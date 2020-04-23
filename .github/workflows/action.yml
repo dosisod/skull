@@ -11,6 +11,7 @@ jobs:
       run: |
         mkdir build
     - name: Generate cmake files
+      run: |
         cd build
         cmake --version
         cmake ..
