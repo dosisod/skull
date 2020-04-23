@@ -1,0 +1,22 @@
+name: tests
+
+on: [push, pull_request]
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup dir
+      run: |
+        mkdir build
+    - name: Generate cmake files
+        cd build
+        cmake --version
+        cmake ..
+    - name: Build
+      run: |
+        cd build
+        cmake --build .
+    - name: Dry run
+      run: ./build/src/skull
