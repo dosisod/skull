@@ -20,7 +20,7 @@ jobs:
         cd build
         cmake --build .
     - name: Run tests
-      run: ./build/src/skull
+      run: ./build/test/Test
     - name: Run skull parser
       run: |
         cd build/src
