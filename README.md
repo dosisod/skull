@@ -5,15 +5,15 @@ The skull programming language
 ## Syntax Proposal
 
 ```
-'this is a comment!'
+# this is a comment!
 
-[main] [] [i64] [
-  print ["hello world!"]
+main[] i32 [
+  print["hello world!"]
 
-  return [0]
+  return 0
 ]
 
-main []
+main[]
 ```
 
 ## Building
