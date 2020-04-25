@@ -3,6 +3,14 @@
 #include "../src/parse/tokenize.h"
 #include "../test/testing.h"
 
+bool test_is_whitespace() {
+	return !(is_whitespace(' ') && !is_whitespace('A'));
+}
+
+bool test_is_quote() {
+	return !(is_quote('\"') && is_quote('\'') && !is_quote('A'));
+}
+
 bool test_tokenize_single_token() {
 	token_t *t=tokenize("token");
 
@@ -33,6 +41,18 @@ bool test_whitespace_at_eol_ignored() {
 	free(t);
 
 	return !pass;
+}
+
+bool test_whitespace_inside_double_quotes_respected() {
+	token_t *t=tokenize("\"this is a single token\"");
+
+	return !(t->next==NULL && t->start==0 && t->end==24);
+}
+
+bool test_whitespace_inside_single_quotes_respected() {
+	token_t *t=tokenize("'this is a single token'");
+
+	return !(t->next==NULL && t->start==0 && t->end==24);
 }
 
 bool test_bracket_token_open() {
@@ -112,9 +132,13 @@ bool test_free_tokens() {
 
 void tokenizer_test_self(bool *failed) {
 	tests_t tests={
+		test_is_whitespace,
+		test_is_quote,
 		test_tokenize_single_token,
 		test_whitespace_between_tokens,
 		test_whitespace_at_eol_ignored,
+		test_whitespace_inside_double_quotes_respected,
+		test_whitespace_inside_single_quotes_respected,
 		test_bracket_token_open,
 		test_bracket_token_close,
 		test_token_keyword,

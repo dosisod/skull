@@ -20,6 +20,10 @@ bool is_whitespace(char c) {
 	return (c <= 32);
 }
 
+bool is_quote(char c) {
+	return (c=='\'' || c=='\"');
+}
+
 //tokenize passed in string, returns a linked list of tokens
 token_t *tokenize(const char *code) {
 	struct token_t *head=malloc(sizeof(token_t));
@@ -33,9 +37,22 @@ token_t *tokenize(const char *code) {
 
 	unsigned long CODE_LEN=strlen(code);
 
+	char quote=0;
 	unsigned long i=0;
 	for (; i<CODE_LEN ; i++) {
-		if (current->start==-1) {
+		if (quote!=0) {
+			if (code[i]==quote) {
+				quote=0;
+			}
+		}
+		else if (!quote && is_quote(code[i])) {
+			quote=code[i];
+
+			if (current->start==-1) {
+				current->start=i;
+			}
+		}
+		else if (current->start==-1) {
 			if (!is_whitespace(code[i])) {
 				current->start=i;
 			}
