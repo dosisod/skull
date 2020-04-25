@@ -98,3 +98,15 @@ void classify_tokens(token_t *head, const char *code) {
 		current=current->next;
 	}
 }
+
+//free all tokens in linked list, starting from last element
+void free_tokens(token_t *head) {
+	token_t *tmp;
+
+	while (head!=NULL) {
+		tmp=head;
+		head=head->next;
+		free(tmp);
+		tmp->next=NULL;
+	}
+}

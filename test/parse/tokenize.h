@@ -95,6 +95,21 @@ bool test_token_classifier() {
 	return !pass;
 }
 
+bool test_free_tokens() {
+	const char *code="token token token";
+	token_t *t=tokenize(code);
+	classify_tokens(t, code);
+
+	token_t *token2=t->next;
+	token_t *token3=t->next->next;
+
+	free_tokens(t);
+
+	bool pass=(t->next==NULL && token2->next==NULL && token3->next==NULL);
+
+	return !pass;
+}
+
 void tokenizer_test_self(bool *failed) {
 	tests_t tests={
 		test_tokenize_single_token,
@@ -105,6 +120,7 @@ void tokenizer_test_self(bool *failed) {
 		test_token_keyword,
 		test_token_unknown,
 		test_token_classifier,
+		test_free_tokens,
 		NULL
 	};
 
