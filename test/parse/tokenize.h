@@ -11,6 +11,17 @@ bool test_is_quote() {
 	return !(is_quote('\"') && is_quote('\'') && !is_quote('A'));
 }
 
+bool test_is_keyword_token() {
+	const char *code="if else not_keyword";
+	token_t *token=tokenize(code);
+
+	return !(
+		is_keyword_token(token, code) &&
+		is_keyword_token(token->next, code) &&
+		!is_keyword_token(token->next->next, code)
+	);
+}
+
 bool test_tokenize_single_token() {
 	token_t *t=tokenize("token");
 
@@ -134,6 +145,7 @@ void tokenizer_test_self(bool *failed) {
 	tests_t tests={
 		test_is_whitespace,
 		test_is_quote,
+		test_is_keyword_token,
 		test_tokenize_single_token,
 		test_whitespace_between_tokens,
 		test_whitespace_at_eol_ignored,

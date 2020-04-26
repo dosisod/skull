@@ -6,6 +6,19 @@
 #define TOKEN_KEYWORD 1
 #define TOKEN_BRACKET_OPEN 2
 #define TOKEN_BRACKET_CLOSE 3
+#define TOKEN_FUNCTION 4
+
+#define TOKEN_KEYWORDS_LEN 8
+const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
+	"return",
+	"if",
+	"elif",
+	"else",
+	"do",
+	"while",
+	"import",
+	"for"
+};
 
 //a token is text between whitespace/control characters
 typedef struct token_t {
@@ -22,6 +35,21 @@ bool is_whitespace(char c) {
 
 bool is_quote(char c) {
 	return (c=='\'' || c=='\"');
+}
+
+bool is_keyword_token(token_t *token, const char *code) {
+	int len=(token->end - token->start);
+	char buf[len + 1];
+
+	strncpy(buf, code + token->start, len);
+	buf[len]='\0';
+
+	for (unsigned long i=0 ; i<TOKEN_KEYWORDS_LEN ; i++) {
+		if (strcmp(buf, TOKEN_KEYWORDS[i])==0) {
+			return true;
+		}
+	}
+	return false;
 }
 
 //tokenize passed in string, returns a linked list of tokens
