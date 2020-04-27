@@ -109,12 +109,32 @@ bool test_bracket_token_close() {
 }
 
 bool test_token_keyword() {
-	const char *code="return";
+	const char *code="if else return";
 	token_t *t=tokenize(code);
-	classify_token(t, code);
+	classify_tokens(t, code);
 
-	bool pass=(t->token_type==TOKEN_KEYWORD);
-	free(t);
+	bool pass=(
+		t->token_type==TOKEN_KEYWORD &&
+		t->next->token_type==TOKEN_KEYWORD &&
+		t->next->next->token_type==TOKEN_KEYWORD
+	);
+
+	free_tokens(t);
+
+	return !pass;
+}
+
+bool test_token_type() {
+	const char *code="i32 not_a_type";
+	token_t *t=tokenize(code);
+	classify_tokens(t, code);
+
+	bool pass=(
+		t->token_type==TOKEN_TYPE &&
+		t->next->token_type!=TOKEN_TYPE
+	);
+
+	free_tokens(t);
 
 	return !pass;
 }
@@ -175,6 +195,7 @@ void tokenizer_test_self(bool *failed) {
 		test_bracket_token_open,
 		test_bracket_token_close,
 		test_token_keyword,
+		test_token_type,
 		test_token_unknown,
 		test_token_classifier,
 		test_free_tokens,

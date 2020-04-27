@@ -9,6 +9,7 @@
 #define TOKEN_BRACKET_OPEN 2
 #define TOKEN_BRACKET_CLOSE 3
 #define TOKEN_FUNCTION 4
+#define TOKEN_TYPE 5
 
 #define TOKEN_KEYWORDS_LEN 8
 const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
@@ -148,9 +149,11 @@ void classify_token(token_t *token, const char *code) {
 	else if (strcmp(buf, "]")==0) {
 		token->token_type=TOKEN_BRACKET_CLOSE;
 	}
-	//for now, the only known keyword is "return"
-	else if (strcmp(buf, "return")==0) {
+	else if (is_keyword_token(token, code)) {
 		token->token_type=TOKEN_KEYWORD;
+	}
+	else if (is_type_token(token, code)) {
+		token->token_type=TOKEN_TYPE;
 	}
 }
 
