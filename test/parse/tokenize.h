@@ -15,11 +15,31 @@ bool test_is_keyword_token() {
 	const char *code="if else not_keyword";
 	token_t *token=tokenize(code);
 
-	return !(
+	bool pass=(
 		is_keyword_token(token, code) &&
 		is_keyword_token(token->next, code) &&
 		!is_keyword_token(token->next->next, code)
 	);
+
+	free_tokens(token);
+
+	return !pass;
+}
+
+bool test_is_type_token() {
+	const char *code="i32 not_a_type";
+	token_t *token=tokenize(code);
+
+	make_default_types();
+
+	bool pass=(
+		is_type_token(token, code) &&
+		!is_type_token(token->next, code)
+	);
+
+	free_tokens(token);
+
+	return !pass;
 }
 
 bool test_tokenize_single_token() {
@@ -146,6 +166,7 @@ void tokenizer_test_self(bool *failed) {
 		test_is_whitespace,
 		test_is_quote,
 		test_is_keyword_token,
+		test_is_type_token,
 		test_tokenize_single_token,
 		test_whitespace_between_tokens,
 		test_whitespace_at_eol_ignored,

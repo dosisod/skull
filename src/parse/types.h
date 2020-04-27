@@ -1,3 +1,5 @@
+#pragma once
+
 typedef struct type_t {
 	const char *name;
 

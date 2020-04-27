@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "types.h"
+
 #define TOKEN_UNKNOWN 0
 #define TOKEN_KEYWORD 1
 #define TOKEN_BRACKET_OPEN 2
@@ -35,6 +37,24 @@ bool is_whitespace(char c) {
 
 bool is_quote(char c) {
 	return (c=='\'' || c=='\"');
+}
+
+bool is_type_token(token_t *token, const char *code) {
+	int len=(token->end - token->start);
+	char buf[len + 1];
+
+	strncpy(buf, code + token->start, len);
+	buf[len]='\0';
+
+	type_t *current=&TYPES_AVAILABLE;
+
+	while (current) {
+		if (strcmp(buf, current->name)==0) {
+			return true;
+		}
+		current=current->next;
+	}
+	return false;
 }
 
 bool is_keyword_token(token_t *token, const char *code) {
@@ -144,7 +164,6 @@ void classify_tokens(token_t *head, const char *code) {
 	}
 }
 
-//free all tokens in linked list, starting from last element
 void free_tokens(token_t *head) {
 	token_t *tmp;
 
