@@ -26,6 +26,23 @@ bool test_is_keyword_token() {
 	return !pass;
 }
 
+bool test_is_operator_token() {
+	const char *code="x = 10 / 2";
+	token_t *token=tokenize(code);
+
+	bool pass=(
+		!is_operator_token(token, code) &&
+		is_operator_token(token->next, code) &&
+		!is_operator_token(token->next->next, code) &&
+		is_operator_token(token->next->next->next, code) &&
+		!is_operator_token(token->next->next->next->next, code)
+	);
+
+	free_tokens(token);
+
+	return !pass;
+}
+
 bool test_is_type_token() {
 	const char *code="i32 not_a_type";
 	token_t *token=tokenize(code);
@@ -124,6 +141,24 @@ bool test_token_keyword() {
 	return !pass;
 }
 
+bool test_token_operator() {
+	const char *code="x = 10 / 2";
+	token_t *t=tokenize(code);
+	classify_tokens(t, code);
+
+	bool pass=(
+		t->token_type!=TOKEN_OPERATOR &&
+		t->next->token_type==TOKEN_OPERATOR &&
+		t->next->next->token_type!=TOKEN_OPERATOR &&
+		t->next->next->next->token_type==TOKEN_OPERATOR &&
+		t->next->next->next->next->token_type!=TOKEN_OPERATOR
+	);
+
+	free_tokens(t);
+
+	return !pass;
+}
+
 bool test_token_type() {
 	const char *code="i32 not_a_type";
 	token_t *t=tokenize(code);
@@ -186,6 +221,7 @@ void tokenizer_test_self(bool *failed) {
 		test_is_whitespace,
 		test_is_quote,
 		test_is_keyword_token,
+		test_is_operator_token,
 		test_is_type_token,
 		test_tokenize_single_token,
 		test_whitespace_between_tokens,
@@ -195,6 +231,7 @@ void tokenizer_test_self(bool *failed) {
 		test_bracket_token_open,
 		test_bracket_token_close,
 		test_token_keyword,
+		test_token_operator,
 		test_token_type,
 		test_token_unknown,
 		test_token_classifier,
