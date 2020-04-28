@@ -4,11 +4,11 @@
 #include "../test/testing.h"
 
 bool test_is_whitespace() {
-	return !(is_whitespace(' ') && !is_whitespace('A'));
+	return is_whitespace(' ') && !is_whitespace('A');
 }
 
 bool test_is_quote() {
-	return !(is_quote('\"') && is_quote('\'') && !is_quote('A'));
+	return is_quote('\"') && is_quote('\'') && !is_quote('A');
 }
 
 bool test_is_keyword_token() {
@@ -23,7 +23,7 @@ bool test_is_keyword_token() {
 
 	free_tokens(token);
 
-	return !pass;
+	return pass;
 }
 
 bool test_is_operator_token() {
@@ -40,7 +40,7 @@ bool test_is_operator_token() {
 
 	free_tokens(token);
 
-	return !pass;
+	return pass;
 }
 
 bool test_is_type_token() {
@@ -56,7 +56,7 @@ bool test_is_type_token() {
 
 	free_tokens(token);
 
-	return !pass;
+	return pass;
 }
 
 bool test_tokenize_single_token() {
@@ -65,7 +65,7 @@ bool test_tokenize_single_token() {
 	bool pass=(t->start==0 && t->end==5);
 	free(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_whitespace_between_tokens() {
@@ -79,7 +79,7 @@ bool test_whitespace_between_tokens() {
 	free(t->next);
 	free(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_whitespace_at_eol_ignored() {
@@ -88,19 +88,25 @@ bool test_whitespace_at_eol_ignored() {
 	bool pass=(t->start==0 && t->end==5);
 	free(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_whitespace_inside_double_quotes_respected() {
 	token_t *t=tokenize("\"this is a single token\"");
 
-	return !(t->next==NULL && t->start==0 && t->end==24);
+	bool pass=(t->next==NULL && t->start==0 && t->end==24);
+	free(t);
+
+	return pass;
 }
 
 bool test_whitespace_inside_single_quotes_respected() {
 	token_t *t=tokenize("'this is a single token'");
 
-	return !(t->next==NULL && t->start==0 && t->end==24);
+	bool pass=(t->next==NULL && t->start==0 && t->end==24);
+	free(t);
+
+	return pass;
 }
 
 bool test_bracket_token_open() {
@@ -111,7 +117,7 @@ bool test_bracket_token_open() {
 	bool pass=(t->token_type==TOKEN_BRACKET_OPEN);
 	free(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_bracket_token_close() {
@@ -122,7 +128,7 @@ bool test_bracket_token_close() {
 	bool pass=(t->token_type==TOKEN_BRACKET_CLOSE);
 	free(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_token_keyword() {
@@ -138,7 +144,7 @@ bool test_token_keyword() {
 
 	free_tokens(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_token_operator() {
@@ -156,7 +162,7 @@ bool test_token_operator() {
 
 	free_tokens(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_token_type() {
@@ -171,7 +177,7 @@ bool test_token_type() {
 
 	free_tokens(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_token_unknown() {
@@ -182,7 +188,7 @@ bool test_token_unknown() {
 	bool pass=(t->token_type==TOKEN_UNKNOWN);
 	free(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_token_classifier() {
@@ -198,7 +204,7 @@ bool test_token_classifier() {
 	free(t->next);
 	free(t);
 
-	return !pass;
+	return pass;
 }
 
 bool test_free_tokens() {
@@ -211,12 +217,14 @@ bool test_free_tokens() {
 
 	free_tokens(t);
 
-	bool pass=(t->next==NULL && token2->next==NULL && token3->next==NULL);
-
-	return !pass;
+	return (
+		t->next==NULL &&
+		token2->next==NULL &&
+		token3->next==NULL
+	);
 }
 
-void tokenizer_test_self(bool *failed) {
+void tokenizer_test_self(bool *pass) {
 	tests_t tests={
 		test_is_whitespace,
 		test_is_quote,
@@ -239,5 +247,5 @@ void tokenizer_test_self(bool *failed) {
 		NULL
 	};
 
-	run_many_tests(__FILE__, tests, failed);
+	run_many_tests(__FILE__, tests, pass);
 }
