@@ -13,7 +13,7 @@ bool test_find_line_comment_on_blank_line() {
 	return find_line_comment("")==0;
 }
 
-bool constants_test_self(bool *pass) {
+void constants_test_self(bool *pass) {
 	tests_t tests={
 		test_find_line_comment_at_start_of_line,
 		test_find_line_comment_without_comment,

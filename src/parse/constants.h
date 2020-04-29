@@ -1,12 +1,14 @@
 #include <string.h>
 #include <stdio.h>
 
+#define LINE_COMMENT_LEN 2
 const char *LINE_COMMENT="# ";
-const short LINE_COMMENT_LEN=2;
 
 long long find_line_comment(const char *code) {
-	const long long searchable_range=(strlen(code) - LINE_COMMENT_LEN);
-	if (searchable_range<LINE_COMMENT_LEN) return strlen(code);
+	const unsigned long long code_len=strlen(code);
+
+	const unsigned long long searchable_range=(code_len - LINE_COMMENT_LEN);
+	if (searchable_range<LINE_COMMENT_LEN || searchable_range>code_len) return code_len;
 
 	unsigned long long i=0;
 	char cache[LINE_COMMENT_LEN + 1];

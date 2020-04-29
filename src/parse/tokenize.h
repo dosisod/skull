@@ -42,16 +42,16 @@ token_t *tokenize(const char *code) {
 		else if (!quote && is_quote(code[i])) {
 			quote=code[i];
 
-			if (current->start==-1) {
+			if (current->start==(unsigned long)-1) {
 				current->start=i;
 			}
 		}
-		else if (current->start==-1) {
+		else if (current->start==(unsigned long)-1) {
 			if (!is_whitespace(code[i])) {
 				current->start=i;
 			}
 		}
-		else if (current->end==-1) {
+		else if (current->end==(unsigned long)-1) {
 			if (is_whitespace(code[i])) {
 				current->end=i;
 
@@ -69,7 +69,7 @@ token_t *tokenize(const char *code) {
 	}
 
 	//close dangling token if there was no whitespace at EOF
-	if (current->start!=-1) {
+	if (current->start!=(unsigned long)-1) {
 		current->end=i;
 	}
 	//if there is a no token to be created, pop last token
