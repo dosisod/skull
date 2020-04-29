@@ -1,1 +1,1 @@
-print["hello world!"]
+dll_run["./libhello.so", "hello"]
