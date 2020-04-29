@@ -1,1 +1,1 @@
-dll_run["./libhello.so", "hello"]
+dll_run["./src/functions/libhello.so", "hello"]

@@ -23,7 +23,5 @@ jobs:
       run: ./build/test/Test
     - name: Run skull parser
       run: |
-        c99 -shared src/libhello.c -ldl -o build/src/libhello.so
-        cp src/main.skull build/src
-        cd build/src
-        ./skull
+        c99 -shared src/functions/libhello.c -ldl -o src/functions/libhello.so
+        ./build/src/skull src/main.skull

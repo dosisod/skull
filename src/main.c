@@ -2,12 +2,17 @@
 
 #include "../src/eval.h"
 
-int main() {
+int main(int argc, char *argv[]) {
+	if (argc!=2) {
+		printf("no input files specified, exiting\n");
+		return 1;
+	}
+
 	FILE *f;
-	f=fopen("./main.skull", "r");
+	f=fopen(argv[1], "r");
 
 	if (f==NULL) {
-		printf("\"main.skull\" was not found, exiting\n");
+		printf("\"%s\" was not found, exiting\n", argv[1]);
 		return 1;
 	}
 
