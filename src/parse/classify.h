@@ -77,6 +77,24 @@ bool is_operator_token(token_t *token, const char *code) {
 	return false;
 }
 
+bool is_function_token(token_t *token, const char *code) {
+	int len=(token->end - token->start);
+	char buf[len + 1];
+
+	strncpy(buf, code + token->start, len);
+	buf[len]='\0';
+
+	//functions can end in "[]", or have a "[" without having a "]"
+	if (len>3 && buf[len - 2]=='[' && buf[len - 1]==']') {
+		return true;
+	}
+	else if (strchr(buf, '[')!=NULL && strchr(buf, ']')==NULL) {
+		return true;
+	}
+
+	return false;
+}
+
 //determine what to classify a single token as
 void classify_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
@@ -99,6 +117,9 @@ void classify_token(token_t *token, const char *code) {
 	}
 	else if (is_type_token(token, code)) {
 		token->token_type=TOKEN_TYPE;
+	}
+	else if (is_function_token(token, code)) {
+		token->token_type=TOKEN_FUNCTION;
 	}
 }
 
