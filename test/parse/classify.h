@@ -68,6 +68,23 @@ bool test_is_function_token() {
 	return pass;
 }
 
+bool test_is_function_param_token() {
+	const char *code1="param_name]";
+	const char *code2="param_name,";
+	token_t *token1=tokenize(code1);
+	token_t *token2=tokenize(code2);
+
+	bool pass=(
+		is_function_param_token(token1, code1) &&
+		is_function_param_token(token2, code2)
+	);
+
+	free(token1);
+	free(token2);
+
+	return pass;
+}
+
 bool test_bracket_token_open() {
 	const char *code="[";
 	token_t *t=tokenize(code);
@@ -161,6 +178,17 @@ bool test_token_function_no_params() {
 	return pass;
 }
 
+bool test_token_function_param() {
+	const char *code="param_name]";
+	token_t *t=tokenize(code);
+	classify_tokens(t, code);
+
+	bool pass=(t->token_type==TOKEN_FUNCTION_PARAM);
+	free(t);
+
+	return pass;
+}
+
 bool test_token_classifier() {
 	const char *code="[ ]";
 	token_t *t=tokenize(code);
@@ -183,6 +211,7 @@ void classifier_test_self(bool *pass) {
 		test_is_operator_token,
 		test_is_type_token,
 		test_is_function_token,
+		test_is_function_param_token,
 		test_bracket_token_open,
 		test_bracket_token_close,
 		test_token_keyword,
@@ -190,6 +219,7 @@ void classifier_test_self(bool *pass) {
 		test_token_type,
 		test_token_unknown,
 		test_token_function_no_params,
+		test_token_function_param,
 		test_token_classifier,
 		NULL
 	};

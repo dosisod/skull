@@ -5,8 +5,9 @@
 #define TOKEN_BRACKET_OPEN 2
 #define TOKEN_BRACKET_CLOSE 3
 #define TOKEN_FUNCTION 4
-#define TOKEN_TYPE 5
-#define TOKEN_OPERATOR 6
+#define TOKEN_FUNCTION_PARAM 5
+#define TOKEN_TYPE 6
+#define TOKEN_OPERATOR 7
 
 #define TOKEN_KEYWORDS_LEN 8
 const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
@@ -95,6 +96,20 @@ bool is_function_token(token_t *token, const char *code) {
 	return false;
 }
 
+bool is_function_param_token(token_t *token, const char *code) {
+	int len=(token->end - token->start);
+	char buf[len + 1];
+
+	strncpy(buf, code + token->start, len);
+	buf[len]='\0';
+
+	if (len>2 && (buf[len - 1]==']' || buf[len - 1]==',')) {
+		return true;
+	}
+
+	return false;
+}
+
 //determine what to classify a single token as
 void classify_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
@@ -120,6 +135,9 @@ void classify_token(token_t *token, const char *code) {
 	}
 	else if (is_function_token(token, code)) {
 		token->token_type=TOKEN_FUNCTION;
+	}
+	else if (is_function_param_token(token, code)) {
+		token->token_type=TOKEN_FUNCTION_PARAM;
 	}
 }
 
