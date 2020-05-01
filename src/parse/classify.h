@@ -1,3 +1,5 @@
+#pragma once
+
 #include "types.h"
 
 #define TOKEN_UNKNOWN 0

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string.h>
+#include <stdlib.h>
+
 typedef struct type_t {
 	const char *name;
 
