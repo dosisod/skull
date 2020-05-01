@@ -1,11 +1,6 @@
 #include <string.h>
 #include <stdio.h>
 
-/*
-Single line comments are lines with `# ` in them.
-
-The space following the `#` is mandatory.
-*/
 #define LINE_COMMENT_LEN 2
 const char *LINE_COMMENT="# ";
 

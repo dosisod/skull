@@ -1,8 +1,5 @@
 #include "types.h"
 
-/*
-List of the possible token types.
-*/
 #define TOKEN_UNKNOWN 0
 #define TOKEN_KEYWORD 1
 #define TOKEN_BRACKET_OPEN 2
@@ -12,9 +9,6 @@ List of the possible token types.
 #define TOKEN_TYPE 6
 #define TOKEN_OPERATOR 7
 
-/*
-List of all the reserved keyword tokens.
-*/
 #define TOKEN_KEYWORDS_LEN 8
 const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
 	"return",
@@ -27,9 +21,6 @@ const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
 	"for"
 };
 
-/*
-List of all the reserved operators.
-*/
 #define TOKEN_OPERATORS_LEN 28
 const char *TOKEN_OPERATORS[TOKEN_OPERATORS_LEN] = {
 	"+", "-", "/", "//", "*", "%", "<<", ">>", "|", "&", "^",
@@ -41,8 +32,6 @@ const char *TOKEN_OPERATORS[TOKEN_OPERATORS_LEN] = {
 
 /*
 Returns true if `token` is a type token.
-
-A list of valid types can be found in (src/parse/types.h).
 */
 bool is_type_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
@@ -64,8 +53,6 @@ bool is_type_token(token_t *token, const char *code) {
 
 /*
 Returns true if `token` is a keyword token.
-
-A list of valid keywords are listed above.
 */
 bool is_keyword_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
@@ -84,8 +71,6 @@ bool is_keyword_token(token_t *token, const char *code) {
 
 /*
 Returns true if `token` is an operator token.
-
-A list of valid operators are listed above.
 */
 bool is_operator_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
@@ -148,8 +133,6 @@ bool is_function_param_token(token_t *token, const char *code) {
 
 /*
 Classify the token `token`.
-
-A list of valid token types are listed above.
 */
 void classify_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);

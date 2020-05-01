@@ -1,13 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-/*
-The token type is used to indicate the start and stop of tokens.
-
-`start` and `end` refer to the code that the token was parsed from.
-
-The `next` parameter of a `token_t` is used to point to the next respective token.
-*/
 typedef struct token_t {
 	unsigned long start;
 	unsigned long end;

@@ -1,19 +1,11 @@
 #pragma once
 
-/*
-`type_t` is used to store all of the available types.
-*/
 typedef struct type_t {
 	const char *name;
 
 	struct type_t *next;
 } type_t;
 
-/*
-`TYPES_AVAILABLE` is the head to the linked list of all types.
-
-By adding more `type_t`s to the `next` field, you can add your own types.
-*/
 struct type_t TYPES_AVAILABLE = {
 	.name="",
 	.next=NULL
