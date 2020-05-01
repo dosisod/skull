@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include <dlfcn.h>
 
+/*
+Run a void(void) function pointer from a dll.
+
+If the dll is not found, or symbol was not found, function does nothing.
+Else, the function is invoked.
+*/
 void dll_run(const char *data) {
 	char *comma=strstr(data, "\", \"");
 	if (comma==NULL) {

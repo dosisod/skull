@@ -1,7 +1,13 @@
 #include <string.h>
 #include <stdlib.h>
 
-//a token is text between whitespace/control characters
+/*
+The token type is used to indicate the start and stop of tokens.
+
+`start` and `end` refer to the code that the token was parsed from.
+
+The `next` parameter of a `token_t` is used to point to the next respective token.
+*/
 typedef struct token_t {
 	unsigned long start;
 	unsigned long end;
@@ -10,15 +16,25 @@ typedef struct token_t {
 	struct token_t *next;
 } token_t;
 
+/*
+Return true if `c` is whitespace.
+
+Whitespace includes control-characters, non-printable characters, and spaces.
+*/
 bool is_whitespace(char c) {
 	return (c <= 32);
 }
 
+/*
+Return true if `c` is a double or single quote.
+*/
 bool is_quote(char c) {
 	return (c=='\'' || c=='\"');
 }
 
-//tokenize passed in string, returns a linked list of tokens
+/*
+Tokenize the passed code, returning the head to a linked list of tokens.
+*/
 token_t *tokenize(const char *code) {
 	struct token_t *head=malloc(sizeof(token_t));
 	head->start=-1;
@@ -81,6 +97,11 @@ token_t *tokenize(const char *code) {
 	return head;
 }
 
+/*
+Free all the tokens from a linked list of tokens.
+
+This function should be called at the head of the linked list.
+*/
 void free_tokens(token_t *head) {
 	token_t *tmp;
 

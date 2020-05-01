@@ -1,18 +1,29 @@
 #pragma once
 
+/*
+`type_t` is used to store all of the available types.
+*/
 typedef struct type_t {
 	const char *name;
 
 	struct type_t *next;
 } type_t;
 
-//types must be stored as linked list to account for user-defined types
+/*
+`TYPES_AVAILABLE` is the head to the linked list of all types.
+
+By adding more `type_t`s to the `next` field, you can add your own types.
+*/
 struct type_t TYPES_AVAILABLE = {
 	.name="",
 	.next=NULL
 };
 
-//insert new type into TYPES_AVAILABLE, return false if type exists already
+/*
+Returns true if the type `name` was inserted.
+
+Returns false if a type called `name` already exists, and was not inserted.
+*/
 bool make_new_type(const char *name) {
 	type_t *current=&TYPES_AVAILABLE;
 	type_t *last=current;
@@ -34,7 +45,9 @@ bool make_new_type(const char *name) {
 	return true;
 }
 
-//free all types (except for head)
+/*
+Free all defined types from `TYPES_AVAILABLE`, except for `TYPES_AVAILABLE`.
+*/
 void free_types() {
 	type_t *head=(&TYPES_AVAILABLE)->next;
 	type_t *tmp;
@@ -49,6 +62,11 @@ void free_types() {
 	TYPES_AVAILABLE.next=NULL;
 }
 
+/*
+Populate `TYPES_AVAILABLE` with all the builtin types.
+
+Calling this function will reset all types defined in `TYPES_AVAILABLE`.
+*/
 void make_default_types() {
 	free_types();
 

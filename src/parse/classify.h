@@ -1,5 +1,8 @@
 #include "types.h"
 
+/*
+List of the possible token types.
+*/
 #define TOKEN_UNKNOWN 0
 #define TOKEN_KEYWORD 1
 #define TOKEN_BRACKET_OPEN 2
@@ -9,6 +12,9 @@
 #define TOKEN_TYPE 6
 #define TOKEN_OPERATOR 7
 
+/*
+List of all the reserved keyword tokens.
+*/
 #define TOKEN_KEYWORDS_LEN 8
 const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
 	"return",
@@ -21,6 +27,9 @@ const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
 	"for"
 };
 
+/*
+List of all the reserved operators.
+*/
 #define TOKEN_OPERATORS_LEN 28
 const char *TOKEN_OPERATORS[TOKEN_OPERATORS_LEN] = {
 	"+", "-", "/", "//", "*", "%", "<<", ">>", "|", "&", "^",
@@ -30,6 +39,11 @@ const char *TOKEN_OPERATORS[TOKEN_OPERATORS_LEN] = {
 	"and", "or", "not"
 };
 
+/*
+Returns true if `token` is a type token.
+
+A list of valid types can be found in (src/parse/types.h).
+*/
 bool is_type_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
 	char buf[len + 1];
@@ -48,6 +62,11 @@ bool is_type_token(token_t *token, const char *code) {
 	return false;
 }
 
+/*
+Returns true if `token` is a keyword token.
+
+A list of valid keywords are listed above.
+*/
 bool is_keyword_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
 	char buf[len + 1];
@@ -63,6 +82,11 @@ bool is_keyword_token(token_t *token, const char *code) {
 	return false;
 }
 
+/*
+Returns true if `token` is an operator token.
+
+A list of valid operators are listed above.
+*/
 bool is_operator_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
 	char buf[len + 1];
@@ -78,6 +102,12 @@ bool is_operator_token(token_t *token, const char *code) {
 	return false;
 }
 
+/*
+Returns true if `token` is a function token.
+
+Function tokens are tokens that look like `name[]`, or `name[`.
+They indicate the start of a function declaration.
+*/
 bool is_function_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
 	char buf[len + 1];
@@ -96,6 +126,12 @@ bool is_function_token(token_t *token, const char *code) {
 	return false;
 }
 
+/*
+Returns true if `token` is a function parameter.
+
+Function parameters are tokens that look like `name]`, or `name,`.
+They indicate that there is a parameter for a given function.
+*/
 bool is_function_param_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
 	char buf[len + 1];
@@ -110,7 +146,11 @@ bool is_function_param_token(token_t *token, const char *code) {
 	return false;
 }
 
-//determine what to classify a single token as
+/*
+Classify the token `token`.
+
+A list of valid token types are listed above.
+*/
 void classify_token(token_t *token, const char *code) {
 	int len=(token->end - token->start);
 	char buf[len + 1];
@@ -141,7 +181,9 @@ void classify_token(token_t *token, const char *code) {
 	}
 }
 
-//classify all tokens starting from head
+/*
+Starting at token `token`, go through and classify each token in linked list.
+*/
 void classify_tokens(token_t *head, const char *code) {
 	token_t *current=head;
 

@@ -1,9 +1,19 @@
 #include <string.h>
 #include <stdio.h>
 
+/*
+Single line comments are lines with `# ` in them.
+
+The space following the `#` is mandatory.
+*/
 #define LINE_COMMENT_LEN 2
 const char *LINE_COMMENT="# ";
 
+/*
+Returns index of the first single line comment, starting from pointer `code`.
+
+If no comment is found, the index of the last character is returned.
+*/
 long long find_line_comment(const char *code) {
 	const unsigned long long code_len=strlen(code);
 
