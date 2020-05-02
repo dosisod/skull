@@ -107,3 +107,10 @@ void free_tokens(token_t *head) {
 		tmp->next=NULL;
 	}
 }
+
+/*
+Returns the character length of the passed token
+*/
+int token_len(token_t *token) {
+	return (token->end - token->start);
+}

@@ -36,7 +36,7 @@ const char *TOKEN_OPERATORS[TOKEN_OPERATORS_LEN] = {
 Returns true if `token` is a type token.
 */
 bool is_type_token(token_t *token, const char *code) {
-	int len=(token->end - token->start);
+	int len=token_len(token);
 	char buf[len + 1];
 
 	strncpy(buf, code + token->start, len);
@@ -57,7 +57,7 @@ bool is_type_token(token_t *token, const char *code) {
 Returns true if `token` is a keyword token.
 */
 bool is_keyword_token(token_t *token, const char *code) {
-	int len=(token->end - token->start);
+	int len=token_len(token);
 	char buf[len + 1];
 
 	strncpy(buf, code + token->start, len);
@@ -75,7 +75,7 @@ bool is_keyword_token(token_t *token, const char *code) {
 Returns true if `token` is an operator token.
 */
 bool is_operator_token(token_t *token, const char *code) {
-	int len=(token->end - token->start);
+	int len=token_len(token);
 	char buf[len + 1];
 
 	strncpy(buf, code + token->start, len);
@@ -96,7 +96,7 @@ Function tokens are tokens that look like `name[]`, or `name[`.
 They indicate the start of a function declaration.
 */
 bool is_function_token(token_t *token, const char *code) {
-	int len=(token->end - token->start);
+	int len=token_len(token);
 	char buf[len + 1];
 
 	strncpy(buf, code + token->start, len);
@@ -120,7 +120,7 @@ Function parameters are tokens that look like `name]`, or `name,`.
 They indicate that there is a parameter for a given function.
 */
 bool is_function_param_token(token_t *token, const char *code) {
-	int len=(token->end - token->start);
+	int len=token_len(token);
 	char buf[len + 1];
 
 	strncpy(buf, code + token->start, len);
@@ -137,7 +137,7 @@ bool is_function_param_token(token_t *token, const char *code) {
 Classify the token `token`.
 */
 void classify_token(token_t *token, const char *code) {
-	int len=(token->end - token->start);
+	int len=token_len(token);
 	char buf[len + 1];
 
 	strncpy(buf, code + token->start, len);

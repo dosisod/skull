@@ -77,6 +77,12 @@ bool test_free_tokens() {
 	);
 }
 
+bool test_token_len() {
+	token_t *token=tokenize("token");
+
+	return token_len(token)==5;
+}
+
 void tokenizer_test_self(bool *pass) {
 	tests_t tests={
 		test_is_whitespace,
@@ -87,6 +93,7 @@ void tokenizer_test_self(bool *pass) {
 		test_whitespace_inside_double_quotes_respected,
 		test_whitespace_inside_single_quotes_respected,
 		test_free_tokens,
+		test_token_len,
 		NULL
 	};
 

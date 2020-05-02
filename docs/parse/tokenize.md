@@ -16,3 +16,6 @@ Free all the tokens from a linked list of tokens.
 
 This function should be called at the head of the linked list.
 
+#### `int token_len(token_t *token)`
+Returns the character length of the passed token
+
