@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "../src/common/str.h"
+
 #define LINE_COMMENT_LEN 2
 const char *LINE_COMMENT="# ";
 
@@ -19,9 +21,8 @@ long long find_line_comment(const char *code) {
 	char cache[LINE_COMMENT_LEN + 1];
 
 	for (; (i<=searchable_range); i++) {
-		strncpy(cache, code+i, LINE_COMMENT_LEN);
-		cache[LINE_COMMENT_LEN]='\0';
-		if (strcmp(cache, LINE_COMMENT)==0) break;
+		strncpyz(cache, code+i, LINE_COMMENT_LEN);
+		if (samestr(cache, LINE_COMMENT)) break;
 	}
 
 	return i;

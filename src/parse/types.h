@@ -24,7 +24,7 @@ bool make_new_type(const char *name) {
 	type_t *last=current;
 
 	while (current) {
-		if (strcmp(current->name, name)==0) {
+		if (samestr(current->name, name)) {
 			return false;
 		}
 		last=current;

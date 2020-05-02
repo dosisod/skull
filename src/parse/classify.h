@@ -39,13 +39,12 @@ bool is_type_token(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
 
-	strncpy(buf, code + token->start, len);
-	buf[len]='\0';
+	strncpyz(buf, code + token->start, len);
 
 	type_t *current=&TYPES_AVAILABLE;
 
 	while (current) {
-		if (strcmp(buf, current->name)==0) {
+		if (samestr(buf, current->name)) {
 			return true;
 		}
 		current=current->next;
@@ -60,11 +59,10 @@ bool is_keyword_token(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
 
-	strncpy(buf, code + token->start, len);
-	buf[len]='\0';
+	strncpyz(buf, code + token->start, len);
 
 	for (unsigned long i=0 ; i<TOKEN_KEYWORDS_LEN ; i++) {
-		if (strcmp(buf, TOKEN_KEYWORDS[i])==0) {
+		if (samestr(buf, TOKEN_KEYWORDS[i])) {
 			return true;
 		}
 	}
@@ -78,11 +76,10 @@ bool is_operator_token(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
 
-	strncpy(buf, code + token->start, len);
-	buf[len]='\0';
+	strncpyz(buf, code + token->start, len);
 
 	for (unsigned long i=0 ; i<TOKEN_OPERATORS_LEN; i++) {
-		if (strcmp(buf, TOKEN_OPERATORS[i])==0) {
+		if (samestr(buf, TOKEN_OPERATORS[i])) {
 			return true;
 		}
 	}
@@ -99,8 +96,7 @@ bool is_function_token(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
 
-	strncpy(buf, code + token->start, len);
-	buf[len]='\0';
+	strncpyz(buf, code + token->start, len);
 
 	//functions can end in "[]", or have a "[" without having a "]"
 	if (len>3 && buf[len - 2]=='[' && buf[len - 1]==']') {
@@ -123,8 +119,7 @@ bool is_function_param_token(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
 
-	strncpy(buf, code + token->start, len);
-	buf[len]='\0';
+	strncpyz(buf, code + token->start, len);
 
 	if (len>2 && (buf[len - 1]==']' || buf[len - 1]==',')) {
 		return true;
@@ -140,13 +135,12 @@ void classify_token(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
 
-	strncpy(buf, code + token->start, len);
-	buf[len]='\0';
+	strncpyz(buf, code + token->start, len);
 
-	if (strcmp(buf, "[")==0) {
+	if (samestr(buf, "[")) {
 		token->token_type=TOKEN_BRACKET_OPEN;
 	}
-	else if (strcmp(buf, "]")==0) {
+	else if (samestr(buf, "]")) {
 		token->token_type=TOKEN_BRACKET_CLOSE;
 	}
 	else if (is_keyword_token(token, code)) {

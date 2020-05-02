@@ -8,6 +8,8 @@
 
 #include "eval/eval_if.h"
 
+#include "common/str.h"
+
 int main() {
 	bool passed=true;
 
@@ -18,6 +20,8 @@ int main() {
 	classifier_test_self(&passed);
 
 	eval_if_test_self(&passed);
+
+	str_test_self(&passed);
 
 	if (!passed) {
 		printf("\n1 or more errors occurred.\n");

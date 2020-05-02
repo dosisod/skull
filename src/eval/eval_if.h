@@ -10,14 +10,12 @@ If the token isnt `"true"` or `"false"`, `EVAL_TOKEN_ERROR` is returned instead.
 int eval_if_true(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
-	buf[len]='\0';
+	strncpyz(buf, code + token->start, len);
 
-	strncpy(buf, code + token->start, len);
-
-	if (strcmp(buf, "true")==0) {
+	if (samestr(buf, "true")) {
 		return EVAL_IF_TRUE;
 	}
-	else if (strcmp(buf, "false")==0) {
+	else if (samestr(buf, "false")) {
 		return EVAL_IF_FALSE;
 	}
 
@@ -39,8 +37,7 @@ Examples include:
 int eval_if_equal(token_t *token, const char *code) {
 	int mid_len=token_len(token->next);
 	char mid_buf[mid_len + 1];
-	mid_buf[mid_len]='\0';
-	strncpy(mid_buf, code + token->next->start, mid_len);
+	strncpyz(mid_buf, code + token->next->start, mid_len);
 
 	int lhs=eval_if_true(token, code);
 	int rhs=eval_if_true(token->next->next, code);
@@ -49,10 +46,10 @@ int eval_if_equal(token_t *token, const char *code) {
 		return EVAL_IF_ERROR;
 	}
 
-	if (strcmp(mid_buf, "==")==0) {
+	if (samestr(mid_buf, "==")) {
 		return lhs==rhs;
 	}
-	else if (strcmp(mid_buf, "!=")==0) {
+	else if (samestr(mid_buf, "!=")) {
 		return lhs!=rhs;
 	}
 
