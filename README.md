@@ -1,5 +1,7 @@
 # skull
 
+![](https://github.com/dosisod/skull/workflows/tests/badge.svg)
+
 The skull programming language
 
 ## Syntax Proposal
