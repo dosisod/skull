@@ -58,6 +58,7 @@ Examples include:
 "false"
 "true == false"
 "false != false"
+"not true"
 ```
 */
 int eval_if(const char *code) {
@@ -66,6 +67,9 @@ int eval_if(const char *code) {
 
 	if (token->next==NULL) {
 		return eval_if_true(token, code);
+	}
+	else if (token_cmp("not", token, code)) {
+		return !eval_if_true(token->next, code);
 	}
 	else if (token->next->next==NULL) {
 		return EVAL_IF_ERROR;

@@ -27,5 +27,6 @@ Examples include:
 "false"
 "true == false"
 "false != false"
+"not true"
 ```
 

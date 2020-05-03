@@ -30,12 +30,20 @@ bool test_eval_if_with_errors() {
 	);
 }
 
+bool test_eval_if_not() {
+	return (
+		eval_if("not true")==EVAL_IF_FALSE &&
+		eval_if("not false")==EVAL_IF_TRUE
+	);
+}
+
 void eval_if_test_self(bool *pass) {
 	tests_t tests={
 		test_eval_if_single_param,
 		test_eval_if_odd_num_tokens,
 		test_eval_if_equal_compare,
 		test_eval_if_with_errors,
+		test_eval_if_not,
 		NULL
 	};
 
