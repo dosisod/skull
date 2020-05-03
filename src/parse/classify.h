@@ -37,14 +37,10 @@ Returns true if `token` is a type token.
 */
 bool is_type_token(token_t *token, const char *code) {
 	int len=token_len(token);
-	char buf[len + 1];
-
-	strncpyz(buf, code + token->start, len);
 
 	type_t *current=&TYPES_AVAILABLE;
-
 	while (current) {
-		if (samestr(buf, current->name)) {
+		if (strncmp(current->name, code + token->start, len)==0) {
 			return true;
 		}
 		current=current->next;
@@ -57,12 +53,9 @@ Returns true if `token` is a keyword token.
 */
 bool is_keyword_token(token_t *token, const char *code) {
 	int len=token_len(token);
-	char buf[len + 1];
-
-	strncpyz(buf, code + token->start, len);
 
 	for (unsigned long i=0 ; i<TOKEN_KEYWORDS_LEN ; i++) {
-		if (samestr(buf, TOKEN_KEYWORDS[i])) {
+		if (strncmp(TOKEN_KEYWORDS[i], code + token->start, len)==0) {
 			return true;
 		}
 	}
@@ -74,12 +67,9 @@ Returns true if `token` is an operator token.
 */
 bool is_operator_token(token_t *token, const char *code) {
 	int len=token_len(token);
-	char buf[len + 1];
-
-	strncpyz(buf, code + token->start, len);
 
 	for (unsigned long i=0 ; i<TOKEN_OPERATORS_LEN; i++) {
-		if (samestr(buf, TOKEN_OPERATORS[i])) {
+		if (strncmp(TOKEN_OPERATORS[i], code + token->start, len)==0) {
 			return true;
 		}
 	}
@@ -116,16 +106,9 @@ Function parameters are tokens that look like `name]`, or `name,`.
 They indicate that there is a parameter for a given function.
 */
 bool is_function_param_token(token_t *token, const char *code) {
-	int len=token_len(token);
-	char buf[len + 1];
+	if (token_len(token)<=2) return false;
 
-	strncpyz(buf, code + token->start, len);
-
-	if (len>2 && (buf[len - 1]==']' || buf[len - 1]==',')) {
-		return true;
-	}
-
-	return false;
+	return (code[token->end - 1]==']' || code[token->end - 1]==',');
 }
 
 /*
@@ -133,14 +116,11 @@ Classify the token `token`.
 */
 void classify_token(token_t *token, const char *code) {
 	int len=token_len(token);
-	char buf[len + 1];
 
-	strncpyz(buf, code + token->start, len);
-
-	if (samestr(buf, "[")) {
+	if (strncmp("[", code + token->start, len)==0) {
 		token->token_type=TOKEN_BRACKET_OPEN;
 	}
-	else if (samestr(buf, "]")) {
+	else if (strncmp("]", code + token->start, len)==0) {
 		token->token_type=TOKEN_BRACKET_CLOSE;
 	}
 	else if (is_keyword_token(token, code)) {

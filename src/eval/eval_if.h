@@ -9,13 +9,11 @@ If the token isnt `"true"` or `"false"`, `EVAL_TOKEN_ERROR` is returned instead.
 */
 int eval_if_true(token_t *token, const char *code) {
 	int len=token_len(token);
-	char buf[len + 1];
-	strncpyz(buf, code + token->start, len);
 
-	if (samestr(buf, "true")) {
+	if (strncmp("true", code + token->start, len)==0) {
 		return EVAL_IF_TRUE;
 	}
-	else if (samestr(buf, "false")) {
+	else if (strncmp("false", code + token->start, len)==0) {
 		return EVAL_IF_FALSE;
 	}
 
@@ -35,9 +33,7 @@ Examples include:
 ```
 */
 int eval_if_equal(token_t *token, const char *code) {
-	int mid_len=token_len(token->next);
-	char mid_buf[mid_len + 1];
-	strncpyz(mid_buf, code + token->next->start, mid_len);
+	int operator_len=token_len(token->next);
 
 	int lhs=eval_if_true(token, code);
 	int rhs=eval_if_true(token->next->next, code);
@@ -46,10 +42,10 @@ int eval_if_equal(token_t *token, const char *code) {
 		return EVAL_IF_ERROR;
 	}
 
-	if (samestr(mid_buf, "==")) {
+	if (strncmp("==", code + token->next->start, operator_len)==0) {
 		return lhs==rhs;
 	}
-	else if (samestr(mid_buf, "!=")) {
+	else if (strncmp("!=", code + token->next->start, operator_len)==0) {
 		return lhs!=rhs;
 	}
 

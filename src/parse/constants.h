@@ -18,11 +18,9 @@ long long find_line_comment(const char *code) {
 	if (searchable_range<LINE_COMMENT_LEN || searchable_range>code_len) return code_len;
 
 	unsigned long long i=0;
-	char cache[LINE_COMMENT_LEN + 1];
 
 	for (; (i<=searchable_range); i++) {
-		strncpyz(cache, code+i, LINE_COMMENT_LEN);
-		if (samestr(cache, LINE_COMMENT)) break;
+		if (strncmp(LINE_COMMENT, code+i, LINE_COMMENT_LEN)==0) break;
 	}
 
 	return i;
