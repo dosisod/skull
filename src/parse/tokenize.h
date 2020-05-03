@@ -114,3 +114,10 @@ Returns the character length of the passed token
 int token_len(token_t *token) {
 	return (token->end - token->start);
 }
+
+/*
+Returns true if `str` is equal to the value of `token`.
+*/
+bool token_cmp(const char* str, token_t *token, const char *code) {
+	return strncmp(str, code + token->start, token_len(token))==0;
+}

@@ -83,6 +83,20 @@ bool test_token_len() {
 	return token_len(token)==5;
 }
 
+bool test_token_cmp() {
+	const char *code="data";
+	token_t *token=tokenize(code);
+
+	bool pass=(
+		token_cmp("data", token, code) &&
+		!token_cmp("not_data", token, code)
+	);
+
+	free(token);
+
+	return pass;
+}
+
 void tokenizer_test_self(bool *pass) {
 	tests_t tests={
 		test_is_whitespace,
@@ -94,6 +108,7 @@ void tokenizer_test_self(bool *pass) {
 		test_whitespace_inside_single_quotes_respected,
 		test_free_tokens,
 		test_token_len,
+		test_token_cmp,
 		NULL
 	};
 

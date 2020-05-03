@@ -8,12 +8,10 @@ Returns `EVAL_IF_TRUE` or `EVAL_IF_FALSE` if token is `"true"` or `"false"`.
 If the token isnt `"true"` or `"false"`, `EVAL_TOKEN_ERROR` is returned instead.
 */
 int eval_if_true(token_t *token, const char *code) {
-	int len=token_len(token);
-
-	if (strncmp("true", code + token->start, len)==0) {
+	if (token_cmp("true", token, code)) {
 		return EVAL_IF_TRUE;
 	}
-	else if (strncmp("false", code + token->start, len)==0) {
+	else if (token_cmp("false", token, code)) {
 		return EVAL_IF_FALSE;
 	}
 
@@ -33,8 +31,6 @@ Examples include:
 ```
 */
 int eval_if_equal(token_t *token, const char *code) {
-	int operator_len=token_len(token->next);
-
 	int lhs=eval_if_true(token, code);
 	int rhs=eval_if_true(token->next->next, code);
 
@@ -42,10 +38,10 @@ int eval_if_equal(token_t *token, const char *code) {
 		return EVAL_IF_ERROR;
 	}
 
-	if (strncmp("==", code + token->next->start, operator_len)==0) {
+	if (token_cmp("==", token->next, code)) {
 		return lhs==rhs;
 	}
-	else if (strncmp("!=", code + token->next->start, operator_len)==0) {
+	else if (token_cmp("!=", token->next, code)) {
 		return lhs!=rhs;
 	}
 

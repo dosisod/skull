@@ -39,11 +39,9 @@ const char *TOKEN_OPERATORS[TOKEN_OPERATORS_LEN] = {
 Returns true if `token` is a type token.
 */
 bool is_type_token(token_t *token, const char *code) {
-	int len=token_len(token);
-
 	type_t *current=&TYPES_AVAILABLE;
 	while (current) {
-		if (strncmp(current->name, code + token->start, len)==0) {
+		if (token_cmp(current->name, token, code)) {
 			return true;
 		}
 		current=current->next;
@@ -55,10 +53,8 @@ bool is_type_token(token_t *token, const char *code) {
 Returns true if `token` is a keyword token.
 */
 bool is_keyword_token(token_t *token, const char *code) {
-	int len=token_len(token);
-
 	for (unsigned long i=0 ; i<TOKEN_KEYWORDS_LEN ; i++) {
-		if (strncmp(TOKEN_KEYWORDS[i], code + token->start, len)==0) {
+		if (token_cmp(TOKEN_KEYWORDS[i], token, code)) {
 			return true;
 		}
 	}
@@ -69,10 +65,8 @@ bool is_keyword_token(token_t *token, const char *code) {
 Returns true if `token` is an operator token.
 */
 bool is_operator_token(token_t *token, const char *code) {
-	int len=token_len(token);
-
 	for (unsigned long i=0 ; i<TOKEN_OPERATORS_LEN; i++) {
-		if (strncmp(TOKEN_OPERATORS[i], code + token->start, len)==0) {
+		if (token_cmp(TOKEN_OPERATORS[i], token, code)) {
 			return true;
 		}
 	}
@@ -147,12 +141,10 @@ bool is_constant_integer_token(token_t *token, const char *code) {
 Classify the token `token`.
 */
 void classify_token(token_t *token, const char *code) {
-	int len=token_len(token);
-
-	if (strncmp("[", code + token->start, len)==0) {
+	if (token_cmp("[", token, code)) {
 		token->token_type=TOKEN_BRACKET_OPEN;
 	}
-	else if (strncmp("]", code + token->start, len)==0) {
+	else if (token_cmp("]", token, code)) {
 		token->token_type=TOKEN_BRACKET_CLOSE;
 	}
 	else if (is_keyword_token(token, code)) {

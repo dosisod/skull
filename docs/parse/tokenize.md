@@ -19,3 +19,6 @@ This function should be called at the head of the linked list.
 #### `int token_len(token_t *token)`
 Returns the character length of the passed token
 
+#### `bool token_cmp(const char* str, token_t *token, const char *code)`
+Returns true if `str` is equal to the value of `token`.
+
