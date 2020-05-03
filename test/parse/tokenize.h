@@ -20,6 +20,15 @@ bool test_tokenize_single_token() {
 	return pass;
 }
 
+bool test_tokenize_no_tokens() {
+	token_t *t=tokenize("");
+
+	bool pass=(t->start==0 && t->end==0);
+	free(t);
+
+	return pass;
+}
+
 bool test_whitespace_between_tokens() {
 	token_t *t=tokenize("token1\r\n\t token2");
 
@@ -102,6 +111,7 @@ void tokenizer_test_self(bool *pass) {
 		test_is_whitespace,
 		test_is_quote,
 		test_tokenize_single_token,
+		test_tokenize_no_tokens,
 		test_whitespace_between_tokens,
 		test_whitespace_at_eol_ignored,
 		test_whitespace_inside_double_quotes_respected,

@@ -84,9 +84,15 @@ token_t *tokenize(const char *code) {
 		current->end=i;
 	}
 	//if there is a no token to be created, pop last token
-	else {
+	else if (current!=head) {
 		last->next=NULL;
 		free(current);
+	}
+	//there where no tokens to parse, set safe defaults
+	else {
+		head->start=0;
+		head->end=0;
+		head->next=NULL;
 	}
 
 	return head;
