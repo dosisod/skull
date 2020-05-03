@@ -21,6 +21,16 @@ Returns true if `token` is a function parameter.
 Function parameters are tokens that look like `name]`, or `name,`.
 They indicate that there is a parameter for a given function.
 
+#### `bool is_constant_integer(const char *str)`
+Returns true if string is a valid hex/binary/decimal integer.
+
+Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1101`
+
+#### `bool is_constant_integer_token(token_t *token, const char *code)`
+Returns true if the passed token is an integer constant.
+
+See above function for examples of valid inputs.
+
 #### `void classify_token(token_t *token, const char *code)`
 Classify the token `token`.
 

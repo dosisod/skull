@@ -1,5 +1,7 @@
 #pragma once
 
+#include <regex.h>
+
 #include "types.h"
 
 #define TOKEN_UNKNOWN 0
@@ -10,6 +12,7 @@
 #define TOKEN_FUNCTION_PARAM 5
 #define TOKEN_TYPE 6
 #define TOKEN_OPERATOR 7
+#define TOKEN_INT_CONST 8
 
 #define TOKEN_KEYWORDS_LEN 8
 const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
@@ -111,6 +114,35 @@ bool is_function_param_token(token_t *token, const char *code) {
 	return (code[token->end - 1]==']' || code[token->end - 1]==',');
 }
 
+regex_t int_regex;
+bool int_regex_compiled=false;
+/*
+Returns true if string is a valid hex/binary/decimal integer.
+
+Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1101`
+*/
+bool is_constant_integer(const char *str) {
+	if (!int_regex_compiled) {
+		regcomp(&int_regex, "^(-?[0-9]+|0x[0-9a-fA-F]+|0b[10]+)$", REG_EXTENDED);
+		int_regex_compiled=true;
+	}
+
+	return regexec(&int_regex, str, 0, NULL, 0)==0;
+}
+
+/*
+Returns true if the passed token is an integer constant.
+
+See above function for examples of valid inputs.
+*/
+bool is_constant_integer_token(token_t *token, const char *code) {
+	int len=token_len(token);
+	char buf[len + 1];
+	strncpyz(buf, code + token->start, len);
+
+	return is_constant_integer(buf);
+}
+
 /*
 Classify the token `token`.
 */
@@ -138,6 +170,12 @@ void classify_token(token_t *token, const char *code) {
 	else if (is_function_param_token(token, code)) {
 		token->token_type=TOKEN_FUNCTION_PARAM;
 	}
+	else if (is_constant_integer_token(token, code)) {
+		token->token_type=TOKEN_INT_CONST;
+	}
+
+	regfree(&int_regex);
+	int_regex_compiled=false;
 }
 
 /*
