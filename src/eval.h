@@ -9,11 +9,7 @@ void eval(FILE *f) {
 	long size=ftell(f);
 	rewind(f);
 
-	char *code=malloc(size + 1);
-	if (code==NULL) {
-		printf("could not allocate enough memory\n");
-		exit(2);
-	}
+	char code[size + 1];
 	fread(code, 1, size, f);
 	code[size]='\0';
 
@@ -28,18 +24,13 @@ void eval(FILE *f) {
 	int end_index=(int)(close_bracket - code);
 	int bracket_data_len=end_index - start_index;
 
-	char *bracket_data=malloc(bracket_data_len);
-	if (bracket_data==NULL) {
-		printf("could not allocate enough memory\n");
-		exit(2);
-	}
+	char bracket_data[bracket_data_len + 1];
 	strncpy(bracket_data, (code + start_index + 1), bracket_data_len - 1);
+	bracket_data[bracket_data_len]='\0';
 
-	char *function_name=malloc(start_index);
+	char function_name[start_index + 1];
 	strncpy(function_name, code, start_index);
+	function_name[start_index]='\0';
 
 	run_function(function_name, bracket_data);
-
-	free(bracket_data);
-	free(function_name);
 }
