@@ -3,12 +3,12 @@
 #include "../src/common/str.h"
 #include "../test/testing.h"
 
-bool test_strncpyz() {
+bool test_strlcpy() {
 	const char *data="hello there!";
 	int len=5;
 	char buf[len + 1];
 
-	strncpyz(buf, data, 5);
+	strlcpy(buf, data, 5);
 
 	return strlen(buf)==5;
 }
@@ -19,7 +19,7 @@ bool test_samestr() {
 
 void str_test_self(bool *pass) {
 	tests_t tests={
-		test_strncpyz,
+		test_strlcpy,
 		test_samestr,
 		NULL
 	};

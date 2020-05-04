@@ -4,9 +4,9 @@
 #include <string.h>
 
 /*
-Copies string with `strncpy`, then set last char to NULL
+Custom implementation of non-standard `strlcpy` function.
 */
-char *strncpyz(char *dest, const char *src, size_t n) {
+char *strlcpy(char *dest, const char *src, size_t n) {
 	char *ret=strncpy(dest, src, n);
 	dest[n]='\0';
 

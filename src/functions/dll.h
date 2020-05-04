@@ -17,11 +17,11 @@ void dll_run(const char *data) {
 
 	int param1_len=(comma - data - 1);
 	char param1[param1_len + 1];
-	strncpyz(param1, data + 1, param1_len);
+	strlcpy(param1, data + 1, param1_len);
 
 	int param2_len=(strlen(data) - param1_len - 6);
 	char param2[param2_len + 1];
-	strncpyz(param2, comma + 4, param2_len);
+	strlcpy(param2, comma + 4, param2_len);
 
 	void *handle=dlopen(param1, RTLD_LOCAL | RTLD_NOW);
 	if (handle==NULL) {

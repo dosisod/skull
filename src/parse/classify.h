@@ -83,7 +83,7 @@ bool is_function_token(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
 
-	strncpyz(buf, code + token->start, len);
+	strlcpy(buf, code + token->start, len);
 
 	//functions can end in "[]", or have a "[" without having a "]"
 	if (len>3 && buf[len - 2]=='[' && buf[len - 1]==']') {
@@ -132,7 +132,7 @@ See above function for examples of valid inputs.
 bool is_constant_integer_token(token_t *token, const char *code) {
 	int len=token_len(token);
 	char buf[len + 1];
-	strncpyz(buf, code + token->start, len);
+	strlcpy(buf, code + token->start, len);
 
 	return is_constant_integer(buf);
 }
