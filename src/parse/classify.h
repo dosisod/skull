@@ -14,6 +14,7 @@
 #define TOKEN_OPERATOR 7
 #define TOKEN_INT_CONST 8
 #define TOKEN_FLOAT_CONST 9
+#define TOKEN_BOOL_CONST 10
 
 #define TOKEN_KEYWORDS_LEN 8
 const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
@@ -155,7 +156,7 @@ bool is_constant_float(const char *str) {
 }
 
 /*
-Returns true if the passed token is an float constant.
+Returns true if the passed token is a float constant.
 
 See above function for examples of valid inputs.
 */
@@ -165,6 +166,24 @@ bool is_constant_float_token(token_t *token, const char *code) {
 	strlcpy(buf, code + token->start, len);
 
 	return is_constant_float(buf);
+}
+
+/*
+Returns true if the string is a valid bool (`true` or `false`).
+*/
+bool is_constant_bool(const char *str) {
+	return strcmp("false", str)==0 || strcmp("true", str)==0;
+}
+
+/*
+Returns true if the passed token is a boolean constant.
+*/
+bool is_constant_bool_token(token_t *token, const char *code) {
+	int len=token_len(token);
+	char buf[len + 1];
+	strlcpy(buf, code + token->start, len);
+
+	return is_constant_bool(buf);
 }
 
 /*
@@ -198,9 +217,15 @@ void classify_token(token_t *token, const char *code) {
 	else if (is_constant_float_token(token, code)) {
 		token->token_type=TOKEN_FLOAT_CONST;
 	}
+	else if (is_constant_bool_token(token, code)) {
+		token->token_type=TOKEN_BOOL_CONST;
+	}
 
 	regfree(&int_regex);
 	int_regex_compiled=false;
+
+	regfree(&float_regex);
+	float_regex_compiled=false;
 }
 
 /*

@@ -31,6 +31,22 @@ Returns true if the passed token is an integer constant.
 
 See above function for examples of valid inputs.
 
+#### `bool is_constant_float(const char *str)`
+Returns true if string is a valid float (with decimal).
+
+Examples: `123.0`, `-123.0`, `0.0`
+
+#### `bool is_constant_float_token(token_t *token, const char *code)`
+Returns true if the passed token is a float constant.
+
+See above function for examples of valid inputs.
+
+#### `bool is_constant_bool(const char *str)`
+Returns true if the string is a valid bool (`true` or `false`).
+
+#### `bool is_constant_bool_token(token_t *token, const char *code)`
+Returns true if the passed token is a boolean constant.
+
 #### `void classify_token(token_t *token, const char *code)`
 Classify the token `token`.
 

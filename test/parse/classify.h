@@ -117,6 +117,14 @@ bool test_is_constant_float() {
 	);
 }
 
+bool test_is_constant_bool() {
+	return (
+		is_constant_bool("true") &&
+		is_constant_bool("false") &&
+		!is_constant_bool("not_bool")
+	);
+}
+
 bool test_bracket_token_open() {
 	const char *code="[";
 	token_t *t=tokenize(code);
@@ -243,6 +251,17 @@ bool test_token_float_constant() {
 	return pass;
 }
 
+bool test_token_bool_constant() {
+	const char *code="true";
+	token_t *t=tokenize(code);
+	classify_tokens(t, code);
+
+	bool pass=(t->token_type==TOKEN_BOOL_CONST);
+	free(t);
+
+	return pass;
+}
+
 bool test_token_classifier() {
 	const char *code="[ ]";
 	token_t *t=tokenize(code);
@@ -268,6 +287,7 @@ void classifier_test_self(bool *pass) {
 		test_is_function_param_token,
 		test_is_constant_integer,
 		test_is_constant_float,
+		test_is_constant_bool,
 		test_bracket_token_open,
 		test_bracket_token_close,
 		test_token_keyword,
@@ -278,6 +298,7 @@ void classifier_test_self(bool *pass) {
 		test_token_function_param,
 		test_token_integer_constant,
 		test_token_float_constant,
+		test_token_bool_constant,
 		test_token_classifier,
 		NULL
 	};
