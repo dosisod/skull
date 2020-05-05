@@ -37,6 +37,20 @@ bool test_eval_if_not() {
 	);
 }
 
+bool test_eval_if_and() {
+	return (
+		eval_if("true and true")==EVAL_IF_TRUE &&
+		eval_if("false and false")==EVAL_IF_FALSE
+	);
+}
+
+bool test_eval_if_or() {
+	return (
+		eval_if("true or false")==EVAL_IF_TRUE &&
+		eval_if("false or false")==EVAL_IF_FALSE
+	);
+}
+
 void eval_if_test_self(bool *pass) {
 	tests_t tests={
 		test_eval_if_single_param,
@@ -44,6 +58,8 @@ void eval_if_test_self(bool *pass) {
 		test_eval_if_equal_compare,
 		test_eval_if_with_errors,
 		test_eval_if_not,
+		test_eval_if_and,
+		test_eval_if_or,
 		NULL
 	};
 

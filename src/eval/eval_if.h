@@ -74,6 +74,12 @@ int eval_if(const char *code) {
 	else if (token->next->next==NULL) {
 		return EVAL_IF_ERROR;
 	}
+	else if (token_cmp("and", token->next, code)) {
+		return eval_if_true(token, code) && eval_if_true(token->next->next, code);
+	}
+	else if (token_cmp("or", token->next, code)) {
+		return eval_if_true(token, code) || eval_if_true(token->next->next, code);
+	}
 
 	return eval_if_equal(token, code);
 }
