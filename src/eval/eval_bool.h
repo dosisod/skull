@@ -28,21 +28,28 @@ Examples include:
 ```
 "true == false"
 "true != true"
+"123 == 123"
+"3.14 == 3.14"
 ```
 */
-int eval_bool_equal(token_t *token, const char *code) {
-	int lhs=eval_bool_true(token, code);
-	int rhs=eval_bool_true(token->next->next, code);
-
-	if (rhs==EVAL_ERROR || lhs==EVAL_ERROR) {
+int eval_equality_comparison(token_t *token, const char *code) {
+	if ((token->token_type != token->next->next->token_type) || token->token_type==TOKEN_UNKNOWN) {
 		return EVAL_ERROR;
 	}
 
+	int lhs_len=token_len(token);
+	char lhs[lhs_len + 1];
+	strlcpy(lhs, code + token->start, lhs_len);
+
+	int rhs_len=token_len(token->next->next);
+	char rhs[rhs_len + 1];
+	strlcpy(rhs, code + token->next->next->start, rhs_len);
+
 	if (token_cmp("==", token->next, code)) {
-		return lhs==rhs;
+		return strcmp(lhs, rhs)==0;
 	}
 	else if (token_cmp("!=", token->next, code)) {
-		return lhs!=rhs;
+		return strcmp(lhs, rhs)!=0;
 	}
 
 	return EVAL_ERROR;
@@ -81,5 +88,5 @@ int eval_bool(const char *code) {
 		return eval_bool_true(token, code) || eval_bool_true(token->next->next, code);
 	}
 
-	return eval_bool_equal(token, code);
+	return eval_equality_comparison(token, code);
 }

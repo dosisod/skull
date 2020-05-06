@@ -15,18 +15,22 @@ bool test_eval_bool_odd_num_tokens() {
 	return eval_bool("bad ==")==EVAL_ERROR;
 }
 
-bool test_eval_bool_equal_compare() {
+bool test_eval_equality_comparison() {
 	return (
 		eval_bool("true == true")==EVAL_TRUE &&
 		eval_bool("true != true")==EVAL_FALSE &&
-		eval_bool("false == true")==EVAL_FALSE
+		eval_bool("false == true")==EVAL_FALSE &&
+		eval_bool("0.0 == 0")==EVAL_ERROR &&
+		eval_bool("123 == 321")==EVAL_FALSE &&
+		eval_bool("3.14 == 3.14")==EVAL_TRUE
 	);
 }
 
 bool test_eval_bool_with_errors() {
 	return (
 		eval_bool("true == not_a_bool")==EVAL_ERROR &&
-		eval_bool("not_a_bool == true")==EVAL_ERROR
+		eval_bool("not_a_bool == true")==EVAL_ERROR &&
+		eval_bool("not_a_bool == not_a_bool")==EVAL_ERROR
 	);
 }
 
@@ -55,7 +59,7 @@ void eval_bool_test_self(bool *pass) {
 	tests_t tests={
 		test_eval_bool_single_param,
 		test_eval_bool_odd_num_tokens,
-		test_eval_bool_equal_compare,
+		test_eval_equality_comparison,
 		test_eval_bool_with_errors,
 		test_eval_bool_not,
 		test_eval_bool_and,
