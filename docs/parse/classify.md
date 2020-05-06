@@ -58,6 +58,16 @@ Returns true if the passed token is a char constant.
 
 Examples of valid inputs can be seen in the above function.
 
+#### `bool is_constant_str(const char *str)`
+Returns true if the string is a valid string constant.
+
+Examples: `""` and `"hello"`.
+
+#### `bool is_constant_str_token(token_t *token, const char *code)`
+Returns true if the passed token is a string constant.
+
+Examples of valid inputs can be seen in the above function.
+
 #### `void classify_token(token_t *token, const char *code)`
 Classify the token `token`.
 

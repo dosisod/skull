@@ -16,6 +16,7 @@
 #define TOKEN_FLOAT_CONST 9
 #define TOKEN_BOOL_CONST 10
 #define TOKEN_CHAR_CONST 11
+#define TOKEN_STR_CONST 12
 
 #define TOKEN_KEYWORDS_LEN 8
 const char *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
@@ -211,6 +212,30 @@ bool is_constant_char_token(token_t *token, const char *code) {
 }
 
 /*
+Returns true if the string is a valid string constant.
+
+Examples: `""` and `"hello"`.
+*/
+bool is_constant_str(const char *str) {
+	int len=strlen(str);
+
+	return len>=2 && str[0]=='\"' && str[len - 1]=='\"';
+}
+
+/*
+Returns true if the passed token is a string constant.
+
+Examples of valid inputs can be seen in the above function.
+*/
+bool is_constant_str_token(token_t *token, const char *code) {
+	int len=token_len(token);
+	char buf[len + 1];
+	strlcpy(buf, code + token->start, len);
+
+	return is_constant_str(buf);
+}
+
+/*
 Classify the token `token`.
 */
 void classify_token(token_t *token, const char *code) {
@@ -246,6 +271,9 @@ void classify_token(token_t *token, const char *code) {
 	}
 	else if (is_constant_char_token(token, code)) {
 		token->token_type=TOKEN_CHAR_CONST;
+	}
+	else if (is_constant_str_token(token, code)) {
+		token->token_type=TOKEN_STR_CONST;
 	}
 
 	regfree(&int_regex);
