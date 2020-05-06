@@ -22,7 +22,8 @@ bool test_eval_equality_comparison() {
 		eval_bool("false == true")==EVAL_FALSE &&
 		eval_bool("0.0 == 0")==EVAL_ERROR &&
 		eval_bool("123 == 321")==EVAL_FALSE &&
-		eval_bool("3.14 == 3.14")==EVAL_TRUE
+		eval_bool("3.14 == 3.14")==EVAL_TRUE &&
+		eval_bool("'x' == 'x'")==EVAL_TRUE
 	);
 }
 
