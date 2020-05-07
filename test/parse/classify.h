@@ -71,12 +71,18 @@ bool test_is_function_token() {
 bool test_is_function_param_token() {
 	const char *code1="param_name]";
 	const char *code2="param_name,";
+	const char *code3="x]";
+	const char *code4="x,";
 	token_t *token1=tokenize(code1);
 	token_t *token2=tokenize(code2);
+	token_t *token3=tokenize(code3);
+	token_t *token4=tokenize(code4);
 
 	bool pass=(
 		is_function_param_token(token1, code1) &&
-		is_function_param_token(token2, code2)
+		is_function_param_token(token2, code2) &&
+		is_function_param_token(token3, code3) &&
+		is_function_param_token(token4, code4)
 	);
 
 	free(token1);

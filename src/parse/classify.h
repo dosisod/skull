@@ -89,7 +89,6 @@ bool is_function_token(token_t *token, const char *code) {
 
 	strlcpy(buf, code + token->start, len);
 
-	//functions can end in "[]", or have a "[" without having a "]"
 	if (len>3 && buf[len - 2]=='[' && buf[len - 1]==']') {
 		return true;
 	}
@@ -107,7 +106,7 @@ Function parameters are tokens that look like `name]`, or `name,`.
 They indicate that there is a parameter for a given function.
 */
 bool is_function_param_token(token_t *token, const char *code) {
-	if (token_len(token)<=2) return false;
+	if (token_len(token)<2) return false;
 
 	return (code[token->end - 1]==']' || code[token->end - 1]==',');
 }
