@@ -4,7 +4,7 @@
 #include "../test/testing.h"
 
 bool test_create_variable() {
-	variable_t *var=make_variable("i32", "x", 4);
+	variable_t *var=make_variable("i32", "x");
 
 	bool pass=(
 		strcmp(var->type, "i32")==0 &&
@@ -19,13 +19,13 @@ bool test_create_variable() {
 }
 
 bool test_create_variable_with_invalid_type_fails() {
-	variable_t *var=make_variable("not_a_type", "x", 1);
+	variable_t *var=make_variable("not_a_type", "x");
 
 	return var==NULL;
 }
 
 bool test_free_variable_t() {
-	variable_t *var=make_variable("i32", "x", 4);
+	variable_t *var=make_variable("i32", "x");
 
 	if (var==NULL || var->mem==NULL) return false;
 
