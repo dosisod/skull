@@ -1,9 +1,10 @@
 # src/parse/types.h
 
-#### `bool make_new_type(const char *name)`
-Returns true if the type `name` was inserted.
+#### `bool make_new_type(const char *name, size_t bytes)`
+Creates a new type named `type` that allocates `bytes` bytes.
 
 Returns false if a type called `name` already exists, and was not inserted.
+Returns true if the type `name` was inserted.
 
 #### `void free_types()`
 Free all defined types from `TYPES_AVAILABLE`, except for `TYPES_AVAILABLE`.

@@ -5,21 +5,24 @@
 
 typedef struct type_t {
 	const char *name;
+	size_t bytes;
 
 	struct type_t *next;
 } type_t;
 
 struct type_t TYPES_AVAILABLE = {
 	.name="",
+	.bytes=0,
 	.next=NULL
 };
 
 /*
-Returns true if the type `name` was inserted.
+Creates a new type named `type` that allocates `bytes` bytes.
 
 Returns false if a type called `name` already exists, and was not inserted.
+Returns true if the type `name` was inserted.
 */
-bool make_new_type(const char *name) {
+bool make_new_type(const char *name, size_t bytes) {
 	type_t *current=&TYPES_AVAILABLE;
 	type_t *last=current;
 
@@ -33,6 +36,7 @@ bool make_new_type(const char *name) {
 
 	type_t *new_type=malloc(sizeof(type_t));
 	new_type->name=name;
+	new_type->bytes=bytes;
 	new_type->next=NULL;
 
 	last->next=new_type;
@@ -65,8 +69,8 @@ Calling this function will reset all types defined in `TYPES_AVAILABLE`.
 void make_default_types() {
 	free_types();
 
-	make_new_type("i8");
-	make_new_type("i16");
-	make_new_type("i32");
-	make_new_type("i64");
+	make_new_type("i8", 1);
+	make_new_type("i16", 2);
+	make_new_type("i32", 4);
+	make_new_type("i64", 8);
 }

@@ -8,7 +8,7 @@ bool test_make_new_type() {
 	type_t *current=&TYPES_AVAILABLE;
 	type_t *last=current;
 
-	make_new_type("test_type");
+	make_new_type("test_type", 1);
 
 	bool pass=false;
 	while (current) {
@@ -34,8 +34,8 @@ bool test_make_new_type() {
 bool test_make_new_type_rejects_non_unique_type() {
 	type_t *current=&TYPES_AVAILABLE;
 
-	bool inserted1=make_new_type("test_type");
-	bool inserted2=make_new_type("test_type");
+	bool inserted1=make_new_type("test_type", 1);
+	bool inserted2=make_new_type("test_type", 1);
 
 	int count=0;
 
@@ -59,9 +59,9 @@ bool test_make_new_type_rejects_non_unique_type() {
 }
 
 bool test_free_types() {
-	make_new_type("test_type1");
-	make_new_type("test_type2");
-	make_new_type("test_type3");
+	make_new_type("test_type1", 1);
+	make_new_type("test_type2", 1);
+	make_new_type("test_type3", 1);
 	type_t *type1=TYPES_AVAILABLE.next;
 	type_t *type2=TYPES_AVAILABLE.next->next;
 	type_t *type3=TYPES_AVAILABLE.next->next->next;
