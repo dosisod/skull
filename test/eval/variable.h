@@ -18,6 +18,12 @@ bool test_create_variable() {
 	return pass;
 }
 
+bool test_create_variable_with_invalid_type_fails() {
+	variable_t *var=make_variable("not_a_type", "x", 1);
+
+	return var==NULL;
+}
+
 bool test_free_variable_t() {
 	variable_t *var=make_variable("i32", "x", 4);
 
@@ -31,6 +37,7 @@ bool test_free_variable_t() {
 void variable_test_self(bool *pass) {
 	tests_t tests={
 		test_create_variable,
+		test_create_variable_with_invalid_type_fails,
 		test_free_variable_t,
 		NULL
 	};
