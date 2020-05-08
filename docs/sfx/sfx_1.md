@@ -16,9 +16,9 @@ main[] i32 [
 
 No matter what you chose, your use of indentation should remain constant.
 
-# Case style?
+# Case Style?
 
-Function names should be `snake_case`:
+Function and variable names should be in `snake_case`:
 
 ```
 function_name[] [
@@ -28,7 +28,7 @@ function_name[] [
 ]
 ```
 
-Classes should be `PascalCase`:
+Classes should be in `PascalCase`:
 
 ```
 TBD.
@@ -36,12 +36,12 @@ TBD.
 
 # File Size?
 
-A single file should strive to contain 50 SLOC (Source lines of code).
+A single file should strive to contain 50 SLOC (Source lines of code) or less.
 
-This means comments, whitespace, or opening/closing brackets do not count.
+Comments, whitespace, and opening/closing brackets do not count as source code.
 
 # File Names?
 
-File names should be succinctly describe what the code does.
+File names should succinctly describe what the code inside does.
 
 If a file name cannot describe the code inside, the file is probably too big or complex.
