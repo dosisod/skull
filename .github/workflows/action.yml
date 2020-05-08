@@ -7,9 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Install clang-tidy
+      run: sudo apt install clang-tidy
     - name: Setup dir
-      run: |
-        mkdir build
+      run: mkdir build
     - name: Generate cmake files
       run: |
         cd build
