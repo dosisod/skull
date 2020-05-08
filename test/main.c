@@ -7,6 +7,7 @@
 #include "parse/types.h"
 
 #include "eval/eval_bool.h"
+#include "eval/variable.h"
 
 #include "common/str.h"
 
@@ -20,6 +21,7 @@ int main() {
 	classifier_test_self(&passed);
 
 	eval_bool_test_self(&passed);
+	variable_test_self(&passed);
 
 	str_test_self(&passed);
 
