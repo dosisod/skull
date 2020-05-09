@@ -1,3 +1,4 @@
+#include <locale.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -12,6 +13,11 @@
 #include "common/str.h"
 
 int main() {
+	if (!setlocale(LC_CTYPE, "")) {
+		printf("Could not set locale.");
+		return 1;
+	}
+
 	bool passed=true;
 
 	testing_test_self(&passed);

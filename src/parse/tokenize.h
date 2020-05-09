@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 typedef struct token_t {
 	unsigned long start;
@@ -17,14 +18,14 @@ Return true if `c` is whitespace.
 
 Whitespace includes control-characters, non-printable characters, and spaces.
 */
-bool is_whitespace(char c) {
+bool is_whitespace(wchar_t c) {
 	return (c <= 32);
 }
 
 /*
 Return true if `c` is a double or single quote.
 */
-bool is_quote(char c) {
+bool is_quote(wchar_t c) {
 	return (c=='\'' || c=='\"');
 }
 

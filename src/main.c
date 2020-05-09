@@ -1,3 +1,4 @@
+#include <locale.h>
 #include <stdio.h>
 
 #include "../src/eval.h"
@@ -10,6 +11,11 @@ If the file was not found, or a file is not specified, skull sets an exit code o
 Else, an exit code of 0 is set.
 */
 int main(int argc, char *argv[]) {
+	if (!setlocale(LC_CTYPE, "")) {
+		printf("Could not set locale.");
+		return 1;
+	}
+
 	if (argc!=2) {
 		printf("no input files specified, exiting\n");
 		return 1;

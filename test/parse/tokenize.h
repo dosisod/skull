@@ -4,11 +4,20 @@
 #include "../test/testing.h"
 
 bool test_is_whitespace() {
-	return is_whitespace(' ') && !is_whitespace('A');
+	return (
+		is_whitespace(' ') &&
+		!is_whitespace('A') &&
+		!is_whitespace(L'字')
+	);
 }
 
 bool test_is_quote() {
-	return is_quote('\"') && is_quote('\'') && !is_quote('A');
+	return (
+		is_quote('\"') &&
+		is_quote('\'') &&
+		!is_quote(L'字') &&
+		!is_quote('A')
+	);
 }
 
 bool test_tokenize_single_token() {
