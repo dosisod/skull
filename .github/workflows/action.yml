@@ -8,7 +8,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install clang-tidy
-      run: sudo apt install clang-tidy
+      run: |
+        sudo apt install clang-tidy
+        clang-tidy --version
+    - name: Run clang-tidy
+      run: clang-tidy -checks=*,-llvm-header-guard src/**/*.{c,h} -- -std=c99
     - name: Setup dir
       run: mkdir build
     - name: Generate cmake files

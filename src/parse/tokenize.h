@@ -1,7 +1,8 @@
 #pragma once
 
-#include <string.h>
+#include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct token_t {
 	unsigned long start;
@@ -109,8 +110,8 @@ void free_tokens(token_t *head) {
 	while (head!=NULL) {
 		tmp=head;
 		head=head->next;
-		free(tmp);
 		tmp->next=NULL;
+		free(tmp);
 	}
 }
 

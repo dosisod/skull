@@ -1,3 +1,10 @@
+#pragma once
+
+#include <stdlib.h>
+
+#include "../parse/tokenize.h"
+#include "../parse/classify.h"
+
 #define EVAL_FALSE 0
 #define EVAL_TRUE 1
 #define EVAL_ERROR 2
@@ -11,7 +18,7 @@ int eval_bool_true(token_t *token, const char *code) {
 	if (token_cmp("true", token, code)) {
 		return EVAL_TRUE;
 	}
-	else if (token_cmp("false", token, code)) {
+	if (token_cmp("false", token, code)) {
 		return EVAL_FALSE;
 	}
 
@@ -48,7 +55,7 @@ int eval_equality_comparison(token_t *token, const char *code) {
 	if (token_cmp("==", token->next, code)) {
 		return strcmp(lhs, rhs)==0;
 	}
-	else if (token_cmp("!=", token->next, code)) {
+	if (token_cmp("!=", token->next, code)) {
 		return strcmp(lhs, rhs)!=0;
 	}
 
@@ -72,21 +79,30 @@ int eval_bool(const char *code) {
 	token_t *token=tokenize(code);
 	classify_tokens(token, code);
 
-	if (token->next==NULL) {
-		return eval_bool_true(token, code);
-	}
-	else if (token_cmp("not", token, code)) {
-		return !eval_bool_true(token->next, code);
-	}
-	else if (token->next->next==NULL) {
+	if (token==NULL) {
 		return EVAL_ERROR;
 	}
+
+	int ret;
+	if (token->next==NULL) {
+		ret=eval_bool_true(token, code);
+	}
+	else if (token_cmp("not", token, code)) {
+		ret=!eval_bool_true(token->next, code);
+	}
+	else if (token->next->next==NULL) {
+		ret=EVAL_ERROR;
+	}
 	else if (token_cmp("and", token->next, code)) {
-		return eval_bool_true(token, code) && eval_bool_true(token->next->next, code);
+		ret=eval_bool_true(token, code) && eval_bool_true(token->next->next, code);
 	}
 	else if (token_cmp("or", token->next, code)) {
-		return eval_bool_true(token, code) || eval_bool_true(token->next->next, code);
+		ret=eval_bool_true(token, code) || eval_bool_true(token->next->next, code);
+	}
+	else {
+		ret=eval_equality_comparison(token, code);
 	}
 
-	return eval_equality_comparison(token, code);
+	free(token);
+	return ret;
 }

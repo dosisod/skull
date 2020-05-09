@@ -1,8 +1,8 @@
 #include <string.h>
 
 #include "./../../src/common/str.h"
-#include "./print.h"
 #include "./dll.h"
+#include "./print.h"
 
 /*
 Try to run function `name`.

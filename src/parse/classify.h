@@ -2,6 +2,8 @@
 
 #include <regex.h>
 
+#include "../../src/common/str.h"
+#include "tokenize.h"
 #include "types.h"
 
 #define TOKEN_UNKNOWN 0
@@ -92,7 +94,7 @@ bool is_function_token(token_t *token, const char *code) {
 	if (len>3 && buf[len - 2]=='[' && buf[len - 1]==']') {
 		return true;
 	}
-	else if (strchr(buf, '[')!=NULL && strchr(buf, ']')==NULL) {
+	if (strchr(buf, '[')!=NULL && strchr(buf, ']')==NULL) {
 		return true;
 	}
 
@@ -106,7 +108,9 @@ Function parameters are tokens that look like `name]`, or `name,`.
 They indicate that there is a parameter for a given function.
 */
 bool is_function_param_token(token_t *token, const char *code) {
-	if (token_len(token)<2) return false;
+	if (token_len(token)<2) {
+		return false;
+	}
 
 	return (code[token->end - 1]==']' || code[token->end - 1]==',');
 }

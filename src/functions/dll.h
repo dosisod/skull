@@ -1,6 +1,10 @@
-#include <string.h>
-#include <stdio.h>
+#pragma once
+
 #include <dlfcn.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "../common/str.h"
 
 /*
 Run a void(void) function pointer from a dll.
@@ -23,7 +27,7 @@ void dll_run(const char *data) {
 	char param2[param2_len + 1];
 	strlcpy(param2, comma + 4, param2_len);
 
-	void *handle=dlopen(param1, RTLD_LOCAL | RTLD_NOW);
+	void *handle=dlopen(param1, RTLD_NOW);
 	if (handle==NULL) {
 		printf("\"%s\" could not be loaded\n", param1);
 		return;

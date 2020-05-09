@@ -1,5 +1,11 @@
 #pragma once
 
+#include <stddef.h>
+#include <stdlib.h>
+
+#include "../parse/tokenize.h"
+#include "../parse/types.h"
+
 typedef struct variable_t {
 	const char *type;
 	const char *name;
@@ -17,11 +23,16 @@ variable_t *make_variable(const char *type, const char *name) {
 
 	type_t *current=&TYPES_AVAILABLE;
 	while (current) {
-		if (strcmp(current->name, type)==0) break;
+		if (strcmp(current->name, type)==0) {
+			break;
+		}
 
 		current=current->next;
 	}
-	if (!current) return NULL;
+	if (!current) {
+		free(var);
+		return NULL;
+	}
 
 	var->name=name;
 	var->type=type;

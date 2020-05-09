@@ -1,7 +1,10 @@
 #pragma once
 
-#include <string.h>
+#include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "../../src/common/str.h"
 
 typedef struct type_t {
 	const char *name;
@@ -54,8 +57,8 @@ void free_types() {
 	while (head!=NULL) {
 		tmp=head;
 		head=head->next;
-		free(tmp);
 		tmp->next=NULL;
+		free(tmp);
 	}
 
 	TYPES_AVAILABLE.next=NULL;
