@@ -4,11 +4,11 @@
 #include "../test/testing.h"
 
 bool test_create_variable() {
-	variable_t *var=make_variable("i32", "x");
+	variable_t *var=make_variable(L"i32", L"x");
 
 	bool pass=(
-		strcmp(var->type, "i32")==0 &&
-		strcmp(var->name, "x")==0 &&
+		wcscmp(var->type, L"i32")==0 &&
+		wcscmp(var->name, L"x")==0 &&
 		var->bytes == 4 &&
 		var->mem != NULL
 	);
@@ -19,13 +19,13 @@ bool test_create_variable() {
 }
 
 bool test_create_variable_with_invalid_type_fails() {
-	variable_t *var=make_variable("not_a_type", "x");
+	variable_t *var=make_variable(L"not_a_type", L"x");
 
 	return var==NULL;
 }
 
 bool test_free_variable_t() {
-	variable_t *var=make_variable("i32", "x");
+	variable_t *var=make_variable(L"i32", L"x");
 
 	if (var==NULL || var->mem==NULL) return false;
 

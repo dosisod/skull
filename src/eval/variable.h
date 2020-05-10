@@ -7,8 +7,8 @@
 #include "../parse/types.h"
 
 typedef struct variable_t {
-	const char *type;
-	const char *name;
+	const wchar_t *type;
+	const wchar_t *name;
 	size_t bytes;
 	char *mem;
 } variable_t;
@@ -18,18 +18,18 @@ Make a variable called `name` with type `type`.
 
 Returns NULL if var cannot be created, else pointer to created var.
 */
-variable_t *make_variable(const char *type, const char *name) {
+variable_t *make_variable(const wchar_t *type, const wchar_t *name) {
 	variable_t *var=malloc(sizeof(variable_t));
 
 	type_t *current=&TYPES_AVAILABLE;
 	while (current) {
-		if (strcmp(current->name, type)==0) {
+		if (wcscmp(current->name, type)==0) {
 			break;
 		}
 
 		current=current->next;
 	}
-	if (!current) {
+	if (current==NULL) {
 		free(var);
 		return NULL;
 	}

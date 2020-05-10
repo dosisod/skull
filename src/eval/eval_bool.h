@@ -14,11 +14,11 @@ Returns `EVAL_TRUE` or `EVAL_FALSE` if token is `"true"` or `"false"`.
 
 If the token isnt `"true"` or `"false"`, `EVAL_ERROR` is returned instead.
 */
-int eval_bool_true(token_t *token, const char *code) {
-	if (token_cmp("true", token, code)) {
+int eval_bool_true(token_t *token, const wchar_t *code) {
+	if (token_cmp(L"true", token, code)) {
 		return EVAL_TRUE;
 	}
-	if (token_cmp("false", token, code)) {
+	if (token_cmp(L"false", token, code)) {
 		return EVAL_FALSE;
 	}
 
@@ -39,24 +39,24 @@ Examples include:
 "3.14 == 3.14"
 ```
 */
-int eval_equality_comparison(token_t *token, const char *code) {
+int eval_equality_comparison(token_t *token, const wchar_t *code) {
 	if ((token->token_type != token->next->next->token_type) || token->token_type==TOKEN_UNKNOWN) {
 		return EVAL_ERROR;
 	}
 
 	int lhs_len=token_len(token);
-	char lhs[lhs_len + 1];
-	strlcpy(lhs, code + token->start, lhs_len);
+	wchar_t lhs[lhs_len + 1];
+	wcsncpy(lhs, code + token->start, lhs_len);
 
 	int rhs_len=token_len(token->next->next);
-	char rhs[rhs_len + 1];
-	strlcpy(rhs, code + token->next->next->start, rhs_len);
+	wchar_t rhs[rhs_len + 1];
+	wcsncpy(rhs, code + token->next->next->start, rhs_len);
 
-	if (token_cmp("==", token->next, code)) {
-		return strcmp(lhs, rhs)==0;
+	if (token_cmp(L"==", token->next, code)) {
+		return wcscmp(lhs, rhs)==0;
 	}
-	if (token_cmp("!=", token->next, code)) {
-		return strcmp(lhs, rhs)!=0;
+	if (token_cmp(L"!=", token->next, code)) {
+		return wcscmp(lhs, rhs)!=0;
 	}
 
 	return EVAL_ERROR;
@@ -75,7 +75,7 @@ Examples include:
 "not true"
 ```
 */
-int eval_bool(const char *code) {
+int eval_bool(const wchar_t *code) {
 	token_t *token=tokenize(code);
 	classify_tokens(token, code);
 
@@ -87,16 +87,16 @@ int eval_bool(const char *code) {
 	if (token->next==NULL) {
 		ret=eval_bool_true(token, code);
 	}
-	else if (token_cmp("not", token, code)) {
+	else if (token_cmp(L"not", token, code)) {
 		ret=!eval_bool_true(token->next, code);
 	}
 	else if (token->next->next==NULL) {
 		ret=EVAL_ERROR;
 	}
-	else if (token_cmp("and", token->next, code)) {
+	else if (token_cmp(L"and", token->next, code)) {
 		ret=eval_bool_true(token, code) && eval_bool_true(token->next->next, code);
 	}
-	else if (token_cmp("or", token->next, code)) {
+	else if (token_cmp(L"or", token->next, code)) {
 		ret=eval_bool_true(token, code) || eval_bool_true(token->next->next, code);
 	}
 	else {
