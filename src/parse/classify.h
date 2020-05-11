@@ -1,7 +1,6 @@
 #pragma once
 
-#include <regex.h>
-
+#include "../../src/common/wegex.h"
 #include "../../src/common/str.h"
 #include "tokenize.h"
 #include "types.h"
@@ -115,20 +114,18 @@ bool is_function_param_token(token_t *token, const wchar_t *code) {
 	return (code[token->end - 1]==']' || code[token->end - 1]==',');
 }
 
-regex_t int_regex;
-bool int_regex_compiled=false;
 /*
 Returns true if string is a valid hex/binary/decimal integer.
 
-Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1101`
+Examples: `-123`, `123`, `0xFF`, `0xff`
 */
 bool is_constant_integer(const wchar_t *str) {
-	if (!int_regex_compiled) {
-		regcomp(&int_regex, "^(-?[0-9]+|0x[0-9a-fA-F]+|0b[10]+)$", REG_EXTENDED);
-		int_regex_compiled=true;
-	}
+	return (
+		wegex_match(L"?-+\n", str) ||
+		wegex_match(L"0x+\b", str)
 
-	return regexec(&int_regex, str, 0, NULL, 0)==0;
+		//wegex_match(L"0b+[01]", str) //does not work for now :(
+	);
 }
 
 /*
@@ -144,20 +141,13 @@ bool is_constant_integer_token(token_t *token, const wchar_t *code) {
 	return is_constant_integer(buf);
 }
 
-regex_t float_regex;
-bool float_regex_compiled=false;
 /*
 Returns true if string is a valid float (with decimal).
 
 Examples: `123.0`, `-123.0`, `0.0`
 */
 bool is_constant_float(const wchar_t *str) {
-	if (!float_regex_compiled) {
-		regcomp(&float_regex, "^-?[0-9]+\\.[0-9]+$", REG_EXTENDED);
-		float_regex_compiled=true;
-	}
-
-	return regexec(&float_regex, str, 0, NULL, 0)==0;
+	return wegex_match(L"?-+\n.+\n", str);
 }
 
 /*
@@ -222,7 +212,7 @@ Examples: `""` and `"hello"`.
 bool is_constant_str(const wchar_t *str) {
 	int len=wcslen(str);
 
-	return len>=2 && str[0]=='\"' && str[len - 1]=='\"';
+	return len>=2 && str[0]==L'\"' && str[len - 1]==L'\"';
 }
 
 /*
@@ -233,7 +223,7 @@ Examples of valid inputs can be seen in the above function.
 bool is_constant_str_token(token_t *token, const wchar_t *code) {
 	int len=token_len(token);
 	wchar_t buf[len + 1];
-	wcsncpy(buf, code + token->start, len);
+	wcslcpy(buf, code + token->start, len);
 
 	return is_constant_str(buf);
 }
@@ -278,12 +268,6 @@ void classify_token(token_t *token, const wchar_t *code) {
 	else if (is_constant_str_token(token, code)) {
 		token->token_type=TOKEN_STR_CONST;
 	}
-
-	regfree(&int_regex);
-	int_regex_compiled=false;
-
-	regfree(&float_regex);
-	float_regex_compiled=false;
 }
 
 /*

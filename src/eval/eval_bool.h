@@ -46,11 +46,11 @@ int eval_equality_comparison(token_t *token, const wchar_t *code) {
 
 	int lhs_len=token_len(token);
 	wchar_t lhs[lhs_len + 1];
-	wcsncpy(lhs, code + token->start, lhs_len);
+	wcslcpy(lhs, code + token->start, lhs_len);
 
 	int rhs_len=token_len(token->next->next);
 	wchar_t rhs[rhs_len + 1];
-	wcsncpy(rhs, code + token->next->next->start, rhs_len);
+	wcslcpy(rhs, code + token->next->next->start, rhs_len);
 
 	if (token_cmp(L"==", token->next, code)) {
 		return wcscmp(lhs, rhs)==0;
