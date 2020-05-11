@@ -1,6 +1,6 @@
 # src/parse/types.h
 
-#### `bool make_new_type(const char *name, size_t bytes)`
+#### `bool make_new_type(const wchar_t *name, size_t bytes)`
 Creates a new type named `type` that allocates `bytes` bytes.
 
 Returns false if a type called `name` already exists, and was not inserted.

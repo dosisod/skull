@@ -7,14 +7,14 @@
 #include "../../src/common/str.h"
 
 typedef struct type_t {
-	const char *name;
+	const wchar_t *name;
 	size_t bytes;
 
 	struct type_t *next;
 } type_t;
 
 struct type_t TYPES_AVAILABLE = {
-	.name="",
+	.name=L"",
 	.bytes=0,
 	.next=NULL
 };
@@ -25,12 +25,12 @@ Creates a new type named `type` that allocates `bytes` bytes.
 Returns false if a type called `name` already exists, and was not inserted.
 Returns true if the type `name` was inserted.
 */
-bool make_new_type(const char *name, size_t bytes) {
+bool make_new_type(const wchar_t *name, size_t bytes) {
 	type_t *current=&TYPES_AVAILABLE;
 	type_t *last=current;
 
 	while (current) {
-		if (samestr(current->name, name)) {
+		if (wcscmp(current->name, name)==0) {
 			return false;
 		}
 		last=current;
@@ -72,8 +72,8 @@ Calling this function will reset all types defined in `TYPES_AVAILABLE`.
 void make_default_types() {
 	free_types();
 
-	make_new_type("i8", 1);
-	make_new_type("i16", 2);
-	make_new_type("i32", 4);
-	make_new_type("i64", 8);
+	make_new_type(L"i8", 1);
+	make_new_type(L"i16", 2);
+	make_new_type(L"i32", 4);
+	make_new_type(L"i64", 8);
 }

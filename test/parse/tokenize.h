@@ -4,24 +4,39 @@
 #include "../test/testing.h"
 
 bool test_is_whitespace() {
-	return is_whitespace(' ') && !is_whitespace('A');
+	return (
+		is_whitespace(' ') &&
+		!is_whitespace('A') &&
+		!is_whitespace(L'字')
+	);
 }
 
 bool test_is_quote() {
-	return is_quote('\"') && is_quote('\'') && !is_quote('A');
+	return (
+		is_quote('\"') &&
+		is_quote('\'') &&
+		!is_quote(L'字') &&
+		!is_quote('A')
+	);
 }
 
 bool test_tokenize_single_token() {
-	token_t *t=tokenize("token");
+	token_t *t1=tokenize(L"token");
+	token_t *t2=tokenize(L"token字");
 
-	bool pass=(t->start==0 && t->end==5);
-	free(t);
+	bool pass=(
+		t1->start==0 && t1->end==5 &&
+		t2->start==0 && t2->end==6
+	);
+
+	free(t1);
+	free(t2);
 
 	return pass;
 }
 
 bool test_tokenize_no_tokens() {
-	token_t *t=tokenize("");
+	token_t *t=tokenize(L"");
 
 	bool pass=(t->start==0 && t->end==0);
 	free(t);
@@ -30,7 +45,7 @@ bool test_tokenize_no_tokens() {
 }
 
 bool test_whitespace_between_tokens() {
-	token_t *t=tokenize("token1\r\n\t token2");
+	token_t *t=tokenize(L"token1\r\n\t token2");
 
 	bool pass=(
 		t->start==0 && t->end==6 &&
@@ -44,7 +59,7 @@ bool test_whitespace_between_tokens() {
 }
 
 bool test_whitespace_at_eol_ignored() {
-	token_t *t=tokenize("token   ");
+	token_t *t=tokenize(L"token   ");
 
 	bool pass=(t->start==0 && t->end==5);
 	free(t);
@@ -53,7 +68,7 @@ bool test_whitespace_at_eol_ignored() {
 }
 
 bool test_whitespace_inside_double_quotes_respected() {
-	token_t *t=tokenize("\"this is a single token\"");
+	token_t *t=tokenize(L"\"this is a single token\"");
 
 	bool pass=(t->next==NULL && t->start==0 && t->end==24);
 	free(t);
@@ -62,7 +77,7 @@ bool test_whitespace_inside_double_quotes_respected() {
 }
 
 bool test_whitespace_inside_single_quotes_respected() {
-	token_t *t=tokenize("'this is a single token'");
+	token_t *t=tokenize(L"'this is a single token'");
 
 	bool pass=(t->next==NULL && t->start==0 && t->end==24);
 	free(t);
@@ -71,7 +86,7 @@ bool test_whitespace_inside_single_quotes_respected() {
 }
 
 bool test_free_tokens() {
-	const char *code="token token token";
+	const wchar_t *code=L"token token token";
 	token_t *t=tokenize(code);
 
 	token_t *token2=t->next;
@@ -87,18 +102,18 @@ bool test_free_tokens() {
 }
 
 bool test_token_len() {
-	token_t *token=tokenize("token");
+	token_t *token=tokenize(L"token");
 
 	return token_len(token)==5;
 }
 
 bool test_token_cmp() {
-	const char *code="data";
+	const wchar_t *code=L"data";
 	token_t *token=tokenize(code);
 
 	bool pass=(
-		token_cmp("data", token, code) &&
-		!token_cmp("not_data", token, code)
+		token_cmp(L"data", token, code) &&
+		!token_cmp(L"not_data", token, code)
 	);
 
 	free(token);
