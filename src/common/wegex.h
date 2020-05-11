@@ -28,56 +28,45 @@ Returns true if the `wegex` string matches the `match` string.
 * "wegex" strings must match exactly, as in, they are like doing `^x$` in regex.
 */
 bool wegex_match(const wchar_t *wegex, const wchar_t *match) {
-	size_t wegex_index=0;
-	size_t match_index=0;
-
-	wchar_t wegex_current=wegex[0];
-	wchar_t match_current=match[0];
-
-	while (wegex_current!=L'\0' && match_current!=L'\0') {
-		if (wegex_current==L'*') {
-			while (wegex_wc_cmp(wegex[wegex_index + 1], match_current)) {
-				match_index++;
-				match_current=match[match_index];
+	while (*wegex!=L'\0' && *match!=L'\0') {
+		if (*wegex==L'*') {
+			wegex++;
+			while (wegex_wc_cmp(*wegex, *match)) {
+				match++;
 			}
-			wegex_index+=2;
-			wegex_current=wegex[wegex_index];
-			continue;
+			wegex++;
 		}
 
-		if (wegex_current==L'+') {
-			if (!wegex_wc_cmp(wegex[wegex_index + 1], match_current)) {
+		else if (*wegex==L'+') {
+			wegex++;
+			if (!wegex_wc_cmp(*wegex, *match)) {
 				return false;
 			}
-			while (wegex_wc_cmp(wegex[wegex_index + 1], match_current)) {
-				match_index++;
-				match_current=match[match_index];
+			match++;
+			while (wegex_wc_cmp(*wegex, *match)) {
+				match++;
 			}
-			wegex_index+=2;
-			wegex_current=wegex[wegex_index];
-			continue;
+			wegex++;
 		}
 
-		if (wegex_current==L'?') {
-			if (wegex_wc_cmp(wegex[wegex_index + 1], match_current)) {
-				match_index++;
-				match_current=match[match_index];
+		else if (*wegex==L'?') {
+			wegex++;
+			if (wegex_wc_cmp(*wegex, *match)) {
+				match++;
 			}
 
-			wegex_index+=2;
-			wegex_current=wegex[wegex_index];
-			continue;
+			wegex++;
 		}
 
-		if (!wegex_wc_cmp(wegex_current, match_current)) {
+		else if (!wegex_wc_cmp(*wegex, *match)) {
 			return false;
 		}
 
-		wegex_index++;
-		match_index++;
-		wegex_current=wegex[wegex_index];
-		match_current=match[match_index];
+		else {
+			wegex++;
+			match++;
+		}
 	}
 
-	return wegex_current==match_current;
+	return *wegex==*match;
 }

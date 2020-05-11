@@ -11,6 +11,7 @@
 #include "eval/variable.h"
 
 #include "common/str.h"
+#include "common/wegex.h"
 
 int main() {
 	if (!setlocale(LC_CTYPE, "")) {
@@ -30,6 +31,7 @@ int main() {
 	variable_test_self(&passed);
 
 	str_test_self(&passed);
+	wegex_test_self(&passed);
 
 	if (!passed) {
 		printf("\n1 or more errors occurred.\n");
