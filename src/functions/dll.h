@@ -19,11 +19,11 @@ void dll_run(const char *data) {
 		return;
 	}
 
-	int param1_len=(comma - data - 1);
+	size_t param1_len=(comma - data - 1);
 	char param1[param1_len + 1];
 	strlcpy(param1, data + 1, param1_len);
 
-	int param2_len=(strlen(data) - param1_len - 6);
+	size_t param2_len=(strlen(data) - param1_len - 6);
 	char param2[param2_len + 1];
 	strlcpy(param2, comma + 4, param2_len);
 

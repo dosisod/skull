@@ -7,7 +7,7 @@
 
 void eval(FILE *f) {
 	fseek(f, 0, SEEK_END);
-	long size=ftell(f);
+	long int size=ftell(f);
 	rewind(f);
 
 	char code[size + 1];
@@ -21,9 +21,9 @@ void eval(FILE *f) {
 		exit(1);
 	}
 
-	int start_index=(int)(open_bracket - code);
-	int end_index=(int)(close_bracket - code);
-	int bracket_data_len=end_index - start_index;
+	size_t start_index=(size_t)(open_bracket - code);
+	size_t end_index=(size_t)(close_bracket - code);
+	size_t bracket_data_len=end_index - start_index;
 
 	char bracket_data[bracket_data_len + 1];
 	strncpy(bracket_data, (code + start_index + 1), bracket_data_len - 1);

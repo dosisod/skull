@@ -14,7 +14,7 @@ Returns `EVAL_TRUE` or `EVAL_FALSE` if token is `"true"` or `"false"`.
 
 If the token isnt `"true"` or `"false"`, `EVAL_ERROR` is returned instead.
 */
-int eval_bool_true(token_t *token, const wchar_t *code) {
+short int eval_bool_true(token_t *token, const wchar_t *code) {
 	if (token_cmp(L"true", token, code)) {
 		return EVAL_TRUE;
 	}
@@ -39,16 +39,16 @@ Examples include:
 "3.14 == 3.14"
 ```
 */
-int eval_equality_comparison(token_t *token, const wchar_t *code) {
+short int eval_equality_comparison(token_t *token, const wchar_t *code) {
 	if ((token->token_type != token->next->next->token_type) || token->token_type==TOKEN_UNKNOWN) {
 		return EVAL_ERROR;
 	}
 
-	int lhs_len=token_len(token);
+	size_t lhs_len=token_len(token);
 	wchar_t lhs[lhs_len + 1];
 	wcslcpy(lhs, code + token->start, lhs_len);
 
-	int rhs_len=token_len(token->next->next);
+	size_t rhs_len=token_len(token->next->next);
 	wchar_t rhs[rhs_len + 1];
 	wcslcpy(rhs, code + token->next->next->start, rhs_len);
 
@@ -75,7 +75,7 @@ Examples include:
 "not true"
 ```
 */
-int eval_bool(const wchar_t *code) {
+short int eval_bool(const wchar_t *code) {
 	token_t *token=tokenize(code);
 	classify_tokens(token, code);
 
@@ -83,7 +83,7 @@ int eval_bool(const wchar_t *code) {
 		return EVAL_ERROR;
 	}
 
-	int ret;
+	short int ret;
 	if (token->next==NULL) {
 		ret=eval_bool_true(token, code);
 	}

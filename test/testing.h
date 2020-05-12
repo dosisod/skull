@@ -19,10 +19,9 @@ void run_single_test(test_t test, bool *pass) {
 void run_many_tests(const char *name, tests_t tests, bool *pass) {
 	wprintf(L"%s ", name);
 
-	unsigned int i=0;
-	while (tests[i]!=NULL) {
-		run_single_test(tests[i], pass);
-		i++;
+	while(*tests!=NULL) {
+		run_single_test(*tests, pass);
+		tests++;
 	}
 
 	wprintf(L"\n");

@@ -58,7 +58,7 @@ bool is_type_token(token_t *token, const wchar_t *code) {
 Returns true if `token` is a keyword token.
 */
 bool is_keyword_token(token_t *token, const wchar_t *code) {
-	for (unsigned long i=0 ; i<TOKEN_KEYWORDS_LEN ; i++) {
+	for (unsigned long int i=0 ; i<TOKEN_KEYWORDS_LEN ; i++) {
 		if (token_cmp(TOKEN_KEYWORDS[i], token, code)) {
 			return true;
 		}
@@ -70,7 +70,7 @@ bool is_keyword_token(token_t *token, const wchar_t *code) {
 Returns true if `token` is an operator token.
 */
 bool is_operator_token(token_t *token, const wchar_t *code) {
-	for (unsigned long i=0 ; i<TOKEN_OPERATORS_LEN; i++) {
+	for (unsigned long int i=0 ; i<TOKEN_OPERATORS_LEN ; i++) {
 		if (token_cmp(TOKEN_OPERATORS[i], token, code)) {
 			return true;
 		}
@@ -85,7 +85,7 @@ Function tokens are tokens that look like `name[]`, or `name[`.
 They indicate the start of a function declaration.
 */
 bool is_function_token(token_t *token, const wchar_t *code) {
-	int len=token_len(token);
+	size_t len=token_len(token);
 	wchar_t buf[len + 1];
 
 	wcslcpy(buf, code + token->start, len);
@@ -134,7 +134,7 @@ Returns true if the passed token is an integer constant.
 See above function for examples of valid inputs.
 */
 bool is_constant_integer_token(token_t *token, const wchar_t *code) {
-	int len=token_len(token);
+	size_t len=token_len(token);
 	wchar_t buf[len + 1];
 	wcslcpy(buf, code + token->start, len);
 
@@ -156,7 +156,7 @@ Returns true if the passed token is a float constant.
 See above function for examples of valid inputs.
 */
 bool is_constant_float_token(token_t *token, const wchar_t *code) {
-	int len=token_len(token);
+	size_t len=token_len(token);
 	wchar_t buf[len + 1];
 	wcslcpy(buf, code + token->start, len);
 
@@ -174,7 +174,7 @@ bool is_constant_bool(const wchar_t *str) {
 Returns true if the passed token is a boolean constant.
 */
 bool is_constant_bool_token(token_t *token, const wchar_t *code) {
-	int len=token_len(token);
+	size_t len=token_len(token);
 	wchar_t buf[len + 1];
 	wcslcpy(buf, code + token->start, len);
 
@@ -197,7 +197,7 @@ Returns true if the passed token is a char constant.
 Examples of valid inputs can be seen in the above function.
 */
 bool is_constant_char_token(token_t *token, const wchar_t *code) {
-	int len=token_len(token);
+	size_t len=token_len(token);
 	wchar_t buf[len + 1];
 	wcslcpy(buf, code + token->start, len);
 
@@ -210,7 +210,7 @@ Returns true if the string is a valid string constant.
 Examples: `""` and `"hello"`.
 */
 bool is_constant_str(const wchar_t *str) {
-	int len=wcslen(str);
+	size_t len=wcslen(str);
 
 	return len>=2 && str[0]==L'\"' && str[len - 1]==L'\"';
 }
@@ -221,7 +221,7 @@ Returns true if the passed token is a string constant.
 Examples of valid inputs can be seen in the above function.
 */
 bool is_constant_str_token(token_t *token, const wchar_t *code) {
-	int len=token_len(token);
+	size_t len=token_len(token);
 	wchar_t buf[len + 1];
 	wcslcpy(buf, code + token->start, len);
 

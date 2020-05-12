@@ -6,9 +6,9 @@
 #include <wchar.h>
 
 typedef struct token_t {
-	unsigned long start;
-	unsigned long end;
-	int token_type;
+	size_t start;
+	size_t end;
+	short int token_type;
 
 	struct token_t *next;
 } token_t;
@@ -42,10 +42,10 @@ token_t *tokenize(const wchar_t *code) {
 	struct token_t *current=head;
 	struct token_t *last=current;
 
-	unsigned long CODE_LEN=wcslen(code);
+	size_t CODE_LEN=wcslen(code);
 
 	char quote=0;
-	unsigned long i=0;
+	size_t i=0;
 	for (; i<CODE_LEN ; i++) {
 		if (quote!=0) {
 			if (code[i]==quote) {
@@ -55,16 +55,16 @@ token_t *tokenize(const wchar_t *code) {
 		else if (!quote && is_quote(code[i])) {
 			quote=code[i];
 
-			if (current->start==(unsigned long)-1) {
+			if (current->start==(size_t)-1) {
 				current->start=i;
 			}
 		}
-		else if (current->start==(unsigned long)-1) {
+		else if (current->start==(size_t)-1) {
 			if (!is_whitespace(code[i])) {
 				current->start=i;
 			}
 		}
-		else if (current->end==(unsigned long)-1) {
+		else if (current->end==(size_t)-1) {
 			if (is_whitespace(code[i])) {
 				current->end=i;
 
@@ -82,7 +82,7 @@ token_t *tokenize(const wchar_t *code) {
 	}
 
 	//close dangling token if there was no whitespace at EOF
-	if (current->start!=(unsigned long)-1) {
+	if (current->start!=(size_t)-1) {
 		current->end=i;
 	}
 	//if there is a no token to be created, pop last token
@@ -119,7 +119,7 @@ void free_tokens(token_t *head) {
 /*
 Returns the character length of the passed token
 */
-int token_len(token_t *token) {
+size_t token_len(token_t *token) {
 	return (token->end - token->start);
 }
 

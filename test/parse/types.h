@@ -37,7 +37,7 @@ bool test_make_new_type_rejects_non_unique_type() {
 	bool inserted1=make_new_type(L"test_type", 1);
 	bool inserted2=make_new_type(L"test_type", 1);
 
-	int count=0;
+	unsigned int count=0;
 
 	while (current) {
 		count+=(wcscmp(current->name, L"test_type")==0);
@@ -78,9 +78,9 @@ bool test_free_types() {
 
 bool test_append_default_types() {
 	make_default_types();
-
 	type_t *head=&TYPES_AVAILABLE;
-	int count=0;
+
+	unsigned int count=0;
 	while (head) {
 		count++;
 		head=head->next;
@@ -88,7 +88,8 @@ bool test_append_default_types() {
 
 	make_default_types();
 	head=&TYPES_AVAILABLE;
-	int new_count=0;
+
+	unsigned int new_count=0;
 	while (head) {
 		new_count++;
 		head=head->next;
