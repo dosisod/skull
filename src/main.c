@@ -1,5 +1,5 @@
 #include <locale.h>
-#include <stdio.h>
+#include <wchar.h>
 
 #include "../src/eval.h"
 
@@ -12,12 +12,12 @@ Else, an exit code of 0 is set.
 */
 int main(int argc, char *argv[]) {
 	if (!setlocale(LC_CTYPE, "")) {
-		printf("Could not set locale.");
+		wprintf(L"Could not set locale.");
 		return 1;
 	}
 
 	if (argc!=2) {
-		printf("no input files specified, exiting\n");
+		wprintf(L"no input files specified, exiting\n");
 		return 1;
 	}
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 	f=fopen(argv[1], "r");
 
 	if (f==NULL) {
-		printf("\"%s\" was not found, exiting\n", argv[1]);
+		wprintf(L"\"%s\" was not found, exiting\n", argv[1]);
 		return 1;
 	}
 

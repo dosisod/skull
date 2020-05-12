@@ -1,6 +1,6 @@
 #include <locale.h>
 #include <stdbool.h>
-#include <stdio.h>
+#include <wchar.h>
 
 #include "parse/constants.h"
 #include "parse/tokenize.h"
@@ -15,7 +15,7 @@
 
 int main() {
 	if (!setlocale(LC_CTYPE, "")) {
-		printf("Could not set locale.");
+		wprintf(L"Could not set locale.");
 		return 1;
 	}
 
@@ -34,7 +34,7 @@ int main() {
 	wegex_test_self(&passed);
 
 	if (!passed) {
-		printf("\n1 or more errors occurred.\n");
+		wprintf(L"\n1 or more errors occurred.\n");
 		return 1;
 	}
 

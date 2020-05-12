@@ -1,8 +1,8 @@
-#include <stdio.h>
+#include <wchar.h>
 
 /*
 An example of a function that will be called via `dll_run`.
 */
 void hello() {
-	printf("hello from libhello!\n");
+	wprintf(L"hello from libhello!\n");
 }

@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <string.h>
+#include <wchar.h>
 
 #include "../../src/common/str.h"
 

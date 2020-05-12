@@ -1,23 +1,23 @@
 #pragma once
 
 #include <stdbool.h>
-#include <stdio.h>
+#include <wchar.h>
 
 typedef bool (*test_t)(void);
 typedef bool (*tests_t[])(void);
 
 void run_single_test(test_t test, bool *pass) {
 	if (!test()) {
-		printf("F");
+		wprintf(L"F");
 		*pass=false;
 	}
 	else {
-		printf(".");
+		wprintf(L".");
 	}
 }
 
 void run_many_tests(const char *name, tests_t tests, bool *pass) {
-	printf("%s ", name);
+	wprintf(L"%s ", name);
 
 	unsigned int i=0;
 	while (tests[i]!=NULL) {
@@ -25,7 +25,7 @@ void run_many_tests(const char *name, tests_t tests, bool *pass) {
 		i++;
 	}
 
-	printf("\n");
+	wprintf(L"\n");
 }
 
 bool dummy_function() {
