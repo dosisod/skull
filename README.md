@@ -28,3 +28,19 @@ $ cd build
 $ cmake ..
 $ cmake --build .
 ```
+
+## Testing
+
+After building, run:
+
+```
+./test/Test
+```
+
+## Todo
+
+Soon to come:
+
+- [ ] Runnable skull files
+- [ ] Skull to C function calls
+- [ ] Rich skull std library
