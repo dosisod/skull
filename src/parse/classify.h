@@ -19,8 +19,7 @@
 #define TOKEN_CHAR_CONST 11
 #define TOKEN_STR_CONST 12
 
-#define TOKEN_KEYWORDS_LEN 8
-const wchar_t *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
+const wchar_t *TOKEN_KEYWORDS[] = {
 	L"return",
 	L"if",
 	L"elif",
@@ -28,16 +27,17 @@ const wchar_t *TOKEN_KEYWORDS[TOKEN_KEYWORDS_LEN] = {
 	L"do",
 	L"while",
 	L"import",
-	L"for"
+	L"for",
+	L""
 };
 
-#define TOKEN_OPERATORS_LEN 28
-const wchar_t *TOKEN_OPERATORS[TOKEN_OPERATORS_LEN] = {
+const wchar_t *TOKEN_OPERATORS[] = {
 	L"+", L"-", L"/", L"//", L"*", L"%", L"<<", L">>", L"|", L"&", L"^",
 	L"+=", L"-=", L"/=", L"*=", L"|=", L"&=", L"^=",
 	L"<", L">", L"<=", L">=",
 	L"=", L"==", L"!=",
-	L"and", L"or", L"not"
+	L"and", L"or", L"not",
+	L""
 };
 
 /*
@@ -58,10 +58,12 @@ bool is_type_token(token_t *token, const wchar_t *code) {
 Returns true if `token` is a keyword token.
 */
 bool is_keyword_token(token_t *token, const wchar_t *code) {
-	for (unsigned long int i=0 ; i<TOKEN_KEYWORDS_LEN ; i++) {
-		if (token_cmp(TOKEN_KEYWORDS[i], token, code)) {
+	const wchar_t **head=TOKEN_KEYWORDS;
+	while (*head[0]!=L'\0') {
+		if (token_cmp(*head, token, code)) {
 			return true;
 		}
+		head++;
 	}
 	return false;
 }
@@ -70,10 +72,12 @@ bool is_keyword_token(token_t *token, const wchar_t *code) {
 Returns true if `token` is an operator token.
 */
 bool is_operator_token(token_t *token, const wchar_t *code) {
-	for (unsigned long int i=0 ; i<TOKEN_OPERATORS_LEN ; i++) {
-		if (token_cmp(TOKEN_OPERATORS[i], token, code)) {
+	const wchar_t **head=TOKEN_OPERATORS;
+	while (*head[0]!=L'\0') {
+		if (token_cmp(*head, token, code)) {
 			return true;
 		}
+		head++;
 	}
 	return false;
 }
