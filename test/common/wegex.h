@@ -42,12 +42,24 @@ bool test_ternary_modifier() {
 	);
 }
 
+bool test_charset_syntax() {
+	return (
+		wegex_match(L"+[abc]", L"a") &&
+		wegex_match(L"+[abc]", L"b") &&
+		wegex_match(L"+[abc]", L"c") &&
+		wegex_match(L"+[abc]", L"aabbcc") &&
+		!wegex_match(L"+[abc]", L"d") &&
+		!wegex_match(L"+[abc]", L"ax")
+	);
+}
+
 void wegex_test_self(bool *pass) {
 	tests_t tests={
 		test_no_modifiers,
 		test_star_modifier,
 		test_plus_modifier,
 		test_ternary_modifier,
+		test_charset_syntax,
 		NULL
 	};
 

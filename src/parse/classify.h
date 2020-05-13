@@ -121,14 +121,13 @@ bool is_function_param_token(token_t *token, const wchar_t *code) {
 /*
 Returns true if string is a valid hex/binary/decimal integer.
 
-Examples: `-123`, `123`, `0xFF`, `0xff`
+Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`
 */
 bool is_constant_integer(const wchar_t *str) {
 	return (
 		wegex_match(L"?-+\n", str) ||
-		wegex_match(L"0x+\b", str)
-
-		//wegex_match(L"0b+[01]", str) //does not work for now :(
+		wegex_match(L"0x+\b", str) ||
+		wegex_match(L"0b+[01]", str)
 	);
 }
 

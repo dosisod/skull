@@ -24,7 +24,7 @@ They indicate that there is a parameter for a given function.
 #### `bool is_constant_integer(const wchar_t *str)`
 Returns true if string is a valid hex/binary/decimal integer.
 
-Examples: `-123`, `123`, `0xFF`, `0xff`
+Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`
 
 #### `bool is_constant_integer_token(token_t *token, const wchar_t *code)`
 Returns true if the passed token is an integer constant.
