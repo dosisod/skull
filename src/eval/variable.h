@@ -9,16 +9,17 @@
 typedef struct variable_t {
 	const wchar_t *type;
 	const wchar_t *name;
+	bool is_const;
 	size_t bytes;
 	char *mem;
 } variable_t;
 
 /*
-Make a variable called `name` with type `type`.
+Make a variable called `name` with type `type`, and make it const if `is_const` is true.
 
 Returns NULL if var cannot be created, else pointer to created var.
 */
-variable_t *make_variable(const wchar_t *type, const wchar_t *name) {
+variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_const) {
 	variable_t *var=malloc(sizeof(variable_t));
 
 	type_t *current=&TYPES_AVAILABLE;
@@ -36,6 +37,7 @@ variable_t *make_variable(const wchar_t *type, const wchar_t *name) {
 
 	var->name=name;
 	var->type=type;
+	var->is_const=is_const;
 	var->bytes=current->bytes;
 
 	char *mem=calloc(current->bytes, sizeof(char));
