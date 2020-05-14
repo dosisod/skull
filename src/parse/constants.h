@@ -18,7 +18,7 @@ unsigned long long int find_line_comment(const char *code) {
 		return code_len;
 	}
 
-	unsigned long long int i=0;
+	size_t i=0;
 	for (; (i<=searchable_range); i++) {
 		if (strncmp(LINE_COMMENT, code + i, LINE_COMMENT_LEN)==0) {
 			break;

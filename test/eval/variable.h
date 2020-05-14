@@ -6,7 +6,7 @@
 bool test_create_variable() {
 	variable_t *var=make_variable(L"i32", L"x", true);
 
-	bool pass=(
+	const bool pass=(
 		wcscmp(var->type, L"i32")==0 &&
 		wcscmp(var->name, L"x")==0 &&
 		var->is_const &&
@@ -20,7 +20,7 @@ bool test_create_variable() {
 }
 
 bool test_create_variable_with_invalid_type_fails() {
-	variable_t *var=make_variable(L"not_a_type", L"x", true);
+	const variable_t *var=make_variable(L"not_a_type", L"x", true);
 
 	return var==NULL;
 }

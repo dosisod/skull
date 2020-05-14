@@ -14,7 +14,7 @@ Returns `EVAL_TRUE` or `EVAL_FALSE` if token is `"true"` or `"false"`.
 
 If the token isnt `"true"` or `"false"`, `EVAL_ERROR` is returned instead.
 */
-short int eval_bool_true(token_t *token, const wchar_t *code) {
+short int eval_bool_true(const token_t *token, const wchar_t *code) {
 	if (token_cmp(L"true", token, code)) {
 		return EVAL_TRUE;
 	}
@@ -39,16 +39,16 @@ Examples include:
 "3.14 == 3.14"
 ```
 */
-short int eval_equality_comparison(token_t *token, const wchar_t *code) {
+short int eval_equality_comparison(const token_t *token, const wchar_t *code) {
 	if ((token->token_type != token->next->next->token_type) || token->token_type==TOKEN_UNKNOWN) {
 		return EVAL_ERROR;
 	}
 
-	size_t lhs_len=token_len(token);
+	const size_t lhs_len=token_len(token);
 	wchar_t lhs[lhs_len + 1];
 	wcslcpy(lhs, code + token->start, lhs_len);
 
-	size_t rhs_len=token_len(token->next->next);
+	const size_t rhs_len=token_len(token->next->next);
 	wchar_t rhs[rhs_len + 1];
 	wcslcpy(rhs, code + token->next->next->start, rhs_len);
 

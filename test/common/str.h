@@ -5,7 +5,7 @@
 
 bool test_strlcpy() {
 	const char *data="hello there!";
-	unsigned int len=5;
+	const size_t len=5;
 	char buf[len + 1];
 
 	strlcpy(buf, data, 5);

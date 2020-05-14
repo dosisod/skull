@@ -13,17 +13,17 @@ If the dll is not found, or symbol was not found, function does nothing.
 Else, the function is invoked.
 */
 void dll_run(const char *data) {
-	char *comma=strstr(data, "\", \"");
+	const char *comma=strstr(data, "\", \"");
 	if (comma==NULL) {
 		wprintf(L"dll_run expects 2 params, got 1\n");
 		return;
 	}
 
-	size_t param1_len=(comma - data - 1);
+	const size_t param1_len=(comma - data - 1);
 	char param1[param1_len + 1];
 	strlcpy(param1, data + 1, param1_len);
 
-	size_t param2_len=(strlen(data) - param1_len - 6);
+	const size_t param2_len=(strlen(data) - param1_len - 6);
 	char param2[param2_len + 1];
 	strlcpy(param2, comma + 4, param2_len);
 

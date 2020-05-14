@@ -16,9 +16,9 @@ Free all the tokens from a linked list of tokens.
 
 This function should be called at the head of the linked list.
 
-#### `size_t token_len(token_t *token)`
+#### `size_t token_len(const token_t *token)`
 Returns the character length of the passed token
 
-#### `bool token_cmp(const wchar_t* str, token_t *token, const wchar_t *code)`
+#### `bool token_cmp(const wchar_t* str, const token_t *token, const wchar_t *code)`
 Returns true if `str` is equal to the value of `token`.
 

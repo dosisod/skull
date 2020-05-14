@@ -24,7 +24,7 @@ bool test_make_ast() {
 	token_t *token=tokenize(L"token1");
 	ast_node_t *node=make_ast(token);
 
-	bool pass=(
+	const bool pass=(
 		node->token==token &&
 		node->last==NULL &&
 		node->next==NULL
@@ -40,7 +40,7 @@ bool test_make_ast_multi_token() {
 	token_t *token=tokenize(L"token1 token2");
 	ast_node_t *node=make_ast(token);
 
-	bool pass=(
+	const bool pass=(
 		node->last==NULL &&
 		node->token==token &&
 		node->next!=NULL &&

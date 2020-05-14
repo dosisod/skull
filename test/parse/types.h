@@ -35,8 +35,8 @@ bool test_make_new_type() {
 bool test_make_new_type_rejects_non_unique_type() {
 	type_t *current=&TYPES_AVAILABLE;
 
-	bool inserted1=make_new_type(L"test_type", 1);
-	bool inserted2=make_new_type(L"test_type", 1);
+	const bool inserted1=make_new_type(L"test_type", 1);
+	const bool inserted2=make_new_type(L"test_type", 1);
 
 	unsigned int count=0;
 

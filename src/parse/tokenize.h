@@ -42,7 +42,7 @@ token_t *tokenize(const wchar_t *code) {
 	struct token_t *current=head;
 	struct token_t *last=current;
 
-	size_t CODE_LEN=wcslen(code);
+	const size_t CODE_LEN=wcslen(code);
 
 	char quote=0;
 	size_t i=0;
@@ -119,13 +119,13 @@ void free_tokens(token_t *head) {
 /*
 Returns the character length of the passed token
 */
-size_t token_len(token_t *token) {
+size_t token_len(const token_t *token) {
 	return (token->end - token->start);
 }
 
 /*
 Returns true if `str` is equal to the value of `token`.
 */
-bool token_cmp(const wchar_t* str, token_t *token, const wchar_t *code) {
+bool token_cmp(const wchar_t* str, const token_t *token, const wchar_t *code) {
 	return wcsncmp(str, code + token->start, token_len(token))==0;
 }
