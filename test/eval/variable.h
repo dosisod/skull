@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include "../src/eval/variable.h"
-#include "../test/testing.h"
+#include "../../src/eval/variable.h"
+#include "../../test/testing.h"
 
 bool test_create_variable() {
 	variable_t *var=make_variable(L"i32", L"x", true);
@@ -28,11 +28,13 @@ bool test_create_variable_with_invalid_type_fails() {
 bool test_free_variable_t() {
 	variable_t *var=make_variable(L"i32", L"x", true);
 
-	if (var==NULL || var->mem==NULL) return false;
+	if (var==NULL || var->mem==NULL) {
+		return false;
+	}
 
 	free_variable_t(var);
 
-	return (var!=NULL && var->mem!=NULL);
+	return true;
 }
 
 void variable_test_self(bool *pass) {

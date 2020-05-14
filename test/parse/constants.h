@@ -1,5 +1,5 @@
-#include "../src/parse/constants.h"
-#include "../test/testing.h"
+#include "../../src/parse/constants.h"
+#include "../../test/testing.h"
 
 bool test_find_line_comment_at_start_of_line() {
 	return find_line_comment("# should be zero")==0;

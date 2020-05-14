@@ -1,8 +1,9 @@
 
 #include <stdbool.h>
 
-#include "../src/parse/tokenize.h"
-#include "../test/testing.h"
+#include "../../src/parse/tokenize.h"
+#include "../../src/common/wegex.h"
+#include "../../test/testing.h"
 
 bool test_no_modifiers() {
 	return (

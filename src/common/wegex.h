@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdbool.h>
 #include <wchar.h>
 #include <wctype.h>

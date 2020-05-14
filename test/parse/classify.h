@@ -1,11 +1,15 @@
 #include <stdbool.h>
 
-#include "../src/parse/classify.h"
-#include "../test/testing.h"
+#include "../../src/parse/classify.h"
+#include "../../test/testing.h"
 
 bool test_is_keyword_token() {
 	const wchar_t *code=L"if else not_keyword";
 	token_t *token=tokenize(code);
+
+	if (token->next==NULL || token->next->next==NULL) {
+		return false;
+	}
 
 	bool pass=(
 		is_keyword_token(token, code) &&
@@ -21,6 +25,15 @@ bool test_is_keyword_token() {
 bool test_is_operator_token() {
 	const wchar_t *code=L"x = 10 / 2";
 	token_t *token=tokenize(code);
+
+	if (
+		token->next==NULL ||
+		token->next->next==NULL ||
+		token->next->next->next==NULL ||
+		token->next->next->next->next==NULL
+	) {
+		return false;
+	}
 
 	bool pass=(
 		!is_operator_token(token, code) &&

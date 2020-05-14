@@ -1,26 +1,27 @@
 #include <stdbool.h>
 
-#include "../src/parse/types.h"
-
-#include "../test/testing.h"
+#include "../../src/parse/types.h"
+#include "../../test/testing.h"
 
 bool test_make_new_type() {
 	type_t *current=&TYPES_AVAILABLE;
-	type_t *last=current;
 
 	make_new_type(L"test_type", 1);
 
 	bool pass=false;
 	while (current) {
-		last=current;
 		pass|=(wcscmp(current->name, L"test_type")==0);
 		current=current->next;
 	}
 
-	current=&TYPES_AVAILABLE;
-	last=current;
+	current=(&TYPES_AVAILABLE)->next;
+	type_t *last=&TYPES_AVAILABLE;
 
-	while (current->next) {
+	if (current==NULL) {
+		return false;
+	}
+
+	while (current->next!=NULL) {
 		last=current;
 		current=current->next;
 	}
@@ -44,10 +45,10 @@ bool test_make_new_type_rejects_non_unique_type() {
 		current=current->next;
 	}
 
-	current=&TYPES_AVAILABLE;
-	type_t *last=current;
+	current=(&TYPES_AVAILABLE)->next;
+	type_t *last=&TYPES_AVAILABLE;
 
-	while (current->next) {
+	while (current) {
 		last=current;
 		current=current->next;
 	}
@@ -55,25 +56,19 @@ bool test_make_new_type_rejects_non_unique_type() {
 	free(current);
 	last->next=NULL;
 
-	return (inserted1 && !inserted2 && count==1);
+	return (
+		inserted1 &&
+		!inserted2 &&
+		count==1
+	);
 }
 
 bool test_free_types() {
-	make_new_type(L"test_type1", 1);
-	make_new_type(L"test_type2", 1);
-	make_new_type(L"test_type3", 1);
-	type_t *type1=TYPES_AVAILABLE.next;
-	type_t *type2=TYPES_AVAILABLE.next->next;
-	type_t *type3=TYPES_AVAILABLE.next->next->next;
+	make_new_type(L"test_type", 1);
 
 	free_types();
 
-	return (
-		type1->next==NULL &&
-		type2->next==NULL &&
-		type3->next==NULL &&
-		TYPES_AVAILABLE.next==NULL
-	);
+	return TYPES_AVAILABLE.next==NULL;
 }
 
 bool test_append_default_types() {

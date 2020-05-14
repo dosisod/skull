@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include "../src/eval/eval_bool.h"
-#include "../test/testing.h"
+#include "../../src/eval/eval_bool.h"
+#include "../../test/testing.h"
 
 bool test_eval_bool_single_param() {
 	return (

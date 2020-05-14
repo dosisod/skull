@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include "../src/common/str.h"
-#include "../test/testing.h"
+#include "../../src/common/str.h"
+#include "../../test/testing.h"
 
 bool test_strlcpy() {
 	const char *data="hello there!";
