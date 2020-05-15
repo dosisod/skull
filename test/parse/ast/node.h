@@ -3,83 +3,105 @@
 #include "../src/parse/ast/node.h"
 
 bool test_ast_node_struct() {
-	token_t *token=tokenize(L"token");
-
 	ast_node_t node = {
-		.token=token,
 		.last=NULL,
-		.next=NULL
+		.next=NULL,
+		.parent=NULL,
+		.child=NULL
 	};
 
-	free(token);
-
 	return (
-		node.token!=NULL &&
 		node.last==NULL &&
-		node.next==NULL
+		node.next==NULL &&
+		node.parent==NULL &&
+		node.child==NULL
 	);
 }
 
-bool test_make_ast() {
-	token_t *token=tokenize(L"token1");
-	ast_node_t *node=make_ast(token);
-
-	const bool pass=(
-		node->token==token &&
-		node->last==NULL &&
-		node->next==NULL
-	);
-
-	free(token);
-	free(node);
-
-	return pass;
-}
-
-bool test_make_ast_multi_token() {
-	token_t *token=tokenize(L"token1 token2");
-	ast_node_t *node=make_ast(token);
+bool test_ast_node_single_node() {
+	const wchar_t *code=L"hello";
+	ast_node_t *node=make_ast_tree(code);
 
 	const bool pass=(
 		node->last==NULL &&
-		node->token==token &&
-		node->next!=NULL &&
-		node->next->token==token->next &&
-		node->next->last==node
-	);
-
-	free(token->next);
-	free(node->next);
-	free(token);
-	free(node);
-
-	return pass;
-}
-
-bool test_free_ast_tree() {
-	token_t *token=tokenize(L"token1 token2");
-	ast_node_t *node=make_ast(token);
-
-	ast_node_t *node_next=node->next;
-
-	free_ast_tree(node);
-
-	return (
-		node->last==NULL &&
-		node->token==NULL &&
 		node->next==NULL &&
-		node_next->last==NULL &&
-		node_next->token==NULL &&
-		node_next->next==NULL
+		node->child==NULL &&
+		node->parent==NULL &&
+		node->begin==&code[0] &&
+		node->end==&code[5]
 	);
+
+	free(node);
+
+	return pass;
+}
+
+bool test_ast_node_multi_node() {
+	const wchar_t *code=L"hello[world[abc";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->last==NULL &&
+		node->next==NULL &&
+		node->child!=NULL &&
+		node->parent==NULL &&
+		node->begin==&code[0] &&
+		node->end==&code[5] &&
+
+		node->child->last==NULL &&
+		node->child->next==NULL &&
+		node->child->child!=NULL &&
+		node->child->parent==node &&
+		node->child->begin==&code[6] &&
+		node->child->end==&code[11] &&
+
+		node->child->child->last==NULL &&
+		node->child->child->next==NULL &&
+		node->child->child->child==NULL &&
+		node->child->child->parent==node->child &&
+		node->child->child->begin==&code[12] &&
+		node->child->child->end==&code[15]
+	);
+
+	free(node->child->child);
+	free(node->child);
+	free(node);
+
+	return pass;
+}
+
+bool test_ast_node_close_bracket() {
+	const wchar_t *code=L"hello[world]";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->last==NULL &&
+		node->next==NULL &&
+		node->child!=NULL &&
+		node->parent==NULL &&
+		node->begin==&code[0] &&
+		node->end==&code[5] &&
+
+		node->child->last==NULL &&
+		node->child->next==NULL &&
+		node->child->child==NULL &&
+		node->child->parent==node &&
+		node->child->begin==&code[6] &&
+		node->child->end==&code[10]
+	);
+
+	free(node->child);
+	free(node);
+
+	return pass;
 }
 
 void ast_node_test_self(bool *pass) {
 	tests_t tests={
 		test_ast_node_struct,
-		test_make_ast,
-		test_make_ast_multi_token,
-		test_free_ast_tree,
+		test_ast_node_single_node,
+		test_ast_node_multi_node,
+		test_ast_node_close_bracket,
 		NULL
 	};
 

@@ -1,56 +1,52 @@
 #pragma once
 
 typedef struct ast_node_t {
-	struct token_t *token;
-
 	struct ast_node_t *last;
 	struct ast_node_t *next;
+
+	struct ast_node_t *parent;
+	struct ast_node_t *child;
+
+	const wchar_t *begin;
+	const wchar_t *end;
 } ast_node_t;
 
 /*
-Returns an AST tree built from a linked list of tokens.
-*/
-ast_node_t *make_ast(token_t *token) {
-	ast_node_t *head=malloc(sizeof(ast_node_t));
-	ast_node_t *current=head;
+Generate an AST tree from a pointer to `code`.
 
-	head->token=token;
+Nodes represent the areas between `[]` characters.
+*/
+ast_node_t *make_ast_tree(const wchar_t *code) {
+	ast_node_t *head=malloc(sizeof(ast_node_t));
+
 	head->last=NULL;
 	head->next=NULL;
+	head->child=NULL;
+	head->parent=NULL;
 
-	ast_node_t *tmp_node;
+	head->begin=code;
+	head->end=code;
 
-	while (token->next) {
-		tmp_node=malloc(sizeof(ast_node_t));
+	while (*code!=L'\0') {
+		if (*code==L'[') {
+			ast_node_t *tmp=make_ast_tree(code + 1);
+			tmp->last=NULL;
+			tmp->next=NULL;
 
-		tmp_node->token=token->next;
-		tmp_node->last=current;
-		tmp_node->next=NULL;
+			tmp->parent=head;
+			head->child=tmp;
+			head->end=code;
 
-		current->next=tmp_node;
-		token=token->next;
+			return head;
+		}
+		else if (*code==L']') {
+			head->end=code - 1;
+			return head;
+		}
+		code++;
 	}
+
+	head->end=code;
 
 	return head;
-}
-
-/*
-Frees all nodes in an AST tree, starting from `node`.
-*/
-void free_ast_tree(ast_node_t *node) {
-	ast_node_t *current=node;
-	ast_node_t *tmp=current;
-
-	while (current!=NULL) {
-		tmp=current;
-		current=current->next;
-
-		free(tmp->token);
-		tmp->token->next=NULL;
-
-		free(tmp);
-		tmp->token=NULL;
-		tmp->last=NULL;
-		tmp->next=NULL;
-	}
 }
