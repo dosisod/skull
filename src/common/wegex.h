@@ -7,31 +7,31 @@
 /*
 Returns true if `wc` matches a wegex group or a single character.
 
-If char at `start` is `'\n'`, then return wether `wc` is a number or not.
-If char at `start` is `'\b'`, then return wether `wc` is a hexadecimal number (byte) or not.
+If char at `begin` is `'\n'`, then return wether `wc` is a number or not.
+If char at `begin` is `'\b'`, then return wether `wc` is a hexadecimal number (byte) or not.
 
-If char at `start` is `'['`, then return wether `wc` matches any character within `start` and `end`.
+If char at `begin` is `'['`, then return wether `wc` matches any character within `begin` and `end`.
 
-Else, return wether `wc` and the char at `start` are equal.
+Else, return wether `wc` and the char at `begin` are equal.
 */
-bool wegex_wc_cmp(const wchar_t *start, const wchar_t *end, wchar_t wc) {
-	if (*start==L'[') {
-		start++;
-		while (start!=end) {
-			if (wegex_wc_cmp(start, end, wc)) {
+bool wegex_wc_cmp(const wchar_t *begin, const wchar_t *end, wchar_t wc) {
+	if (*begin==L'[') {
+		begin++;
+		while (begin!=end) {
+			if (wegex_wc_cmp(begin, end, wc)) {
 				return true;
 			}
-			start++;
+			begin++;
 		}
 		return false;
 	}
-	if (*start==L'\n') {
+	if (*begin==L'\n') {
 		return iswdigit(wc);
 	}
-	if (*start==L'\b') {
+	if (*begin==L'\b') {
 		return iswxdigit(wc);
 	}
-	return *start==wc;
+	return *begin==wc;
 }
 
 /*

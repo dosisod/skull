@@ -92,7 +92,7 @@ bool is_function_token(const token_t *token, const wchar_t *code) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
 
-	wcslcpy(buf, code + token->start, len);
+	wcslcpy(buf, code + token->begin, len);
 
 	if (len>3 && buf[len - 2]=='[' && buf[len - 1]==']') {
 		return true;
@@ -139,7 +139,7 @@ See above function for examples of valid inputs.
 bool is_constant_integer_token(const token_t *token, const wchar_t *code) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->start, len);
+	wcslcpy(buf, code + token->begin, len);
 
 	return is_constant_integer(buf);
 }
@@ -161,7 +161,7 @@ See above function for examples of valid inputs.
 bool is_constant_float_token(const token_t *token, const wchar_t *code) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->start, len);
+	wcslcpy(buf, code + token->begin, len);
 
 	return is_constant_float(buf);
 }
@@ -179,7 +179,7 @@ Returns true if the passed token is a boolean constant.
 bool is_constant_bool_token(const token_t *token, const wchar_t *code) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->start, len);
+	wcslcpy(buf, code + token->begin, len);
 
 	return is_constant_bool(buf);
 }
@@ -202,7 +202,7 @@ Examples of valid inputs can be seen in the above function.
 bool is_constant_char_token(const token_t *token, const wchar_t *code) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->start, len);
+	wcslcpy(buf, code + token->begin, len);
 
 	return is_constant_char(buf);
 }
@@ -226,7 +226,7 @@ Examples of valid inputs can be seen in the above function.
 bool is_constant_str_token(const token_t *token, const wchar_t *code) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->start, len);
+	wcslcpy(buf, code + token->begin, len);
 
 	return is_constant_str(buf);
 }

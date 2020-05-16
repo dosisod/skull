@@ -25,8 +25,8 @@ bool test_tokenize_single_token() {
 	token_t *t2=tokenize(L"token字");
 
 	const bool pass=(
-		t1->start==0 && t1->end==5 &&
-		t2->start==0 && t2->end==6
+		t1->begin==0 && t1->end==5 &&
+		t2->begin==0 && t2->end==6
 	);
 
 	free(t1);
@@ -38,7 +38,7 @@ bool test_tokenize_single_token() {
 bool test_tokenize_no_tokens() {
 	token_t *t=tokenize(L"");
 
-	const bool pass=(t->start==0 && t->end==0);
+	const bool pass=(t->begin==0 && t->end==0);
 	free(t);
 
 	return pass;
@@ -48,8 +48,8 @@ bool test_whitespace_between_tokens() {
 	token_t *t=tokenize(L"token1\r\n\t token2");
 
 	const bool pass=(
-		t->start==0 && t->end==6 &&
-		t->next->start==10 && t->next->end==16
+		t->begin==0 && t->end==6 &&
+		t->next->begin==10 && t->next->end==16
 	);
 
 	free(t->next);
@@ -61,7 +61,7 @@ bool test_whitespace_between_tokens() {
 bool test_whitespace_at_eol_ignored() {
 	token_t *t=tokenize(L"token   ");
 
-	const bool pass=(t->start==0 && t->end==5);
+	const bool pass=(t->begin==0 && t->end==5);
 	free(t);
 
 	return pass;
@@ -70,7 +70,7 @@ bool test_whitespace_at_eol_ignored() {
 bool test_whitespace_inside_double_quotes_respected() {
 	token_t *t=tokenize(L"\"this is a single token\"");
 
-	const bool pass=(t->next==NULL && t->start==0 && t->end==24);
+	const bool pass=(t->next==NULL && t->begin==0 && t->end==24);
 	free(t);
 
 	return pass;
@@ -79,7 +79,7 @@ bool test_whitespace_inside_double_quotes_respected() {
 bool test_whitespace_inside_single_quotes_respected() {
 	token_t *t=tokenize(L"'this is a single token'");
 
-	const bool pass=(t->next==NULL && t->start==0 && t->end==24);
+	const bool pass=(t->next==NULL && t->begin==0 && t->end==24);
 	free(t);
 
 	return pass;
@@ -118,7 +118,7 @@ bool test_make_token() {
 	token_t *token=make_token();
 
 	const bool pass=(
-		token->start==(size_t)-1 &&
+		token->begin==(size_t)-1 &&
 		token->end==(size_t)-1 &&
 		token->token_type==0 &&
 		token->next==NULL
