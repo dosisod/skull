@@ -7,8 +7,6 @@
 #include "parse/classify.h"
 #include "parse/types.h"
 
-#include "parse/ast/node.h"
-
 #include "eval/eval_bool.h"
 #include "eval/variable.h"
 
@@ -31,8 +29,6 @@ int main() {
 
 	eval_bool_test_self(&passed);
 	variable_test_self(&passed);
-
-	ast_node_test_self(&passed);
 
 	str_test_self(&passed);
 	wegex_test_self(&passed);
