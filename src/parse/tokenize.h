@@ -30,17 +30,26 @@ bool is_quote(wchar_t c) {
 }
 
 /*
+Allocate and return a token with set defaults.
+*/
+token_t *make_token() {
+	token_t *token=malloc(sizeof(token_t));
+	token->start=-1;
+	token->end=-1;
+	token->token_type=0;
+	token->next=NULL;
+
+	return token;
+}
+
+/*
 Tokenize the passed code, returning the head to a linked list of tokens.
 */
 token_t *tokenize(const wchar_t *code) {
-	struct token_t *head=malloc(sizeof(token_t));
-	head->start=-1;
-	head->end=-1;
-	head->token_type=0;
-	head->next=NULL;
+	token_t *head=make_token();
 
-	struct token_t *current=head;
-	struct token_t *last=current;
+	token_t *current=head;
+	token_t *last=current;
 
 	const size_t CODE_LEN=wcslen(code);
 
@@ -68,11 +77,7 @@ token_t *tokenize(const wchar_t *code) {
 			if (is_whitespace(code[i])) {
 				current->end=i;
 
-				token_t *next_token=malloc(sizeof(token_t));
-				next_token->start=-1;
-				next_token->end=-1;
-				next_token->token_type=0;
-				next_token->next=NULL;
+				token_t *next_token=make_token();
 
 				last=current;
 				current->next=next_token;

@@ -114,6 +114,21 @@ bool test_token_cmp() {
 	return pass;
 }
 
+bool test_make_token() {
+	token_t *token=make_token();
+
+	const bool pass=(
+		token->start==(size_t)-1 &&
+		token->end==(size_t)-1 &&
+		token->token_type==0 &&
+		token->next==NULL
+	);
+
+	free(token);
+
+	return pass;
+}
+
 void tokenizer_test_self(bool *pass) {
 	tests_t tests={
 		test_is_whitespace,
@@ -127,6 +142,7 @@ void tokenizer_test_self(bool *pass) {
 		test_free_tokens,
 		test_token_len,
 		test_token_cmp,
+		test_make_token,
 		NULL
 	};
 
