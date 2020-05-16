@@ -6,8 +6,8 @@
 #include <wchar.h>
 
 typedef struct token_t {
-	size_t begin;
-	size_t end;
+	const wchar_t *begin;
+	const wchar_t *end;
 	short int token_type;
 
 	struct token_t *next;
@@ -34,8 +34,8 @@ Allocate and return a token with set defaults.
 */
 token_t *make_token() {
 	token_t *token=malloc(sizeof(token_t));
-	token->begin=-1;
-	token->end=-1;
+	token->begin=NULL;
+	token->end=NULL;
 	token->token_type=0;
 	token->next=NULL;
 
@@ -46,36 +46,36 @@ token_t *make_token() {
 Tokenize the passed code, returning the head to a linked list of tokens.
 */
 token_t *tokenize(const wchar_t *code) {
+	const wchar_t *code_copy=code;
+
 	token_t *head=make_token();
 
 	token_t *current=head;
 	token_t *last=current;
 
-	const size_t CODE_LEN=wcslen(code);
+	wchar_t quote=0;
 
-	char quote=0;
-	size_t i=0;
-	for (; i<CODE_LEN ; i++) {
+	while (*code!=L'\0') {
 		if (quote!=0) {
-			if (code[i]==quote) {
+			if (*code==quote) {
 				quote=0;
 			}
 		}
-		else if (!quote && is_quote(code[i])) {
-			quote=code[i];
+		else if (!quote && is_quote(*code)) {
+			quote=*code;
 
-			if (current->begin==(size_t)-1) {
-				current->begin=i;
+			if (current->begin==NULL) {
+				current->begin=code;
 			}
 		}
-		else if (current->begin==(size_t)-1) {
-			if (!is_whitespace(code[i])) {
-				current->begin=i;
+		else if (current->begin==NULL) {
+			if (!is_whitespace(*code)) {
+				current->begin=code;
 			}
 		}
-		else if (current->end==(size_t)-1) {
-			if (is_whitespace(code[i])) {
-				current->end=i;
+		else if (current->end==NULL) {
+			if (is_whitespace(*code)) {
+				current->end=code;
 
 				token_t *next_token=make_token();
 
@@ -84,11 +84,12 @@ token_t *tokenize(const wchar_t *code) {
 				current=next_token;
 			}
 		}
+		code++;
 	}
 
 	//close dangling token if there was no whitespace at EOF
-	if (current->begin!=(size_t)-1) {
-		current->end=i;
+	if (current->begin!=NULL) {
+		current->end=code;
 	}
 	//if there is a no token to be created, pop last token
 	else if (current!=head) {
@@ -97,8 +98,8 @@ token_t *tokenize(const wchar_t *code) {
 	}
 	//there where no tokens to parse, set safe defaults
 	else {
-		head->begin=0;
-		head->end=0;
+		head->begin=code_copy;
+		head->end=code_copy;
 		head->next=NULL;
 	}
 
@@ -131,6 +132,6 @@ size_t token_len(const token_t *token) {
 /*
 Returns true if `str` is equal to the value of `token`.
 */
-bool token_cmp(const wchar_t* str, const token_t *token, const wchar_t *code) {
-	return wcsncmp(str, code + token->begin, token_len(token))==0;
+bool token_cmp(const wchar_t* str, const token_t *token) {
+	return wcsncmp(str, token->begin, token_len(token))==0;
 }

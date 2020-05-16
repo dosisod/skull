@@ -12,9 +12,9 @@ bool test_is_keyword_token() {
 	}
 
 	const bool pass=(
-		is_keyword_token(token, code) &&
-		is_keyword_token(token->next, code) &&
-		!is_keyword_token(token->next->next, code)
+		is_keyword_token(token) &&
+		is_keyword_token(token->next) &&
+		!is_keyword_token(token->next->next)
 	);
 
 	free_tokens(token);
@@ -36,11 +36,11 @@ bool test_is_operator_token() {
 	}
 
 	const bool pass=(
-		!is_operator_token(token, code) &&
-		is_operator_token(token->next, code) &&
-		!is_operator_token(token->next->next, code) &&
-		is_operator_token(token->next->next->next, code) &&
-		!is_operator_token(token->next->next->next->next, code)
+		!is_operator_token(token) &&
+		is_operator_token(token->next) &&
+		!is_operator_token(token->next->next) &&
+		is_operator_token(token->next->next->next) &&
+		!is_operator_token(token->next->next->next->next)
 	);
 
 	free_tokens(token);
@@ -55,8 +55,8 @@ bool test_is_type_token() {
 	make_default_types();
 
 	const bool pass=(
-		is_type_token(token, code) &&
-		!is_type_token(token->next, code)
+		is_type_token(token) &&
+		!is_type_token(token->next)
 	);
 
 	free_tokens(token);
@@ -71,8 +71,8 @@ bool test_is_function_token() {
 	token_t *token2=tokenize(code2);
 
 	const bool pass=(
-		is_function_token(token1, code1) &&
-		is_function_token(token2, code2)
+		is_function_token(token1) &&
+		is_function_token(token2)
 	);
 
 	free(token1);
@@ -92,10 +92,10 @@ bool test_is_function_param_token() {
 	token_t *token4=tokenize(code4);
 
 	const bool pass=(
-		is_function_param_token(token1, code1) &&
-		is_function_param_token(token2, code2) &&
-		is_function_param_token(token3, code3) &&
-		is_function_param_token(token4, code4)
+		is_function_param_token(token1) &&
+		is_function_param_token(token2) &&
+		is_function_param_token(token3) &&
+		is_function_param_token(token4)
 	);
 
 	free(token1);
@@ -162,7 +162,7 @@ bool test_is_constant_str() {
 bool test_bracket_token_open() {
 	const wchar_t *code=L"[";
 	token_t *t=tokenize(code);
-	classify_token(t, code);
+	classify_token(t);
 
 	const bool pass=(t->token_type==TOKEN_BRACKET_OPEN);
 	free(t);
@@ -173,7 +173,7 @@ bool test_bracket_token_open() {
 bool test_bracket_token_close() {
 	const wchar_t *code=L"]";
 	token_t *t=tokenize(code);
-	classify_token(t, code);
+	classify_token(t);
 
 	const bool pass=(t->token_type==TOKEN_BRACKET_CLOSE);
 	free(t);
@@ -184,7 +184,7 @@ bool test_bracket_token_close() {
 bool test_token_keyword() {
 	const wchar_t *code=L"if else return";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(
 		t->token_type==TOKEN_KEYWORD &&
@@ -200,7 +200,7 @@ bool test_token_keyword() {
 bool test_token_operator() {
 	const wchar_t *code=L"x = 10 / 2";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(
 		t->token_type!=TOKEN_OPERATOR &&
@@ -218,7 +218,7 @@ bool test_token_operator() {
 bool test_token_type() {
 	const wchar_t *code=L"i32 not_a_type";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(
 		t->token_type==TOKEN_TYPE &&
@@ -233,7 +233,7 @@ bool test_token_type() {
 bool test_token_unknown() {
 	const wchar_t *code=L"garbage_value";
 	token_t *t=tokenize(code);
-	classify_token(t, code);
+	classify_token(t);
 
 	const bool pass=(t->token_type==TOKEN_UNKNOWN);
 	free(t);
@@ -244,7 +244,7 @@ bool test_token_unknown() {
 bool test_token_function_no_params() {
 	const wchar_t *code=L"main[]";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_FUNCTION);
 	free(t);
@@ -255,7 +255,7 @@ bool test_token_function_no_params() {
 bool test_token_function_param() {
 	const wchar_t *code=L"param_name]";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_FUNCTION_PARAM);
 	free(t);
@@ -266,7 +266,7 @@ bool test_token_function_param() {
 bool test_token_integer_constant() {
 	const wchar_t *code=L"1234";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_INT_CONST);
 	free(t);
@@ -277,7 +277,7 @@ bool test_token_integer_constant() {
 bool test_token_float_constant() {
 	const wchar_t *code=L"123.0";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_FLOAT_CONST);
 	free(t);
@@ -288,7 +288,7 @@ bool test_token_float_constant() {
 bool test_token_bool_constant() {
 	const wchar_t *code=L"true";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_BOOL_CONST);
 	free(t);
@@ -299,7 +299,7 @@ bool test_token_bool_constant() {
 bool test_token_char_constant() {
 	const wchar_t *code=L"'x'";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_CHAR_CONST);
 	free(t);
@@ -310,7 +310,7 @@ bool test_token_char_constant() {
 bool test_token_str_constant() {
 	const wchar_t *code=L"\"xyz\"";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_STR_CONST);
 	free(t);
@@ -321,7 +321,7 @@ bool test_token_str_constant() {
 bool test_token_classifier() {
 	const wchar_t *code=L"[ ]";
 	token_t *t=tokenize(code);
-	classify_tokens(t, code);
+	classify_tokens(t);
 
 	const bool pass=(
 		t->token_type==TOKEN_BRACKET_OPEN &&

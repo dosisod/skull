@@ -1,11 +1,11 @@
 # src/eval/eval_bool.h
 
-#### `short int eval_bool_true(const token_t *token, const wchar_t *code)`
+#### `short int eval_bool_true(const token_t *token)`
 Returns `EVAL_TRUE` or `EVAL_FALSE` if token is `"true"` or `"false"`.
 
 If the token isnt `"true"` or `"false"`, `EVAL_ERROR` is returned instead.
 
-#### `short int eval_equality_comparison(const token_t *token, const wchar_t *code)`
+#### `short int eval_equality_comparison(const token_t *token)`
 Returns `EVAL_TRUE` or `EVAL_FALSE` if successfull.
 
 If there is an `EVAL_ERROR` on the left or right hand side, `EVAL_ERROR` is returned.

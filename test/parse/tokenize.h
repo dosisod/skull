@@ -21,12 +21,16 @@ bool test_is_quote() {
 }
 
 bool test_tokenize_single_token() {
-	token_t *t1=tokenize(L"token");
-	token_t *t2=tokenize(L"token字");
+	const wchar_t *code1=L"token";
+	const wchar_t *code2=L"token字";
+	token_t *t1=tokenize(code1);
+	token_t *t2=tokenize(code2);
 
 	const bool pass=(
-		t1->begin==0 && t1->end==5 &&
-		t2->begin==0 && t2->end==6
+		t1->begin==code1 &&
+		t1->end==(code1 + 5) &&
+		t2->begin==code2 &&
+		t2->end==(code2 + 6)
 	);
 
 	free(t1);
@@ -36,20 +40,28 @@ bool test_tokenize_single_token() {
 }
 
 bool test_tokenize_no_tokens() {
-	token_t *t=tokenize(L"");
+	const wchar_t *code=L"";
+	token_t *t=tokenize(code);
 
-	const bool pass=(t->begin==0 && t->end==0);
+	const bool pass=(
+		t->begin==code &&
+		t->end==code
+	);
+
 	free(t);
 
 	return pass;
 }
 
 bool test_whitespace_between_tokens() {
-	token_t *t=tokenize(L"token1\r\n\t token2");
+	const wchar_t *code=L"token1\r\n\t token2";
+	token_t *t=tokenize(code);
 
 	const bool pass=(
-		t->begin==0 && t->end==6 &&
-		t->next->begin==10 && t->next->end==16
+		t->begin==&code[0] &&
+		t->end==&code[6] &&
+		t->next->begin==&code[10] &&
+		t->next->end==&code[16]
 	);
 
 	free(t->next);
@@ -59,27 +71,44 @@ bool test_whitespace_between_tokens() {
 }
 
 bool test_whitespace_at_eol_ignored() {
-	token_t *t=tokenize(L"token   ");
+	const wchar_t *code=L"token   ";
+	token_t *t=tokenize(code);
 
-	const bool pass=(t->begin==0 && t->end==5);
+	const bool pass=(
+		t->begin==&code[0] &&
+		t->end==&code[5]
+	);
+
 	free(t);
 
 	return pass;
 }
 
 bool test_whitespace_inside_double_quotes_respected() {
-	token_t *t=tokenize(L"\"this is a single token\"");
+	const wchar_t *code=L"\"this is a single token\"";
+	token_t *t=tokenize(code);
 
-	const bool pass=(t->next==NULL && t->begin==0 && t->end==24);
+	const bool pass=(
+		t->next==NULL &&
+		t->begin==&code[0] &&
+		t->end==&code[24]
+	);
+
 	free(t);
 
 	return pass;
 }
 
 bool test_whitespace_inside_single_quotes_respected() {
-	token_t *t=tokenize(L"'this is a single token'");
+	const wchar_t *code=L"'this is a single token'";
+	token_t *t=tokenize(code);
 
-	const bool pass=(t->next==NULL && t->begin==0 && t->end==24);
+	const bool pass=(
+		t->next==NULL &&
+		t->begin==&code[0] &&
+		t->end==&code[24]
+	);
+
 	free(t);
 
 	return pass;
@@ -105,8 +134,8 @@ bool test_token_cmp() {
 	token_t *token=tokenize(code);
 
 	const bool pass=(
-		token_cmp(L"data", token, code) &&
-		!token_cmp(L"not_data", token, code)
+		token_cmp(L"data", token) &&
+		!token_cmp(L"not_data", token)
 	);
 
 	free(token);
@@ -118,8 +147,8 @@ bool test_make_token() {
 	token_t *token=make_token();
 
 	const bool pass=(
-		token->begin==(size_t)-1 &&
-		token->end==(size_t)-1 &&
+		token->begin==NULL &&
+		token->end==NULL &&
 		token->token_type==0 &&
 		token->next==NULL
 	);

@@ -43,10 +43,10 @@ const wchar_t *TOKEN_OPERATORS[] = {
 /*
 Returns true if `token` is a type token.
 */
-bool is_type_token(const token_t *token, const wchar_t *code) {
+bool is_type_token(const token_t *token) {
 	type_t *current=&TYPES_AVAILABLE;
 	while (current) {
-		if (token_cmp(current->name, token, code)) {
+		if (token_cmp(current->name, token)) {
 			return true;
 		}
 		current=current->next;
@@ -57,10 +57,10 @@ bool is_type_token(const token_t *token, const wchar_t *code) {
 /*
 Returns true if `token` is a keyword token.
 */
-bool is_keyword_token(const token_t *token, const wchar_t *code) {
+bool is_keyword_token(const token_t *token) {
 	const wchar_t **head=TOKEN_KEYWORDS;
 	while (*head[0]!=L'\0') {
-		if (token_cmp(*head, token, code)) {
+		if (token_cmp(*head, token)) {
 			return true;
 		}
 		head++;
@@ -71,10 +71,10 @@ bool is_keyword_token(const token_t *token, const wchar_t *code) {
 /*
 Returns true if `token` is an operator token.
 */
-bool is_operator_token(const token_t *token, const wchar_t *code) {
+bool is_operator_token(const token_t *token) {
 	const wchar_t **head=TOKEN_OPERATORS;
 	while (*head[0]!=L'\0') {
-		if (token_cmp(*head, token, code)) {
+		if (token_cmp(*head, token)) {
 			return true;
 		}
 		head++;
@@ -88,13 +88,13 @@ Returns true if `token` is a function token.
 Function tokens are tokens that look like `name[]`, or `name[`.
 They indicate the start of a function declaration.
 */
-bool is_function_token(const token_t *token, const wchar_t *code) {
+bool is_function_token(const token_t *token) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
 
-	wcslcpy(buf, code + token->begin, len);
+	wcslcpy(buf, token->begin, len);
 
-	if (len>3 && buf[len - 2]=='[' && buf[len - 1]==']') {
+	if (len>3 && buf[len - 2]==L'[' && buf[len - 1]==L']') {
 		return true;
 	}
 	if (wcschr(buf, L'[')!=NULL && wcschr(buf, L']')==NULL) {
@@ -110,12 +110,12 @@ Returns true if `token` is a function parameter.
 Function parameters are tokens that look like `name]`, or `name,`.
 They indicate that there is a parameter for a given function.
 */
-bool is_function_param_token(const token_t *token, const wchar_t *code) {
+bool is_function_param_token(const token_t *token) {
 	if (token_len(token)<2) {
 		return false;
 	}
 
-	return (code[token->end - 1]==']' || code[token->end - 1]==',');
+	return (*(token->end - 1)==L']' || *(token->end - 1)==L',');
 }
 
 /*
@@ -136,10 +136,10 @@ Returns true if the passed token is an integer constant.
 
 See above function for examples of valid inputs.
 */
-bool is_constant_integer_token(const token_t *token, const wchar_t *code) {
+bool is_constant_integer_token(const token_t *token) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->begin, len);
+	wcslcpy(buf, token->begin, len);
 
 	return is_constant_integer(buf);
 }
@@ -158,10 +158,10 @@ Returns true if the passed token is a float constant.
 
 See above function for examples of valid inputs.
 */
-bool is_constant_float_token(const token_t *token, const wchar_t *code) {
+bool is_constant_float_token(const token_t *token) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->begin, len);
+	wcslcpy(buf, token->begin, len);
 
 	return is_constant_float(buf);
 }
@@ -176,10 +176,10 @@ bool is_constant_bool(const wchar_t *str) {
 /*
 Returns true if the passed token is a boolean constant.
 */
-bool is_constant_bool_token(const token_t *token, const wchar_t *code) {
+bool is_constant_bool_token(const token_t *token) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->begin, len);
+	wcslcpy(buf, token->begin, len);
 
 	return is_constant_bool(buf);
 }
@@ -199,10 +199,10 @@ Returns true if the passed token is a char constant.
 
 Examples of valid inputs can be seen in the above function.
 */
-bool is_constant_char_token(const token_t *token, const wchar_t *code) {
+bool is_constant_char_token(const token_t *token) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->begin, len);
+	wcslcpy(buf, token->begin, len);
 
 	return is_constant_char(buf);
 }
@@ -223,10 +223,10 @@ Returns true if the passed token is a string constant.
 
 Examples of valid inputs can be seen in the above function.
 */
-bool is_constant_str_token(const token_t *token, const wchar_t *code) {
+bool is_constant_str_token(const token_t *token) {
 	const size_t len=token_len(token);
 	wchar_t buf[len + 1];
-	wcslcpy(buf, code + token->begin, len);
+	wcslcpy(buf, token->begin, len);
 
 	return is_constant_str(buf);
 }
@@ -234,41 +234,41 @@ bool is_constant_str_token(const token_t *token, const wchar_t *code) {
 /*
 Classify the token `token`.
 */
-void classify_token(token_t *token, const wchar_t *code) {
-	if (token_cmp(L"[", token, code)) {
+void classify_token(token_t *token) {
+	if (token_cmp(L"[", token)) {
 		token->token_type=TOKEN_BRACKET_OPEN;
 	}
-	else if (token_cmp(L"]", token, code)) {
+	else if (token_cmp(L"]", token)) {
 		token->token_type=TOKEN_BRACKET_CLOSE;
 	}
-	else if (is_keyword_token(token, code)) {
+	else if (is_keyword_token(token)) {
 		token->token_type=TOKEN_KEYWORD;
 	}
-	else if (is_operator_token(token, code)) {
+	else if (is_operator_token(token)) {
 		token->token_type=TOKEN_OPERATOR;
 	}
-	else if (is_type_token(token, code)) {
+	else if (is_type_token(token)) {
 		token->token_type=TOKEN_TYPE;
 	}
-	else if (is_function_token(token, code)) {
+	else if (is_function_token(token)) {
 		token->token_type=TOKEN_FUNCTION;
 	}
-	else if (is_function_param_token(token, code)) {
+	else if (is_function_param_token(token)) {
 		token->token_type=TOKEN_FUNCTION_PARAM;
 	}
-	else if (is_constant_integer_token(token, code)) {
+	else if (is_constant_integer_token(token)) {
 		token->token_type=TOKEN_INT_CONST;
 	}
-	else if (is_constant_float_token(token, code)) {
+	else if (is_constant_float_token(token)) {
 		token->token_type=TOKEN_FLOAT_CONST;
 	}
-	else if (is_constant_bool_token(token, code)) {
+	else if (is_constant_bool_token(token)) {
 		token->token_type=TOKEN_BOOL_CONST;
 	}
-	else if (is_constant_char_token(token, code)) {
+	else if (is_constant_char_token(token)) {
 		token->token_type=TOKEN_CHAR_CONST;
 	}
-	else if (is_constant_str_token(token, code)) {
+	else if (is_constant_str_token(token)) {
 		token->token_type=TOKEN_STR_CONST;
 	}
 }
@@ -276,11 +276,11 @@ void classify_token(token_t *token, const wchar_t *code) {
 /*
 Starting at token `token`, go through and classify each token in linked list.
 */
-void classify_tokens(token_t *head, const wchar_t *code) {
+void classify_tokens(token_t *head) {
 	token_t *current=head;
 
 	while (current!=NULL) {
-		classify_token(current, code);
+		classify_token(current);
 		current=current->next;
 	}
 }
