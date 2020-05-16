@@ -2,15 +2,21 @@
 #include "../../test/testing.h"
 
 bool test_find_line_comment_at_start_of_line() {
-	return find_line_comment("# should be zero")==0;
+	const wchar_t *code=L"# should be zero";
+
+	return find_line_comment(code)==code;
 }
 
 bool test_find_line_comment_without_comment() {
-	return find_line_comment("not a comment")==12;
+	const wchar_t *code=L"not a comment";
+
+	return find_line_comment(code)==(code + 12);
 }
 
 bool test_find_line_comment_on_blank_line() {
-	return find_line_comment("")==0;
+	const wchar_t *code=L"";
+
+	return find_line_comment(code)==code;
 }
 
 void constants_test_self(bool *pass) {

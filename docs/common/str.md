@@ -8,6 +8,3 @@ Similar to above `strlcpy`, but for `wchar_t` types.
 
 This function will always put a wide char NULL terminator at the end of the string.
 
-#### `bool samestr(const char *s1, const char *s2)`
-Same as calling strcmp(s1, s2)==0
-

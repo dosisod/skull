@@ -1,7 +1,7 @@
 # src/parse/constants.h
 
-#### `unsigned long long int find_line_comment(const char *code)`
-Returns index of the first single line comment, starting from pointer `code`.
+#### `const wchar_t *find_line_comment(const wchar_t *code)`
+Returns pointer to the start of a single line comment in `code`.
 
-If no comment is found, the index of the last character is returned.
+If no comment is found, a pointer to the last character is returned.
 

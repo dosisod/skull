@@ -3,27 +3,27 @@
 #include "../../src/common/str.h"
 
 #define LINE_COMMENT_LEN 2
-const char *LINE_COMMENT="# ";
+const wchar_t *LINE_COMMENT=L"# ";
 
 /*
-Returns index of the first single line comment, starting from pointer `code`.
+Returns pointer to the start of a single line comment in `code`.
 
-If no comment is found, the index of the last character is returned.
+If no comment is found, a pointer to the last character is returned.
 */
-unsigned long long int find_line_comment(const char *code) {
-	const size_t code_len=strlen(code);
+const wchar_t *find_line_comment(const wchar_t *code) {
+	const size_t code_len=wcslen(code);
 
 	const size_t searchable_range=(code_len - LINE_COMMENT_LEN);
 	if (searchable_range<LINE_COMMENT_LEN || searchable_range>code_len) {
-		return code_len;
+		return code + code_len;
 	}
 
-	size_t i=0;
-	for (; (i<=searchable_range); i++) {
-		if (strncmp(LINE_COMMENT, code + i, LINE_COMMENT_LEN)==0) {
-			break;
+	while (*code!=L'\0') {
+		if (wcsncmp(LINE_COMMENT, code, LINE_COMMENT_LEN)==0) {
+			return code;
 		}
+		code++;
 	}
 
-	return i;
+	return code - 1;
 }

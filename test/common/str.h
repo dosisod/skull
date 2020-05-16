@@ -13,14 +13,20 @@ bool test_strlcpy() {
 	return strlen(buf)==5;
 }
 
-bool test_samestr() {
-	return samestr("a", "b")==(strcmp("a", "b")==0);
+bool test_wcslcpy() {
+	const wchar_t *data=L"hello there!";
+	const size_t len=5;
+	wchar_t buf[len + 1];
+
+	wcslcpy(buf, data, 5);
+
+	return wcslen(buf)==5;
 }
 
 void str_test_self(bool *pass) {
 	tests_t tests={
 		test_strlcpy,
-		test_samestr,
+		test_wcslcpy,
 		NULL
 	};
 

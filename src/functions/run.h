@@ -8,10 +8,10 @@
 Try to run function `name`.
 */
 void run_function(const char *function_name, const char *data) {
-	if (samestr(function_name, "print")) {
+	if (strcmp(function_name, "print")==0) {
 		print(data);
 	}
-	else if (samestr(function_name, "dll_run")) {
+	else if (strcmp(function_name, "dll_run")==0) {
 		dll_run(data);
 	}
 }
