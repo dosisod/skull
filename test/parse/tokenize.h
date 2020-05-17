@@ -114,6 +114,29 @@ bool test_whitespace_inside_single_quotes_respected() {
 	return pass;
 }
 
+bool test_brackets_always_make_their_own_token() {
+	const wchar_t *code=L"left[]right";
+	token_t *t=tokenize(code);
+
+	const bool pass=(
+		t->begin==code &&
+		t->end==(code + 4) &&
+		t->next!=NULL &&
+		t->next->begin==(code + 4) &&
+		t->next->end==(code + 5) &&
+		t->next->next!=NULL &&
+		t->next->next->begin==(code + 5) &&
+		t->next->next->end==(code + 6) &&
+		t->next->next->next!=NULL &&
+		t->next->next->next->begin==(code + 6) &&
+		t->next->next->next->end==(code + 11)
+	);
+
+	free(t);
+
+	return pass;
+}
+
 bool test_free_tokens() {
 	const wchar_t *code=L"token token token";
 	token_t *t=tokenize(code);
@@ -168,6 +191,7 @@ void tokenizer_test_self(bool *pass) {
 		test_whitespace_at_eol_ignored,
 		test_whitespace_inside_double_quotes_respected,
 		test_whitespace_inside_single_quotes_respected,
+		test_brackets_always_make_their_own_token,
 		test_free_tokens,
 		test_token_len,
 		test_token_cmp,

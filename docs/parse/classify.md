@@ -9,18 +9,6 @@ Returns true if `token` is a keyword token.
 #### `bool is_operator_token(const token_t *token)`
 Returns true if `token` is an operator token.
 
-#### `bool is_function_token(const token_t *token)`
-Returns true if `token` is a function token.
-
-Function tokens are tokens that look like `name[]`, or `name[`.
-They indicate the start of a function declaration.
-
-#### `bool is_function_param_token(const token_t *token)`
-Returns true if `token` is a function parameter.
-
-Function parameters are tokens that look like `name]`, or `name,`.
-They indicate that there is a parameter for a given function.
-
 #### `bool is_constant_integer(const wchar_t *str)`
 Returns true if string is a valid hex/binary/decimal integer.
 

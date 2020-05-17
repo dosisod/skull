@@ -68,6 +68,28 @@ token_t *tokenize(const wchar_t *code) {
 				current->begin=code;
 			}
 		}
+		else if (*code==L'[' || *code==L']') {
+			if (current->begin!=NULL) {
+				current->end=code;
+
+				token_t *next_token=make_token();
+				next_token->begin=code;
+				next_token->end=code+1;
+
+				current->next=next_token;
+				current=next_token;
+			}
+			else {
+				current->begin=code;
+				current->end=code+1;
+			}
+
+			token_t *next_token=make_token();
+
+			last=current;
+			current->next=next_token;
+			current=next_token;
+		}
 		else if (current->begin==NULL) {
 			if (!is_whitespace(*code)) {
 				current->begin=code;

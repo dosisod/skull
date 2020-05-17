@@ -9,15 +9,13 @@
 #define TOKEN_KEYWORD 1
 #define TOKEN_BRACKET_OPEN 2
 #define TOKEN_BRACKET_CLOSE 3
-#define TOKEN_FUNCTION 4
-#define TOKEN_FUNCTION_PARAM 5
-#define TOKEN_TYPE 6
-#define TOKEN_OPERATOR 7
-#define TOKEN_INT_CONST 8
-#define TOKEN_FLOAT_CONST 9
-#define TOKEN_BOOL_CONST 10
-#define TOKEN_CHAR_CONST 11
-#define TOKEN_STR_CONST 12
+#define TOKEN_TYPE 4
+#define TOKEN_OPERATOR 5
+#define TOKEN_INT_CONST 6
+#define TOKEN_FLOAT_CONST 7
+#define TOKEN_BOOL_CONST 8
+#define TOKEN_CHAR_CONST 9
+#define TOKEN_STR_CONST 11
 
 const wchar_t *TOKEN_KEYWORDS[] = {
 	L"return",
@@ -80,42 +78,6 @@ bool is_operator_token(const token_t *token) {
 		head++;
 	}
 	return false;
-}
-
-/*
-Returns true if `token` is a function token.
-
-Function tokens are tokens that look like `name[]`, or `name[`.
-They indicate the start of a function declaration.
-*/
-bool is_function_token(const token_t *token) {
-	const size_t len=token_len(token);
-	wchar_t buf[len + 1];
-
-	wcslcpy(buf, token->begin, len);
-
-	if (len>3 && buf[len - 2]==L'[' && buf[len - 1]==L']') {
-		return true;
-	}
-	if (wcschr(buf, L'[')!=NULL && wcschr(buf, L']')==NULL) {
-		return true;
-	}
-
-	return false;
-}
-
-/*
-Returns true if `token` is a function parameter.
-
-Function parameters are tokens that look like `name]`, or `name,`.
-They indicate that there is a parameter for a given function.
-*/
-bool is_function_param_token(const token_t *token) {
-	if (token_len(token)<2) {
-		return false;
-	}
-
-	return (*(token->end - 1)==L']' || *(token->end - 1)==L',');
 }
 
 /*
@@ -249,12 +211,6 @@ void classify_token(token_t *token) {
 	}
 	else if (is_type_token(token)) {
 		token->token_type=TOKEN_TYPE;
-	}
-	else if (is_function_token(token)) {
-		token->token_type=TOKEN_FUNCTION;
-	}
-	else if (is_function_param_token(token)) {
-		token->token_type=TOKEN_FUNCTION_PARAM;
 	}
 	else if (is_constant_integer_token(token)) {
 		token->token_type=TOKEN_INT_CONST;
