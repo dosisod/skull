@@ -9,6 +9,9 @@ Returns true if `token` is a keyword token.
 #### `bool is_operator_token(const token_t *token)`
 Returns true if `token` is an operator token.
 
+#### `bool is_function_token(const token_t *token)`
+Returns true if a token is a function token.
+
 #### `bool is_constant_integer(const wchar_t *str)`
 Returns true if string is a valid hex/binary/decimal integer.
 

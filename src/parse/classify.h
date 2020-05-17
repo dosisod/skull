@@ -10,11 +10,12 @@
 #define TOKEN_BRACKET_OPEN 2
 #define TOKEN_BRACKET_CLOSE 3
 #define TOKEN_TYPE 4
-#define TOKEN_OPERATOR 5
-#define TOKEN_INT_CONST 6
-#define TOKEN_FLOAT_CONST 7
-#define TOKEN_BOOL_CONST 8
-#define TOKEN_CHAR_CONST 9
+#define TOKEN_FUNCTION 5
+#define TOKEN_OPERATOR 6
+#define TOKEN_INT_CONST 7
+#define TOKEN_FLOAT_CONST 8
+#define TOKEN_BOOL_CONST 9
+#define TOKEN_CHAR_CONST 10
 #define TOKEN_STR_CONST 11
 
 const wchar_t *TOKEN_KEYWORDS[] = {
@@ -78,6 +79,13 @@ bool is_operator_token(const token_t *token) {
 		head++;
 	}
 	return false;
+}
+
+/*
+Returns true if a token is a function token.
+*/
+bool is_function_token(const token_t *token) {
+	return token_cmp(L"fn", token);
 }
 
 /*
@@ -211,6 +219,9 @@ void classify_token(token_t *token) {
 	}
 	else if (is_type_token(token)) {
 		token->token_type=TOKEN_TYPE;
+	}
+	else if (is_function_token(token)) {
+		token->token_type=TOKEN_FUNCTION;
 	}
 	else if (is_constant_integer_token(token)) {
 		token->token_type=TOKEN_INT_CONST;

@@ -7,9 +7,11 @@ The skull programming language
 ## Syntax Proposal
 
 ```
+import io.print
+
 # this is a comment!
 
-main[] i32 [
+fn main[] i32 [
   print["hello world!"]
 
   return 0

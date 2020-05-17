@@ -64,6 +64,20 @@ bool test_is_type_token() {
 	return pass;
 }
 
+bool test_is_function_token() {
+	const wchar_t *code=L"fn main";
+	token_t *token=tokenize(code);
+
+	const bool pass=(
+		is_function_token(token) &&
+		!is_function_token(token->next)
+	);
+
+	free_tokens(token);
+
+	return pass;
+}
+
 bool test_is_constant_integer() {
 	return (
 		is_constant_integer(L"123") &&
@@ -190,6 +204,21 @@ bool test_token_type() {
 	return pass;
 }
 
+bool test_token_function() {
+	const wchar_t *code=L"fn main";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_FUNCTION &&
+		t->next->token_type!=TOKEN_FUNCTION
+	);
+
+	free_tokens(t);
+
+	return pass;
+}
+
 bool test_token_unknown() {
 	const wchar_t *code=L"garbage_value";
 	token_t *t=tokenize(code);
@@ -277,6 +306,7 @@ void classifier_test_self(bool *pass) {
 		test_is_keyword_token,
 		test_is_operator_token,
 		test_is_type_token,
+		test_is_function_token,
 		test_is_constant_integer,
 		test_is_constant_float,
 		test_is_constant_bool,
@@ -287,6 +317,7 @@ void classifier_test_self(bool *pass) {
 		test_token_keyword,
 		test_token_operator,
 		test_token_type,
+		test_token_function,
 		test_token_unknown,
 		test_token_integer_constant,
 		test_token_float_constant,
