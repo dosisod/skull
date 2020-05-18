@@ -10,8 +10,9 @@ typedef struct variable_t {
 	const wchar_t *type;
 	const wchar_t *name;
 	bool is_const;
+
 	size_t bytes;
-	char *mem;
+	uint8_t *mem;
 } variable_t;
 
 /*
@@ -40,7 +41,7 @@ variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_cons
 	var->is_const=is_const;
 	var->bytes=current->bytes;
 
-	char *mem=calloc(current->bytes, sizeof(char));
+	uint8_t *mem=calloc(current->bytes, sizeof(uint8_t));
 	var->mem=mem;
 
 	return var;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "../parse/tokenize.h"
 #include "../parse/classify.h"
@@ -14,7 +15,7 @@ Returns `EVAL_TRUE` or `EVAL_FALSE` if token is `"true"` or `"false"`.
 
 If the token isnt `"true"` or `"false"`, `EVAL_ERROR` is returned instead.
 */
-short int eval_bool_true(const token_t *token) {
+uint8_t eval_bool_true(const token_t *token) {
 	if (token_cmp(L"true", token)) {
 		return EVAL_TRUE;
 	}
@@ -39,7 +40,7 @@ Examples include:
 "3.14 == 3.14"
 ```
 */
-short int eval_equality_comparison(const token_t *token) {
+uint8_t eval_equality_comparison(const token_t *token) {
 	if ((token->token_type != token->next->next->token_type) || token->token_type==TOKEN_UNKNOWN) {
 		return EVAL_ERROR;
 	}
@@ -75,7 +76,7 @@ Examples include:
 "not true"
 ```
 */
-short int eval_bool(const wchar_t *code) {
+uint8_t eval_bool(const wchar_t *code) {
 	token_t *token=tokenize(code);
 	classify_tokens(token);
 
@@ -83,7 +84,7 @@ short int eval_bool(const wchar_t *code) {
 		return EVAL_ERROR;
 	}
 
-	short int ret;
+	uint8_t ret;
 	if (token->next==NULL) {
 		ret=eval_bool_true(token);
 	}

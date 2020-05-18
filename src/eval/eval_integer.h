@@ -10,12 +10,12 @@
 #define EVAL_INTEGER_ERR 1
 
 /*
-Converts a `TOKEN_INT_CONST` token to an actual integer (long long int).
+Converts a `TOKEN_INT_CONST` token to an actual integer (`int64_t`).
 
 If an error occurs while converting, `error` is set to `EVAL_INTEGER_ERR`.
 `error` should always be `EVAL_INTEGER_OK` upon success.
 */
-long long int eval_integer(const token_t *token, short int *error) {
+int64_t eval_integer(const token_t *token, uint8_t *error) {
 	*error=EVAL_INTEGER_OK;
 
 	if (token->token_type!=TOKEN_INT_CONST) {
@@ -23,9 +23,9 @@ long long int eval_integer(const token_t *token, short int *error) {
 		return 0;
 	}
 
-	long long int ret=0;
+	int64_t ret=0;
 	const wchar_t *begin=token->begin;
-	short int base=10;
+	uint8_t base=10;
 
 	if (wcsncmp(L"0b", token->begin, 2)==0) {
 		begin+=2;

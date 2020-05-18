@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
@@ -8,7 +9,7 @@
 typedef struct token_t {
 	const wchar_t *begin;
 	const wchar_t *end;
-	short int token_type;
+	uint8_t token_type;
 
 	struct token_t *next;
 } token_t;

@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "../../src/eval/eval_integer.h"
 #include "../../test/testing.h"
@@ -9,10 +10,10 @@ bool test_convert_integer_token() {
 	classify_tokens(token1);
 	classify_tokens(token2);
 
-	short int err1=0;
-	long long int num1=eval_integer(token1, &err1);
-	short int err2=0;
-	long long int num2=eval_integer(token2, &err2);
+	uint8_t err1=0;
+	int64_t num1=eval_integer(token1, &err1);
+	uint8_t err2=0;
+	int64_t num2=eval_integer(token2, &err2);
 
 	const bool pass=(
 		num1==1234 &&
@@ -31,8 +32,8 @@ bool test_integer_overflow_returns_error() {
 	token_t *token=tokenize(L"9999999999999999999");
 	classify_tokens(token);
 
-	short int err=0;
-	long long int num=eval_integer(token, &err);
+	uint8_t err=0;
+	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==LLONG_MAX &&
@@ -48,8 +49,8 @@ bool test_integer_underflow_returns_error() {
 	token_t *token=tokenize(L"-9999999999999999999");
 	classify_tokens(token);
 
-	short int err=0;
-	long long int num=eval_integer(token, &err);
+	uint8_t err=0;
+	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==LLONG_MIN &&
@@ -65,8 +66,8 @@ bool test_convert_hex_integer() {
 	token_t *token=tokenize(L"0xff");
 	classify_tokens(token);
 
-	short int err=0;
-	long long int num=eval_integer(token, &err);
+	uint8_t err=0;
+	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==255 &&
@@ -82,8 +83,8 @@ bool test_convert_binary_integer() {
 	token_t *token=tokenize(L"0b1111");
 	classify_tokens(token);
 
-	short int err=0;
-	long long int num=eval_integer(token, &err);
+	uint8_t err=0;
+	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==15 &&
@@ -99,8 +100,8 @@ bool test_non_integer_token_fails() {
 	token_t *token=tokenize(L"not_an_int_token");
 	classify_tokens(token);
 
-	short int err=0;
-	long long int num=eval_integer(token, &err);
+	uint8_t err=0;
+	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==0 &&
