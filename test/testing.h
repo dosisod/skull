@@ -8,11 +8,11 @@ typedef bool (*tests_t[])(void);
 
 void run_single_test(test_t test, bool *pass) {
 	if (!test()) {
-		wprintf(L"F");
+		wprintf(L"\033[1m\033[31mF\033[m");
 		*pass=false;
 	}
 	else {
-		wprintf(L".");
+		wprintf(L"\033[1m\033[32m.\033[m");
 	}
 }
 
