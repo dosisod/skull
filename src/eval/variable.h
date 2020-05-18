@@ -6,6 +6,9 @@
 #include "../parse/tokenize.h"
 #include "../parse/types.h"
 
+#define VARIABLE_WRITE_OK 0
+#define VARIABLE_WRITE_ECONST 1
+
 typedef struct variable_t {
 	const wchar_t *type;
 	const wchar_t *name;
@@ -45,6 +48,21 @@ variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_cons
 	var->mem=mem;
 
 	return var;
+}
+
+/*
+Write `data` to `var`.
+
+If `var` is const, `VARIABLE_WRITE_ECONST` is returned.
+Upon success, `VARIABLE_WRITE_OK` is returned.
+*/
+uint8_t variable_write(const variable_t *var, const void *data) {
+	if (var->is_const) {
+		return VARIABLE_WRITE_ECONST;
+	}
+
+	memcpy(var->mem, data, var->bytes);
+	return VARIABLE_WRITE_OK;
 }
 
 /*

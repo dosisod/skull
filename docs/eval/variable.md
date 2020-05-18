@@ -5,6 +5,12 @@ Make a variable called `name` with type `type`, and make it const if `is_const` 
 
 Returns NULL if var cannot be created, else pointer to created var.
 
+#### `uint8_t variable_write(const variable_t *var, const void *data)`
+Write `data` to `var`.
+
+If `var` is const, `VARIABLE_WRITE_ECONST` is returned.
+Upon success, `VARIABLE_WRITE_OK` is returned.
+
 #### `void free_variable_t(variable_t *var)`
 Free a given `variable_t` variable.
 

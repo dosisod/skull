@@ -25,6 +25,44 @@ bool test_create_variable_with_invalid_type_fails() {
 	return var==NULL;
 }
 
+bool test_variable_write() {
+	variable_t *var=make_variable(L"i32", L"x", false);
+
+	const uint32_t data=1234;
+	const uint8_t ret=variable_write(var, &data);
+
+	uint32_t val=0;
+	memcpy(&val, var->mem, var->bytes);
+
+	const bool pass=(
+		ret==VARIABLE_WRITE_OK &&
+		val==1234
+	);
+
+	free_variable_t(var);
+
+	return pass;
+}
+
+bool test_variable_cannot_write_to_const() {
+	variable_t *var=make_variable(L"i32", L"x", true);
+
+	const uint32_t data=1234;
+	const uint8_t ret=variable_write(var, &data);
+
+	uint32_t val=0;
+	memcpy(&val, var->mem, var->bytes);
+
+	const bool pass=(
+		ret==VARIABLE_WRITE_ECONST &&
+		val==0
+	);
+
+	free_variable_t(var);
+
+	return pass;
+}
+
 bool test_free_variable_t() {
 	variable_t *var=make_variable(L"i32", L"x", true);
 
@@ -41,6 +79,8 @@ void variable_test_self(bool *pass) {
 	tests_t tests={
 		test_create_variable,
 		test_create_variable_with_invalid_type_fails,
+		test_variable_write,
+		test_variable_cannot_write_to_const,
 		test_free_variable_t,
 		NULL
 	};
