@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "../parse/tokenize.h"
 #include "../parse/classify.h"
