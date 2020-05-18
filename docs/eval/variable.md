@@ -11,6 +11,9 @@ Write `data` to `var`.
 If `var` is const, `VARIABLE_WRITE_ECONST` is returned.
 Upon success, `VARIABLE_WRITE_OK` is returned.
 
+#### `void variable_read(void *dest, const variable_t *var)`
+Read variable `var`s memory into `dest`.
+
 #### `void free_variable_t(variable_t *var)`
 Free a given `variable_t` variable.
 

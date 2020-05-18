@@ -66,6 +66,13 @@ uint8_t variable_write(const variable_t *var, const void *data) {
 }
 
 /*
+Read variable `var`s memory into `dest`.
+*/
+void variable_read(void *dest, const variable_t *var) {
+	memcpy(dest, var->mem, var->bytes);
+}
+
+/*
 Free a given `variable_t` variable.
 */
 void free_variable_t(variable_t *var) {

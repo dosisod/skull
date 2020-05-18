@@ -63,6 +63,21 @@ bool test_variable_cannot_write_to_const() {
 	return pass;
 }
 
+bool test_variable_read() {
+	variable_t *var=make_variable(L"i32", L"x", false);
+	const uint32_t data=1234;
+	variable_write(var, &data);
+
+	uint32_t val=0;
+	variable_read(&val, var);
+
+	const bool pass=(val==1234);
+
+	free_variable_t(var);
+
+	return pass;
+}
+
 bool test_free_variable_t() {
 	variable_t *var=make_variable(L"i32", L"x", true);
 
@@ -81,6 +96,7 @@ void variable_test_self(bool *pass) {
 		test_create_variable_with_invalid_type_fails,
 		test_variable_write,
 		test_variable_cannot_write_to_const,
+		test_variable_read,
 		test_free_variable_t,
 		NULL
 	};
