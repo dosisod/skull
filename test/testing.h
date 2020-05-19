@@ -3,16 +3,18 @@
 #include <stdbool.h>
 #include <wchar.h>
 
+#include "../src/common/color.h"
+
 typedef bool (*test_t)(void);
 typedef bool (*tests_t[])(void);
 
 void run_single_test(test_t test, bool *pass) {
 	if (!test()) {
-		wprintf(L"\033[1m\033[31mF\033[m");
+		wprintf(COLOR_BOLD COLOR_RED_FG L"F" COLOR_RESET);
 		*pass=false;
 	}
 	else {
-		wprintf(L"\033[1m\033[32m.\033[m");
+		wprintf(COLOR_BOLD COLOR_GREEN_FG L"." COLOR_RESET);
 	}
 }
 

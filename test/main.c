@@ -11,6 +11,7 @@
 #include "eval/eval_integer.h"
 #include "eval/variable.h"
 
+#include "common/color.h"
 #include "common/str.h"
 #include "common/wegex.h"
 
@@ -32,6 +33,7 @@ int main() {
 	eval_integer_test_self(&passed);
 	variable_test_self(&passed);
 
+	color_test_self(&passed);
 	str_test_self(&passed);
 	wegex_test_self(&passed);
 
