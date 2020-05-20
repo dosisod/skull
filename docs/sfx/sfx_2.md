@@ -62,7 +62,7 @@ The value of `arr` is an object, and therefor is "truthy". In Skull, you must ex
 
 ```
 # pseudo code
-Array[i32] x
+Array[int32] x
 
 if [x.length == 0] [
   # true

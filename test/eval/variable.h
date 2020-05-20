@@ -4,10 +4,10 @@
 #include "../../test/testing.h"
 
 bool test_create_variable() {
-	variable_t *var=make_variable(L"i32", L"x", true);
+	variable_t *var=make_variable(L"int32", L"x", true);
 
 	const bool pass=(
-		wcscmp(var->type, L"i32")==0 &&
+		wcscmp(var->type, L"int32")==0 &&
 		wcscmp(var->name, L"x")==0 &&
 		var->is_const &&
 		var->bytes == 4 &&
@@ -26,7 +26,7 @@ bool test_create_variable_with_invalid_type_fails() {
 }
 
 bool test_variable_write() {
-	variable_t *var=make_variable(L"i32", L"x", false);
+	variable_t *var=make_variable(L"int32", L"x", false);
 
 	const uint32_t data=1234;
 	const uint8_t ret=variable_write(var, &data);
@@ -45,7 +45,7 @@ bool test_variable_write() {
 }
 
 bool test_variable_cannot_write_to_const() {
-	variable_t *var=make_variable(L"i32", L"x", true);
+	variable_t *var=make_variable(L"int32", L"x", true);
 
 	const uint32_t data=1234;
 	const uint8_t ret=variable_write(var, &data);
@@ -64,7 +64,7 @@ bool test_variable_cannot_write_to_const() {
 }
 
 bool test_variable_read() {
-	variable_t *var=make_variable(L"i32", L"x", false);
+	variable_t *var=make_variable(L"int32", L"x", false);
 	const uint32_t data=1234;
 	variable_write(var, &data);
 
@@ -79,7 +79,7 @@ bool test_variable_read() {
 }
 
 bool test_free_variable_t() {
-	variable_t *var=make_variable(L"i32", L"x", true);
+	variable_t *var=make_variable(L"int32", L"x", true);
 
 	if (var==NULL || var->mem==NULL) {
 		return false;

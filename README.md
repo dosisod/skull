@@ -11,7 +11,7 @@ import io.print
 
 # this is a comment!
 
-fn main[] i32 [
+fn main[] int32 [
   print["hello world!"]
 
   return 0

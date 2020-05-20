@@ -49,7 +49,7 @@ bool test_is_operator_token() {
 }
 
 bool test_is_type_token() {
-	const wchar_t *code=L"i32 not_a_type";
+	const wchar_t *code=L"int32 not_a_type";
 	token_t *token=tokenize(code);
 
 	make_default_types();
@@ -190,7 +190,7 @@ bool test_token_operator() {
 }
 
 bool test_token_type() {
-	const wchar_t *code=L"i32 not_a_type";
+	const wchar_t *code=L"int32 not_a_type";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
