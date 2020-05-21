@@ -9,6 +9,7 @@
 
 #include "eval/eval_bool.h"
 #include "eval/eval_integer.h"
+#include "eval/context.h"
 #include "eval/variable.h"
 
 #include "common/color.h"
@@ -32,6 +33,7 @@ int main() {
 	eval_bool_test_self(&passed);
 	eval_integer_test_self(&passed);
 	variable_test_self(&passed);
+	context_test_self(&passed);
 
 	color_test_self(&passed);
 	str_test_self(&passed);
