@@ -64,6 +64,19 @@ bool test_make_new_type_rejects_non_unique_type() {
 	);
 }
 
+bool test_find_type() {
+	type_t *type;
+	type=NULL;
+	make_default_types();
+
+	find_type(&type, L"int32");
+
+	const bool pass=(type!=NULL);
+
+	free_types();
+	return pass;
+}
+
 bool test_free_types() {
 	make_new_type(L"test_type", 1);
 
@@ -100,6 +113,7 @@ void types_test_self(bool *pass) {
 	tests_t tests={
 		test_make_new_type,
 		test_make_new_type_rejects_non_unique_type,
+		test_find_type,
 		test_free_types,
 		test_append_default_types,
 		NULL

@@ -7,7 +7,7 @@ bool test_create_variable() {
 	variable_t *var=make_variable(L"int32", L"x", true);
 
 	const bool pass=(
-		wcscmp(var->type, L"int32")==0 &&
+		wcscmp(var->type->name, L"int32")==0 &&
 		wcscmp(var->name, L"x")==0 &&
 		var->is_const &&
 		var->bytes == 4 &&
@@ -82,6 +82,7 @@ bool test_free_variable_t() {
 	variable_t *var=make_variable(L"int32", L"x", true);
 
 	if (var==NULL || var->mem==NULL) {
+		free_variable_t(var);
 		return false;
 	}
 

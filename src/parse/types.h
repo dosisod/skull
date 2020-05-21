@@ -47,6 +47,20 @@ bool make_new_type(const wchar_t *name, size_t bytes) {
 	return true;
 }
 
+void find_type(type_t **ret, const wchar_t *name) {
+	type_t *head=&TYPES_AVAILABLE;
+
+	while (head!=NULL) {
+		if (wcscmp(name, head->name)==0) {
+			*ret=head;
+			return;
+		}
+		head=head->next;
+	}
+
+	*ret=NULL;
+}
+
 /*
 Free all defined types from `TYPES_AVAILABLE`, except for `TYPES_AVAILABLE`.
 */

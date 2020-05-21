@@ -10,7 +10,7 @@
 #define VARIABLE_WRITE_ECONST 1
 
 typedef struct variable_t {
-	const wchar_t *type;
+	type_t *type;
 	const wchar_t *name;
 	bool is_const;
 
@@ -21,30 +21,24 @@ typedef struct variable_t {
 /*
 Make a variable called `name` with type `type`, and make it const if `is_const` is true.
 
-Returns NULL if var cannot be created, else pointer to created var.
+Returns `NULL` if var cannot be created, else pointer to created var.
 */
 variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_const) {
-	variable_t *var=malloc(sizeof(variable_t));
+	type_t *found_type;
+	find_type(&found_type, type);
 
-	type_t *current=&TYPES_AVAILABLE;
-	while (current) {
-		if (wcscmp(current->name, type)==0) {
-			break;
-		}
-
-		current=current->next;
-	}
-	if (current==NULL) {
-		free(var);
+	if (found_type==NULL) {
 		return NULL;
 	}
 
-	var->name=name;
-	var->type=type;
-	var->is_const=is_const;
-	var->bytes=current->bytes;
+	variable_t *var=malloc(sizeof(variable_t));
 
-	uint8_t *mem=calloc(current->bytes, sizeof(uint8_t));
+	var->name=name;
+	var->type=found_type;
+	var->is_const=is_const;
+	var->bytes=found_type->bytes;
+
+	uint8_t *mem=calloc(found_type->bytes, sizeof(uint8_t));
 	var->mem=mem;
 
 	return var;
