@@ -12,14 +12,14 @@ To be more persice:
 In Skull, variables are const by default:
 
 ```
-int32 x = 0
+int x = 0
 x = 1  # error, cannot assign to const
 ```
 
 To make a non-const variable, use `mut`:
 
 ```
-mut int32 x = 0
+mut int x = 0
 x = 1
 ```
 
@@ -44,7 +44,7 @@ Here, `123.456` is implicitly converted from `float` to `int`.
 In Skull, you must explicitly cast to `int`:
 
 ```
-int32 x = int32[123.456]
+int x = int[123.456]
 ```
 
 In most languages, there exists a concept of "truthy" and "falsy":
@@ -62,7 +62,7 @@ The value of `arr` is an object, and therefor is "truthy". In Skull, you must ex
 
 ```
 # pseudo code
-Array[int32] x
+Array[int] x
 
 if [x.length == 0] [
   # true
@@ -75,18 +75,12 @@ Below is a table of built-in types, and their C/C++ equivalents:
 
 | Skull | C/C++ | Description |
 |:----- |:----- |:----------- |
-| `bool` | `bool` | Stores a `true` or `false` value. |
-| `int8` | `int8_t` | Signed 8 bit int |
-| `int16` | `int16_t` | Signed 16 bit int |
-| `int32` | `int32_t` | Signed 32 bit int |
-| `int64` | `int64_t` | Signed 64 bit int |
-| `float32` | `float` | 32 bit floating number |
-| `float64` | `double` | 64 bit floating number |
-| `float128` | `long double` | 128 bit floating number |
-| `decimal` | N/A | Lossless base10 decimal `*` |
+| `bool` | `bool` | Can only be `true` or `false` |
+| `int` | `int64_t` | Stores a signed 63 bit integer |
+| `float` | `long double` | 128 bit floating number |
 | `char` | `wchar_t` | UTF-16 code point `*` |
 | `str` | `wchar_t*` | String of UTF-16 characters `*`|
 | `T` | `template<typename T>` | Templated type `*` |
 | `auto` | `auto` | Automatically deduced type `*` |
 
-`*`: Subject to change
+`*` Subject to change

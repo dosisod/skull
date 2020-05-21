@@ -87,12 +87,7 @@ void make_default_types() {
 	free_types();
 
 	make_new_type(L"bool", 1);
-	make_new_type(L"int8", 1);
-	make_new_type(L"int16", 2);
-	make_new_type(L"int32", 4);
-	make_new_type(L"int64", 8);
-	make_new_type(L"float32", 4);
-	make_new_type(L"float64", 8);
-	make_new_type(L"float128", 16);
+	make_new_type(L"int", 8);
+	make_new_type(L"float", 16);
 	make_new_type(L"char", 2);
 }

@@ -69,7 +69,7 @@ bool test_find_type() {
 	type=NULL;
 	make_default_types();
 
-	find_type(&type, L"int32");
+	find_type(&type, L"int");
 
 	const bool pass=(type!=NULL);
 

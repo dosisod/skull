@@ -4,13 +4,13 @@
 #include "../../test/testing.h"
 
 bool test_create_variable() {
-	variable_t *var=make_variable(L"int32", L"x", true);
+	variable_t *var=make_variable(L"int", L"x", true);
 
 	const bool pass=(
-		wcscmp(var->type->name, L"int32")==0 &&
+		wcscmp(var->type->name, L"int")==0 &&
 		wcscmp(var->name, L"x")==0 &&
 		var->is_const &&
-		var->bytes == 4 &&
+		var->bytes==8 &&
 		var->mem != NULL
 	);
 
@@ -26,12 +26,12 @@ bool test_create_variable_with_invalid_type_fails() {
 }
 
 bool test_variable_write() {
-	variable_t *var=make_variable(L"int32", L"x", false);
+	variable_t *var=make_variable(L"int", L"x", false);
 
-	const uint32_t data=1234;
+	const int64_t data=1234;
 	const uint8_t ret=variable_write(var, &data);
 
-	uint32_t val=0;
+	int64_t val=0;
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
@@ -45,12 +45,12 @@ bool test_variable_write() {
 }
 
 bool test_variable_cannot_write_to_const() {
-	variable_t *var=make_variable(L"int32", L"x", true);
+	variable_t *var=make_variable(L"int", L"x", true);
 
-	const uint32_t data=1234;
+	const int64_t data=1234;
 	const uint8_t ret=variable_write(var, &data);
 
-	uint32_t val=0;
+	int64_t val=0;
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
@@ -64,11 +64,11 @@ bool test_variable_cannot_write_to_const() {
 }
 
 bool test_variable_read() {
-	variable_t *var=make_variable(L"int32", L"x", false);
-	const uint32_t data=1234;
+	variable_t *var=make_variable(L"int", L"x", false);
+	const int64_t data=1234;
 	variable_write(var, &data);
 
-	uint32_t val=0;
+	int64_t val=0;
 	variable_read(&val, var);
 
 	const bool pass=(val==1234);
@@ -79,7 +79,7 @@ bool test_variable_read() {
 }
 
 bool test_free_variable_t() {
-	variable_t *var=make_variable(L"int32", L"x", true);
+	variable_t *var=make_variable(L"int", L"x", true);
 
 	if (var==NULL || var->mem==NULL) {
 		free_variable_t(var);

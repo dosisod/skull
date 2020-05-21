@@ -19,7 +19,7 @@ bool test_make_context() {
 
 bool test_add_vars_to_context() {
 	context_t *ctx=make_context();
-	variable_t *var=make_variable(L"int32", L"x", true);
+	variable_t *var=make_variable(L"int", L"x", true);
 
 	context_add_var(ctx, var);
 
@@ -36,8 +36,8 @@ bool test_add_vars_to_context() {
 
 bool test_cannot_add_same_varname_to_context() {
 	context_t *ctx=make_context();
-	variable_t *var1=make_variable(L"int32", L"x", true);
-	variable_t *var2=make_variable(L"int32", L"x", true);
+	variable_t *var1=make_variable(L"int", L"x", true);
+	variable_t *var2=make_variable(L"int", L"x", true);
 
 	context_add_var(ctx, var1);
 	context_add_var(ctx, var2);
@@ -73,13 +73,13 @@ bool test_add_nested_context() {
 
 bool test_cannot_add_same_varname_to_sub_context() {
 	context_t *ctx=make_context();
-	variable_t *var1=make_variable(L"int32", L"x", true);
+	variable_t *var1=make_variable(L"int", L"x", true);
 	context_add_var(ctx, var1);
 
 	context_t *ctx_new=make_context();
 	context_add_ctx(ctx, ctx_new);
 
-	variable_t *var2=make_variable(L"int32", L"x", true);
+	variable_t *var2=make_variable(L"int", L"x", true);
 	context_add_var(ctx_new, var2);
 
 	const bool pass=(
@@ -97,7 +97,7 @@ bool test_cannot_add_same_varname_to_sub_context() {
 
 bool test_free_context() {
 	context_t *ctx=make_context();
-	variable_t *var=make_variable(L"int32", L"x", true);
+	variable_t *var=make_variable(L"int", L"x", true);
 
 	context_add_var(ctx, var);
 
