@@ -11,7 +11,7 @@ variable_t *eval_add(const variable_t *lhs, const variable_t *rhs) {
 	}
 
 	if (lhs->type==find_type(L"int")) {
-		variable_t *ret=make_variable(L"int", L"", false);
+		variable_t *ret=make_variable(L"int", L"tmp", false);
 
 		if (ret==NULL) {
 			return NULL;

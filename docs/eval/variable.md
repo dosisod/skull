@@ -1,5 +1,8 @@
 # src/eval/variable.h
 
+#### `bool is_valid_identifier(wchar_t wc)`
+Returns true the passed character the start of a valid identifier.
+
 #### `variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_const)`
 Make a variable called `name` with type `type`, and make it const if `is_const` is true.
 

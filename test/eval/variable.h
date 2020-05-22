@@ -78,6 +78,27 @@ bool test_variable_read() {
 	return pass;
 }
 
+bool test_is_valid_identifier() {
+	return (
+		is_valid_identifier(L'a') &&
+		is_valid_identifier(L'z') &&
+		is_valid_identifier(L'A') &&
+		is_valid_identifier(L'Z') &&
+		!is_valid_identifier(L'0') &&
+		!is_valid_identifier(L'_') &&
+		!is_valid_identifier(L'~')
+	);
+}
+
+bool test_make_variable_with_invalid_name_fails() {
+	variable_t *var=make_variable(L"int", L"1nvalid", false);
+
+	const bool pass=(var==NULL);
+	free_variable(var);
+
+	return pass;
+}
+
 bool test_free_variable() {
 	variable_t *var=make_variable(L"int", L"x", true);
 
@@ -106,6 +127,8 @@ void variable_test_self(bool *pass) {
 		test_variable_write,
 		test_variable_cannot_write_to_const,
 		test_variable_read,
+		test_is_valid_identifier,
+		test_make_variable_with_invalid_name_fails,
 		test_free_variable,
 		test_free_null_variable_is_ok,
 		NULL

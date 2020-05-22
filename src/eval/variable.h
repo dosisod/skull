@@ -19,6 +19,16 @@ typedef struct variable_t {
 } variable_t;
 
 /*
+Returns true the passed character the start of a valid identifier.
+*/
+bool is_valid_identifier(wchar_t wc) {
+	return (
+		(wc>=L'A' && wc<=L'Z') ||
+		(wc>=L'a' && wc<=L'z')
+	);
+}
+
+/*
 Make a variable called `name` with type `type`, and make it const if `is_const` is true.
 
 Returns `NULL` if var cannot be created, else pointer to created var.
@@ -26,7 +36,7 @@ Returns `NULL` if var cannot be created, else pointer to created var.
 variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_const) {
 	type_t *found_type=find_type(type);
 
-	if (found_type==NULL) {
+	if (found_type==NULL || !is_valid_identifier(*name)) {
 		return NULL;
 	}
 
