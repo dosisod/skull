@@ -88,7 +88,7 @@ bool test_cannot_add_same_varname_to_sub_context() {
 		ctx->vars[0]==var1
 	);
 
-	free_variable_t(var2);
+	free_variable(var2);
 	free_context(ctx_new);
 	free_context(ctx);
 

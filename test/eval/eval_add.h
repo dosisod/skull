@@ -17,9 +17,9 @@ bool test_adding_2_variables() {
 
 	const bool pass=(result==2);
 
-	free_variable_t(var1);
-	free_variable_t(var2);
-	free_variable_t(var3);
+	free_variable(var1);
+	free_variable(var2);
+	free_variable(var3);
 
 	return pass;
 }
@@ -31,8 +31,8 @@ bool test_adding_vars_with_different_types_fail() {
 
 	const bool pass=(var3==NULL);
 
-	free_variable_t(var1);
-	free_variable_t(var2);
+	free_variable(var1);
+	free_variable(var2);
 	free(var3);
 
 	return pass;

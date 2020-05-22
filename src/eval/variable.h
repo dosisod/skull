@@ -68,7 +68,9 @@ void variable_read(void *dest, const variable_t *var) {
 /*
 Free a given `variable_t` variable.
 */
-void free_variable_t(variable_t *var) {
-	free(var->mem);
-	free(var);
+void free_variable(variable_t *var) {
+	if (var!=NULL) {
+		free(var->mem);
+		free(var);
+	}
 }

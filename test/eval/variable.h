@@ -14,7 +14,7 @@ bool test_create_variable() {
 		var->mem != NULL
 	);
 
-	free_variable_t(var);
+	free_variable(var);
 
 	return pass;
 }
@@ -39,7 +39,7 @@ bool test_variable_write() {
 		val==1234
 	);
 
-	free_variable_t(var);
+	free_variable(var);
 
 	return pass;
 }
@@ -58,7 +58,7 @@ bool test_variable_cannot_write_to_const() {
 		val==0
 	);
 
-	free_variable_t(var);
+	free_variable(var);
 
 	return pass;
 }
@@ -73,20 +73,28 @@ bool test_variable_read() {
 
 	const bool pass=(val==1234);
 
-	free_variable_t(var);
+	free_variable(var);
 
 	return pass;
 }
 
-bool test_free_variable_t() {
+bool test_free_variable() {
 	variable_t *var=make_variable(L"int", L"x", true);
 
 	if (var==NULL || var->mem==NULL) {
-		free_variable_t(var);
+		free_variable(var);
 		return false;
 	}
 
-	free_variable_t(var);
+	free_variable(var);
+
+	return true;
+}
+
+bool test_free_null_variable_is_ok() {
+	variable_t *var=NULL;
+
+	free_variable(var);
 
 	return true;
 }
@@ -98,7 +106,8 @@ void variable_test_self(bool *pass) {
 		test_variable_write,
 		test_variable_cannot_write_to_const,
 		test_variable_read,
-		test_free_variable_t,
+		test_free_variable,
+		test_free_null_variable_is_ok,
 		NULL
 	};
 

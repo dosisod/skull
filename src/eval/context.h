@@ -71,7 +71,7 @@ void free_context(context_t *ctx) {
 	size_t tmp=0;
 
 	while (tmp < ctx->vars_used) {
-		free_variable_t(ctx->vars[tmp]);
+		free_variable(ctx->vars[tmp]);
 		tmp++;
 	}
 
