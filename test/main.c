@@ -7,6 +7,7 @@
 #include "parse/classify.h"
 #include "parse/types.h"
 
+#include "eval/eval_add.h"
 #include "eval/eval_bool.h"
 #include "eval/eval_integer.h"
 #include "eval/context.h"
@@ -34,6 +35,7 @@ int main() {
 	eval_integer_test_self(&passed);
 	variable_test_self(&passed);
 	context_test_self(&passed);
+	eval_add_test_self(&passed);
 
 	color_test_self(&passed);
 	str_test_self(&passed);
