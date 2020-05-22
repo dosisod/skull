@@ -65,11 +65,9 @@ bool test_make_new_type_rejects_non_unique_type() {
 }
 
 bool test_find_type() {
-	type_t *type;
-	type=NULL;
 	make_default_types();
 
-	find_type(&type, L"int");
+	type_t *type=find_type(L"int");
 
 	const bool pass=(type!=NULL);
 
