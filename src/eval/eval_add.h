@@ -23,5 +23,18 @@ variable_t *eval_add(const variable_t *lhs, const variable_t *rhs) {
 		return ret;
 	}
 
+	if (lhs->type==find_type(L"float")) {
+		variable_t *ret=make_variable(L"float", L"tmp", false);
+
+		if (ret==NULL) {
+			return NULL;
+		}
+
+		long double tmp=(*(long double*)lhs->mem) + (*(long double*)rhs->mem);
+
+		memcpy(ret->mem, &tmp, sizeof(long double));
+		return ret;
+	}
+
 	return NULL;
 }
