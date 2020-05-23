@@ -9,6 +9,7 @@
 
 #include "eval/eval_add.h"
 #include "eval/eval_bool.h"
+#include "eval/eval_float.h"
 #include "eval/eval_integer.h"
 #include "eval/context.h"
 #include "eval/variable.h"
@@ -32,6 +33,7 @@ int main() {
 	classifier_test_self(&passed);
 
 	eval_bool_test_self(&passed);
+	eval_float_test_self(&passed);
 	eval_integer_test_self(&passed);
 	variable_test_self(&passed);
 	context_test_self(&passed);
