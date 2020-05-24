@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <wchar.h>
 
+#include "parse/ast/node.h"
 #include "parse/constants.h"
 #include "parse/tokenize.h"
 #include "parse/classify.h"
@@ -27,6 +28,8 @@ int main() {
 	bool passed=true;
 
 	testing_test_self(&passed);
+
+	ast_node_test_self(&passed);
 	constants_test_self(&passed);
 	tokenizer_test_self(&passed);
 	types_test_self(&passed);
