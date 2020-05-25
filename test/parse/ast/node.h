@@ -97,6 +97,23 @@ bool test_ast_token_cmp_missing_tokens() {
 	return pass;
 }
 
+bool test_make_ast_tree_variable_def() {
+	const wchar_t *code=L"int x = 0";
+	make_default_types();
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_VAR_DEF &&
+		node->begin==code &&
+		node->end==(code + 9)
+	);
+
+	free_types();
+	free(node);
+
+	return pass;
+}
+
 void ast_node_test_self(bool *pass) {
 	tests_t tests={
 		test_make_ast_node_struct,
@@ -104,6 +121,7 @@ void ast_node_test_self(bool *pass) {
 		test_ast_token_cmp,
 		test_ast_token_cmp_extra_tokens,
 		test_ast_token_cmp_missing_tokens,
+		test_make_ast_tree_variable_def,
 		NULL
 	};
 

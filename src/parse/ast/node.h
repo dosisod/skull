@@ -9,6 +9,7 @@
 #include "../tokenize.h"
 
 #define AST_NODE_UNKNOWN 0
+#define AST_NODE_VAR_DEF 1
 
 typedef struct ast_node_t {
 	uint8_t node_type;
@@ -41,15 +42,15 @@ The last `-1` is to tell the function to stop iterating.
 
 If all the args match, return last token matched, else, the passed `token`.
 */
-const token_t *ast_token_cmp(const token_t *token, ...) {
-	const token_t *head=token;
+token_t *ast_token_cmp(token_t *token, ...) {
+	token_t *head=token;
+	token_t *last=head;
 
 	va_list args;
 	va_start(args, token);
 
 	int token_type=va_arg(args, int);
 
-	const token_t *last=head;
 	while (token!=NULL && token_type!=-1) {
 		if (token->token_type!=token_type) {
 			return head;
@@ -65,4 +66,33 @@ const token_t *ast_token_cmp(const token_t *token, ...) {
 		return last;
 	}
 	return head;
+}
+
+/*
+makes an AST (abstract syntax tree) from a given string.
+*/
+ast_node_t *make_ast_tree(const wchar_t *code) {
+	token_t *token=tokenize(code);
+	token_t *last=token;
+	classify_tokens(token);
+
+	ast_node_t *node=make_ast_node();
+
+	token=ast_token_cmp(
+		token,
+		TOKEN_TYPE,
+		TOKEN_UNKNOWN,
+		TOKEN_OPERATOR,
+		TOKEN_INT_CONST,
+		-1
+	);
+
+	if (token!=last) {
+		node->node_type=AST_NODE_VAR_DEF;
+		node->begin=last->begin;
+		node->end=token->end;
+	}
+
+	free_tokens(token);
+	return node;
 }
