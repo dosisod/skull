@@ -72,6 +72,23 @@ token_t *ast_token_cmp(token_t *token, ...) {
 }
 
 /*
+Push a new AST node to `node` of type `node_type` if `token` and `last` do not match.
+
+Use after calling `ast_token_cmp`.
+*/
+void push_ast_node_if(token_t *token, token_t *last, uint8_t node_type, ast_node_t **node) {
+	if (token!=last) {
+		(*node)->node_type=node_type;
+		(*node)->begin=last->begin;
+		(*node)->end=token->end;
+
+		ast_node_t *tmp=make_ast_node();
+		(*node)->next=tmp;
+		(*node)=tmp;
+	}
+}
+
+/*
 Makes an AST (abstract syntax tree) from a given string.
 */
 ast_node_t *make_ast_tree(const wchar_t *code) {
@@ -94,15 +111,7 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 			-1
 		);
 
-		if (token!=last) {
-			node->node_type=AST_NODE_VAR_DEF;
-			node->begin=last->begin;
-			node->end=token->end;
-
-			ast_node_t *tmp=make_ast_node();
-			node->next=tmp;
-			node=tmp;
-		}
+		push_ast_node_if(token, last, AST_NODE_VAR_DEF, &node);
 
 		token=token->next;
 	}
