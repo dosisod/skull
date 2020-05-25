@@ -15,5 +15,5 @@ The last `-1` is to tell the function to stop iterating.
 If all the args match, return last token matched, else, the passed `token`.
 
 #### `ast_node_t *make_ast_tree(const wchar_t *code)`
-makes an AST (abstract syntax tree) from a given string.
+Makes an AST (abstract syntax tree) from a given string.
 

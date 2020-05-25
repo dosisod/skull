@@ -16,6 +16,8 @@ typedef struct ast_node_t {
 
 	const wchar_t *begin;
 	const wchar_t *end;
+
+	struct ast_node_t *next;
 } ast_node_t;
 
 /*
@@ -27,6 +29,7 @@ ast_node_t *make_ast_node() {
 	node->node_type=AST_NODE_UNKNOWN;
 	node->begin=NULL;
 	node->end=NULL;
+	node->next=NULL;
 
 	return node;
 }
@@ -69,30 +72,41 @@ token_t *ast_token_cmp(token_t *token, ...) {
 }
 
 /*
-makes an AST (abstract syntax tree) from a given string.
+Makes an AST (abstract syntax tree) from a given string.
 */
 ast_node_t *make_ast_tree(const wchar_t *code) {
 	token_t *token=tokenize(code);
-	token_t *last=token;
+	token_t *last;
+
 	classify_tokens(token);
 
 	ast_node_t *node=make_ast_node();
+	ast_node_t *head=node;
 
-	token=ast_token_cmp(
-		token,
-		TOKEN_TYPE,
-		TOKEN_UNKNOWN,
-		TOKEN_OPERATOR,
-		TOKEN_INT_CONST,
-		-1
-	);
+	while (token!=NULL) {
+		last=token;
+		token=ast_token_cmp(
+			token,
+			TOKEN_TYPE,
+			TOKEN_UNKNOWN,
+			TOKEN_OPERATOR,
+			TOKEN_INT_CONST,
+			-1
+		);
 
-	if (token!=last) {
-		node->node_type=AST_NODE_VAR_DEF;
-		node->begin=last->begin;
-		node->end=token->end;
+		if (token!=last) {
+			node->node_type=AST_NODE_VAR_DEF;
+			node->begin=last->begin;
+			node->end=token->end;
+
+			ast_node_t *tmp=make_ast_node();
+			node->next=tmp;
+			node=tmp;
+		}
+
+		token=token->next;
 	}
 
 	free_tokens(token);
-	return node;
+	return head;
 }
