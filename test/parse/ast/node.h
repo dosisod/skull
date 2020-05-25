@@ -33,10 +33,31 @@ bool test_make_ast_node() {
 	return pass;
 }
 
+bool test_ast_token_cmp() {
+	const wchar_t *code=L"int x = 0";
+	token_t *token=tokenize(code);
+	make_default_types();
+	classify_tokens(token);
+
+	const bool pass=ast_token_cmp(
+		token,
+		TOKEN_TYPE,
+		TOKEN_UNKNOWN,
+		TOKEN_OPERATOR,
+		TOKEN_INT_CONST
+	);
+
+	free_types();
+	free_tokens(token);
+
+	return pass;
+}
+
 void ast_node_test_self(bool *pass) {
 	tests_t tests={
 		test_make_ast_node_struct,
 		test_make_ast_node,
+		test_ast_token_cmp,
 		NULL
 	};
 
