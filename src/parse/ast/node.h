@@ -31,21 +31,38 @@ ast_node_t *make_ast_node() {
 }
 
 /*
-Returns true if the passed token matches the passed token types.
+Compare tokens agains a variable amount of token types (`...`)
 
-For example, `ast_token_cmp(token, 0, 1)` will check to see that `token` and `token->next` are of type `0` and `1` respectively.
+Each additional argument will be compared with the next token after the last token.
+
+For example, `ast_token_cmp(token, 0, 1, 2, -1)` will check up until `token->next->next`.
+
+The last `-1` is to tell the function to stop iterating.
+
+If all the args match, return last token matched, else, the passed `token`.
 */
-bool ast_token_cmp(const token_t* token, ...) {
+const token_t *ast_token_cmp(const token_t *token, ...) {
+	const token_t *head=token;
+
 	va_list args;
 	va_start(args, token);
 
-	while (token!=NULL) {
-		if (token->token_type!=va_arg(args, int)) {
-			return false;
+	int token_type=va_arg(args, int);
+
+	const token_t *last=head;
+	while (token!=NULL && token_type!=-1) {
+		if (token->token_type!=token_type) {
+			return head;
 		}
+		token_type=va_arg(args, int);
+		last=token;
 		token=token->next;
 	}
 
 	va_end(args);
-	return true;
+
+	if (token_type==-1) {
+		return last;
+	}
+	return head;
 }

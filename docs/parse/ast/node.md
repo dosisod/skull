@@ -3,8 +3,14 @@
 #### `ast_node_t *make_ast_node()`
 Makes an ast_node_t with default values
 
-#### `bool ast_token_cmp(const token_t* token, ...)`
-Returns true if the passed token matches the passed token types.
+#### `const token_t *ast_token_cmp(const token_t *token, ...)`
+Compare tokens agains a variable amount of token types (`...`)
 
-For example, `ast_token_cmp(token, 0, 1)` will check to see that `token` and `token->next` are of type `0` and `1` respectively.
+Each additional argument will be compared with the next token after the last token.
+
+For example, `ast_token_cmp(token, 0, 1, 2, -1)` will check up until `token->next->next`.
+
+The last `-1` is to tell the function to stop iterating.
+
+If all the args match, return last token matched, else, the passed `token`.
 
