@@ -29,9 +29,9 @@ wchar_t *repl_eval(wchar_t *str) {
 	token_t *token=tokenize(str);
 	classify_tokens(token);
 
-	if (token->token_type==TOKEN_TYPE &&
+	if (token->token_type==TOKEN_IDENTIFIER &&
 		token->next!=NULL &&
-		token->next->token_type==TOKEN_IDENTIFIER &&
+		token->next->token_type==TOKEN_TYPE &&
 		token->next->next!=NULL &&
 		token->next->next->token_type==TOKEN_OPERATOR &&
 		token->next->next->next!=NULL &&
@@ -39,6 +39,11 @@ wchar_t *repl_eval(wchar_t *str) {
 	{
 		ret=NULL;
 	}
+
+	else if (token_cmp(L"return", token)) {
+		exit(0);
+	}
+
 
 	free_tokens(token);
 	return ret;

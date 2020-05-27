@@ -10,7 +10,7 @@ bool test_repl_number_echo() {
 }
 
 bool test_repl_variable_assign() {
-	const wchar_t *output=repl_eval(L"int x = 0");
+	const wchar_t *output=repl_eval(L"x: int = 0");
 
 	return output==NULL;
 }
