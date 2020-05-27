@@ -7,7 +7,7 @@ The below guidelines are not enforced, but are strongly recommended.
 Skull programs should use 2 space indentation:
 
 ```
-main[] int [
+main[] int -> [
   print["hello world!"]
 
   return 0
@@ -21,8 +21,8 @@ No matter what you chose, your use of indentation should remain constant.
 Function and variable names should be in `snake_case`:
 
 ```
-function_name[] int [
-  int variable_name = 0
+function_name[] int -> [
+  variable_name: int = 0
 
   return variable_name
 ]

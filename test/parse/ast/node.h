@@ -37,15 +37,15 @@ bool test_make_ast_node() {
 }
 
 bool test_ast_token_cmp() {
-	const wchar_t *code=L"int x = 0";
+	const wchar_t *code=L"x: int = 0";
 	token_t *token=tokenize(code);
 	make_default_types();
 	classify_tokens(token);
 
 	const bool pass=ast_token_cmp(
 		token,
-		TOKEN_TYPE,
 		TOKEN_IDENTIFIER,
+		TOKEN_TYPE,
 		TOKEN_OPERATOR,
 		TOKEN_INT_CONST,
 		-1
@@ -58,15 +58,15 @@ bool test_ast_token_cmp() {
 }
 
 bool test_ast_token_cmp_extra_tokens() {
-	const wchar_t *code=L"int x = 0 extra";
+	const wchar_t *code=L"x: int = 0 extra";
 	token_t *token=tokenize(code);
 	make_default_types();
 	classify_tokens(token);
 
 	const bool pass=ast_token_cmp(
 		token,
-		TOKEN_TYPE,
 		TOKEN_IDENTIFIER,
+		TOKEN_TYPE,
 		TOKEN_OPERATOR,
 		TOKEN_INT_CONST,
 		-1
@@ -79,15 +79,15 @@ bool test_ast_token_cmp_extra_tokens() {
 }
 
 bool test_ast_token_cmp_missing_tokens() {
-	const wchar_t *code=L"int x = 0";
+	const wchar_t *code=L"x: int = 0";
 	token_t *token=tokenize(code);
 	make_default_types();
 	classify_tokens(token);
 
 	const bool pass=ast_token_cmp(
 		token,
-		TOKEN_TYPE,
 		TOKEN_IDENTIFIER,
+		TOKEN_TYPE,
 		TOKEN_OPERATOR,
 		TOKEN_INT_CONST,
 		TOKEN_UNKNOWN,
@@ -101,7 +101,7 @@ bool test_ast_token_cmp_missing_tokens() {
 }
 
 bool test_push_ast_node_if() {
-	const wchar_t *code=L"int x = 0";
+	const wchar_t *code=L"x: int = 0";
 	token_t *token=tokenize(code);
 	token_t *last=token;
 
@@ -113,8 +113,8 @@ bool test_push_ast_node_if() {
 
 	token=ast_token_cmp(
 		token,
-		TOKEN_TYPE,
 		TOKEN_IDENTIFIER,
+		TOKEN_TYPE,
 		TOKEN_OPERATOR,
 		TOKEN_INT_CONST,
 		-1
@@ -131,14 +131,14 @@ bool test_push_ast_node_if() {
 }
 
 bool test_make_ast_tree_variable_def() {
-	const wchar_t *code=L"int x = 0";
+	const wchar_t *code=L"x: int = 0";
 	make_default_types();
 	ast_node_t *node=make_ast_tree(code);
 
 	const bool pass=(
 		node->node_type==AST_NODE_VAR_DEF &&
 		node->begin==code &&
-		node->end==(code + 9) &&
+		node->end==(code + 10) &&
 		node->next!=NULL
 	);
 
@@ -149,18 +149,18 @@ bool test_make_ast_tree_variable_def() {
 }
 
 bool test_make_ast_tree_many_lines() {
-	const wchar_t *code=L"int x = 0\nint y = 0";
+	const wchar_t *code=L"x: int = 0\ny: int = 0";
 	make_default_types();
 	ast_node_t *node=make_ast_tree(code);
 
 	const bool pass=(
 		node->node_type==AST_NODE_VAR_DEF &&
 		node->begin==code &&
-		node->end==(code + 9) &&
+		node->end==(code + 10) &&
 		node->next!=NULL &&
 		node->next->node_type==AST_NODE_VAR_DEF &&
-		node->next->begin==(code + 10) &&
-		node->next->end==(code + 19)
+		node->next->begin==(code + 11) &&
+		node->next->end==(code + 21)
 	);
 
 	free_types();

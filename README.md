@@ -11,7 +11,7 @@ import io.print
 
 # this is a comment!
 
-fn main[] int [
+main[] int -> [
   print["hello world!"]
 
   return 0

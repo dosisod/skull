@@ -86,7 +86,7 @@ bool is_operator_token(const token_t *token) {
 Returns true if a token is a function token.
 */
 bool is_function_token(const token_t *token) {
-	return token_cmp(L"fn", token);
+	return token_cmp(L"->", token);
 }
 
 /*

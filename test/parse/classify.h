@@ -65,12 +65,12 @@ bool test_is_type_token() {
 }
 
 bool test_is_function_token() {
-	const wchar_t *code=L"fn main";
+	const wchar_t *code=L"main[] ->";
 	token_t *token=tokenize(code);
 
 	const bool pass=(
-		is_function_token(token) &&
-		!is_function_token(token->next)
+		!is_function_token(token) &&
+		is_function_token(token->next->next->next)
 	);
 
 	free_tokens(token);
@@ -205,13 +205,13 @@ bool test_token_type() {
 }
 
 bool test_token_function() {
-	const wchar_t *code=L"fn main";
+	const wchar_t *code=L"main[] ->";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
-		t->token_type==TOKEN_FUNCTION &&
-		t->next->token_type!=TOKEN_FUNCTION
+		t->token_type!=TOKEN_FUNCTION &&
+		t->next->next->next->token_type==TOKEN_FUNCTION
 	);
 
 	free_tokens(t);

@@ -12,14 +12,14 @@ To be more persice:
 In Skull, variables are const by default:
 
 ```
-int x = 0
+x: int = 0
 x = 1  # error, cannot assign to const
 ```
 
 To make a non-const variable, use `mut`:
 
 ```
-mut int x = 0
+x: mut int = 0
 x = 1
 ```
 
@@ -44,7 +44,7 @@ Here, `123.456` is implicitly converted from `float` to `int`.
 In Skull, you must explicitly cast to `int`:
 
 ```
-int x = int[123.456]
+x: int = int[123.456]
 ```
 
 In most languages, there exists a concept of "truthy" and "falsy":
@@ -62,7 +62,7 @@ The value of `arr` is an object, and therefor is "truthy". In Skull, you must ex
 
 ```
 # pseudo code
-Array[int] x
+x: Array[int]
 
 if [x.length == 0] [
   # true
