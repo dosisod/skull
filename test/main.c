@@ -13,6 +13,7 @@
 #include "eval/eval_float.h"
 #include "eval/eval_integer.h"
 #include "eval/context.h"
+#include "eval/repl.h"
 #include "eval/variable.h"
 
 #include "common/color.h"
@@ -41,6 +42,7 @@ int main() {
 	variable_test_self(&passed);
 	context_test_self(&passed);
 	eval_add_test_self(&passed);
+	repl_test_self(&passed);
 
 	color_test_self(&passed);
 	str_test_self(&passed);
