@@ -31,7 +31,7 @@ wchar_t *repl_eval(wchar_t *str) {
 
 	if (token->token_type==TOKEN_TYPE &&
 		token->next!=NULL &&
-		token->next->token_type==TOKEN_UNKNOWN &&
+		token->next->token_type==TOKEN_IDENTIFIER &&
 		token->next->next!=NULL &&
 		token->next->next->token_type==TOKEN_OPERATOR &&
 		token->next->next->next!=NULL &&

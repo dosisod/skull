@@ -45,7 +45,7 @@ bool test_ast_token_cmp() {
 	const bool pass=ast_token_cmp(
 		token,
 		TOKEN_TYPE,
-		TOKEN_UNKNOWN,
+		TOKEN_IDENTIFIER,
 		TOKEN_OPERATOR,
 		TOKEN_INT_CONST,
 		-1
@@ -66,7 +66,7 @@ bool test_ast_token_cmp_extra_tokens() {
 	const bool pass=ast_token_cmp(
 		token,
 		TOKEN_TYPE,
-		TOKEN_UNKNOWN,
+		TOKEN_IDENTIFIER,
 		TOKEN_OPERATOR,
 		TOKEN_INT_CONST,
 		-1
@@ -87,7 +87,7 @@ bool test_ast_token_cmp_missing_tokens() {
 	const bool pass=ast_token_cmp(
 		token,
 		TOKEN_TYPE,
-		TOKEN_UNKNOWN,
+		TOKEN_IDENTIFIER,
 		TOKEN_OPERATOR,
 		TOKEN_INT_CONST,
 		TOKEN_UNKNOWN,
@@ -114,7 +114,7 @@ bool test_push_ast_node_if() {
 	token=ast_token_cmp(
 		token,
 		TOKEN_TYPE,
-		TOKEN_UNKNOWN,
+		TOKEN_IDENTIFIER,
 		TOKEN_OPERATOR,
 		TOKEN_INT_CONST,
 		-1

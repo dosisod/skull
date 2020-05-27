@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "../parse/classify.h"
 #include "../parse/tokenize.h"
 #include "../parse/types.h"
 
@@ -17,16 +18,6 @@ typedef struct variable_t {
 	size_t bytes;
 	uint8_t *mem;
 } variable_t;
-
-/*
-Returns true the passed character the start of a valid identifier.
-*/
-bool is_valid_identifier(wchar_t wc) {
-	return (
-		(wc>=L'A' && wc<=L'Z') ||
-		(wc>=L'a' && wc<=L'z')
-	);
-}
 
 /*
 Make a variable called `name` with type `type`, and make it const if `is_const` is true.

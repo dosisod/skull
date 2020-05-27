@@ -220,7 +220,7 @@ bool test_token_function() {
 }
 
 bool test_token_unknown() {
-	const wchar_t *code=L"garbage_value";
+	const wchar_t *code=L"123garbage_value";
 	token_t *t=tokenize(code);
 	classify_token(t);
 
@@ -285,6 +285,28 @@ bool test_token_str_constant() {
 	return pass;
 }
 
+bool test_is_valid_identifier() {
+	return (
+		is_valid_identifier(L'a') &&
+		is_valid_identifier(L'z') &&
+		is_valid_identifier(L'A') &&
+		is_valid_identifier(L'Z') &&
+		!is_valid_identifier(L'0') &&
+		!is_valid_identifier(L'_') &&
+		!is_valid_identifier(L'~')
+	);
+}
+
+bool test_is_valid_identifier_token() {
+	token_t *t=tokenize(L"x");
+	classify_tokens(t);
+
+	const bool pass=(t->token_type==TOKEN_IDENTIFIER);
+
+	free(t);
+	return pass;
+}
+
 bool test_token_classifier() {
 	const wchar_t *code=L"[ ]";
 	token_t *t=tokenize(code);
@@ -324,6 +346,8 @@ void classifier_test_self(bool *pass) {
 		test_token_bool_constant,
 		test_token_char_constant,
 		test_token_str_constant,
+		test_is_valid_identifier,
+		test_is_valid_identifier_token,
 		test_token_classifier,
 		NULL
 	};

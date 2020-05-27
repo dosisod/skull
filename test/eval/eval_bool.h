@@ -30,9 +30,9 @@ bool test_eval_equality_comparison() {
 
 bool test_eval_bool_with_errors() {
 	return (
-		eval_bool(L"true == not_a_bool")==EVAL_ERROR &&
-		eval_bool(L"not_a_bool == true")==EVAL_ERROR &&
-		eval_bool(L"not_a_bool == not_a_bool")==EVAL_ERROR
+		eval_bool(L"true == 1nvalid")==EVAL_ERROR &&
+		eval_bool(L"1nvalid == true")==EVAL_ERROR &&
+		eval_bool(L"1nvalid == 1nvalid")==EVAL_ERROR
 	);
 }
 

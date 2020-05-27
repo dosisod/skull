@@ -105,7 +105,7 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 		token=ast_token_cmp(
 			token,
 			TOKEN_TYPE,
-			TOKEN_UNKNOWN,
+			TOKEN_IDENTIFIER,
 			TOKEN_OPERATOR,
 			TOKEN_INT_CONST,
 			-1

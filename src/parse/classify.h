@@ -17,6 +17,7 @@
 #define TOKEN_BOOL_CONST 9
 #define TOKEN_CHAR_CONST 10
 #define TOKEN_STR_CONST 11
+#define TOKEN_IDENTIFIER 12
 
 const wchar_t *TOKEN_KEYWORDS[] = {
 	L"return",
@@ -202,6 +203,23 @@ bool is_constant_str_token(const token_t *token) {
 }
 
 /*
+Returns true the passed character the start of a valid identifier.
+*/
+bool is_valid_identifier(wchar_t wc) {
+	return (
+		(wc>=L'A' && wc<=L'Z') ||
+		(wc>=L'a' && wc<=L'z')
+	);
+}
+
+/*
+Return true if passed token is a valid identifier.
+*/
+bool is_valid_identifier_token(const token_t *token) {
+	return is_valid_identifier(*token->begin);
+}
+
+/*
 Classify the token `token`.
 */
 void classify_token(token_t *token) {
@@ -237,6 +255,9 @@ void classify_token(token_t *token) {
 	}
 	else if (is_constant_str_token(token)) {
 		token->token_type=TOKEN_STR_CONST;
+	}
+	else if (is_valid_identifier_token(token)) {
+		token->token_type=TOKEN_IDENTIFIER;
 	}
 }
 
