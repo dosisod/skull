@@ -1,24 +1,48 @@
 #include <stdbool.h>
 
+#include "../../src/eval/context.h"
 #include "../../src/eval/repl.h"
 #include "../../test/testing.h"
 
 bool test_repl_number_echo() {
-	const wchar_t *output=repl_eval(L"0");
+	const wchar_t *output=repl_eval(L"0", NULL);
 
 	return wcscmp(L"0", output)==0;
 }
 
 bool test_repl_variable_assign() {
-	const wchar_t *output=repl_eval(L"x: int = 0");
+	const wchar_t *output=repl_eval(L"x: int = 0", NULL);
 
 	return output==NULL;
+}
+
+bool test_repl_variable_assign_in_context() {
+	context_t *ctx=make_context();
+
+	const wchar_t *output=repl_eval(L"x: int = 1234", ctx);
+
+	if (ctx->vars_used!=1) {
+		free_context(ctx);
+		return false;
+	}
+
+	int64_t ret=0;
+	variable_read(&ret, ctx->vars[0]);
+
+	const bool pass=(
+		output==NULL &&
+		ret==1234
+	);
+
+	free_context(ctx);
+	return pass;
 }
 
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_number_echo,
 		test_repl_variable_assign,
+		test_repl_variable_assign_in_context,
 		NULL
 	};
 

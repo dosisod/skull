@@ -20,10 +20,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (strcmp(argv[1], "-i")==0) {
+		context_t *ctx=make_context();
+		make_default_types();
+
 		wchar_t *line;
 		while (true) {
 			line=repl_read();
-			wprintf(L"%ls\n", repl_eval(line));
+			wprintf(L"%ls\n", repl_eval(line, ctx));
 
 			free(line);
 		}

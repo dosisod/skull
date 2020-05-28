@@ -22,6 +22,6 @@ This function should be called at the head of the linked list.
 #### `size_t token_len(const token_t *token)`
 Returns the character length of the passed token
 
-#### `bool token_cmp(const wchar_t* str, const token_t *token)`
+#### `bool token_cmp(const wchar_t *str, const token_t *token)`
 Returns true if `str` is equal to the value of `token`.
 
