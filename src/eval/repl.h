@@ -61,7 +61,7 @@ wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 			}
 		}
 
-		ret=NULL;
+		ret=NULL; // NOLINT
 	}
 
 	else if (token_cmp(L"return", token)) {
