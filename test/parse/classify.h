@@ -59,6 +59,7 @@ bool test_is_type_token() {
 		!is_type_token(token->next)
 	);
 
+	free_types();
 	free_tokens(token);
 
 	return pass;
@@ -192,6 +193,7 @@ bool test_token_operator() {
 bool test_token_type() {
 	const wchar_t *code=L"int not_a_type";
 	token_t *t=tokenize(code);
+	make_default_types();
 	classify_tokens(t);
 
 	const bool pass=(
@@ -199,6 +201,7 @@ bool test_token_type() {
 		t->next->token_type!=TOKEN_TYPE
 	);
 
+	free_types();
 	free_tokens(t);
 
 	return pass;

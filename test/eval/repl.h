@@ -11,17 +11,21 @@ bool test_repl_number_echo() {
 }
 
 bool test_repl_variable_assign() {
+	make_default_types();
 	const wchar_t *output=repl_eval(L"x: int = 0", NULL);
 
+	free_types();
 	return output==NULL;
 }
 
 bool test_repl_variable_assign_in_context() {
 	context_t *ctx=make_context();
 
+	make_default_types();
 	const wchar_t *output=repl_eval(L"x: int = 1234", ctx);
 
 	if (ctx->vars_used!=1) {
+		free_types();
 		free_context(ctx);
 		return false;
 	}
@@ -34,6 +38,7 @@ bool test_repl_variable_assign_in_context() {
 		ret==1234
 	);
 
+	free_types();
 	free_context(ctx);
 	return pass;
 }

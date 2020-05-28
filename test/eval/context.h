@@ -19,6 +19,7 @@ bool test_make_context() {
 
 bool test_context_contains_var() {
 	context_t *ctx=make_context();
+	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
 	variable_t *var2=make_variable(L"int", L"y", true);
 
@@ -29,6 +30,7 @@ bool test_context_contains_var() {
 		!context_contains_var(ctx, var2)
 	);
 
+	free_types();
 	free(var1);
 	free(var2);
 	free(ctx);
@@ -38,6 +40,7 @@ bool test_context_contains_var() {
 
 bool test_context_find_name() {
 	context_t *ctx=make_context();
+	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
 	context_add_var(ctx, var);
@@ -47,6 +50,7 @@ bool test_context_find_name() {
 		context_find_name(ctx, L"y")==NULL
 	);
 
+	free_types();
 	free(var);
 	free(ctx);
 
@@ -55,6 +59,7 @@ bool test_context_find_name() {
 
 bool test_add_vars_to_context() {
 	context_t *ctx=make_context();
+	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
 	context_add_var(ctx, var);
@@ -64,6 +69,7 @@ bool test_add_vars_to_context() {
 		ctx->vars[0]==var
 	);
 
+	free_types();
 	free(var);
 	free(ctx);
 
@@ -72,6 +78,7 @@ bool test_add_vars_to_context() {
 
 bool test_cannot_add_same_varname_to_context() {
 	context_t *ctx=make_context();
+	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
 	variable_t *var2=make_variable(L"int", L"x", true);
 
@@ -83,6 +90,7 @@ bool test_cannot_add_same_varname_to_context() {
 		ctx->vars[0]==var1
 	);
 
+	free_types();
 	free(var1);
 	free(var2);
 	free(ctx);
@@ -109,6 +117,7 @@ bool test_add_nested_context() {
 
 bool test_cannot_add_same_varname_to_sub_context() {
 	context_t *ctx=make_context();
+	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
 	context_add_var(ctx, var1);
 
@@ -124,6 +133,7 @@ bool test_cannot_add_same_varname_to_sub_context() {
 		ctx->vars[0]==var1
 	);
 
+	free_types();
 	free_variable(var2);
 	free_context(ctx_new);
 	free_context(ctx);
@@ -133,10 +143,12 @@ bool test_cannot_add_same_varname_to_sub_context() {
 
 bool test_free_context() {
 	context_t *ctx=make_context();
+	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
 	context_add_var(ctx, var);
 
+	free_types();
 	free_context(ctx);
 
 	return true;
