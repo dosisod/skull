@@ -3,6 +3,9 @@
 #### `context_t *make_context()`
 Returns a new variable context.
 
+#### `variable_t *context_find_name(context_t *ctx, const wchar_t *name)`
+Returns pointer to variable with matching `name` if found, else `NULL`
+
 #### `bool context_contains_var(context_t *ctx, const variable_t *var)`
 Returns true if `var` is defined in a given context `ctx`.
 

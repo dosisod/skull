@@ -26,6 +26,25 @@ context_t *make_context() {
 }
 
 /*
+Returns pointer to variable with matching `name` if found, else `NULL`
+*/
+variable_t *context_find_name(context_t *ctx, const wchar_t *name) {
+	size_t tmp=0;
+
+	while (tmp < ctx->vars_used) {
+		if (wcscmp(ctx->vars[tmp]->name, name)==0) {
+			return ctx->vars[tmp];
+		}
+		tmp++;
+	}
+
+	if (ctx->parent) {
+		return context_find_name(ctx->parent, name);
+	}
+	return NULL;
+}
+
+/*
 Returns true if `var` is defined in a given context `ctx`.
 */
 bool context_contains_var(context_t *ctx, const variable_t *var) {
