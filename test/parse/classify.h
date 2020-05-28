@@ -307,6 +307,20 @@ bool test_is_valid_identifier_token() {
 	return pass;
 }
 
+bool test_identifier_clip_trailing_colon() {
+	const wchar_t *code=L"x: int = 0";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_IDENTIFIER &&
+		t->end==(code + 1)
+	);
+
+	free(t);
+	return pass;
+}
+
 bool test_token_classifier() {
 	const wchar_t *code=L"[ ]";
 	token_t *t=tokenize(code);
@@ -348,6 +362,7 @@ void classifier_test_self(bool *pass) {
 		test_token_str_constant,
 		test_is_valid_identifier,
 		test_is_valid_identifier_token,
+		test_identifier_clip_trailing_colon,
 		test_token_classifier,
 		NULL
 	};

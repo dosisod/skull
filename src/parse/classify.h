@@ -258,6 +258,10 @@ void classify_token(token_t *token) {
 	}
 	else if (is_valid_identifier_token(token)) {
 		token->token_type=TOKEN_IDENTIFIER;
+
+		if (*(token->end - 1)==L':') {
+			token->end--;
+		}
 	}
 }
 
