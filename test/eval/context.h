@@ -115,7 +115,7 @@ bool test_cannot_add_same_varname_to_sub_context() {
 	context_t *ctx_new=make_context();
 	context_add_ctx(ctx, ctx_new);
 
-	variable_t *var2=make_variable(L"int", L"x", true);
+	variable_t *var2=make_variable(L"int", L"x", true); // NOLINT
 	context_add_var(ctx_new, var2);
 
 	const bool pass=(
