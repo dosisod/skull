@@ -40,11 +40,8 @@ wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		token->next->next->next->token_type==TOKEN_INT_CONST)
 	{
 		if (ctx!=NULL) {
-			wchar_t type[token->next->end - token->next->begin];
-			wcslcpy(type, token->next->begin, token_len(token->next));
-
-			wchar_t name[token->end - token->begin];
-			wcslcpy(name, token->begin, token_len(token));
+			MAKE_TOKEN_BUF(type, token->next);
+			MAKE_TOKEN_BUF(name, token);
 
 			variable_t *var=make_variable(type, name, false);
 

@@ -51,7 +51,7 @@ bool context_contains_var(context_t *ctx, const variable_t *var) {
 	size_t tmp=0;
 
 	while (tmp < ctx->vars_used) {
-		if (wcscmp(ctx->vars[tmp]->name, var->name)==0) {
+		if (wcscmp(ctx->vars[tmp]->name, var->name)==0) { // NOLINT
 			return true;
 		}
 		tmp++;

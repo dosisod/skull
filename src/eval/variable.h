@@ -33,7 +33,11 @@ variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_cons
 
 	variable_t *var=malloc(sizeof(variable_t));
 
-	var->name=name;
+	const size_t len=wcslen(name);
+	const wchar_t *name_copy=malloc((len + 1) * sizeof(wchar_t));
+	wcslcpy((wchar_t*)name_copy, name, len);
+
+	var->name=name_copy;
 	var->type=found_type;
 	var->is_const=is_const;
 	var->bytes=found_type->bytes;
@@ -71,6 +75,7 @@ Free a given `variable_t` variable.
 */
 void free_variable(variable_t *var) {
 	if (var!=NULL) {
+		free((wchar_t*)var->name);
 		free(var->mem);
 		free(var);
 	}

@@ -87,9 +87,12 @@ bool test_variable_read() {
 }
 
 bool test_make_variable_with_invalid_name_fails() {
+	make_default_types();
 	variable_t *var=make_variable(L"int", L"1nvalid", false);
 
 	const bool pass=(var==NULL);
+
+	free_types();
 	free_variable(var);
 
 	return pass;

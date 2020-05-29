@@ -43,11 +43,26 @@ bool test_repl_variable_assign_in_context() {
 	return pass;
 }
 
+bool test_repl_cannot_redeclare_var() {
+	context_t *ctx=make_context();
+
+	make_default_types();
+	repl_eval(L"x: int = 1234", ctx);
+	repl_eval(L"x: int = 1234", ctx);
+
+	const bool pass=(ctx->vars_used==1);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_number_echo,
 		test_repl_variable_assign,
 		test_repl_variable_assign_in_context,
+		test_repl_cannot_redeclare_var,
 		NULL
 	};
 
