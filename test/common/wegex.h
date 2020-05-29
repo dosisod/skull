@@ -1,4 +1,3 @@
-
 #include <stdbool.h>
 
 #include "../../src/parse/tokenize.h"
@@ -54,6 +53,90 @@ bool test_charset_syntax() {
 	);
 }
 
+bool test_wegex_number_match() {
+	return (
+		wegex_match(L"\n", L"0") &&
+		wegex_match(L"\n", L"1") &&
+		wegex_match(L"\n", L"2") &&
+		wegex_match(L"\n", L"3") &&
+		wegex_match(L"\n", L"4") &&
+		wegex_match(L"\n", L"5") &&
+		wegex_match(L"\n", L"6") &&
+		wegex_match(L"\n", L"7") &&
+		wegex_match(L"\n", L"8") &&
+		wegex_match(L"\n", L"9") &&
+		wegex_match(L"+\n", L"1234") &&
+		!wegex_match(L"\n", L"abc")
+	);
+}
+
+bool test_wegex_hexadecimal_match() {
+	return (
+		wegex_match(L"\b", L"a") &&
+		wegex_match(L"\b", L"b") &&
+		wegex_match(L"\b", L"c") &&
+		wegex_match(L"\b", L"d") &&
+		wegex_match(L"\b", L"e") &&
+		wegex_match(L"\b", L"f") &&
+		wegex_match(L"\b", L"A") &&
+		wegex_match(L"\b", L"B") &&
+		wegex_match(L"\b", L"C") &&
+		wegex_match(L"\b", L"D") &&
+		wegex_match(L"\b", L"E") &&
+		wegex_match(L"\b", L"F") &&
+		wegex_match(L"\b", L"0") &&
+		wegex_match(L"\b", L"1") &&
+		wegex_match(L"\b", L"2") &&
+		wegex_match(L"\b", L"3") &&
+		wegex_match(L"\b", L"4") &&
+		wegex_match(L"\b", L"5") &&
+		wegex_match(L"\b", L"6") &&
+		wegex_match(L"\b", L"7") &&
+		wegex_match(L"\b", L"8") &&
+		wegex_match(L"\b", L"9") &&
+		!wegex_match(L"\b", L"z")
+	);
+}
+
+bool test_wegex_ascii_alpha_match() {
+	return (
+		wegex_match(L"\a", L"a") &&
+		wegex_match(L"\a", L"b") &&
+		wegex_match(L"\a", L"c") &&
+		wegex_match(L"\a", L"x") &&
+		wegex_match(L"\a", L"y") &&
+		wegex_match(L"\a", L"z") &&
+		wegex_match(L"\a", L"A") &&
+		wegex_match(L"\a", L"B") &&
+		wegex_match(L"\a", L"C") &&
+		wegex_match(L"\a", L"X") &&
+		wegex_match(L"\a", L"Y") &&
+		wegex_match(L"\a", L"Z") &&
+		!wegex_match(L"\a", L"0")
+	);
+}
+
+bool test_wegex_full_alpha_match() {
+	return (
+		wegex_match(L"\f", L"a") &&
+		wegex_match(L"\f", L"b") &&
+		wegex_match(L"\f", L"c") &&
+		wegex_match(L"\f", L"x") &&
+		wegex_match(L"\f", L"y") &&
+		wegex_match(L"\f", L"z") &&
+		wegex_match(L"\f", L"A") &&
+		wegex_match(L"\f", L"B") &&
+		wegex_match(L"\f", L"C") &&
+		wegex_match(L"\f", L"X") &&
+		wegex_match(L"\f", L"Y") &&
+		wegex_match(L"\f", L"Z") &&
+		wegex_match(L"\f", L"ß") &&
+		!wegex_match(L"\f", L"0") &&
+		!wegex_match(L"\f", L"9") &&
+		!wegex_match(L"\f", L"!")
+	);
+}
+
 void wegex_test_self(bool *pass) {
 	tests_t tests={
 		test_no_modifiers,
@@ -61,6 +144,10 @@ void wegex_test_self(bool *pass) {
 		test_plus_modifier,
 		test_ternary_modifier,
 		test_charset_syntax,
+		test_wegex_number_match,
+		test_wegex_hexadecimal_match,
+		test_wegex_ascii_alpha_match,
+		test_wegex_full_alpha_match,
 		NULL
 	};
 

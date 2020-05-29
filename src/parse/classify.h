@@ -195,10 +195,10 @@ bool is_constant_str_token(const token_t *token) {
 /*
 Returns true the passed character the start of a valid identifier.
 */
-bool is_valid_identifier(wchar_t wc) {
+bool is_valid_identifier(const wchar_t *str) {
 	return (
-		(wc>=L'A' && wc<=L'Z') ||
-		(wc>=L'a' && wc<=L'z')
+		(*str>=L'A' && *str<=L'Z') ||
+		(*str>=L'a' && *str<=L'z')
 	);
 }
 
@@ -206,7 +206,7 @@ bool is_valid_identifier(wchar_t wc) {
 Return true if passed token is a valid identifier.
 */
 bool is_valid_identifier_token(const token_t *token) {
-	return is_valid_identifier(*token->begin);
+	return is_valid_identifier(token->begin);
 }
 
 /*

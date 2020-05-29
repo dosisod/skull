@@ -7,8 +7,10 @@
 /*
 Returns true if `wc` matches a wegex group or a single character.
 
-If char at `begin` is `'\n'`, then return wether `wc` is a number or not.
-If char at `begin` is `'\b'`, then return wether `wc` is a hexadecimal number (byte) or not.
+If char at `begin` is `'\n'`, then return whether `wc` is a number or not.
+If char at `begin` is `'\b'`, then return whether `wc` is a hexadecimal number (byte) or not.
+If char at `begin` is `'\a'`, then return whether `wc` is an ASCII alpha character: `A-Z`, `a-z`
+If char at `begin` is `'\f'`, then return whether `wc` is an alpha character: `A-Z`, `a-z`, or locale specific alpha character.
 
 If char at `begin` is `'['`, then return wether `wc` matches any character within `begin` and `end`.
 
@@ -30,6 +32,15 @@ bool wegex_wc_cmp(const wchar_t *begin, const wchar_t *end, wchar_t wc) {
 	}
 	if (*begin==L'\b') {
 		return iswxdigit(wc);
+	}
+	if (*begin==L'\a') {
+		return (
+			(wc>=L'A' && wc<=L'Z') ||
+			(wc>=L'a' && wc<=L'z')
+		);
+	}
+	if (*begin==L'\f') {
+		return iswalpha(wc);
 	}
 	return *begin==wc;
 }

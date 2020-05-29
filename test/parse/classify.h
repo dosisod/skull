@@ -290,13 +290,14 @@ bool test_token_str_constant() {
 
 bool test_is_valid_identifier() {
 	return (
-		is_valid_identifier(L'a') &&
-		is_valid_identifier(L'z') &&
-		is_valid_identifier(L'A') &&
-		is_valid_identifier(L'Z') &&
-		!is_valid_identifier(L'0') &&
-		!is_valid_identifier(L'_') &&
-		!is_valid_identifier(L'~')
+		is_valid_identifier(L"a") &&
+		is_valid_identifier(L"z") &&
+		is_valid_identifier(L"A") &&
+		is_valid_identifier(L"Z") &&
+		!is_valid_identifier(L"0") &&
+		!is_valid_identifier(L"_") &&
+		!is_valid_identifier(L"~") &&
+		is_valid_identifier(L"a:")
 	);
 }
 

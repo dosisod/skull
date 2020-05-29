@@ -59,7 +59,7 @@ Returns true if the passed token is a string constant.
 
 Examples of valid inputs can be seen in the above function.
 
-#### `bool is_valid_identifier(wchar_t wc)`
+#### `bool is_valid_identifier(const wchar_t *str)`
 Returns true the passed character the start of a valid identifier.
 
 #### `bool is_valid_identifier_token(const token_t *token)`
