@@ -109,16 +109,19 @@ bool wegex_match(const wchar_t *wegex, const wchar_t *match) {
 			}
 		}
 
-		else if (!wegex_wc_cmp(wegex, wegex_end, *match)) {
-			return false;
-		}
-
-		else {
+		else if (wegex_wc_cmp(wegex, wegex_end, *match)) {
 			match++;
 			wegex_end=find_next_wegex(wegex);
 		}
+		else {
+			return false;
+		}
 
 		wegex=wegex_end + 1;
+	}
+
+	while (*wegex==L'?' || *wegex==L'*') {
+		wegex+=2;
 	}
 
 	return *wegex==*match;

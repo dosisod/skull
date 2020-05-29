@@ -19,7 +19,7 @@ bool test_star_modifier() {
 		wegex_match(L"*xa", L"a") &&
 		wegex_match(L"*xa", L"xxxxa") &&
 		!wegex_match(L"*x", L"xa") &&
-		!wegex_match(L"*x", L"")
+		wegex_match(L"*x", L"")
 	);
 }
 
@@ -38,7 +38,7 @@ bool test_ternary_modifier() {
 		wegex_match(L"?x", L"x") &&
 		wegex_match(L"?xa", L"xa") &&
 		wegex_match(L"?xa", L"a") &&
-		!wegex_match(L"?x", L"")
+		wegex_match(L"?x", L"")
 	);
 }
 
@@ -137,6 +137,20 @@ bool test_wegex_full_alpha_match() {
 	);
 }
 
+bool test_wegex_optional_modifiers_at_eol() {
+	return (
+		wegex_match(L"x?y", L"xy") &&
+		wegex_match(L"x?y", L"x") &&
+		wegex_match(L"x*y", L"xyy") &&
+		wegex_match(L"x*y", L"xy") &&
+		wegex_match(L"x*y", L"x") &&
+		wegex_match(L"x?y?z", L"xyz") &&
+		wegex_match(L"x?y?z", L"xy") &&
+		wegex_match(L"x?y?z", L"xz") &&
+		wegex_match(L"x?y?z", L"x")
+	);
+}
+
 void wegex_test_self(bool *pass) {
 	tests_t tests={
 		test_no_modifiers,
@@ -148,6 +162,7 @@ void wegex_test_self(bool *pass) {
 		test_wegex_hexadecimal_match,
 		test_wegex_ascii_alpha_match,
 		test_wegex_full_alpha_match,
+		test_wegex_optional_modifiers_at_eol,
 		NULL
 	};
 
