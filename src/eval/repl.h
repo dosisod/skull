@@ -27,7 +27,6 @@ wchar_t *repl_read() {
 Evaluates a single line, returns result as a string (if any).
 */
 wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
-	wchar_t *ret=NULL;
 	token_t *token=tokenize(str);
 	classify_tokens(token);
 
@@ -39,42 +38,50 @@ wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		token->next->next->next!=NULL &&
 		token->next->next->next->token_type==TOKEN_INT_CONST)
 	{
-		if (ctx!=NULL) {
-			MAKE_TOKEN_BUF(type, token->next);
-			MAKE_TOKEN_BUF(name, token);
-
-			variable_t *var=make_variable(type, name, false);
-
-			uint8_t err=0;
-			int64_t tmp=eval_integer(token->next->next->next, &err);
-
-			if (err==EVAL_INTEGER_OK) {
-				variable_write(var, &tmp);
-				var->is_const=true;
-				context_add_var(ctx, var);
-			}
-			else {
-				free_variable(var);
-			}
+		if (ctx==NULL) {
+			free_tokens(token);
+			return NULL;
 		}
+
+		MAKE_TOKEN_BUF(type, token->next);
+		MAKE_TOKEN_BUF(name, token);
+
+		variable_t *var=make_variable(type, name, false);
+
+		uint8_t err=0;
+		int64_t tmp=eval_integer(token->next->next->next, &err);
+
+		if (err==EVAL_INTEGER_OK) {
+			variable_write(var, &tmp);
+			var->is_const=true;
+			context_add_var(ctx, var);
+		}
+		else {
+			free_variable(var);
+		}
+		free_tokens(token);
+		return NULL;
 	}
 
-	else if (ctx!=NULL && context_find_name(ctx, token->begin)!=NULL) {
-		variable_t *var=context_find_name(ctx, token->begin);
-
+	variable_t *var=NULL;
+	if (ctx!=NULL) {
+		var=context_find_name(ctx, token->begin);
+	}
+	if (var!=NULL) {
 		int64_t val=0;
 		variable_read(&val, var);
 
 		wprintf(L"%lli\n", val);
+
+		free_tokens(token);
+		return NULL;
 	}
 
-	else if (*token->begin!=L'\0' && token_cmp(L"return", token)) {
+	if (*token->begin!=L'\0' && token_cmp(L"return", token)) {
+		free_tokens(token);
 		exit(0);
-	}
-	else {
-		ret=L"invalid input";
 	}
 
 	free_tokens(token);
-	return ret;
+	return L"invalid input";
 }
