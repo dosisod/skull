@@ -26,7 +26,11 @@ int main(int argc, char *argv[]) {
 		wchar_t *line;
 		while (true) {
 			line=repl_read();
-			wprintf(L"%ls\n", repl_eval(line, ctx));
+
+			const wchar_t *output=repl_eval(line, ctx);
+			if (output!=NULL) {
+				wprintf(L"%ls\n", output);
+			}
 
 			free(line);
 		}
