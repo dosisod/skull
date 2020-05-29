@@ -4,12 +4,6 @@
 #include "../../src/eval/repl.h"
 #include "../../test/testing.h"
 
-bool test_repl_number_echo() {
-	const wchar_t *output=repl_eval(L"0", NULL);
-
-	return wcscmp(L"0", output)==0;
-}
-
 bool test_repl_variable_assign() {
 	make_default_types();
 	const wchar_t *output=repl_eval(L"x: int = 0", NULL);
@@ -57,12 +51,18 @@ bool test_repl_cannot_redeclare_var() {
 	return pass;
 }
 
+bool test_repl_invalid_input_returns_error() {
+	const wchar_t *output=repl_eval(L"not_valid", NULL);
+
+	return wcscmp(L"invalid input", output)==0;
+}
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
-		test_repl_number_echo,
 		test_repl_variable_assign,
 		test_repl_variable_assign_in_context,
 		test_repl_cannot_redeclare_var,
+		test_repl_invalid_input_returns_error,
 		NULL
 	};
 

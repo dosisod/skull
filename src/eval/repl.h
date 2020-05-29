@@ -27,7 +27,7 @@ wchar_t *repl_read() {
 Evaluates a single line, returns result as a string (if any).
 */
 wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
-	wchar_t *ret=str;
+	wchar_t *ret=NULL;
 	token_t *token=tokenize(str);
 	classify_tokens(token);
 
@@ -57,8 +57,6 @@ wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 				free_variable(var);
 			}
 		}
-
-		ret=NULL; // NOLINT
 	}
 
 	else if (ctx!=NULL && context_find_name(ctx, token->begin)!=NULL) {
@@ -68,11 +66,13 @@ wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		variable_read(&val, var);
 
 		wprintf(L"%lli\n", val);
-		ret=NULL;
 	}
 
 	else if (*token->begin!=L'\0' && token_cmp(L"return", token)) {
 		exit(0);
+	}
+	else {
+		ret=L"invalid input";
 	}
 
 	free_tokens(token);
