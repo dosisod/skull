@@ -158,3 +158,8 @@ Returns true if `str` is equal to the value of `token`.
 bool token_cmp(const wchar_t *str, const token_t *token) {
 	return wcsncmp(str, token->begin, token_len(token))==0;
 }
+
+#define MAKE_TOKEN_BUF(buf, token) \
+	const size_t buf##_len=token_len(token); \
+	wchar_t buf[buf##_len + 1]; \
+	wcslcpy(buf, (token)->begin, buf##_len)

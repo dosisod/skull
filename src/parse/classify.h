@@ -108,9 +108,7 @@ Returns true if the passed token is an integer constant.
 See above function for examples of valid inputs.
 */
 bool is_constant_integer_token(const token_t *token) {
-	const size_t len=token_len(token);
-	wchar_t buf[len + 1];
-	wcslcpy(buf, token->begin, len);
+	MAKE_TOKEN_BUF(buf, token);
 
 	return is_constant_integer(buf);
 }
@@ -130,9 +128,7 @@ Returns true if the passed token is a float constant.
 See above function for examples of valid inputs.
 */
 bool is_constant_float_token(const token_t *token) {
-	const size_t len=token_len(token);
-	wchar_t buf[len + 1];
-	wcslcpy(buf, token->begin, len);
+	MAKE_TOKEN_BUF(buf, token);
 
 	return is_constant_float(buf);
 }
@@ -148,9 +144,7 @@ bool is_constant_bool(const wchar_t *str) {
 Returns true if the passed token is a boolean constant.
 */
 bool is_constant_bool_token(const token_t *token) {
-	const size_t len=token_len(token);
-	wchar_t buf[len + 1];
-	wcslcpy(buf, token->begin, len);
+	MAKE_TOKEN_BUF(buf, token);
 
 	return is_constant_bool(buf);
 }
@@ -171,9 +165,7 @@ Returns true if the passed token is a char constant.
 Examples of valid inputs can be seen in the above function.
 */
 bool is_constant_char_token(const token_t *token) {
-	const size_t len=token_len(token);
-	wchar_t buf[len + 1];
-	wcslcpy(buf, token->begin, len);
+	MAKE_TOKEN_BUF(buf, token);
 
 	return is_constant_char(buf);
 }
@@ -195,9 +187,7 @@ Returns true if the passed token is a string constant.
 Examples of valid inputs can be seen in the above function.
 */
 bool is_constant_str_token(const token_t *token) {
-	const size_t len=token_len(token);
-	wchar_t buf[len + 1];
-	wcslcpy(buf, token->begin, len);
+	MAKE_TOKEN_BUF(buf, token);
 
 	return is_constant_str(buf);
 }
