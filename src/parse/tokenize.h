@@ -6,6 +6,8 @@
 #include <string.h>
 #include <wchar.h>
 
+#include "../common/str.h"
+
 typedef struct token_t {
 	const wchar_t *begin;
 	const wchar_t *end;
@@ -157,6 +159,17 @@ Returns true if `str` is equal to the value of `token`.
 */
 bool token_cmp(const wchar_t *str, const token_t *token) {
 	return wcsncmp(str, token->begin, token_len(token))==0;
+}
+
+/*
+Return a copy of the string data inside `token`.
+*/
+wchar_t *token_str(const token_t *token) {
+	const size_t len=token_len(token);
+	wchar_t *str=malloc((len + 1) * sizeof(wchar_t));
+	wcslcpy(str, token->begin, len);
+
+	return str;
 }
 
 #define MAKE_TOKEN_BUF(buf, token) \

@@ -166,6 +166,19 @@ bool test_token_cmp() {
 	return pass;
 }
 
+bool test_token_str() {
+	const wchar_t *code=L"left right";
+	token_t *token=tokenize(code);
+	wchar_t *buf=token_str(token);
+
+	const bool pass=(wcscmp(buf, L"left")==0);
+
+	free(buf);
+	free_tokens(token);
+
+	return pass;
+}
+
 bool test_make_token() {
 	token_t *token=make_token();
 
@@ -195,6 +208,7 @@ void tokenizer_test_self(bool *pass) {
 		test_free_tokens,
 		test_token_len,
 		test_token_cmp,
+		test_token_str,
 		test_make_token,
 		NULL
 	};
