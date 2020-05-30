@@ -59,7 +59,7 @@ wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		else {
 			free_variable(var);
 		}
-		free_tokens(token);
+		free_tokens(token); // NOLINT
 		return NULL;
 	}
 

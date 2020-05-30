@@ -131,8 +131,8 @@ bool test_wegex_full_alpha_match() {
 		wegex_match(L"\f", L"Y") &&
 		wegex_match(L"\f", L"Z") &&
 		wegex_match(L"\f", L"ß") &&
-		!wegex_match(L"\f", L"0") &&
-		!wegex_match(L"\f", L"9") &&
+		wegex_match(L"\f", L"0") &&
+		wegex_match(L"\f", L"9") &&
 		!wegex_match(L"\f", L"!")
 	);
 }

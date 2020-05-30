@@ -196,17 +196,16 @@ bool is_constant_str_token(const token_t *token) {
 Returns true the passed character the start of a valid identifier.
 */
 bool is_valid_identifier(const wchar_t *str) {
-	return (
-		(*str>=L'A' && *str<=L'Z') ||
-		(*str>=L'a' && *str<=L'z')
-	);
+	return wegex_match(L"\a*\f?:", str);
 }
 
 /*
 Return true if passed token is a valid identifier.
 */
 bool is_valid_identifier_token(const token_t *token) {
-	return is_valid_identifier(token->begin);
+	MAKE_TOKEN_BUF(buf, token);
+
+	return is_valid_identifier(buf);
 }
 
 /*

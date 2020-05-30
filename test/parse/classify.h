@@ -297,7 +297,11 @@ bool test_is_valid_identifier() {
 		!is_valid_identifier(L"0") &&
 		!is_valid_identifier(L"_") &&
 		!is_valid_identifier(L"~") &&
-		is_valid_identifier(L"a:")
+		is_valid_identifier(L"a:") &&
+		is_valid_identifier(L"abc:") &&
+		!is_valid_identifier(L"1var") &&
+		is_valid_identifier(L"var1") &&
+		is_valid_identifier(L"x1")
 	);
 }
 
