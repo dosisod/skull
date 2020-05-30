@@ -35,7 +35,7 @@ variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_cons
 
 	const size_t len=wcslen(name);
 	const wchar_t *name_copy=malloc((len + 1) * sizeof(wchar_t));
-	wcslcpy((wchar_t*)name_copy, name, len);
+	wcslcpy((wchar_t*)name_copy, name, len + 1);
 
 	var->name=name_copy;
 	var->type=found_type;

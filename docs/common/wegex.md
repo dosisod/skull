@@ -6,7 +6,7 @@ Returns true if `wc` matches a wegex group or a single character.
 If char at `begin` is `'\n'`, then return whether `wc` is a number or not.
 If char at `begin` is `'\b'`, then return whether `wc` is a hexadecimal number (byte) or not.
 If char at `begin` is `'\a'`, then return whether `wc` is an ASCII alpha character: `A-Z`, `a-z`
-If char at `begin` is `'\f'`, then return whether `wc` is an alpha character: `A-Z`, `a-z`, or locale specific alpha character.
+If char at `begin` is `'\f'`, then return whether `wc` is an alphanumeric character: `0-9`, `A-Z`, `a-z`, or locale specific alphanumeric character.
 
 If char at `begin` is `'['`, then return wether `wc` matches any character within `begin` and `end`.
 

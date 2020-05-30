@@ -8,9 +8,12 @@ bool test_strlcpy() {
 	const size_t len=5;
 	char buf[len + 1];
 
-	strlcpy(buf, data, 5);
+	strlcpy(buf, data, len + 1);
 
-	return strlen(buf)==5;
+	return (
+		strlen(buf)==len &&
+		strcmp(buf, "hello")==0
+	);
 }
 
 bool test_wcslcpy() {
@@ -18,9 +21,12 @@ bool test_wcslcpy() {
 	const size_t len=5;
 	wchar_t buf[len + 1];
 
-	wcslcpy(buf, data, 5);
+	wcslcpy(buf, data, len + 1);
 
-	return wcslen(buf)==5;
+	return (
+		wcslen(buf)==len &&
+		wcscmp(buf, L"hello")==0
+	);
 }
 
 void str_test_self(bool *pass) {

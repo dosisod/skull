@@ -45,13 +45,8 @@ uint8_t eval_equality_comparison(const token_t *token) {
 		return EVAL_ERROR;
 	}
 
-	const size_t lhs_len=token_len(token);
-	wchar_t lhs[lhs_len + 1];
-	wcslcpy(lhs, token->begin, lhs_len);
-
-	const size_t rhs_len=token_len(token->next->next);
-	wchar_t rhs[rhs_len + 1];
-	wcslcpy(rhs, token->next->next->begin, rhs_len);
+	MAKE_TOKEN_BUF(lhs, token);
+	MAKE_TOKEN_BUF(rhs, token->next->next);
 
 	if (token_cmp(L"==", token->next)) {
 		return wcscmp(lhs, rhs)==0;

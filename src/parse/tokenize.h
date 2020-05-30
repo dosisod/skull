@@ -167,7 +167,7 @@ Return a copy of the string data inside `token`.
 wchar_t *token_str(const token_t *token) {
 	const size_t len=token_len(token);
 	wchar_t *str=malloc((len + 1) * sizeof(wchar_t));
-	wcslcpy(str, token->begin, len);
+	wcslcpy(str, token->begin, len + 1);
 
 	return str;
 }
@@ -175,4 +175,4 @@ wchar_t *token_str(const token_t *token) {
 #define MAKE_TOKEN_BUF(buf, token) \
 	const size_t buf##_len=token_len(token); \
 	wchar_t buf[buf##_len + 1]; \
-	wcslcpy(buf, (token)->begin, buf##_len)
+	wcslcpy(buf, (token)->begin, buf##_len + 1)
