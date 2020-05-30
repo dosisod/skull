@@ -301,7 +301,9 @@ bool test_is_valid_identifier() {
 		is_valid_identifier(L"abc:") &&
 		!is_valid_identifier(L"1var") &&
 		is_valid_identifier(L"var1") &&
-		is_valid_identifier(L"x1")
+		is_valid_identifier(L"x1") &&
+		is_valid_identifier(L"x_") &&
+		!is_valid_identifier(L"_x")
 	);
 }
 

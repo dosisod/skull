@@ -121,7 +121,13 @@ bool wegex_match(const wchar_t *wegex, const wchar_t *match) {
 	}
 
 	while (*wegex==L'?' || *wegex==L'*') {
-		wegex+=2;
+		const wchar_t *tmp=find_next_wegex(wegex + 1) + 1;
+		if (tmp!=wegex) {
+			wegex=tmp;
+		}
+		else {
+			wegex+=2;
+		}
 	}
 
 	return *wegex==*match;
