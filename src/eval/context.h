@@ -65,14 +65,18 @@ bool context_contains_var(context_t *ctx, const variable_t *var) {
 
 /*
 Add variable `var` to context `ctx`.
+
+Returns `true` if `var` was added, else `false`
 */
-void context_add_var(context_t *ctx, variable_t *var) {
+bool context_add_var(context_t *ctx, variable_t *var) {
 	if (context_contains_var(ctx, var)) {
-		return;
+		return false;
 	}
 
 	ctx->vars[ctx->vars_used]=var;
 	ctx->vars_used++;
+
+	return true;
 }
 
 /*

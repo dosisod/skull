@@ -82,12 +82,14 @@ bool test_cannot_add_same_varname_to_context() {
 	variable_t *var1=make_variable(L"int", L"x", true);
 	variable_t *var2=make_variable(L"int", L"x", true);
 
-	context_add_var(ctx, var1);
-	context_add_var(ctx, var2);
+	const bool added_var1=context_add_var(ctx, var1);
+	const bool added_var2=context_add_var(ctx, var2);
 
 	const bool pass=(
 		ctx->vars_used==1 &&
-		ctx->vars[0]==var1
+		ctx->vars[0]==var1 &&
+		added_var1 &&
+		!added_var2
 	);
 
 	free_types();

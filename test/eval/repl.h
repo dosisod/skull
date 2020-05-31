@@ -42,9 +42,12 @@ bool test_repl_cannot_redeclare_var() {
 
 	make_default_types();
 	repl_eval(L"x: int = 1234", ctx);
-	repl_eval(L"x: int = 1234", ctx);
+	const wchar_t *output=repl_eval(L"x: int = 1234", ctx);
 
-	const bool pass=(ctx->vars_used==1);
+	const bool pass=(
+		ctx->vars_used==1 &&
+		wcscmp(L"variable already defined", output)==0
+	);
 
 	free_types();
 	free_context(ctx);

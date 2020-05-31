@@ -54,12 +54,17 @@ wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		if (err==EVAL_INTEGER_OK) {
 			variable_write(var, &tmp);
 			var->is_const=true;
-			context_add_var(ctx, var);
+			if (!context_add_var(ctx, var)) {
+				free_variable(var);
+				free_tokens(token);
+
+				return L"variable already defined";
+			}
 		}
 		else {
 			free_variable(var);
 		}
-		free_tokens(token); // NOLINT
+		free_tokens(token);
 		return NULL;
 	}
 
