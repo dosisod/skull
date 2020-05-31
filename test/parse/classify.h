@@ -3,25 +3,6 @@
 #include "../../src/parse/classify.h"
 #include "../../test/testing.h"
 
-bool test_is_keyword_token(void) {
-	const wchar_t *code=L"if else not_keyword";
-	token_t *token=tokenize(code);
-
-	if (token->next==NULL || token->next->next==NULL) {
-		return false;
-	}
-
-	const bool pass=(
-		is_keyword_token(token) &&
-		is_keyword_token(token->next) &&
-		!is_keyword_token(token->next->next)
-	);
-
-	free_tokens(token);
-
-	return pass;
-}
-
 bool test_is_operator_token(void) {
 	const wchar_t *code=L"x = 10 / 2";
 	token_t *token=tokenize(code);
@@ -156,15 +137,14 @@ bool test_bracket_token_close(void) {
 	return pass;
 }
 
-bool test_token_keyword(void) {
-	const wchar_t *code=L"if else return";
+bool test_token_mut_kw(void) {
+	const wchar_t *code=L"mut not_mut";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
-		t->token_type==TOKEN_KEYWORD &&
-		t->next->token_type==TOKEN_KEYWORD &&
-		t->next->next->token_type==TOKEN_KEYWORD
+		t->token_type==TOKEN_KW_MUT &&
+		t->next->token_type!=TOKEN_KW_MUT
 	);
 
 	free_tokens(t);
@@ -349,7 +329,6 @@ bool test_token_classifier(void) {
 
 void classifier_test_self(bool *pass) {
 	tests_t tests={
-		test_is_keyword_token,
 		test_is_operator_token,
 		test_is_type_token,
 		test_is_function_token,
@@ -360,7 +339,7 @@ void classifier_test_self(bool *pass) {
 		test_is_constant_str,
 		test_bracket_token_open,
 		test_bracket_token_close,
-		test_token_keyword,
+		test_token_mut_kw,
 		test_token_operator,
 		test_token_type,
 		test_token_function,

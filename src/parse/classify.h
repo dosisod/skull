@@ -6,31 +6,31 @@
 #include "types.h"
 
 enum token_types {
+	//default token type
 	TOKEN_UNKNOWN,
-	TOKEN_KEYWORD,
+
+	//identifiers are things like variable and function names
+	TOKEN_IDENTIFIER,
+
+	//indicates the start of a function
+	TOKEN_FUNCTION,
+
+	//keyword related tokens
+	TOKEN_KW_MUT,
+
 	TOKEN_BRACKET_OPEN,
 	TOKEN_BRACKET_CLOSE,
+
 	TOKEN_TYPE,
-	TOKEN_FUNCTION,
+
 	TOKEN_OPERATOR,
+
+	//constant values, such as ints and strings
 	TOKEN_INT_CONST,
 	TOKEN_FLOAT_CONST,
 	TOKEN_BOOL_CONST,
 	TOKEN_CHAR_CONST,
-	TOKEN_STR_CONST,
-	TOKEN_IDENTIFIER
-};
-
-const wchar_t *TOKEN_KEYWORDS[] = {
-	L"return",
-	L"if",
-	L"elif",
-	L"else",
-	L"do",
-	L"while",
-	L"import",
-	L"for",
-	L""
+	TOKEN_STR_CONST
 };
 
 const wchar_t *TOKEN_OPERATORS[] = {
@@ -52,20 +52,6 @@ bool is_type_token(const token_t *token) {
 			return true;
 		}
 		current=current->next;
-	}
-	return false;
-}
-
-/*
-Returns true if `token` is a keyword token.
-*/
-bool is_keyword_token(const token_t *token) {
-	const wchar_t **head=TOKEN_KEYWORDS;
-	while (*head[0]!=L'\0') {
-		if (token_cmp(*head, token)) {
-			return true;
-		}
-		head++;
 	}
 	return false;
 }
@@ -220,8 +206,8 @@ void classify_token(token_t *token) {
 	else if (token_cmp(L"]", token)) {
 		token->token_type=TOKEN_BRACKET_CLOSE;
 	}
-	else if (is_keyword_token(token)) {
-		token->token_type=TOKEN_KEYWORD;
+	else if (token_cmp(L"mut", token)) {
+		token->token_type=TOKEN_KW_MUT;
 	}
 	else if (is_operator_token(token)) {
 		token->token_type=TOKEN_OPERATOR;

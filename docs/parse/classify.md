@@ -3,9 +3,6 @@
 #### `bool is_type_token(const token_t *token)`
 Returns true if `token` is a type token.
 
-#### `bool is_keyword_token(const token_t *token)`
-Returns true if `token` is a keyword token.
-
 #### `bool is_operator_token(const token_t *token)`
 Returns true if `token` is an operator token.
 
