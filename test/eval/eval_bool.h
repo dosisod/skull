@@ -3,7 +3,7 @@
 #include "../../src/eval/eval_bool.h"
 #include "../../test/testing.h"
 
-bool test_eval_bool_single_param() {
+bool test_eval_bool_single_param(void) {
 	return (
 		eval_bool(L"true")==EVAL_TRUE &&
 		eval_bool(L"false")==EVAL_FALSE &&
@@ -11,11 +11,11 @@ bool test_eval_bool_single_param() {
 	);
 }
 
-bool test_eval_bool_odd_num_tokens() {
+bool test_eval_bool_odd_num_tokens(void) {
 	return eval_bool(L"bad ==")==EVAL_ERROR;
 }
 
-bool test_eval_equality_comparison() {
+bool test_eval_equality_comparison(void) {
 	return (
 		eval_bool(L"true == true")==EVAL_TRUE &&
 		eval_bool(L"true != true")==EVAL_FALSE &&
@@ -28,7 +28,7 @@ bool test_eval_equality_comparison() {
 	);
 }
 
-bool test_eval_bool_with_errors() {
+bool test_eval_bool_with_errors(void) {
 	return (
 		eval_bool(L"true == 1nvalid")==EVAL_ERROR &&
 		eval_bool(L"1nvalid == true")==EVAL_ERROR &&
@@ -36,21 +36,21 @@ bool test_eval_bool_with_errors() {
 	);
 }
 
-bool test_eval_bool_not() {
+bool test_eval_bool_not(void) {
 	return (
 		eval_bool(L"not true")==EVAL_FALSE &&
 		eval_bool(L"not false")==EVAL_TRUE
 	);
 }
 
-bool test_eval_bool_and() {
+bool test_eval_bool_and(void) {
 	return (
 		eval_bool(L"true and true")==EVAL_TRUE &&
 		eval_bool(L"false and false")==EVAL_FALSE
 	);
 }
 
-bool test_eval_bool_or() {
+bool test_eval_bool_or(void) {
 	return (
 		eval_bool(L"true or false")==EVAL_TRUE &&
 		eval_bool(L"false or false")==EVAL_FALSE

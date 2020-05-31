@@ -20,7 +20,7 @@
 #include "common/str.h"
 #include "common/wegex.h"
 
-int main() {
+int main(void) {
 	if (!setlocale(LC_CTYPE, "")) {
 		wprintf(L"Could not set locale.");
 		return 1;

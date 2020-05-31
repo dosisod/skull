@@ -3,7 +3,7 @@
 #include "../../src/common/color.h"
 #include "../../test/testing.h"
 
-bool test_color_names() {
+bool test_color_names(void) {
 	return (
 		wcscmp(L"\033[0m", COLOR_RESET)==0 &&
 		wcscmp(L"\033[1m", COLOR_BOLD)==0 &&

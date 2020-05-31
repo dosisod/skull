@@ -3,7 +3,7 @@
 #include "../../src/eval/context.h"
 #include "../../test/testing.h"
 
-bool test_make_context() {
+bool test_make_context(void) {
 	context_t *ctx=make_context();
 
 	const bool pass=(
@@ -17,7 +17,7 @@ bool test_make_context() {
 	return pass;
 }
 
-bool test_context_contains_var() {
+bool test_context_contains_var(void) {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
@@ -38,7 +38,7 @@ bool test_context_contains_var() {
 	return pass;
 }
 
-bool test_context_find_name() {
+bool test_context_find_name(void) {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
@@ -57,7 +57,7 @@ bool test_context_find_name() {
 	return pass;
 }
 
-bool test_add_vars_to_context() {
+bool test_add_vars_to_context(void) {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
@@ -76,7 +76,7 @@ bool test_add_vars_to_context() {
 	return pass;
 }
 
-bool test_cannot_add_same_varname_to_context() {
+bool test_cannot_add_same_varname_to_context(void) {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
@@ -100,7 +100,7 @@ bool test_cannot_add_same_varname_to_context() {
 	return pass;
 }
 
-bool test_add_nested_context() {
+bool test_add_nested_context(void) {
 	context_t *ctx=make_context();
 	context_t *ctx_new=make_context();
 
@@ -117,7 +117,7 @@ bool test_add_nested_context() {
 	return pass;
 }
 
-bool test_cannot_add_same_varname_to_sub_context() {
+bool test_cannot_add_same_varname_to_sub_context(void) {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
@@ -143,7 +143,7 @@ bool test_cannot_add_same_varname_to_sub_context() {
 	return pass;
 }
 
-bool test_free_context() {
+bool test_free_context(void) {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);

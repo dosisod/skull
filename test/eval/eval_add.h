@@ -3,7 +3,7 @@
 #include "../../src/eval/eval_add.h"
 #include "../../test/testing.h"
 
-bool test_adding_2_ints() {
+bool test_adding_2_ints(void) {
 	make_default_types();
 	variable_t *var1=make_variable(L"int", L"var1", false);
 	variable_t *var2=make_variable(L"int", L"var2", false);
@@ -26,7 +26,7 @@ bool test_adding_2_ints() {
 	return pass;
 }
 
-bool test_adding_2_floats() {
+bool test_adding_2_floats(void) {
 	make_default_types();
 	variable_t *var1=make_variable(L"float", L"var1", false);
 	variable_t *var2=make_variable(L"float", L"var2", false);
@@ -49,7 +49,7 @@ bool test_adding_2_floats() {
 	return pass;
 }
 
-bool test_adding_vars_with_different_types_fail() {
+bool test_adding_vars_with_different_types_fail(void) {
 	make_default_types();
 	variable_t *var1=make_variable(L"int", L"var1", false);
 	variable_t *var2=make_variable(L"float", L"var2", false);

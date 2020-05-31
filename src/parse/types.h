@@ -66,7 +66,7 @@ type_t *find_type(const wchar_t *name) {
 /*
 Free all defined types from `TYPES_AVAILABLE`, except for `TYPES_AVAILABLE`.
 */
-void free_types() {
+void free_types(void) {
 	type_t *head=(&TYPES_AVAILABLE)->next;
 	type_t *tmp;
 
@@ -85,7 +85,7 @@ Populate `TYPES_AVAILABLE` with all the builtin types.
 
 Calling this function will reset all types defined in `TYPES_AVAILABLE`.
 */
-void make_default_types() {
+void make_default_types(void) {
 	free_types();
 
 	make_new_type(L"bool", 1);

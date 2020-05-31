@@ -15,7 +15,7 @@ typedef struct context_t {
 /*
 Returns a new variable context.
 */
-context_t *make_context() {
+context_t *make_context(void) {
 	context_t *ctx=malloc(sizeof(context_t));
 
 	ctx->vars_used=0;

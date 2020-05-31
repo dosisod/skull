@@ -3,7 +3,7 @@
 #include "../../../src/parse/ast/node.h"
 #include "../../../test/testing.h"
 
-bool test_make_ast_node_struct() {
+bool test_make_ast_node_struct(void) {
 	const wchar_t *code=L"hello";
 
 	ast_node_t node = {
@@ -21,7 +21,7 @@ bool test_make_ast_node_struct() {
 	);
 }
 
-bool test_make_ast_node() {
+bool test_make_ast_node(void) {
 	ast_node_t *node=make_ast_node();
 
 	const bool pass=(
@@ -36,7 +36,7 @@ bool test_make_ast_node() {
 	return pass;
 }
 
-bool test_ast_token_cmp() {
+bool test_ast_token_cmp(void) {
 	const wchar_t *code=L"x: int = 0";
 	token_t *token=tokenize(code);
 	make_default_types();
@@ -57,7 +57,7 @@ bool test_ast_token_cmp() {
 	return pass;
 }
 
-bool test_ast_token_cmp_extra_tokens() {
+bool test_ast_token_cmp_extra_tokens(void) {
 	const wchar_t *code=L"x: int = 0 extra";
 	token_t *token=tokenize(code);
 	make_default_types();
@@ -78,7 +78,7 @@ bool test_ast_token_cmp_extra_tokens() {
 	return pass;
 }
 
-bool test_ast_token_cmp_missing_tokens() {
+bool test_ast_token_cmp_missing_tokens(void) {
 	const wchar_t *code=L"x: int = 0";
 	token_t *token=tokenize(code);
 	make_default_types();
@@ -100,7 +100,7 @@ bool test_ast_token_cmp_missing_tokens() {
 	return pass;
 }
 
-bool test_push_ast_node_if() {
+bool test_push_ast_node_if(void) {
 	const wchar_t *code=L"x: int = 0";
 	token_t *token=tokenize(code);
 	token_t *last=token;
@@ -130,7 +130,7 @@ bool test_push_ast_node_if() {
 	return pass;
 }
 
-bool test_make_ast_tree_variable_def() {
+bool test_make_ast_tree_variable_def(void) {
 	const wchar_t *code=L"x: int = 0";
 	make_default_types();
 	ast_node_t *node=make_ast_tree(code);
@@ -148,7 +148,7 @@ bool test_make_ast_tree_variable_def() {
 	return pass;
 }
 
-bool test_make_ast_tree_many_lines() {
+bool test_make_ast_tree_many_lines(void) {
 	const wchar_t *code=L"x: int = 0\ny: int = 0";
 	make_default_types();
 	ast_node_t *node=make_ast_tree(code);

@@ -8,7 +8,7 @@ Whitespace includes control-characters, non-printable characters, and spaces.
 #### `bool is_quote(wchar_t c)`
 Return true if `c` is a double or single quote.
 
-#### `token_t *make_token()`
+#### `token_t *make_token(void)`
 Allocate and return a token with set defaults.
 
 #### `token_t *tokenize(const wchar_t *code)`

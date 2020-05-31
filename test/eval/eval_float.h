@@ -4,7 +4,7 @@
 #include "../../src/eval/eval_float.h"
 #include "../../test/testing.h"
 
-bool test_convert_float_token() {
+bool test_convert_float_token(void) {
 	token_t *token1=tokenize(L"1234.0");
 	token_t *token2=tokenize(L"-1234.0");
 	classify_tokens(token1);
@@ -28,7 +28,7 @@ bool test_convert_float_token() {
 	return pass;
 }
 
-bool test_non_float_token_fails() {
+bool test_non_float_token_fails(void) {
 	token_t *token=tokenize(L"not_an_int_token");
 	classify_tokens(token);
 

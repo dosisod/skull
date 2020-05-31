@@ -4,7 +4,7 @@
 #include "../../src/parse/types.h"
 #include "../../test/testing.h"
 
-bool test_make_new_type() {
+bool test_make_new_type(void) {
 	type_t *current=&TYPES_AVAILABLE;
 
 	make_new_type(L"test_type", 1);
@@ -33,7 +33,7 @@ bool test_make_new_type() {
 	return pass;
 }
 
-bool test_make_new_type_rejects_non_unique_type() {
+bool test_make_new_type_rejects_non_unique_type(void) {
 	type_t *current=&TYPES_AVAILABLE;
 
 	const bool inserted1=make_new_type(L"test_type", 1);
@@ -64,7 +64,7 @@ bool test_make_new_type_rejects_non_unique_type() {
 	);
 }
 
-bool test_find_type() {
+bool test_find_type(void) {
 	make_default_types();
 
 	type_t *type=find_type(L"int");
@@ -75,7 +75,7 @@ bool test_find_type() {
 	return pass;
 }
 
-bool test_free_types() {
+bool test_free_types(void) {
 	make_new_type(L"test_type", 1);
 
 	free_types();
@@ -83,7 +83,7 @@ bool test_free_types() {
 	return TYPES_AVAILABLE.next==NULL;
 }
 
-bool test_append_default_types() {
+bool test_append_default_types(void) {
 	make_default_types();
 	type_t *head=&TYPES_AVAILABLE;
 

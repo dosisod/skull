@@ -1,6 +1,6 @@
 # src/eval/repl.h
 
-#### `wchar_t *repl_read()`
+#### `wchar_t *repl_read(void)`
 Returns pointer to string read from commandline.
 
 #### `const wchar_t *repl_eval(wchar_t *str, context_t *ctx)`

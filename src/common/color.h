@@ -47,6 +47,6 @@
 /*
 Reset current colors to terminal defaults.
 */
-void color_reset() {
+void color_reset(void) {
 	wprintf(COLOR_RESET);
 }

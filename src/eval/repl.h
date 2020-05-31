@@ -13,7 +13,7 @@
 /*
 Returns pointer to string read from commandline.
 */
-wchar_t *repl_read() {
+wchar_t *repl_read(void) {
 	wchar_t *line=malloc(REPL_MAX_LINE_LEN * sizeof(wchar_t));
 
 	wprintf(COLOR_BRIGHT_GREEN_FG L"> " COLOR_RESET);

@@ -4,7 +4,7 @@
 #include "../../src/eval/eval_integer.h"
 #include "../../test/testing.h"
 
-bool test_convert_integer_token() {
+bool test_convert_integer_token(void) {
 	token_t *token1=tokenize(L"1234");
 	token_t *token2=tokenize(L"-1234");
 	classify_tokens(token1);
@@ -28,7 +28,7 @@ bool test_convert_integer_token() {
 	return pass;
 }
 
-bool test_integer_overflow_returns_error() {
+bool test_integer_overflow_returns_error(void) {
 	token_t *token=tokenize(L"9999999999999999999");
 	classify_tokens(token);
 
@@ -45,7 +45,7 @@ bool test_integer_overflow_returns_error() {
 	return pass;
 }
 
-bool test_integer_underflow_returns_error() {
+bool test_integer_underflow_returns_error(void) {
 	token_t *token=tokenize(L"-9999999999999999999");
 	classify_tokens(token);
 
@@ -62,7 +62,7 @@ bool test_integer_underflow_returns_error() {
 	return pass;
 }
 
-bool test_convert_hex_integer() {
+bool test_convert_hex_integer(void) {
 	token_t *token=tokenize(L"0xff");
 	classify_tokens(token);
 
@@ -79,7 +79,7 @@ bool test_convert_hex_integer() {
 	return pass;
 }
 
-bool test_convert_binary_integer() {
+bool test_convert_binary_integer(void) {
 	token_t *token=tokenize(L"0b1111");
 	classify_tokens(token);
 
@@ -96,7 +96,7 @@ bool test_convert_binary_integer() {
 	return pass;
 }
 
-bool test_non_integer_token_fails() {
+bool test_non_integer_token_fails(void) {
 	token_t *token=tokenize(L"not_an_int_token");
 	classify_tokens(token);
 

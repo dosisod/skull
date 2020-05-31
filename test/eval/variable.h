@@ -3,7 +3,7 @@
 #include "../../src/eval/variable.h"
 #include "../../test/testing.h"
 
-bool test_create_variable() {
+bool test_create_variable(void) {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
@@ -21,13 +21,13 @@ bool test_create_variable() {
 	return pass;
 }
 
-bool test_create_variable_with_invalid_type_fails() {
+bool test_create_variable_with_invalid_type_fails(void) {
 	const variable_t *var=make_variable(L"not_a_type", L"x", true);
 
 	return var==NULL;
 }
 
-bool test_variable_write() {
+bool test_variable_write(void) {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", false);
 
@@ -48,7 +48,7 @@ bool test_variable_write() {
 	return pass;
 }
 
-bool test_variable_cannot_write_to_const() {
+bool test_variable_cannot_write_to_const(void) {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
@@ -69,7 +69,7 @@ bool test_variable_cannot_write_to_const() {
 	return pass;
 }
 
-bool test_variable_read() {
+bool test_variable_read(void) {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", false);
 	const int64_t data=1234;
@@ -86,7 +86,7 @@ bool test_variable_read() {
 	return pass;
 }
 
-bool test_make_variable_with_invalid_name_fails() {
+bool test_make_variable_with_invalid_name_fails(void) {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"1nvalid", false);
 
@@ -98,7 +98,7 @@ bool test_make_variable_with_invalid_name_fails() {
 	return pass;
 }
 
-bool test_free_variable() {
+bool test_free_variable(void) {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
@@ -113,7 +113,7 @@ bool test_free_variable() {
 	return true;
 }
 
-bool test_free_null_variable_is_ok() {
+bool test_free_null_variable_is_ok(void) {
 	variable_t *var=NULL;
 
 	free_variable(var);

@@ -4,7 +4,7 @@
 #include "../../src/common/wegex.h"
 #include "../../test/testing.h"
 
-bool test_no_modifiers() {
+bool test_no_modifiers(void) {
 	return (
 		wegex_match(L"abc", L"abc") &&
 		!wegex_match(L"abc", L"abcd") &&
@@ -12,7 +12,7 @@ bool test_no_modifiers() {
 	);
 }
 
-bool test_star_modifier() {
+bool test_star_modifier(void) {
 	return (
 		wegex_match(L"*x", L"x") &&
 		wegex_match(L"*x", L"xxx") &&
@@ -23,7 +23,7 @@ bool test_star_modifier() {
 	);
 }
 
-bool test_plus_modifier() {
+bool test_plus_modifier(void) {
 	return (
 		wegex_match(L"+x", L"x") &&
 		wegex_match(L"+x", L"xxx") &&
@@ -33,7 +33,7 @@ bool test_plus_modifier() {
 	);
 }
 
-bool test_ternary_modifier() {
+bool test_ternary_modifier(void) {
 	return (
 		wegex_match(L"?x", L"x") &&
 		wegex_match(L"?xa", L"xa") &&
@@ -42,7 +42,7 @@ bool test_ternary_modifier() {
 	);
 }
 
-bool test_charset_syntax() {
+bool test_charset_syntax(void) {
 	return (
 		wegex_match(L"+[abc]", L"a") &&
 		wegex_match(L"+[abc]", L"b") &&
@@ -53,7 +53,7 @@ bool test_charset_syntax() {
 	);
 }
 
-bool test_wegex_number_match() {
+bool test_wegex_number_match(void) {
 	return (
 		wegex_match(L"\n", L"0") &&
 		wegex_match(L"\n", L"1") &&
@@ -70,7 +70,7 @@ bool test_wegex_number_match() {
 	);
 }
 
-bool test_wegex_hexadecimal_match() {
+bool test_wegex_hexadecimal_match(void) {
 	return (
 		wegex_match(L"\b", L"a") &&
 		wegex_match(L"\b", L"b") &&
@@ -98,7 +98,7 @@ bool test_wegex_hexadecimal_match() {
 	);
 }
 
-bool test_wegex_ascii_alpha_match() {
+bool test_wegex_ascii_alpha_match(void) {
 	return (
 		wegex_match(L"\a", L"a") &&
 		wegex_match(L"\a", L"b") &&
@@ -116,7 +116,7 @@ bool test_wegex_ascii_alpha_match() {
 	);
 }
 
-bool test_wegex_full_alpha_match() {
+bool test_wegex_full_alpha_match(void) {
 	return (
 		wegex_match(L"\f", L"a") &&
 		wegex_match(L"\f", L"b") &&
@@ -137,7 +137,7 @@ bool test_wegex_full_alpha_match() {
 	);
 }
 
-bool test_wegex_optional_modifiers_at_eol() {
+bool test_wegex_optional_modifiers_at_eol(void) {
 	return (
 		wegex_match(L"x?y", L"xy") &&
 		wegex_match(L"x?y", L"x") &&

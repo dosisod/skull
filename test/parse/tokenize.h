@@ -3,7 +3,7 @@
 #include "../../src/parse/tokenize.h"
 #include "../../test/testing.h"
 
-bool test_is_whitespace() {
+bool test_is_whitespace(void) {
 	return (
 		is_whitespace(' ') &&
 		!is_whitespace('A') &&
@@ -11,7 +11,7 @@ bool test_is_whitespace() {
 	);
 }
 
-bool test_is_quote() {
+bool test_is_quote(void) {
 	return (
 		is_quote('\"') &&
 		is_quote('\'') &&
@@ -20,7 +20,7 @@ bool test_is_quote() {
 	);
 }
 
-bool test_tokenize_single_token() {
+bool test_tokenize_single_token(void) {
 	const wchar_t *code1=L"token";
 	const wchar_t *code2=L"token字";
 	token_t *t1=tokenize(code1);
@@ -39,7 +39,7 @@ bool test_tokenize_single_token() {
 	return pass;
 }
 
-bool test_tokenize_no_tokens() {
+bool test_tokenize_no_tokens(void) {
 	const wchar_t *code=L"";
 	token_t *t=tokenize(code);
 
@@ -53,7 +53,7 @@ bool test_tokenize_no_tokens() {
 	return pass;
 }
 
-bool test_whitespace_between_tokens() {
+bool test_whitespace_between_tokens(void) {
 	const wchar_t *code=L"token1\r\n\t token2";
 	token_t *t=tokenize(code);
 
@@ -70,7 +70,7 @@ bool test_whitespace_between_tokens() {
 	return pass;
 }
 
-bool test_whitespace_at_eol_ignored() {
+bool test_whitespace_at_eol_ignored(void) {
 	const wchar_t *code=L"token   ";
 	token_t *t=tokenize(code);
 
@@ -84,7 +84,7 @@ bool test_whitespace_at_eol_ignored() {
 	return pass;
 }
 
-bool test_whitespace_inside_double_quotes_respected() {
+bool test_whitespace_inside_double_quotes_respected(void) {
 	const wchar_t *code=L"\"this is a single token\"";
 	token_t *t=tokenize(code);
 
@@ -99,7 +99,7 @@ bool test_whitespace_inside_double_quotes_respected() {
 	return pass;
 }
 
-bool test_whitespace_inside_single_quotes_respected() {
+bool test_whitespace_inside_single_quotes_respected(void) {
 	const wchar_t *code=L"'this is a single token'";
 	token_t *t=tokenize(code);
 
@@ -114,7 +114,7 @@ bool test_whitespace_inside_single_quotes_respected() {
 	return pass;
 }
 
-bool test_brackets_always_make_their_own_token() {
+bool test_brackets_always_make_their_own_token(void) {
 	const wchar_t *code=L"left[]right";
 	token_t *t=tokenize(code);
 
@@ -137,7 +137,7 @@ bool test_brackets_always_make_their_own_token() {
 	return pass;
 }
 
-bool test_free_tokens() {
+bool test_free_tokens(void) {
 	const wchar_t *code=L"token token token";
 	token_t *t=tokenize(code);
 
@@ -146,13 +146,13 @@ bool test_free_tokens() {
 	return true;
 }
 
-bool test_token_len() {
+bool test_token_len(void) {
 	token_t *token=tokenize(L"token");
 
 	return token_len(token)==5;
 }
 
-bool test_token_cmp() {
+bool test_token_cmp(void) {
 	const wchar_t *code=L"data";
 	token_t *token=tokenize(code);
 
@@ -166,7 +166,7 @@ bool test_token_cmp() {
 	return pass;
 }
 
-bool test_token_str() {
+bool test_token_str(void) {
 	const wchar_t *code=L"left right";
 	token_t *token=tokenize(code);
 	wchar_t *buf=token_str(token);
@@ -179,7 +179,7 @@ bool test_token_str() {
 	return pass;
 }
 
-bool test_make_token() {
+bool test_make_token(void) {
 	token_t *token=make_token();
 
 	const bool pass=(

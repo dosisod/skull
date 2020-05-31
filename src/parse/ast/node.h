@@ -23,7 +23,7 @@ typedef struct ast_node_t {
 /*
 Makes an ast_node_t with default values
 */
-ast_node_t *make_ast_node() {
+ast_node_t *make_ast_node(void) {
 	ast_node_t *node=malloc(sizeof(ast_node_t));
 
 	node->node_type=AST_NODE_UNKNOWN;

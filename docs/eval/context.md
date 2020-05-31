@@ -1,6 +1,6 @@
 # src/eval/context.h
 
-#### `context_t *make_context()`
+#### `context_t *make_context(void)`
 Returns a new variable context.
 
 #### `variable_t *context_find_name(context_t *ctx, const wchar_t *name)`

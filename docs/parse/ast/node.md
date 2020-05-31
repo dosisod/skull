@@ -1,6 +1,6 @@
 # src/parse/ast/node.h
 
-#### `ast_node_t *make_ast_node()`
+#### `ast_node_t *make_ast_node(void)`
 Makes an ast_node_t with default values
 
 #### `token_t *ast_token_cmp(token_t *token, ...)`

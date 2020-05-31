@@ -1,5 +1,5 @@
 # src/functions/libhello.c
 
-#### `void hello()`
+#### `void hello(void)`
 An example of a function that will be called via `dll_run`.
 

@@ -35,7 +35,7 @@ bool is_quote(wchar_t c) {
 /*
 Allocate and return a token with set defaults.
 */
-token_t *make_token() {
+token_t *make_token(void) {
 	token_t *token=malloc(sizeof(token_t));
 	token->begin=NULL;
 	token->end=NULL;

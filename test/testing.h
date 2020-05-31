@@ -29,7 +29,7 @@ void run_many_tests(const char *name, tests_t tests, bool *pass) {
 	wprintf(L"\n");
 }
 
-bool dummy_function() {
+bool dummy_function(void) {
 	return true;
 }
 

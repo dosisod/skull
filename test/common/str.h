@@ -3,7 +3,7 @@
 #include "../../src/common/str.h"
 #include "../../test/testing.h"
 
-bool test_strlcpy() {
+bool test_strlcpy(void) {
 	const char *data="hello there!";
 	const size_t len=5;
 	char buf[len + 1];
@@ -16,7 +16,7 @@ bool test_strlcpy() {
 	);
 }
 
-bool test_wcslcpy() {
+bool test_wcslcpy(void) {
 	const wchar_t *data=L"hello there!";
 	const size_t len=5;
 	wchar_t buf[len + 1];
