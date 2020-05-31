@@ -28,10 +28,10 @@ bool wegex_wc_cmp(const wchar_t *begin, const wchar_t *end, wchar_t wc) {
 		return false;
 	}
 	if (*begin==L'\n') {
-		return iswdigit(wc);
+		return iswdigit((wint_t)wc);
 	}
 	if (*begin==L'\b') {
-		return iswxdigit(wc);
+		return iswxdigit((wint_t)wc);
 	}
 	if (*begin==L'\a') {
 		return (
@@ -40,7 +40,7 @@ bool wegex_wc_cmp(const wchar_t *begin, const wchar_t *end, wchar_t wc) {
 		);
 	}
 	if (*begin==L'\f') {
-		return iswalnum(wc);
+		return iswalnum((wint_t)wc);
 	}
 	return *begin==wc;
 }

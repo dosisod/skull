@@ -11,7 +11,7 @@ void eval(FILE *f) {
 	rewind(f);
 
 	char code[size + 1];
-	fread(code, 1, size, f);
+	fread(code, 1, (size_t)size, f);
 	code[size]='\0';
 
 	const char *open_bracket=strchr(code, '[');

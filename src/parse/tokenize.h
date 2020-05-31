@@ -151,7 +151,7 @@ void free_tokens(token_t *head) {
 Returns the character length of the passed token
 */
 size_t token_len(const token_t *token) {
-	return (token->end - token->begin);
+	return (size_t)(token->end - token->begin);
 }
 
 /*

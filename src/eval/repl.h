@@ -26,7 +26,7 @@ wchar_t *repl_read() {
 /*
 Evaluates a single line, returns result as a string (if any).
 */
-wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
+const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	token_t *token=tokenize(str);
 	classify_tokens(token);
 

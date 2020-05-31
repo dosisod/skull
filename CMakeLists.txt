@@ -42,6 +42,9 @@ set(EXTRA_COMPILER_FLAGS
 	-Wunused
 	-Wunused-macros
 	-Wchkp
+	-Wconversion
+	-Wfloat-equal
+	-Wwrite-strings
 )
 
 add_subdirectory(src)
