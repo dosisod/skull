@@ -28,7 +28,19 @@ Evaluates a single line, returns result as a string (if any).
 */
 const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	token_t *token=tokenize(str);
+	token_t *head=token;
 	classify_tokens(token);
+
+	bool is_const=true;
+	if (token->token_type==TOKEN_KW_MUT) {
+		is_const=false;
+		token=token->next;
+
+		if (token==NULL) {
+			free_tokens(head);
+			return NULL;
+		}
+	}
 
 	if (token->token_type==TOKEN_IDENTIFIER &&
 		token->next!=NULL &&
@@ -39,7 +51,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		token->next->next->next->token_type==TOKEN_INT_CONST)
 	{
 		if (ctx==NULL) {
-			free_tokens(token);
+			free_tokens(head);
 			return NULL;
 		}
 
@@ -53,10 +65,10 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 
 		if (err==EVAL_INTEGER_OK) {
 			variable_write(var, &tmp);
-			var->is_const=true;
+			var->is_const=is_const;
 			if (!context_add_var(ctx, var)) {
 				free_variable(var);
-				free_tokens(token);
+				free_tokens(head);
 
 				return L"variable already defined";
 			}
@@ -64,7 +76,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		else {
 			free_variable(var);
 		}
-		free_tokens(token);
+		free_tokens(head);
 		return NULL;
 	}
 
