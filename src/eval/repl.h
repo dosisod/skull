@@ -80,25 +80,45 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		return NULL;
 	}
 
-	variable_t *var=NULL;
 	if (ctx!=NULL) {
-		var=context_find_name(ctx, token->begin);
-	}
-	if (var!=NULL) {
-		int64_t val=0;
-		variable_read(&val, var);
+		MAKE_TOKEN_BUF(buf, token);
+		variable_t *var=context_find_name(ctx, buf);
 
-		wprintf(L"%lli\n", val);
+		if (var!=NULL && token->next==NULL) {
+			int64_t val=0;
+			variable_read(&val, var);
 
-		free_tokens(token);
-		return NULL;
+			wprintf(L"%lli\n", val);
+
+			free_tokens(head);
+			return NULL;
+		}
+		if (
+			var!=NULL &&
+			token->next!=NULL &&
+			token->next->token_type==TOKEN_OPER_EQUAL &&
+			token->next->next!=NULL &&
+			token->next->next->token_type==TOKEN_INT_CONST)
+		{
+			uint8_t err=0;
+			int64_t data=eval_integer(token->next->next, &err);
+
+			if (err==EVAL_INTEGER_ERR) {
+				return NULL;
+			}
+
+			variable_write(ctx->vars[0], &data);
+
+			free_tokens(head);
+			return NULL;
+		}
 	}
 
 	if (*token->begin!=L'\0' && token_cmp(L"return", token)) {
-		free_tokens(token);
+		free_tokens(head);
 		exit(0);
 	}
 
-	free_tokens(token);
+	free_tokens(head);
 	return L"invalid input";
 }

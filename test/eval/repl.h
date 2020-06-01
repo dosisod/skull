@@ -117,6 +117,42 @@ bool test_repl_manually_writing_to_mutable_var_works(void) {
 	return pass;
 }
 
+bool test_repl_write_to_mutable_var(void) {
+	context_t *ctx=make_context();
+
+	make_default_types();
+	repl_eval(L"mut x: int = 1234", ctx);
+	repl_eval(L"x = 5678", ctx);
+
+	if (ctx->vars_used!=1) {
+		free_context(ctx);
+		return false;
+	}
+
+	int64_t result=0;
+	variable_read(&result, ctx->vars[0]);
+
+	const bool pass=(result==5678);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
+bool test_repl_print_fail_with_trailing_tokens(void) {
+	context_t *ctx=make_context();
+
+	make_default_types();
+	repl_eval(L"x: int = 1234", ctx);
+	const wchar_t *output=repl_eval(L"x random_data", ctx);
+
+	const bool pass=wcscmp(L"invalid input", output)==0;
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
 bool test_repl_invalid_input_returns_error(void) {
 	const wchar_t *output=repl_eval(L"not_valid", NULL);
 
@@ -131,6 +167,8 @@ void repl_test_self(bool *pass) {
 		test_repl_declaring_mutable_var,
 		test_repl_manually_writing_to_const_var_fails,
 		test_repl_manually_writing_to_mutable_var_works,
+		test_repl_write_to_mutable_var,
+		test_repl_print_fail_with_trailing_tokens,
 		test_repl_invalid_input_returns_error,
 		NULL
 	};
