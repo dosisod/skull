@@ -46,7 +46,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		token->next!=NULL &&
 		token->next->token_type==TOKEN_TYPE &&
 		token->next->next!=NULL &&
-		token->next->next->token_type==TOKEN_OPERATOR &&
+		token->next->next->token_type==TOKEN_OPER_EQUAL &&
 		token->next->next->next!=NULL &&
 		token->next->next->next->token_type==TOKEN_INT_CONST)
 	{

@@ -23,7 +23,8 @@ enum token_types {
 
 	TOKEN_TYPE,
 
-	TOKEN_OPERATOR,
+	//operators (add, subtract, assign)
+	TOKEN_OPER_EQUAL,
 
 	//constant values, such as ints and strings
 	TOKEN_INT_CONST,
@@ -31,15 +32,6 @@ enum token_types {
 	TOKEN_BOOL_CONST,
 	TOKEN_CHAR_CONST,
 	TOKEN_STR_CONST
-};
-
-const wchar_t *TOKEN_OPERATORS[] = {
-	L"+", L"-", L"/", L"//", L"*", L"%", L"<<", L">>", L"|", L"&", L"^",
-	L"+=", L"-=", L"/=", L"*=", L"|=", L"&=", L"^=",
-	L"<", L">", L"<=", L">=",
-	L"=", L"==", L"!=",
-	L"and", L"or", L"not",
-	L""
 };
 
 /*
@@ -52,20 +44,6 @@ bool is_type_token(const token_t *token) {
 			return true;
 		}
 		current=current->next;
-	}
-	return false;
-}
-
-/*
-Returns true if `token` is an operator token.
-*/
-bool is_operator_token(const token_t *token) {
-	const wchar_t **head=TOKEN_OPERATORS;
-	while (*head[0]!=L'\0') {
-		if (token_cmp(*head, token)) {
-			return true;
-		}
-		head++;
 	}
 	return false;
 }
@@ -209,8 +187,8 @@ void classify_token(token_t *token) {
 	else if (token_cmp(L"mut", token)) {
 		token->token_type=TOKEN_KW_MUT;
 	}
-	else if (is_operator_token(token)) {
-		token->token_type=TOKEN_OPERATOR;
+	else if (token_cmp(L"=", token)) {
+		token->token_type=TOKEN_OPER_EQUAL;
 	}
 	else if (is_type_token(token)) {
 		token->token_type=TOKEN_TYPE;

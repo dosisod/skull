@@ -46,7 +46,7 @@ bool test_ast_token_cmp(void) {
 		token,
 		TOKEN_IDENTIFIER,
 		TOKEN_TYPE,
-		TOKEN_OPERATOR,
+		TOKEN_OPER_EQUAL,
 		TOKEN_INT_CONST,
 		-1
 	)==token->next->next->next;
@@ -67,7 +67,7 @@ bool test_ast_token_cmp_extra_tokens(void) {
 		token,
 		TOKEN_IDENTIFIER,
 		TOKEN_TYPE,
-		TOKEN_OPERATOR,
+		TOKEN_OPER_EQUAL,
 		TOKEN_INT_CONST,
 		-1
 	)==token->next->next->next;
@@ -88,7 +88,7 @@ bool test_ast_token_cmp_missing_tokens(void) {
 		token,
 		TOKEN_IDENTIFIER,
 		TOKEN_TYPE,
-		TOKEN_OPERATOR,
+		TOKEN_OPER_EQUAL,
 		TOKEN_INT_CONST,
 		TOKEN_UNKNOWN,
 		-1
@@ -115,7 +115,7 @@ bool test_push_ast_node_if(void) {
 		token,
 		TOKEN_IDENTIFIER,
 		TOKEN_TYPE,
-		TOKEN_OPERATOR,
+		TOKEN_OPER_EQUAL,
 		TOKEN_INT_CONST,
 		-1
 	);
