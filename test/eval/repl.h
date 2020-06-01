@@ -153,6 +153,10 @@ bool test_repl_print_fail_with_trailing_tokens(void) {
 	return pass;
 }
 
+bool test_repl_blank_line_returns_nothing(void) {
+	return repl_eval(L"", NULL)==NULL;
+}
+
 bool test_repl_invalid_input_returns_error(void) {
 	const wchar_t *output=repl_eval(L"not_valid", NULL);
 
@@ -169,6 +173,7 @@ void repl_test_self(bool *pass) {
 		test_repl_manually_writing_to_mutable_var_works,
 		test_repl_write_to_mutable_var,
 		test_repl_print_fail_with_trailing_tokens,
+		test_repl_blank_line_returns_nothing,
 		test_repl_invalid_input_returns_error,
 		NULL
 	};

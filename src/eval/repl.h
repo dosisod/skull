@@ -31,6 +31,11 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	token_t *head=token;
 	classify_tokens(token);
 
+	if (token->end==token->begin) {
+		free_tokens(head);
+		return NULL;
+	}
+
 	bool is_const=true;
 	if (token->token_type==TOKEN_KW_MUT) {
 		is_const=false;
