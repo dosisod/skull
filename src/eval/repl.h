@@ -109,10 +109,14 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 			int64_t data=eval_integer(token->next->next, &err);
 
 			if (err==EVAL_INTEGER_ERR) {
+				free_tokens(head);
 				return NULL;
 			}
 
-			variable_write(ctx->vars[0], &data);
+			if (variable_write(var, &data)==VARIABLE_WRITE_ECONST) {
+				free_tokens(head);
+				return L"cannot assign to const";
+			}
 
 			free_tokens(head);
 			return NULL;
