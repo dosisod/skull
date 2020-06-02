@@ -5,6 +5,7 @@
 #include "../common/color.h"
 #include "../eval/context.h"
 #include "../eval/eval_integer.h"
+#include "../parse/ast/node.h"
 #include "../parse/classify.h"
 #include "../parse/tokenize.h"
 
@@ -24,6 +25,39 @@ wchar_t *repl_read(void) {
 }
 
 /*
+Make and add a variable from passed `tokens` to context `ctx`.
+
+Added variable will be constant if `is_const` is true.
+*/
+const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const) {
+	if (ctx==NULL) {
+		return NULL;
+	}
+
+	MAKE_TOKEN_BUF(type, token->next);
+	MAKE_TOKEN_BUF(name, token);
+
+	variable_t *var=make_variable(type, name, false);
+
+	uint8_t err=0;
+	int64_t tmp=eval_integer(token->next->next->next, &err);
+
+	if (err==EVAL_INTEGER_OK) {
+		variable_write(var, &tmp);
+		var->is_const=is_const;
+		if (!context_add_var(ctx, var)) {
+			free_variable(var);
+
+			return L"variable already defined";
+		}
+	}
+	else {
+		free_variable(var);
+	}
+	return NULL;
+}
+
+/*
 Evaluates a single line, returns result as a string (if any).
 */
 const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
@@ -31,96 +65,73 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	token_t *head=token;
 	classify_tokens(token);
 
+	//blank or empty line
 	if (token->end==token->begin) {
 		free_tokens(head);
 		return NULL;
 	}
 
-	bool is_const=true;
-	if (token->token_type==TOKEN_KW_MUT) {
-		is_const=false;
-		token=token->next;
+	// x: int = 0
+	if (token!=ast_token_cmp(token,
+		TOKEN_IDENTIFIER,
+		TOKEN_TYPE,
+		TOKEN_OPER_EQUAL,
+		TOKEN_INT_CONST, -1))
+	{
+		const wchar_t *ret=repl_make_var(token, ctx, true);
 
-		if (token==NULL) {
-			free_tokens(head);
-			return NULL;
-		}
+		free_tokens(head);
+		return ret;
 	}
 
-	if (token->token_type==TOKEN_IDENTIFIER &&
-		token->next!=NULL &&
-		token->next->token_type==TOKEN_TYPE &&
-		token->next->next!=NULL &&
-		token->next->next->token_type==TOKEN_OPER_EQUAL &&
-		token->next->next->next!=NULL &&
-		token->next->next->next->token_type==TOKEN_INT_CONST)
+	// mut x: int = 0
+	if (token!=ast_token_cmp(token,
+		TOKEN_KW_MUT,
+		TOKEN_IDENTIFIER,
+		TOKEN_TYPE,
+		TOKEN_OPER_EQUAL,
+		TOKEN_INT_CONST, -1))
 	{
-		if (ctx==NULL) {
-			free_tokens(head);
-			return NULL;
-		}
+		const wchar_t *ret=repl_make_var(token->next, ctx, false);
 
-		MAKE_TOKEN_BUF(type, token->next);
-		MAKE_TOKEN_BUF(name, token);
+		free_tokens(head);
+		return ret;
+	}
 
-		variable_t *var=make_variable(type, name, false);
+	MAKE_TOKEN_BUF(buf, token);
+	variable_t *var=context_find_name(ctx, buf);
 
-		uint8_t err=0;
-		int64_t tmp=eval_integer(token->next->next->next, &err);
+	//print user defined variable
+	if (var!=NULL && token->next==NULL) {
+		int64_t val=0;
+		variable_read(&val, var);
 
-		if (err==EVAL_INTEGER_OK) {
-			variable_write(var, &tmp);
-			var->is_const=is_const;
-			if (!context_add_var(ctx, var)) {
-				free_variable(var);
-				free_tokens(head);
+		wprintf(L"%lli\n", val);
 
-				return L"variable already defined";
-			}
-		}
-		else {
-			free_variable(var);
-		}
 		free_tokens(head);
 		return NULL;
 	}
 
-	if (ctx!=NULL) {
-		MAKE_TOKEN_BUF(buf, token);
-		variable_t *var=context_find_name(ctx, buf);
+	//reassigning an existing variable
+	if (var!=NULL && token->next!=ast_token_cmp(token->next,
+		TOKEN_OPER_EQUAL,
+		TOKEN_INT_CONST, -1))
+	{
+		uint8_t err=0;
+		int64_t data=eval_integer(token->next->next, &err);
 
-		if (var!=NULL && token->next==NULL) {
-			int64_t val=0;
-			variable_read(&val, var);
-
-			wprintf(L"%lli\n", val);
-
+		if (err==EVAL_INTEGER_ERR) {
 			free_tokens(head);
 			return NULL;
 		}
-		if (
-			var!=NULL &&
-			token->next!=NULL &&
-			token->next->token_type==TOKEN_OPER_EQUAL &&
-			token->next->next!=NULL &&
-			token->next->next->token_type==TOKEN_INT_CONST)
-		{
-			uint8_t err=0;
-			int64_t data=eval_integer(token->next->next, &err);
 
-			if (err==EVAL_INTEGER_ERR) {
-				free_tokens(head);
-				return NULL;
-			}
-
-			if (variable_write(var, &data)==VARIABLE_WRITE_ECONST) {
-				free_tokens(head);
-				return L"cannot assign to const";
-			}
-
+		if (variable_write(var, &data)==VARIABLE_WRITE_ECONST) {
 			free_tokens(head);
-			return NULL;
+			return L"cannot assign to const";
 		}
+
+		free_tokens(head);
+		return NULL;
 	}
 
 	if (token_cmp(L"return", token) &&

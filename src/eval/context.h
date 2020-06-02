@@ -29,8 +29,11 @@ context_t *make_context(void) {
 Returns pointer to variable with matching `name` if found, else `NULL`
 */
 variable_t *context_find_name(context_t *ctx, const wchar_t *name) {
-	size_t tmp=0;
+	if (ctx==NULL) {
+		return NULL;
+	}
 
+	size_t tmp=0;
 	while (tmp < ctx->vars_used) {
 		if (wcscmp(ctx->vars[tmp]->name, name)==0) {
 			return ctx->vars[tmp];

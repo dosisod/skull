@@ -182,6 +182,13 @@ bool test_repl_invalid_input_returns_error(void) {
 	return wcscmp(L"invalid input", output)==0;
 }
 
+bool test_repl_mut_cannot_be_used_alone(void) {
+	return wcscmp(
+		L"invalid input",
+		repl_eval(L"mut", NULL)
+	)==0;
+}
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_variable_assign,
@@ -195,6 +202,7 @@ void repl_test_self(bool *pass) {
 		test_repl_print_fail_with_trailing_tokens,
 		test_repl_blank_line_returns_nothing,
 		test_repl_invalid_input_returns_error,
+		test_repl_mut_cannot_be_used_alone,
 		NULL
 	};
 

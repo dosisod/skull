@@ -156,6 +156,10 @@ bool test_free_context(void) {
 	return true;
 }
 
+bool test_context_find_name_when_null(void) {
+	return context_find_name(NULL, L"anything")==NULL;
+}
+
 void context_test_self(bool *pass) {
 	tests_t tests={
 		test_make_context,
@@ -166,6 +170,7 @@ void context_test_self(bool *pass) {
 		test_add_nested_context,
 		test_cannot_add_same_varname_to_sub_context,
 		test_free_context,
+		test_context_find_name_when_null,
 		NULL
 	};
 
