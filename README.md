@@ -33,10 +33,24 @@ $ cmake --build .
 
 ## Testing
 
-After building, run:
+Tests are best ran via a `pre-commit`:
 
 ```
-./test/Test
+# run tests, wont commit unless tests pass
+$ git commit
+```
+
+To use these `pre-commit`s, run the following:
+
+```
+$ cp pre-commit .git/hooks/pre-commit
+$ chmod +x .git/hooks/pre-commit
+```
+
+Tests may also be ran manually:
+
+```
+$ ./build/test/Test
 ```
 
 ## Todo

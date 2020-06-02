@@ -1,0 +1,18 @@
+if [ ! -d "build" ]; then
+	mkdir build
+	cd build
+	cmake ..
+	cmake --build .
+fi
+
+python3 make_docs.py
+
+cd build
+cmake --build .
+./test/Test
+cd ..
+
+c99 -shared src/functions/libhello.c -ldl -o src/functions/libhello.so
+./build/src/skull src/main.skull
+
+#bash ./.github/workflows/clang_tidy.sh
