@@ -166,6 +166,26 @@ bool test_token_cmp(void) {
 	return pass;
 }
 
+bool test_token_cmp_match_exact_strings_only(void) {
+	token_t *token1=tokenize(L"data");
+	token_t *token2=tokenize(L"dat");
+	token_t *token3=tokenize(L"da");
+	token_t *token4=tokenize(L"d");
+
+	const bool pass=(
+		token_cmp(L"data", token1) &&
+		!token_cmp(L"data", token2) &&
+		!token_cmp(L"data", token3) &&
+		!token_cmp(L"data", token4)
+	);
+
+	free(token1);
+	free(token2);
+	free(token3);
+	free(token4);
+	return pass;
+}
+
 bool test_token_str(void) {
 	const wchar_t *code=L"left right";
 	token_t *token=tokenize(code);
@@ -208,6 +228,7 @@ void tokenizer_test_self(bool *pass) {
 		test_free_tokens,
 		test_token_len,
 		test_token_cmp,
+		test_token_cmp_match_exact_strings_only,
 		test_token_str,
 		test_make_token,
 		NULL

@@ -158,7 +158,11 @@ size_t token_len(const token_t *token) {
 Returns true if `str` is equal to the value of `token`.
 */
 bool token_cmp(const wchar_t *str, const token_t *token) {
-	return wcsncmp(str, token->begin, token_len(token))==0;
+	const size_t len=token_len(token);
+	return (
+		wcslen(str)==len &&
+		wcsncmp(str, token->begin, len)==0
+	);
 }
 
 /*
