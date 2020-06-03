@@ -26,6 +26,7 @@ enum token_types {
 
 	//operators (add, subtract, assign)
 	TOKEN_OPER_EQUAL,
+	TOKEN_OPER_PLUS,
 
 	//constant values, such as ints and strings
 	TOKEN_INT_CONST,
@@ -193,6 +194,9 @@ void classify_token(token_t *token) {
 	}
 	else if (token_cmp(L"=", token)) {
 		token->token_type=TOKEN_OPER_EQUAL;
+	}
+	else if (token_cmp(L"+", token)) {
+		token->token_type=TOKEN_OPER_PLUS;
 	}
 	else if (is_type_token(token)) {
 		token->token_type=TOKEN_TYPE;

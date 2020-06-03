@@ -4,6 +4,7 @@
 
 #include "../common/color.h"
 #include "../eval/context.h"
+#include "../eval/eval_add.h"
 #include "../eval/eval_integer.h"
 #include "../parse/ast/node.h"
 #include "../parse/classify.h"
@@ -130,6 +131,28 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 			return L"cannot assign to const";
 		}
 
+		free_tokens(head);
+		return NULL;
+	}
+
+	if (var!=NULL && token->next!=ast_token_cmp(token->next,
+		TOKEN_OPER_PLUS,
+		TOKEN_IDENTIFIER, -1))
+	{
+		MAKE_TOKEN_BUF(rhs_buf, token->next->next);
+		variable_t *var_rhs=context_find_name(ctx, rhs_buf);
+		if (var_rhs==NULL) {
+			free_tokens(head);
+			return L"invalid input";
+		}
+
+		variable_t *result=eval_add(var, var_rhs);
+		int64_t val=0;
+		variable_read(&val, result);
+
+		wprintf(L"%lli\n", val);
+
+		free_variable(result);
 		free_tokens(head);
 		return NULL;
 	}

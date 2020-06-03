@@ -196,6 +196,35 @@ bool test_repl_clear_function(void) {
 	)==0;
 }
 
+bool test_repl_add_variables(void) {
+	make_default_types();
+	context_t *ctx=make_context();
+
+	repl_eval(L"x: int = 1", ctx);
+	repl_eval(L"y: int = 2", ctx);
+	const wchar_t *output=repl_eval(L"x + y", ctx);
+
+	const bool pass=(output==NULL);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
+bool test_repl_cannot_add_nonexistent_var(void) {
+	make_default_types();
+	context_t *ctx=make_context();
+
+	repl_eval(L"x: int = 1", ctx);
+	const wchar_t *output=repl_eval(L"x + y", ctx);
+
+	const bool pass=(wcscmp(L"invalid input", output)==0);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_variable_assign,
@@ -211,6 +240,8 @@ void repl_test_self(bool *pass) {
 		test_repl_invalid_input_returns_error,
 		test_repl_mut_cannot_be_used_alone,
 		test_repl_clear_function,
+		test_repl_add_variables,
+		test_repl_cannot_add_nonexistent_var,
 		NULL
 	};
 

@@ -156,6 +156,21 @@ bool test_token_equal_oper(void) {
 	return pass;
 }
 
+bool test_token_plus_oper(void) {
+	const wchar_t *code=L"+ other";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_OPER_PLUS &&
+		t->next->token_type!=TOKEN_OPER_PLUS
+	);
+
+	free_tokens(t);
+
+	return pass;
+}
+
 bool test_token_type(void) {
 	const wchar_t *code=L"int not_a_type";
 	token_t *t=tokenize(code);
@@ -327,6 +342,7 @@ void classifier_test_self(bool *pass) {
 		test_token_mut_kw,
 		test_token_return_kw,
 		test_token_equal_oper,
+		test_token_plus_oper,
 		test_token_type,
 		test_token_function,
 		test_token_unknown,
