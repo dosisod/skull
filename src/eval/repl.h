@@ -134,9 +134,9 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		return NULL;
 	}
 
-	if (token_cmp(L"return", token) &&
-		token->next!=NULL &&
-		token->next->token_type==TOKEN_INT_CONST)
+	if (token!=ast_token_cmp(token,
+		TOKEN_KW_RETURN,
+		TOKEN_INT_CONST, -1))
 	{
 		uint8_t err=0;
 		int64_t ret=eval_integer(token->next, &err);
@@ -147,6 +147,14 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 
 		free_tokens(head);
 		exit((int)ret);
+	}
+
+	if (token_cmp(L"clear", token) && token!=ast_token_cmp(token->next,
+		TOKEN_BRACKET_OPEN,
+		TOKEN_BRACKET_CLOSE, -1))
+	{
+		free_tokens(head);
+		return L"\033[2J\033[;1H";
 	}
 
 	free_tokens(head);

@@ -189,6 +189,13 @@ bool test_repl_mut_cannot_be_used_alone(void) {
 	)==0;
 }
 
+bool test_repl_clear_function(void) {
+	return wcscmp(
+		L"\033[2J\033[;1H",
+		repl_eval(L"clear[]", NULL)
+	)==0;
+}
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_variable_assign,
@@ -203,6 +210,7 @@ void repl_test_self(bool *pass) {
 		test_repl_blank_line_returns_nothing,
 		test_repl_invalid_input_returns_error,
 		test_repl_mut_cannot_be_used_alone,
+		test_repl_clear_function,
 		NULL
 	};
 

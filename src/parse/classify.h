@@ -17,6 +17,7 @@ enum token_types {
 
 	//keyword related tokens
 	TOKEN_KW_MUT,
+	TOKEN_KW_RETURN,
 
 	TOKEN_BRACKET_OPEN,
 	TOKEN_BRACKET_CLOSE,
@@ -186,6 +187,9 @@ void classify_token(token_t *token) {
 	}
 	else if (token_cmp(L"mut", token)) {
 		token->token_type=TOKEN_KW_MUT;
+	}
+	else if (token_cmp(L"return", token)) {
+		token->token_type=TOKEN_KW_RETURN;
 	}
 	else if (token_cmp(L"=", token)) {
 		token->token_type=TOKEN_OPER_EQUAL;
