@@ -8,6 +8,8 @@
 #include "parse/classify.h"
 #include "parse/types.h"
 
+#include "errors.h"
+
 #include "eval/eval_add.h"
 #include "eval/eval_bool.h"
 #include "eval/eval_float.h"
@@ -35,6 +37,8 @@ int main(void) {
 	tokenizer_test_self(&passed);
 	types_test_self(&passed);
 	classifier_test_self(&passed);
+
+	error_test_self(&passed);
 
 	eval_bool_test_self(&passed);
 	eval_float_test_self(&passed);

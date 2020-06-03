@@ -46,7 +46,7 @@ bool test_repl_cannot_redeclare_var(void) {
 
 	const bool pass=(
 		ctx->vars_used==1 &&
-		wcscmp(L"variable already defined", output)==0
+		wcscmp(ERROR_MSG[ERROR_VAR_ALREADY_DEFINED], output)==0
 	);
 
 	free_types();
@@ -151,7 +151,7 @@ bool test_repl_write_to_const_var_fails(void) {
 		return false;
 	}
 
-	const bool pass=(wcscmp(L"cannot assign to const", output)==0);
+	const bool pass=(wcscmp(ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST], output)==0);
 
 	free_types();
 	free_context(ctx);
@@ -165,7 +165,7 @@ bool test_repl_print_fail_with_trailing_tokens(void) {
 	repl_eval(L"x: int = 1234", ctx);
 	const wchar_t *output=repl_eval(L"x random_data", ctx);
 
-	const bool pass=wcscmp(L"invalid input", output)==0;
+	const bool pass=wcscmp(ERROR_MSG[ERROR_INVALID_INPUT], output)==0;
 
 	free_types();
 	free_context(ctx);
@@ -179,12 +179,12 @@ bool test_repl_blank_line_returns_nothing(void) {
 bool test_repl_invalid_input_returns_error(void) {
 	const wchar_t *output=repl_eval(L"not_valid", NULL);
 
-	return wcscmp(L"invalid input", output)==0;
+	return wcscmp(ERROR_MSG[ERROR_INVALID_INPUT], output)==0;
 }
 
 bool test_repl_mut_cannot_be_used_alone(void) {
 	return wcscmp(
-		L"invalid input",
+		ERROR_MSG[ERROR_INVALID_INPUT],
 		repl_eval(L"mut", NULL)
 	)==0;
 }
@@ -218,7 +218,7 @@ bool test_repl_cannot_add_nonexistent_var(void) {
 	repl_eval(L"x: int = 1", ctx);
 	const wchar_t *output=repl_eval(L"x + y", ctx);
 
-	const bool pass=(wcscmp(L"invalid input", output)==0);
+	const bool pass=(wcscmp(ERROR_MSG[ERROR_INVALID_INPUT], output)==0);
 
 	free_types();
 	free_context(ctx);

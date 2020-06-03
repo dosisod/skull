@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "../common/color.h"
+#include "../errors.h"
 #include "../eval/context.h"
 #include "../eval/eval_add.h"
 #include "../eval/eval_integer.h"
@@ -49,7 +50,7 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		if (!context_add_var(ctx, var)) {
 			free_variable(var);
 
-			return L"variable already defined";
+			return ERROR_MSG[ERROR_VAR_ALREADY_DEFINED];
 		}
 	}
 	else {
@@ -128,7 +129,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 
 		if (variable_write(var, &data)==VARIABLE_WRITE_ECONST) {
 			free_tokens(head);
-			return L"cannot assign to const";
+			return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
 		}
 
 		free_tokens(head);
@@ -143,7 +144,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		variable_t *var_rhs=context_find_name(ctx, rhs_buf);
 		if (var_rhs==NULL) {
 			free_tokens(head);
-			return L"invalid input";
+			return ERROR_MSG[ERROR_INVALID_INPUT];
 		}
 
 		variable_t *result=eval_add(var, var_rhs);
@@ -181,5 +182,5 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	}
 
 	free_tokens(head);
-	return L"invalid input";
+	return ERROR_MSG[ERROR_INVALID_INPUT];
 }
