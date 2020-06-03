@@ -196,17 +196,36 @@ bool test_repl_clear_function(void) {
 	)==0;
 }
 
+bool test_repl_print_var(void) {
+	make_default_types();
+	context_t *ctx=make_context();
+
+	repl_eval(L"x: int = 1234", ctx);
+	const wchar_t *output=repl_eval(L"x", ctx);
+
+	const bool pass=(wcscmp(L"1234", output)==0);
+
+	if (!is_error_msg(output)) {
+		free((void*)output);
+	}
+	free_types();
+	free_context(ctx);
+	return pass;
+}
 bool test_repl_add_variables(void) {
 	make_default_types();
 	context_t *ctx=make_context();
 
 	repl_eval(L"x: int = 1", ctx);
-	repl_eval(L"y: int = 2", ctx);
-	const wchar_t *output=repl_eval(L"x + y", ctx);
+	repl_eval(L"y: int = 2", ctx); // NOLINT
+	const wchar_t *output=repl_eval(L"x + y", ctx); // NOLINT
 
-	const bool pass=(output==NULL);
+	const bool pass=(wcscmp(L"3", output)==0);
 
-	free_types();
+	if (!is_error_msg(output)) {
+		free((void*)output); // NOLINT
+	}
+	free_types(); // NOLINT
 	free_context(ctx);
 	return pass;
 }
@@ -216,9 +235,9 @@ bool test_repl_cannot_add_nonexistent_var(void) {
 	context_t *ctx=make_context();
 
 	repl_eval(L"x: int = 1", ctx);
-	const wchar_t *output=repl_eval(L"x + y", ctx);
+	const wchar_t *output=repl_eval(L"x + y", ctx); // NOLINT
 
-	const bool pass=(wcscmp(ERROR_MSG[ERROR_INVALID_INPUT], output)==0);
+	const bool pass=(wcscmp(ERROR_MSG[ERROR_INVALID_INPUT], output)==0); // NOLINT
 
 	free_types();
 	free_context(ctx);
@@ -241,6 +260,7 @@ void repl_test_self(bool *pass) {
 		test_repl_mut_cannot_be_used_alone,
 		test_repl_clear_function,
 		test_repl_add_variables,
+		test_repl_print_var,
 		test_repl_cannot_add_nonexistent_var,
 		NULL
 	};

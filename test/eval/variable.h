@@ -121,6 +121,26 @@ bool test_free_null_variable_is_ok(void) {
 	return true;
 }
 
+bool test_fmt_var_int(void) {
+	make_default_types();
+	variable_t *var=make_variable(L"int", L"x", false);
+
+	int64_t data=1234;
+	variable_write(var, &data);
+
+	wchar_t *str=fmt_var(var);
+
+	const bool pass=(
+		str!=NULL &&
+		wcscmp(L"1234", str)==0
+	);
+
+	free(str);
+	free_variable(var);
+	free_types();
+	return pass;
+}
+
 void variable_test_self(bool *pass) {
 	tests_t tests={
 		test_create_variable,
@@ -131,6 +151,7 @@ void variable_test_self(bool *pass) {
 		test_make_variable_with_invalid_name_fails,
 		test_free_variable,
 		test_free_null_variable_is_ok,
+		test_fmt_var_int,
 		NULL
 	};
 

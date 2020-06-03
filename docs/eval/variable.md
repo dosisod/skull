@@ -17,3 +17,8 @@ Read variable `var`s memory into `dest`.
 #### `void free_variable(variable_t *var)`
 Free a given `variable_t` variable.
 
+#### `wchar_t *fmt_var(const variable_t *var)`
+Return string representation of a variable.
+
+The result of this function must be freed.
+

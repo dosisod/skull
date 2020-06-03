@@ -105,13 +105,10 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 
 	//print user defined variable
 	if (var!=NULL && token->next==NULL) {
-		int64_t val=0;
-		variable_read(&val, var);
-
-		wprintf(L"%lli\n", val);
+		wchar_t *ret=fmt_var(var);
 
 		free_tokens(head);
-		return NULL;
+		return ret;
 	}
 
 	//reassigning an existing variable
@@ -148,14 +145,11 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		}
 
 		variable_t *result=eval_add(var, var_rhs);
-		int64_t val=0;
-		variable_read(&val, result);
-
-		wprintf(L"%lli\n", val);
+		wchar_t *ret=fmt_var(result);
 
 		free_variable(result);
 		free_tokens(head);
-		return NULL;
+		return ret;
 	}
 
 	if (token!=ast_token_cmp(token,

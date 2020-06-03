@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "../parse/classify.h"
@@ -79,4 +80,37 @@ void free_variable(variable_t *var) {
 		free(var->mem);
 		free(var);
 	}
+}
+
+/*
+Return string representation of a variable.
+
+The result of this function must be freed.
+*/
+wchar_t *fmt_var(const variable_t *var) {
+	char *tmp=NULL;
+	wchar_t *ret=NULL;
+
+	if (var->type==find_type(L"int")) {
+		int64_t data=0;
+		variable_read(&data, var);
+
+		int needed=snprintf(NULL, 0, "%li", data) + 1;
+		if (needed<0) {
+			return NULL;
+		}
+
+		tmp=malloc(sizeof(char) * (unsigned long int)needed);
+		int wrote=snprintf(tmp, (unsigned long int)needed, "%li", data);
+		if (wrote<0) {
+			free(tmp);
+			return NULL;
+		}
+
+		ret=malloc(sizeof(wchar_t) * (unsigned long int)needed);
+		mbstowcs(ret, tmp, (unsigned long int)needed);
+	}
+
+	free(tmp);
+	return ret;
 }

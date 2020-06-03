@@ -32,5 +32,5 @@ bool is_error_msg(const wchar_t *str) {
 		}
 	}
 
-	return (str <= *ERROR_MSG_LAST) && (str >= ERROR_MSG[0]);
+	return (ERROR_MSG_LAST!=NULL) && (str <= *ERROR_MSG_LAST) && (str >= ERROR_MSG[0]);
 }
