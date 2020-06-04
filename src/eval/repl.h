@@ -49,12 +49,12 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		var->is_const=is_const;
 		if (!context_add_var(ctx, var)) {
 			free_variable(var);
-
 			return ERROR_MSG[ERROR_VAR_ALREADY_DEFINED];
 		}
 	}
 	else {
 		free_variable(var);
+		return ERROR_MSG[ERROR_WRITING_TO_VAR];
 	}
 	return NULL;
 }
@@ -121,7 +121,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 
 		if (err==EVAL_INTEGER_ERR) {
 			free_tokens(head);
-			return NULL;
+			return ERROR_MSG[ERROR_WRITING_TO_VAR];
 		}
 
 		if (variable_write(var, &data)==VARIABLE_WRITE_ECONST) {

@@ -244,6 +244,25 @@ bool test_repl_cannot_add_nonexistent_var(void) {
 	return pass;
 }
 
+bool test_repl_overflow_int_gives_error(void) {
+	make_default_types();
+	context_t *ctx=make_context();
+
+	const wchar_t *output1=repl_eval(L"x: int = 99999999999999999999999", ctx);
+
+	repl_eval(L"mut y: int = 0", ctx);
+	const wchar_t *output2=repl_eval(L"y = 99999999999999999999999", ctx); // NOLINT
+
+	const bool pass=(
+		wcscmp(ERROR_MSG[ERROR_WRITING_TO_VAR], output1)==0 && // NOLINT
+		wcscmp(ERROR_MSG[ERROR_WRITING_TO_VAR], output2)==0
+	);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_variable_assign,
@@ -262,6 +281,7 @@ void repl_test_self(bool *pass) {
 		test_repl_add_variables,
 		test_repl_print_var,
 		test_repl_cannot_add_nonexistent_var,
+		test_repl_overflow_int_gives_error,
 		NULL
 	};
 
