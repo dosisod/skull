@@ -120,7 +120,7 @@ bool test_push_ast_node_if(void) {
 		-1
 	);
 
-	push_ast_node_if(token, last, AST_NODE_VAR_DEF, &node);
+	push_ast_node_if(token, &last, AST_NODE_VAR_DEF, &node);
 
 	const bool pass=(tmp->next==node);
 
@@ -139,6 +139,24 @@ bool test_make_ast_tree_variable_def(void) {
 		node->node_type==AST_NODE_VAR_DEF &&
 		node->begin==code &&
 		node->end==(code + 10) &&
+		node->next!=NULL
+	);
+
+	free_types();
+	free(node);
+
+	return pass;
+}
+
+bool test_make_ast_tree_mutable_variable_def(void) {
+	const wchar_t *code=L"mut x: int = 0";
+	make_default_types();
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_MUT_VAR_DEF &&
+		node->begin==code &&
+		node->end==(code + 14) &&
 		node->next!=NULL
 	);
 
@@ -170,6 +188,65 @@ bool test_make_ast_tree_many_lines(void) {
 	return pass;
 }
 
+bool test_make_ast_tree_with_whitespace(void) {
+	ast_node_t *node=make_ast_tree(L"");
+
+	const bool pass=(
+		node!=NULL &&
+		node->next==NULL &&
+		node->begin==NULL &&
+		node->end==NULL
+	);
+
+	free(node);
+	return pass;
+}
+
+bool test_make_ast_tree_var_assign(void) {
+	const wchar_t *code=L"x = 1";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_VAR_ASSIGN &&
+		node->begin==code &&
+		node->end==(code + 5) &&
+		node->next!=NULL
+	);
+
+	free(node);
+	return pass;
+}
+
+bool test_make_ast_tree_var_add(void) {
+	const wchar_t *code=L"x + y";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_ADD_VAR &&
+		node->begin==code &&
+		node->end==(code + 5) &&
+		node->next!=NULL
+	);
+
+	free(node);
+	return pass;
+}
+
+bool test_make_ast_tree_return(void) {
+	const wchar_t *code=L"return 0";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_RETURN &&
+		node->begin==code &&
+		node->end==(code + 8) &&
+		node->next!=NULL
+	);
+
+	free(node);
+	return pass;
+}
+
 void ast_node_test_self(bool *pass) {
 	tests_t tests={
 		test_make_ast_node_struct,
@@ -179,7 +256,12 @@ void ast_node_test_self(bool *pass) {
 		test_ast_token_cmp_missing_tokens,
 		test_push_ast_node_if,
 		test_make_ast_tree_variable_def,
+		test_make_ast_tree_mutable_variable_def,
 		test_make_ast_tree_many_lines,
+		test_make_ast_tree_with_whitespace,
+		test_make_ast_tree_var_assign,
+		test_make_ast_tree_var_add,
+		test_make_ast_tree_return,
 		NULL
 	};
 

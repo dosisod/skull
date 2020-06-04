@@ -8,8 +8,18 @@
 #include "../classify.h"
 #include "../tokenize.h"
 
-#define AST_NODE_UNKNOWN 0
-#define AST_NODE_VAR_DEF 1
+enum node_types {
+	AST_NODE_UNKNOWN,
+
+	AST_NODE_VAR_DEF,
+	AST_NODE_MUT_VAR_DEF,
+
+	AST_NODE_VAR_ASSIGN,
+
+	AST_NODE_ADD_VAR,
+
+	AST_NODE_RETURN
+};
 
 typedef struct ast_node_t {
 	uint8_t node_type;
@@ -76,15 +86,17 @@ Push a new AST node to `node` of type `node_type` if `token` and `last` do not m
 
 Use after calling `ast_token_cmp`.
 */
-void push_ast_node_if(token_t *token, token_t *last, uint8_t node_type, ast_node_t **node) {
-	if (token!=last) {
+void push_ast_node_if(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node) {
+	if (token!=*last) {
 		(*node)->node_type=node_type;
-		(*node)->begin=last->begin;
+		(*node)->begin=(*last)->begin;
 		(*node)->end=token->end;
 
 		ast_node_t *tmp=make_ast_node();
 		(*node)->next=tmp;
 		(*node)=tmp;
+
+		*last=token;
 	}
 }
 
@@ -107,11 +119,42 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 			TOKEN_IDENTIFIER,
 			TOKEN_TYPE,
 			TOKEN_OPER_EQUAL,
-			TOKEN_INT_CONST,
-			-1
+			TOKEN_INT_CONST, -1
 		);
+		push_ast_node_if(token, &last, AST_NODE_VAR_DEF, &node);
 
-		push_ast_node_if(token, last, AST_NODE_VAR_DEF, &node);
+		token=ast_token_cmp(
+			token,
+			TOKEN_KW_MUT,
+			TOKEN_IDENTIFIER,
+			TOKEN_TYPE,
+			TOKEN_OPER_EQUAL,
+			TOKEN_INT_CONST, -1
+		);
+		push_ast_node_if(token, &last, AST_NODE_MUT_VAR_DEF, &node);
+
+		token=ast_token_cmp(
+			token,
+			TOKEN_IDENTIFIER,
+			TOKEN_OPER_EQUAL,
+			TOKEN_INT_CONST, -1
+		);
+		push_ast_node_if(token, &last, AST_NODE_VAR_ASSIGN, &node);
+
+		token=ast_token_cmp(
+			token,
+			TOKEN_IDENTIFIER,
+			TOKEN_OPER_PLUS,
+			TOKEN_IDENTIFIER, -1
+		);
+		push_ast_node_if(token, &last, AST_NODE_ADD_VAR, &node);
+
+		token=ast_token_cmp(
+			token,
+			TOKEN_KW_RETURN,
+			TOKEN_INT_CONST, -1
+		);
+		push_ast_node_if(token, &last, AST_NODE_RETURN, &node);
 
 		token=token->next;
 	}
