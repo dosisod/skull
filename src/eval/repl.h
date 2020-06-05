@@ -32,31 +32,29 @@ Make and add a variable from passed `tokens` to context `ctx`.
 Added variable will be constant if `is_const` is true.
 */
 const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const) {
-	if (ctx==NULL || token==NULL || token->next==NULL) {
+	if (ctx==NULL) {
 		return NULL;
 	}
-
-	MAKE_TOKEN_BUF(type, token->next);
-	MAKE_TOKEN_BUF(name, token);
-
-	variable_t *var=make_variable(type, name, false);
 
 	uint8_t err=0;
 	int64_t tmp=eval_integer(token->next->next->next, &err);
 
 	if (err==EVAL_INTEGER_OK) {
+		MAKE_TOKEN_BUF(type, token->next);
+		MAKE_TOKEN_BUF(name, token);
+
+		variable_t *var=make_variable(type, name, false);
 		variable_write(var, &tmp);
 		var->is_const=is_const;
-		if (!context_add_var(ctx, var)) {
-			free_variable(var);
-			return ERROR_MSG[ERROR_VAR_ALREADY_DEFINED];
+
+		if (context_add_var(ctx, var)) {
+			return NULL;
 		}
-	}
-	else {
 		free_variable(var);
-		return ERROR_MSG[ERROR_WRITING_TO_VAR];
+		return ERROR_MSG[ERROR_VAR_ALREADY_DEFINED];
 	}
-	return NULL;
+
+	return ERROR_MSG[ERROR_WRITING_TO_VAR];
 }
 
 /*
@@ -131,43 +129,35 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 
 	free_tokens(token);
 	ast_node_t *node=make_ast_tree(str);
+	const wchar_t *ret=ERROR_MSG[ERROR_INVALID_INPUT];
 
 	if (node->token==NULL) {
-		free_ast_tree(node);
-		return ERROR_MSG[ERROR_INVALID_INPUT];
+		ret=ERROR_MSG[ERROR_INVALID_INPUT];
 	}
 
-	if (node->node_type==AST_NODE_VAR_DEF) {
-		const wchar_t *ret=repl_make_var(node->token, ctx, true);
-
-		free_ast_tree(node);
-		return ret;
+	else if (node->node_type==AST_NODE_VAR_DEF) {
+		ret=repl_make_var(node->token, ctx, true);
 	}
 
-	if (node->node_type==AST_NODE_MUT_VAR_DEF) {
-		const wchar_t *ret=repl_make_var(node->token->next, ctx, false);
-
-		free_ast_tree(node);
-		return ret;
+	else if (node->node_type==AST_NODE_MUT_VAR_DEF) {
+		ret=repl_make_var(node->token->next, ctx, false);
 	}
 
-	if (node->node_type==AST_NODE_RETURN) {
+	else if (node->node_type==AST_NODE_RETURN) {
 		uint8_t err=0;
-		int64_t ret=eval_integer(node->token->next, &err);
+		int64_t num=eval_integer(node->token->next, &err);
 
-		if (err==EVAL_INTEGER_ERR) {
-			return NULL;
+		if (err!=EVAL_INTEGER_ERR) {
+			free_ast_tree(node);
+			exit((int)num);
 		}
-
-		free_ast_tree(node);
-		exit((int)ret);
+		ret=NULL;
 	}
 
-	if (node->node_type==AST_NODE_UNKNOWN) {
-		free_ast_tree(node);
-		return NULL;
+	else if (node->node_type==AST_NODE_UNKNOWN) {
+		ret=NULL;
 	}
 
 	free_ast_tree(node);
-	return ERROR_MSG[ERROR_INVALID_INPUT];
+	return ret;
 }

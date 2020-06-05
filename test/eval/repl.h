@@ -163,9 +163,11 @@ bool test_repl_print_fail_with_trailing_tokens(void) {
 
 	make_default_types();
 	repl_eval(L"x: int = 1234", ctx);
-	const wchar_t *output=repl_eval(L"x random_data", ctx);
 
-	const bool pass=wcscmp(ERROR_MSG[ERROR_INVALID_INPUT], output)==0;
+	const bool pass=wcscmp(
+		ERROR_MSG[ERROR_INVALID_INPUT],
+		repl_eval(L"x random_data", ctx)
+	)==0;
 
 	free_types();
 	free_context(ctx);
@@ -177,9 +179,10 @@ bool test_repl_blank_line_returns_nothing(void) {
 }
 
 bool test_repl_invalid_input_returns_error(void) {
-	const wchar_t *output=repl_eval(L"not_valid", NULL);
-
-	return wcscmp(ERROR_MSG[ERROR_INVALID_INPUT], output)==0;
+	return wcscmp(
+		ERROR_MSG[ERROR_INVALID_INPUT],
+		repl_eval(L"not_valid", NULL)
+	)==0;
 }
 
 bool test_repl_mut_cannot_be_used_alone(void) {
