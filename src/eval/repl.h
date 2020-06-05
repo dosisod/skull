@@ -119,19 +119,15 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		return ret;
 	}
 
-	if (token_cmp(L"clear", token) && token!=ast_token_cmp(token->next,
-		TOKEN_BRACKET_OPEN,
-		TOKEN_BRACKET_CLOSE, -1))
-	{
-		free_tokens(token);
-		return L"\033[2J\033[;1H";
-	}
-
 	free_tokens(token);
 	ast_node_t *node=make_ast_tree(str);
 	const wchar_t *ret=ERROR_MSG[ERROR_INVALID_INPUT];
 
-	if (node->token==NULL) {
+	if (node->node_type==AST_NODE_NO_PARAM_FUNC && token_cmp(L"clear", node->token)) {
+		ret=L"\033[2J\033[;1H";
+	}
+
+	else if (node->token==NULL) {
 		ret=ERROR_MSG[ERROR_INVALID_INPUT];
 	}
 

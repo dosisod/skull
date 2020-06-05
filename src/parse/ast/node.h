@@ -18,7 +18,9 @@ enum node_types {
 
 	AST_NODE_ADD_VAR,
 
-	AST_NODE_RETURN
+	AST_NODE_RETURN,
+
+	AST_NODE_NO_PARAM_FUNC
 };
 
 typedef struct ast_node_t {
@@ -155,6 +157,14 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 			TOKEN_INT_CONST, -1
 		);
 		push_ast_node_if(token, &last, AST_NODE_RETURN, &node);
+
+		token=ast_token_cmp(
+			token,
+			TOKEN_IDENTIFIER,
+			TOKEN_BRACKET_OPEN,
+			TOKEN_BRACKET_CLOSE, -1
+		);
+		push_ast_node_if(token, &last, AST_NODE_NO_PARAM_FUNC, &node);
 
 		token=token->next;
 	}

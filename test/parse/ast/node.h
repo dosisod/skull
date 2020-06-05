@@ -247,6 +247,21 @@ bool test_make_ast_tree_return(void) {
 	return pass;
 }
 
+bool test_make_ast_tree_no_param_func(void) {
+	const wchar_t *code=L"func[]";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_NO_PARAM_FUNC &&
+		node->token->begin==code &&
+		node->token_end->end==(code + 6) &&
+		node->next!=NULL
+	);
+
+	free(node);
+	return pass;
+}
+
 bool test_free_ast_tree(void) {
 	ast_node_t *node=make_ast_tree(L"hello world");
 
@@ -269,6 +284,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_var_assign,
 		test_make_ast_tree_var_add,
 		test_make_ast_tree_return,
+		test_make_ast_tree_no_param_func,
 		test_free_ast_tree,
 		NULL
 	};
