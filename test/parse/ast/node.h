@@ -45,7 +45,7 @@ bool test_ast_token_cmp(void) {
 
 	const bool pass=ast_token_cmp(
 		token,
-		TOKEN_IDENTIFIER,
+		TOKEN_NEW_IDENTIFIER,
 		TOKEN_TYPE,
 		TOKEN_OPER_EQUAL,
 		TOKEN_INT_CONST,
@@ -66,7 +66,7 @@ bool test_ast_token_cmp_extra_tokens(void) {
 
 	const bool pass=ast_token_cmp(
 		token,
-		TOKEN_IDENTIFIER,
+		TOKEN_NEW_IDENTIFIER,
 		TOKEN_TYPE,
 		TOKEN_OPER_EQUAL,
 		TOKEN_INT_CONST,
@@ -114,7 +114,7 @@ bool test_push_ast_node_if(void) {
 
 	token=ast_token_cmp(
 		token,
-		TOKEN_IDENTIFIER,
+		TOKEN_NEW_IDENTIFIER,
 		TOKEN_TYPE,
 		TOKEN_OPER_EQUAL,
 		TOKEN_INT_CONST,
@@ -262,6 +262,23 @@ bool test_make_ast_tree_no_param_func(void) {
 	return pass;
 }
 
+/* Once a certain bug is fixed, this test can run
+bool test_make_ast_tree_colon_suffix_required(void) {
+	const wchar_t *code=L"x int = 0";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_UNKNOWN &&
+		node->token->begin==code &&
+		node->token_end->end==(code + 9) &&
+		node->next!=NULL
+	);
+
+	free(node);
+	return pass;
+}
+*/
+
 bool test_free_ast_tree(void) {
 	ast_node_t *node=make_ast_tree(L"hello world");
 
@@ -285,6 +302,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_var_add,
 		test_make_ast_tree_return,
 		test_make_ast_tree_no_param_func,
+		//test_make_ast_tree_colon_suffix_required,
 		test_free_ast_tree,
 		NULL
 	};

@@ -298,13 +298,13 @@ bool test_is_valid_identifier_token(void) {
 	return pass;
 }
 
-bool test_identifier_clip_trailing_colon(void) {
+bool test_new_identifier_clip_trailing_colon(void) {
 	const wchar_t *code=L"x: int = 0";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
-		t->token_type==TOKEN_IDENTIFIER &&
+		t->token_type==TOKEN_NEW_IDENTIFIER &&
 		t->end==(code + 1)
 	);
 
@@ -353,7 +353,7 @@ void classifier_test_self(bool *pass) {
 		test_token_str_constant,
 		test_is_valid_identifier,
 		test_is_valid_identifier_token,
-		test_identifier_clip_trailing_colon,
+		test_new_identifier_clip_trailing_colon,
 		test_token_classifier,
 		NULL
 	};

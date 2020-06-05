@@ -11,6 +11,7 @@ enum token_types {
 
 	//identifiers are things like variable and function names
 	TOKEN_IDENTIFIER,
+	TOKEN_NEW_IDENTIFIER, //must suffix new var names with ":"
 
 	//indicates the start of a function
 	TOKEN_FUNCTION,
@@ -223,6 +224,7 @@ void classify_token(token_t *token) {
 		token->token_type=TOKEN_IDENTIFIER;
 
 		if (*(token->end - 1)==L':') {
+			token->token_type=TOKEN_NEW_IDENTIFIER;
 			token->end--;
 		}
 	}
