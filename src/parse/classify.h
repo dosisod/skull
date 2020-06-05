@@ -226,6 +226,11 @@ void classify_token(token_t *token) {
 		if (*(token->end - 1)==L':') {
 			token->token_type=TOKEN_NEW_IDENTIFIER;
 			token->end--;
+
+			if (is_type_token(token)) {
+				token->token_type=TOKEN_UNKNOWN;
+				token->end++;
+			}
 		}
 	}
 }

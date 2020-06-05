@@ -312,6 +312,22 @@ bool test_new_identifier_clip_trailing_colon(void) {
 	return pass;
 }
 
+bool test_identifier_cannot_be_type(void) {
+	make_default_types();
+	const wchar_t *code=L"int: int = 0";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_UNKNOWN &&
+		t->end==(code + 4)
+	);
+
+	free_types();
+	free(t);
+	return pass;
+}
+
 bool test_token_classifier(void) {
 	const wchar_t *code=L"[ ]";
 	token_t *t=tokenize(code);
@@ -354,6 +370,7 @@ void classifier_test_self(bool *pass) {
 		test_is_valid_identifier,
 		test_is_valid_identifier_token,
 		test_new_identifier_clip_trailing_colon,
+		test_identifier_cannot_be_type,
 		test_token_classifier,
 		NULL
 	};
