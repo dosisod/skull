@@ -24,8 +24,8 @@ enum node_types {
 typedef struct ast_node_t {
 	uint8_t node_type;
 
-	const wchar_t *begin;
-	const wchar_t *end;
+	struct token_t *token;
+	struct token_t *token_end;
 
 	struct ast_node_t *next;
 } ast_node_t;
@@ -37,8 +37,8 @@ ast_node_t *make_ast_node(void) {
 	ast_node_t *node=malloc(sizeof(ast_node_t));
 
 	node->node_type=AST_NODE_UNKNOWN;
-	node->begin=NULL;
-	node->end=NULL;
+	node->token=NULL;
+	node->token_end=NULL;
 	node->next=NULL;
 
 	return node;
@@ -89,8 +89,8 @@ Use after calling `ast_token_cmp`.
 void push_ast_node_if(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node) {
 	if (token!=*last) {
 		(*node)->node_type=node_type;
-		(*node)->begin=(*last)->begin;
-		(*node)->end=token->end;
+		(*node)->token=(*last);
+		(*node)->token_end=token;
 
 		ast_node_t *tmp=make_ast_node();
 		(*node)->next=tmp;
@@ -159,6 +159,13 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 		token=token->next;
 	}
 
-	free_tokens(token);
 	return head;
+}
+
+/*
+Frees an AST tree.
+*/
+void free_ast_tree(ast_node_t *node) {
+	free_tokens(node->token);
+	free(node);
 }

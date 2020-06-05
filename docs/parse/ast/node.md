@@ -22,3 +22,6 @@ Use after calling `ast_token_cmp`.
 #### `ast_node_t *make_ast_tree(const wchar_t *code)`
 Makes an AST (abstract syntax tree) from a given string.
 
+#### `void free_ast_tree(ast_node_t *node)`
+Frees an AST tree.
+

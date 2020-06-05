@@ -66,6 +66,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	if (*str==L'\0') {
 		return NULL;
 	}
+
 	token_t *token=tokenize(str);
 	classify_tokens(token);
 	MAKE_TOKEN_BUF(buf, token);
@@ -131,51 +132,42 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	free_tokens(token);
 	ast_node_t *node=make_ast_tree(str);
 
-	if (node->begin==NULL) {
-		free(node);
+	if (node->token==NULL) {
+		free_ast_tree(node);
 		return ERROR_MSG[ERROR_INVALID_INPUT];
 	}
 
 	if (node->node_type==AST_NODE_VAR_DEF) {
-		token=tokenize(node->begin);
-		classify_tokens(token);
-		const wchar_t *ret=repl_make_var(token, ctx, true);
+		const wchar_t *ret=repl_make_var(node->token, ctx, true);
 
-		free_tokens(token);
-		free(node);
+		free_ast_tree(node);
 		return ret;
 	}
 
 	if (node->node_type==AST_NODE_MUT_VAR_DEF) {
-		token=tokenize(node->begin);
-		classify_tokens(token);
-		const wchar_t *ret=repl_make_var(token->next, ctx, false);
+		const wchar_t *ret=repl_make_var(node->token->next, ctx, false);
 
-		free_tokens(token);
-		free(node);
+		free_ast_tree(node);
 		return ret;
 	}
 
 	if (node->node_type==AST_NODE_RETURN) {
-		token=tokenize(node->begin);
-		classify_tokens(token);
 		uint8_t err=0;
-		int64_t ret=eval_integer(token->next, &err);
+		int64_t ret=eval_integer(node->token->next, &err);
 
 		if (err==EVAL_INTEGER_ERR) {
 			return NULL;
 		}
 
-		free_tokens(token);
-		free(node);
+		free_ast_tree(node);
 		exit((int)ret);
 	}
 
 	if (node->node_type==AST_NODE_UNKNOWN) {
-		free(node);
+		free_ast_tree(node);
 		return NULL;
 	}
 
-	free(node);
+	free_ast_tree(node);
 	return ERROR_MSG[ERROR_INVALID_INPUT];
 }
