@@ -32,7 +32,7 @@ Make and add a variable from passed `tokens` to context `ctx`.
 Added variable will be constant if `is_const` is true.
 */
 const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const) {
-	if (ctx==NULL) {
+	if (ctx==NULL || token==NULL || token->next==NULL) {
 		return NULL;
 	}
 
@@ -63,43 +63,11 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 Evaluates a single line, returns result as a string (if any).
 */
 const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
-	token_t *token=tokenize(str);
-	token_t *head=token;
-	classify_tokens(token);
-
-	//blank or empty line
-	if (token->end==token->begin) {
-		free_tokens(head);
+	if (*str==L'\0') {
 		return NULL;
 	}
-
-	// x: int = 0
-	if (token!=ast_token_cmp(token,
-		TOKEN_IDENTIFIER,
-		TOKEN_TYPE,
-		TOKEN_OPER_EQUAL,
-		TOKEN_INT_CONST, -1))
-	{
-		const wchar_t *ret=repl_make_var(token, ctx, true);
-
-		free_tokens(head);
-		return ret;
-	}
-
-	// mut x: int = 0
-	if (token!=ast_token_cmp(token,
-		TOKEN_KW_MUT,
-		TOKEN_IDENTIFIER,
-		TOKEN_TYPE,
-		TOKEN_OPER_EQUAL,
-		TOKEN_INT_CONST, -1))
-	{
-		const wchar_t *ret=repl_make_var(token->next, ctx, false);
-
-		free_tokens(head);
-		return ret;
-	}
-
+	token_t *token=tokenize(str);
+	classify_tokens(token);
 	MAKE_TOKEN_BUF(buf, token);
 	variable_t *var=context_find_name(ctx, buf);
 
@@ -107,7 +75,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	if (var!=NULL && token->next==NULL) {
 		wchar_t *ret=fmt_var(var);
 
-		free_tokens(head);
+		free_tokens(token);
 		return ret;
 	}
 
@@ -120,16 +88,16 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		int64_t data=eval_integer(token->next->next, &err);
 
 		if (err==EVAL_INTEGER_ERR) {
-			free_tokens(head);
+			free_tokens(token);
 			return ERROR_MSG[ERROR_WRITING_TO_VAR];
 		}
 
 		if (variable_write(var, &data)==VARIABLE_WRITE_ECONST) {
-			free_tokens(head);
+			free_tokens(token);
 			return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
 		}
 
-		free_tokens(head);
+		free_tokens(token);
 		return NULL;
 	}
 
@@ -140,7 +108,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		MAKE_TOKEN_BUF(rhs_buf, token->next->next);
 		variable_t *var_rhs=context_find_name(ctx, rhs_buf);
 		if (var_rhs==NULL) {
-			free_tokens(head);
+			free_tokens(token);
 			return ERROR_MSG[ERROR_INVALID_INPUT];
 		}
 
@@ -148,14 +116,49 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		wchar_t *ret=fmt_var(result);
 
 		free_variable(result);
-		free_tokens(head);
+		free_tokens(token);
 		return ret;
 	}
 
-	if (token!=ast_token_cmp(token,
-		TOKEN_KW_RETURN,
-		TOKEN_INT_CONST, -1))
+	if (token_cmp(L"clear", token) && token!=ast_token_cmp(token->next,
+		TOKEN_BRACKET_OPEN,
+		TOKEN_BRACKET_CLOSE, -1))
 	{
+		free_tokens(token);
+		return L"\033[2J\033[;1H";
+	}
+
+	free_tokens(token);
+	ast_node_t *node=make_ast_tree(str);
+
+	if (node->begin==NULL) {
+		free(node);
+		return ERROR_MSG[ERROR_INVALID_INPUT];
+	}
+
+	if (node->node_type==AST_NODE_VAR_DEF) {
+		token=tokenize(node->begin);
+		classify_tokens(token);
+		const wchar_t *ret=repl_make_var(token, ctx, true);
+
+		free_tokens(token);
+		free(node);
+		return ret;
+	}
+
+	if (node->node_type==AST_NODE_MUT_VAR_DEF) {
+		token=tokenize(node->begin);
+		classify_tokens(token);
+		const wchar_t *ret=repl_make_var(token->next, ctx, false);
+
+		free_tokens(token);
+		free(node);
+		return ret;
+	}
+
+	if (node->node_type==AST_NODE_RETURN) {
+		token=tokenize(node->begin);
+		classify_tokens(token);
 		uint8_t err=0;
 		int64_t ret=eval_integer(token->next, &err);
 
@@ -163,18 +166,16 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 			return NULL;
 		}
 
-		free_tokens(head);
+		free_tokens(token);
+		free(node);
 		exit((int)ret);
 	}
 
-	if (token_cmp(L"clear", token) && token!=ast_token_cmp(token->next,
-		TOKEN_BRACKET_OPEN,
-		TOKEN_BRACKET_CLOSE, -1))
-	{
-		free_tokens(head);
-		return L"\033[2J\033[;1H";
+	if (node->node_type==AST_NODE_UNKNOWN) {
+		free(node);
+		return NULL;
 	}
 
-	free_tokens(head);
+	free(node);
 	return ERROR_MSG[ERROR_INVALID_INPUT];
 }
