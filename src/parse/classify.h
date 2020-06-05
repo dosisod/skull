@@ -69,15 +69,16 @@ bool is_function_token(const token_t *token) {
 }
 
 /*
-Returns true if string is a valid hex/binary/decimal integer.
+Returns true if string is a valid hex/octal/binary/decimal integer.
 
-Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`
+Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 */
 bool is_constant_integer(const wchar_t *str) {
 	return (
 		wegex_match(L"?-+\n", str) ||
 		wegex_match(L"0x+\b", str) ||
-		wegex_match(L"0b+[01]", str)
+		wegex_match(L"0b+[01]", str) ||
+		wegex_match(L"0o+[01234567]", str)
 	);
 }
 

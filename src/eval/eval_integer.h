@@ -31,6 +31,10 @@ int64_t eval_integer(const token_t *token, uint8_t *error) {
 		begin+=2;
 		base=2;
 	}
+	else if (wcsncmp(L"0o", token->begin, 2)==0) {
+		begin+=2;
+		base=8;
+	}
 	else if (wcsncmp(L"0x", token->begin, 2)==0) {
 		begin+=2;
 		base=16;

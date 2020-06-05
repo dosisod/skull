@@ -10,9 +10,9 @@ Returns true if a `str` is a keyword.
 Returns true if a token is a function token.
 
 #### `bool is_constant_integer(const wchar_t *str)`
-Returns true if string is a valid hex/binary/decimal integer.
+Returns true if string is a valid hex/octal/binary/decimal integer.
 
-Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`
+Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 
 #### `bool is_constant_integer_token(const token_t *token)`
 Returns true if the passed token is an integer constant.

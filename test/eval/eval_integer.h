@@ -79,6 +79,23 @@ bool test_convert_hex_integer(void) {
 	return pass;
 }
 
+bool test_convert_octal_integer(void) {
+	token_t *token=tokenize(L"0o777");
+	classify_tokens(token);
+
+	uint8_t err=0;
+	int64_t num=eval_integer(token, &err);
+
+	const bool pass=(
+		num==0777 &&
+		err==EVAL_INTEGER_OK
+	);
+
+	free(token);
+
+	return pass;
+}
+
 bool test_convert_binary_integer(void) {
 	token_t *token=tokenize(L"0b1111");
 	classify_tokens(token);
@@ -119,6 +136,7 @@ void eval_integer_test_self(bool *pass) {
 		test_integer_overflow_returns_error,
 		test_integer_underflow_returns_error,
 		test_convert_hex_integer,
+		test_convert_octal_integer,
 		test_convert_binary_integer,
 		test_non_integer_token_fails,
 		NULL
