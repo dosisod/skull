@@ -52,6 +52,16 @@ bool is_type_token(const token_t *token) {
 }
 
 /*
+Returns true if a `str` is a keyword.
+*/
+bool is_keyword_str(const wchar_t *str) {
+	return (
+		wcscmp(L"return", str)==0 ||
+		wcscmp(L"mut", str)==0
+	);
+}
+
+/*
 Returns true if a token is a function token.
 */
 bool is_function_token(const token_t *token) {
@@ -227,7 +237,8 @@ void classify_token(token_t *token) {
 			token->token_type=TOKEN_NEW_IDENTIFIER;
 			token->end--;
 
-			if (is_type_token(token)) {
+			MAKE_TOKEN_BUF(buf, token);
+			if (is_type_token(token) || is_keyword_str(buf)) {
 				token->token_type=TOKEN_UNKNOWN;
 				token->end++;
 			}

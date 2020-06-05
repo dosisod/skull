@@ -20,6 +20,14 @@ bool test_is_type_token(void) {
 	return pass;
 }
 
+bool test_is_keyword_str(void) {
+	return (
+		is_keyword_str(L"return") &&
+		is_keyword_str(L"mut") &&
+		!is_keyword_str(L"not_a_keyword")
+	);
+}
+
 bool test_is_function_token(void) {
 	const wchar_t *code=L"main[] ->";
 	token_t *token=tokenize(code);
@@ -328,6 +336,22 @@ bool test_identifier_cannot_be_type(void) {
 	return pass;
 }
 
+bool test_identifier_cannot_be_keyword(void) {
+	make_default_types();
+	const wchar_t *code=L"mut: int = 0";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_UNKNOWN &&
+		t->end==(code + 4)
+	);
+
+	free_types();
+	free(t);
+	return pass;
+}
+
 bool test_token_classifier(void) {
 	const wchar_t *code=L"[ ]";
 	token_t *t=tokenize(code);
@@ -347,6 +371,7 @@ bool test_token_classifier(void) {
 void classifier_test_self(bool *pass) {
 	tests_t tests={
 		test_is_type_token,
+		test_is_keyword_str,
 		test_is_function_token,
 		test_is_constant_integer,
 		test_is_constant_float,
@@ -371,6 +396,7 @@ void classifier_test_self(bool *pass) {
 		test_is_valid_identifier_token,
 		test_new_identifier_clip_trailing_colon,
 		test_identifier_cannot_be_type,
+		test_identifier_cannot_be_keyword,
 		test_token_classifier,
 		NULL
 	};
