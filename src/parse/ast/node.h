@@ -20,7 +20,9 @@ enum node_types {
 
 	AST_NODE_RETURN,
 
-	AST_NODE_NO_PARAM_FUNC
+	AST_NODE_NO_PARAM_FUNC,
+
+	AST_NODE_INT_CONST
 };
 
 typedef struct ast_node_t {
@@ -84,23 +86,25 @@ token_t *ast_token_cmp(token_t *token, ...) {
 }
 
 /*
-Push a new AST node to `node` of type `node_type` if `token` and `last` do not match.
-
-Use after calling `ast_token_cmp`.
+Push a new AST node to `node` with type `node_type`
 */
-void push_ast_node_if(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node) {
-	if (token!=*last) {
-		(*node)->node_type=node_type;
-		(*node)->token=(*last);
-		(*node)->token_end=token;
+void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node) {
+	(*node)->node_type=node_type;
+	(*node)->token=(*last);
+	(*node)->token_end=token;
 
-		ast_node_t *tmp=make_ast_node();
-		(*node)->next=tmp;
-		(*node)=tmp;
+	ast_node_t *tmp=make_ast_node();
+	(*node)->next=tmp;
+	(*node)=tmp;
 
-		*last=token;
-	}
+	*last=token;
 }
+
+#define PUSH_AST_NODE_IF(token, last, node_type, node) \
+if (token!=*last) { \
+	push_ast_node(token, last, node_type, node); \
+	continue; \
+} \
 
 /*
 Makes an AST (abstract syntax tree) from a given string.
@@ -116,55 +120,49 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 
 	while (token!=NULL) {
 		last=token;
-		token=ast_token_cmp(
-			token,
+		token=ast_token_cmp(token,
 			TOKEN_NEW_IDENTIFIER,
 			TOKEN_TYPE,
 			TOKEN_OPER_EQUAL,
 			TOKEN_INT_CONST, -1
 		);
-		push_ast_node_if(token, &last, AST_NODE_VAR_DEF, &node);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_VAR_DEF, &node);
 
-		token=ast_token_cmp(
-			token,
+		token=ast_token_cmp(token,
 			TOKEN_KW_MUT,
 			TOKEN_NEW_IDENTIFIER,
 			TOKEN_TYPE,
 			TOKEN_OPER_EQUAL,
 			TOKEN_INT_CONST, -1
 		);
-		push_ast_node_if(token, &last, AST_NODE_MUT_VAR_DEF, &node);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_MUT_VAR_DEF, &node);
 
-		token=ast_token_cmp(
-			token,
+		token=ast_token_cmp(token,
 			TOKEN_IDENTIFIER,
 			TOKEN_OPER_EQUAL,
 			TOKEN_INT_CONST, -1
 		);
-		push_ast_node_if(token, &last, AST_NODE_VAR_ASSIGN, &node);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_VAR_ASSIGN, &node);
 
-		token=ast_token_cmp(
-			token,
+		token=ast_token_cmp(token,
 			TOKEN_IDENTIFIER,
 			TOKEN_OPER_PLUS,
 			TOKEN_IDENTIFIER, -1
 		);
-		push_ast_node_if(token, &last, AST_NODE_ADD_VAR, &node);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_ADD_VAR, &node);
 
-		token=ast_token_cmp(
-			token,
+		token=ast_token_cmp(token,
 			TOKEN_KW_RETURN,
 			TOKEN_INT_CONST, -1
 		);
-		push_ast_node_if(token, &last, AST_NODE_RETURN, &node);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_RETURN, &node);
 
-		token=ast_token_cmp(
-			token,
+		token=ast_token_cmp(token,
 			TOKEN_IDENTIFIER,
 			TOKEN_BRACKET_OPEN,
 			TOKEN_BRACKET_CLOSE, -1
 		);
-		push_ast_node_if(token, &last, AST_NODE_NO_PARAM_FUNC, &node);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_NO_PARAM_FUNC, &node);
 
 		token=token->next;
 	}

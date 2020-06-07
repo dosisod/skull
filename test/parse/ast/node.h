@@ -101,7 +101,7 @@ bool test_ast_token_cmp_missing_tokens(void) {
 	return pass;
 }
 
-bool test_push_ast_node_if(void) {
+bool test_push_ast_node(void) {
 	const wchar_t *code=L"x: int = 0";
 	token_t *token=tokenize(code);
 	token_t *last=token;
@@ -120,8 +120,7 @@ bool test_push_ast_node_if(void) {
 		TOKEN_INT_CONST,
 		-1
 	);
-
-	push_ast_node_if(token, &last, AST_NODE_VAR_DEF, &node);
+	push_ast_node(token, &last, AST_NODE_VAR_DEF, &node);
 
 	const bool pass=(tmp->next==node);
 
@@ -293,7 +292,7 @@ void ast_node_test_self(bool *pass) {
 		test_ast_token_cmp,
 		test_ast_token_cmp_extra_tokens,
 		test_ast_token_cmp_missing_tokens,
-		test_push_ast_node_if,
+		test_push_ast_node,
 		test_make_ast_tree_variable_def,
 		test_make_ast_tree_mutable_variable_def,
 		test_make_ast_tree_many_lines,
