@@ -282,6 +282,21 @@ bool test_make_ast_tree_int_const(void) {
 	return pass;
 }
 
+bool test_make_ast_tree_float_const(void) {
+	const wchar_t *code=L"3.1415";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_FLOAT_CONST &&
+		node->token->begin==code &&
+		node->token_end->end==(code + 6) &&
+		node->next!=NULL
+	);
+
+	free(node);
+	return pass;
+}
+
 /* Once a certain bug is fixed, this test can run
 bool test_make_ast_tree_colon_suffix_required(void) {
 	const wchar_t *code=L"x int = 0";
@@ -323,6 +338,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_return,
 		test_make_ast_tree_no_param_func,
 		test_make_ast_tree_int_const,
+		test_make_ast_tree_float_const,
 		//test_make_ast_tree_colon_suffix_required,
 		test_free_ast_tree,
 		NULL

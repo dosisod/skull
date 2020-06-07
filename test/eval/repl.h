@@ -4,7 +4,7 @@
 #include "../../src/eval/repl.h"
 #include "../../test/testing.h"
 
-bool test_repl_variable_assign(void) {
+bool test_repl_variable_declare(void) {
 	make_default_types();
 	const wchar_t *output=repl_eval(L"x: int = 0", NULL);
 
@@ -12,7 +12,7 @@ bool test_repl_variable_assign(void) {
 	return output==NULL;
 }
 
-bool test_repl_variable_assign_in_context(void) {
+bool test_repl_variable_declare_in_context(void) {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -139,6 +139,28 @@ bool test_repl_write_to_mutable_var(void) {
 	return pass;
 }
 
+bool test_repl_write_to_mutable_float_var(void) {
+	context_t *ctx=make_context();
+
+	make_default_types();
+	repl_eval(L"mut x: float = 0.0", ctx);
+	repl_eval(L"x = 1234.0", ctx);
+
+	if (ctx->vars_used!=1) {
+		free_context(ctx);
+		return false;
+	}
+
+	long double result=0;
+	variable_read(&result, ctx->vars[0]);
+
+	const bool pass=(result==1234.0);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
 bool test_repl_write_to_const_var_fails(void) {
 	context_t *ctx=make_context();
 
@@ -152,6 +174,31 @@ bool test_repl_write_to_const_var_fails(void) {
 	}
 
 	const bool pass=(wcscmp(ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST], output)==0);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
+bool test_repl_make_float_variable(void) {
+	context_t *ctx=make_context();
+
+	make_default_types();
+	const wchar_t *output=repl_eval(L"x: float = 0.0", ctx);
+
+	if (ctx->vars_used!=1) {
+		free_types();
+		free_context(ctx);
+		return false;
+	}
+
+	long double ret=0;
+	variable_read(&ret, ctx->vars[0]);
+
+	const bool pass=(
+		output==NULL &&
+		ret==0.0
+	);
 
 	free_types();
 	free_context(ctx);
@@ -296,14 +343,16 @@ bool test_repl_missing_value_no_segfault(void) {
 
 void repl_test_self(bool *pass) {
 	tests_t tests={
-		test_repl_variable_assign,
-		test_repl_variable_assign_in_context,
+		test_repl_variable_declare,
+		test_repl_variable_declare_in_context,
 		test_repl_cannot_redeclare_var,
 		test_repl_declaring_mutable_var,
 		test_repl_manually_writing_to_const_var_fails,
 		test_repl_manually_writing_to_mutable_var_works,
 		test_repl_write_to_mutable_var,
+		test_repl_write_to_mutable_float_var,
 		test_repl_write_to_const_var_fails,
+		test_repl_make_float_variable,
 		test_repl_print_fail_with_trailing_tokens,
 		test_repl_blank_line_returns_nothing,
 		test_repl_invalid_input_returns_error,

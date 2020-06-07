@@ -141,6 +141,26 @@ bool test_fmt_var_int(void) {
 	return pass;
 }
 
+bool test_fmt_var_float(void) {
+	make_default_types();
+	variable_t *var=make_variable(L"float", L"x", false);
+
+	long double data=3.1415;
+	variable_write(var, &data);
+
+	wchar_t *str=fmt_var(var);
+
+	const bool pass=(
+		str!=NULL &&
+		wcscmp(L"3.1415", str)==0
+	);
+
+	free(str);
+	free_variable(var);
+	free_types();
+	return pass;
+}
+
 void variable_test_self(bool *pass) {
 	tests_t tests={
 		test_create_variable,

@@ -6,6 +6,7 @@
 #include "../errors.h"
 #include "../eval/context.h"
 #include "../eval/eval_add.h"
+#include "../eval/eval_float.h"
 #include "../eval/eval_integer.h"
 #include "../parse/ast/node.h"
 #include "../parse/classify.h"
@@ -42,14 +43,22 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 	}
 
 	uint8_t err=0;
-	int64_t tmp=eval_integer(token->next->next->next, &err);
+	void *tmp=NULL;
+	if (token->next->next->next->token_type==TOKEN_INT_CONST) {
+		int64_t tmp2=eval_integer(token->next->next->next, &err);
+		tmp=&tmp2;
+	}
+	else if (token->next->next->next->token_type==TOKEN_FLOAT_CONST) {
+		long double tmp2=eval_float(token->next->next->next, &err);
+		tmp=&tmp2;
+	}
 
-	if (err==EVAL_INTEGER_OK) {
+	if (err==EVAL_INTEGER_OK && tmp!=NULL) {
 		MAKE_TOKEN_BUF(type, token->next);
 		MAKE_TOKEN_BUF(name, token);
 
 		variable_t *var=make_variable(type, name, false);
-		variable_write(var, &tmp);
+		variable_write(var, tmp);
 		var->is_const=is_const;
 
 		if (context_add_var(ctx, var)) {
@@ -84,19 +93,31 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	}
 
 	//reassigning an existing variable
-	if (var!=NULL && token->next!=ast_token_cmp(token->next,
-		TOKEN_OPER_EQUAL,
-		TOKEN_INT_CONST, -1))
+	if (var!=NULL &&
+		token->next!=NULL &&
+		token->next->token_type==TOKEN_OPER_EQUAL &&
+		token->next->next!=NULL && (
+			token->next->next->token_type==TOKEN_FLOAT_CONST ||
+			token->next->next->token_type==TOKEN_INT_CONST
+		))
 	{
 		uint8_t err=0;
-		int64_t data=eval_integer(token->next->next, &err);
+		void *tmp;
+		if (token->next->next->token_type==TOKEN_INT_CONST) {
+			int64_t tmp2=eval_integer(token->next->next, &err);
+			tmp=&tmp2;
+		}
+		else if (token->next->next->token_type==TOKEN_FLOAT_CONST) {
+			long double tmp2=eval_float(token->next->next, &err);
+			tmp=&tmp2;
+		}
 
 		if (err==EVAL_INTEGER_ERR) {
 			free_tokens(token);
 			return ERROR_MSG[ERROR_WRITING_TO_VAR];
 		}
 
-		if (variable_write(var, &data)==VARIABLE_WRITE_ECONST) {
+		if (variable_write(var, tmp)==VARIABLE_WRITE_ECONST) {
 			free_tokens(token);
 			return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
 		}
