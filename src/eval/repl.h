@@ -43,27 +43,22 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		return ERROR_MSG[ERROR_INVALID_INPUT];
 	}
 
-	uint8_t err=0;
-	void *tmp=eval_assign(token->next->next->next, &err);
+	MAKE_TOKEN_BUF(type, token->next);
+	MAKE_TOKEN_BUF(name, token);
+	variable_t *var=make_variable(type, name, false);
 
-	if (err==EVAL_INTEGER_OK && tmp!=NULL) {
-		MAKE_TOKEN_BUF(type, token->next);
-		MAKE_TOKEN_BUF(name, token);
+	const wchar_t *tmp=eval_assign(var, token->next->next->next);
+	var->is_const=is_const;
 
-		variable_t *var=make_variable(type, name, false);
-		variable_write(var, tmp);
-		var->is_const=is_const;
-		free(tmp);
-
-		if (context_add_var(ctx, var)) {
-			return NULL;
-		}
+	if (tmp!=NULL) {
 		free_variable(var);
-		return ERROR_MSG[ERROR_VAR_ALREADY_DEFINED];
+		return tmp;
 	}
-
-	free(tmp);
-	return ERROR_MSG[ERROR_WRITING_TO_VAR];
+	if (context_add_var(ctx, var)) {
+		return NULL;
+	}
+	free_variable(var);
+	return ERROR_MSG[ERROR_VAR_ALREADY_DEFINED];
 }
 
 /*
@@ -115,18 +110,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	}
 
 	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
-		uint8_t err=0;
-		void *tmp=eval_assign(node->token->next->next, &err);
-
-		if (err==EVAL_INTEGER_ERR) {
-			ret=ERROR_MSG[ERROR_WRITING_TO_VAR];
-		}
-		else if (tmp!=NULL && variable_write(var, tmp)==VARIABLE_WRITE_ECONST) {
-			ret=ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
-		}
-		else {
-			ret=NULL;
-		}
+		ret=eval_assign(var, node->token->next->next);
 	}
 
 	else if (node->token==NULL) {

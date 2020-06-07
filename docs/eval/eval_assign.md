@@ -1,5 +1,7 @@
 # src/eval/eval_assign.h
 
-#### `void *eval_assign(token_t *token, uint8_t *err)`
-Convert a token to something that can be later assigned to a variable
+#### `const wchar_t *eval_assign(variable_t *var, token_t *token)`
+Assign the value of `token` to a variable `var`.
+
+Return an error (as a string) if any occured, else `NULL`.
 

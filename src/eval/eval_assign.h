@@ -1,27 +1,39 @@
 #pragma once
 
+#include <wchar.h>
+
+#include "../errors.h"
 #include "./eval_float.h"
 #include "./eval_integer.h"
+#include "./variable.h"
 
 /*
-Convert a token to something that can be later assigned to a variable
+Assign the value of `token` to a variable `var`.
+
+Return an error (as a string) if any occured, else `NULL`.
 */
-void *eval_assign(token_t *token, uint8_t *err) {
-	void *ret=NULL;
+const wchar_t *eval_assign(variable_t *var, token_t *token) {
+	void *mem=NULL;
+	uint8_t err=0;
+
 	if (token->token_type==TOKEN_INT_CONST) {
-		ret=malloc(sizeof(int64_t));
-		int64_t tmp=eval_integer(token, err);
-		memcpy(ret, &tmp, sizeof(int64_t));
+		int64_t tmp=eval_integer(token, &err);
+		mem=&tmp;
 	}
 	else if (token->token_type==TOKEN_FLOAT_CONST) {
-		ret=malloc(sizeof(long double));
-		long double tmp=eval_float(token, err);
-		memcpy(ret, &tmp, sizeof(long double));
+		long double tmp=eval_float(token, &err);
+		mem=&tmp;
 	}
 	else if (token->token_type==TOKEN_BOOL_CONST) {
-		ret=malloc(sizeof(bool));
 		bool tmp=token_cmp(L"true", token);
-		memcpy(ret, &tmp, sizeof(bool));
+		mem=&tmp;
 	}
-	return ret;
+
+	if (mem==NULL || err==EVAL_INTEGER_ERR) {
+		return ERROR_MSG[ERROR_WRITING_TO_VAR];
+	}
+	if (variable_write(var, mem)==VARIABLE_WRITE_ECONST) {
+		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
+	}
+	return NULL;
 }
