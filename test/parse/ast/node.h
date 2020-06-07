@@ -131,15 +131,14 @@ bool test_push_ast_node(void) {
 }
 
 bool test_make_ast_tree_variable_def(void) {
-	const wchar_t *code=L"x: int = 0";
+	const wchar_t *code=L"x: int =";
 	make_default_types();
 	ast_node_t *node=make_ast_tree(code);
 
 	const bool pass=(
 		node->node_type==AST_NODE_VAR_DEF &&
 		node->token->begin==code &&
-		node->token_end->end==(code + 10) &&
-		node->next!=NULL
+		node->token_end->end==(code + 8)
 	);
 
 	free_types();
@@ -149,15 +148,14 @@ bool test_make_ast_tree_variable_def(void) {
 }
 
 bool test_make_ast_tree_mutable_variable_def(void) {
-	const wchar_t *code=L"mut x: int = 0";
+	const wchar_t *code=L"mut x: int =";
 	make_default_types();
 	ast_node_t *node=make_ast_tree(code);
 
 	const bool pass=(
 		node->node_type==AST_NODE_MUT_VAR_DEF &&
 		node->token->begin==code &&
-		node->token_end->end==(code + 14) &&
-		node->next!=NULL
+		node->token_end->end==(code + 12)
 	);
 
 	free_types();
@@ -174,11 +172,19 @@ bool test_make_ast_tree_many_lines(void) {
 	const bool pass=(
 		node->node_type==AST_NODE_VAR_DEF &&
 		node->token->begin==code &&
-		node->token_end->end==(code + 10) &&
+		node->token_end->end==(code + 8) &&
 		node->next!=NULL &&
-		node->next->node_type==AST_NODE_VAR_DEF &&
-		node->next->token->begin==(code + 11) &&
-		node->next->token_end->end==(code + 21)
+		node->next->node_type==AST_NODE_INT_CONST &&
+		node->next->token->begin==(code + 9) &&
+		node->next->token_end->end==(code + 10) &&
+		node->next->next!=NULL &&
+		node->next->next->node_type==AST_NODE_VAR_DEF &&
+		node->next->next->token->begin==(code + 11) &&
+		node->next->next->token_end->end==(code + 19) &&
+		node->next->next->next!=NULL &&
+		node->next->next->next->node_type==AST_NODE_INT_CONST &&
+		node->next->next->next->token->begin==(code + 20) &&
+		node->next->next->next->token_end->end==(code + 21)
 	);
 
 	free_types();
@@ -202,13 +208,13 @@ bool test_make_ast_tree_with_whitespace(void) {
 }
 
 bool test_make_ast_tree_var_assign(void) {
-	const wchar_t *code=L"x = 1";
+	const wchar_t *code=L"x =";
 	ast_node_t *node=make_ast_tree(code);
 
 	const bool pass=(
 		node->node_type==AST_NODE_VAR_ASSIGN &&
 		node->token->begin==code &&
-		node->token_end->end==(code + 5) &&
+		node->token_end->end==(code + 3) &&
 		node->next!=NULL
 	);
 
@@ -261,6 +267,21 @@ bool test_make_ast_tree_no_param_func(void) {
 	return pass;
 }
 
+bool test_make_ast_tree_int_const(void) {
+	const wchar_t *code=L"1234";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_INT_CONST &&
+		node->token->begin==code &&
+		node->token_end->end==(code + 4) &&
+		node->next!=NULL
+	);
+
+	free(node);
+	return pass;
+}
+
 /* Once a certain bug is fixed, this test can run
 bool test_make_ast_tree_colon_suffix_required(void) {
 	const wchar_t *code=L"x int = 0";
@@ -301,6 +322,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_var_add,
 		test_make_ast_tree_return,
 		test_make_ast_tree_no_param_func,
+		test_make_ast_tree_int_const,
 		//test_make_ast_tree_colon_suffix_required,
 		test_free_ast_tree,
 		NULL

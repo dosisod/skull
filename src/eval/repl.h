@@ -36,6 +36,11 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		return NULL;
 	}
 
+	//token after "=" is required
+	if (token->next->next->next==NULL) {
+		return ERROR_MSG[ERROR_INVALID_INPUT];
+	}
+
 	uint8_t err=0;
 	int64_t tmp=eval_integer(token->next->next->next, &err);
 

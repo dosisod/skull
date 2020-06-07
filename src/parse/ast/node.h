@@ -123,8 +123,7 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 		token=ast_token_cmp(token,
 			TOKEN_NEW_IDENTIFIER,
 			TOKEN_TYPE,
-			TOKEN_OPER_EQUAL,
-			TOKEN_INT_CONST, -1
+			TOKEN_OPER_EQUAL, -1
 		);
 		PUSH_AST_NODE_IF(token, &last, AST_NODE_VAR_DEF, &node);
 
@@ -132,15 +131,13 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 			TOKEN_KW_MUT,
 			TOKEN_NEW_IDENTIFIER,
 			TOKEN_TYPE,
-			TOKEN_OPER_EQUAL,
-			TOKEN_INT_CONST, -1
+			TOKEN_OPER_EQUAL, -1
 		);
 		PUSH_AST_NODE_IF(token, &last, AST_NODE_MUT_VAR_DEF, &node);
 
 		token=ast_token_cmp(token,
 			TOKEN_IDENTIFIER,
-			TOKEN_OPER_EQUAL,
-			TOKEN_INT_CONST, -1
+			TOKEN_OPER_EQUAL, -1
 		);
 		PUSH_AST_NODE_IF(token, &last, AST_NODE_VAR_ASSIGN, &node);
 
@@ -163,6 +160,10 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 			TOKEN_BRACKET_CLOSE, -1
 		);
 		PUSH_AST_NODE_IF(token, &last, AST_NODE_NO_PARAM_FUNC, &node);
+
+		if (token->token_type==TOKEN_INT_CONST) {
+			push_ast_node(token, &last, AST_NODE_INT_CONST, &node);
+		}
 
 		token=token->next;
 	}

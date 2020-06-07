@@ -280,6 +280,20 @@ bool test_repl_define_var_without_colon_fails(void) {
 	return pass;
 }
 
+bool test_repl_missing_value_no_segfault(void) {
+	make_default_types();
+	context_t *ctx=make_context();
+
+	const bool pass=wcscmp(
+		ERROR_MSG[ERROR_INVALID_INPUT],
+		repl_eval(L"x: int =", ctx)
+	)==0;
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_variable_assign,
@@ -300,6 +314,7 @@ void repl_test_self(bool *pass) {
 		test_repl_cannot_add_nonexistent_var,
 		test_repl_overflow_int_gives_error,
 		test_repl_define_var_without_colon_fails,
+		test_repl_missing_value_no_segfault,
 		NULL
 	};
 
