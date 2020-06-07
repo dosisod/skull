@@ -11,6 +11,7 @@
 #include "errors.h"
 
 #include "eval/eval_add.h"
+#include "eval/eval_assign.h"
 #include "eval/eval_bool.h"
 #include "eval/eval_float.h"
 #include "eval/eval_integer.h"
@@ -40,6 +41,7 @@ int main(void) {
 
 	error_test_self(&passed);
 
+	eval_assign_test_self(&passed);
 	eval_bool_test_self(&passed);
 	eval_float_test_self(&passed);
 	eval_integer_test_self(&passed);

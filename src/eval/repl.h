@@ -6,6 +6,7 @@
 #include "../errors.h"
 #include "../eval/context.h"
 #include "../eval/eval_add.h"
+#include "../eval/eval_assign.h"
 #include "../eval/eval_float.h"
 #include "../eval/eval_integer.h"
 #include "../parse/ast/node.h"
@@ -43,19 +44,7 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 	}
 
 	uint8_t err=0;
-	void *tmp=NULL;
-	if (token->next->next->next->token_type==TOKEN_INT_CONST) {
-		int64_t tmp2=eval_integer(token->next->next->next, &err);
-		tmp=&tmp2;
-	}
-	else if (token->next->next->next->token_type==TOKEN_FLOAT_CONST) {
-		long double tmp2=eval_float(token->next->next->next, &err);
-		tmp=&tmp2;
-	}
-	else if (token->next->next->next->token_type==TOKEN_BOOL_CONST) {
-		bool tmp2=token_cmp(L"true", token->next->next->next);
-		tmp=&tmp2;
-	}
+	void *tmp=eval_assign(token->next->next->next, &err);
 
 	if (err==EVAL_INTEGER_OK && tmp!=NULL) {
 		MAKE_TOKEN_BUF(type, token->next);
@@ -64,6 +53,7 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		variable_t *var=make_variable(type, name, false);
 		variable_write(var, tmp);
 		var->is_const=is_const;
+		free(tmp);
 
 		if (context_add_var(ctx, var)) {
 			return NULL;
@@ -72,6 +62,7 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		return ERROR_MSG[ERROR_VAR_ALREADY_DEFINED];
 	}
 
+	free(tmp);
 	return ERROR_MSG[ERROR_WRITING_TO_VAR];
 }
 
@@ -125,19 +116,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 
 	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
 		uint8_t err=0;
-		void *tmp=NULL;
-		if (node->token->next->next->token_type==TOKEN_INT_CONST) {
-			int64_t tmp2=eval_integer(node->token->next->next, &err);
-			tmp=&tmp2;
-		}
-		else if (node->token->next->next->token_type==TOKEN_FLOAT_CONST) {
-			long double tmp2=eval_float(node->token->next->next, &err);
-			tmp=&tmp2;
-		}
-		else if (node->token->next->next->token_type==TOKEN_BOOL_CONST) {
-			bool tmp2=token_cmp(L"true", node->token->next->next);
-			tmp=&tmp2;
-		}
+		void *tmp=eval_assign(node->token->next->next, &err);
 
 		if (err==EVAL_INTEGER_ERR) {
 			ret=ERROR_MSG[ERROR_WRITING_TO_VAR];
