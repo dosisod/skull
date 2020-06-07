@@ -92,40 +92,6 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 		return ret;
 	}
 
-	//reassigning an existing variable
-	if (var!=NULL &&
-		token->next!=NULL &&
-		token->next->token_type==TOKEN_OPER_EQUAL &&
-		token->next->next!=NULL && (
-			token->next->next->token_type==TOKEN_FLOAT_CONST ||
-			token->next->next->token_type==TOKEN_INT_CONST
-		))
-	{
-		uint8_t err=0;
-		void *tmp;
-		if (token->next->next->token_type==TOKEN_INT_CONST) {
-			int64_t tmp2=eval_integer(token->next->next, &err);
-			tmp=&tmp2;
-		}
-		else if (token->next->next->token_type==TOKEN_FLOAT_CONST) {
-			long double tmp2=eval_float(token->next->next, &err);
-			tmp=&tmp2;
-		}
-
-		if (err==EVAL_INTEGER_ERR) {
-			free_tokens(token);
-			return ERROR_MSG[ERROR_WRITING_TO_VAR];
-		}
-
-		if (variable_write(var, tmp)==VARIABLE_WRITE_ECONST) {
-			free_tokens(token);
-			return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
-		}
-
-		free_tokens(token);
-		return NULL;
-	}
-
 	if (var!=NULL && token->next!=ast_token_cmp(token->next,
 		TOKEN_OPER_PLUS,
 		TOKEN_IDENTIFIER, -1))
@@ -151,6 +117,26 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 
 	if (node->node_type==AST_NODE_NO_PARAM_FUNC && token_cmp(L"clear", node->token)) {
 		ret=L"\033[2J\033[;1H";
+	}
+
+	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
+		uint8_t err=0;
+		void *tmp=NULL;
+		if (node->token->next->next->token_type==TOKEN_INT_CONST) {
+			int64_t tmp2=eval_integer(node->token->next->next, &err);
+			tmp=&tmp2;
+		}
+		else if (node->token->next->next->token_type==TOKEN_FLOAT_CONST) {
+			long double tmp2=eval_float(node->token->next->next, &err);
+			tmp=&tmp2;
+		}
+
+		if (err==EVAL_INTEGER_ERR) {
+			ret=ERROR_MSG[ERROR_WRITING_TO_VAR];
+		}
+		else if (tmp!=NULL && variable_write(var, tmp)==VARIABLE_WRITE_ECONST) {
+			ret=ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
+		}
 	}
 
 	else if (node->token==NULL) {
