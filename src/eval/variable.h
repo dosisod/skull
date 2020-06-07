@@ -1,5 +1,7 @@
 #pragma once
 
+#define _GNU_SOURCE
+
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -88,6 +90,16 @@ Return string representation of a variable.
 The result of this function must be freed.
 */
 wchar_t *fmt_var(const variable_t *var) {
+	if (var->type==find_type(L"bool")) {
+		bool data=false;
+		variable_read(&data, var);
+
+		if (data) {
+			return wcsdup(L"true");
+		}
+		return wcsdup(L"false");
+	}
+
 	char *tmp=NULL;
 	wchar_t *ret=NULL;
 

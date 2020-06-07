@@ -161,6 +161,31 @@ bool test_repl_write_to_mutable_float_var(void) {
 	return pass;
 }
 
+bool test_repl_write_to_mutable_bool_var(void) {
+	context_t *ctx=make_context();
+
+	make_default_types();
+	repl_eval(L"mut x: bool = false", ctx);
+	const wchar_t *output=repl_eval(L"x = true", ctx);
+
+	if (ctx->vars_used!=1) {
+		free_context(ctx);
+		return false;
+	}
+
+	bool result=0;
+	variable_read(&result, ctx->vars[0]);
+
+	const bool pass=(
+		output==NULL &&
+		result==true
+	);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
 bool test_repl_write_to_const_var_fails(void) {
 	context_t *ctx=make_context();
 
@@ -198,6 +223,31 @@ bool test_repl_make_float_variable(void) {
 	const bool pass=(
 		output==NULL &&
 		ret==0.0
+	);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+}
+
+bool test_repl_make_bool_variable(void) {
+	context_t *ctx=make_context();
+
+	make_default_types();
+	const wchar_t *output=repl_eval(L"x: bool = false", ctx);
+
+	if (ctx->vars_used!=1) {
+		free_types();
+		free_context(ctx);
+		return false;
+	}
+
+	double ret=0;
+	variable_read(&ret, ctx->vars[0]);
+
+	const bool pass=(
+		output==NULL &&
+		ret==false
 	);
 
 	free_types();
@@ -351,8 +401,10 @@ void repl_test_self(bool *pass) {
 		test_repl_manually_writing_to_mutable_var_works,
 		test_repl_write_to_mutable_var,
 		test_repl_write_to_mutable_float_var,
+		test_repl_write_to_mutable_bool_var,
 		test_repl_write_to_const_var_fails,
 		test_repl_make_float_variable,
+		test_repl_make_bool_variable,
 		test_repl_print_fail_with_trailing_tokens,
 		test_repl_blank_line_returns_nothing,
 		test_repl_invalid_input_returns_error,

@@ -52,6 +52,10 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		long double tmp2=eval_float(token->next->next->next, &err);
 		tmp=&tmp2;
 	}
+	else if (token->next->next->next->token_type==TOKEN_BOOL_CONST) {
+		bool tmp2=token_cmp(L"true", token->next->next->next);
+		tmp=&tmp2;
+	}
 
 	if (err==EVAL_INTEGER_OK && tmp!=NULL) {
 		MAKE_TOKEN_BUF(type, token->next);
@@ -130,12 +134,19 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 			long double tmp2=eval_float(node->token->next->next, &err);
 			tmp=&tmp2;
 		}
+		else if (node->token->next->next->token_type==TOKEN_BOOL_CONST) {
+			bool tmp2=token_cmp(L"true", node->token->next->next);
+			tmp=&tmp2;
+		}
 
 		if (err==EVAL_INTEGER_ERR) {
 			ret=ERROR_MSG[ERROR_WRITING_TO_VAR];
 		}
 		else if (tmp!=NULL && variable_write(var, tmp)==VARIABLE_WRITE_ECONST) {
 			ret=ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
+		}
+		else {
+			ret=NULL;
 		}
 	}
 
