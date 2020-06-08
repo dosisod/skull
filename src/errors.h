@@ -6,15 +6,16 @@
 #define ERROR_VAR_ALREADY_DEFINED 1
 #define ERROR_CANNOT_ASSIGN_CONST 2
 #define ERROR_WRITING_TO_VAR 3
+#define ERROR_OVERFLOW 4
 
 const wchar_t *ERROR_MSG[] = {
 	L"invalid input",
 	L"variable already defined",
 	L"cannot assign to const",
 	L"error writing to var",
+	L"overflow occurred",
 	L""
 };
-
 const wchar_t **ERROR_MSG_LAST=NULL;
 
 /*

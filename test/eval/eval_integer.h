@@ -37,7 +37,7 @@ TEST(integer_overflow_returns_error, {
 
 	const bool pass=(
 		num==LLONG_MAX &&
-		err==EVAL_INTEGER_ERR
+		err==EVAL_INTEGER_OVERFLOW
 	);
 
 	free(token);
@@ -54,7 +54,7 @@ TEST(integer_underflow_returns_error, {
 
 	const bool pass=(
 		num==LLONG_MIN &&
-		err==EVAL_INTEGER_ERR
+		err==EVAL_INTEGER_OVERFLOW
 	);
 
 	free(token);

@@ -355,8 +355,8 @@ TEST(repl_overflow_int_gives_error, {
 	const wchar_t *output2=repl_eval(L"y = 99999999999999999999999", ctx); // NOLINT
 
 	const bool pass=(
-		wcscmp(ERROR_MSG[ERROR_WRITING_TO_VAR], output1)==0 && // NOLINT
-		wcscmp(ERROR_MSG[ERROR_WRITING_TO_VAR], output2)==0
+		wcscmp(ERROR_MSG[ERROR_OVERFLOW], output1)==0 && // NOLINT
+		wcscmp(ERROR_MSG[ERROR_OVERFLOW], output2)==0
 	);
 
 	free_types();

@@ -26,9 +26,5 @@ long double eval_float(const token_t *token, uint8_t *error) {
 	errno=0;
 	long double ret=wcstold(token->begin, NULL);
 
-	if (errno==ERANGE) {
-		*error=EVAL_FLOAT_ERR;
-	}
-
 	return ret;
 }

@@ -32,6 +32,9 @@ const wchar_t *eval_assign(variable_t *var, token_t *token) {
 	if (mem==NULL || err==EVAL_INTEGER_ERR) {
 		return ERROR_MSG[ERROR_WRITING_TO_VAR];
 	}
+	if (err==EVAL_INTEGER_OVERFLOW) {
+		return ERROR_MSG[ERROR_OVERFLOW];
+	}
 	if (variable_write(var, mem)==VARIABLE_WRITE_ECONST) {
 		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
 	}
