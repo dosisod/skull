@@ -4,15 +4,15 @@
 #include "../../src/eval/repl.h"
 #include "../../test/testing.h"
 
-bool test_repl_variable_declare(void) {
+TEST(repl_variable_declare, {
 	make_default_types();
 	const wchar_t *output=repl_eval(L"x: int = 0", NULL);
 
 	free_types();
 	return output==NULL;
-}
+});
 
-bool test_repl_variable_declare_in_context(void) {
+TEST(repl_variable_declare_in_context, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -35,9 +35,9 @@ bool test_repl_variable_declare_in_context(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_cannot_redeclare_var(void) {
+TEST(repl_cannot_redeclare_var, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -52,9 +52,9 @@ bool test_repl_cannot_redeclare_var(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_declaring_mutable_var(void) {
+TEST(repl_declaring_mutable_var, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -67,9 +67,9 @@ bool test_repl_declaring_mutable_var(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_manually_writing_to_const_var_fails(void) {
+TEST(repl_manually_writing_to_const_var_fails, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -88,9 +88,9 @@ bool test_repl_manually_writing_to_const_var_fails(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_manually_writing_to_mutable_var_works(void) {
+TEST(repl_manually_writing_to_mutable_var_works, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -115,9 +115,9 @@ bool test_repl_manually_writing_to_mutable_var_works(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_write_to_mutable_var(void) {
+TEST(repl_write_to_mutable_var, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -137,9 +137,9 @@ bool test_repl_write_to_mutable_var(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_write_to_mutable_float_var(void) {
+TEST(repl_write_to_mutable_float_var, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -159,9 +159,9 @@ bool test_repl_write_to_mutable_float_var(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_write_to_mutable_bool_var(void) {
+TEST(repl_write_to_mutable_bool_var, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -184,9 +184,9 @@ bool test_repl_write_to_mutable_bool_var(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_write_to_const_var_fails(void) {
+TEST(repl_write_to_const_var_fails, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -203,9 +203,9 @@ bool test_repl_write_to_const_var_fails(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_make_float_variable(void) {
+TEST(repl_make_float_variable, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -228,9 +228,9 @@ bool test_repl_make_float_variable(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_make_bool_variable(void) {
+TEST(repl_make_bool_variable, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -253,9 +253,9 @@ bool test_repl_make_bool_variable(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_print_fail_with_trailing_tokens(void) {
+TEST(repl_print_fail_with_trailing_tokens, {
 	context_t *ctx=make_context();
 
 	make_default_types();
@@ -269,34 +269,34 @@ bool test_repl_print_fail_with_trailing_tokens(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_blank_line_returns_nothing(void) {
+TEST(repl_blank_line_returns_nothing, {
 	return repl_eval(L"", NULL)==NULL;
-}
+});
 
-bool test_repl_invalid_input_returns_error(void) {
+TEST(repl_invalid_input_returns_error, {
 	return wcscmp(
 		ERROR_MSG[ERROR_INVALID_INPUT],
 		repl_eval(L"not_valid", NULL)
 	)==0;
-}
+});
 
-bool test_repl_mut_cannot_be_used_alone(void) {
+TEST(repl_mut_cannot_be_used_alone, {
 	return wcscmp(
 		ERROR_MSG[ERROR_INVALID_INPUT],
 		repl_eval(L"mut", NULL)
 	)==0;
-}
+});
 
-bool test_repl_clear_function(void) {
+TEST(repl_clear_function, {
 	return wcscmp(
 		L"\033[2J\033[;1H",
 		repl_eval(L"clear[]", NULL)
 	)==0;
-}
+});
 
-bool test_repl_print_var(void) {
+TEST(repl_print_var, {
 	make_default_types();
 	context_t *ctx=make_context();
 
@@ -311,8 +311,9 @@ bool test_repl_print_var(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
-bool test_repl_add_variables(void) {
+});
+
+TEST(repl_add_variables, {
 	make_default_types();
 	context_t *ctx=make_context();
 
@@ -328,9 +329,9 @@ bool test_repl_add_variables(void) {
 	free_types(); // NOLINT
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_cannot_add_nonexistent_var(void) {
+TEST(repl_cannot_add_nonexistent_var, {
 	make_default_types();
 	context_t *ctx=make_context();
 
@@ -342,9 +343,9 @@ bool test_repl_cannot_add_nonexistent_var(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_overflow_int_gives_error(void) {
+TEST(repl_overflow_int_gives_error, {
 	make_default_types();
 	context_t *ctx=make_context();
 
@@ -361,9 +362,9 @@ bool test_repl_overflow_int_gives_error(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_define_var_without_colon_fails(void) {
+TEST(repl_define_var_without_colon_fails, {
 	make_default_types();
 	context_t *ctx=make_context();
 
@@ -375,9 +376,9 @@ bool test_repl_define_var_without_colon_fails(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
-bool test_repl_missing_value_no_segfault(void) {
+TEST(repl_missing_value_no_segfault, {
 	make_default_types();
 	context_t *ctx=make_context();
 
@@ -389,7 +390,7 @@ bool test_repl_missing_value_no_segfault(void) {
 	free_types();
 	free_context(ctx);
 	return pass;
-}
+});
 
 void repl_test_self(bool *pass) {
 	tests_t tests={

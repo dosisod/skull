@@ -4,15 +4,15 @@
 #include "../../src/common/wegex.h"
 #include "../../test/testing.h"
 
-bool test_no_modifiers(void) {
+TEST(no_modifiers, {
 	return (
 		wegex_match(L"abc", L"abc") &&
 		!wegex_match(L"abc", L"abcd") &&
 		!wegex_match(L"abc", L"a")
 	);
-}
+});
 
-bool test_star_modifier(void) {
+TEST(star_modifier, {
 	return (
 		wegex_match(L"*x", L"x") &&
 		wegex_match(L"*x", L"xxx") &&
@@ -21,9 +21,9 @@ bool test_star_modifier(void) {
 		!wegex_match(L"*x", L"xa") &&
 		wegex_match(L"*x", L"")
 	);
-}
+});
 
-bool test_plus_modifier(void) {
+TEST(plus_modifier, {
 	return (
 		wegex_match(L"+x", L"x") &&
 		wegex_match(L"+x", L"xxx") &&
@@ -31,18 +31,18 @@ bool test_plus_modifier(void) {
 		!wegex_match(L"+x", L"xa") &&
 		!wegex_match(L"+x", L"")
 	);
-}
+});
 
-bool test_ternary_modifier(void) {
+TEST(ternary_modifier, {
 	return (
 		wegex_match(L"?x", L"x") &&
 		wegex_match(L"?xa", L"xa") &&
 		wegex_match(L"?xa", L"a") &&
 		wegex_match(L"?x", L"")
 	);
-}
+});
 
-bool test_charset_syntax(void) {
+TEST(charset_syntax, {
 	return (
 		wegex_match(L"+[abc]", L"a") &&
 		wegex_match(L"+[abc]", L"b") &&
@@ -51,9 +51,9 @@ bool test_charset_syntax(void) {
 		!wegex_match(L"+[abc]", L"d") &&
 		!wegex_match(L"+[abc]", L"ax")
 	);
-}
+});
 
-bool test_wegex_number_match(void) {
+TEST(wegex_number_match, {
 	return (
 		wegex_match(L"\n", L"0") &&
 		wegex_match(L"\n", L"1") &&
@@ -68,9 +68,9 @@ bool test_wegex_number_match(void) {
 		wegex_match(L"+\n", L"1234") &&
 		!wegex_match(L"\n", L"abc")
 	);
-}
+});
 
-bool test_wegex_hexadecimal_match(void) {
+TEST(wegex_hexadecimal_match, {
 	return (
 		wegex_match(L"\b", L"a") &&
 		wegex_match(L"\b", L"b") &&
@@ -96,9 +96,9 @@ bool test_wegex_hexadecimal_match(void) {
 		wegex_match(L"\b", L"9") &&
 		!wegex_match(L"\b", L"z")
 	);
-}
+});
 
-bool test_wegex_ascii_alpha_match(void) {
+TEST(wegex_ascii_alpha_match, {
 	return (
 		wegex_match(L"\a", L"a") &&
 		wegex_match(L"\a", L"b") &&
@@ -114,9 +114,9 @@ bool test_wegex_ascii_alpha_match(void) {
 		wegex_match(L"\a", L"Z") &&
 		!wegex_match(L"\a", L"0")
 	);
-}
+});
 
-bool test_wegex_full_alpha_match(void) {
+TEST(wegex_full_alpha_match, {
 	return (
 		wegex_match(L"\f", L"a") &&
 		wegex_match(L"\f", L"b") &&
@@ -135,9 +135,9 @@ bool test_wegex_full_alpha_match(void) {
 		wegex_match(L"\f", L"9") &&
 		!wegex_match(L"\f", L"!")
 	);
-}
+});
 
-bool test_wegex_optional_modifiers_at_eol(void) {
+TEST(wegex_optional_modifiers_at_eol, {
 	return (
 		wegex_match(L"x?y", L"xy") &&
 		wegex_match(L"x?y", L"x") &&
@@ -149,7 +149,7 @@ bool test_wegex_optional_modifiers_at_eol(void) {
 		wegex_match(L"x?y?z", L"xz") &&
 		wegex_match(L"x?y?z", L"x")
 	);
-}
+});
 
 void wegex_test_self(bool *pass) {
 	tests_t tests={

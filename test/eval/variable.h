@@ -3,7 +3,7 @@
 #include "../../src/eval/variable.h"
 #include "../../test/testing.h"
 
-bool test_create_variable(void) {
+TEST(create_variable, {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
@@ -19,15 +19,15 @@ bool test_create_variable(void) {
 	free_variable(var);
 
 	return pass;
-}
+});
 
-bool test_create_variable_with_invalid_type_fails(void) {
+TEST(create_variable_with_invalid_type_fails, {
 	const variable_t *var=make_variable(L"not_a_type", L"x", true);
 
 	return var==NULL;
-}
+});
 
-bool test_variable_write(void) {
+TEST(variable_write, {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", false);
 
@@ -46,9 +46,9 @@ bool test_variable_write(void) {
 	free_variable(var);
 
 	return pass;
-}
+});
 
-bool test_variable_cannot_write_to_const(void) {
+TEST(variable_cannot_write_to_const, {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
@@ -67,9 +67,9 @@ bool test_variable_cannot_write_to_const(void) {
 	free_variable(var);
 
 	return pass;
-}
+});
 
-bool test_variable_read(void) {
+TEST(variable_read, {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", false);
 	const int64_t data=1234;
@@ -84,9 +84,9 @@ bool test_variable_read(void) {
 	free_variable(var);
 
 	return pass;
-}
+});
 
-bool test_make_variable_with_invalid_name_fails(void) {
+TEST(make_variable_with_invalid_name_fails, {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"1nvalid", false);
 
@@ -96,9 +96,9 @@ bool test_make_variable_with_invalid_name_fails(void) {
 	free_variable(var);
 
 	return pass;
-}
+});
 
-bool test_free_variable(void) {
+TEST(free_variable, {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
 
@@ -111,17 +111,17 @@ bool test_free_variable(void) {
 	free_variable(var);
 
 	return true;
-}
+});
 
-bool test_free_null_variable_is_ok(void) {
+TEST(free_null_variable_is_ok, {
 	variable_t *var=NULL;
 
 	free_variable(var);
 
 	return true;
-}
+});
 
-bool test_fmt_var_int(void) {
+TEST(fmt_var_int, {
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", false);
 
@@ -139,9 +139,9 @@ bool test_fmt_var_int(void) {
 	free_variable(var);
 	free_types();
 	return pass;
-}
+});
 
-bool test_fmt_var_float(void) {
+TEST(fmt_var_float, {
 	make_default_types();
 	variable_t *var=make_variable(L"float", L"x", false);
 
@@ -159,9 +159,9 @@ bool test_fmt_var_float(void) {
 	free_variable(var);
 	free_types();
 	return pass;
-}
+});
 
-bool test_fmt_var_bool(void) {
+TEST(fmt_var_bool, {
 	make_default_types();
 	variable_t *var=make_variable(L"bool", L"x", false);
 
@@ -179,7 +179,7 @@ bool test_fmt_var_bool(void) {
 	free_variable(var);
 	free_types();
 	return pass;
-}
+});
 
 void variable_test_self(bool *pass) {
 	tests_t tests={

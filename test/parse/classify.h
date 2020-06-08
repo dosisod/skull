@@ -3,7 +3,7 @@
 #include "../../src/parse/classify.h"
 #include "../../test/testing.h"
 
-bool test_is_type_token(void) {
+TEST(is_type_token, {
 	const wchar_t *code=L"int not_a_type";
 	token_t *token=tokenize(code);
 
@@ -18,17 +18,17 @@ bool test_is_type_token(void) {
 	free_tokens(token);
 
 	return pass;
-}
+});
 
-bool test_is_keyword_str(void) {
+TEST(is_keyword_str, {
 	return (
 		is_keyword_str(L"return") &&
 		is_keyword_str(L"mut") &&
 		!is_keyword_str(L"not_a_keyword")
 	);
-}
+});
 
-bool test_is_function_token(void) {
+TEST(is_function_token, {
 	const wchar_t *code=L"main[] ->";
 	token_t *token=tokenize(code);
 
@@ -40,9 +40,9 @@ bool test_is_function_token(void) {
 	free_tokens(token);
 
 	return pass;
-}
+});
 
-bool test_is_constant_integer(void) {
+TEST(is_constant_integer, {
 	return (
 		is_constant_integer(L"123") &&
 		is_constant_integer(L"-123") &&
@@ -59,9 +59,9 @@ bool test_is_constant_integer(void) {
 		!is_constant_integer(L"-123aaa") &&
 		!is_constant_integer(L"")
 	);
-}
+});
 
-bool test_is_constant_float(void) {
+TEST(is_constant_float, {
 	return (
 		is_constant_float(L"123.0") &&
 		is_constant_float(L"-123.0") &&
@@ -71,25 +71,25 @@ bool test_is_constant_float(void) {
 		!is_constant_float(L".123") &&
 		!is_constant_float(L"123aaa")
 	);
-}
+});
 
-bool test_is_constant_bool(void) {
+TEST(is_constant_bool, {
 	return (
 		is_constant_bool(L"true") &&
 		is_constant_bool(L"false") &&
 		!is_constant_bool(L"not_bool")
 	);
-}
+});
 
-bool test_is_constant_char(void) {
+TEST(is_constant_char, {
 	return (
 		is_constant_char(L"'x'") &&
 		!is_constant_char(L"'x '") &&
 		!is_constant_char(L"''")
 	);
-}
+});
 
-bool test_is_constant_str(void) {
+TEST(is_constant_str, {
 	return (
 		is_constant_str(L"\"\"") &&
 		is_constant_str(L"\"x\"") &&
@@ -97,9 +97,9 @@ bool test_is_constant_str(void) {
 		!is_constant_str(L"\"bad") &&
 		!is_constant_str(L"bad\"")
 	);
-}
+});
 
-bool test_bracket_token_open(void) {
+TEST(bracket_token_open, {
 	const wchar_t *code=L"[";
 	token_t *t=tokenize(code);
 	classify_token(t);
@@ -108,9 +108,9 @@ bool test_bracket_token_open(void) {
 	free(t);
 
 	return pass;
-}
+});
 
-bool test_bracket_token_close(void) {
+TEST(bracket_token_close, {
 	const wchar_t *code=L"]";
 	token_t *t=tokenize(code);
 	classify_token(t);
@@ -119,9 +119,9 @@ bool test_bracket_token_close(void) {
 	free(t);
 
 	return pass;
-}
+});
 
-bool test_token_mut_kw(void) {
+TEST(token_mut_kw, {
 	const wchar_t *code=L"mut not_mut";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -134,9 +134,9 @@ bool test_token_mut_kw(void) {
 	free_tokens(t);
 
 	return pass;
-}
+});
 
-bool test_token_return_kw(void) {
+TEST(token_return_kw, {
 	const wchar_t *code=L"return not_return";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -149,9 +149,9 @@ bool test_token_return_kw(void) {
 	free_tokens(t);
 
 	return pass;
-}
+});
 
-bool test_token_equal_oper(void) {
+TEST(token_equal_oper, {
 	const wchar_t *code=L"= other";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -164,9 +164,9 @@ bool test_token_equal_oper(void) {
 	free_tokens(t);
 
 	return pass;
-}
+});
 
-bool test_token_plus_oper(void) {
+TEST(token_plus_oper, {
 	const wchar_t *code=L"+ other";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -179,9 +179,9 @@ bool test_token_plus_oper(void) {
 	free_tokens(t);
 
 	return pass;
-}
+});
 
-bool test_token_type(void) {
+TEST(token_type, {
 	const wchar_t *code=L"int not_a_type";
 	token_t *t=tokenize(code);
 	make_default_types();
@@ -196,9 +196,9 @@ bool test_token_type(void) {
 	free_tokens(t);
 
 	return pass;
-}
+});
 
-bool test_token_function(void) {
+TEST(token_function, {
 	const wchar_t *code=L"main[] ->";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -211,9 +211,9 @@ bool test_token_function(void) {
 	free_tokens(t);
 
 	return pass;
-}
+});
 
-bool test_token_unknown(void) {
+TEST(token_unknown, {
 	const wchar_t *code=L"123garbage_value";
 	token_t *t=tokenize(code);
 	classify_token(t);
@@ -222,9 +222,9 @@ bool test_token_unknown(void) {
 	free(t);
 
 	return pass;
-}
+});
 
-bool test_token_integer_constant(void) {
+TEST(token_integer_constant, {
 	const wchar_t *code=L"1234";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -233,9 +233,9 @@ bool test_token_integer_constant(void) {
 	free(t);
 
 	return pass;
-}
+});
 
-bool test_token_float_constant(void) {
+TEST(token_float_constant, {
 	const wchar_t *code=L"123.0";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -244,9 +244,9 @@ bool test_token_float_constant(void) {
 	free(t);
 
 	return pass;
-}
+});
 
-bool test_token_bool_constant(void) {
+TEST(token_bool_constant, {
 	const wchar_t *code=L"true";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -255,9 +255,9 @@ bool test_token_bool_constant(void) {
 	free(t);
 
 	return pass;
-}
+});
 
-bool test_token_char_constant(void) {
+TEST(token_char_constant, {
 	const wchar_t *code=L"'x'";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -266,9 +266,9 @@ bool test_token_char_constant(void) {
 	free(t);
 
 	return pass;
-}
+});
 
-bool test_token_str_constant(void) {
+TEST(token_str_constant, {
 	const wchar_t *code=L"\"xyz\"";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -277,9 +277,9 @@ bool test_token_str_constant(void) {
 	free(t);
 
 	return pass;
-}
+});
 
-bool test_is_valid_identifier(void) {
+TEST(is_valid_identifier, {
 	return (
 		is_valid_identifier(L"a") &&
 		is_valid_identifier(L"z") &&
@@ -296,9 +296,9 @@ bool test_is_valid_identifier(void) {
 		is_valid_identifier(L"x_") &&
 		!is_valid_identifier(L"_x")
 	);
-}
+});
 
-bool test_is_valid_identifier_token(void) {
+TEST(is_valid_identifier_token, {
 	token_t *t=tokenize(L"x");
 	classify_tokens(t);
 
@@ -306,9 +306,9 @@ bool test_is_valid_identifier_token(void) {
 
 	free(t);
 	return pass;
-}
+});
 
-bool test_new_identifier_clip_trailing_colon(void) {
+TEST(new_identifier_clip_trailing_colon, {
 	const wchar_t *code=L"x: int = 0";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -320,9 +320,9 @@ bool test_new_identifier_clip_trailing_colon(void) {
 
 	free(t);
 	return pass;
-}
+});
 
-bool test_identifier_cannot_be_type(void) {
+TEST(identifier_cannot_be_type, {
 	make_default_types();
 	const wchar_t *code=L"int: int = 0";
 	token_t *t=tokenize(code);
@@ -336,9 +336,9 @@ bool test_identifier_cannot_be_type(void) {
 	free_types();
 	free(t);
 	return pass;
-}
+});
 
-bool test_identifier_cannot_be_keyword(void) {
+TEST(identifier_cannot_be_keyword, {
 	make_default_types();
 	const wchar_t *code=L"mut: int = 0";
 	token_t *t=tokenize(code);
@@ -352,9 +352,9 @@ bool test_identifier_cannot_be_keyword(void) {
 	free_types();
 	free(t);
 	return pass;
-}
+});
 
-bool test_token_classifier(void) {
+TEST(token_classifier, {
 	const wchar_t *code=L"[ ]";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -368,7 +368,7 @@ bool test_token_classifier(void) {
 	free(t);
 
 	return pass;
-}
+});
 
 void classifier_test_self(bool *pass) {
 	tests_t tests={

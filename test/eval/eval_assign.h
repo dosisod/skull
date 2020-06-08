@@ -3,7 +3,7 @@
 #include "../../src/eval/eval_assign.h"
 #include "../../test/testing.h"
 
-bool test_eval_assign_int(void) {
+TEST(eval_assign_int, {
 	token_t *token=tokenize(L"1234");
 	classify_tokens(token);
 
@@ -20,9 +20,9 @@ bool test_eval_assign_int(void) {
 	free_types();
 	free_variable(var);
 	return pass;
-}
+});
 
-bool test_eval_assign_float(void) {
+TEST(eval_assign_float, {
 	token_t *token=tokenize(L"0.0");
 	classify_tokens(token);
 
@@ -39,9 +39,9 @@ bool test_eval_assign_float(void) {
 	free_types();
 	free_variable(var);
 	return pass;
-}
+});
 
-bool test_eval_assign_bool(void) {
+TEST(eval_assign_bool, {
 	token_t *token=tokenize(L"false");
 	classify_tokens(token);
 
@@ -58,7 +58,7 @@ bool test_eval_assign_bool(void) {
 	free_types();
 	free_variable(var);
 	return pass;
-}
+});
 
 void eval_assign_test_self(bool *pass) {
 	tests_t tests={

@@ -3,7 +3,7 @@
 #include "../../src/eval/context.h"
 #include "../../test/testing.h"
 
-bool test_make_context(void) {
+TEST(make_context, {
 	context_t *ctx=make_context();
 
 	const bool pass=(
@@ -15,9 +15,9 @@ bool test_make_context(void) {
 	free(ctx);
 
 	return pass;
-}
+});
 
-bool test_context_contains_var(void) {
+TEST(context_contains_var, {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
@@ -36,9 +36,9 @@ bool test_context_contains_var(void) {
 	free(ctx);
 
 	return pass;
-}
+});
 
-bool test_context_find_name(void) {
+TEST(context_find_name, {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
@@ -55,9 +55,9 @@ bool test_context_find_name(void) {
 	free(ctx);
 
 	return pass;
-}
+});
 
-bool test_add_vars_to_context(void) {
+TEST(add_vars_to_context, {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
@@ -74,9 +74,9 @@ bool test_add_vars_to_context(void) {
 	free(ctx);
 
 	return pass;
-}
+});
 
-bool test_cannot_add_same_varname_to_context(void) {
+TEST(cannot_add_same_varname_to_context, {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
@@ -98,9 +98,9 @@ bool test_cannot_add_same_varname_to_context(void) {
 	free(ctx);
 
 	return pass;
-}
+});
 
-bool test_add_nested_context(void) {
+TEST(add_nested_context, {
 	context_t *ctx=make_context();
 	context_t *ctx_new=make_context();
 
@@ -115,9 +115,9 @@ bool test_add_nested_context(void) {
 	free_context(ctx);
 
 	return pass;
-}
+});
 
-bool test_cannot_add_same_varname_to_sub_context(void) {
+TEST(cannot_add_same_varname_to_sub_context, {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var1=make_variable(L"int", L"x", true);
@@ -141,9 +141,9 @@ bool test_cannot_add_same_varname_to_sub_context(void) {
 	free_context(ctx);
 
 	return pass;
-}
+});
 
-bool test_free_context(void) {
+TEST(free_context, {
 	context_t *ctx=make_context();
 	make_default_types();
 	variable_t *var=make_variable(L"int", L"x", true);
@@ -154,11 +154,11 @@ bool test_free_context(void) {
 	free_context(ctx);
 
 	return true;
-}
+});
 
-bool test_context_find_name_when_null(void) {
+TEST(context_find_name_when_null, {
 	return context_find_name(NULL, L"anything")==NULL;
-}
+});
 
 void context_test_self(bool *pass) {
 	tests_t tests={
