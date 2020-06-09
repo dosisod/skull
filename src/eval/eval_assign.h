@@ -29,7 +29,7 @@ const wchar_t *eval_assign(variable_t *var, token_t *token) {
 		mem=&tmp;
 	}
 	else if (token->token_type==TOKEN_CHAR_CONST) {
-		mem=token->begin + 1;
+		mem=token->begin;
 	}
 
 	if (mem==NULL || err==EVAL_INTEGER_ERR) {

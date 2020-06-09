@@ -321,8 +321,8 @@ TEST(make_ast_tree_char_const, {
 
 	const bool pass=(
 		node->node_type==AST_NODE_CHAR_CONST &&
-		node->token->begin==code &&
-		node->token_end->end==(code + 3) &&
+		node->token->begin==(code + 1) &&
+		node->token_end->end==(code + 2) &&
 		node->next!=NULL
 	);
 

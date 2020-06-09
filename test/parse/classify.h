@@ -262,9 +262,13 @@ TEST(token_char_constant, {
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
-	const bool pass=(t->token_type==TOKEN_CHAR_CONST);
-	free(t);
+	const bool pass=(
+		t->token_type==TOKEN_CHAR_CONST &&
+		t->begin==(code + 1) &&
+		t->end==(code + 2)
+	);
 
+	free(t);
 	return pass;
 });
 
@@ -273,9 +277,13 @@ TEST(token_str_constant, {
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
-	const bool pass=(t->token_type==TOKEN_STR_CONST);
-	free(t);
+	const bool pass=(
+		t->token_type==TOKEN_STR_CONST &&
+		t->begin==(code + 1) &&
+		t->end==(code + 4)
+	);
 
+	free(t);
 	return pass;
 });
 

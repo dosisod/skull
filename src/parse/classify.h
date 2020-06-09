@@ -227,9 +227,17 @@ void classify_token(token_t *token) {
 	}
 	else if (is_constant_char_token(token)) {
 		token->token_type=TOKEN_CHAR_CONST;
+
+		//dont include ''s as part of string
+		token->begin++;
+		token->end--;
 	}
 	else if (is_constant_str_token(token)) {
 		token->token_type=TOKEN_STR_CONST;
+
+		//dont include ""s as part of string
+		token->begin++;
+		token->end--;
 	}
 	else if (is_valid_identifier_token(token)) {
 		token->token_type=TOKEN_IDENTIFIER;
