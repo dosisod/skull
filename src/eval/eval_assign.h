@@ -13,7 +13,7 @@ Assign the value of `token` to a variable `var`.
 Return an error (as a string) if any occured, else `NULL`.
 */
 const wchar_t *eval_assign(variable_t *var, token_t *token) {
-	void *mem=NULL;
+	const void *mem=NULL;
 	uint8_t err=0;
 
 	if (token->token_type==TOKEN_INT_CONST) {
@@ -27,6 +27,9 @@ const wchar_t *eval_assign(variable_t *var, token_t *token) {
 	else if (token->token_type==TOKEN_BOOL_CONST) {
 		bool tmp=token_cmp(L"true", token);
 		mem=&tmp;
+	}
+	else if (token->token_type==TOKEN_CHAR_CONST) {
+		mem=token->begin + 1;
 	}
 
 	if (mem==NULL || err==EVAL_INTEGER_ERR) {

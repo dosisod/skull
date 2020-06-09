@@ -24,7 +24,8 @@ enum node_types {
 
 	AST_NODE_INT_CONST,
 	AST_NODE_FLOAT_CONST,
-	AST_NODE_BOOL_CONST
+	AST_NODE_BOOL_CONST,
+	AST_NODE_CHAR_CONST
 };
 
 typedef struct ast_node_t {
@@ -171,6 +172,9 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 		}
 		if (token->token_type==TOKEN_BOOL_CONST) {
 			push_ast_node(token, &last, AST_NODE_BOOL_CONST, &node);
+		}
+		if (token->token_type==TOKEN_CHAR_CONST) {
+			push_ast_node(token, &last, AST_NODE_CHAR_CONST, &node);
 		}
 
 		token=token->next;

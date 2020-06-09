@@ -60,6 +60,25 @@ TEST(eval_assign_bool, {
 	return pass;
 });
 
+TEST(eval_assign_char, {
+	token_t *token=tokenize(L"'a'");
+	classify_tokens(token);
+
+	make_default_types();
+	variable_t *var=make_variable(L"char", L"x", false);
+
+	eval_assign(var, token);
+
+	wchar_t data=L'\0';
+	variable_read(&data, var);
+
+	const bool pass=(data==L'a');
+
+	free_types();
+	free_variable(var);
+	return pass;
+});
+
 TEST(eval_assign_int_overflow, {
 	token_t *token=tokenize(L"99999999999999999999999999999999");
 	classify_tokens(token);
@@ -84,6 +103,7 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_int,
 		test_eval_assign_float,
 		test_eval_assign_bool,
+		test_eval_assign_char,
 		test_eval_assign_int_overflow,
 		NULL
 	};

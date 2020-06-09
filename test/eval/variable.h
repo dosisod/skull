@@ -181,6 +181,26 @@ TEST(fmt_var_bool, {
 	return pass;
 });
 
+TEST(fmt_var_char, {
+	make_default_types();
+	variable_t *var=make_variable(L"char", L"x", false);
+
+	wchar_t data=L'a';
+	variable_write(var, &data);
+
+	wchar_t *str=fmt_var(var);
+
+	const bool pass=(
+		str!=NULL &&
+		wcscmp(L"'a'", str)==0
+	);
+
+	free(str);
+	free_variable(var);
+	free_types();
+	return pass;
+});
+
 void variable_test_self(bool *pass) {
 	tests_t tests={
 		test_create_variable,
@@ -194,6 +214,7 @@ void variable_test_self(bool *pass) {
 		test_fmt_var_int,
 		test_fmt_var_float,
 		test_fmt_var_bool,
+		test_fmt_var_char,
 		NULL
 	};
 
