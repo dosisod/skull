@@ -33,7 +33,7 @@ const wchar_t *eval_assign(variable_t *var, token_t *token) {
 	}
 
 	if (mem==NULL || err==EVAL_INTEGER_ERR) {
-		return ERROR_MSG[ERROR_WRITING_TO_VAR];
+		return ERROR_MSG[ERROR_TYPE_MISMATCH];
 	}
 	if (err==EVAL_INTEGER_OVERFLOW) {
 		return ERROR_MSG[ERROR_OVERFLOW];
