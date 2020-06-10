@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stddef.h>
+#include <wchar.h>
 
 #define ERROR_INVALID_INPUT 0
 #define ERROR_VAR_ALREADY_DEFINED 1

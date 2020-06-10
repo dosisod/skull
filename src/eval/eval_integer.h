@@ -3,24 +3,18 @@
 #include <errno.h>
 #include <limits.h>
 
+#include "../../src/errors.h"
 #include "../../src/parse/classify.h"
 #include "../../src/parse/tokenize.h"
-
-#define EVAL_INTEGER_OK 0
-#define EVAL_INTEGER_ERR 1
-#define EVAL_INTEGER_OVERFLOW 2
 
 /*
 Converts a `TOKEN_INT_CONST` token to an actual integer (`int64_t`).
 
-If an error occurs while converting, `error` is set to `EVAL_INTEGER_ERR`.
-`error` should always be `EVAL_INTEGER_OK` upon success.
+Return `NULL` if no errors occurred, else, pointer to error msg.
 */
-int64_t eval_integer(const token_t *token, uint8_t *error) {
-	*error=EVAL_INTEGER_OK;
-
+int64_t eval_integer(const token_t *token, const wchar_t **error) {
 	if (token->token_type!=TOKEN_INT_CONST) {
-		*error=EVAL_INTEGER_ERR;
+		*error=ERROR_MSG[ERROR_TYPE_MISMATCH];
 		return 0;
 	}
 
@@ -45,7 +39,7 @@ int64_t eval_integer(const token_t *token, uint8_t *error) {
 	ret=wcstoll(begin, NULL, base);
 
 	if ((ret==LLONG_MAX || ret==LLONG_MIN) && errno==ERANGE) {
-		*error=EVAL_INTEGER_OVERFLOW;
+		*error=ERROR_MSG[ERROR_OVERFLOW];
 	}
 
 	return ret;

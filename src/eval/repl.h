@@ -126,10 +126,10 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	}
 
 	else if (node->node_type==AST_NODE_RETURN) {
-		uint8_t err=0;
+		const wchar_t *err=NULL;
 		int64_t num=eval_integer(node->token->next, &err);
 
-		if (err!=EVAL_INTEGER_ERR) {
+		if (err==NULL) {
 			free_ast_tree(node);
 			exit((int)num);
 		}

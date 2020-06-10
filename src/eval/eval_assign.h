@@ -14,7 +14,7 @@ Return an error (as a string) if any occured, else `NULL`.
 */
 const wchar_t *eval_assign(variable_t *var, token_t *token) {
 	const void *mem=NULL;
-	uint8_t err=0;
+	const wchar_t *err=NULL;
 
 	if (var->type==find_type(L"int") && token->token_type==TOKEN_INT_CONST) {
 		int64_t tmp=eval_integer(token, &err);
@@ -35,11 +35,8 @@ const wchar_t *eval_assign(variable_t *var, token_t *token) {
 		return ERROR_MSG[ERROR_TYPE_MISMATCH];
 	}
 
-	if (mem==NULL || err==EVAL_INTEGER_ERR) {
-		return ERROR_MSG[ERROR_TYPE_MISMATCH];
-	}
-	if (err==EVAL_INTEGER_OVERFLOW) {
-		return ERROR_MSG[ERROR_OVERFLOW];
+	if (err!=NULL) {
+		return err;
 	}
 	if (variable_write(var, mem)==VARIABLE_WRITE_ECONST) {
 		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];

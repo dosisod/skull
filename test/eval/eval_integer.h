@@ -10,16 +10,16 @@ TEST(convert_integer_token, {
 	classify_tokens(token1);
 	classify_tokens(token2);
 
-	uint8_t err1=0;
+	const wchar_t *err1=0;
 	int64_t num1=eval_integer(token1, &err1);
-	uint8_t err2=0;
+	const wchar_t *err2=0;
 	int64_t num2=eval_integer(token2, &err2);
 
 	const bool pass=(
 		num1==1234 &&
-		err1==EVAL_INTEGER_OK &&
+		err1==NULL &&
 		num2==-1234 &&
-		err2==EVAL_INTEGER_OK
+		err2==NULL
 	);
 
 	free(token1);
@@ -32,12 +32,12 @@ TEST(integer_overflow_returns_error, {
 	token_t *token=tokenize(L"9999999999999999999");
 	classify_tokens(token);
 
-	uint8_t err=0;
+	const wchar_t *err=0;
 	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==LLONG_MAX &&
-		err==EVAL_INTEGER_OVERFLOW
+		err==ERROR_MSG[ERROR_OVERFLOW]
 	);
 
 	free(token);
@@ -49,12 +49,12 @@ TEST(integer_underflow_returns_error, {
 	token_t *token=tokenize(L"-9999999999999999999");
 	classify_tokens(token);
 
-	uint8_t err=0;
+	const wchar_t *err=0;
 	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==LLONG_MIN &&
-		err==EVAL_INTEGER_OVERFLOW
+		err==ERROR_MSG[ERROR_OVERFLOW]
 	);
 
 	free(token);
@@ -66,12 +66,12 @@ TEST(convert_hex_integer, {
 	token_t *token=tokenize(L"0xff");
 	classify_tokens(token);
 
-	uint8_t err=0;
+	const wchar_t *err=0;
 	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==255 &&
-		err==EVAL_INTEGER_OK
+		err==NULL
 	);
 
 	free(token);
@@ -83,12 +83,12 @@ TEST(convert_octal_integer, {
 	token_t *token=tokenize(L"0o777");
 	classify_tokens(token);
 
-	uint8_t err=0;
+	const wchar_t *err=0;
 	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==0777 &&
-		err==EVAL_INTEGER_OK
+		err==NULL
 	);
 
 	free(token);
@@ -100,12 +100,12 @@ TEST(convert_binary_integer, {
 	token_t *token=tokenize(L"0b1111");
 	classify_tokens(token);
 
-	uint8_t err=0;
+	const wchar_t *err=0;
 	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==15 &&
-		err==EVAL_INTEGER_OK
+		err==NULL
 	);
 
 	free(token);
@@ -117,12 +117,12 @@ TEST(non_integer_token_fails, {
 	token_t *token=tokenize(L"not_an_int_token");
 	classify_tokens(token);
 
-	uint8_t err=0;
+	const wchar_t *err=0;
 	int64_t num=eval_integer(token, &err);
 
 	const bool pass=(
 		num==0 &&
-		err==EVAL_INTEGER_ERR
+		err==ERROR_MSG[ERROR_TYPE_MISMATCH]
 	);
 
 	free(token);

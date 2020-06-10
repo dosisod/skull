@@ -10,16 +10,16 @@ TEST(convert_float_token, {
 	classify_tokens(token1);
 	classify_tokens(token2);
 
-	uint8_t err1=0;
+	const wchar_t *err1=0;
 	long double num1=eval_float(token1, &err1);
-	uint8_t err2=0;
+	const wchar_t *err2=0;
 	long double num2=eval_float(token2, &err2);
 
 	const bool pass=(
 		num1==1234.0 &&
-		err1==EVAL_FLOAT_OK &&
+		err1==NULL &&
 		num2==-1234.0 &&
-		err2==EVAL_FLOAT_OK
+		err2==NULL
 	);
 
 	free(token1);
@@ -32,12 +32,12 @@ TEST(non_float_token_fails, {
 	token_t *token=tokenize(L"not_an_int_token");
 	classify_tokens(token);
 
-	uint8_t err=0.0;
+	const wchar_t *err=NULL;
 	long double num=eval_float(token, &err);
 
 	const bool pass=(
 		num==0 &&
-		err==EVAL_FLOAT_ERR
+		err==ERROR_MSG[ERROR_TYPE_MISMATCH]
 	);
 
 	free(token);

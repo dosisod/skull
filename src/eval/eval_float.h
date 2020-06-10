@@ -3,28 +3,20 @@
 #include <errno.h>
 #include <limits.h>
 
+#include "../../src/errors.h"
 #include "../../src/parse/classify.h"
 #include "../../src/parse/tokenize.h"
-
-#define EVAL_FLOAT_OK 0
-#define EVAL_FLOAT_ERR 1
 
 /*
 Converts a `TOKEN_FLOAT_CONST` token to a floating point number (`long double`).
 
-If an error occurs while converting, `error` is set to `EVAL_FLOAT_ERR`.
-`error` should always be `EVAL_FLOAT_OK` upon success.
+Return `NULL` if no errors occurred, else, pointer to error msg.
 */
-long double eval_float(const token_t *token, uint8_t *error) {
-	*error=EVAL_FLOAT_OK;
-
+long double eval_float(const token_t *token, const wchar_t **error) {
 	if (token->token_type!=TOKEN_FLOAT_CONST) {
-		*error=EVAL_FLOAT_ERR;
+		*error=ERROR_MSG[ERROR_TYPE_MISMATCH];
 		return 0.0;
 	}
 
-	errno=0;
-	long double ret=wcstold(token->begin, NULL);
-
-	return ret;
+	return wcstold(token->begin, NULL);
 }
