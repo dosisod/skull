@@ -16,20 +16,23 @@ const wchar_t *eval_assign(variable_t *var, token_t *token) {
 	const void *mem=NULL;
 	uint8_t err=0;
 
-	if (token->token_type==TOKEN_INT_CONST) {
+	if (var->type==find_type(L"int") && token->token_type==TOKEN_INT_CONST) {
 		int64_t tmp=eval_integer(token, &err);
 		mem=&tmp;
 	}
-	else if (token->token_type==TOKEN_FLOAT_CONST) {
+	else if (var->type==find_type(L"float") && token->token_type==TOKEN_FLOAT_CONST) {
 		long double tmp=eval_float(token, &err);
 		mem=&tmp;
 	}
-	else if (token->token_type==TOKEN_BOOL_CONST) {
+	else if (var->type==find_type(L"bool") && token->token_type==TOKEN_BOOL_CONST) {
 		bool tmp=token_cmp(L"true", token);
 		mem=&tmp;
 	}
-	else if (token->token_type==TOKEN_CHAR_CONST) {
+	else if (var->type==find_type(L"char") && token->token_type==TOKEN_CHAR_CONST) {
 		mem=token->begin;
+	}
+	else {
+		return ERROR_MSG[ERROR_TYPE_MISMATCH];
 	}
 
 	if (mem==NULL || err==EVAL_INTEGER_ERR) {

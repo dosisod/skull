@@ -117,6 +117,82 @@ TEST(eval_assign_type_mismatch, {
 	return pass;
 });
 
+TEST(eval_assign_cannot_assign_non_ints, {
+	token_t *token=tokenize(L"3.1415");
+	classify_tokens(token);
+
+	make_default_types();
+	variable_t *var=make_variable(L"int", L"x", false);
+
+	const wchar_t *output=eval_assign(var, token);
+
+	const bool pass=(wcscmp(
+		output,
+		ERROR_MSG[ERROR_TYPE_MISMATCH]
+	)==0);
+
+	free_types();
+	free_variable(var);
+	return pass;
+});
+
+TEST(eval_assign_cannot_assign_non_floats, {
+	token_t *token=tokenize(L"123");
+	classify_tokens(token);
+
+	make_default_types();
+	variable_t *var=make_variable(L"float", L"x", false);
+
+	const wchar_t *output=eval_assign(var, token);
+
+	const bool pass=(wcscmp(
+		output,
+		ERROR_MSG[ERROR_TYPE_MISMATCH]
+	)==0);
+
+	free_types();
+	free_variable(var);
+	return pass;
+});
+
+TEST(eval_assign_cannot_assign_non_bools, {
+	token_t *token=tokenize(L"1");
+	classify_tokens(token);
+
+	make_default_types();
+	variable_t *var=make_variable(L"bool", L"x", false);
+
+	const wchar_t *output=eval_assign(var, token);
+
+	const bool pass=(wcscmp(
+		output,
+		ERROR_MSG[ERROR_TYPE_MISMATCH]
+	)==0);
+
+	free_types();
+	free_variable(var);
+	return pass;
+});
+
+TEST(eval_assign_cannot_assign_non_chars, {
+	token_t *token=tokenize(L"1234");
+	classify_tokens(token);
+
+	make_default_types();
+	variable_t *var=make_variable(L"char", L"x", false);
+
+	const wchar_t *output=eval_assign(var, token);
+
+	const bool pass=(wcscmp(
+		output,
+		ERROR_MSG[ERROR_TYPE_MISMATCH]
+	)==0);
+
+	free_types();
+	free_variable(var);
+	return pass;
+});
+
 void eval_assign_test_self(bool *pass) {
 	tests_t tests={
 		test_eval_assign_int,
@@ -125,6 +201,10 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_char,
 		test_eval_assign_int_overflow,
 		test_eval_assign_type_mismatch,
+		test_eval_assign_cannot_assign_non_ints,
+		test_eval_assign_cannot_assign_non_floats,
+		test_eval_assign_cannot_assign_non_bools,
+		test_eval_assign_cannot_assign_non_chars,
 		NULL
 	};
 
