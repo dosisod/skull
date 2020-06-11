@@ -3,57 +3,66 @@
 #include "../../src/eval/eval_bool.h"
 #include "../../test/testing.h"
 
+bool eval_bool_shim(const wchar_t *code, bool expected, const wchar_t *error) {
+	const wchar_t *err=NULL;
+
+	return (
+		eval_bool(code, &err)==expected &&
+		err==error
+	);
+}
+
 TEST(eval_bool_single_param, {
 	return (
-		eval_bool(L"true")==EVAL_TRUE &&
-		eval_bool(L"false")==EVAL_FALSE &&
-		eval_bool(L"not_a_bool")==EVAL_ERROR
+		eval_bool_shim(L"true", true, NULL) &&
+		eval_bool_shim(L"false", false, NULL) &&
+		eval_bool_shim(L"not_a_bool", false, ERROR_MSG[ERROR_TYPE_MISMATCH])
 	);
 });
 
 TEST(eval_bool_odd_num_tokens, {
-	return eval_bool(L"bad ==")==EVAL_ERROR;
+	return eval_bool_shim(L"bad ==", false, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 });
 
 TEST(eval_equality_comparison, {
 	return (
-		eval_bool(L"true == true")==EVAL_TRUE &&
-		eval_bool(L"true != true")==EVAL_FALSE &&
-		eval_bool(L"false == true")==EVAL_FALSE &&
-		eval_bool(L"0.0 == 0")==EVAL_ERROR &&
-		eval_bool(L"123 == 321")==EVAL_FALSE &&
-		eval_bool(L"3.14 == 3.14")==EVAL_TRUE &&
-		eval_bool(L"'x' == 'x'")==EVAL_TRUE &&
-		eval_bool(L"\"abc\" == \"abc\"")==EVAL_TRUE
+		eval_bool_shim(L"true == true", true, NULL) &&
+		eval_bool_shim(L"true != true", false, NULL) &&
+		eval_bool_shim(L"false == true", false, NULL) &&
+		eval_bool_shim(L"0.0 == 0", false, ERROR_MSG[ERROR_TYPE_MISMATCH]) &&
+		eval_bool_shim(L"123 == 321", false, NULL) &&
+		eval_bool_shim(L"3.14 == 3.14", true, NULL) &&
+		eval_bool_shim(L"'x' == 'x'", true, NULL) &&
+		eval_bool_shim(L"\"abc\" == \"abc\"", true, NULL)
 	);
 });
 
 TEST(eval_bool_with_errors, {
 	return (
-		eval_bool(L"true == 1nvalid")==EVAL_ERROR &&
-		eval_bool(L"1nvalid == true")==EVAL_ERROR &&
-		eval_bool(L"1nvalid == 1nvalid")==EVAL_ERROR
+		eval_bool_shim(L"true == 1nvalid", false, ERROR_MSG[ERROR_TYPE_MISMATCH]) &&
+		eval_bool_shim(L"1nvalid == true", false, ERROR_MSG[ERROR_TYPE_MISMATCH]) &&
+		eval_bool_shim(L"1nvalid == 1nvalid", false, ERROR_MSG[ERROR_TYPE_MISMATCH])
 	);
 });
 
 TEST(eval_bool_not, {
 	return (
-		eval_bool(L"not true")==EVAL_FALSE &&
-		eval_bool(L"not false")==EVAL_TRUE
+		eval_bool_shim(L"not true", false, NULL) &&
+		eval_bool_shim(L"not false", true, NULL)
 	);
 });
 
 TEST(eval_bool_and, {
 	return (
-		eval_bool(L"true and true")==EVAL_TRUE &&
-		eval_bool(L"false and false")==EVAL_FALSE
+		eval_bool_shim(L"true and true", true, NULL) &&
+		eval_bool_shim(L"false and false", false, NULL)
 	);
 });
 
 TEST(eval_bool_or, {
 	return (
-		eval_bool(L"true or false")==EVAL_TRUE &&
-		eval_bool(L"false or false")==EVAL_FALSE
+		eval_bool_shim(L"true or false", true, NULL) &&
+		eval_bool_shim(L"false or false", false, NULL)
 	);
 });
 

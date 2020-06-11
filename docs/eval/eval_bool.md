@@ -1,14 +1,12 @@
 # src/eval/eval_bool.h
 
-#### `uint8_t eval_bool_true(const token_t *token)`
-Returns `EVAL_TRUE` or `EVAL_FALSE` if token is `"true"` or `"false"`.
+#### `bool eval_bool_true(const token_t *token, const wchar_t **error)`
+Returns `true` or `false` if token is `"true"` or `"false"`.
 
-If the token isnt `"true"` or `"false"`, `EVAL_ERROR` is returned instead.
+`error` is `NULL` if no error occurs, else `error` points to error msg.
 
-#### `uint8_t eval_equality_comparison(const token_t *token)`
-Returns `EVAL_TRUE` or `EVAL_FALSE` if successfull.
-
-If there is an `EVAL_ERROR` on the left or right hand side, `EVAL_ERROR` is returned.
+#### `bool eval_equality_comparison(const token_t *token, const wchar_t **error)`
+Return the result of an equality comparison.
 
 Examples include:
 
@@ -19,8 +17,10 @@ Examples include:
 "3.14 == 3.14"
 ```
 
-#### `uint8_t eval_bool(const wchar_t *code)`
-Evaluates an boolean expression from string.
+If an error occurs on either side, `error` is set to non `NULL`.
+
+#### `bool eval_bool(const wchar_t *code, const wchar_t **error)`
+Resolve a boolean expression from string into `true` or `false`.
 
 Examples include:
 
@@ -31,4 +31,6 @@ Examples include:
 "false != false"
 "not true"
 ```
+
+If an error an occurs, `error` is set to non `NULL`.
 
