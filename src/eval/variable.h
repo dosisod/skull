@@ -6,12 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../errors.h"
 #include "../parse/classify.h"
 #include "../parse/tokenize.h"
 #include "../parse/types.h"
-
-#define VARIABLE_WRITE_OK 0
-#define VARIABLE_WRITE_ECONST 1
 
 typedef struct variable_t {
 	type_t *type;
@@ -54,16 +52,15 @@ variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_cons
 /*
 Write `data` to `var`.
 
-If `var` is const, `VARIABLE_WRITE_ECONST` is returned.
-Upon success, `VARIABLE_WRITE_OK` is returned.
+If `var` is constant, return error msg, else `NULL`.
 */
-uint8_t variable_write(const variable_t *var, const void *data) {
+const wchar_t *variable_write(const variable_t *var, const void *data) {
 	if (var->is_const) {
-		return VARIABLE_WRITE_ECONST;
+		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
 	}
 
 	memcpy(var->mem, data, var->bytes);
-	return VARIABLE_WRITE_OK;
+	return NULL;
 }
 
 /*

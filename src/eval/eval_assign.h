@@ -57,7 +57,7 @@ const wchar_t *eval_assign(variable_t *var, token_t *token) {
 		}
 		return err;
 	}
-	if (variable_write(var, mem)==VARIABLE_WRITE_ECONST) {
+	if (variable_write(var, mem)==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]) {
 		if (var->type==find_type(L"str")) {
 			mem=NULL;
 			variable_read(&mem, var);
@@ -65,5 +65,5 @@ const wchar_t *eval_assign(variable_t *var, token_t *token) {
 		}
 		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]; // NOLINT
 	}
-	return NULL;
+	return NULL; // NOLINT
 }

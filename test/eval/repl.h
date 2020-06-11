@@ -81,9 +81,9 @@ TEST(repl_manually_writing_to_const_var_fails, {
 	}
 
 	int64_t data=1111;
-	uint8_t err=variable_write(ctx->vars[0], &data);
+	const wchar_t *err=variable_write(ctx->vars[0], &data);
 
-	const bool pass=(err==VARIABLE_WRITE_ECONST);
+	const bool pass=(err==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]);
 
 	free_types();
 	free_context(ctx);
@@ -102,14 +102,14 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 	}
 
 	int64_t data=1111;
-	uint8_t err=variable_write(ctx->vars[0], &data);
+	const wchar_t *err=variable_write(ctx->vars[0], &data);
 
 	int64_t result=0;
 	variable_read(&result, ctx->vars[0]);
 
 	const bool pass=(
 		result==1111 &&
-		err==VARIABLE_WRITE_OK
+		err==NULL
 	);
 
 	free_types();

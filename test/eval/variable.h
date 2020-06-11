@@ -33,13 +33,13 @@ TEST(variable_write, {
 	variable_t *var=make_variable(L"int", L"x", false);
 
 	const int64_t data=1234;
-	const uint8_t ret=variable_write(var, &data);
+	const wchar_t *ret=variable_write(var, &data);
 
 	int64_t val=0;
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
-		ret==VARIABLE_WRITE_OK &&
+		ret==NULL &&
 		val==1234
 	);
 
@@ -54,13 +54,13 @@ TEST(variable_cannot_write_to_const, {
 	variable_t *var=make_variable(L"int", L"x", true);
 
 	const int64_t data=1234;
-	const uint8_t ret=variable_write(var, &data);
+	const wchar_t *ret=variable_write(var, &data);
 
 	int64_t val=0;
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
-		ret==VARIABLE_WRITE_ECONST &&
+		ret==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST] &&
 		val==0
 	);
 
