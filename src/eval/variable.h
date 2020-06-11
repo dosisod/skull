@@ -99,12 +99,36 @@ wchar_t *fmt_var(const variable_t *var) {
 		}
 		return wcsdup(L"false");
 	}
+	if (var->type==find_type(L"str")) {
+		const wchar_t *data=NULL;
+		variable_read(&data, var);
+
+		size_t len=wcslen(data);
+
+		//add 3 for ""s and NULL terminator
+		wchar_t *ret=malloc((sizeof(wchar_t) * len) + 3);
+
+		wcsncpy(ret + 1, data, len);
+		ret[0]=L'\"';
+		ret[len + 1]=L'\"';
+		ret[len + 2]=L'\0';
+
+		return ret;
+	}
+	if (var->type==find_type(L"char")) {
+		wchar_t *ret=malloc(sizeof(wchar_t) * 4);
+		ret[0]=L'\'';
+		ret[1]=*var->mem;
+		ret[2]=L'\'';
+		ret[3]=L'\0';
+
+		return ret;
+	}
 
 	char *tmp=NULL;
-	wchar_t *ret=NULL;
-
 	int needed=-1;
 	int wrote=-1;
+
 	if (var->type==find_type(L"int")) {
 		int64_t data=0;
 		variable_read(&data, var);
@@ -127,35 +151,13 @@ wchar_t *fmt_var(const variable_t *var) {
 		tmp=malloc(sizeof(char) * (unsigned long int)needed);
 		wrote=snprintf(tmp, (unsigned long int)needed, "%Lg", data);
 	}
-	else if (var->type==find_type(L"char")) {
-		wchar_t data=L'\0';
-		variable_read(&data, var);
-
-		needed=snprintf(NULL, 0, "'%c'", data) + 1;
-		if (needed<0) {
-			return NULL;
-		}
-		tmp=malloc(sizeof(char) * (unsigned long int)needed);
-		wrote=snprintf(tmp, (unsigned long int)needed, "'%c'", data);
-	}
-	else if (var->type==find_type(L"str")) {
-		const wchar_t *data=NULL;
-		variable_read(&data, var);
-
-		needed=snprintf(NULL, 0, "\"%ls\"", data) + 1;
-		if (needed<0) {
-			return NULL;
-		}
-		tmp=malloc(sizeof(char) * (unsigned long int)needed);
-		wrote=snprintf(tmp, (unsigned long int)needed, "\"%ls\"", data);
-	}
 
 	if (wrote<0) {
 		free(tmp);
 		return NULL;
 	}
 
-	ret=malloc(sizeof(wchar_t) * (unsigned long int)needed);
+	wchar_t *ret=malloc(sizeof(wchar_t) * (unsigned long int)needed);
 	mbstowcs(ret, tmp, (unsigned long int)needed);
 
 	free(tmp);
