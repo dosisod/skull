@@ -330,6 +330,21 @@ TEST(make_ast_tree_char_const, {
 	return pass;
 });
 
+TEST(make_ast_tree_str_const, {
+	const wchar_t *code=L"\"abc\"";
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_STR_CONST &&
+		node->token->begin==(code + 1) &&
+		node->token_end->end==(code + 4) &&
+		node->next!=NULL
+	);
+
+	free(node);
+	return pass;
+});
+
 /* Once a certain bug is fixed, this test can run
 bool test_make_ast_tree_colon_suffix_required(void) {
 	const wchar_t *code=L"x int = 0";
@@ -374,6 +389,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_float_const,
 		test_make_ast_tree_bool_const,
 		test_make_ast_tree_char_const,
+		test_make_ast_tree_str_const,
 		//test_make_ast_tree_colon_suffix_required,
 		test_free_ast_tree,
 		NULL

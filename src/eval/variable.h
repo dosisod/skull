@@ -138,6 +138,17 @@ wchar_t *fmt_var(const variable_t *var) {
 		tmp=malloc(sizeof(char) * (unsigned long int)needed);
 		wrote=snprintf(tmp, (unsigned long int)needed, "'%c'", data);
 	}
+	else if (var->type==find_type(L"str")) {
+		const wchar_t *data=NULL;
+		variable_read(&data, var);
+
+		needed=snprintf(NULL, 0, "\"%ls\"", data) + 1;
+		if (needed<0) {
+			return NULL;
+		}
+		tmp=malloc(sizeof(char) * (unsigned long int)needed);
+		wrote=snprintf(tmp, (unsigned long int)needed, "\"%ls\"", data);
+	}
 
 	if (wrote<0) {
 		free(tmp);

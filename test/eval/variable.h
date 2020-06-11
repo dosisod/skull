@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#include "../../src/eval/eval_assign.h"
 #include "../../src/eval/variable.h"
 #include "../../test/testing.h"
 
@@ -201,6 +202,33 @@ TEST(fmt_var_char, {
 	return pass;
 });
 
+TEST(fmt_var_str, {
+	make_default_types();
+	variable_t *var=make_variable(L"str", L"x", false);
+
+	const wchar_t *data=L"\"abc\"";
+	token_t *token=tokenize(data);
+	classify_token(token);
+
+	eval_assign(var, token);
+
+	wchar_t *str=fmt_var(var);
+
+	const bool pass=(
+		str!=NULL &&
+		wcscmp(L"\"abc\"", str)==0
+	);
+
+	wchar_t *mem=NULL;
+	variable_read(&mem, var);
+	free(mem);
+
+	free(str);
+	free_variable(var);
+	free_types();
+	return pass;
+});
+
 void variable_test_self(bool *pass) {
 	tests_t tests={
 		test_create_variable,
@@ -215,6 +243,7 @@ void variable_test_self(bool *pass) {
 		test_fmt_var_float,
 		test_fmt_var_bool,
 		test_fmt_var_char,
+		test_fmt_var_str,
 		NULL
 	};
 

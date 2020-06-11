@@ -79,6 +79,29 @@ TEST(eval_assign_char, {
 	return pass;
 });
 
+TEST(eval_assign_str, {
+	token_t *token=tokenize(L"\"abc\"");
+	classify_tokens(token);
+
+	make_default_types();
+	variable_t *var=make_variable(L"str", L"x", false);
+
+	eval_assign(var, token);
+
+	wchar_t *data=NULL;
+	variable_read(&data, var);
+
+	const bool pass=(wcscmp(data, L"abc")==0);
+
+	wchar_t *mem=NULL;
+	variable_read(&mem, var);
+	free(mem);
+
+	free_types();
+	free_variable(var);
+	return pass;
+});
+
 TEST(eval_assign_int_overflow, {
 	token_t *token=tokenize(L"99999999999999999999999999999999");
 	classify_tokens(token);
@@ -193,18 +216,43 @@ TEST(eval_assign_cannot_assign_non_chars, {
 	return pass;
 });
 
+TEST(eval_assign_cannot_assign_non_strs, {
+	token_t *token=tokenize(L"1234");
+	classify_tokens(token);
+
+	make_default_types();
+	variable_t *var=make_variable(L"str", L"x", false);
+
+	const wchar_t *output=eval_assign(var, token);
+
+	const bool pass=(wcscmp(
+		output,
+		ERROR_MSG[ERROR_TYPE_MISMATCH]
+	)==0);
+
+	wchar_t *mem=NULL;
+	variable_read(&mem, var);
+	free(mem);
+
+	free_types();
+	free_variable(var);
+	return pass;
+});
+
 void eval_assign_test_self(bool *pass) {
 	tests_t tests={
 		test_eval_assign_int,
 		test_eval_assign_float,
 		test_eval_assign_bool,
 		test_eval_assign_char,
+		test_eval_assign_str,
 		test_eval_assign_int_overflow,
 		test_eval_assign_type_mismatch,
 		test_eval_assign_cannot_assign_non_ints,
 		test_eval_assign_cannot_assign_non_floats,
 		test_eval_assign_cannot_assign_non_bools,
 		test_eval_assign_cannot_assign_non_chars,
+		test_eval_assign_cannot_assign_non_strs,
 		NULL
 	};
 
