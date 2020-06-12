@@ -231,6 +231,20 @@ TEST(token_not_equal_oper, {
 	return pass;
 });
 
+TEST(token_auto_equal_oper, {
+	const wchar_t *code=L":= other";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_OPER_AUTO_EQUAL &&
+		t->next->token_type!=TOKEN_OPER_AUTO_EQUAL
+	);
+
+	free_tokens(t);
+	return pass;
+});
+
 TEST(token_plus_oper, {
 	const wchar_t *code=L"+ other";
 	token_t *t=tokenize(code);
@@ -460,6 +474,7 @@ void classifier_test_self(bool *pass) {
 		test_token_plus_oper,
 		test_token_equal_equal_oper,
 		test_token_not_equal_oper,
+		test_token_auto_equal_oper,
 		test_token_type,
 		test_token_function,
 		test_token_unknown,

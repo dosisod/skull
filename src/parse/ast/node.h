@@ -13,6 +13,8 @@ enum node_types {
 
 	AST_NODE_VAR_DEF,
 	AST_NODE_MUT_VAR_DEF,
+	AST_NODE_AUTO_VAR_DEF,
+	AST_NODE_MUT_AUTO_VAR_DEF,
 
 	AST_NODE_VAR_ASSIGN,
 
@@ -138,6 +140,19 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 			TOKEN_OPER_EQUAL, -1
 		);
 		PUSH_AST_NODE_IF(token, &last, AST_NODE_MUT_VAR_DEF, &node);
+
+		token=ast_token_cmp(token,
+			TOKEN_IDENTIFIER,
+			TOKEN_OPER_AUTO_EQUAL, -1
+		);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_AUTO_VAR_DEF, &node);
+
+		token=ast_token_cmp(token,
+			TOKEN_KW_MUT,
+			TOKEN_IDENTIFIER,
+			TOKEN_OPER_AUTO_EQUAL, -1
+		);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_MUT_AUTO_VAR_DEF, &node);
 
 		token=ast_token_cmp(token,
 			TOKEN_IDENTIFIER,

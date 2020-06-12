@@ -38,16 +38,47 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		return NULL;
 	}
 
-	//token after "=" is required
-	if (token->next->next->next==NULL) {
+	token_t *value=token->next->next->next;
+	bool is_auto_assign=false;
+
+	if (token->next->token_type==TOKEN_OPER_AUTO_EQUAL) {
+		value=token->next->next;
+		is_auto_assign=true;
+	}
+
+	//token after "=" or ":=" is required
+	if (value==NULL) {
 		return ERROR_MSG[ERROR_INVALID_INPUT];
 	}
 
-	MAKE_TOKEN_BUF(type, token->next);
 	MAKE_TOKEN_BUF(name, token);
-	variable_t *var=make_variable(type, name, false);
+	variable_t *var=NULL;
 
-	const wchar_t *tmp=eval_assign(var, token->next->next->next, ctx);
+	if (is_auto_assign) {
+		const wchar_t *type=NULL;
+		if (value->token_type==TOKEN_INT_CONST) {
+			type=L"int";
+		}
+		else if (value->token_type==TOKEN_FLOAT_CONST) {
+			type=L"float";
+		}
+		else if (value->token_type==TOKEN_BOOL_CONST) {
+			type=L"bool";
+		}
+		else if (value->token_type==TOKEN_STR_CONST) {
+			type=L"str";
+		}
+		else if (value->token_type==TOKEN_CHAR_CONST) {
+			type=L"char";
+		}
+		var=make_variable(type, name, false);
+	}
+	else {
+		MAKE_TOKEN_BUF(type, token->next);
+		var=make_variable(type, name, false);
+	}
+
+	const wchar_t *tmp=eval_assign(var, value, ctx);
 	var->is_const=is_const;
 
 	if (tmp!=NULL) {
@@ -122,6 +153,14 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	}
 
 	else if (node->node_type==AST_NODE_MUT_VAR_DEF) {
+		ret=repl_make_var(node->token->next, ctx, false);
+	}
+
+	else if (node->node_type==AST_NODE_AUTO_VAR_DEF) {
+		ret=repl_make_var(node->token, ctx, true);
+	}
+
+	else if (node->node_type==AST_NODE_MUT_AUTO_VAR_DEF) {
 		ret=repl_make_var(node->token->next, ctx, false);
 	}
 

@@ -163,6 +163,40 @@ TEST(make_ast_tree_mutable_variable_def, {
 	return pass;
 });
 
+TEST(make_ast_tree_auto_variable_def, {
+	const wchar_t *code=L"x :=";
+	make_default_types();
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_AUTO_VAR_DEF &&
+		node->token->begin==code &&
+		node->token_end->end==(code + 4)
+	);
+
+	free_types();
+	free(node);
+
+	return pass;
+});
+
+TEST(make_ast_tree_auto_mutable_variable_def, {
+	const wchar_t *code=L"mut x :=";
+	make_default_types();
+	ast_node_t *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_MUT_AUTO_VAR_DEF &&
+		node->token->begin==code &&
+		node->token_end->end==(code + 8)
+	);
+
+	free_types();
+	free(node);
+
+	return pass;
+});
+
 TEST(make_ast_tree_many_lines, {
 	const wchar_t *code=L"x: int = 0\ny: int = 0";
 	make_default_types();
@@ -379,6 +413,8 @@ void ast_node_test_self(bool *pass) {
 		test_push_ast_node,
 		test_make_ast_tree_variable_def,
 		test_make_ast_tree_mutable_variable_def,
+		test_make_ast_tree_auto_variable_def,
+		test_make_ast_tree_auto_mutable_variable_def,
 		test_make_ast_tree_many_lines,
 		test_make_ast_tree_with_whitespace,
 		test_make_ast_tree_var_assign,

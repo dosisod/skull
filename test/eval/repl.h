@@ -69,6 +69,21 @@ TEST(repl_declaring_mutable_var, {
 	return pass;
 });
 
+TEST(repl_declaring_mutable_auto_var, {
+	context_t *ctx=make_context();
+
+	make_default_types();
+	repl_eval(L"x := 0", ctx);
+
+	const bool pass=(
+		ctx->vars_used==1
+	);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+});
+
 TEST(repl_manually_writing_to_const_var_fails, {
 	context_t *ctx=make_context();
 
@@ -398,6 +413,7 @@ void repl_test_self(bool *pass) {
 		test_repl_variable_declare_in_context,
 		test_repl_cannot_redeclare_var,
 		test_repl_declaring_mutable_var,
+		test_repl_declaring_mutable_auto_var,
 		test_repl_manually_writing_to_const_var_fails,
 		test_repl_manually_writing_to_mutable_var_works,
 		test_repl_write_to_mutable_var,
