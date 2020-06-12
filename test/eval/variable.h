@@ -210,7 +210,7 @@ TEST(fmt_var_str, {
 	token_t *token=tokenize(data);
 	classify_token(token);
 
-	eval_assign(var, token);
+	eval_assign(var, token, NULL);
 
 	wchar_t *str=fmt_var(var);
 

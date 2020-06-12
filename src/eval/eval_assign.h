@@ -5,18 +5,39 @@
 #include <wchar.h>
 
 #include "../errors.h"
-#include "./eval_float.h"
-#include "./eval_integer.h"
-#include "./variable.h"
+#include "context.h"
+#include "eval_float.h"
+#include "eval_integer.h"
+#include "variable.h"
 
 /*
 Assign the value of `token` to a variable `var`.
 
+Set `ctx` to allow for assigning variables to other variables.
+
 Return an error (as a string) if any occured, else `NULL`.
 */
-const wchar_t *eval_assign(variable_t *var, token_t *token) {
+const wchar_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx) {
 	const void *mem=NULL;
 	const wchar_t *err=NULL;
+
+	if (ctx!=NULL && token->token_type==TOKEN_IDENTIFIER) {
+		MAKE_TOKEN_BUF(buf, token);
+		variable_t *var_new=context_find_name(ctx, buf);
+
+		if (var_new==NULL) {
+			return ERROR_MSG[ERROR_INVALID_INPUT];
+		}
+		if (var_new->type!=var->type) {
+			return ERROR_MSG[ERROR_TYPE_MISMATCH];
+		}
+
+		uint8_t mem_tmp[var_new->bytes];
+		variable_read(mem_tmp, var_new);
+		variable_write(var, mem_tmp);
+
+		return NULL;
+	}
 
 	if (var->type==find_type(L"int") && token->token_type==TOKEN_INT_CONST) {
 		int64_t tmp=eval_integer(token, &err);

@@ -47,7 +47,7 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 	MAKE_TOKEN_BUF(name, token);
 	variable_t *var=make_variable(type, name, false);
 
-	const wchar_t *tmp=eval_assign(var, token->next->next->next);
+	const wchar_t *tmp=eval_assign(var, token->next->next->next, ctx);
 	var->is_const=is_const;
 
 	if (tmp!=NULL) {
@@ -110,7 +110,7 @@ const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
 	}
 
 	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
-		ret=eval_assign(var, node->token->next->next);
+		ret=eval_assign(var, node->token->next->next, ctx);
 	}
 
 	else if (node->token==NULL) {

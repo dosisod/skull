@@ -28,7 +28,7 @@ context_t *make_context(void) {
 /*
 Returns pointer to variable with matching `name` if found, else `NULL`
 */
-variable_t *context_find_name(context_t *ctx, const wchar_t *name) {
+variable_t *context_find_name(const context_t *ctx, const wchar_t *name) {
 	if (ctx==NULL) {
 		return NULL;
 	}
