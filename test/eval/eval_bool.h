@@ -6,10 +6,16 @@
 bool eval_bool_shim(const wchar_t *code, bool expected, const wchar_t *error) {
 	const wchar_t *err=NULL;
 
-	return (
-		eval_bool(code, &err)==expected &&
+	token_t *token=tokenize(code);
+	classify_tokens(token);
+
+	const bool pass=(
+		eval_bool(token, &err)==expected &&
 		err==error
 	);
+
+	free_tokens(token);
+	return pass;
 }
 
 TEST(eval_bool_single_param, {

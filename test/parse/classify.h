@@ -16,7 +16,6 @@ TEST(is_type_token, {
 
 	free_types();
 	free_tokens(token);
-
 	return pass;
 });
 
@@ -38,7 +37,6 @@ TEST(is_function_token, {
 	);
 
 	free_tokens(token);
-
 	return pass;
 });
 
@@ -105,8 +103,8 @@ TEST(bracket_token_open, {
 	classify_token(t);
 
 	const bool pass=(t->token_type==TOKEN_BRACKET_OPEN);
-	free(t);
 
+	free(t);
 	return pass;
 });
 
@@ -116,8 +114,8 @@ TEST(bracket_token_close, {
 	classify_token(t);
 
 	const bool pass=(t->token_type==TOKEN_BRACKET_CLOSE);
-	free(t);
 
+	free(t);
 	return pass;
 });
 
@@ -132,7 +130,6 @@ TEST(token_mut_kw, {
 	);
 
 	free_tokens(t);
-
 	return pass;
 });
 
@@ -147,7 +144,48 @@ TEST(token_return_kw, {
 	);
 
 	free_tokens(t);
+	return pass;
+});
 
+TEST(token_or_kw, {
+	const wchar_t *code=L"or not_or";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_KW_OR &&
+		t->next->token_type!=TOKEN_KW_OR
+	);
+
+	free_tokens(t);
+	return pass;
+});
+
+TEST(token_and_kw, {
+	const wchar_t *code=L"and not_and";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_KW_AND &&
+		t->next->token_type!=TOKEN_KW_AND
+	);
+
+	free_tokens(t);
+	return pass;
+});
+
+TEST(token_not_kw, {
+	const wchar_t *code=L"not something_else";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_KW_NOT &&
+		t->next->token_type!=TOKEN_KW_NOT
+	);
+
+	free_tokens(t);
 	return pass;
 });
 
@@ -162,7 +200,34 @@ TEST(token_equal_oper, {
 	);
 
 	free_tokens(t);
+	return pass;
+});
 
+TEST(token_equal_equal_oper, {
+	const wchar_t *code=L"== other";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_OPER_EQUAL_EQUAL &&
+		t->next->token_type!=TOKEN_OPER_EQUAL_EQUAL
+	);
+
+	free_tokens(t);
+	return pass;
+});
+
+TEST(token_not_equal_oper, {
+	const wchar_t *code=L"!= other";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_OPER_NOT_EQUAL &&
+		t->next->token_type!=TOKEN_OPER_NOT_EQUAL
+	);
+
+	free_tokens(t);
 	return pass;
 });
 
@@ -177,7 +242,6 @@ TEST(token_plus_oper, {
 	);
 
 	free_tokens(t);
-
 	return pass;
 });
 
@@ -194,7 +258,6 @@ TEST(token_type, {
 
 	free_types();
 	free_tokens(t);
-
 	return pass;
 });
 
@@ -209,7 +272,6 @@ TEST(token_function, {
 	);
 
 	free_tokens(t);
-
 	return pass;
 });
 
@@ -219,8 +281,8 @@ TEST(token_unknown, {
 	classify_token(t);
 
 	const bool pass=(t->token_type==TOKEN_UNKNOWN);
-	free(t);
 
+	free(t);
 	return pass;
 });
 
@@ -231,7 +293,6 @@ TEST(token_integer_constant, {
 
 	const bool pass=(t->token_type==TOKEN_INT_CONST);
 	free(t);
-
 	return pass;
 });
 
@@ -241,8 +302,8 @@ TEST(token_float_constant, {
 	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_FLOAT_CONST);
-	free(t);
 
+	free(t);
 	return pass;
 });
 
@@ -252,8 +313,8 @@ TEST(token_bool_constant, {
 	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_BOOL_CONST);
-	free(t);
 
+	free(t);
 	return pass;
 });
 
@@ -392,8 +453,13 @@ void classifier_test_self(bool *pass) {
 		test_bracket_token_close,
 		test_token_mut_kw,
 		test_token_return_kw,
+		test_token_or_kw,
+		test_token_and_kw,
+		test_token_not_kw,
 		test_token_equal_oper,
 		test_token_plus_oper,
+		test_token_equal_equal_oper,
+		test_token_not_equal_oper,
 		test_token_type,
 		test_token_function,
 		test_token_unknown,

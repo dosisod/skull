@@ -19,7 +19,7 @@ Examples include:
 
 If an error occurs on either side, `error` is set to non `NULL`.
 
-#### `bool eval_bool(const wchar_t *code, const wchar_t **error)`
+#### `bool eval_bool(const token_t *token, const wchar_t **error)`
 Resolve a boolean expression from string into `true` or `false`.
 
 Examples include:

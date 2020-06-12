@@ -19,6 +19,9 @@ enum token_types {
 	//keyword related tokens
 	TOKEN_KW_MUT,
 	TOKEN_KW_RETURN,
+	TOKEN_KW_OR,
+	TOKEN_KW_AND,
+	TOKEN_KW_NOT,
 
 	TOKEN_BRACKET_OPEN,
 	TOKEN_BRACKET_CLOSE,
@@ -28,6 +31,8 @@ enum token_types {
 	//operators (add, subtract, assign)
 	TOKEN_OPER_EQUAL,
 	TOKEN_OPER_PLUS,
+	TOKEN_OPER_EQUAL_EQUAL,
+	TOKEN_OPER_NOT_EQUAL,
 
 	//constant values, such as ints and strings
 	TOKEN_INT_CONST,
@@ -204,11 +209,26 @@ void classify_token(token_t *token) {
 	else if (token_cmp(L"return", token)) {
 		token->token_type=TOKEN_KW_RETURN;
 	}
+	else if (token_cmp(L"or", token)) {
+		token->token_type=TOKEN_KW_OR;
+	}
+	else if (token_cmp(L"and", token)) {
+		token->token_type=TOKEN_KW_AND;
+	}
+	else if (token_cmp(L"not", token)) {
+		token->token_type=TOKEN_KW_NOT;
+	}
 	else if (token_cmp(L"=", token)) {
 		token->token_type=TOKEN_OPER_EQUAL;
 	}
 	else if (token_cmp(L"+", token)) {
 		token->token_type=TOKEN_OPER_PLUS;
+	}
+	else if (token_cmp(L"==", token)) {
+		token->token_type=TOKEN_OPER_EQUAL_EQUAL;
+	}
+	else if (token_cmp(L"!=", token)) {
+		token->token_type=TOKEN_OPER_NOT_EQUAL;
 	}
 	else if (is_type_token(token)) {
 		token->token_type=TOKEN_TYPE;

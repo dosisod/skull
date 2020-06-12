@@ -26,6 +26,8 @@ void run_single_test(test_t test, bool *pass) {
 		*pass=false;
 
 		fail_t *fail=malloc(sizeof(fail_t));
+		fail->next=NULL;
+
 		if (fails_head==NULL) {
 			fail->next=NULL;
 			fails_head=fail;
