@@ -97,166 +97,60 @@ TEST(is_constant_str, {
 	);
 });
 
-TEST(bracket_token_open, {
-	const wchar_t *code=L"[";
-	token_t *t=tokenize(code);
-	classify_token(t);
-
-	const bool pass=(t->token_type==TOKEN_BRACKET_OPEN);
-
-	free(t);
+#define TEST_CLASSIFY_TOKEN(str, expected) \
+	const wchar_t *code=str; \
+	token_t *token=tokenize(code); \
+	classify_token(token); \
+	const bool pass=(token->token_type==(expected)); \
+	free(token); \
 	return pass;
+
+TEST(bracket_token_open, {
+	TEST_CLASSIFY_TOKEN(L"[", TOKEN_BRACKET_OPEN);
 });
 
 TEST(bracket_token_close, {
-	const wchar_t *code=L"]";
-	token_t *t=tokenize(code);
-	classify_token(t);
-
-	const bool pass=(t->token_type==TOKEN_BRACKET_CLOSE);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"]", TOKEN_BRACKET_CLOSE);
 });
 
 TEST(token_mut_kw, {
-	const wchar_t *code=L"mut not_mut";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_KW_MUT &&
-		t->next->token_type!=TOKEN_KW_MUT
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"mut", TOKEN_KW_MUT);
 });
 
 TEST(token_return_kw, {
-	const wchar_t *code=L"return not_return";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_KW_RETURN &&
-		t->next->token_type!=TOKEN_KW_RETURN
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"return", TOKEN_KW_RETURN);
 });
 
 TEST(token_or_kw, {
-	const wchar_t *code=L"or not_or";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_KW_OR &&
-		t->next->token_type!=TOKEN_KW_OR
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"or", TOKEN_KW_OR);
 });
 
 TEST(token_and_kw, {
-	const wchar_t *code=L"and not_and";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_KW_AND &&
-		t->next->token_type!=TOKEN_KW_AND
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"and", TOKEN_KW_AND);
 });
 
 TEST(token_not_kw, {
-	const wchar_t *code=L"not something_else";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_KW_NOT &&
-		t->next->token_type!=TOKEN_KW_NOT
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"not", TOKEN_KW_NOT);
 });
 
 TEST(token_equal_oper, {
-	const wchar_t *code=L"= other";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_OPER_EQUAL &&
-		t->next->token_type!=TOKEN_OPER_EQUAL
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"=", TOKEN_OPER_EQUAL);
 });
 
 TEST(token_equal_equal_oper, {
-	const wchar_t *code=L"== other";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_OPER_EQUAL_EQUAL &&
-		t->next->token_type!=TOKEN_OPER_EQUAL_EQUAL
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"==", TOKEN_OPER_EQUAL_EQUAL);
 });
 
 TEST(token_not_equal_oper, {
-	const wchar_t *code=L"!= other";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_OPER_NOT_EQUAL &&
-		t->next->token_type!=TOKEN_OPER_NOT_EQUAL
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"!=", TOKEN_OPER_NOT_EQUAL);
 });
 
 TEST(token_auto_equal_oper, {
-	const wchar_t *code=L":= other";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_OPER_AUTO_EQUAL &&
-		t->next->token_type!=TOKEN_OPER_AUTO_EQUAL
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L":=", TOKEN_OPER_AUTO_EQUAL);
 });
 
 TEST(token_plus_oper, {
-	const wchar_t *code=L"+ other";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_OPER_PLUS &&
-		t->next->token_type!=TOKEN_OPER_PLUS
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"+", TOKEN_OPER_PLUS);
 });
 
 TEST(token_type, {
@@ -276,61 +170,26 @@ TEST(token_type, {
 });
 
 TEST(token_function, {
-	const wchar_t *code=L"main[] ->";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type!=TOKEN_FUNCTION &&
-		t->next->next->next->token_type==TOKEN_FUNCTION
-	);
-
-	free_tokens(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"->", TOKEN_FUNCTION);
 });
 
 TEST(token_unknown, {
-	const wchar_t *code=L"123garbage_value";
-	token_t *t=tokenize(code);
-	classify_token(t);
-
-	const bool pass=(t->token_type==TOKEN_UNKNOWN);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"123garbage_value", TOKEN_UNKNOWN);
 });
 
 TEST(token_integer_constant, {
-	const wchar_t *code=L"1234";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(t->token_type==TOKEN_INT_CONST);
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"1234", TOKEN_INT_CONST);
 });
 
 TEST(token_float_constant, {
-	const wchar_t *code=L"123.0";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(t->token_type==TOKEN_FLOAT_CONST);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"1234.0", TOKEN_FLOAT_CONST);
 });
 
 TEST(token_bool_constant, {
-	const wchar_t *code=L"true";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(t->token_type==TOKEN_BOOL_CONST);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN(L"true", TOKEN_BOOL_CONST);
 });
+
+#undef TEST_CLASSIFY_TOKEN
 
 TEST(token_char_constant, {
 	const wchar_t *code=L"'x'";

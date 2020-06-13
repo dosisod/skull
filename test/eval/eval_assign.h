@@ -3,80 +3,36 @@
 #include "../../src/eval/eval_assign.h"
 #include "../../test/testing.h"
 
-TEST(eval_assign_int, {
-	token_t *token=tokenize(L"1234");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", false);
-
-	eval_assign(var, token, NULL);
-
-	int64_t data=0;
-	variable_read(&data, var);
-
-	const bool pass=(data==1234);
-
-	free_types();
-	free_variable(var);
+#define TEST_EVAL_ASSIGN(str_type, str_value, real_type, expected_val, expected_error) \
+	token_t *token=tokenize(str_value); \
+	classify_tokens(token); \
+	make_default_types(); \
+	variable_t *var=make_variable(str_type, L"x", false); \
+	const wchar_t *output=eval_assign(var, token, NULL); \
+	real_type data=0; \
+	variable_read(&data, var); \
+	const bool pass=( \
+		data==(expected_val) && \
+		output==(expected_error) \
+	); \
+	free_types(); \
+	free_variable(var); \
 	return pass;
+
+TEST(eval_assign_int, {
+	TEST_EVAL_ASSIGN(L"int", L"1234", int64_t, 1234, NULL);
 });
 
 TEST(eval_assign_float, {
-	token_t *token=tokenize(L"0.0");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"float", L"x", false);
-
-	eval_assign(var, token, NULL);
-
-	long double data=1.0;
-	variable_read(&data, var);
-
-	const bool pass=(data==0.0);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"float", L"1234.0", long double, 1234.0, NULL);
 });
 
 TEST(eval_assign_bool, {
-	token_t *token=tokenize(L"false");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", false);
-
-	eval_assign(var, token, NULL);
-
-	bool data=true;
-	variable_read(&data, var);
-
-	const bool pass=(data==false);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"bool", L"true", bool, true, NULL);
 });
 
 TEST(eval_assign_char, {
-	token_t *token=tokenize(L"'a'");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"char", L"x", false);
-
-	eval_assign(var, token, NULL);
-
-	wchar_t data=L'\0';
-	variable_read(&data, var);
-
-	const bool pass=(data==L'a');
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"char", L"'a'", wchar_t, L'a', NULL);
 });
 
 TEST(eval_assign_str, {
@@ -103,141 +59,34 @@ TEST(eval_assign_str, {
 });
 
 TEST(eval_assign_int_overflow, {
-	token_t *token=tokenize(L"99999999999999999999999999999999");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", false);
-
-	const wchar_t *output=eval_assign(var, token, NULL);
-
-	const bool pass=(wcscmp(
-		output,
-		ERROR_MSG[ERROR_OVERFLOW]
-	)==0);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"int", L"99999999999999999999999999999999", int64_t, 0, ERROR_MSG[ERROR_OVERFLOW]);
 });
 
 TEST(eval_assign_type_mismatch, {
-	token_t *token=tokenize(L"not_an_int");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", false);
-
-	const wchar_t *output=eval_assign(var, token, NULL);
-
-	const bool pass=(wcscmp(
-		output,
-		ERROR_MSG[ERROR_TYPE_MISMATCH]
-	)==0);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"int", L"not_an_int", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 });
 
 TEST(eval_assign_cannot_assign_non_ints, {
-	token_t *token=tokenize(L"3.1415");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", false);
-
-	const wchar_t *output=eval_assign(var, token, NULL);
-
-	const bool pass=(wcscmp(
-		output,
-		ERROR_MSG[ERROR_TYPE_MISMATCH]
-	)==0);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"int", L"3.1415", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 });
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	token_t *token=tokenize(L"123");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"float", L"x", false);
-
-	const wchar_t *output=eval_assign(var, token, NULL);
-
-	const bool pass=(wcscmp(
-		output,
-		ERROR_MSG[ERROR_TYPE_MISMATCH]
-	)==0);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"float", L"1234", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 });
 
 TEST(eval_assign_cannot_assign_non_bools, {
-	token_t *token=tokenize(L"1");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"bool", L"x", false);
-
-	const wchar_t *output=eval_assign(var, token, NULL);
-
-	const bool pass=(wcscmp(
-		output,
-		ERROR_MSG[ERROR_TYPE_MISMATCH]
-	)==0);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"bool", L"1", bool, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 });
 
 TEST(eval_assign_cannot_assign_non_chars, {
-	token_t *token=tokenize(L"1234");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"char", L"x", false);
-
-	const wchar_t *output=eval_assign(var, token, NULL);
-
-	const bool pass=(wcscmp(
-		output,
-		ERROR_MSG[ERROR_TYPE_MISMATCH]
-	)==0);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"char", L"1234", wchar_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 });
 
 TEST(eval_assign_cannot_assign_non_strs, {
-	token_t *token=tokenize(L"1234");
-	classify_tokens(token);
-
-	make_default_types();
-	variable_t *var=make_variable(L"str", L"x", false);
-
-	const wchar_t *output=eval_assign(var, token, NULL);
-
-	const bool pass=(wcscmp(
-		output,
-		ERROR_MSG[ERROR_TYPE_MISMATCH]
-	)==0);
-
-	wchar_t *mem=NULL;
-	variable_read(&mem, var);
-	free(mem);
-
-	free_types();
-	free_variable(var);
-	return pass;
+	TEST_EVAL_ASSIGN(L"str", L"1234", wchar_t*, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 });
+
+#undef TEST_EVAL_ASSIGN
 
 TEST(eval_assign_variable_to_another, {
 	make_default_types();

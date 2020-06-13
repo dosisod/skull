@@ -23,9 +23,7 @@ TEST(create_variable, {
 });
 
 TEST(create_variable_with_invalid_type_fails, {
-	const variable_t *var=make_variable(L"not_a_type", L"x", true);
-
-	return var==NULL;
+	return (make_variable(L"not_a_type", L"x", true)==NULL);
 });
 
 TEST(variable_write, {
@@ -115,92 +113,43 @@ TEST(free_variable, {
 });
 
 TEST(free_null_variable_is_ok, {
-	variable_t *var=NULL;
-
-	free_variable(var);
+	free_variable(NULL);
 
 	return true;
 });
 
-TEST(fmt_var_int, {
-	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", false);
-
-	int64_t data=1234;
-	variable_write(var, &data);
-
-	wchar_t *str=fmt_var(var);
-
-	const bool pass=(
-		str!=NULL &&
-		wcscmp(L"1234", str)==0
-	);
-
-	free(str);
-	free_variable(var);
-	free_types();
+#define TEST_FMT_VAR(str_type, real_type, real_data, expected) \
+	make_default_types(); \
+	variable_t *var=make_variable(str_type, L"x", false); \
+	real_type data=real_data; \
+	variable_write(var, &data); \
+	wchar_t *str=fmt_var(var); \
+	const bool pass=( \
+		str!=NULL && \
+		wcscmp(expected, str)==0 \
+	); \
+	free(str); \
+	free_variable(var); \
+	free_types(); \
 	return pass;
+
+TEST(fmt_var_int, {
+	TEST_FMT_VAR(L"int", int64_t, 1234, L"1234");
 });
 
 TEST(fmt_var_float, {
-	make_default_types();
-	variable_t *var=make_variable(L"float", L"x", false);
-
-	long double data=3.1415;
-	variable_write(var, &data);
-
-	wchar_t *str=fmt_var(var);
-
-	const bool pass=(
-		str!=NULL &&
-		wcscmp(L"3.1415", str)==0
-	);
-
-	free(str);
-	free_variable(var);
-	free_types();
-	return pass;
+	TEST_FMT_VAR(L"float", long double, 3.1415, L"3.1415");
 });
 
 TEST(fmt_var_bool, {
-	make_default_types();
-	variable_t *var=make_variable(L"bool", L"x", false);
-
-	bool data=false;
-	variable_write(var, &data);
-
-	wchar_t *str=fmt_var(var);
-
-	const bool pass=(
-		str!=NULL &&
-		wcscmp(L"false", str)==0
-	);
-
-	free(str);
-	free_variable(var);
-	free_types();
-	return pass;
+	TEST_FMT_VAR(L"bool", bool, false, L"false");
 });
 
 TEST(fmt_var_char, {
-	make_default_types();
-	variable_t *var=make_variable(L"char", L"x", false);
-
-	wchar_t data=L'a';
-	variable_write(var, &data);
-
-	wchar_t *str=fmt_var(var);
-
-	const bool pass=(
-		str!=NULL &&
-		wcscmp(L"'a'", str)==0
-	);
-
-	free(str);
-	free_variable(var);
-	free_types();
-	return pass;
+	TEST_FMT_VAR(L"char", wchar_t, L'a', L"'a'");
 });
+
+#undef TEST_FMT_VAR
 
 TEST(fmt_var_str, {
 	make_default_types();

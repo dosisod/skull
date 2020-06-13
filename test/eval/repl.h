@@ -132,74 +132,47 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 	return pass;
 });
 
-TEST(repl_write_to_mutable_var, {
-	context_t *ctx=make_context();
-
-	make_default_types();
-	repl_eval(L"mut x: int = 1234", ctx);
-	repl_eval(L"x = 5678", ctx);
-
-	if (ctx->vars_used!=1) {
-		free_context(ctx);
-		return false;
-	}
-
-	int64_t result=0;
-	variable_read(&result, ctx->vars[0]);
-
-	const bool pass=(result==5678);
-
-	free_types();
-	free_context(ctx);
+#define TEST_WRITE_TO_MUTABLE(str_type, str_val1, str_val2, real_type, expected) \
+	context_t *ctx=make_context(); \
+	make_default_types(); \
+	repl_eval(L"mut x: " str_type  " = " str_val1, ctx); \
+	const wchar_t *output=repl_eval(L"x = " str_val2, ctx); \
+	if (ctx->vars_used!=1) { \
+		free_context(ctx); \
+		return false; \
+	} \
+	real_type result=0; \
+	variable_read(&result, ctx->vars[0]); \
+	const bool pass=(output==NULL && result==(expected)); \
+	free_types(); \
+	free_context(ctx); \
 	return pass;
+
+TEST(repl_write_to_mutable_int_var, {
+	TEST_WRITE_TO_MUTABLE(
+		L"int", L"1234",
+		L"5678",
+		int64_t, 5678
+	);
 });
 
 TEST(repl_write_to_mutable_float_var, {
-	context_t *ctx=make_context();
-
-	make_default_types();
-	repl_eval(L"mut x: float = 0.0", ctx);
-	repl_eval(L"x = 1234.0", ctx);
-
-	if (ctx->vars_used!=1) {
-		free_context(ctx);
-		return false;
-	}
-
-	long double result=0;
-	variable_read(&result, ctx->vars[0]);
-
-	const bool pass=(result==1234.0);
-
-	free_types();
-	free_context(ctx);
-	return pass;
+	TEST_WRITE_TO_MUTABLE(
+		L"float", L"0.0",
+		L"1234.0",
+		long double, 1234.0
+	);
 });
 
 TEST(repl_write_to_mutable_bool_var, {
-	context_t *ctx=make_context();
-
-	make_default_types();
-	repl_eval(L"mut x: bool = false", ctx);
-	const wchar_t *output=repl_eval(L"x = true", ctx);
-
-	if (ctx->vars_used!=1) {
-		free_context(ctx);
-		return false;
-	}
-
-	bool result=0;
-	variable_read(&result, ctx->vars[0]);
-
-	const bool pass=(
-		output==NULL &&
-		result==true
+	TEST_WRITE_TO_MUTABLE(
+		L"bool", "false",
+		L"true",
+		bool, true
 	);
-
-	free_types();
-	free_context(ctx);
-	return pass;
 });
+
+#undef TEST_WRITE_TO_MUTABLE
 
 TEST(repl_write_to_const_var_fails, {
 	context_t *ctx=make_context();
@@ -220,55 +193,46 @@ TEST(repl_write_to_const_var_fails, {
 	return pass;
 });
 
-TEST(repl_make_float_variable, {
-	context_t *ctx=make_context();
-
-	make_default_types();
-	const wchar_t *output=repl_eval(L"x: float = 0.0", ctx);
-
-	if (ctx->vars_used!=1) {
-		free_types();
-		free_context(ctx);
-		return false;
-	}
-
-	long double ret=0;
-	variable_read(&ret, ctx->vars[0]);
-
-	const bool pass=(
-		output==NULL &&
-		ret==0.0
-	);
-
-	free_types();
-	free_context(ctx);
+#define TEST_MAKE_VAR(str_type, str_val, real_type, expected) \
+	context_t *ctx=make_context(); \
+	make_default_types(); \
+	const wchar_t *output=repl_eval(L"x: " str_type " = " str_val, ctx); \
+	if (ctx->vars_used!=1) { \
+		free_types(); \
+		free_context(ctx); \
+		return false; \
+	} \
+	real_type ret=0; \
+	variable_read(&ret, ctx->vars[0]); \
+	const bool pass=( \
+		output==NULL && \
+		ret==(expected) \
+	);\
+	free_types(); \
+	free_context(ctx); \
 	return pass;
+
+TEST(repl_make_float_variable, {
+	TEST_MAKE_VAR(
+		L"float", L"1234.0",
+		long double, 1234.0
+	);
 });
 
 TEST(repl_make_bool_variable, {
-	context_t *ctx=make_context();
-
-	make_default_types();
-	const wchar_t *output=repl_eval(L"x: bool = false", ctx);
-
-	if (ctx->vars_used!=1) {
-		free_types();
-		free_context(ctx);
-		return false;
-	}
-
-	double ret=0;
-	variable_read(&ret, ctx->vars[0]);
-
-	const bool pass=(
-		output==NULL &&
-		ret==false
+	TEST_MAKE_VAR(
+		L"bool", L"false",
+		bool, false
 	);
-
-	free_types();
-	free_context(ctx);
-	return pass;
 });
+
+TEST(repl_make_char_variable, {
+	TEST_MAKE_VAR(
+		L"char", L"'a'",
+		wchar_t, L'a'
+	);
+});
+
 
 TEST(repl_print_fail_with_trailing_tokens, {
 	context_t *ctx=make_context();
@@ -416,12 +380,13 @@ void repl_test_self(bool *pass) {
 		test_repl_declaring_mutable_auto_var,
 		test_repl_manually_writing_to_const_var_fails,
 		test_repl_manually_writing_to_mutable_var_works,
-		test_repl_write_to_mutable_var,
+		test_repl_write_to_mutable_int_var,
 		test_repl_write_to_mutable_float_var,
 		test_repl_write_to_mutable_bool_var,
 		test_repl_write_to_const_var_fails,
 		test_repl_make_float_variable,
 		test_repl_make_bool_variable,
+		test_repl_make_char_variable,
 		test_repl_print_fail_with_trailing_tokens,
 		test_repl_blank_line_returns_nothing,
 		test_repl_invalid_input_returns_error,
