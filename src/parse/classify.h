@@ -46,10 +46,10 @@ enum token_types {
 /*
 Returns true if `token` is a type token.
 */
-bool is_type_token(const token_t *token) {
+bool is_type_str(const wchar_t *name) {
 	type_t *current=&TYPES_AVAILABLE;
 	while (current) {
-		if (token_cmp(current->name, token)) {
+		if (wcscmp(current->name, name)==0) {
 			return true;
 		}
 		current=current->next;
@@ -68,18 +68,11 @@ bool is_keyword_str(const wchar_t *str) {
 }
 
 /*
-Returns true if a token is a function token.
-*/
-bool is_function_token(const token_t *token) {
-	return token_cmp(L"->", token);
-}
-
-/*
 Returns true if string is a valid hex/octal/binary/decimal integer.
 
 Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 */
-bool is_constant_integer(const wchar_t *str) {
+bool is_constant_integer_str(const wchar_t *str) {
 	return (
 		wegex_match(L"?-+\n", str) ||
 		wegex_match(L"0x+\b", str) ||
@@ -89,50 +82,19 @@ bool is_constant_integer(const wchar_t *str) {
 }
 
 /*
-Returns true if the passed token is an integer constant.
-
-See above function for examples of valid inputs.
-*/
-bool is_constant_integer_token(const token_t *token) {
-	MAKE_TOKEN_BUF(buf, token);
-
-	return is_constant_integer(buf);
-}
-
-/*
 Returns true if string is a valid float (with decimal).
 
 Examples: `123.0`, `-123.0`, `0.0`
 */
-bool is_constant_float(const wchar_t *str) {
+bool is_constant_float_str(const wchar_t *str) {
 	return wegex_match(L"?-+\n.+\n", str);
-}
-
-/*
-Returns true if the passed token is a float constant.
-
-See above function for examples of valid inputs.
-*/
-bool is_constant_float_token(const token_t *token) {
-	MAKE_TOKEN_BUF(buf, token);
-
-	return is_constant_float(buf);
 }
 
 /*
 Returns true if the string is a valid bool (`true` or `false`).
 */
-bool is_constant_bool(const wchar_t *str) {
+bool is_constant_bool_str(const wchar_t *str) {
 	return wcscmp(L"false", str)==0 || wcscmp(L"true", str)==0;
-}
-
-/*
-Returns true if the passed token is a boolean constant.
-*/
-bool is_constant_bool_token(const token_t *token) {
-	MAKE_TOKEN_BUF(buf, token);
-
-	return is_constant_bool(buf);
 }
 
 /*
@@ -141,19 +103,8 @@ Returns true if the string is a valid char.
 Examples: `'x'` and `' '`.
 Won't work: `''`, `'x '`, or `' x'`.
 */
-bool is_constant_char(const wchar_t *str) {
+bool is_constant_char_str(const wchar_t *str) {
 	return wcslen(str)==3 && str[0]=='\'' && str[2]=='\'';
-}
-
-/*
-Returns true if the passed token is a char constant.
-
-Examples of valid inputs can be seen in the above function.
-*/
-bool is_constant_char_token(const token_t *token) {
-	MAKE_TOKEN_BUF(buf, token);
-
-	return is_constant_char(buf);
 }
 
 /*
@@ -161,43 +112,25 @@ Returns true if the string is a valid string constant.
 
 Examples: `""` and `"hello"`.
 */
-bool is_constant_str(const wchar_t *str) {
+bool is_constant_str_str(const wchar_t *str) {
 	const size_t len=wcslen(str);
 
 	return len>=2 && str[0]==L'\"' && str[len - 1]==L'\"';
 }
 
 /*
-Returns true if the passed token is a string constant.
-
-Examples of valid inputs can be seen in the above function.
-*/
-bool is_constant_str_token(const token_t *token) {
-	MAKE_TOKEN_BUF(buf, token);
-
-	return is_constant_str(buf);
-}
-
-/*
 Returns true the passed character the start of a valid identifier.
 */
-bool is_valid_identifier(const wchar_t *str) {
+bool is_valid_identifier_str(const wchar_t *str) {
 	return wegex_match(L"\a*[\f_]?:", str);
-}
-
-/*
-Return true if passed token is a valid identifier.
-*/
-bool is_valid_identifier_token(const token_t *token) {
-	MAKE_TOKEN_BUF(buf, token);
-
-	return is_valid_identifier(buf);
 }
 
 /*
 Classify the token `token`.
 */
 void classify_token(token_t *token) {
+	MAKE_TOKEN_BUF(buf, token);
+
 	if (token_cmp(L"[", token)) {
 		token->token_type=TOKEN_BRACKET_OPEN;
 	}
@@ -234,44 +167,44 @@ void classify_token(token_t *token) {
 	else if (token_cmp(L":=", token)) {
 		token->token_type=TOKEN_OPER_AUTO_EQUAL;
 	}
-	else if (is_type_token(token)) {
-		token->token_type=TOKEN_TYPE;
-	}
-	else if (is_function_token(token)) {
+	else if (token_cmp(L"->", token)) {
 		token->token_type=TOKEN_FUNCTION;
 	}
-	else if (is_constant_integer_token(token)) {
+	else if (is_type_str(buf)) {
+		token->token_type=TOKEN_TYPE;
+	}
+	else if (is_constant_integer_str(buf)) {
 		token->token_type=TOKEN_INT_CONST;
 	}
-	else if (is_constant_float_token(token)) {
+	else if (is_constant_float_str(buf)) {
 		token->token_type=TOKEN_FLOAT_CONST;
 	}
-	else if (is_constant_bool_token(token)) {
+	else if (is_constant_bool_str(buf)) {
 		token->token_type=TOKEN_BOOL_CONST;
 	}
-	else if (is_constant_char_token(token)) {
+	else if (is_constant_char_str(buf)) {
 		token->token_type=TOKEN_CHAR_CONST;
 
 		//dont include ''s as part of string
 		token->begin++;
 		token->end--;
 	}
-	else if (is_constant_str_token(token)) {
+	else if (is_constant_str_str(buf)) {
 		token->token_type=TOKEN_STR_CONST;
 
 		//dont include ""s as part of string
 		token->begin++;
 		token->end--;
 	}
-	else if (is_valid_identifier_token(token)) {
+	else if (is_valid_identifier_str(buf)) {
 		token->token_type=TOKEN_IDENTIFIER;
 
 		if (*(token->end - 1)==L':') {
 			token->token_type=TOKEN_NEW_IDENTIFIER;
 			token->end--;
 
-			MAKE_TOKEN_BUF(buf, token);
-			if (is_type_token(token) || is_keyword_str(buf)) {
+			MAKE_TOKEN_BUF(tmp_buf, token);
+			if (is_type_str(tmp_buf) || is_keyword_str(tmp_buf)) {
 				token->token_type=TOKEN_UNKNOWN;
 				token->end++;
 			}

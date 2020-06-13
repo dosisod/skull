@@ -3,15 +3,17 @@
 #include "../../src/parse/classify.h"
 #include "../../test/testing.h"
 
-TEST(is_type_token, {
+TEST(is_type_str, {
+	make_default_types();
 	const wchar_t *code=L"int not_a_type";
 	token_t *token=tokenize(code);
 
-	make_default_types();
+	MAKE_TOKEN_BUF(buf, token);
+	MAKE_TOKEN_BUF(buf_next, token->next);
 
 	const bool pass=(
-		is_type_token(token) &&
-		!is_type_token(token->next)
+		is_type_str(buf) &&
+		!is_type_str(buf_next)
 	);
 
 	free_types();
@@ -27,73 +29,60 @@ TEST(is_keyword_str, {
 	);
 });
 
-TEST(is_function_token, {
-	const wchar_t *code=L"main[] ->";
-	token_t *token=tokenize(code);
-
-	const bool pass=(
-		!is_function_token(token) &&
-		is_function_token(token->next->next->next)
-	);
-
-	free_tokens(token);
-	return pass;
-});
-
 TEST(is_constant_integer, {
 	return (
-		is_constant_integer(L"123") &&
-		is_constant_integer(L"-123") &&
-		is_constant_integer(L"0x123") &&
-		is_constant_integer(L"0x0123456789ABCDEF") &&
-		is_constant_integer(L"0xabcdef") &&
-		is_constant_integer(L"0b10101") &&
-		is_constant_integer(L"0o01234567") &&
-		!is_constant_integer(L"0b") &&
-		!is_constant_integer(L"0x") &&
-		!is_constant_integer(L"0o") &&
-		!is_constant_integer(L"-") &&
-		!is_constant_integer(L"123aaa") &&
-		!is_constant_integer(L"-123aaa") &&
-		!is_constant_integer(L"")
+		is_constant_integer_str(L"123") &&
+		is_constant_integer_str(L"-123") &&
+		is_constant_integer_str(L"0x123") &&
+		is_constant_integer_str(L"0x0123456789ABCDEF") &&
+		is_constant_integer_str(L"0xabcdef") &&
+		is_constant_integer_str(L"0b10101") &&
+		is_constant_integer_str(L"0o01234567") &&
+		!is_constant_integer_str(L"0b") &&
+		!is_constant_integer_str(L"0x") &&
+		!is_constant_integer_str(L"0o") &&
+		!is_constant_integer_str(L"-") &&
+		!is_constant_integer_str(L"123aaa") &&
+		!is_constant_integer_str(L"-123aaa") &&
+		!is_constant_integer_str(L"")
 	);
 });
 
 TEST(is_constant_float, {
 	return (
-		is_constant_float(L"123.0") &&
-		is_constant_float(L"-123.0") &&
-		is_constant_float(L"0.0") &&
-		!is_constant_float(L"123") &&
-		!is_constant_float(L"123.") &&
-		!is_constant_float(L".123") &&
-		!is_constant_float(L"123aaa")
+		is_constant_float_str(L"123.0") &&
+		is_constant_float_str(L"-123.0") &&
+		is_constant_float_str(L"0.0") &&
+		!is_constant_float_str(L"123") &&
+		!is_constant_float_str(L"123.") &&
+		!is_constant_float_str(L".123") &&
+		!is_constant_float_str(L"123aaa")
 	);
 });
 
 TEST(is_constant_bool, {
 	return (
-		is_constant_bool(L"true") &&
-		is_constant_bool(L"false") &&
-		!is_constant_bool(L"not_bool")
+		is_constant_bool_str(L"true") &&
+		is_constant_bool_str(L"false") &&
+		!is_constant_bool_str(L"not_bool")
 	);
 });
 
 TEST(is_constant_char, {
 	return (
-		is_constant_char(L"'x'") &&
-		!is_constant_char(L"'x '") &&
-		!is_constant_char(L"''")
+		is_constant_char_str(L"'x'") &&
+		!is_constant_char_str(L"'x '") &&
+		!is_constant_char_str(L"''")
 	);
 });
 
 TEST(is_constant_str, {
 	return (
-		is_constant_str(L"\"\"") &&
-		is_constant_str(L"\"x\"") &&
-		is_constant_str(L"\"xyz\"") &&
-		!is_constant_str(L"\"bad") &&
-		!is_constant_str(L"bad\"")
+		is_constant_str_str(L"\"\"") &&
+		is_constant_str_str(L"\"x\"") &&
+		is_constant_str_str(L"\"xyz\"") &&
+		!is_constant_str_str(L"\"bad") &&
+		!is_constant_str_str(L"bad\"")
 	);
 });
 
@@ -223,20 +212,20 @@ TEST(token_str_constant, {
 
 TEST(is_valid_identifier, {
 	return (
-		is_valid_identifier(L"a") &&
-		is_valid_identifier(L"z") &&
-		is_valid_identifier(L"A") &&
-		is_valid_identifier(L"Z") &&
-		!is_valid_identifier(L"0") &&
-		!is_valid_identifier(L"_") &&
-		!is_valid_identifier(L"~") &&
-		is_valid_identifier(L"a:") &&
-		is_valid_identifier(L"abc:") &&
-		!is_valid_identifier(L"1var") &&
-		is_valid_identifier(L"var1") &&
-		is_valid_identifier(L"x1") &&
-		is_valid_identifier(L"x_") &&
-		!is_valid_identifier(L"_x")
+		is_valid_identifier_str(L"a") &&
+		is_valid_identifier_str(L"z") &&
+		is_valid_identifier_str(L"A") &&
+		is_valid_identifier_str(L"Z") &&
+		!is_valid_identifier_str(L"0") &&
+		!is_valid_identifier_str(L"_") &&
+		!is_valid_identifier_str(L"~") &&
+		is_valid_identifier_str(L"a:") &&
+		is_valid_identifier_str(L"abc:") &&
+		!is_valid_identifier_str(L"1var") &&
+		is_valid_identifier_str(L"var1") &&
+		is_valid_identifier_str(L"x1") &&
+		is_valid_identifier_str(L"x_") &&
+		!is_valid_identifier_str(L"_x")
 	);
 });
 
@@ -314,9 +303,8 @@ TEST(token_classifier, {
 
 void classifier_test_self(bool *pass) {
 	tests_t tests={
-		test_is_type_token,
+		test_is_type_str,
 		test_is_keyword_str,
-		test_is_function_token,
 		test_is_constant_integer,
 		test_is_constant_float,
 		test_is_constant_bool,

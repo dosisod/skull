@@ -28,7 +28,7 @@ Returns `NULL` if var cannot be created, else pointer to created var.
 variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_const) {
 	type_t *found_type=find_type(type);
 
-	if (found_type==NULL || !is_valid_identifier(name)) {
+	if (found_type==NULL || !is_valid_identifier_str(name)) {
 		return NULL;
 	}
 
