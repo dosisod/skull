@@ -384,11 +384,44 @@ TEST(repl_assigning_variable_to_auto_type, {
 
 	const bool pass=(
 		data==1234 &&
-		output==NULL &&
+		output==NULL && // NOLINT
 		var->type==find_type(L"int")
 	);
 
 	free_types();
+	free_context(ctx);
+	return pass;
+});
+
+TEST(repl_auto_assign_detect_unknown_var, {
+	context_t *ctx=make_context();
+
+	const wchar_t *output=repl_eval(L"x := oof", ctx);
+
+	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]);
+
+	free_context(ctx);
+	return pass;
+});
+
+TEST(repl_auto_assign_detect_bad_token, {
+	context_t *ctx=make_context();
+
+	const wchar_t *output=repl_eval(L"x := 1234a", ctx);
+
+	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]);
+
+	free_context(ctx);
+	return pass;
+});
+
+TEST(repl_auto_assign_detect_missing_token, {
+	context_t *ctx=make_context();
+
+	const wchar_t *output=repl_eval(L"x :=", ctx);
+
+	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]);
+
 	free_context(ctx);
 	return pass;
 });
@@ -421,6 +454,9 @@ void repl_test_self(bool *pass) {
 		test_repl_define_var_without_colon_fails,
 		test_repl_missing_value_no_segfault,
 		test_repl_assigning_variable_to_auto_type,
+		test_repl_auto_assign_detect_unknown_var,
+		test_repl_auto_assign_detect_bad_token,
+		test_repl_auto_assign_detect_missing_token,
 		NULL
 	};
 

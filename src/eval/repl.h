@@ -38,6 +38,10 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		return NULL;
 	}
 
+	if (token->next->next==NULL) {
+		return ERROR_MSG[ERROR_INVALID_INPUT];
+	}
+
 	token_t *value=token->next->next->next;
 	bool is_auto_assign=false;
 
@@ -78,6 +82,12 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 			if (new_var!=NULL) {
 				type=new_var->type->name;
 			}
+			else {
+				return ERROR_MSG[ERROR_INVALID_INPUT];
+			}
+		}
+		else {
+			return ERROR_MSG[ERROR_INVALID_INPUT];
 		}
 		var=make_variable(type, name, false);
 	}
