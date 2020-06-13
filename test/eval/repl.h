@@ -371,6 +371,28 @@ TEST(repl_missing_value_no_segfault, {
 	return pass;
 });
 
+TEST(repl_assigning_variable_to_auto_type, {
+	make_default_types();
+	context_t *ctx=make_context();
+
+	repl_eval(L"x: int = 1234", ctx);
+	const wchar_t *output=repl_eval(L"y := x", ctx);
+
+	variable_t *var=context_find_name(ctx, L"y");
+	int64_t data=0;
+	variable_read(&data, var);
+
+	const bool pass=(
+		data==1234 &&
+		output==NULL &&
+		var->type==find_type(L"int")
+	);
+
+	free_types();
+	free_context(ctx);
+	return pass;
+});
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_variable_declare,
@@ -398,6 +420,7 @@ void repl_test_self(bool *pass) {
 		test_repl_overflow_int_gives_error,
 		test_repl_define_var_without_colon_fails,
 		test_repl_missing_value_no_segfault,
+		test_repl_assigning_variable_to_auto_type,
 		NULL
 	};
 

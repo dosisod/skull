@@ -71,6 +71,14 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 		else if (value->token_type==TOKEN_CHAR_CONST) {
 			type=L"char";
 		}
+		else if (value->token_type==TOKEN_IDENTIFIER) {
+			MAKE_TOKEN_BUF(buf, token->next->next);
+			variable_t *new_var=context_find_name(ctx, buf);
+
+			if (new_var!=NULL) {
+				type=new_var->type->name;
+			}
+		}
 		var=make_variable(type, name, false);
 	}
 	else {
