@@ -103,7 +103,7 @@ wchar_t *fmt_var(const variable_t *var) {
 		size_t len=wcslen(data);
 
 		//add 3 for ""s and NULL terminator
-		wchar_t *ret=malloc((sizeof(wchar_t) * len) + 3);
+		wchar_t *ret=malloc(sizeof(wchar_t) * (len + 3));
 
 		wcsncpy(ret + 1, data, len);
 		ret[0]=L'\"';
