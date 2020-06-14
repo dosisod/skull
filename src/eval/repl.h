@@ -19,13 +19,29 @@
 Returns pointer to string read from commandline.
 */
 wchar_t *repl_read(void) {
-	wchar_t *line=malloc(REPL_MAX_LINE_LEN * sizeof(wchar_t));
-
 	wprintf(COLOR_BRIGHT_GREEN_FG L"> " COLOR_RESET);
-	fgetws(line, REPL_MAX_LINE_LEN, stdin);
-	line[wcscspn(line, L"\n")]=0;
 
-	return line;
+	wchar_t *str=malloc(sizeof(wchar_t) * REPL_MAX_LINE_LEN);
+	size_t offset=0;
+
+	wchar_t c=(wchar_t)getwchar();
+	while (c!=L'\n') {
+		//read char by char until we need to reallocate more memory
+		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
+			wchar_t *new_str=realloc(str, sizeof(wchar_t) * (offset + REPL_MAX_LINE_LEN));
+			if (new_str==NULL) {
+				exit(1);
+			}
+			str=new_str;
+		}
+		str[offset]=c;
+		offset++;
+
+		c=(wchar_t)getwchar();
+	}
+	str[offset]=L'\0';
+
+	return str;
 }
 
 /*
