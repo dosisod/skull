@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "../common/color.h"
+#include "../common/malloc.h"
 #include "../errors.h"
 #include "../eval/context.h"
 #include "../eval/eval_add.h"
@@ -22,16 +23,17 @@ wchar_t *repl_read(void) {
 	wprintf(COLOR_BRIGHT_GREEN_FG L"> " COLOR_RESET);
 
 	wchar_t *str=malloc(sizeof(wchar_t) * REPL_MAX_LINE_LEN);
-	size_t offset=0;
+	DIE_IF_MALLOC_FAILS(str);
 
+	size_t offset=0;
 	wchar_t c=(wchar_t)getwchar();
+
 	while (c!=L'\n') {
 		//read char by char until we need to reallocate more memory
 		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
 			wchar_t *new_str=realloc(str, sizeof(wchar_t) * (offset + REPL_MAX_LINE_LEN));
-			if (new_str==NULL) {
-				exit(1);
-			}
+			DIE_IF_MALLOC_FAILS(new_str);
+
 			str=new_str;
 		}
 		str[offset]=c;

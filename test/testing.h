@@ -4,6 +4,7 @@
 #include <wchar.h>
 
 #include "../src/common/color.h"
+#include "../src/common/malloc.h"
 
 typedef bool (*test_t)(const char** func);
 typedef bool (*tests_t[])(const char** func);
@@ -26,6 +27,8 @@ void run_single_test(test_t test, bool *pass) {
 		*pass=false;
 
 		fail_t *fail=malloc(sizeof(fail_t));
+		DIE_IF_MALLOC_FAILS(fail);
+
 		fail->next=NULL;
 
 		if (fails_head==NULL) {

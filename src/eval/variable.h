@@ -33,9 +33,12 @@ variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_cons
 	}
 
 	variable_t *var=malloc(sizeof(variable_t));
+	DIE_IF_MALLOC_FAILS(var);
 
 	const size_t len=wcslen(name);
 	wchar_t *name_copy=malloc((len + 1) * sizeof(wchar_t));
+	DIE_IF_MALLOC_FAILS(name_copy);
+
 	wcslcpy(name_copy, name, len + 1);
 
 	var->name=name_copy;
@@ -44,8 +47,9 @@ variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_cons
 	var->bytes=found_type->bytes;
 
 	uint8_t *mem=calloc(found_type->bytes, sizeof(uint8_t));
-	var->mem=mem;
+	DIE_IF_MALLOC_FAILS(mem);
 
+	var->mem=mem;
 	return var;
 }
 
@@ -91,10 +95,10 @@ wchar_t *fmt_var(const variable_t *var) {
 		bool data=false;
 		variable_read(&data, var);
 
-		if (data) {
-			return wcsdup(L"true");
-		}
-		return wcsdup(L"false");
+		wchar_t *ret=wcsdup(data ? L"true" : L"false");
+		DIE_IF_MALLOC_FAILS(ret);
+
+		return ret;
 	}
 	if (var->type==find_type(L"str")) {
 		const wchar_t *data=NULL;
@@ -104,6 +108,7 @@ wchar_t *fmt_var(const variable_t *var) {
 
 		//add 3 for ""s and NULL terminator
 		wchar_t *ret=malloc(sizeof(wchar_t) * (len + 3));
+		DIE_IF_MALLOC_FAILS(ret);
 
 		wcsncpy(ret + 1, data, len);
 		ret[0]=L'\"';
@@ -114,6 +119,8 @@ wchar_t *fmt_var(const variable_t *var) {
 	}
 	if (var->type==find_type(L"char")) {
 		wchar_t *ret=malloc(sizeof(wchar_t) * 4);
+		DIE_IF_MALLOC_FAILS(ret);
+
 		ret[0]=L'\'';
 		ret[1]=*var->mem;
 		ret[2]=L'\'';
@@ -135,6 +142,8 @@ wchar_t *fmt_var(const variable_t *var) {
 			return NULL;
 		}
 		tmp=malloc(sizeof(char) * (unsigned long int)needed);
+		DIE_IF_MALLOC_FAILS(tmp);
+
 		wrote=snprintf(tmp, (unsigned long int)needed, "%li", data);
 	}
 	else if (var->type==find_type(L"float")) {
@@ -146,6 +155,8 @@ wchar_t *fmt_var(const variable_t *var) {
 			return NULL;
 		}
 		tmp=malloc(sizeof(char) * (unsigned long int)needed);
+		DIE_IF_MALLOC_FAILS(tmp);
+
 		wrote=snprintf(tmp, (unsigned long int)needed, "%Lg", data);
 	}
 
@@ -155,6 +166,8 @@ wchar_t *fmt_var(const variable_t *var) {
 	}
 
 	wchar_t *ret=malloc(sizeof(wchar_t) * (unsigned long int)needed);
+	DIE_IF_MALLOC_FAILS(ret);
+
 	mbstowcs(ret, tmp, (unsigned long int)needed);
 
 	free(tmp);

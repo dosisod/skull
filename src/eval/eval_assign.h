@@ -64,6 +64,8 @@ const wchar_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx
 
 		MAKE_TOKEN_BUF(buf, token);
 		wchar_t *tmp=wcsdup(buf);
+		DIE_IF_MALLOC_FAILS(tmp);
+
 		mem=&tmp;
 	}
 	else {

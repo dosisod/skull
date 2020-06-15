@@ -7,6 +7,7 @@
 
 #include "../classify.h"
 #include "../tokenize.h"
+#include "../../common/malloc.h"
 
 enum node_types {
 	AST_NODE_UNKNOWN,
@@ -46,6 +47,7 @@ Makes an ast_node_t with default values
 */
 ast_node_t *make_ast_node(void) {
 	ast_node_t *node=malloc(sizeof(ast_node_t));
+	DIE_IF_MALLOC_FAILS(node);
 
 	node->node_type=AST_NODE_UNKNOWN;
 	node->token=NULL;

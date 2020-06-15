@@ -17,6 +17,7 @@ Returns a new variable context.
 */
 context_t *make_context(void) {
 	context_t *ctx=malloc(sizeof(context_t));
+	DIE_IF_MALLOC_FAILS(ctx);
 
 	ctx->vars_used=0;
 	ctx->child=NULL;

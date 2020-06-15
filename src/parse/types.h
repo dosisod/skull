@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "../../src/common/str.h"
+#include "../../src/common/malloc.h"
 
 typedef struct type_t {
 	const wchar_t *name;
@@ -38,6 +39,8 @@ bool make_new_type(const wchar_t *name, size_t bytes) {
 	}
 
 	type_t *new_type=malloc(sizeof(type_t));
+	DIE_IF_MALLOC_FAILS(new_type);
+
 	new_type->name=name;
 	new_type->bytes=bytes;
 	new_type->next=NULL;

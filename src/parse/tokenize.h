@@ -7,6 +7,7 @@
 #include <wchar.h>
 
 #include "../common/str.h"
+#include "../common/malloc.h"
 
 typedef struct token_t {
 	const wchar_t *begin;
@@ -37,6 +38,8 @@ Allocate and return a token with set defaults.
 */
 token_t *make_token(void) {
 	token_t *token=malloc(sizeof(token_t));
+	DIE_IF_MALLOC_FAILS(token);
+
 	token->begin=NULL;
 	token->end=NULL;
 	token->token_type=0;
