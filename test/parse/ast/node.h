@@ -100,6 +100,26 @@ TEST(ast_token_cmp_missing_tokens, {
 	return pass;
 });
 
+TEST(ast_token_cmp_any_token, {
+	const wchar_t *code=L"[anything]";
+	token_t *token=tokenize(code);
+	make_default_types();
+	classify_tokens(token);
+
+	const bool pass=ast_token_cmp(
+		token,
+		TOKEN_BRACKET_OPEN,
+		TOKEN_ANY_NON_BRACKET_TOKEN,
+		TOKEN_BRACKET_CLOSE,
+		-1
+	)==token->next->next;
+
+	free_types();
+	free_tokens(token);
+
+	return pass;
+});
+
 TEST(push_ast_node, {
 	const wchar_t *code=L"x: int = 0";
 	token_t *token=tokenize(code);
@@ -218,6 +238,10 @@ TEST(make_ast_tree_no_param_func, {
 	TEST_AST_TREE(L"func[]", AST_NODE_NO_PARAM_FUNC, 0, 6);
 });
 
+TEST(make_ast_tree_one_param_func, {
+	TEST_AST_TREE(L"func[abc]", AST_NODE_ONE_PARAM_FUNC, 0, 9);
+});
+
 TEST(make_ast_tree_int_const, {
 	TEST_AST_TREE(L"1234", AST_NODE_INT_CONST, 0, 4);
 });
@@ -275,6 +299,7 @@ void ast_node_test_self(bool *pass) {
 		test_ast_token_cmp,
 		test_ast_token_cmp_extra_tokens,
 		test_ast_token_cmp_missing_tokens,
+		test_ast_token_cmp_any_token,
 		test_push_ast_node,
 		test_make_ast_tree_variable_def,
 		test_make_ast_tree_mutable_variable_def,
@@ -286,6 +311,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_var_add,
 		test_make_ast_tree_return,
 		test_make_ast_tree_no_param_func,
+		test_make_ast_tree_one_param_func,
 		test_make_ast_tree_int_const,
 		test_make_ast_tree_float_const,
 		test_make_ast_tree_bool_const_true,

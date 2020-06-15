@@ -40,7 +40,10 @@ enum token_types {
 	TOKEN_FLOAT_CONST,
 	TOKEN_BOOL_CONST,
 	TOKEN_CHAR_CONST,
-	TOKEN_STR_CONST
+	TOKEN_STR_CONST,
+
+	//cannot be assigned to a token directly
+	TOKEN_ANY_NON_BRACKET_TOKEN
 };
 
 /*

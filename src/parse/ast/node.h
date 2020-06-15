@@ -23,6 +23,7 @@ enum node_types {
 	AST_NODE_RETURN,
 
 	AST_NODE_NO_PARAM_FUNC,
+	AST_NODE_ONE_PARAM_FUNC,
 
 	AST_NODE_INT_CONST,
 	AST_NODE_FLOAT_CONST,
@@ -75,7 +76,13 @@ token_t *ast_token_cmp(token_t *token, ...) {
 	int token_type=va_arg(args, int);
 
 	while (token!=NULL && token_type!=-1) {
-		if (token->token_type!=token_type) {
+		if (token->token_type!=token_type && token_type!=TOKEN_ANY_NON_BRACKET_TOKEN) {
+			return head;
+		}
+		if (token_type==TOKEN_ANY_NON_BRACKET_TOKEN &&
+			(token->token_type==TOKEN_BRACKET_OPEN ||
+			token->token_type==TOKEN_BRACKET_CLOSE))
+		{
 			return head;
 		}
 		token_type=va_arg(args, int);
@@ -179,6 +186,14 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 			TOKEN_BRACKET_CLOSE, -1
 		);
 		PUSH_AST_NODE_IF(token, &last, AST_NODE_NO_PARAM_FUNC, &node);
+
+		token=ast_token_cmp(token,
+			TOKEN_IDENTIFIER,
+			TOKEN_BRACKET_OPEN,
+			TOKEN_ANY_NON_BRACKET_TOKEN,
+			TOKEN_BRACKET_CLOSE, -1
+		);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_ONE_PARAM_FUNC, &node);
 
 		if (token->token_type==TOKEN_INT_CONST) {
 			push_ast_node(token, &last, AST_NODE_INT_CONST, &node);
