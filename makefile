@@ -1,4 +1,4 @@
-CC = $(shell readlink -f /usr/bin/cc)
+CC = $(shell readlink -f $(shell which cc))
 CFLAGS = -Wall \
 	-Wextra \
 	-pedantic \

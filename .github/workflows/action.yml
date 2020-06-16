@@ -19,7 +19,7 @@ jobs:
       run: |
         make all
     - name: Run tests
-      run: ./build/test/Test
+      run: ./build/test/test
     - name: Run skull parser
       run: |
         c99 -shared src/functions/libhello.c -ldl -o src/functions/libhello.so
