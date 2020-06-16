@@ -150,14 +150,27 @@ wchar_t *fmt_var(const variable_t *var) {
 		long double data=0;
 		variable_read(&data, var);
 
-		needed=snprintf(NULL, 0, "%Lg", data) + 1;
+		needed=snprintf(NULL, 0, "%Lf", data) + 1;
 		if (needed<0) {
 			return NULL;
 		}
 		tmp=malloc(sizeof(char) * (unsigned long int)needed);
 		DIE_IF_MALLOC_FAILS(tmp);
 
-		wrote=snprintf(tmp, (unsigned long int)needed, "%Lg", data);
+		wrote=snprintf(tmp, (unsigned long int)needed, "%Lf", data);
+
+		//trim excess zeros off of decimal
+		size_t len=strlen(tmp);
+		for (size_t i=len; i>0; i--) {
+			if (tmp[i-1]=='.') {
+				tmp[i]='0';
+			}
+			else if (tmp[i-1]=='0') {
+				tmp[i-1]='\0';
+				continue;
+			}
+			break;
+		}
 	}
 
 	if (wrote<0) {
