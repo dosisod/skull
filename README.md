@@ -26,9 +26,7 @@ main[]
 $ git clone https://github.com/dosisod/skull
 $ cd skull
 $ mkdir build
-$ cd build
-$ cmake ..
-$ cmake --build .
+$ make all
 ```
 
 ## Testing
@@ -50,7 +48,7 @@ $ chmod +x .git/hooks/pre-commit
 Tests may also be ran manually:
 
 ```
-$ ./build/test/Test
+$ ./build/test/test
 ```
 
 ## Todo

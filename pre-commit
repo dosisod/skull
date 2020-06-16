@@ -1,16 +1,10 @@
 if [ ! -d "build" ]; then
 	mkdir build
-	cd build
-	cmake ..
-	cmake --build .
 fi
 
-python3 make_docs.py
+make all
 
-cd build
-cmake --build .
-./test/Test
-cd ..
+./build/test/test
 
 c99 -shared src/functions/libhello.c -ldl -o src/functions/libhello.so
 ./build/src/skull src/main.skull
