@@ -24,7 +24,7 @@ TEST(adding_2_ints, {
 	free_variable(var3);
 
 	return pass;
-});
+})
 
 TEST(adding_2_floats, {
 	make_default_types();
@@ -39,7 +39,8 @@ TEST(adding_2_floats, {
 	long double result=0.0;
 	variable_read(&result, var3);
 
-	const bool pass=(result==2.0);
+	//casting int to make compiler happy
+	const bool pass=((int)result==(int)2.0);
 
 	free_types();
 	free_variable(var1);
@@ -47,7 +48,7 @@ TEST(adding_2_floats, {
 	free_variable(var3);
 
 	return pass;
-});
+})
 
 TEST(adding_vars_with_different_types_fail, {
 	make_default_types();
@@ -63,7 +64,7 @@ TEST(adding_vars_with_different_types_fail, {
 	free(var3);
 
 	return pass;
-});
+})
 
 void eval_add_test_self(bool *pass) {
 	tests_t tests={

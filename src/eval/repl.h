@@ -131,7 +131,7 @@ const wchar_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const
 /*
 Evaluates a single line, returns result as a string (if any).
 */
-const wchar_t *repl_eval(wchar_t *str, context_t *ctx) {
+const wchar_t *repl_eval(const wchar_t *str, context_t *ctx) {
 	if (*str==L'\0') {
 		return NULL;
 	}

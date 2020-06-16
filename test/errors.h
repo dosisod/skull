@@ -12,7 +12,7 @@ TEST(errors_not_null, {
 		ERROR_MSG[ERROR_TYPE_MISMATCH]!=NULL &&
 		ERROR_MSG[ERROR_OVERFLOW]!=NULL
 	);
-});
+})
 
 TEST(is_error_msg_setup, {
 	ERROR_MSG_LAST=NULL;
@@ -23,7 +23,7 @@ TEST(is_error_msg_setup, {
 		*ERROR_MSG_LAST!=NULL &&
 		*(ERROR_MSG_LAST + 1)[0]==L'\0'
 	);
-});
+})
 
 TEST(is_error_msg, {
 	return (
@@ -31,11 +31,11 @@ TEST(is_error_msg, {
 		is_error_msg(ERROR_MSG[ERROR_INVALID_INPUT]) &&
 		!is_error_msg(L"not an error msg")
 	);
-});
+})
 
 TEST(is_error_msg_with_null_returns_false, {
 	return !is_error_msg(NULL);
-});
+})
 
 void error_test_self(bool *pass) {
 	tests_t tests={

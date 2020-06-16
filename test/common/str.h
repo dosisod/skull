@@ -14,7 +14,7 @@ TEST(strlcpy, {
 		strlen(buf)==len &&
 		strcmp(buf, "hello")==0
 	);
-});
+})
 
 TEST(wcslcpy, {
 	const wchar_t *data=L"hello there!";
@@ -27,7 +27,7 @@ TEST(wcslcpy, {
 		wcslen(buf)==len &&
 		wcscmp(buf, L"hello")==0
 	);
-});
+})
 
 void str_test_self(bool *pass) {
 	tests_t tests={

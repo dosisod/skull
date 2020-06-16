@@ -20,11 +20,11 @@ TEST(create_variable, {
 	free_variable(var);
 
 	return pass;
-});
+})
 
 TEST(create_variable_with_invalid_type_fails, {
 	return (make_variable(L"not_a_type", L"x", true)==NULL);
-});
+})
 
 TEST(variable_write, {
 	make_default_types();
@@ -45,7 +45,7 @@ TEST(variable_write, {
 	free_variable(var);
 
 	return pass;
-});
+})
 
 TEST(variable_cannot_write_to_const, {
 	make_default_types();
@@ -66,7 +66,7 @@ TEST(variable_cannot_write_to_const, {
 	free_variable(var);
 
 	return pass;
-});
+})
 
 TEST(variable_read, {
 	make_default_types();
@@ -83,7 +83,7 @@ TEST(variable_read, {
 	free_variable(var);
 
 	return pass;
-});
+})
 
 TEST(make_variable_with_invalid_name_fails, {
 	make_default_types();
@@ -95,7 +95,7 @@ TEST(make_variable_with_invalid_name_fails, {
 	free_variable(var);
 
 	return pass;
-});
+})
 
 TEST(free_variable, {
 	make_default_types();
@@ -110,13 +110,13 @@ TEST(free_variable, {
 	free_variable(var);
 
 	return true;
-});
+})
 
 TEST(free_null_variable_is_ok, {
 	free_variable(NULL);
 
 	return true;
-});
+})
 
 #define TEST_FMT_VAR(str_type, real_type, real_data, expected) \
 	make_default_types(); \
@@ -135,23 +135,23 @@ TEST(free_null_variable_is_ok, {
 
 TEST(fmt_var_int, {
 	TEST_FMT_VAR(L"int", int64_t, 1234, L"1234");
-});
+})
 
 TEST(fmt_var_float, {
 	TEST_FMT_VAR(L"float", long double, 3.1415, L"3.1415");
-});
+})
 
 TEST(fmt_var_float_zeros, {
 	TEST_FMT_VAR(L"float", long double, 1234, L"1234.0");
-});
+})
 
 TEST(fmt_var_bool, {
 	TEST_FMT_VAR(L"bool", bool, false, L"false");
-});
+})
 
 TEST(fmt_var_char, {
 	TEST_FMT_VAR(L"char", wchar_t, L'a', L"'a'");
-});
+})
 
 #undef TEST_FMT_VAR
 
@@ -180,7 +180,7 @@ TEST(fmt_var_str, {
 	free_variable(var);
 	free_types();
 	return pass;
-});
+})
 
 void variable_test_self(bool *pass) {
 	tests_t tests={

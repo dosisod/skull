@@ -10,7 +10,10 @@ typedef bool (*test_t)(const char** func);
 typedef bool (*tests_t[])(const char** func);
 
 #define TEST(name, code) \
-bool test_##name (const char** func) {*func=__func__;(code);}
+bool test_##name (const char** func) { \
+	*func=__func__; \
+	code; \
+}
 
 typedef struct fail_t {
 	const char *name;

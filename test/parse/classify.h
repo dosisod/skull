@@ -19,7 +19,7 @@ TEST(is_type_str, {
 	free_types();
 	free_tokens(token);
 	return pass;
-});
+})
 
 TEST(is_keyword_str, {
 	return (
@@ -27,7 +27,7 @@ TEST(is_keyword_str, {
 		is_keyword_str(L"mut") &&
 		!is_keyword_str(L"not_a_keyword")
 	);
-});
+})
 
 TEST(is_constant_integer, {
 	return (
@@ -46,7 +46,7 @@ TEST(is_constant_integer, {
 		!is_constant_integer_str(L"-123aaa") &&
 		!is_constant_integer_str(L"")
 	);
-});
+})
 
 TEST(is_constant_float, {
 	return (
@@ -58,7 +58,7 @@ TEST(is_constant_float, {
 		!is_constant_float_str(L".123") &&
 		!is_constant_float_str(L"123aaa")
 	);
-});
+})
 
 TEST(is_constant_bool, {
 	return (
@@ -66,7 +66,7 @@ TEST(is_constant_bool, {
 		is_constant_bool_str(L"false") &&
 		!is_constant_bool_str(L"not_bool")
 	);
-});
+})
 
 TEST(is_constant_char, {
 	return (
@@ -74,7 +74,7 @@ TEST(is_constant_char, {
 		!is_constant_char_str(L"'x '") &&
 		!is_constant_char_str(L"''")
 	);
-});
+})
 
 TEST(is_constant_str, {
 	return (
@@ -84,7 +84,7 @@ TEST(is_constant_str, {
 		!is_constant_str_str(L"\"bad") &&
 		!is_constant_str_str(L"bad\"")
 	);
-});
+})
 
 #define TEST_CLASSIFY_TOKEN(str, expected) \
 	const wchar_t *code=str; \
@@ -96,51 +96,51 @@ TEST(is_constant_str, {
 
 TEST(bracket_token_open, {
 	TEST_CLASSIFY_TOKEN(L"[", TOKEN_BRACKET_OPEN);
-});
+})
 
 TEST(bracket_token_close, {
 	TEST_CLASSIFY_TOKEN(L"]", TOKEN_BRACKET_CLOSE);
-});
+})
 
 TEST(token_mut_kw, {
 	TEST_CLASSIFY_TOKEN(L"mut", TOKEN_KW_MUT);
-});
+})
 
 TEST(token_return_kw, {
 	TEST_CLASSIFY_TOKEN(L"return", TOKEN_KW_RETURN);
-});
+})
 
 TEST(token_or_kw, {
 	TEST_CLASSIFY_TOKEN(L"or", TOKEN_KW_OR);
-});
+})
 
 TEST(token_and_kw, {
 	TEST_CLASSIFY_TOKEN(L"and", TOKEN_KW_AND);
-});
+})
 
 TEST(token_not_kw, {
 	TEST_CLASSIFY_TOKEN(L"not", TOKEN_KW_NOT);
-});
+})
 
 TEST(token_equal_oper, {
 	TEST_CLASSIFY_TOKEN(L"=", TOKEN_OPER_EQUAL);
-});
+})
 
 TEST(token_equal_equal_oper, {
 	TEST_CLASSIFY_TOKEN(L"==", TOKEN_OPER_EQUAL_EQUAL);
-});
+})
 
 TEST(token_not_equal_oper, {
 	TEST_CLASSIFY_TOKEN(L"!=", TOKEN_OPER_NOT_EQUAL);
-});
+})
 
 TEST(token_auto_equal_oper, {
 	TEST_CLASSIFY_TOKEN(L":=", TOKEN_OPER_AUTO_EQUAL);
-});
+})
 
 TEST(token_plus_oper, {
 	TEST_CLASSIFY_TOKEN(L"+", TOKEN_OPER_PLUS);
-});
+})
 
 TEST(token_type, {
 	const wchar_t *code=L"int not_a_type";
@@ -156,27 +156,27 @@ TEST(token_type, {
 	free_types();
 	free_tokens(t);
 	return pass;
-});
+})
 
 TEST(token_function, {
 	TEST_CLASSIFY_TOKEN(L"->", TOKEN_FUNCTION);
-});
+})
 
 TEST(token_unknown, {
 	TEST_CLASSIFY_TOKEN(L"123garbage_value", TOKEN_UNKNOWN);
-});
+})
 
 TEST(token_integer_constant, {
 	TEST_CLASSIFY_TOKEN(L"1234", TOKEN_INT_CONST);
-});
+})
 
 TEST(token_float_constant, {
 	TEST_CLASSIFY_TOKEN(L"1234.0", TOKEN_FLOAT_CONST);
-});
+})
 
 TEST(token_bool_constant, {
 	TEST_CLASSIFY_TOKEN(L"true", TOKEN_BOOL_CONST);
-});
+})
 
 #undef TEST_CLASSIFY_TOKEN
 
@@ -193,7 +193,7 @@ TEST(token_char_constant, {
 
 	free(t);
 	return pass;
-});
+})
 
 TEST(token_str_constant, {
 	const wchar_t *code=L"\"xyz\"";
@@ -208,7 +208,7 @@ TEST(token_str_constant, {
 
 	free(t);
 	return pass;
-});
+})
 
 TEST(is_valid_identifier, {
 	return (
@@ -227,7 +227,7 @@ TEST(is_valid_identifier, {
 		is_valid_identifier_str(L"x_") &&
 		!is_valid_identifier_str(L"_x")
 	);
-});
+})
 
 TEST(is_valid_identifier_token, {
 	token_t *t=tokenize(L"x");
@@ -237,7 +237,7 @@ TEST(is_valid_identifier_token, {
 
 	free(t);
 	return pass;
-});
+})
 
 TEST(new_identifier_clip_trailing_colon, {
 	const wchar_t *code=L"x: int = 0";
@@ -251,7 +251,7 @@ TEST(new_identifier_clip_trailing_colon, {
 
 	free(t);
 	return pass;
-});
+})
 
 TEST(identifier_cannot_be_type, {
 	make_default_types();
@@ -267,7 +267,7 @@ TEST(identifier_cannot_be_type, {
 	free_types();
 	free(t);
 	return pass;
-});
+})
 
 TEST(identifier_cannot_be_keyword, {
 	make_default_types();
@@ -283,7 +283,7 @@ TEST(identifier_cannot_be_keyword, {
 	free_types();
 	free(t);
 	return pass;
-});
+})
 
 TEST(token_classifier, {
 	const wchar_t *code=L"[ ]";
@@ -299,7 +299,7 @@ TEST(token_classifier, {
 	free(t);
 
 	return pass;
-});
+})
 
 void classifier_test_self(bool *pass) {
 	tests_t tests={

@@ -24,11 +24,11 @@ TEST(eval_bool_single_param, {
 		eval_bool_shim(L"false", false, NULL) &&
 		eval_bool_shim(L"not_a_bool", false, ERROR_MSG[ERROR_TYPE_MISMATCH])
 	);
-});
+})
 
 TEST(eval_bool_odd_num_tokens, {
 	return eval_bool_shim(L"bad ==", false, ERROR_MSG[ERROR_TYPE_MISMATCH]);
-});
+})
 
 TEST(eval_equality_comparison, {
 	return (
@@ -41,7 +41,7 @@ TEST(eval_equality_comparison, {
 		eval_bool_shim(L"'x' == 'x'", true, NULL) &&
 		eval_bool_shim(L"\"abc\" == \"abc\"", true, NULL)
 	);
-});
+})
 
 TEST(eval_bool_with_errors, {
 	return (
@@ -49,28 +49,28 @@ TEST(eval_bool_with_errors, {
 		eval_bool_shim(L"1nvalid == true", false, ERROR_MSG[ERROR_TYPE_MISMATCH]) &&
 		eval_bool_shim(L"1nvalid == 1nvalid", false, ERROR_MSG[ERROR_TYPE_MISMATCH])
 	);
-});
+})
 
 TEST(eval_bool_not, {
 	return (
 		eval_bool_shim(L"not true", false, NULL) &&
 		eval_bool_shim(L"not false", true, NULL)
 	);
-});
+})
 
 TEST(eval_bool_and, {
 	return (
 		eval_bool_shim(L"true and true", true, NULL) &&
 		eval_bool_shim(L"false and false", false, NULL)
 	);
-});
+})
 
 TEST(eval_bool_or, {
 	return (
 		eval_bool_shim(L"true or false", true, NULL) &&
 		eval_bool_shim(L"false or false", false, NULL)
 	);
-});
+})
 
 void eval_bool_test_self(bool *pass) {
 	tests_t tests={

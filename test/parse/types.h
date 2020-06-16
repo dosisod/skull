@@ -31,7 +31,7 @@ TEST(make_new_type, {
 	last->next=NULL;
 
 	return pass;
-});
+})
 
 TEST(make_new_type_rejects_non_unique_type, {
 	type_t *current=&TYPES_AVAILABLE;
@@ -39,7 +39,7 @@ TEST(make_new_type_rejects_non_unique_type, {
 	const bool inserted1=make_new_type(L"test_type", 1);
 	const bool inserted2=make_new_type(L"test_type", 1);
 
-	uint8_t count=0;
+	int count=0;
 
 	while (current) {
 		count+=(wcscmp(current->name, L"test_type")==0);
@@ -62,7 +62,7 @@ TEST(make_new_type_rejects_non_unique_type, {
 		!inserted2 &&
 		count==1
 	);
-});
+})
 
 TEST(find_type, {
 	make_default_types();
@@ -73,7 +73,7 @@ TEST(find_type, {
 
 	free_types();
 	return pass;
-});
+})
 
 TEST(free_types, {
 	make_new_type(L"test_type", 1);
@@ -81,7 +81,7 @@ TEST(free_types, {
 	free_types();
 
 	return TYPES_AVAILABLE.next==NULL;
-});
+})
 
 TEST(append_default_types, {
 	make_default_types();
@@ -105,7 +105,7 @@ TEST(append_default_types, {
 	free_types();
 
 	return new_count==count;
-});
+})
 
 void types_test_self(bool *pass) {
 	tests_t tests={

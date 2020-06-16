@@ -15,7 +15,7 @@ TEST(make_context, {
 	free(ctx);
 
 	return pass;
-});
+})
 
 TEST(context_contains_var, {
 	context_t *ctx=make_context();
@@ -36,7 +36,7 @@ TEST(context_contains_var, {
 	free(ctx);
 
 	return pass;
-});
+})
 
 TEST(context_find_name, {
 	context_t *ctx=make_context();
@@ -55,7 +55,7 @@ TEST(context_find_name, {
 	free(ctx);
 
 	return pass;
-});
+})
 
 TEST(add_vars_to_context, {
 	context_t *ctx=make_context();
@@ -74,7 +74,7 @@ TEST(add_vars_to_context, {
 	free(ctx);
 
 	return pass;
-});
+})
 
 TEST(cannot_add_same_varname_to_context, {
 	context_t *ctx=make_context();
@@ -98,7 +98,7 @@ TEST(cannot_add_same_varname_to_context, {
 	free(ctx);
 
 	return pass;
-});
+})
 
 TEST(add_nested_context, {
 	context_t *ctx=make_context();
@@ -115,7 +115,7 @@ TEST(add_nested_context, {
 	free_context(ctx);
 
 	return pass;
-});
+})
 
 TEST(cannot_add_same_varname_to_sub_context, {
 	context_t *ctx=make_context();
@@ -141,7 +141,7 @@ TEST(cannot_add_same_varname_to_sub_context, {
 	free_context(ctx);
 
 	return pass;
-});
+})
 
 TEST(free_context, {
 	context_t *ctx=make_context();
@@ -154,11 +154,11 @@ TEST(free_context, {
 	free_context(ctx);
 
 	return true;
-});
+})
 
 TEST(context_find_name_when_null, {
 	return context_find_name(NULL, L"anything")==NULL;
-});
+})
 
 void context_test_self(bool *pass) {
 	tests_t tests={

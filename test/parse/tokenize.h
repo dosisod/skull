@@ -9,7 +9,7 @@ TEST(is_whitespace, {
 		!is_whitespace('A') &&
 		!is_whitespace(L'字')
 	);
-});
+})
 
 TEST(is_quote, {
 	return (
@@ -18,7 +18,7 @@ TEST(is_quote, {
 		!is_quote(L'字') &&
 		!is_quote('A')
 	);
-});
+})
 
 TEST(tokenize_single_token, {
 	const wchar_t *code1=L"token";
@@ -37,7 +37,7 @@ TEST(tokenize_single_token, {
 	free(t2);
 
 	return pass;
-});
+})
 
 TEST(tokenize_no_tokens, {
 	const wchar_t *code=L"";
@@ -51,7 +51,7 @@ TEST(tokenize_no_tokens, {
 	free(t);
 
 	return pass;
-});
+})
 
 TEST(whitespace_between_tokens, {
 	const wchar_t *code=L"token1\r\n\t token2";
@@ -68,7 +68,7 @@ TEST(whitespace_between_tokens, {
 	free(t);
 
 	return pass;
-});
+})
 
 TEST(whitespace_at_eol_ignored, {
 	const wchar_t *code=L"token   ";
@@ -82,7 +82,7 @@ TEST(whitespace_at_eol_ignored, {
 	free(t);
 
 	return pass;
-});
+})
 
 TEST(whitespace_inside_double_quotes_respected, {
 	const wchar_t *code=L"\"this is a single token\"";
@@ -97,7 +97,7 @@ TEST(whitespace_inside_double_quotes_respected, {
 	free(t);
 
 	return pass;
-});
+})
 
 TEST(whitespace_inside_single_quotes_respected, {
 	const wchar_t *code=L"'this is a single token'";
@@ -112,7 +112,7 @@ TEST(whitespace_inside_single_quotes_respected, {
 	free(t);
 
 	return pass;
-});
+})
 
 TEST(brackets_always_make_their_own_token, {
 	const wchar_t *code=L"left[]right";
@@ -135,7 +135,7 @@ TEST(brackets_always_make_their_own_token, {
 	free(t);
 
 	return pass;
-});
+})
 
 TEST(free_tokens, {
 	const wchar_t *code=L"token token token";
@@ -144,13 +144,13 @@ TEST(free_tokens, {
 	free_tokens(t);
 
 	return true;
-});
+})
 
 TEST(token_len, {
 	token_t *token=tokenize(L"token");
 
 	return token_len(token)==5;
-});
+})
 
 TEST(token_cmp, {
 	const wchar_t *code=L"data";
@@ -164,7 +164,7 @@ TEST(token_cmp, {
 	free(token);
 
 	return pass;
-});
+})
 
 TEST(token_cmp_match_exact_strings_only, {
 	token_t *token1=tokenize(L"data");
@@ -184,7 +184,7 @@ TEST(token_cmp_match_exact_strings_only, {
 	free(token3);
 	free(token4);
 	return pass;
-});
+})
 
 TEST(token_str, {
 	const wchar_t *code=L"left right";
@@ -197,7 +197,7 @@ TEST(token_str, {
 	free_tokens(token);
 
 	return pass;
-});
+})
 
 TEST(make_token, {
 	token_t *token=make_token();
@@ -212,7 +212,7 @@ TEST(make_token, {
 	free(token);
 
 	return pass;
-});
+})
 
 void tokenizer_test_self(bool *pass) {
 	tests_t tests={

@@ -47,7 +47,7 @@ TEST(color_names, {
 		wcscmp(L"\033[106m", COLOR_BRIGHT_TEAL_BG)==0 &&
 		wcscmp(L"\033[107m", COLOR_BRIGHT_WHITE_BG)==0
 	);
-});
+})
 
 void color_test_self(bool *pass) {
 	tests_t tests={

@@ -8,6 +8,6 @@ Make and add a variable from passed `tokens` to context `ctx`.
 
 Added variable will be constant if `is_const` is true.
 
-#### `const wchar_t *repl_eval(wchar_t *str, context_t *ctx)`
+#### `const wchar_t *repl_eval(const wchar_t *str, context_t *ctx)`
 Evaluates a single line, returns result as a string (if any).
 

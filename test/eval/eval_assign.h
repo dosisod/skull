@@ -3,7 +3,7 @@
 #include "../../src/eval/eval_assign.h"
 #include "../../test/testing.h"
 
-#define TEST_EVAL_ASSIGN(str_type, str_value, real_type, expected_val, expected_error) \
+#define TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, cmp) \
 	token_t *token=tokenize(str_value); \
 	classify_tokens(token); \
 	make_default_types(); \
@@ -12,28 +12,34 @@
 	real_type data=0; \
 	variable_read(&data, var); \
 	const bool pass=( \
-		data==(expected_val) && \
+		(cmp) && \
 		output==(expected_error) \
 	); \
 	free_types(); \
 	free_variable(var); \
 	return pass;
 
+#define TEST_EVAL_ASSIGN_FLOAT(str_type, str_value, real_type, expected_val, expected_error) \
+	TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, (int)data==(int)(expected_val))
+
+#define TEST_EVAL_ASSIGN(str_type, str_value, real_type, expected_val, expected_error) \
+	TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, data==(expected_val))
+
 TEST(eval_assign_int, {
 	TEST_EVAL_ASSIGN(L"int", L"1234", int64_t, 1234, NULL);
-});
+})
 
 TEST(eval_assign_float, {
-	TEST_EVAL_ASSIGN(L"float", L"1234.0", long double, 1234.0, NULL);
-});
+	TEST_EVAL_ASSIGN_FLOAT(L"float", L"1234.0", long double, 1234.0, NULL);
+})
 
 TEST(eval_assign_bool, {
 	TEST_EVAL_ASSIGN(L"bool", L"true", bool, true, NULL);
-});
+})
 
 TEST(eval_assign_char, {
 	TEST_EVAL_ASSIGN(L"char", L"'a'", wchar_t, L'a', NULL);
-});
+})
 
 TEST(eval_assign_str, {
 	token_t *token=tokenize(L"\"abc\"");
@@ -56,35 +62,35 @@ TEST(eval_assign_str, {
 	free_types();
 	free_variable(var);
 	return pass;
-});
+})
 
 TEST(eval_assign_int_overflow, {
 	TEST_EVAL_ASSIGN(L"int", L"99999999999999999999999999999999", int64_t, 0, ERROR_MSG[ERROR_OVERFLOW]);
-});
+})
 
 TEST(eval_assign_type_mismatch, {
 	TEST_EVAL_ASSIGN(L"int", L"not_an_int", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
-});
+})
 
 TEST(eval_assign_cannot_assign_non_ints, {
 	TEST_EVAL_ASSIGN(L"int", L"3.1415", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
-});
+})
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	TEST_EVAL_ASSIGN(L"float", L"1234", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
-});
+	TEST_EVAL_ASSIGN_FLOAT(L"float", L"1234", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+})
 
 TEST(eval_assign_cannot_assign_non_bools, {
 	TEST_EVAL_ASSIGN(L"bool", L"1", bool, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
-});
+})
 
 TEST(eval_assign_cannot_assign_non_chars, {
 	TEST_EVAL_ASSIGN(L"char", L"1234", wchar_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
-});
+})
 
 TEST(eval_assign_cannot_assign_non_strs, {
 	TEST_EVAL_ASSIGN(L"str", L"1234", wchar_t*, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
-});
+})
 
 #undef TEST_EVAL_ASSIGN
 
@@ -119,7 +125,7 @@ TEST(eval_assign_variable_to_another, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(eval_assign_variable_to_another_check_same_type, {
 	make_default_types();
@@ -146,7 +152,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(eval_assign_variable_to_another_check_bad_var, {
 	make_default_types();
@@ -169,7 +175,7 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 void eval_assign_test_self(bool *pass) {
 	tests_t tests={

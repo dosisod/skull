@@ -10,7 +10,7 @@ TEST(repl_variable_declare, {
 
 	free_types();
 	return output==NULL;
-});
+})
 
 TEST(repl_variable_declare_in_context, {
 	context_t *ctx=make_context();
@@ -35,7 +35,7 @@ TEST(repl_variable_declare_in_context, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_cannot_redeclare_var, {
 	context_t *ctx=make_context();
@@ -52,7 +52,7 @@ TEST(repl_cannot_redeclare_var, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_declaring_mutable_var, {
 	context_t *ctx=make_context();
@@ -67,7 +67,7 @@ TEST(repl_declaring_mutable_var, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_declaring_mutable_auto_var, {
 	context_t *ctx=make_context();
@@ -82,7 +82,7 @@ TEST(repl_declaring_mutable_auto_var, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_manually_writing_to_const_var_fails, {
 	context_t *ctx=make_context();
@@ -103,7 +103,7 @@ TEST(repl_manually_writing_to_const_var_fails, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_manually_writing_to_mutable_var_works, {
 	context_t *ctx=make_context();
@@ -130,9 +130,9 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
-#define TEST_WRITE_TO_MUTABLE(str_type, str_val1, str_val2, real_type, expected) \
+#define TEST_WRITE_TO_MUTABLE_BASE(str_type, str_val1, str_val2, real_type, expected, cmp) \
 	context_t *ctx=make_context(); \
 	make_default_types(); \
 	repl_eval(L"mut x: " str_type  " = " str_val1, ctx); \
@@ -143,10 +143,16 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 	} \
 	real_type result=0; \
 	variable_read(&result, ctx->vars[0]); \
-	const bool pass=(output==NULL && result==(expected)); \
+	const bool pass=(output==NULL && (cmp)); \
 	free_types(); \
 	free_context(ctx); \
 	return pass;
+
+#define TEST_WRITE_TO_MUTABLE_FLOAT(str_type, str_val1, str_val2, real_type, expected) \
+	TEST_WRITE_TO_MUTABLE_BASE(str_type, str_val1, str_val2, real_type, expected, (int)result==(int)(expected))
+
+#define TEST_WRITE_TO_MUTABLE(str_type, str_val1, str_val2, real_type, expected) \
+	TEST_WRITE_TO_MUTABLE_BASE(str_type, str_val1, str_val2, real_type, expected, result==(expected))
 
 TEST(repl_write_to_mutable_int_var, {
 	TEST_WRITE_TO_MUTABLE(
@@ -154,15 +160,15 @@ TEST(repl_write_to_mutable_int_var, {
 		L"5678",
 		int64_t, 5678
 	);
-});
+})
 
 TEST(repl_write_to_mutable_float_var, {
-	TEST_WRITE_TO_MUTABLE(
+	TEST_WRITE_TO_MUTABLE_FLOAT(
 		L"float", L"0.0",
 		L"1234.0",
 		long double, 1234.0
 	);
-});
+})
 
 TEST(repl_write_to_mutable_bool_var, {
 	TEST_WRITE_TO_MUTABLE(
@@ -170,7 +176,7 @@ TEST(repl_write_to_mutable_bool_var, {
 		L"true",
 		bool, true
 	);
-});
+})
 
 #undef TEST_WRITE_TO_MUTABLE
 
@@ -191,9 +197,9 @@ TEST(repl_write_to_const_var_fails, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
-#define TEST_MAKE_VAR(str_type, str_val, real_type, expected) \
+#define TEST_MAKE_VAR_BASE(str_type, str_val, real_type, expected, cmp) \
 	context_t *ctx=make_context(); \
 	make_default_types(); \
 	const wchar_t *output=repl_eval(L"x: " str_type " = " str_val, ctx); \
@@ -206,32 +212,38 @@ TEST(repl_write_to_const_var_fails, {
 	variable_read(&ret, ctx->vars[0]); \
 	const bool pass=( \
 		output==NULL && \
-		ret==(expected) \
+		(cmp) \
 	);\
 	free_types(); \
 	free_context(ctx); \
 	return pass;
 
+#define TEST_MAKE_VAR_FLOAT(str_type, str_val, real_type, expected) \
+	TEST_MAKE_VAR_BASE(str_type, str_val, real_type, expected, (int)ret==(int)(expected))
+
+#define TEST_MAKE_VAR(str_type, str_val, real_type, expected) \
+	TEST_MAKE_VAR_BASE(str_type, str_val, real_type, expected, ret==(expected))
+
 TEST(repl_make_float_variable, {
-	TEST_MAKE_VAR(
+	TEST_MAKE_VAR_FLOAT(
 		L"float", L"1234.0",
 		long double, 1234.0
 	);
-});
+})
 
 TEST(repl_make_bool_variable, {
 	TEST_MAKE_VAR(
 		L"bool", L"false",
 		bool, false
 	);
-});
+})
 
 TEST(repl_make_char_variable, {
 	TEST_MAKE_VAR(
 		L"char", L"'a'",
 		wchar_t, L'a'
 	);
-});
+})
 
 
 TEST(repl_print_fail_with_trailing_tokens, {
@@ -248,32 +260,32 @@ TEST(repl_print_fail_with_trailing_tokens, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_blank_line_returns_nothing, {
 	return repl_eval(L"", NULL)==NULL;
-});
+})
 
 TEST(repl_invalid_input_returns_error, {
 	return wcscmp(
 		ERROR_MSG[ERROR_INVALID_INPUT],
 		repl_eval(L"not_valid", NULL)
 	)==0;
-});
+})
 
 TEST(repl_mut_cannot_be_used_alone, {
 	return wcscmp(
 		ERROR_MSG[ERROR_INVALID_INPUT],
 		repl_eval(L"mut", NULL)
 	)==0;
-});
+})
 
 TEST(repl_clear_function, {
 	return wcscmp(
 		L"\033[2J\033[;1H",
 		repl_eval(L"clear[]", NULL)
 	)==0;
-});
+})
 
 TEST(repl_print_var, {
 	make_default_types();
@@ -290,7 +302,7 @@ TEST(repl_print_var, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_add_variables, {
 	make_default_types();
@@ -308,7 +320,7 @@ TEST(repl_add_variables, {
 	free_types(); // NOLINT
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_cannot_add_nonexistent_var, {
 	make_default_types();
@@ -322,7 +334,7 @@ TEST(repl_cannot_add_nonexistent_var, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_overflow_int_gives_error, {
 	make_default_types();
@@ -341,7 +353,7 @@ TEST(repl_overflow_int_gives_error, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_define_var_without_colon_fails, {
 	make_default_types();
@@ -355,7 +367,7 @@ TEST(repl_define_var_without_colon_fails, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_missing_value_no_segfault, {
 	make_default_types();
@@ -369,7 +381,7 @@ TEST(repl_missing_value_no_segfault, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_assigning_variable_to_auto_type, {
 	make_default_types();
@@ -391,7 +403,7 @@ TEST(repl_assigning_variable_to_auto_type, {
 	free_types();
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_auto_assign_detect_unknown_var, {
 	context_t *ctx=make_context();
@@ -402,7 +414,7 @@ TEST(repl_auto_assign_detect_unknown_var, {
 
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_auto_assign_detect_bad_token, {
 	context_t *ctx=make_context();
@@ -413,7 +425,7 @@ TEST(repl_auto_assign_detect_bad_token, {
 
 	free_context(ctx);
 	return pass;
-});
+})
 
 TEST(repl_auto_assign_detect_missing_token, {
 	context_t *ctx=make_context();
@@ -424,7 +436,7 @@ TEST(repl_auto_assign_detect_missing_token, {
 
 	free_context(ctx);
 	return pass;
-});
+})
 
 void repl_test_self(bool *pass) {
 	tests_t tests={
