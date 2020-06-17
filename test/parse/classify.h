@@ -102,6 +102,14 @@ TEST(bracket_token_close, {
 	TEST_CLASSIFY_TOKEN(L"]", TOKEN_BRACKET_CLOSE);
 })
 
+TEST(token_newline, {
+	TEST_CLASSIFY_TOKEN(L"\n", TOKEN_NEWLINE);
+})
+
+TEST(token_comma, {
+	TEST_CLASSIFY_TOKEN(L",", TOKEN_COMMA);
+})
+
 TEST(token_mut_kw, {
 	TEST_CLASSIFY_TOKEN(L"mut", TOKEN_KW_MUT);
 })
@@ -312,6 +320,8 @@ void classifier_test_self(bool *pass) {
 		test_is_constant_str,
 		test_bracket_token_open,
 		test_bracket_token_close,
+		test_token_newline,
+		test_token_comma,
 		test_token_mut_kw,
 		test_token_return_kw,
 		test_token_or_kw,

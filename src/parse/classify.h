@@ -26,6 +26,9 @@ enum token_types {
 	TOKEN_BRACKET_OPEN,
 	TOKEN_BRACKET_CLOSE,
 
+	TOKEN_NEWLINE,
+	TOKEN_COMMA,
+
 	TOKEN_TYPE,
 
 	//operators (add, subtract, assign)
@@ -139,6 +142,12 @@ void classify_token(token_t *token) {
 	}
 	else if (token_cmp(L"]", token)) {
 		token->token_type=TOKEN_BRACKET_CLOSE;
+	}
+	else if (token_cmp(L"\n", token)) {
+		token->token_type=TOKEN_NEWLINE;
+	}
+	else if (token_cmp(L",", token)) {
+		token->token_type=TOKEN_COMMA;
 	}
 	else if (token_cmp(L"mut", token)) {
 		token->token_type=TOKEN_KW_MUT;

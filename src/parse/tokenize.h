@@ -74,7 +74,7 @@ token_t *tokenize(const wchar_t *code) {
 				current->begin=code;
 			}
 		}
-		else if (*code==L'[' || *code==L']') {
+		else if (*code==L'[' || *code==L']' || *code==L',' || *code==L'\n') {
 			if (current->begin!=NULL) {
 				current->end=code;
 

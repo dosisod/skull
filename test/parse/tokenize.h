@@ -54,7 +54,7 @@ TEST(tokenize_no_tokens, {
 })
 
 TEST(whitespace_between_tokens, {
-	const wchar_t *code=L"token1\r\n\t token2";
+	const wchar_t *code=L"token1\r\v\t token2";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -130,6 +130,36 @@ TEST(brackets_always_make_their_own_token, {
 		t->next->next->next!=NULL &&
 		t->next->next->next->begin==(code + 6) &&
 		t->next->next->next->end==(code + 11)
+	);
+
+	free(t);
+
+	return pass;
+})
+
+TEST(comma_makes_their_own_token, {
+	const wchar_t *code=L"left,right";
+	token_t *t=tokenize(code);
+
+	const bool pass=(
+		t->next!=NULL &&
+		t->next->begin==&code[4] &&
+		t->next->end==&code[5]
+	);
+
+	free(t);
+
+	return pass;
+})
+
+TEST(newlines_makes_their_own_token, {
+	const wchar_t *code=L"left\nright";
+	token_t *t=tokenize(code);
+
+	const bool pass=(
+		t->next!=NULL &&
+		t->next->begin==&code[4] &&
+		t->next->end==&code[5]
 	);
 
 	free(t);
@@ -225,6 +255,8 @@ void tokenizer_test_self(bool *pass) {
 		test_whitespace_inside_double_quotes_respected,
 		test_whitespace_inside_single_quotes_respected,
 		test_brackets_always_make_their_own_token,
+		test_comma_makes_their_own_token,
+		test_newlines_makes_their_own_token,
 		test_free_tokens,
 		test_token_len,
 		test_token_cmp,
