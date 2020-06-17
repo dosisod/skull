@@ -12,11 +12,13 @@ TEST(make_ast_node_struct, {
 	node.token=token;
 	node.token_end=token;
 	node.next=NULL;
+	node.last=NULL;
 
 	return (
 		node.node_type==AST_NODE_UNKNOWN &&
 		node.token->begin==token->begin &&
 		node.token_end->end==token->end &&
+		node.last==NULL &&
 		node.next==NULL
 	);
 })
@@ -28,6 +30,7 @@ TEST(make_ast_node, {
 		node->node_type==AST_NODE_UNKNOWN &&
 		node->token==NULL &&
 		node->token_end==NULL &&
+		node->last==NULL &&
 		node->next==NULL
 	);
 
@@ -141,7 +144,11 @@ TEST(push_ast_node, {
 	);
 	push_ast_node(token, &last, AST_NODE_VAR_DEF, &node);
 
-	const bool pass=(tmp->next==node);
+	const bool pass=(
+		tmp->last==NULL &&
+		tmp->next==node &&
+		tmp->next->last==tmp
+	);
 
 	free_types();
 	free_tokens(token);
@@ -157,7 +164,8 @@ TEST(push_ast_node, {
 		node->node_type==type && \
 		node->token->begin==(code + begin_offset) && \
 		node->token_end->end==(code + end_offset) && \
-		node->next!=NULL \
+		node->last==NULL && \
+		node->next==NULL \
 	); \
 	free_types(); \
 	free(node); \
@@ -188,18 +196,22 @@ TEST(make_ast_tree_many_lines, {
 		node->node_type==AST_NODE_VAR_DEF &&
 		node->token->begin==code &&
 		node->token_end->end==(code + 8) &&
+		node->last==NULL &&
 		node->next!=NULL &&
 		node->next->node_type==AST_NODE_INT_CONST &&
 		node->next->token->begin==(code + 9) &&
 		node->next->token_end->end==(code + 10) &&
+		node->next->last==node &&
 		node->next->next!=NULL &&
 		node->next->next->node_type==AST_NODE_VAR_DEF &&
 		node->next->next->token->begin==(code + 11) &&
 		node->next->next->token_end->end==(code + 19) &&
+		node->next->next->last==node->next &&
 		node->next->next->next!=NULL &&
 		node->next->next->next->node_type==AST_NODE_INT_CONST &&
 		node->next->next->next->token->begin==(code + 20) &&
-		node->next->next->next->token_end->end==(code + 21)
+		node->next->next->next->token_end->end==(code + 21) &&
+		node->next->next->next->last==node->next->next
 	);
 
 	free_types();

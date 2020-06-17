@@ -40,6 +40,7 @@ typedef struct ast_node_t {
 	struct token_t *token_end;
 
 	struct ast_node_t *next;
+	struct ast_node_t *last;
 } ast_node_t;
 
 /*
@@ -52,6 +53,7 @@ ast_node_t *make_ast_node(void) {
 	node->node_type=AST_NODE_UNKNOWN;
 	node->token=NULL;
 	node->token_end=NULL;
+	node->last=NULL;
 	node->next=NULL;
 
 	return node;
@@ -109,10 +111,12 @@ void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t
 	(*node)->token_end=token;
 
 	ast_node_t *tmp=make_ast_node();
+
+	tmp->last=*node;
+	*last=token->next;
+
 	(*node)->next=tmp;
 	(*node)=tmp;
-
-	*last=token;
 }
 
 #define PUSH_AST_NODE_IF(token, last, node_type, node) \
@@ -197,6 +201,11 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 		);
 		PUSH_AST_NODE_IF(token, &last, AST_NODE_ONE_PARAM_FUNC, &node);
 
+		//skip to next token if current token is present in last node
+		if (node->last && node->last->token_end==token) {
+			token=token->next;
+			continue;
+		}
 		if (token->token_type==TOKEN_INT_CONST) {
 			push_ast_node(token, &last, AST_NODE_INT_CONST, &node);
 		}
@@ -216,6 +225,11 @@ ast_node_t *make_ast_tree(const wchar_t *code) {
 		token=token->next;
 	}
 
+	if (node->last!=NULL) {
+		node->last->next=NULL;
+		node->last=NULL;
+		free(node);
+	}
 	return head;
 }
 
