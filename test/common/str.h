@@ -29,10 +29,20 @@ TEST(wcslcpy, {
 	);
 })
 
+TEST(wcsdup, {
+	wchar_t *str=wcsdup(L"hello world");
+
+	const bool pass=wcscmp(L"hello world", str)==0;
+
+	free(str);
+	return pass;
+})
+
 void str_test_self(bool *pass) {
 	tests_t tests={
 		test_strlcpy,
 		test_wcslcpy,
+		test_wcsdup,
 		NULL
 	};
 

@@ -1,11 +1,10 @@
 #pragma once
 
-#define _GNU_SOURCE
-
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../common/str.h"
 #include "../errors.h"
 #include "../parse/classify.h"
 #include "../parse/tokenize.h"

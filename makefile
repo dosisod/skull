@@ -1,4 +1,4 @@
-CC = $(shell readlink -f $(shell which cc))
+CC = $(shell readlink -f $(shell which cc)) -std=c99
 CFLAGS = -Wall \
 	-Wextra \
 	-pedantic \

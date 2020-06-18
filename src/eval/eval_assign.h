@@ -1,9 +1,8 @@
 #pragma once
 
-#define _GNU_SOURCE
-
 #include <wchar.h>
 
+#include "../common/str.h"
 #include "../errors.h"
 #include "context.h"
 #include "eval_float.h"
