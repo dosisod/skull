@@ -1,8 +1,8 @@
 #pragma once
 
 #include <dlfcn.h>
+#include <stdio.h>
 #include <string.h>
-#include <wchar.h>
 
 #include "../common/str.h"
 
@@ -15,7 +15,7 @@ Else, the function is invoked.
 void dll_run(const char *data) {
 	const char *comma=strstr(data, "\", \"");
 	if (comma==NULL) {
-		wprintf(L"dll_run expects 2 params, got 1\n");
+		puts("dll_run expects 2 params, got 1");
 		return;
 	}
 
@@ -29,14 +29,14 @@ void dll_run(const char *data) {
 
 	void *handle=dlopen(param1, RTLD_NOW);
 	if (handle==NULL) {
-		wprintf(L"\"%s\" could not be loaded\n", param1);
+		printf("\"%s\" could not be loaded\n", param1);
 		return;
 	}
 
 	void(*callable)();
 	*(void **)(&callable)=dlsym(handle, param2);
 	if (callable==NULL) {
-		wprintf(L"could not call \"%s\" on \"%s\"\n", param2, param1);
+		printf("could not call \"%s\" on \"%s\"\n", param2, param1);
 		return;
 	}
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include <wchar.h>
+#include <stdio.h>
 
 #include "../src/common/color.h"
 #include "../src/common/malloc.h"
@@ -26,7 +26,7 @@ fail_t *fails_last=NULL;
 void run_single_test(test_t test, bool *pass) {
 	const char *name=NULL;
 	if (!test(&name)) {
-		wprintf(COLOR_BOLD COLOR_RED_FG L"F" COLOR_RESET);
+		printf(COLOR_BOLD COLOR_RED_FG "F" COLOR_RESET);
 		*pass=false;
 
 		fail_t *fail=malloc(sizeof(fail_t));
@@ -46,32 +46,32 @@ void run_single_test(test_t test, bool *pass) {
 		fails_last->name=name;
 	}
 	else {
-		wprintf(COLOR_BOLD COLOR_GREEN_FG L"." COLOR_RESET);
+		printf(COLOR_BOLD COLOR_GREEN_FG "." COLOR_RESET);
 	}
 }
 
 void run_many_tests(const char *name, tests_t tests, bool *pass) {
-	wprintf(L"%s ", name);
+	printf("%s ", name);
 
 	while(*tests!=NULL) {
 		run_single_test(*tests, pass);
 		tests++;
 	}
 
-	wprintf(L"\n");
+	puts("");
 
 	if (fails_head!=NULL) {
 		fail_t *current=fails_head;
 		fail_t *tmp=NULL;
 
 		while (current!=NULL) {
-			wprintf(L"%s " COLOR_BOLD COLOR_RED_FG "FAILED\n" COLOR_RESET, current->name);
+			printf("%s " COLOR_BOLD COLOR_RED_FG "FAILED\n" COLOR_RESET, current->name);
 
 			tmp=current;
 			current=current->next;
 			free(tmp);
 		}
-		wprintf(L"\n");
+		puts("");
 
 		fails_last=NULL;
 		fails_head=NULL;

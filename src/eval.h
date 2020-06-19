@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <wchar.h>
 
 #include "../src/functions/run.h"
 
@@ -17,7 +16,7 @@ void eval(FILE *f) {
 	const char *open_bracket=strchr(code, '[');
 	const char *close_bracket=strchr(code, ']');
 	if (open_bracket==NULL || close_bracket==NULL) {
-		wprintf(L"no function found\n");
+		puts("no function found");
 		exit(1);
 	}
 

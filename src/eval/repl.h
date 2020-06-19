@@ -20,7 +20,7 @@
 Returns pointer to string read from commandline.
 */
 wchar_t *repl_read(void) {
-	wprintf(COLOR_BRIGHT_GREEN_FG L"> " COLOR_RESET);
+	printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
 
 	wchar_t *str=malloc(sizeof(wchar_t) * REPL_MAX_LINE_LEN);
 	DIE_IF_MALLOC_FAILS(str);

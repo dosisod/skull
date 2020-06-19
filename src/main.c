@@ -1,4 +1,5 @@
 #include <locale.h>
+#include <stdio.h>
 #include <wchar.h>
 
 #include "../src/eval/repl.h"
@@ -11,12 +12,12 @@ Else, run a passed in `.skull` file.
 */
 int main(int argc, char *argv[]) {
 	if (!setlocale(LC_CTYPE, "")) {
-		wprintf(L"Could not set locale.");
+		puts("Could not set locale.\n");
 		return 1;
 	}
 
 	if (argc==1) {
-		wprintf(L"Skull " SKULL_VERSION "\n");
+		puts("Skull " SKULL_VERSION);
 
 		context_t *ctx=make_context();
 		make_default_types();
@@ -27,7 +28,7 @@ int main(int argc, char *argv[]) {
 
 			const wchar_t *output=repl_eval(line, ctx);
 			if (output!=NULL) {
-				wprintf(L"%ls\n", output);
+				printf("%ls\n", output);
 			}
 
 			free(line);
@@ -35,13 +36,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	else if (argc>2) {
-		wprintf(L"no input files specified, exiting\n");
+		puts("no input files specified, exiting");
 		return 1;
 	}
 
 	FILE *f=fopen(argv[1], "r");
 	if (f==NULL) {
-		wprintf(L"\"%s\" was not found, exiting\n", argv[1]);
+		printf("\"%s\" was not found, exiting", argv[1]);
 		return 1;
 	}
 
