@@ -153,6 +153,10 @@ TEST(fmt_var_char, {
 	TEST_FMT_VAR(L"char", wchar_t, L'a', L"'a'");
 })
 
+TEST(fmt_var_wide_char_preserved, {
+	TEST_FMT_VAR(L"char", wchar_t, L'存', L"'存'");
+})
+
 #undef TEST_FMT_VAR
 
 TEST(fmt_var_str, {
@@ -197,6 +201,7 @@ void variable_test_self(bool *pass) {
 		test_fmt_var_float_zeros,
 		test_fmt_var_bool,
 		test_fmt_var_char,
+		test_fmt_var_wide_char_preserved,
 		test_fmt_var_str,
 		NULL
 	};

@@ -121,7 +121,7 @@ wchar_t *fmt_var(const variable_t *var) {
 		DIE_IF_MALLOC_FAILS(ret);
 
 		ret[0]=L'\'';
-		ret[1]=*var->mem;
+		ret[1]=*(wchar_t*)var->mem;
 		ret[2]=L'\'';
 		ret[3]=L'\0';
 

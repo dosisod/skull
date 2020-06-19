@@ -94,6 +94,6 @@ void make_default_types(void) {
 	make_new_type(L"bool", 1);
 	make_new_type(L"int", 8);
 	make_new_type(L"float", 16);
-	make_new_type(L"char", 2);
+	make_new_type(L"char", sizeof(wchar_t));
 	make_new_type(L"str", sizeof(wchar_t*));
 }

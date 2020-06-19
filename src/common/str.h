@@ -39,6 +39,7 @@ wchar_t *wcsdup(const wchar_t *str) {
 
 	wchar_t *ret=malloc(sizeof(wchar_t) * (len + 1));
 	wcsncpy(ret, str, len);
+	ret[len]=L'\0';
 
 	return ret;
 }
