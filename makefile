@@ -1,3 +1,5 @@
+SKULL_VERSION=0.0.1
+
 CC = $(shell readlink -f $(shell which cc)) -std=c99
 CFLAGS = -Wall \
 	-Wextra \
@@ -25,7 +27,8 @@ CFLAGS = -Wall \
 	-Wunused-macros \
 	-Wconversion \
 	-Wfloat-equal \
-	-Wwrite-strings
+	-Wwrite-strings \
+	-DSKULL_VERSION="\"$(SKULL_VERSION)\""
 
 #dont add gnu specific flags if compiling in clang
 ifeq ($(findstring clang,$(CC)),)
@@ -62,3 +65,6 @@ test:
 
 docs:
 	python3 make_docs.py
+
+clean:
+	rm -rf build/

@@ -4,8 +4,6 @@
 #include "../src/eval/repl.h"
 #include "../src/eval.h"
 
-#define SKULL_VERSION "0.0.1"
-
 /*
 If no parameters are passed, run in interactive (repl) mode.
 
