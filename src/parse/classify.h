@@ -50,7 +50,7 @@ enum token_types {
 };
 
 /*
-Returns true if `token` is a type token.
+Returns true if `token` is a type string.
 */
 bool is_type_str(const wchar_t *name) {
 	type_t *current=&TYPES_AVAILABLE;
