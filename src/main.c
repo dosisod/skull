@@ -1,7 +1,7 @@
-#include <locale.h>
 #include <stdio.h>
 #include <wchar.h>
 
+#include "../src/common/local.h"
 #include "../src/eval/repl.h"
 #include "../src/eval.h"
 
@@ -11,10 +11,7 @@ If no parameters are passed, run in interactive (repl) mode.
 Else, run a passed in `.skull` file.
 */
 int main(int argc, char *argv[]) {
-	if (!setlocale(LC_CTYPE, "")) {
-		puts("Could not set locale.\n");
-		return 1;
-	}
+	SETUP_LOCALE();
 
 	if (argc==1) {
 		puts("Skull " SKULL_VERSION);

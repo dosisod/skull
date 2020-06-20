@@ -23,11 +23,10 @@
 #include "common/str.h"
 #include "common/wegex.h"
 
+#include "../src/common/local.h"
+
 int main(void) {
-	if (!setlocale(LC_CTYPE, "")) {
-		puts("Could not set locale.");
-		return 1;
-	}
+	SETUP_LOCALE();
 
 	bool passed=true;
 
