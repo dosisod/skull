@@ -21,16 +21,6 @@ char *strlcpy(char *dest, const char *src, size_t n) {
 }
 
 /*
-Similar to above `strlcpy`, but for `wchar_t` types.
-*/
-wchar_t *wcslcpy(wchar_t *dest, const wchar_t *src, size_t n) {
-	wchar_t *ret=wcsncpy(dest, src, n - 1);
-	dest[n - 1]=L'\0';
-
-	return ret;
-}
-
-/*
 Make a heap allocated version of `str`.
 
 The result of this function must be freed.
@@ -48,6 +38,39 @@ wchar_t *wcsdup(const wchar_t *str) {
 #endif
 
 /*
+Similar to above `strlcpy`, but for `wchar_t` types.
+*/
+wchar_t *wcslcpy(wchar_t *dest, const wchar_t *src, size_t n) {
+	wchar_t *ret=wcsncpy(dest, src, n - 1);
+	dest[n - 1]=L'\0';
+
+	return ret;
+}
+
+/*
+char32_t equivalent of `strncpy`, does not add NULL terminator.
+*/
+void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
+	size_t offset=0;
+
+	while (*src!=U'\0' && n>0) {
+		dest[offset]=*src;
+
+		src++;
+		offset++;
+		n--;
+	}
+}
+
+/*
+Similar to above `strlcpy`, but for `char32_t` types.
+*/
+void c32slcpy(char32_t *dest, const char32_t *src, size_t n) {
+	c32sncpy(dest, src, n);
+	dest[n - 1]=L'\0';
+}
+
+/*
 Return the size of a UTF-32 string.
 */
 size_t c32slen(const char32_t *str) {
@@ -59,6 +82,20 @@ size_t c32slen(const char32_t *str) {
 	}
 
 	return len;
+}
+
+/*
+Make a heap allocated version of `str`.
+
+The result of this function must be freed.
+*/
+char32_t *c32sdup(const char32_t *str) {
+	size_t len=c32slen(str);
+
+	char32_t *ret=malloc(sizeof(char32_t) * (len + 1));
+	c32slcpy(ret, str, len + 1);
+
+	return ret;
 }
 
 /*
@@ -117,4 +154,51 @@ char32_t *mbstoc32s(const char *str) {
 	ret[offset]=U'\0';
 
 	return ret;
+}
+
+/*
+Compare two UTF-32 strings `a` and `b`.
+
+`a` and `b` must be of equal length, and match exactly.
+*/
+bool c32scmp(const char32_t *a, const char32_t *b) {
+	while (*a!=U'\0' && *b!=U'\0') {
+		if (*a != *b) {
+			return false;
+		}
+		a++;
+		b++;
+	}
+
+	return (*a==U'\0' && *b==U'\0');
+}
+
+/*
+Compare at most `n` chars of two UTF-32 strings, `a` and `b`.
+*/
+bool c32sncmp(const char32_t *a, const char32_t *b, size_t n) {
+	while (*a!=U'\0' && *b!=U'\0' && n>0) {
+		if (*a != *b) {
+			return false;
+		}
+		a++;
+		b++;
+		n--;
+	}
+	return true;
+}
+
+/*
+Return pointer to first occurence of `c` in `str`.
+
+If it cannot be found, NULL is returned instead.
+*/
+const char32_t *c32schr(const char32_t *str, char32_t c) {
+	while (*str!=U'\0') {
+		if (*str==c) {
+			return str;
+		}
+		str++;
+	}
+	return NULL;
 }

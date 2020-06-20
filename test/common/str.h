@@ -17,6 +17,19 @@ TEST(strlcpy, {
 	);
 })
 
+TEST(c32sncpy, {
+	const char32_t *data=U"abc";
+	char32_t buf[4];
+
+	c32sncpy(buf, data, 3);
+	buf[3]=U'\0';
+
+	return (
+		c32slen(buf)==3 &&
+		c32scmp(buf, U"abc")
+	);
+})
+
 TEST(wcslcpy, {
 	const wchar_t *data=L"hello there!";
 	const size_t len=5;
@@ -28,6 +41,28 @@ TEST(wcslcpy, {
 		wcslen(buf)==len &&
 		wcscmp(buf, L"hello")==0
 	);
+})
+
+TEST(c32slcpy, {
+	const char32_t *data=U"hello there!";
+	const size_t len=5;
+	char32_t buf[len + 1];
+
+	c32slcpy(buf, data, len + 1);
+
+	return (
+		c32slen(buf)==len &&
+		c32scmp(buf, U"hello")
+	);
+})
+
+TEST(c32sdup, {
+	char32_t *str=c32sdup(U"hello world");
+
+	const bool pass=c32scmp(U"hello world", str);
+
+	free(str);
+	return pass;
 })
 
 TEST(wcsdup, {
@@ -77,14 +112,50 @@ TEST(mbstoc32s, {
 	return pass;
 })
 
+TEST(c32scmp, {
+	return (
+		c32scmp(U"abc", U"abc") &&
+		!c32scmp(U"abc", U"abcdef") &&
+		!c32scmp(U"abcdef", U"abc") &&
+		!c32scmp(U"x", U"y")
+	);
+})
+
+TEST(c32sncmp, {
+	return (
+		c32sncmp(U"abc", U"abc", 3) &&
+		c32sncmp(U"abc", U"abcdef", 3) &&
+		c32sncmp(U"abcdef", U"abc", 3) &&
+		c32sncmp(U"ax", U"ay", 1) &&
+		!c32sncmp(U"x", U"y", 1)
+	);
+})
+
+TEST(c32schr, {
+	const char32_t *str=U"abcdefg";
+
+	return (
+		c32schr(str, U'a')==str &&
+		c32schr(str, U'b')==(str + 1) &&
+		c32schr(str, U'c')==(str + 2) &&
+		c32schr(str, U'x')==NULL
+	);
+})
+
 void str_test_self(bool *pass) {
 	tests_t tests={
 		test_strlcpy,
+		test_c32sncpy,
 		test_wcslcpy,
+		test_c32slcpy,
 		test_wcsdup,
+		test_c32sdup,
 		test_c32slen,
 		test_c32stombs,
 		test_mbstoc32s,
+		test_c32scmp,
+		test_c32sncmp,
+		test_c32schr,
 		NULL
 	};
 
