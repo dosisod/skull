@@ -202,3 +202,32 @@ const char32_t *c32schr(const char32_t *str, char32_t c) {
 	}
 	return NULL;
 }
+
+/*
+Return whether the UTF-32 character `c` is a digit.
+*/
+bool c32isdigit(char32_t c) {
+	return (c >= U'0') && (c <= U'9');
+}
+
+/*
+Return whether the UTF-32 character `c` is a hexidecimal digit.
+*/
+bool c32isxdigit(char32_t c) {
+	return (
+		((c >= U'0') && (c <= U'9')) ||
+		((c >= U'a') && (c <= U'f')) ||
+		((c >= U'A') && (c <= U'F'))
+	);
+}
+
+/*
+Returns whether the UTF-32 character `c` is an alpha numeric character.
+*/
+bool c32isalnum(char32_t c) {
+	return (
+		c32isdigit(c) ||
+		((c >= U'A') && (c <= U'Z')) ||
+		((c >= U'a') && (c <= U'z'))
+	);
+}

@@ -48,3 +48,12 @@ Return pointer to first occurence of `c` in `str`.
 
 If it cannot be found, NULL is returned instead.
 
+#### `bool c32isdigit(char32_t c)`
+Return whether the UTF-32 character `c` is a digit.
+
+#### `bool c32isxdigit(char32_t c)`
+Return whether the UTF-32 character `c` is a hexidecimal digit.
+
+#### `bool c32isalnum(char32_t c)`
+Returns whether the UTF-32 character `c` is an alpha numeric character.
+

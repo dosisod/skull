@@ -142,6 +142,49 @@ TEST(c32schr, {
 	);
 })
 
+TEST(c32isdigit, {
+	return (
+		!c32isdigit(U'/') &&
+		c32isdigit(U'0') &&
+		c32isdigit(U'9') &&
+		!c32isdigit(U':')
+	);
+})
+
+TEST(c32isalnum, {
+	return (
+		!c32isalnum(U'/') &&
+		c32isalnum(U'0') &&
+		c32isalnum(U'9') &&
+		!c32isalnum(U':') &&
+		!c32isalnum(U'@') &&
+		c32isalnum(U'A') &&
+		c32isalnum(U'Z') &&
+		!c32isalnum(U'[') &&
+		!c32isalnum(U'`') &&
+		c32isalnum(U'a') &&
+		c32isalnum(U'z') &&
+		!c32isalnum(U'{')
+	);
+})
+
+TEST(c32isxdigit, {
+	return (
+		!c32isxdigit(U'/') &&
+		c32isxdigit(U'0') &&
+		c32isxdigit(U'9') &&
+		!c32isxdigit(U':') &&
+		!c32isxdigit(U'@') &&
+		c32isxdigit(U'A') &&
+		c32isxdigit(U'F') &&
+		!c32isxdigit(U'G') &&
+		!c32isxdigit(U'`') &&
+		c32isxdigit(U'a') &&
+		c32isxdigit(U'f') &&
+		!c32isxdigit(U'g')
+	);
+})
+
 void str_test_self(bool *pass) {
 	tests_t tests={
 		test_strlcpy,
@@ -156,6 +199,9 @@ void str_test_self(bool *pass) {
 		test_c32scmp,
 		test_c32sncmp,
 		test_c32schr,
+		test_c32isalnum,
+		test_c32isdigit,
+		test_c32isxdigit,
 		NULL
 	};
 
