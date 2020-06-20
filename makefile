@@ -1,6 +1,6 @@
 SKULL_VERSION=0.0.1
 
-CC = $(shell readlink -f $(shell which cc)) -std=c99
+CC = $(shell readlink -f $(shell which cc)) -std=c11
 CFLAGS = -Wall \
 	-Wextra \
 	-pedantic \
