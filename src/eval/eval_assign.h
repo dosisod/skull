@@ -80,7 +80,7 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 	if (variable_write(var, mem)==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]) {
 		if (var->type==find_type(U"str")) {
 			mem=NULL;
-			variable_read(&mem, var);
+			variable_read(&mem, var); // NOLINT
 			free((char32_t*)mem);
 		}
 		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]; // NOLINT

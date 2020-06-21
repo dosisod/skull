@@ -177,10 +177,7 @@ char32_t *fmt_var(const variable_t *var) {
 		return NULL;
 	}
 
-	char32_t *ret=malloc(sizeof(char32_t) * (unsigned long int)needed);
-	DIE_IF_MALLOC_FAILS(ret);
-
-	ret=mbstoc32s(tmp);
+	char32_t *ret=mbstoc32s(tmp);
 
 	free(tmp);
 	return ret;

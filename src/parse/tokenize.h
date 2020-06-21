@@ -173,6 +173,8 @@ Return a copy of the string data inside `token`.
 char32_t *token_str(const token_t *token) {
 	const size_t len=token_len(token);
 	char32_t *str=malloc((len + 1) * sizeof(char32_t));
+	DIE_IF_MALLOC_FAILS(str);
+
 	c32slcpy(str, token->begin, len + 1);
 
 	return str;

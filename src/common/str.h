@@ -5,6 +5,8 @@
 #include <string.h>
 #include <uchar.h>
 
+#include "malloc.h"
+
 //Android ships with the below functions, dont redefine if thats the case.
 //Other platforms may need to be added in the future
 #ifndef __ANDROID_API__
@@ -67,6 +69,8 @@ char32_t *c32sdup(const char32_t *str) {
 	size_t len=c32slen(str);
 
 	char32_t *ret=malloc(sizeof(char32_t) * (len + 1));
+	DIE_IF_MALLOC_FAILS(ret);
+
 	c32slcpy(ret, str, len + 1);
 
 	return ret;
@@ -84,6 +88,7 @@ char *c32stombs(const char32_t *str) {
 
 	//allocate the max that str could expand to
 	char *ret=malloc((c32slen(str) + 1) * MB_CUR_MAX);
+	DIE_IF_MALLOC_FAILS(ret);
 
 	size_t offset=0;
 	static mbstate_t mbs;
@@ -113,6 +118,7 @@ The result of this function must be freed.
 char32_t *mbstoc32s(const char *str) {
 	//allocate the max that str could expand to
 	char32_t *ret=malloc((strlen(str) + 1) * sizeof(char32_t));
+	DIE_IF_MALLOC_FAILS(ret);
 
 	size_t offset=0;
 	static mbstate_t mbs;
@@ -140,7 +146,7 @@ Compare two UTF-32 strings `a` and `b`.
 `a` and `b` must be of equal length, and match exactly.
 */
 bool c32scmp(const char32_t *a, const char32_t *b) {
-	while (*a!=U'\0' && *b!=U'\0') {
+	while (*a!=U'\0' && *b!=U'\0') { // NOLINT
 		if (*a != *b) {
 			return false;
 		}
@@ -148,7 +154,7 @@ bool c32scmp(const char32_t *a, const char32_t *b) {
 		b++;
 	}
 
-	return (*a==U'\0' && *b==U'\0');
+	return (*a==U'\0' && *b==U'\0'); // NOLINT
 }
 
 /*
