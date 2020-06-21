@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <wchar.h>
 
 #include "../src/common/local.h"
 #include "../src/eval/repl.h"
@@ -19,15 +18,17 @@ int main(int argc, char *argv[]) {
 		context_t *ctx=make_context();
 		make_default_types();
 
-		wchar_t *line;
+		char32_t *line;
 		while (true) {
 			line=repl_read();
 
-			const wchar_t *output=repl_eval(line, ctx);
+			const char32_t *tmp=repl_eval(line, ctx);
+			char *output=c32stombs(tmp);
 			if (output!=NULL) {
-				printf("%ls\n", output);
+				printf("%s\n", output);
 			}
 
+			free(output);
 			free(line);
 		}
 	}

@@ -2,19 +2,19 @@
 #include "../../test/testing.h"
 
 TEST(find_line_comment_at_start_of_line, {
-	const wchar_t *code=L"# should be zero";
+	const char32_t *code=U"# should be zero";
 
 	return find_line_comment(code)==code;
 })
 
 TEST(find_line_comment_without_comment, {
-	const wchar_t *code=L"not a comment";
+	const char32_t *code=U"not a comment";
 
 	return find_line_comment(code)==(code + 12);
 })
 
 TEST(find_line_comment_on_blank_line, {
-	const wchar_t *code=L"";
+	const char32_t *code=U"";
 
 	return find_line_comment(code)==code;
 })

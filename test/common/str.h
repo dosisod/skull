@@ -30,19 +30,6 @@ TEST(c32sncpy, {
 	);
 })
 
-TEST(wcslcpy, {
-	const wchar_t *data=L"hello there!";
-	const size_t len=5;
-	wchar_t buf[len + 1];
-
-	wcslcpy(buf, data, len + 1);
-
-	return (
-		wcslen(buf)==len &&
-		wcscmp(buf, L"hello")==0
-	);
-})
-
 TEST(c32slcpy, {
 	const char32_t *data=U"hello there!";
 	const size_t len=5;
@@ -65,15 +52,6 @@ TEST(c32sdup, {
 	return pass;
 })
 
-TEST(wcsdup, {
-	wchar_t *str=wcsdup(L"hello world");
-
-	const bool pass=wcscmp(L"hello world", str)==0;
-
-	free(str);
-	return pass;
-})
-
 TEST(c32slen, {
 	return (
 		c32slen(U"abc")==3 &&
@@ -88,6 +66,10 @@ TEST(c32stombs, {
 
 	free(str);
 	return pass;
+})
+
+TEST(c32stombs_with_null, {
+	return c32stombs(NULL)==NULL;
 })
 
 TEST(mbstoc32s, {
@@ -189,12 +171,11 @@ void str_test_self(bool *pass) {
 	tests_t tests={
 		test_strlcpy,
 		test_c32sncpy,
-		test_wcslcpy,
 		test_c32slcpy,
-		test_wcsdup,
 		test_c32sdup,
 		test_c32slen,
 		test_c32stombs,
+		test_c32stombs_with_null,
 		test_mbstoc32s,
 		test_c32scmp,
 		test_c32sncmp,

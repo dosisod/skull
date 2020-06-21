@@ -7,7 +7,7 @@ TEST(is_whitespace, {
 	return (
 		is_whitespace(' ') &&
 		!is_whitespace('A') &&
-		!is_whitespace(L'字')
+		!is_whitespace(U'字')
 	);
 })
 
@@ -15,14 +15,14 @@ TEST(is_quote, {
 	return (
 		is_quote('\"') &&
 		is_quote('\'') &&
-		!is_quote(L'字') &&
+		!is_quote(U'字') &&
 		!is_quote('A')
 	);
 })
 
 TEST(tokenize_single_token, {
-	const wchar_t *code1=L"token";
-	const wchar_t *code2=L"token字";
+	const char32_t *code1=U"token";
+	const char32_t *code2=U"token字";
 	token_t *t1=tokenize(code1);
 	token_t *t2=tokenize(code2);
 
@@ -40,7 +40,7 @@ TEST(tokenize_single_token, {
 })
 
 TEST(tokenize_no_tokens, {
-	const wchar_t *code=L"";
+	const char32_t *code=U"";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -54,7 +54,7 @@ TEST(tokenize_no_tokens, {
 })
 
 TEST(whitespace_between_tokens, {
-	const wchar_t *code=L"token1\r\v\t token2";
+	const char32_t *code=U"token1\r\v\t token2";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -71,7 +71,7 @@ TEST(whitespace_between_tokens, {
 })
 
 TEST(whitespace_at_eol_ignored, {
-	const wchar_t *code=L"token   ";
+	const char32_t *code=U"token   ";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -85,7 +85,7 @@ TEST(whitespace_at_eol_ignored, {
 })
 
 TEST(whitespace_inside_double_quotes_respected, {
-	const wchar_t *code=L"\"this is a single token\"";
+	const char32_t *code=U"\"this is a single token\"";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -100,7 +100,7 @@ TEST(whitespace_inside_double_quotes_respected, {
 })
 
 TEST(whitespace_inside_single_quotes_respected, {
-	const wchar_t *code=L"'this is a single token'";
+	const char32_t *code=U"'this is a single token'";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -115,7 +115,7 @@ TEST(whitespace_inside_single_quotes_respected, {
 })
 
 TEST(brackets_always_make_their_own_token, {
-	const wchar_t *code=L"left[]right";
+	const char32_t *code=U"left[]right";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -138,7 +138,7 @@ TEST(brackets_always_make_their_own_token, {
 })
 
 TEST(comma_makes_their_own_token, {
-	const wchar_t *code=L"left,right";
+	const char32_t *code=U"left,right";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -153,7 +153,7 @@ TEST(comma_makes_their_own_token, {
 })
 
 TEST(newlines_makes_their_own_token, {
-	const wchar_t *code=L"left\nright";
+	const char32_t *code=U"left\nright";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
@@ -168,7 +168,7 @@ TEST(newlines_makes_their_own_token, {
 })
 
 TEST(free_tokens, {
-	const wchar_t *code=L"token token token";
+	const char32_t *code=U"token token token";
 	token_t *t=tokenize(code);
 
 	free_tokens(t);
@@ -177,18 +177,18 @@ TEST(free_tokens, {
 })
 
 TEST(token_len, {
-	token_t *token=tokenize(L"token");
+	token_t *token=tokenize(U"token");
 
 	return token_len(token)==5;
 })
 
 TEST(token_cmp, {
-	const wchar_t *code=L"data";
+	const char32_t *code=U"data";
 	token_t *token=tokenize(code);
 
 	const bool pass=(
-		token_cmp(L"data", token) &&
-		!token_cmp(L"not_data", token)
+		token_cmp(U"data", token) &&
+		!token_cmp(U"not_data", token)
 	);
 
 	free(token);
@@ -197,16 +197,16 @@ TEST(token_cmp, {
 })
 
 TEST(token_cmp_match_exact_strings_only, {
-	token_t *token1=tokenize(L"data");
-	token_t *token2=tokenize(L"dat");
-	token_t *token3=tokenize(L"da");
-	token_t *token4=tokenize(L"d");
+	token_t *token1=tokenize(U"data");
+	token_t *token2=tokenize(U"dat");
+	token_t *token3=tokenize(U"da");
+	token_t *token4=tokenize(U"d");
 
 	const bool pass=(
-		token_cmp(L"data", token1) &&
-		!token_cmp(L"data", token2) &&
-		!token_cmp(L"data", token3) &&
-		!token_cmp(L"data", token4)
+		token_cmp(U"data", token1) &&
+		!token_cmp(U"data", token2) &&
+		!token_cmp(U"data", token3) &&
+		!token_cmp(U"data", token4)
 	);
 
 	free(token1);
@@ -217,11 +217,11 @@ TEST(token_cmp_match_exact_strings_only, {
 })
 
 TEST(token_str, {
-	const wchar_t *code=L"left right";
+	const char32_t *code=U"left right";
 	token_t *token=tokenize(code);
-	wchar_t *buf=token_str(token);
+	char32_t *buf=token_str(token);
 
-	const bool pass=(wcscmp(buf, L"left")==0);
+	const bool pass=c32scmp(buf, U"left");
 
 	free(buf);
 	free_tokens(token);

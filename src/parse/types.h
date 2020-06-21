@@ -8,14 +8,14 @@
 #include "../../src/common/malloc.h"
 
 typedef struct type_t {
-	const wchar_t *name;
+	const char32_t *name;
 	size_t bytes;
 
 	struct type_t *next;
 } type_t;
 
 struct type_t TYPES_AVAILABLE = {
-	.name=L"",
+	.name=U"",
 	.bytes=0,
 	.next=NULL
 };
@@ -26,12 +26,12 @@ Creates a new type named `type` that allocates `bytes` bytes.
 Returns false if a type called `name` already exists, and was not inserted.
 Returns true if the type `name` was inserted.
 */
-bool make_new_type(const wchar_t *name, size_t bytes) {
+bool make_new_type(const char32_t *name, size_t bytes) {
 	type_t *current=&TYPES_AVAILABLE;
 	type_t *last=current;
 
 	while (current) {
-		if (wcscmp(current->name, name)==0) {
+		if (c32scmp(current->name, name)) {
 			return false;
 		}
 		last=current;
@@ -53,11 +53,11 @@ bool make_new_type(const wchar_t *name, size_t bytes) {
 /*
 Returns pointer to type with name `name`.
 */
-type_t *find_type(const wchar_t *name) {
+type_t *find_type(const char32_t *name) {
 	type_t *head=&TYPES_AVAILABLE;
 
 	while (head!=NULL) {
-		if (wcscmp(name, head->name)==0) {
+		if (c32scmp(name, head->name)) {
 			return head;
 		}
 		head=head->next;
@@ -91,9 +91,9 @@ Calling this function will reset all types defined in `TYPES_AVAILABLE`.
 void make_default_types(void) {
 	free_types();
 
-	make_new_type(L"bool", 1);
-	make_new_type(L"int", 8);
-	make_new_type(L"float", 16);
-	make_new_type(L"char", sizeof(wchar_t));
-	make_new_type(L"str", sizeof(wchar_t*));
+	make_new_type(U"bool", 1);
+	make_new_type(U"int", 8);
+	make_new_type(U"float", 16);
+	make_new_type(U"char", sizeof(char32_t));
+	make_new_type(U"str", sizeof(char32_t*));
 }

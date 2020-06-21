@@ -1,8 +1,10 @@
 #pragma once
 
 #include <stdbool.h>
-#include <wchar.h>
+#include <uchar.h>
 #include <wctype.h>
+
+#include "str.h"
 
 /*
 Returns true if `wc` matches a wegex group or a single character.
@@ -10,14 +12,14 @@ Returns true if `wc` matches a wegex group or a single character.
 If char at `begin` is `'\n'`, then return whether `wc` is a number or not.
 If char at `begin` is `'\b'`, then return whether `wc` is a hexadecimal number (byte) or not.
 If char at `begin` is `'\a'`, then return whether `wc` is an ASCII alpha character: `A-Z`, `a-z`
-If char at `begin` is `'\f'`, then return whether `wc` is an alphanumeric character: `0-9`, `A-Z`, `a-z`, or locale specific alphanumeric character.
+If char at `begin` is `'\f'`, then return whether `wc` is an alphanumeric character: `0-9`, `A-Z`, `a-z`
 
 If char at `begin` is `'['`, then return wether `wc` matches any character within `begin` and `end`.
 
 Else, return wether `wc` and the char at `begin` are equal.
 */
-bool wegex_wc_cmp(const wchar_t *begin, const wchar_t *end, wchar_t wc) {
-	if (*begin==L'[') {
+bool wegex_wc_cmp(const char32_t *begin, const char32_t *end, char32_t wc) {
+	if (*begin==U'[') {
 		begin++;
 		while (begin!=end) {
 			if (wegex_wc_cmp(begin, end, wc)) {
@@ -27,19 +29,19 @@ bool wegex_wc_cmp(const wchar_t *begin, const wchar_t *end, wchar_t wc) {
 		}
 		return false;
 	}
-	if (*begin==L'\n') {
+	if (*begin==U'\n') {
 		return iswdigit((wint_t)wc);
 	}
-	if (*begin==L'\b') {
+	if (*begin==U'\b') {
 		return iswxdigit((wint_t)wc);
 	}
-	if (*begin==L'\a') {
+	if (*begin==U'\a') {
 		return (
-			(wc>=L'A' && wc<=L'Z') ||
-			(wc>=L'a' && wc<=L'z')
+			(wc>=U'A' && wc<=U'Z') ||
+			(wc>=U'a' && wc<=U'z')
 		);
 	}
-	if (*begin==L'\f') {
+	if (*begin==U'\f') {
 		return iswalnum((wint_t)wc);
 	}
 	return *begin==wc;
@@ -51,12 +53,12 @@ Returns a pointer to the next searchable wegex group.
 If `wegex` is pointing to a `'['` character, return the corresponding `']'`.
 Else, return the passed wegex.
 */
-const wchar_t *find_next_wegex(const wchar_t* wegex) {
-	if (*wegex!=L'[') {
+const char32_t *find_next_wegex(const char32_t* wegex) {
+	if (*wegex!=U'[') {
 		return wegex;
 	}
 
-	const wchar_t *bracket=wcschr(wegex, L']');
+	const char32_t *bracket=c32schr(wegex, U']');
 
 	if (bracket!=NULL) {
 		return bracket;
@@ -73,11 +75,11 @@ Returns true if the `wegex` string matches the `match` string.
 * "wegex" strings must match exactly, as in, they are like doing `^x$` in regex.
 * Character groups can be used, for example, `+[123]+[abc]` matches `"321cba"`.
 */
-bool wegex_match(const wchar_t *wegex, const wchar_t *match) {
-	const wchar_t *wegex_end=wegex;
+bool wegex_match(const char32_t *wegex, const char32_t *match) {
+	const char32_t *wegex_end=wegex;
 
-	while (*wegex!=L'\0' && *match!=L'\0') {
-		if (*wegex==L'*') {
+	while (*wegex!=U'\0' && *match!=U'\0') {
+		if (*wegex==U'*') {
 			wegex++;
 			wegex_end=find_next_wegex(wegex);
 
@@ -86,7 +88,7 @@ bool wegex_match(const wchar_t *wegex, const wchar_t *match) {
 			}
 		}
 
-		else if (*wegex==L'+') {
+		else if (*wegex==U'+') {
 			wegex++;
 			wegex_end=find_next_wegex(wegex);
 
@@ -100,7 +102,7 @@ bool wegex_match(const wchar_t *wegex, const wchar_t *match) {
 			}
 		}
 
-		else if (*wegex==L'?') {
+		else if (*wegex==U'?') {
 			wegex++;
 			wegex_end=find_next_wegex(wegex);
 
@@ -120,8 +122,8 @@ bool wegex_match(const wchar_t *wegex, const wchar_t *match) {
 		wegex=wegex_end + 1;
 	}
 
-	while (*wegex==L'?' || *wegex==L'*') {
-		const wchar_t *tmp=find_next_wegex(wegex + 1) + 1;
+	while (*wegex==U'?' || *wegex==U'*') {
+		const char32_t *tmp=find_next_wegex(wegex + 1) + 1;
 		if (tmp!=wegex) {
 			wegex=tmp;
 		}

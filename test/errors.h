@@ -17,19 +17,19 @@ TEST(errors_not_null, {
 TEST(is_error_msg_setup, {
 	ERROR_MSG_LAST=NULL;
 
-	is_error_msg(L"anything");
+	is_error_msg(U"anything");
 
 	return (
 		*ERROR_MSG_LAST!=NULL &&
-		*(ERROR_MSG_LAST + 1)[0]==L'\0'
+		*(ERROR_MSG_LAST + 1)[0]==U'\0'
 	);
 })
 
 TEST(is_error_msg, {
 	return (
-		is_error_msg(L"invalid input") &&
+		is_error_msg(U"invalid input") &&
 		is_error_msg(ERROR_MSG[ERROR_INVALID_INPUT]) &&
-		!is_error_msg(L"not an error msg")
+		!is_error_msg(U"not an error msg")
 	);
 })
 

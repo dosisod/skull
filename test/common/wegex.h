@@ -6,148 +6,148 @@
 
 TEST(no_modifiers, {
 	return (
-		wegex_match(L"abc", L"abc") &&
-		!wegex_match(L"abc", L"abcd") &&
-		!wegex_match(L"abc", L"a")
+		wegex_match(U"abc", U"abc") &&
+		!wegex_match(U"abc", U"abcd") &&
+		!wegex_match(U"abc", U"a")
 	);
 })
 
 TEST(star_modifier, {
 	return (
-		wegex_match(L"*x", L"x") &&
-		wegex_match(L"*x", L"xxx") &&
-		wegex_match(L"*xa", L"a") &&
-		wegex_match(L"*xa", L"xxxxa") &&
-		!wegex_match(L"*x", L"xa") &&
-		wegex_match(L"*x", L"")
+		wegex_match(U"*x", U"x") &&
+		wegex_match(U"*x", U"xxx") &&
+		wegex_match(U"*xa", U"a") &&
+		wegex_match(U"*xa", U"xxxxa") &&
+		!wegex_match(U"*x", U"xa") &&
+		wegex_match(U"*x", U"")
 	);
 })
 
 TEST(plus_modifier, {
 	return (
-		wegex_match(L"+x", L"x") &&
-		wegex_match(L"+x", L"xxx") &&
-		!wegex_match(L"+xa", L"a") &&
-		!wegex_match(L"+x", L"xa") &&
-		!wegex_match(L"+x", L"")
+		wegex_match(U"+x", U"x") &&
+		wegex_match(U"+x", U"xxx") &&
+		!wegex_match(U"+xa", U"a") &&
+		!wegex_match(U"+x", U"xa") &&
+		!wegex_match(U"+x", U"")
 	);
 })
 
 TEST(ternary_modifier, {
 	return (
-		wegex_match(L"?x", L"x") &&
-		wegex_match(L"?xa", L"xa") &&
-		wegex_match(L"?xa", L"a") &&
-		wegex_match(L"?x", L"")
+		wegex_match(U"?x", U"x") &&
+		wegex_match(U"?xa", U"xa") &&
+		wegex_match(U"?xa", U"a") &&
+		wegex_match(U"?x", U"")
 	);
 })
 
 TEST(charset_syntax, {
 	return (
-		wegex_match(L"+[abc]", L"a") &&
-		wegex_match(L"+[abc]", L"b") &&
-		wegex_match(L"+[abc]", L"c") &&
-		wegex_match(L"+[abc]", L"aabbcc") &&
-		!wegex_match(L"+[abc]", L"d") &&
-		!wegex_match(L"+[abc]", L"ax")
+		wegex_match(U"+[abc]", U"a") &&
+		wegex_match(U"+[abc]", U"b") &&
+		wegex_match(U"+[abc]", U"c") &&
+		wegex_match(U"+[abc]", U"aabbcc") &&
+		!wegex_match(U"+[abc]", U"d") &&
+		!wegex_match(U"+[abc]", U"ax")
 	);
 })
 
 TEST(wegex_number_match, {
 	return (
-		wegex_match(L"\n", L"0") &&
-		wegex_match(L"\n", L"1") &&
-		wegex_match(L"\n", L"2") &&
-		wegex_match(L"\n", L"3") &&
-		wegex_match(L"\n", L"4") &&
-		wegex_match(L"\n", L"5") &&
-		wegex_match(L"\n", L"6") &&
-		wegex_match(L"\n", L"7") &&
-		wegex_match(L"\n", L"8") &&
-		wegex_match(L"\n", L"9") &&
-		wegex_match(L"+\n", L"1234") &&
-		!wegex_match(L"\n", L"abc")
+		wegex_match(U"\n", U"0") &&
+		wegex_match(U"\n", U"1") &&
+		wegex_match(U"\n", U"2") &&
+		wegex_match(U"\n", U"3") &&
+		wegex_match(U"\n", U"4") &&
+		wegex_match(U"\n", U"5") &&
+		wegex_match(U"\n", U"6") &&
+		wegex_match(U"\n", U"7") &&
+		wegex_match(U"\n", U"8") &&
+		wegex_match(U"\n", U"9") &&
+		wegex_match(U"+\n", U"1234") &&
+		!wegex_match(U"\n", U"abc")
 	);
 })
 
 TEST(wegex_hexadecimal_match, {
 	return (
-		wegex_match(L"\b", L"a") &&
-		wegex_match(L"\b", L"b") &&
-		wegex_match(L"\b", L"c") &&
-		wegex_match(L"\b", L"d") &&
-		wegex_match(L"\b", L"e") &&
-		wegex_match(L"\b", L"f") &&
-		wegex_match(L"\b", L"A") &&
-		wegex_match(L"\b", L"B") &&
-		wegex_match(L"\b", L"C") &&
-		wegex_match(L"\b", L"D") &&
-		wegex_match(L"\b", L"E") &&
-		wegex_match(L"\b", L"F") &&
-		wegex_match(L"\b", L"0") &&
-		wegex_match(L"\b", L"1") &&
-		wegex_match(L"\b", L"2") &&
-		wegex_match(L"\b", L"3") &&
-		wegex_match(L"\b", L"4") &&
-		wegex_match(L"\b", L"5") &&
-		wegex_match(L"\b", L"6") &&
-		wegex_match(L"\b", L"7") &&
-		wegex_match(L"\b", L"8") &&
-		wegex_match(L"\b", L"9") &&
-		!wegex_match(L"\b", L"z")
+		wegex_match(U"\b", U"a") &&
+		wegex_match(U"\b", U"b") &&
+		wegex_match(U"\b", U"c") &&
+		wegex_match(U"\b", U"d") &&
+		wegex_match(U"\b", U"e") &&
+		wegex_match(U"\b", U"f") &&
+		wegex_match(U"\b", U"A") &&
+		wegex_match(U"\b", U"B") &&
+		wegex_match(U"\b", U"C") &&
+		wegex_match(U"\b", U"D") &&
+		wegex_match(U"\b", U"E") &&
+		wegex_match(U"\b", U"F") &&
+		wegex_match(U"\b", U"0") &&
+		wegex_match(U"\b", U"1") &&
+		wegex_match(U"\b", U"2") &&
+		wegex_match(U"\b", U"3") &&
+		wegex_match(U"\b", U"4") &&
+		wegex_match(U"\b", U"5") &&
+		wegex_match(U"\b", U"6") &&
+		wegex_match(U"\b", U"7") &&
+		wegex_match(U"\b", U"8") &&
+		wegex_match(U"\b", U"9") &&
+		!wegex_match(U"\b", U"z")
 	);
 })
 
 TEST(wegex_ascii_alpha_match, {
 	return (
-		wegex_match(L"\a", L"a") &&
-		wegex_match(L"\a", L"b") &&
-		wegex_match(L"\a", L"c") &&
-		wegex_match(L"\a", L"x") &&
-		wegex_match(L"\a", L"y") &&
-		wegex_match(L"\a", L"z") &&
-		wegex_match(L"\a", L"A") &&
-		wegex_match(L"\a", L"B") &&
-		wegex_match(L"\a", L"C") &&
-		wegex_match(L"\a", L"X") &&
-		wegex_match(L"\a", L"Y") &&
-		wegex_match(L"\a", L"Z") &&
-		!wegex_match(L"\a", L"0")
+		wegex_match(U"\a", U"a") &&
+		wegex_match(U"\a", U"b") &&
+		wegex_match(U"\a", U"c") &&
+		wegex_match(U"\a", U"x") &&
+		wegex_match(U"\a", U"y") &&
+		wegex_match(U"\a", U"z") &&
+		wegex_match(U"\a", U"A") &&
+		wegex_match(U"\a", U"B") &&
+		wegex_match(U"\a", U"C") &&
+		wegex_match(U"\a", U"X") &&
+		wegex_match(U"\a", U"Y") &&
+		wegex_match(U"\a", U"Z") &&
+		!wegex_match(U"\a", U"0")
 	);
 })
 
 TEST(wegex_full_alpha_match, {
 	return (
-		wegex_match(L"\f", L"a") &&
-		wegex_match(L"\f", L"b") &&
-		wegex_match(L"\f", L"c") &&
-		wegex_match(L"\f", L"x") &&
-		wegex_match(L"\f", L"y") &&
-		wegex_match(L"\f", L"z") &&
-		wegex_match(L"\f", L"A") &&
-		wegex_match(L"\f", L"B") &&
-		wegex_match(L"\f", L"C") &&
-		wegex_match(L"\f", L"X") &&
-		wegex_match(L"\f", L"Y") &&
-		wegex_match(L"\f", L"Z") &&
-		wegex_match(L"\f", L"ß") &&
-		wegex_match(L"\f", L"0") &&
-		wegex_match(L"\f", L"9") &&
-		!wegex_match(L"\f", L"!")
+		wegex_match(U"\f", U"a") &&
+		wegex_match(U"\f", U"b") &&
+		wegex_match(U"\f", U"c") &&
+		wegex_match(U"\f", U"x") &&
+		wegex_match(U"\f", U"y") &&
+		wegex_match(U"\f", U"z") &&
+		wegex_match(U"\f", U"A") &&
+		wegex_match(U"\f", U"B") &&
+		wegex_match(U"\f", U"C") &&
+		wegex_match(U"\f", U"X") &&
+		wegex_match(U"\f", U"Y") &&
+		wegex_match(U"\f", U"Z") &&
+		wegex_match(U"\f", U"ß") &&
+		wegex_match(U"\f", U"0") &&
+		wegex_match(U"\f", U"9") &&
+		!wegex_match(U"\f", U"!")
 	);
 })
 
 TEST(wegex_optional_modifiers_at_eol, {
 	return (
-		wegex_match(L"x?y", L"xy") &&
-		wegex_match(L"x?y", L"x") &&
-		wegex_match(L"x*y", L"xyy") &&
-		wegex_match(L"x*y", L"xy") &&
-		wegex_match(L"x*y", L"x") &&
-		wegex_match(L"x?y?z", L"xyz") &&
-		wegex_match(L"x?y?z", L"xy") &&
-		wegex_match(L"x?y?z", L"xz") &&
-		wegex_match(L"x?y?z", L"x")
+		wegex_match(U"x?y", U"xy") &&
+		wegex_match(U"x?y", U"x") &&
+		wegex_match(U"x*y", U"xyy") &&
+		wegex_match(U"x*y", U"xy") &&
+		wegex_match(U"x*y", U"x") &&
+		wegex_match(U"x?y?z", U"xyz") &&
+		wegex_match(U"x?y?z", U"xy") &&
+		wegex_match(U"x?y?z", U"xz") &&
+		wegex_match(U"x?y?z", U"x")
 	);
 })
 

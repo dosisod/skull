@@ -4,14 +4,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <wchar.h>
 
 #include "../common/str.h"
 #include "../common/malloc.h"
 
 typedef struct token_t {
-	const wchar_t *begin;
-	const wchar_t *end;
+	const char32_t *begin;
+	const char32_t *end;
 	uint8_t token_type;
 
 	struct token_t *next;
@@ -22,14 +21,14 @@ Return true if `c` is whitespace.
 
 Whitespace includes control-characters, non-printable characters, and spaces.
 */
-bool is_whitespace(wchar_t c) {
+bool is_whitespace(char32_t c) {
 	return (c <= 32);
 }
 
 /*
 Return true if `c` is a double or single quote.
 */
-bool is_quote(wchar_t c) {
+bool is_quote(char32_t c) {
 	return (c=='\'' || c=='\"');
 }
 
@@ -51,17 +50,17 @@ token_t *make_token(void) {
 /*
 Tokenize the passed code, returning the head to a linked list of tokens.
 */
-token_t *tokenize(const wchar_t *code) {
-	const wchar_t *code_copy=code;
+token_t *tokenize(const char32_t *code) {
+	const char32_t *code_copy=code;
 
 	token_t *head=make_token();
 
 	token_t *current=head;
 	token_t *last=current;
 
-	wchar_t quote=0;
+	char32_t quote=0;
 
-	while (*code!=L'\0') {
+	while (*code!=U'\0') {
 		if (quote!=0) {
 			if (*code==quote) {
 				quote=0;
@@ -74,7 +73,7 @@ token_t *tokenize(const wchar_t *code) {
 				current->begin=code;
 			}
 		}
-		else if (*code==L'[' || *code==L']' || *code==L',' || *code==L'\n') {
+		else if (*code==U'[' || *code==U']' || *code==U',' || *code==U'\n') {
 			if (current->begin!=NULL) {
 				current->end=code;
 
@@ -160,26 +159,26 @@ size_t token_len(const token_t *token) {
 /*
 Returns true if `str` is equal to the value of `token`.
 */
-bool token_cmp(const wchar_t *str, const token_t *token) {
+bool token_cmp(const char32_t *str, const token_t *token) {
 	const size_t len=token_len(token);
 	return (
-		wcslen(str)==len &&
-		wcsncmp(str, token->begin, len)==0
+		c32slen(str)==len &&
+		c32sncmp(str, token->begin, len)
 	);
 }
 
 /*
 Return a copy of the string data inside `token`.
 */
-wchar_t *token_str(const token_t *token) {
+char32_t *token_str(const token_t *token) {
 	const size_t len=token_len(token);
-	wchar_t *str=malloc((len + 1) * sizeof(wchar_t));
-	wcslcpy(str, token->begin, len + 1);
+	char32_t *str=malloc((len + 1) * sizeof(char32_t));
+	c32slcpy(str, token->begin, len + 1);
 
 	return str;
 }
 
 #define MAKE_TOKEN_BUF(buf, token) \
 	const size_t buf##_len=token_len(token); \
-	wchar_t buf[buf##_len + 1]; \
-	wcslcpy(buf, (token)->begin, buf##_len + 1)
+	char32_t buf[buf##_len + 1]; \
+	c32slcpy(buf, (token)->begin, buf##_len + 1)

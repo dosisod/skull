@@ -29,14 +29,14 @@ context_t *make_context(void) {
 /*
 Returns pointer to variable with matching `name` if found, else `NULL`
 */
-variable_t *context_find_name(const context_t *ctx, const wchar_t *name) {
+variable_t *context_find_name(const context_t *ctx, const char32_t *name) {
 	if (ctx==NULL) {
 		return NULL;
 	}
 
 	size_t tmp=0;
 	while (tmp < ctx->vars_used) {
-		if (wcscmp(ctx->vars[tmp]->name, name)==0) {
+		if (c32scmp(ctx->vars[tmp]->name, name)) {
 			return ctx->vars[tmp];
 		}
 		tmp++;
@@ -55,7 +55,7 @@ bool context_contains_var(context_t *ctx, const variable_t *var) {
 	size_t tmp=0;
 
 	while (tmp < ctx->vars_used) {
-		if (wcscmp(ctx->vars[tmp]->name, var->name)==0) { // NOLINT
+		if (c32scmp(ctx->vars[tmp]->name, var->name)) { // NOLINT
 			return true;
 		}
 		tmp++;

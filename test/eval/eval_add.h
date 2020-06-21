@@ -5,8 +5,8 @@
 
 TEST(adding_2_ints, {
 	make_default_types();
-	variable_t *var1=make_variable(L"int", L"var1", false);
-	variable_t *var2=make_variable(L"int", L"var2", false);
+	variable_t *var1=make_variable(U"int", U"var1", false);
+	variable_t *var2=make_variable(U"int", U"var2", false);
 
 	const int64_t num=1;
 	variable_write(var1, &num);
@@ -28,8 +28,8 @@ TEST(adding_2_ints, {
 
 TEST(adding_2_floats, {
 	make_default_types();
-	variable_t *var1=make_variable(L"float", L"var1", false);
-	variable_t *var2=make_variable(L"float", L"var2", false);
+	variable_t *var1=make_variable(U"float", U"var1", false);
+	variable_t *var2=make_variable(U"float", U"var2", false);
 
 	const long double num=1.0;
 	variable_write(var1, &num);
@@ -52,8 +52,8 @@ TEST(adding_2_floats, {
 
 TEST(adding_vars_with_different_types_fail, {
 	make_default_types();
-	variable_t *var1=make_variable(L"int", L"var1", false);
-	variable_t *var2=make_variable(L"float", L"var2", false);
+	variable_t *var1=make_variable(U"int", U"var1", false);
+	variable_t *var2=make_variable(U"float", U"var2", false);
 	variable_t *var3=eval_add(var1, var2);
 
 	const bool pass=(var3==NULL);

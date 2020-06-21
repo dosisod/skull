@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include <wchar.h>
+#include <uchar.h>
 
 #define ERROR_INVALID_INPUT 0
 #define ERROR_VAR_ALREADY_DEFINED 1
@@ -10,28 +10,28 @@
 #define ERROR_TYPE_MISMATCH 3
 #define ERROR_OVERFLOW 4
 
-const wchar_t *ERROR_MSG[] = {
-	L"invalid input",
-	L"variable already defined",
-	L"cannot assign to const",
-	L"error, type mismatch",
-	L"overflow occurred",
-	L""
+const char32_t *ERROR_MSG[] = {
+	U"invalid input",
+	U"variable already defined",
+	U"cannot assign to const",
+	U"error, type mismatch",
+	U"overflow occurred",
+	U""
 };
-const wchar_t **ERROR_MSG_LAST=NULL;
+const char32_t **ERROR_MSG_LAST=NULL;
 
 /*
 Returns if a given string is an error msg.
 */
-bool is_error_msg(const wchar_t *str) {
+bool is_error_msg(const char32_t *str) {
 	if (str==NULL) {
 		return false;
 	}
 
 	if (ERROR_MSG_LAST==NULL) {
-		const wchar_t **head=ERROR_MSG;
+		const char32_t **head=ERROR_MSG;
 
-		while (*head[0]!=L'\0') {
+		while (*head[0]!=U'\0') {
 			ERROR_MSG_LAST=head;
 			head++;
 		}

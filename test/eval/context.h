@@ -20,8 +20,8 @@ TEST(make_context, {
 TEST(context_contains_var, {
 	context_t *ctx=make_context();
 	make_default_types();
-	variable_t *var1=make_variable(L"int", L"x", true);
-	variable_t *var2=make_variable(L"int", L"y", true);
+	variable_t *var1=make_variable(U"int", U"x", true);
+	variable_t *var2=make_variable(U"int", U"y", true);
 
 	context_add_var(ctx, var1);
 
@@ -41,13 +41,13 @@ TEST(context_contains_var, {
 TEST(context_find_name, {
 	context_t *ctx=make_context();
 	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", true);
+	variable_t *var=make_variable(U"int", U"x", true);
 
 	context_add_var(ctx, var);
 
 	const bool pass=(
-		context_find_name(ctx, L"x")==var &&
-		context_find_name(ctx, L"y")==NULL
+		context_find_name(ctx, U"x")==var &&
+		context_find_name(ctx, U"y")==NULL
 	);
 
 	free_types();
@@ -60,7 +60,7 @@ TEST(context_find_name, {
 TEST(add_vars_to_context, {
 	context_t *ctx=make_context();
 	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", true);
+	variable_t *var=make_variable(U"int", U"x", true);
 
 	context_add_var(ctx, var);
 
@@ -79,8 +79,8 @@ TEST(add_vars_to_context, {
 TEST(cannot_add_same_varname_to_context, {
 	context_t *ctx=make_context();
 	make_default_types();
-	variable_t *var1=make_variable(L"int", L"x", true);
-	variable_t *var2=make_variable(L"int", L"x", true);
+	variable_t *var1=make_variable(U"int", U"x", true);
+	variable_t *var2=make_variable(U"int", U"x", true);
 
 	const bool added_var1=context_add_var(ctx, var1);
 	const bool added_var2=context_add_var(ctx, var2);
@@ -120,13 +120,13 @@ TEST(add_nested_context, {
 TEST(cannot_add_same_varname_to_sub_context, {
 	context_t *ctx=make_context();
 	make_default_types();
-	variable_t *var1=make_variable(L"int", L"x", true);
+	variable_t *var1=make_variable(U"int", U"x", true);
 	context_add_var(ctx, var1);
 
 	context_t *ctx_new=make_context();
 	context_add_ctx(ctx, ctx_new);
 
-	variable_t *var2=make_variable(L"int", L"x", true); // NOLINT
+	variable_t *var2=make_variable(U"int", U"x", true); // NOLINT
 	context_add_var(ctx_new, var2);
 
 	const bool pass=(
@@ -146,7 +146,7 @@ TEST(cannot_add_same_varname_to_sub_context, {
 TEST(free_context, {
 	context_t *ctx=make_context();
 	make_default_types();
-	variable_t *var=make_variable(L"int", L"x", true);
+	variable_t *var=make_variable(U"int", U"x", true);
 
 	context_add_var(ctx, var);
 
@@ -157,7 +157,7 @@ TEST(free_context, {
 })
 
 TEST(context_find_name_when_null, {
-	return context_find_name(NULL, L"anything")==NULL;
+	return context_find_name(NULL, U"anything")==NULL;
 })
 
 void context_test_self(bool *pass) {

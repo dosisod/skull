@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <uchar.h>
-#include <wchar.h>
 
 //Android ships with the below functions, dont redefine if thats the case.
 //Other platforms may need to be added in the future
@@ -20,32 +19,7 @@ char *strlcpy(char *dest, const char *src, size_t n) {
 	return ret;
 }
 
-/*
-Make a heap allocated version of `str`.
-
-The result of this function must be freed.
-*/
-wchar_t *wcsdup(const wchar_t *str) {
-	size_t len=wcslen(str);
-
-	wchar_t *ret=malloc(sizeof(wchar_t) * (len + 1));
-	wcsncpy(ret, str, len);
-	ret[len]=L'\0';
-
-	return ret;
-}
-
 #endif
-
-/*
-Similar to above `strlcpy`, but for `wchar_t` types.
-*/
-wchar_t *wcslcpy(wchar_t *dest, const wchar_t *src, size_t n) {
-	wchar_t *ret=wcsncpy(dest, src, n - 1);
-	dest[n - 1]=L'\0';
-
-	return ret;
-}
 
 /*
 char32_t equivalent of `strncpy`, does not add NULL terminator.
@@ -67,7 +41,7 @@ Similar to above `strlcpy`, but for `char32_t` types.
 */
 void c32slcpy(char32_t *dest, const char32_t *src, size_t n) {
 	c32sncpy(dest, src, n);
-	dest[n - 1]=L'\0';
+	dest[n - 1]=U'\0';
 }
 
 /*
@@ -104,6 +78,10 @@ Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 The result of this function must be freed.
 */
 char *c32stombs(const char32_t *str) {
+	if (str==NULL) {
+		return NULL;
+	}
+
 	//allocate the max that str could expand to
 	char *ret=malloc((c32slen(str) + 1) * MB_CUR_MAX);
 

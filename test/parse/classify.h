@@ -5,7 +5,7 @@
 
 TEST(is_type_str, {
 	make_default_types();
-	const wchar_t *code=L"int not_a_type";
+	const char32_t *code=U"int not_a_type";
 	token_t *token=tokenize(code);
 
 	MAKE_TOKEN_BUF(buf, token);
@@ -23,71 +23,71 @@ TEST(is_type_str, {
 
 TEST(is_keyword_str, {
 	return (
-		is_keyword_str(L"return") &&
-		is_keyword_str(L"mut") &&
-		!is_keyword_str(L"not_a_keyword")
+		is_keyword_str(U"return") &&
+		is_keyword_str(U"mut") &&
+		!is_keyword_str(U"not_a_keyword")
 	);
 })
 
 TEST(is_constant_integer, {
 	return (
-		is_constant_integer_str(L"123") &&
-		is_constant_integer_str(L"-123") &&
-		is_constant_integer_str(L"0x123") &&
-		is_constant_integer_str(L"0x0123456789ABCDEF") &&
-		is_constant_integer_str(L"0xabcdef") &&
-		is_constant_integer_str(L"0b10101") &&
-		is_constant_integer_str(L"0o01234567") &&
-		!is_constant_integer_str(L"0b") &&
-		!is_constant_integer_str(L"0x") &&
-		!is_constant_integer_str(L"0o") &&
-		!is_constant_integer_str(L"-") &&
-		!is_constant_integer_str(L"123aaa") &&
-		!is_constant_integer_str(L"-123aaa") &&
-		!is_constant_integer_str(L"")
+		is_constant_integer_str(U"123") &&
+		is_constant_integer_str(U"-123") &&
+		is_constant_integer_str(U"0x123") &&
+		is_constant_integer_str(U"0x0123456789ABCDEF") &&
+		is_constant_integer_str(U"0xabcdef") &&
+		is_constant_integer_str(U"0b10101") &&
+		is_constant_integer_str(U"0o01234567") &&
+		!is_constant_integer_str(U"0b") &&
+		!is_constant_integer_str(U"0x") &&
+		!is_constant_integer_str(U"0o") &&
+		!is_constant_integer_str(U"-") &&
+		!is_constant_integer_str(U"123aaa") &&
+		!is_constant_integer_str(U"-123aaa") &&
+		!is_constant_integer_str(U"")
 	);
 })
 
 TEST(is_constant_float, {
 	return (
-		is_constant_float_str(L"123.0") &&
-		is_constant_float_str(L"-123.0") &&
-		is_constant_float_str(L"0.0") &&
-		!is_constant_float_str(L"123") &&
-		!is_constant_float_str(L"123.") &&
-		!is_constant_float_str(L".123") &&
-		!is_constant_float_str(L"123aaa")
+		is_constant_float_str(U"123.0") &&
+		is_constant_float_str(U"-123.0") &&
+		is_constant_float_str(U"0.0") &&
+		!is_constant_float_str(U"123") &&
+		!is_constant_float_str(U"123.") &&
+		!is_constant_float_str(U".123") &&
+		!is_constant_float_str(U"123aaa")
 	);
 })
 
 TEST(is_constant_bool, {
 	return (
-		is_constant_bool_str(L"true") &&
-		is_constant_bool_str(L"false") &&
-		!is_constant_bool_str(L"not_bool")
+		is_constant_bool_str(U"true") &&
+		is_constant_bool_str(U"false") &&
+		!is_constant_bool_str(U"not_bool")
 	);
 })
 
 TEST(is_constant_char, {
 	return (
-		is_constant_char_str(L"'x'") &&
-		!is_constant_char_str(L"'x '") &&
-		!is_constant_char_str(L"''")
+		is_constant_char_str(U"'x'") &&
+		!is_constant_char_str(U"'x '") &&
+		!is_constant_char_str(U"''")
 	);
 })
 
 TEST(is_constant_str, {
 	return (
-		is_constant_str_str(L"\"\"") &&
-		is_constant_str_str(L"\"x\"") &&
-		is_constant_str_str(L"\"xyz\"") &&
-		!is_constant_str_str(L"\"bad") &&
-		!is_constant_str_str(L"bad\"")
+		is_constant_str_str(U"\"\"") &&
+		is_constant_str_str(U"\"x\"") &&
+		is_constant_str_str(U"\"xyz\"") &&
+		!is_constant_str_str(U"\"bad") &&
+		!is_constant_str_str(U"bad\"")
 	);
 })
 
 #define TEST_CLASSIFY_TOKEN(str, expected) \
-	const wchar_t *code=str; \
+	const char32_t *code=str; \
 	token_t *token=tokenize(code); \
 	classify_token(token); \
 	const bool pass=(token->token_type==(expected)); \
@@ -95,63 +95,63 @@ TEST(is_constant_str, {
 	return pass;
 
 TEST(bracket_token_open, {
-	TEST_CLASSIFY_TOKEN(L"[", TOKEN_BRACKET_OPEN);
+	TEST_CLASSIFY_TOKEN(U"[", TOKEN_BRACKET_OPEN);
 })
 
 TEST(bracket_token_close, {
-	TEST_CLASSIFY_TOKEN(L"]", TOKEN_BRACKET_CLOSE);
+	TEST_CLASSIFY_TOKEN(U"]", TOKEN_BRACKET_CLOSE);
 })
 
 TEST(token_newline, {
-	TEST_CLASSIFY_TOKEN(L"\n", TOKEN_NEWLINE);
+	TEST_CLASSIFY_TOKEN(U"\n", TOKEN_NEWLINE);
 })
 
 TEST(token_comma, {
-	TEST_CLASSIFY_TOKEN(L",", TOKEN_COMMA);
+	TEST_CLASSIFY_TOKEN(U",", TOKEN_COMMA);
 })
 
 TEST(token_mut_kw, {
-	TEST_CLASSIFY_TOKEN(L"mut", TOKEN_KW_MUT);
+	TEST_CLASSIFY_TOKEN(U"mut", TOKEN_KW_MUT);
 })
 
 TEST(token_return_kw, {
-	TEST_CLASSIFY_TOKEN(L"return", TOKEN_KW_RETURN);
+	TEST_CLASSIFY_TOKEN(U"return", TOKEN_KW_RETURN);
 })
 
 TEST(token_or_kw, {
-	TEST_CLASSIFY_TOKEN(L"or", TOKEN_KW_OR);
+	TEST_CLASSIFY_TOKEN(U"or", TOKEN_KW_OR);
 })
 
 TEST(token_and_kw, {
-	TEST_CLASSIFY_TOKEN(L"and", TOKEN_KW_AND);
+	TEST_CLASSIFY_TOKEN(U"and", TOKEN_KW_AND);
 })
 
 TEST(token_not_kw, {
-	TEST_CLASSIFY_TOKEN(L"not", TOKEN_KW_NOT);
+	TEST_CLASSIFY_TOKEN(U"not", TOKEN_KW_NOT);
 })
 
 TEST(token_equal_oper, {
-	TEST_CLASSIFY_TOKEN(L"=", TOKEN_OPER_EQUAL);
+	TEST_CLASSIFY_TOKEN(U"=", TOKEN_OPER_EQUAL);
 })
 
 TEST(token_equal_equal_oper, {
-	TEST_CLASSIFY_TOKEN(L"==", TOKEN_OPER_EQUAL_EQUAL);
+	TEST_CLASSIFY_TOKEN(U"==", TOKEN_OPER_EQUAL_EQUAL);
 })
 
 TEST(token_not_equal_oper, {
-	TEST_CLASSIFY_TOKEN(L"!=", TOKEN_OPER_NOT_EQUAL);
+	TEST_CLASSIFY_TOKEN(U"!=", TOKEN_OPER_NOT_EQUAL);
 })
 
 TEST(token_auto_equal_oper, {
-	TEST_CLASSIFY_TOKEN(L":=", TOKEN_OPER_AUTO_EQUAL);
+	TEST_CLASSIFY_TOKEN(U":=", TOKEN_OPER_AUTO_EQUAL);
 })
 
 TEST(token_plus_oper, {
-	TEST_CLASSIFY_TOKEN(L"+", TOKEN_OPER_PLUS);
+	TEST_CLASSIFY_TOKEN(U"+", TOKEN_OPER_PLUS);
 })
 
 TEST(token_type, {
-	const wchar_t *code=L"int not_a_type";
+	const char32_t *code=U"int not_a_type";
 	token_t *t=tokenize(code);
 	make_default_types();
 	classify_tokens(t);
@@ -167,29 +167,29 @@ TEST(token_type, {
 })
 
 TEST(token_function, {
-	TEST_CLASSIFY_TOKEN(L"->", TOKEN_FUNCTION);
+	TEST_CLASSIFY_TOKEN(U"->", TOKEN_FUNCTION);
 })
 
 TEST(token_unknown, {
-	TEST_CLASSIFY_TOKEN(L"123garbage_value", TOKEN_UNKNOWN);
+	TEST_CLASSIFY_TOKEN(U"123garbage_value", TOKEN_UNKNOWN);
 })
 
 TEST(token_integer_constant, {
-	TEST_CLASSIFY_TOKEN(L"1234", TOKEN_INT_CONST);
+	TEST_CLASSIFY_TOKEN(U"1234", TOKEN_INT_CONST);
 })
 
 TEST(token_float_constant, {
-	TEST_CLASSIFY_TOKEN(L"1234.0", TOKEN_FLOAT_CONST);
+	TEST_CLASSIFY_TOKEN(U"1234.0", TOKEN_FLOAT_CONST);
 })
 
 TEST(token_bool_constant, {
-	TEST_CLASSIFY_TOKEN(L"true", TOKEN_BOOL_CONST);
+	TEST_CLASSIFY_TOKEN(U"true", TOKEN_BOOL_CONST);
 })
 
 #undef TEST_CLASSIFY_TOKEN
 
 TEST(token_char_constant, {
-	const wchar_t *code=L"'x'";
+	const char32_t *code=U"'x'";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
@@ -204,7 +204,7 @@ TEST(token_char_constant, {
 })
 
 TEST(token_str_constant, {
-	const wchar_t *code=L"\"xyz\"";
+	const char32_t *code=U"\"xyz\"";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
@@ -220,25 +220,25 @@ TEST(token_str_constant, {
 
 TEST(is_valid_identifier, {
 	return (
-		is_valid_identifier_str(L"a") &&
-		is_valid_identifier_str(L"z") &&
-		is_valid_identifier_str(L"A") &&
-		is_valid_identifier_str(L"Z") &&
-		!is_valid_identifier_str(L"0") &&
-		!is_valid_identifier_str(L"_") &&
-		!is_valid_identifier_str(L"~") &&
-		is_valid_identifier_str(L"a:") &&
-		is_valid_identifier_str(L"abc:") &&
-		!is_valid_identifier_str(L"1var") &&
-		is_valid_identifier_str(L"var1") &&
-		is_valid_identifier_str(L"x1") &&
-		is_valid_identifier_str(L"x_") &&
-		!is_valid_identifier_str(L"_x")
+		is_valid_identifier_str(U"a") &&
+		is_valid_identifier_str(U"z") &&
+		is_valid_identifier_str(U"A") &&
+		is_valid_identifier_str(U"Z") &&
+		!is_valid_identifier_str(U"0") &&
+		!is_valid_identifier_str(U"_") &&
+		!is_valid_identifier_str(U"~") &&
+		is_valid_identifier_str(U"a:") &&
+		is_valid_identifier_str(U"abc:") &&
+		!is_valid_identifier_str(U"1var") &&
+		is_valid_identifier_str(U"var1") &&
+		is_valid_identifier_str(U"x1") &&
+		is_valid_identifier_str(U"x_") &&
+		!is_valid_identifier_str(U"_x")
 	);
 })
 
 TEST(is_valid_identifier_token, {
-	token_t *t=tokenize(L"x");
+	token_t *t=tokenize(U"x");
 	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_IDENTIFIER);
@@ -248,7 +248,7 @@ TEST(is_valid_identifier_token, {
 })
 
 TEST(new_identifier_clip_trailing_colon, {
-	const wchar_t *code=L"x: int = 0";
+	const char32_t *code=U"x: int = 0";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
@@ -263,7 +263,7 @@ TEST(new_identifier_clip_trailing_colon, {
 
 TEST(identifier_cannot_be_type, {
 	make_default_types();
-	const wchar_t *code=L"int: int = 0";
+	const char32_t *code=U"int: int = 0";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
@@ -279,7 +279,7 @@ TEST(identifier_cannot_be_type, {
 
 TEST(identifier_cannot_be_keyword, {
 	make_default_types();
-	const wchar_t *code=L"mut: int = 0";
+	const char32_t *code=U"mut: int = 0";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
@@ -294,7 +294,7 @@ TEST(identifier_cannot_be_keyword, {
 })
 
 TEST(token_classifier, {
-	const wchar_t *code=L"[ ]";
+	const char32_t *code=U"[ ]";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 

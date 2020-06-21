@@ -12,11 +12,11 @@ Returns `true` or `false` if token is `"true"` or `"false"`.
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-bool eval_bool_true(const token_t *token, const wchar_t **error) {
-	if (token_cmp(L"true", token)) {
+bool eval_bool_true(const token_t *token, const char32_t **error) {
+	if (token_cmp(U"true", token)) {
 		return true;
 	}
-	if (token_cmp(L"false", token)) {
+	if (token_cmp(U"false", token)) {
 		return false;
 	}
 
@@ -38,7 +38,7 @@ Examples include:
 
 If an error occurs on either side, `error` is set to non `NULL`.
 */
-bool eval_equality_comparison(const token_t *token, const wchar_t **error) {
+bool eval_equality_comparison(const token_t *token, const char32_t **error) {
 	if ((token->token_type != token->next->next->token_type) || token->token_type==TOKEN_UNKNOWN) {
 		*error=ERROR_MSG[ERROR_TYPE_MISMATCH];
 		return false;
@@ -48,10 +48,10 @@ bool eval_equality_comparison(const token_t *token, const wchar_t **error) {
 	MAKE_TOKEN_BUF(rhs, token->next->next);
 
 	if (token->next->token_type==TOKEN_OPER_EQUAL_EQUAL) {
-		return wcscmp(lhs, rhs)==0;
+		return c32scmp(lhs, rhs);
 	}
 	if (token->next->token_type==TOKEN_OPER_NOT_EQUAL) {
-		return wcscmp(lhs, rhs)!=0;
+		return !c32scmp(lhs, rhs);
 	}
 
 	*error=ERROR_MSG[ERROR_TYPE_MISMATCH];
@@ -73,14 +73,14 @@ Examples include:
 
 If an error an occurs, `error` is set to non `NULL`.
 */
-bool eval_bool(const token_t *token, const wchar_t **error) {
+bool eval_bool(const token_t *token, const char32_t **error) {
 	if (token==NULL) {
 		*error=ERROR_MSG[ERROR_TYPE_MISMATCH];
 		return false;
 	}
 
 	bool ret=false;
-	const wchar_t *err=NULL;
+	const char32_t *err=NULL;
 	if (token->next==NULL) {
 		ret=eval_bool_true(token, &err);
 	}

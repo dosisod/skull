@@ -3,7 +3,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <wchar.h>
 
 #include "../classify.h"
 #include "../tokenize.h"
@@ -128,7 +127,7 @@ if (token!=*last) { \
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-ast_node_t *make_ast_tree(const wchar_t *code) {
+ast_node_t *make_ast_tree(const char32_t *code) {
 	token_t *token=tokenize(code);
 	token_t *last;
 

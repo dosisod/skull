@@ -1,11 +1,11 @@
 # src/eval/variable.h
 
-#### `variable_t *make_variable(const wchar_t *type, const wchar_t *name, bool is_const)`
+#### `variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_const)`
 Make a variable called `name` with type `type`, and make it const if `is_const` is true.
 
 Returns `NULL` if var cannot be created, else pointer to created var.
 
-#### `const wchar_t *variable_write(const variable_t *var, const void *data)`
+#### `const char32_t *variable_write(const variable_t *var, const void *data)`
 Write `data` to `var`.
 
 If `var` is constant, return error msg, else `NULL`.
@@ -16,7 +16,7 @@ Read variable `var`s memory into `dest`.
 #### `void free_variable(variable_t *var)`
 Free a given `variable_t` variable.
 
-#### `wchar_t *fmt_var(const variable_t *var)`
+#### `char32_t *fmt_var(const variable_t *var)`
 Return string representation of a variable.
 
 The result of this function must be freed.

@@ -7,7 +7,7 @@
 #define TEST_EVAL_INT_CONVERT(str_value, expected_num, expected_error) \
 	token_t *token=tokenize(str_value); \
 	classify_tokens(token); \
-	const wchar_t *err=0; \
+	const char32_t *err=0; \
 	int64_t num=eval_integer(token, &err); \
 	const bool pass=( \
 		num==(expected_num) && \
@@ -17,35 +17,35 @@
 	return pass;
 
 TEST(convert_integer_token, {
-	TEST_EVAL_INT_CONVERT(L"1234", 1234, NULL);
+	TEST_EVAL_INT_CONVERT(U"1234", 1234, NULL);
 })
 
 TEST(convert_negative_integer_token, {
-	TEST_EVAL_INT_CONVERT(L"-1234", -1234, NULL);
+	TEST_EVAL_INT_CONVERT(U"-1234", -1234, NULL);
 })
 
 TEST(integer_overflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(L"9999999999999999999", LLONG_MAX, ERROR_MSG[ERROR_OVERFLOW]);
+	TEST_EVAL_INT_CONVERT(U"9999999999999999999", LLONG_MAX, ERROR_MSG[ERROR_OVERFLOW]);
 })
 
 TEST(integer_underflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(L"-9999999999999999999", LLONG_MIN, ERROR_MSG[ERROR_OVERFLOW]);
+	TEST_EVAL_INT_CONVERT(U"-9999999999999999999", LLONG_MIN, ERROR_MSG[ERROR_OVERFLOW]);
 })
 
 TEST(convert_hex_integer, {
-	TEST_EVAL_INT_CONVERT(L"0xff", 255, NULL);
+	TEST_EVAL_INT_CONVERT(U"0xff", 255, NULL);
 })
 
 TEST(convert_octal_integer, {
-	TEST_EVAL_INT_CONVERT(L"0o777", 0777, NULL);
+	TEST_EVAL_INT_CONVERT(U"0o777", 0777, NULL);
 })
 
 TEST(convert_binary_integer, {
-	TEST_EVAL_INT_CONVERT(L"0b1111", 15, NULL);
+	TEST_EVAL_INT_CONVERT(U"0b1111", 15, NULL);
 })
 
 TEST(non_integer_token_fails, {
-	TEST_EVAL_INT_CONVERT(L"not_an_int", 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 })
 
 #undef TEST_EVAL_INT_CONVERT

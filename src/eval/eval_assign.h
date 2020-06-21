@@ -1,7 +1,5 @@
 #pragma once
 
-#include <wchar.h>
-
 #include "../common/str.h"
 #include "../errors.h"
 #include "context.h"
@@ -16,9 +14,9 @@ Set `ctx` to allow for assigning variables to other variables.
 
 Return an error (as a string) if any occured, else `NULL`.
 */
-const wchar_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx) {
+const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx) {
 	const void *mem=NULL;
-	const wchar_t *err=NULL;
+	const char32_t *err=NULL;
 
 	if (ctx!=NULL && token->token_type==TOKEN_IDENTIFIER) {
 		MAKE_TOKEN_BUF(buf, token);
@@ -38,23 +36,23 @@ const wchar_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx
 		return NULL;
 	}
 
-	if (var->type==find_type(L"int") && token->token_type==TOKEN_INT_CONST) {
+	if (var->type==find_type(U"int") && token->token_type==TOKEN_INT_CONST) {
 		int64_t tmp=eval_integer(token, &err);
 		mem=&tmp;
 	}
-	else if (var->type==find_type(L"float") && token->token_type==TOKEN_FLOAT_CONST) {
+	else if (var->type==find_type(U"float") && token->token_type==TOKEN_FLOAT_CONST) {
 		long double tmp=eval_float(token, &err);
 		mem=&tmp;
 	}
-	else if (var->type==find_type(L"bool") && token->token_type==TOKEN_BOOL_CONST) {
-		bool tmp=token_cmp(L"true", token);
+	else if (var->type==find_type(U"bool") && token->token_type==TOKEN_BOOL_CONST) {
+		bool tmp=token_cmp(U"true", token);
 		mem=&tmp;
 	}
-	else if (var->type==find_type(L"char") && token->token_type==TOKEN_CHAR_CONST) {
+	else if (var->type==find_type(U"char") && token->token_type==TOKEN_CHAR_CONST) {
 		mem=token->begin;
 	}
-	else if (var->type==find_type(L"str") && token->token_type==TOKEN_STR_CONST) {
-		wchar_t *current=NULL;
+	else if (var->type==find_type(U"str") && token->token_type==TOKEN_STR_CONST) {
+		char32_t *current=NULL;
 		variable_read(&current, var);
 
 		if (current!=NULL) {
@@ -62,7 +60,7 @@ const wchar_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx
 		}
 
 		MAKE_TOKEN_BUF(buf, token);
-		wchar_t *tmp=wcsdup(buf);
+		char32_t *tmp=c32sdup(buf);
 		DIE_IF_MALLOC_FAILS(tmp);
 
 		mem=&tmp;
@@ -72,18 +70,18 @@ const wchar_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx
 	}
 
 	if (err!=NULL) {
-		if (var->type==find_type(L"str")) {
+		if (var->type==find_type(U"str")) {
 			mem=NULL;
 			variable_read(&mem, var);
-			free((wchar_t*)mem);
+			free((char32_t*)mem);
 		}
 		return err;
 	}
 	if (variable_write(var, mem)==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]) {
-		if (var->type==find_type(L"str")) {
+		if (var->type==find_type(U"str")) {
 			mem=NULL;
 			variable_read(&mem, var);
-			free((wchar_t*)mem);
+			free((char32_t*)mem);
 		}
 		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]; // NOLINT
 	}
