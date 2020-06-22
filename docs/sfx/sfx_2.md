@@ -11,15 +11,23 @@ To be more persice:
 
 In Skull, variables are const by default:
 
-```
+```python
 x: int = 0
+
+# or this
+x := 0
+
 x = 1  # error, cannot assign to const
 ```
 
 To make a non-const variable, use `mut`:
 
-```
-x: mut int = 0
+```python
+mut x: int = 0
+
+# or this
+mut x := 0
+
 x = 1
 ```
 
@@ -31,7 +39,7 @@ Functions without a return type (`void`) cannot be assigned to a variable.
 
 ### No Implicit Casts
 
-In other programming languages, implicit casts may unintentially introduce errors:
+In other programming languages, implicit conversions may unintentially introduce errors:
 
 ```cpp
 // C++
@@ -43,7 +51,7 @@ Here, `123.456` is implicitly converted from `float` to `int`.
 
 In Skull, you must explicitly cast to `int`:
 
-```
+```python
 x: int = int[123.456]
 ```
 
@@ -60,12 +68,16 @@ if (arr) {
 
 The value of `arr` is an object, and therefor is "truthy". In Skull, you must explicitly cast to `bool`:
 
-```
+```python
 # pseudo code
+
 x: Array[int]
 
-if [x.length == 0] [
+if [bool[x.length]] [
   # true
+]
+elif [x.length == 0] [
+  # also true
 ]
 ```
 
@@ -76,11 +88,11 @@ Below is a table of built-in types, and their C/C++ equivalents:
 | Skull | C/C++ | Description |
 |:----- |:----- |:----------- |
 | `bool` | `bool` | Can only be `true` or `false` |
-| `int` | `int64_t` | Stores a signed 63 bit integer |
+| `int` | `int64_t` | Stores a 64 bit integer |
 | `float` | `long double` | 128 bit floating number |
-| `char` | `wchar_t` | UTF-16 code point `*` |
-| `str` | `wchar_t*` | String of UTF-16 characters `*`|
+| `char` | `char32_t` | A single UTF-32 code point |
+| `str` | `char32_t*` | String of UTF-32 code points |
 | `T` | `template<typename T>` | Templated type `*` |
-| `auto` | `auto` | Automatically deduced type `*` |
+| `:=` | `auto` | Automatically deduce type |
 
 `*` Subject to change

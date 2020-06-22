@@ -6,7 +6,7 @@ The below guidelines are not enforced, but are strongly recommended.
 
 Skull programs should use 2 space indentation:
 
-```
+```python
 main[] int -> [
   print["hello world!"]
 
@@ -20,7 +20,7 @@ No matter what you chose, your use of indentation should remain constant.
 
 Function and variable names should be in `snake_case`:
 
-```
+```pyyhon
 function_name[] int -> [
   variable_name: int = 0
 
