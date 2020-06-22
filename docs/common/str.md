@@ -4,7 +4,9 @@
 Copy `n - 1` characters to `dest` from `src`, ensuring the last character is NULL terminated.
 
 #### `void c32sncpy(char32_t *dest, const char32_t *src, size_t n)`
-char32_t equivalent of `strncpy`, does not add NULL terminator.
+char32_t equivalent of `strncpy`.
+
+If there is room between the end of `src` and `dest[n]`, fill it with NULL.
 
 #### `void c32slcpy(char32_t *dest, const char32_t *src, size_t n)`
 Similar to above `strlcpy`, but for `char32_t` types.

@@ -24,16 +24,17 @@ char *strlcpy(char *dest, const char *src, size_t n) {
 #endif
 
 /*
-char32_t equivalent of `strncpy`, does not add NULL terminator.
+char32_t equivalent of `strncpy`.
+
+If there is room between the end of `src` and `dest[n]`, fill it with NULL.
 */
 void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
-	size_t offset=0;
+	memset(dest, 0, n * sizeof(char32_t));
 
 	while (*src!=U'\0' && n>0) {
-		dest[offset]=*src;
-
+		*dest=*src;
 		src++;
-		offset++;
+		dest++;
 		n--;
 	}
 }
@@ -148,7 +149,7 @@ Compare two UTF-32 strings `a` and `b`.
 `a` and `b` must be of equal length, and match exactly.
 */
 bool c32scmp(const char32_t *a, const char32_t *b) {
-	while (*a!=U'\0' && *b!=U'\0') { // NOLINT
+	while (*a!=U'\0' && *b!=U'\0') {
 		if (*a != *b) {
 			return false;
 		}
@@ -156,7 +157,7 @@ bool c32scmp(const char32_t *a, const char32_t *b) {
 		b++;
 	}
 
-	return (*a==U'\0' && *b==U'\0'); // NOLINT
+	return (*a==U'\0' && *b==U'\0');
 }
 
 /*
