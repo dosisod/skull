@@ -73,24 +73,14 @@ TEST(c32stombs_with_null, {
 })
 
 TEST(mbstoc32s, {
-	char32_t *str=mbstoc32s("hello world! 存");
-	char32_t *copy=str;
+	char32_t *str=mbstoc32s("left 字 right");
 
-	const char32_t *cmp=U"hello world! 存";
+	const bool pass=c32scmp(
+		str,
+		U"left 字 right"
+	);
 
-	bool pass=true;
-	while (*str!=U'\0' && *cmp!=U'\0') {
-		if (*str!=*cmp) {
-			break;
-		}
-		str++;
-		cmp++;
-	}
-	if (pass && (*str!=U'\0' || *cmp!=U'\0')) {
-		pass=false;
-	}
-
-	free(copy);
+	free(str);
 	return pass;
 })
 

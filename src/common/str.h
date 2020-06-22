@@ -121,7 +121,9 @@ char32_t *mbstoc32s(const char *str) {
 	DIE_IF_MALLOC_FAILS(ret);
 
 	size_t offset=0;
-	static mbstate_t mbs;
+
+	mbstate_t mbs;
+	memset(&mbs, 0, sizeof(mbstate_t));
 
 	while (*str!='\0') {
 		size_t length=mbrtoc32(ret+offset, str, MB_CUR_MAX, &mbs);
@@ -129,8 +131,8 @@ char32_t *mbstoc32s(const char *str) {
 		if ((length==0) || (length>MB_CUR_MAX)) {
 			break;
 		}
-		offset+=length;
-		str++;
+		offset++;
+		str+=length;
 	}
 
 	//shrink string to only what we need

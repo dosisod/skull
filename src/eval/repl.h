@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdio.h>
-#include <wchar.h>
 
 #include "../common/color.h"
 #include "../common/malloc.h"
@@ -23,16 +22,16 @@ Returns pointer to string read from commandline.
 char32_t *repl_read(void) {
 	printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
 
-	char32_t *str=malloc(sizeof(char32_t) * REPL_MAX_LINE_LEN);
+	char *str=malloc(sizeof(char) * REPL_MAX_LINE_LEN);
 	DIE_IF_MALLOC_FAILS(str);
 
 	size_t offset=0;
-	char32_t c=(char32_t)getwchar();
+	char c=(char)getchar();
 
-	while (c!=U'\n') {
+	while (c!='\n') {
 		//read char by char until we need to reallocate more memory
 		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
-			char32_t *new_str=realloc(str, sizeof(char32_t) * (offset + REPL_MAX_LINE_LEN));
+			char *new_str=realloc(str, sizeof(char) * (offset + REPL_MAX_LINE_LEN));
 			DIE_IF_MALLOC_FAILS(new_str);
 
 			str=new_str;
@@ -40,11 +39,14 @@ char32_t *repl_read(void) {
 		str[offset]=c;
 		offset++;
 
-		c=(char32_t)getwchar();
+		c=(char)getchar();
 	}
-	str[offset]=U'\0';
+	str[offset]='\0';
 
-	return str;
+	char32_t *ret=mbstoc32s(str);
+
+	free(str);
+	return ret;
 }
 
 /*
