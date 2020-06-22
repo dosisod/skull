@@ -10,7 +10,7 @@ variable_t *eval_add(const variable_t *lhs, const variable_t *rhs) {
 		return NULL;
 	}
 
-	if (lhs->type==find_type(U"int")) {
+	if (lhs->type==&TYPE_INT) {
 		variable_t *ret=make_variable(U"int", U"tmp", false);
 
 		if (ret==NULL) {
@@ -29,7 +29,7 @@ variable_t *eval_add(const variable_t *lhs, const variable_t *rhs) {
 		return ret;
 	}
 
-	if (lhs->type==find_type(U"float")) {
+	if (lhs->type==&TYPE_FLOAT) {
 		variable_t *ret=make_variable(U"float", U"tmp", false);
 
 		if (ret==NULL) {

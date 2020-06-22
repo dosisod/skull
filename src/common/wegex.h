@@ -78,7 +78,7 @@ Returns true if the `wegex` string matches the `match` string.
 bool wegex_match(const char32_t *wegex, const char32_t *match) {
 	const char32_t *wegex_end=wegex;
 
-	while (*wegex!=U'\0' && *match!=U'\0') {
+	while (*wegex!=U'\0' && *match!=U'\0') { // NOLINT
 		if (*wegex==U'*') {
 			wegex++;
 			wegex_end=find_next_wegex(wegex);

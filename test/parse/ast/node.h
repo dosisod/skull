@@ -42,7 +42,6 @@ TEST(make_ast_node, {
 TEST(ast_token_cmp, {
 	const char32_t *code=U"x: int = 0";
 	token_t *token=tokenize(code);
-	make_default_types();
 	classify_tokens(token);
 
 	const bool pass=ast_token_cmp(
@@ -54,7 +53,6 @@ TEST(ast_token_cmp, {
 		-1
 	)==token->next->next->next;
 
-	free_types();
 	free_tokens(token);
 
 	return pass;
@@ -63,7 +61,6 @@ TEST(ast_token_cmp, {
 TEST(ast_token_cmp_extra_tokens, {
 	const char32_t *code=U"x: int = 0 extra";
 	token_t *token=tokenize(code);
-	make_default_types();
 	classify_tokens(token);
 
 	const bool pass=ast_token_cmp(
@@ -75,7 +72,6 @@ TEST(ast_token_cmp_extra_tokens, {
 		-1
 	)==token->next->next->next;
 
-	free_types();
 	free_tokens(token);
 
 	return pass;
@@ -84,7 +80,6 @@ TEST(ast_token_cmp_extra_tokens, {
 TEST(ast_token_cmp_missing_tokens, {
 	const char32_t *code=U"x: int = 0";
 	token_t *token=tokenize(code);
-	make_default_types();
 	classify_tokens(token);
 
 	const bool pass=ast_token_cmp(
@@ -97,7 +92,6 @@ TEST(ast_token_cmp_missing_tokens, {
 		-1
 	)==token;
 
-	free_types();
 	free_tokens(token);
 
 	return pass;
@@ -106,7 +100,6 @@ TEST(ast_token_cmp_missing_tokens, {
 TEST(ast_token_cmp_any_token, {
 	const char32_t *code=U"[anything]";
 	token_t *token=tokenize(code);
-	make_default_types();
 	classify_tokens(token);
 
 	const bool pass=ast_token_cmp(
@@ -117,7 +110,6 @@ TEST(ast_token_cmp_any_token, {
 		-1
 	)==token->next->next;
 
-	free_types();
 	free_tokens(token);
 
 	return pass;
@@ -128,7 +120,6 @@ TEST(push_ast_node, {
 	token_t *token=tokenize(code);
 	token_t *last=token;
 
-	make_default_types();
 	classify_tokens(token);
 
 	ast_node_t *node=make_ast_node();
@@ -150,7 +141,6 @@ TEST(push_ast_node, {
 		tmp->next->last==tmp
 	);
 
-	free_types();
 	free_tokens(token);
 
 	return pass;
@@ -158,7 +148,6 @@ TEST(push_ast_node, {
 
 #define TEST_AST_TREE(str, type, begin_offset, end_offset) \
 	const char32_t *code=str; \
-	make_default_types(); \
 	ast_node_t *node=make_ast_tree(code); \
 	const bool pass=( \
 		node->node_type==type && \
@@ -167,7 +156,6 @@ TEST(push_ast_node, {
 		node->last==NULL && \
 		node->next==NULL \
 	); \
-	free_types(); \
 	free(node); \
 	return pass;
 
@@ -189,7 +177,6 @@ TEST(make_ast_tree_auto_mutable_variable_def, {
 
 TEST(make_ast_tree_many_lines, {
 	const char32_t *code=U"x: int = 0\ny: int = 0";
-	make_default_types();
 	ast_node_t *node=make_ast_tree(code);
 
 	const bool pass=(
@@ -214,7 +201,6 @@ TEST(make_ast_tree_many_lines, {
 		node->next->next->next->last==node->next->next
 	);
 
-	free_types();
 	free(node->next);
 	free(node);
 

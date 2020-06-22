@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -14,11 +15,37 @@ typedef struct type_t {
 	struct type_t *next;
 } type_t;
 
-struct type_t TYPES_AVAILABLE = {
-	.name=U"",
-	.bytes=0,
+struct type_t TYPE_BOOL = {
+	.name=U"bool",
+	.bytes=sizeof(bool),
 	.next=NULL
 };
+
+struct type_t TYPE_INT = {
+	.name=U"int",
+	.bytes=sizeof(int64_t),
+	.next=&TYPE_BOOL
+};
+
+struct type_t TYPE_FLOAT = {
+	.name=U"float",
+	.bytes=sizeof(long double),
+	.next=&TYPE_INT
+};
+
+struct type_t TYPE_CHAR = {
+	.name=U"char",
+	.bytes=sizeof(char32_t),
+	.next=&TYPE_FLOAT
+};
+
+struct type_t TYPE_STR = {
+	.name=U"str",
+	.bytes=sizeof(char32_t*),
+	.next=&TYPE_CHAR
+};
+
+struct type_t *TYPES_AVAILABLE=&TYPE_STR;
 
 /*
 Creates a new type named `type` that allocates `bytes` bytes.
@@ -27,10 +54,10 @@ Returns false if a type called `name` already exists, and was not inserted.
 Returns true if the type `name` was inserted.
 */
 bool make_new_type(const char32_t *name, size_t bytes) {
-	type_t *current=&TYPES_AVAILABLE;
+	type_t *current=TYPES_AVAILABLE;
 	type_t *last=current;
 
-	while (current) {
+	while (current!=NULL) {
 		if (c32scmp(current->name, name)) {
 			return false;
 		}
@@ -45,7 +72,7 @@ bool make_new_type(const char32_t *name, size_t bytes) {
 	new_type->bytes=bytes;
 	new_type->next=NULL;
 
-	last->next=new_type;
+	last->next=new_type; // NOLINT
 
 	return true;
 }
@@ -54,7 +81,7 @@ bool make_new_type(const char32_t *name, size_t bytes) {
 Returns pointer to type with name `name`.
 */
 type_t *find_type(const char32_t *name) {
-	type_t *head=&TYPES_AVAILABLE;
+	type_t *head=TYPES_AVAILABLE;
 
 	while (head!=NULL) {
 		if (c32scmp(name, head->name)) {
@@ -67,10 +94,11 @@ type_t *find_type(const char32_t *name) {
 }
 
 /*
-Free all defined types from `TYPES_AVAILABLE`, except for `TYPES_AVAILABLE`.
+Free all non-builtin types.
 */
 void free_types(void) {
-	type_t *head=(&TYPES_AVAILABLE)->next;
+	//TYPE_BOOL is the last defined builtin
+	type_t *head=TYPE_BOOL.next;
 	type_t *tmp;
 
 	while (head!=NULL) {
@@ -80,20 +108,5 @@ void free_types(void) {
 		free(tmp);
 	}
 
-	TYPES_AVAILABLE.next=NULL;
-}
-
-/*
-Populate `TYPES_AVAILABLE` with all the builtin types.
-
-Calling this function will reset all types defined in `TYPES_AVAILABLE`.
-*/
-void make_default_types(void) {
-	free_types();
-
-	make_new_type(U"bool", 1);
-	make_new_type(U"int", 8);
-	make_new_type(U"float", 16);
-	make_new_type(U"char", sizeof(char32_t));
-	make_new_type(U"str", sizeof(char32_t*));
+	TYPE_BOOL.next=NULL;
 }

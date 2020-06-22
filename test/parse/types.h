@@ -5,7 +5,7 @@
 #include "../../test/testing.h"
 
 TEST(make_new_type, {
-	type_t *current=&TYPES_AVAILABLE;
+	type_t *current=TYPES_AVAILABLE;
 
 	make_new_type(U"test_type", 1);
 
@@ -15,8 +15,8 @@ TEST(make_new_type, {
 		current=current->next;
 	}
 
-	current=(&TYPES_AVAILABLE)->next;
-	type_t *last=&TYPES_AVAILABLE;
+	current=(TYPES_AVAILABLE)->next;
+	type_t *last=TYPES_AVAILABLE;
 
 	if (current==NULL) {
 		return false;
@@ -34,44 +34,31 @@ TEST(make_new_type, {
 })
 
 TEST(make_new_type_rejects_non_unique_type, {
-	type_t *current=&TYPES_AVAILABLE;
-
 	const bool inserted1=make_new_type(U"test_type", 1);
+
+	type_t *type=find_type(U"test_type");
+	if (type==NULL) {
+		return false;
+	}
+
 	const bool inserted2=make_new_type(U"test_type", 1);
-
-	int count=0;
-
-	while (current) {
-		count+=c32scmp(current->name, U"test_type");
-		current=current->next;
+	if (type->next!=NULL) {
+		return false;
 	}
 
-	current=(&TYPES_AVAILABLE)->next;
-	type_t *last=&TYPES_AVAILABLE;
-
-	while (current) {
-		last=current;
-		current=current->next;
-	}
-
-	free(current);
-	last->next=NULL;
+	free_types();
 
 	return (
 		inserted1 &&
-		!inserted2 &&
-		count==1
+		!inserted2
 	);
 })
 
 TEST(find_type, {
-	make_default_types();
-
 	type_t *type=find_type(U"int");
 
-	const bool pass=(type!=NULL);
+	const bool pass=(type==&TYPE_INT);
 
-	free_types();
 	return pass;
 })
 
@@ -79,13 +66,11 @@ TEST(free_types, {
 	make_new_type(U"test_type", 1);
 
 	free_types();
-
-	return TYPES_AVAILABLE.next==NULL;
+	return TYPE_BOOL.next==NULL;
 })
 
 TEST(append_default_types, {
-	make_default_types();
-	type_t *head=&TYPES_AVAILABLE;
+	type_t *head=TYPES_AVAILABLE;
 
 	uint8_t count=0;
 	while (head) {
@@ -93,8 +78,7 @@ TEST(append_default_types, {
 		head=head->next;
 	}
 
-	make_default_types();
-	head=&TYPES_AVAILABLE;
+	head=TYPES_AVAILABLE;
 
 	uint8_t new_count=0;
 	while (head) {

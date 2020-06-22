@@ -16,7 +16,6 @@ int main(int argc, char *argv[]) {
 		puts("Skull " SKULL_VERSION);
 
 		context_t *ctx=make_context();
-		make_default_types();
 
 		char32_t *line;
 		while (true) {

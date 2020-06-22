@@ -19,7 +19,6 @@ TEST(make_context, {
 
 TEST(context_contains_var, {
 	context_t *ctx=make_context();
-	make_default_types();
 	variable_t *var1=make_variable(U"int", U"x", true);
 	variable_t *var2=make_variable(U"int", U"y", true);
 
@@ -30,7 +29,6 @@ TEST(context_contains_var, {
 		!context_contains_var(ctx, var2)
 	);
 
-	free_types();
 	free(var1);
 	free(var2);
 	free(ctx);
@@ -40,7 +38,6 @@ TEST(context_contains_var, {
 
 TEST(context_find_name, {
 	context_t *ctx=make_context();
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"x", true);
 
 	context_add_var(ctx, var);
@@ -50,7 +47,6 @@ TEST(context_find_name, {
 		context_find_name(ctx, U"y")==NULL
 	);
 
-	free_types();
 	free(var);
 	free(ctx);
 
@@ -59,7 +55,6 @@ TEST(context_find_name, {
 
 TEST(add_vars_to_context, {
 	context_t *ctx=make_context();
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"x", true);
 
 	context_add_var(ctx, var);
@@ -69,7 +64,6 @@ TEST(add_vars_to_context, {
 		ctx->vars[0]==var
 	);
 
-	free_types();
 	free(var);
 	free(ctx);
 
@@ -78,7 +72,6 @@ TEST(add_vars_to_context, {
 
 TEST(cannot_add_same_varname_to_context, {
 	context_t *ctx=make_context();
-	make_default_types();
 	variable_t *var1=make_variable(U"int", U"x", true);
 	variable_t *var2=make_variable(U"int", U"x", true);
 
@@ -92,7 +85,6 @@ TEST(cannot_add_same_varname_to_context, {
 		!added_var2
 	);
 
-	free_types();
 	free(var1);
 	free(var2);
 	free(ctx);
@@ -119,7 +111,6 @@ TEST(add_nested_context, {
 
 TEST(cannot_add_same_varname_to_sub_context, {
 	context_t *ctx=make_context();
-	make_default_types();
 	variable_t *var1=make_variable(U"int", U"x", true);
 	context_add_var(ctx, var1);
 
@@ -135,7 +126,6 @@ TEST(cannot_add_same_varname_to_sub_context, {
 		ctx->vars[0]==var1
 	);
 
-	free_types();
 	free_variable(var2);
 	free_context(ctx_new);
 	free_context(ctx);
@@ -145,12 +135,10 @@ TEST(cannot_add_same_varname_to_sub_context, {
 
 TEST(free_context, {
 	context_t *ctx=make_context();
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"x", true);
 
 	context_add_var(ctx, var);
 
-	free_types();
 	free_context(ctx);
 
 	return true;

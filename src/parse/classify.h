@@ -53,7 +53,7 @@ enum token_types {
 Returns true if `token` is a type string.
 */
 bool is_type_str(const char32_t *name) {
-	type_t *current=&TYPES_AVAILABLE;
+	type_t *current=TYPES_AVAILABLE;
 	while (current) {
 		if (c32scmp(current->name, name)) {
 			return true;

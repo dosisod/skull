@@ -4,7 +4,6 @@
 #include "../../test/testing.h"
 
 TEST(is_type_str, {
-	make_default_types();
 	const char32_t *code=U"int not_a_type";
 	token_t *token=tokenize(code);
 
@@ -16,7 +15,6 @@ TEST(is_type_str, {
 		!is_type_str(buf_next)
 	);
 
-	free_types();
 	free_tokens(token);
 	return pass;
 })
@@ -153,7 +151,6 @@ TEST(token_plus_oper, {
 TEST(token_type, {
 	const char32_t *code=U"int not_a_type";
 	token_t *t=tokenize(code);
-	make_default_types();
 	classify_tokens(t);
 
 	const bool pass=(
@@ -161,7 +158,6 @@ TEST(token_type, {
 		t->next->token_type!=TOKEN_TYPE
 	);
 
-	free_types();
 	free_tokens(t);
 	return pass;
 })
@@ -262,7 +258,6 @@ TEST(new_identifier_clip_trailing_colon, {
 })
 
 TEST(identifier_cannot_be_type, {
-	make_default_types();
 	const char32_t *code=U"int: int = 0";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -272,13 +267,11 @@ TEST(identifier_cannot_be_type, {
 		t->end==(code + 4)
 	);
 
-	free_types();
 	free(t);
 	return pass;
 })
 
 TEST(identifier_cannot_be_keyword, {
-	make_default_types();
 	const char32_t *code=U"mut: int = 0";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
@@ -288,7 +281,6 @@ TEST(identifier_cannot_be_keyword, {
 		t->end==(code + 4)
 	);
 
-	free_types();
 	free(t);
 	return pass;
 })

@@ -90,7 +90,7 @@ Return string representation of a variable.
 The result of this function must be freed.
 */
 char32_t *fmt_var(const variable_t *var) {
-	if (var->type==find_type(U"bool")) {
+	if (var->type==&TYPE_BOOL) {
 		bool data=false;
 		variable_read(&data, var);
 
@@ -99,7 +99,7 @@ char32_t *fmt_var(const variable_t *var) {
 
 		return ret;
 	}
-	if (var->type==find_type(U"str")) {
+	if (var->type==&TYPE_STR) {
 		const char32_t *data=NULL;
 		variable_read(&data, var);
 
@@ -116,7 +116,7 @@ char32_t *fmt_var(const variable_t *var) {
 
 		return ret;
 	}
-	if (var->type==find_type(U"char")) {
+	if (var->type==&TYPE_CHAR) {
 		char32_t *ret=malloc(sizeof(char32_t) * 4);
 		DIE_IF_MALLOC_FAILS(ret);
 
@@ -132,7 +132,7 @@ char32_t *fmt_var(const variable_t *var) {
 	int needed=-1;
 	int wrote=-1;
 
-	if (var->type==find_type(U"int")) {
+	if (var->type==&TYPE_INT) {
 		int64_t data=0;
 		variable_read(&data, var);
 
@@ -145,7 +145,7 @@ char32_t *fmt_var(const variable_t *var) {
 
 		wrote=snprintf(tmp, (unsigned long int)needed, "%li", data);
 	}
-	else if (var->type==find_type(U"float")) {
+	else if (var->type==&TYPE_FLOAT) {
 		long double data=0;
 		variable_read(&data, var);
 

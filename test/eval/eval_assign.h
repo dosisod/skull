@@ -6,7 +6,6 @@
 #define TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, cmp) \
 	token_t *token=tokenize(str_value); \
 	classify_tokens(token); \
-	make_default_types(); \
 	variable_t *var=make_variable(str_type, U"x", false); \
 	const char32_t *output=eval_assign(var, token, NULL); \
 	real_type data=0; \
@@ -15,7 +14,6 @@
 		(cmp) && \
 		output==(expected_error) \
 	); \
-	free_types(); \
 	free_variable(var); \
 	return pass;
 
@@ -45,7 +43,6 @@ TEST(eval_assign_str, {
 	token_t *token=tokenize(U"\"abc\"");
 	classify_tokens(token);
 
-	make_default_types();
 	variable_t *var=make_variable(U"str", U"x", false);
 
 	eval_assign(var, token, NULL);
@@ -59,7 +56,6 @@ TEST(eval_assign_str, {
 	variable_read(&mem, var);
 	free(mem);
 
-	free_types();
 	free_variable(var);
 	return pass;
 })
@@ -95,7 +91,6 @@ TEST(eval_assign_cannot_assign_non_strs, {
 #undef TEST_EVAL_ASSIGN
 
 TEST(eval_assign_variable_to_another, {
-	make_default_types();
 	variable_t *var1=make_variable(U"int", U"var1", false);
 	variable_t *var2=make_variable(U"int", U"var2", false);
 
@@ -122,13 +117,11 @@ TEST(eval_assign_variable_to_another, {
 		data==1234
 	);
 
-	free_types();
 	free_context(ctx);
 	return pass;
 })
 
 TEST(eval_assign_variable_to_another_check_same_type, {
-	make_default_types();
 	variable_t *var1=make_variable(U"int", U"var1", false);
 	variable_t *var2=make_variable(U"bool", U"var2", false);
 
@@ -149,13 +142,11 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 		ERROR_MSG[ERROR_TYPE_MISMATCH]
 	);
 
-	free_types();
 	free_context(ctx);
 	return pass;
 })
 
 TEST(eval_assign_variable_to_another_check_bad_var, {
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"var", false);
 
 	int64_t tmp=0;
@@ -172,7 +163,6 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 		ERROR_MSG[ERROR_INVALID_INPUT]
 	);
 
-	free_types();
 	free_context(ctx);
 	return pass;
 })

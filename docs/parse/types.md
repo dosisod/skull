@@ -10,10 +10,5 @@ Returns true if the type `name` was inserted.
 Returns pointer to type with name `name`.
 
 #### `void free_types(void)`
-Free all defined types from `TYPES_AVAILABLE`, except for `TYPES_AVAILABLE`.
-
-#### `void make_default_types(void)`
-Populate `TYPES_AVAILABLE` with all the builtin types.
-
-Calling this function will reset all types defined in `TYPES_AVAILABLE`.
+Free all non-builtin types.
 

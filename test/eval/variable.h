@@ -5,7 +5,6 @@
 #include "../../test/testing.h"
 
 TEST(create_variable, {
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"x", true);
 
 	const bool pass=(
@@ -16,7 +15,6 @@ TEST(create_variable, {
 		var->mem != NULL
 	);
 
-	free_types();
 	free_variable(var);
 
 	return pass;
@@ -27,7 +25,6 @@ TEST(create_variable_with_invalid_type_fails, {
 })
 
 TEST(variable_write, {
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"x", false);
 
 	const int64_t data=1234;
@@ -41,14 +38,12 @@ TEST(variable_write, {
 		val==1234
 	);
 
-	make_default_types();
 	free_variable(var);
 
 	return pass;
 })
 
 TEST(variable_cannot_write_to_const, {
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"x", true);
 
 	const int64_t data=1234;
@@ -62,14 +57,12 @@ TEST(variable_cannot_write_to_const, {
 		val==0
 	);
 
-	free_types();
 	free_variable(var);
 
 	return pass;
 })
 
 TEST(variable_read, {
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"x", false);
 	const int64_t data=1234;
 	variable_write(var, &data);
@@ -79,26 +72,22 @@ TEST(variable_read, {
 
 	const bool pass=(val==1234);
 
-	free_types();
 	free_variable(var);
 
 	return pass;
 })
 
 TEST(make_variable_with_invalid_name_fails, {
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"1nvalid", false);
 
 	const bool pass=(var==NULL);
 
-	free_types();
 	free_variable(var);
 
 	return pass;
 })
 
 TEST(free_variable, {
-	make_default_types();
 	variable_t *var=make_variable(U"int", U"x", true);
 
 	if (var==NULL || var->mem==NULL) {
@@ -106,7 +95,6 @@ TEST(free_variable, {
 		return false;
 	}
 
-	free_types();
 	free_variable(var);
 
 	return true;
@@ -119,7 +107,6 @@ TEST(free_null_variable_is_ok, {
 })
 
 #define TEST_FMT_VAR(str_type, real_type, real_data, expected) \
-	make_default_types(); \
 	variable_t *var=make_variable(str_type, U"x", false); \
 	real_type data=real_data; \
 	variable_write(var, &data); \
@@ -130,7 +117,6 @@ TEST(free_null_variable_is_ok, {
 	); \
 	free(str); \
 	free_variable(var); \
-	free_types(); \
 	return pass;
 
 TEST(fmt_var_int, {
@@ -160,7 +146,6 @@ TEST(fmt_var_wide_char_preserved, {
 #undef TEST_FMT_VAR
 
 TEST(fmt_var_str, {
-	make_default_types();
 	variable_t *var=make_variable(U"str", U"x", false);
 
 	const char32_t *data=U"\"abc\"";
@@ -182,7 +167,6 @@ TEST(fmt_var_str, {
 
 	free(str);
 	free_variable(var);
-	free_types();
 	return pass;
 })
 
