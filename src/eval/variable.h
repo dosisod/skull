@@ -121,7 +121,7 @@ char32_t *fmt_var(const variable_t *var) {
 		DIE_IF_MALLOC_FAILS(ret);
 
 		ret[0]=U'\'';
-		ret[1]=*(char32_t*)var->mem;
+		variable_read(ret + 1, var);
 		ret[2]=U'\'';
 		ret[3]=U'\0';
 

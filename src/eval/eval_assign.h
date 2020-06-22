@@ -21,6 +21,10 @@ Set `ctx` to allow for assigning variables to other variables.
 Return an error (as a string) if any occured, else `NULL`.
 */
 const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx) {
+	if (token==NULL) {
+		return ERROR_MSG[ERROR_INVALID_INPUT];
+	}
+
 	if (ctx!=NULL && token->token_type==TOKEN_IDENTIFIER) {
 		MAKE_TOKEN_BUF(buf, token);
 		variable_t *var_new=context_find_name(ctx, buf);

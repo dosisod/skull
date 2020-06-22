@@ -438,6 +438,20 @@ TEST(repl_auto_assign_detect_missing_token, {
 	return pass;
 })
 
+TEST(repl_assign_missing_rhs_token, {
+	make_default_types();
+	context_t *ctx=make_context();
+
+	repl_eval(U"x := 0", ctx);
+	const char32_t *output=repl_eval(U"x =", ctx); // NOLINT
+
+	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]); // NOLINT
+
+	free_context(ctx);
+	free_types();
+	return pass;
+})
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_variable_declare,
@@ -469,6 +483,7 @@ void repl_test_self(bool *pass) {
 		test_repl_auto_assign_detect_unknown_var,
 		test_repl_auto_assign_detect_bad_token,
 		test_repl_auto_assign_detect_missing_token,
+		test_repl_assign_missing_rhs_token,
 		NULL
 	};
 

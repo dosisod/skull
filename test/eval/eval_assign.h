@@ -77,7 +77,7 @@ TEST(eval_assign_cannot_assign_non_ints, {
 })
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	TEST_EVAL_ASSIGN_FLOAT(U"float", U"1234", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_ASSIGN_FLOAT(U"float", U"1234", long double, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
 })
 
 TEST(eval_assign_cannot_assign_non_bools, {
