@@ -403,10 +403,39 @@ TEST(repl_auto_assign_detect_missing_token, {
 TEST(repl_assign_missing_rhs_token, {
 	context_t *ctx=make_context();
 
-	repl_eval(U"x := 0", ctx);
+	repl_eval(U"mut x := 0", ctx);
 	const char32_t *output=repl_eval(U"x =", ctx); // NOLINT
 
 	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]); // NOLINT
+
+	free_context(ctx);
+	return pass;
+})
+
+TEST(repl_cannot_reassign_const, {
+	context_t *ctx=make_context();
+
+	repl_eval(U"x := \"anything\"", ctx);
+
+	variable_t *var=context_find_name(ctx, U"x");
+	if (var==NULL) {
+		free_context(ctx);
+		return false;
+	}
+
+	char32_t *before=NULL;
+	variable_read(&before, var);
+	before=c32sdup(before);
+
+	const char32_t *output=repl_eval(U"x = \"something else\"", ctx); // NOLINT
+
+	char32_t *after=NULL;
+	variable_read(&after, var);
+
+	const bool pass=(
+		c32scmp(before, after) && // NOLINT
+		output==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]
+	);
 
 	free_context(ctx);
 	return pass;
@@ -444,6 +473,7 @@ void repl_test_self(bool *pass) {
 		test_repl_auto_assign_detect_bad_token,
 		test_repl_auto_assign_detect_missing_token,
 		test_repl_assign_missing_rhs_token,
+		test_repl_cannot_reassign_const,
 		NULL
 	};
 

@@ -182,6 +182,9 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	}
 
 	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
+		if (var->is_const) {
+			return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
+		}
 		ret=eval_assign(var, node->token->next->next, ctx);
 	}
 
