@@ -17,16 +17,18 @@
 #define REPL_MAX_LINE_LEN 1024
 
 /*
-Returns pointer to string read from commandline.
+Returns pointer to string read from file descriptor `fd`.
 */
-char32_t *repl_read(void) {
-	printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
+char32_t *repl_read(FILE *fd) {
+	if (fd==stdin) {
+		printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
+	}
 
 	char *str=malloc(sizeof(char) * REPL_MAX_LINE_LEN);
 	DIE_IF_MALLOC_FAILS(str);
 
 	size_t offset=0;
-	char c=(char)getchar();
+	char c=(char)getc(fd);
 
 	while (c!='\n') {
 		//read char by char until we need to reallocate more memory
@@ -39,7 +41,7 @@ char32_t *repl_read(void) {
 		str[offset]=c;
 		offset++;
 
-		c=(char)getchar();
+		c=(char)getc(fd);
 	}
 	str[offset]='\0';
 

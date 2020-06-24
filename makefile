@@ -1,4 +1,4 @@
-SKULL_VERSION=0.0.1
+SKULL_VERSION=0.1.0
 
 CC = $(shell readlink -f $(shell which cc)) -std=c11
 CFLAGS = -Wall \
@@ -33,7 +33,6 @@ CFLAGS = -Wall \
 #dont add gnu specific flags if compiling in clang
 ifeq ($(findstring clang,$(CC)),)
 	CFLAGS += -Waggressive-loop-optimizations \
-	-Wc99-c11-compat \
 	-Wformat-signedness \
 	-Wlogical-op \
 	-Wsuggest-attribute=const \

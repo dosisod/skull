@@ -2,11 +2,11 @@
 
 ![](https://github.com/dosisod/skull/workflows/tests/badge.svg)
 
-The skull programming language
+The Skull programming language
 
 ## Syntax Proposal
 
-```
+```python
 import io.print
 
 # this is a comment!
@@ -55,6 +55,6 @@ $ ./build/test/test
 
 Soon to come:
 
-- [ ] Runnable skull files
+- [x] Runnable skull files
 - [ ] Skull to C function calls
 - [ ] Rich skull std library

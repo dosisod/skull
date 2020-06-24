@@ -1,1 +1,4 @@
-dll_run["./src/functions/libhello.so", "hello"]
+msg := "hello world!"
+msg
+
+return 0

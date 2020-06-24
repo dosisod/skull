@@ -16,11 +16,15 @@ main[] int -> [
 
 No matter what you chose, your use of indentation should remain constant.
 
+# File Encoding?
+
+Files must be stored in UTF-8 format.
+
 # Case Style?
 
 Function and variable names should be in `snake_case`:
 
-```pyyhon
+```python
 function_name[] int -> [
   variable_name: int = 0
 

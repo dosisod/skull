@@ -2,7 +2,7 @@
 
 #include "../src/common/local.h"
 #include "../src/eval/repl.h"
-#include "../src/eval.h"
+#include "../src/eval_file.h"
 
 /*
 If no parameters are passed, run in interactive (repl) mode.
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 
 		char32_t *line;
 		while (true) {
-			line=repl_read();
+			line=repl_read(stdin);
 
 			const char32_t *tmp=repl_eval(line, ctx);
 			char *output=c32stombs(tmp);
@@ -43,7 +43,6 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	eval(f);
-	fclose(f);
+	eval_file(f);
 	return 0;
 }

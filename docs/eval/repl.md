@@ -1,7 +1,7 @@
 # src/eval/repl.h
 
-#### `char32_t *repl_read(void)`
-Returns pointer to string read from commandline.
+#### `char32_t *repl_read(FILE *fd)`
+Returns pointer to string read from file descriptor `fd`.
 
 #### `const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const)`
 Make and add a variable from passed `tokens` to context `ctx`.
