@@ -27,17 +27,25 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 
 	if (ctx!=NULL && token->token_type==TOKEN_IDENTIFIER) {
 		MAKE_TOKEN_BUF(buf, token);
-		variable_t *var_new=context_find_name(ctx, buf);
+		variable_t *var_found=context_find_name(ctx, buf);
 
-		if (var_new==NULL) {
+		if (var_found==NULL) {
 			return ERROR_MSG[ERROR_INVALID_INPUT];
 		}
-		if (var_new->type!=var->type) {
+		if (var_found->type!=var->type) {
 			return ERROR_MSG[ERROR_TYPE_MISMATCH];
 		}
 
-		uint8_t mem[var_new->bytes];
-		variable_read(mem, var_new);
+		uint8_t mem[var_found->bytes];
+		variable_read(mem, var_found);
+
+		if (var->type==&TYPE_STR) {
+			char32_t *str=NULL;
+			variable_read(&str, var_found);
+
+			str=c32sdup(str);
+			memcpy(mem, &str, sizeof(char32_t*));
+		}
 		variable_write(var, mem);
 
 		return NULL;

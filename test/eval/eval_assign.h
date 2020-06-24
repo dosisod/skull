@@ -167,6 +167,43 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 	return pass;
 })
 
+TEST(eval_assign_string_types_cannot_share_pointers, {
+	variable_t *var1=make_variable(U"str", U"var1", false);
+	variable_t *var2=make_variable(U"str", U"var2", false);
+
+	const char32_t *str1=NULL;
+	variable_write(var1, &str1);
+
+	const char32_t *str2=c32sdup(U"anything");
+	variable_write(var2, &str2);
+	var2->is_const=true;
+
+	token_t *token=tokenize(U"var2");
+	classify_tokens(token);
+
+	context_t *ctx=make_context();
+	context_add_var(ctx, var1);
+	context_add_var(ctx, var2);
+
+	const char32_t *output=eval_assign(var1, token, ctx);
+
+	char32_t *after_var1=NULL;
+	variable_read(&after_var1, var1);
+
+	char32_t *after_var2=NULL;
+	variable_read(&after_var2, var2);
+
+	const bool pass=(
+		output==NULL &&
+		c32scmp(after_var1, str2) &&
+		c32scmp(after_var2, str2) && // NOLINT
+		after_var1!=after_var2
+	);
+
+	free_context(ctx);
+	return pass;
+})
+
 void eval_assign_test_self(bool *pass) {
 	tests_t tests={
 		test_eval_assign_int,
@@ -184,6 +221,7 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_variable_to_another,
 		test_eval_assign_variable_to_another_check_same_type,
 		test_eval_assign_variable_to_another_check_bad_var,
+		test_eval_assign_string_types_cannot_share_pointers,
 		NULL
 	};
 
