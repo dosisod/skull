@@ -7,22 +7,6 @@
 
 #include "malloc.h"
 
-//Android ships with the below functions, dont redefine if thats the case.
-//Other platforms may need to be added in the future
-#ifndef __ANDROID_API__
-
-/*
-Copy `n - 1` characters to `dest` from `src`, ensuring the last character is NULL terminated.
-*/
-char *strlcpy(char *dest, const char *src, size_t n) {
-	char *ret=strncpy(dest, src, n - 1);
-	dest[n - 1]='\0';
-
-	return ret;
-}
-
-#endif
-
 /*
 char32_t equivalent of `strncpy`.
 

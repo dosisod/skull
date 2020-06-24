@@ -1,9 +1,9 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdnoreturn.h>
-#include <string.h>
-#include <stdio.h>
 
-#include "../src/functions/run.h"
+#include "context.h"
+#include "repl.h"
 
 noreturn void eval_file(FILE *f) {
 	context_t *ctx=make_context();

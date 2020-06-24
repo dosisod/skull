@@ -2,7 +2,7 @@
 
 #include "../src/common/local.h"
 #include "../src/eval/repl.h"
-#include "../src/eval_file.h"
+#include "../src/eval/file.h"
 
 /*
 If no parameters are passed, run in interactive (repl) mode.

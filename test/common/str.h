@@ -4,19 +4,6 @@
 #include "../../src/common/str.h"
 #include "../../test/testing.h"
 
-TEST(strlcpy, {
-	const char *data="hello there!";
-	const size_t len=5;
-	char buf[len + 1];
-
-	strlcpy(buf, data, len + 1);
-
-	return (
-		strlen(buf)==len &&
-		strcmp(buf, "hello")==0
-	);
-})
-
 TEST(c32sncpy, {
 	const char32_t *data=U"abc";
 	char32_t buf[4];
@@ -159,7 +146,6 @@ TEST(c32isxdigit, {
 
 void str_test_self(bool *pass) {
 	tests_t tests={
-		test_strlcpy,
 		test_c32sncpy,
 		test_c32slcpy,
 		test_c32sdup,

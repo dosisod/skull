@@ -6,7 +6,6 @@ make all
 
 ./build/test/test
 
-c99 -shared src/functions/libhello.c -ldl -o src/functions/libhello.so
 ./build/src/skull src/main.skull
 
 bash ./.github/workflows/clang_tidy.sh

@@ -1,8 +1,5 @@
 # src/common/str.h
 
-#### `char *strlcpy(char *dest, const char *src, size_t n)`
-Copy `n - 1` characters to `dest` from `src`, ensuring the last character is NULL terminated.
-
 #### `void c32sncpy(char32_t *dest, const char32_t *src, size_t n)`
 char32_t equivalent of `strncpy`.
 
