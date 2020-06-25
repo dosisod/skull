@@ -29,6 +29,9 @@ int main(int argc, char *argv[]) {
 
 			free(output);
 			free(line);
+			if (!is_error_msg(tmp)) {
+				free((char32_t*)tmp);
+			}
 		}
 	}
 

@@ -29,5 +29,8 @@ noreturn void eval_file(FILE *f) {
 
 		free(output);
 		free(line);
+		if (!is_error_msg(tmp)) {
+			free((char32_t*)tmp);
+		}
 	}
 }

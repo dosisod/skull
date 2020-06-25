@@ -117,6 +117,10 @@ TEST(eval_assign_variable_to_another, {
 		data==1234
 	);
 
+	if (!is_error_msg(output)) {
+		free((char32_t*)output);
+	}
+
 	free_context(ctx);
 	return pass;
 })
@@ -137,10 +141,16 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 	context_add_var(ctx, var1);
 	context_add_var(ctx, var2);
 
+	const char32_t *output=eval_assign(var1, token, ctx); // NOLINT
+
 	const bool pass=c32scmp(
-		eval_assign(var1, token, ctx), // NOLINT
+		output,
 		ERROR_MSG[ERROR_TYPE_MISMATCH]
 	);
+
+	if (!is_error_msg(output)) {
+		free((char32_t*)output);
+	}
 
 	free_context(ctx);
 	return pass;

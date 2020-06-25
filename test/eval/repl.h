@@ -282,13 +282,13 @@ TEST(repl_add_variables, {
 	context_t *ctx=make_context();
 
 	repl_eval(U"x: int = 1", ctx);
-	repl_eval(U"y: int = 2", ctx); // NOLINT
-	const char32_t *output=repl_eval(U"x + y", ctx); // NOLINT
+	repl_eval(U"y: int = 2", ctx);
+	const char32_t *output=repl_eval(U"x + y", ctx);
 
 	const bool pass=c32scmp(U"3", output);
 
 	if (!is_error_msg(output)) {
-		free((void*)output); // NOLINT
+		free((void*)output);
 	}
 	free_context(ctx);
 	return pass;
@@ -298,9 +298,9 @@ TEST(repl_cannot_add_nonexistent_var, {
 	context_t *ctx=make_context();
 
 	repl_eval(U"x: int = 1", ctx);
-	const char32_t *output=repl_eval(U"x + y", ctx); // NOLINT
+	const char32_t *output=repl_eval(U"x + y", ctx);
 
-	const bool pass=c32scmp(ERROR_MSG[ERROR_INVALID_INPUT], output); // NOLINT
+	const bool pass=c32scmp(ERROR_MSG[ERROR_INVALID_INPUT], output);
 
 	free_context(ctx);
 	return pass;
@@ -312,10 +312,10 @@ TEST(repl_overflow_int_gives_error, {
 	const char32_t *output1=repl_eval(U"x: int = 99999999999999999999999", ctx);
 
 	repl_eval(U"mut y: int = 0", ctx);
-	const char32_t *output2=repl_eval(U"y = 99999999999999999999999", ctx); // NOLINT
+	const char32_t *output2=repl_eval(U"y = 99999999999999999999999", ctx);
 
 	const bool pass=(
-		c32scmp(ERROR_MSG[ERROR_OVERFLOW], output1) && // NOLINT
+		c32scmp(ERROR_MSG[ERROR_OVERFLOW], output1) &&
 		c32scmp(ERROR_MSG[ERROR_OVERFLOW], output2)
 	);
 
@@ -359,7 +359,7 @@ TEST(repl_assigning_variable_to_auto_type, {
 
 	const bool pass=(
 		data==1234 &&
-		output==NULL && // NOLINT
+		output==NULL &&
 		var->type==&TYPE_INT
 	);
 
@@ -404,9 +404,9 @@ TEST(repl_assign_missing_rhs_token, {
 	context_t *ctx=make_context();
 
 	repl_eval(U"mut x := 0", ctx);
-	const char32_t *output=repl_eval(U"x =", ctx); // NOLINT
+	const char32_t *output=repl_eval(U"x =", ctx);
 
-	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]); // NOLINT
+	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]);
 
 	free_context(ctx);
 	return pass;
@@ -427,17 +427,21 @@ TEST(repl_cannot_reassign_const, {
 	variable_read(&before, var);
 	before=c32sdup(before);
 
-	const char32_t *output=repl_eval(U"x = \"something else\"", ctx); // NOLINT
+	const char32_t *output=repl_eval(U"x = \"something else\"", ctx);
 
 	char32_t *after=NULL;
 	variable_read(&after, var);
 
 	const bool pass=(
-		c32scmp(before, after) && // NOLINT
+		c32scmp(before, after) &&
 		output==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]
 	);
 
-	free_context(ctx);
+	if (!is_error_msg(output)) {
+		free((char32_t*)output);
+	}
+
+	free_context(ctx); // NOLINT
 	return pass;
 })
 

@@ -178,7 +178,8 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	const char32_t *ret=ERROR_MSG[ERROR_INVALID_INPUT];
 
 	if (node->node_type==AST_NODE_NO_PARAM_FUNC && token_cmp(U"clear", node->token)) {
-		ret=U"\033[2J\033[;1H";
+		ret=c32sdup(U"\033[2J\033[;1H");
+		DIE_IF_MALLOC_FAILS(ret);
 	}
 
 	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
