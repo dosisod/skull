@@ -1,6 +1,7 @@
 #include <stdbool.h>
 
 #include "../../../src/parse/ast/node.h"
+#include "../../../src/parse/classify.h"
 #include "../../../test/testing.h"
 
 TEST(make_ast_node_struct, {

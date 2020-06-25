@@ -1,3 +1,7 @@
+#include <stddef.h>
+
+#include "../errors.h"
+#include "../parse/classify.h"
 #include "../parse/tokenize.h"
 
 #include "eval_bool.h"

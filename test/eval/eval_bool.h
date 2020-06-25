@@ -1,6 +1,8 @@
 #include <stdbool.h>
 
+#include "../../src/errors.h"
 #include "../../src/eval/eval_bool.h"
+#include "../../src/parse/classify.h"
 #include "../../test/testing.h"
 
 bool eval_bool_shim(const char32_t *code, bool expected, const char32_t *error) {

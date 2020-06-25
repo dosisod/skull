@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "../../src/common/str.h"
 #include "../../src/parse/types.h"
 #include "../../test/testing.h"
 

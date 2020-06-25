@@ -1,7 +1,10 @@
+#include <limits.h>
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "../../src/errors.h"
 #include "../../src/eval/eval_integer.h"
+#include "../../src/parse/classify.h"
 #include "../../test/testing.h"
 
 #define TEST_EVAL_INT_CONVERT(str_value, expected_num, expected_error) \

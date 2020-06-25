@@ -27,8 +27,8 @@ TEST(is_error_msg_setup, {
 
 TEST(is_error_msg, {
 	return (
-		is_error_msg(U"invalid input") &&
 		is_error_msg(ERROR_MSG[ERROR_INVALID_INPUT]) &&
+		is_error_msg(ERROR_MSG[ERROR_OVERFLOW]) &&
 		!is_error_msg(U"not an error msg")
 	);
 })

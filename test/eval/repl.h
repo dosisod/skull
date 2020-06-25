@@ -1,5 +1,7 @@
 #include <stdbool.h>
 
+#include "../../src/common/str.h"
+#include "../../src/errors.h"
 #include "../../src/eval/context.h"
 #include "../../src/eval/repl.h"
 #include "../../test/testing.h"

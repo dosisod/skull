@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <string.h>
 #include <uchar.h>
 
 #include "../../src/common/str.h"
