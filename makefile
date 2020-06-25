@@ -56,7 +56,23 @@ all:
 
 src:
 	mkdir build/src -p
-	$(CC) src/main.c -o build/src/skull -ldl $(CFLAGS)
+	$(CC) src/main.c \
+		src/eval/context.c \
+		src/eval/repl.c \
+		src/errors.c \
+		src/common/str.c \
+		src/parse/tokenize.c \
+		src/eval/file.c \
+		src/eval/variable.c \
+		src/eval/eval_assign.c \
+		src/parse/classify.c \
+		src/parse/ast/node.c \
+		src/eval/eval_add.c \
+		src/eval/eval_integer.c \
+		src/eval/eval_float.c \
+		src/common/wegex.c \
+		src/parse/types.c \
+		-o build/src/skull -ldl $(CFLAGS)
 
 test:
 	mkdir build/test -p

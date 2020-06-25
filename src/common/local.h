@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <locale.h>
+#include <string.h>
 
 //if system local is not set, default to "en_US.UTF8"
 //throw assertion if system does not support UTF-32

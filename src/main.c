@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 
+#include "../src/errors.h"
 #include "../src/common/local.h"
 #include "../src/eval/repl.h"
 #include "../src/eval/file.h"

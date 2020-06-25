@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdbool.h>
-#include <stddef.h>
 #include <uchar.h>
 
 #define ERROR_INVALID_INPUT 0
@@ -10,32 +9,10 @@
 #define ERROR_TYPE_MISMATCH 3
 #define ERROR_OVERFLOW 4
 
-const char32_t *ERROR_MSG[] = {
-	U"invalid input",
-	U"variable already defined",
-	U"cannot assign to const",
-	U"error, type mismatch",
-	U"overflow occurred",
-	U""
-};
-const char32_t **ERROR_MSG_LAST=NULL;
+extern const char32_t *ERROR_MSG[];
+const char32_t **ERROR_MSG_LAST;
 
 /*
 Returns if a given string is an error msg.
 */
-bool is_error_msg(const char32_t *str) {
-	if (str==NULL) {
-		return false;
-	}
-
-	if (ERROR_MSG_LAST==NULL) {
-		const char32_t **head=ERROR_MSG;
-
-		while (*head[0]!=U'\0') {
-			ERROR_MSG_LAST=head;
-			head++;
-		}
-	}
-
-	return (ERROR_MSG_LAST!=NULL) && (str <= *ERROR_MSG_LAST) && (str >= ERROR_MSG[0]);
-}
+bool is_error_msg(const char32_t *str);
