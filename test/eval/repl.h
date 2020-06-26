@@ -42,7 +42,7 @@ TEST(repl_cannot_redeclare_var, {
 
 	const bool pass=(
 		ctx->vars_used==1 &&
-		c32scmp(ERROR_MSG[ERROR_VAR_ALREADY_DEFINED], output)
+		c32scmp(ERR_VAR_ALREADY_DEFINED, output)
 	);
 
 	free_context(ctx);
@@ -88,7 +88,7 @@ TEST(repl_manually_writing_to_const_var_fails, {
 	int64_t data=1111;
 	const char32_t *err=variable_write(ctx->vars[0], &data);
 
-	const bool pass=(err==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]);
+	const bool pass=(err==ERR_CANNOT_ASSIGN_CONST);
 
 	free_context(ctx);
 	return pass;
@@ -176,7 +176,7 @@ TEST(repl_write_to_const_var_fails, {
 		return false;
 	}
 
-	const bool pass=c32scmp(ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST], output);
+	const bool pass=c32scmp(ERR_CANNOT_ASSIGN_CONST, output);
 
 	free_context(ctx);
 	return pass;
@@ -232,7 +232,7 @@ TEST(repl_print_fail_with_trailing_tokens, {
 	repl_eval(U"x: int = 1234", ctx);
 
 	const bool pass=c32scmp(
-		ERROR_MSG[ERROR_INVALID_INPUT],
+		ERR_INVALID_INPUT,
 		repl_eval(U"x random_data", ctx)
 	);
 
@@ -246,14 +246,14 @@ TEST(repl_blank_line_returns_nothing, {
 
 TEST(repl_invalid_input_returns_error, {
 	return c32scmp(
-		ERROR_MSG[ERROR_INVALID_INPUT],
+		ERR_INVALID_INPUT,
 		repl_eval(U"not_valid", NULL)
 	);
 })
 
 TEST(repl_mut_cannot_be_used_alone, {
 	return c32scmp(
-		ERROR_MSG[ERROR_INVALID_INPUT],
+		ERR_INVALID_INPUT,
 		repl_eval(U"mut", NULL)
 	);
 })
@@ -302,7 +302,7 @@ TEST(repl_cannot_add_nonexistent_var, {
 	repl_eval(U"x: int = 1", ctx);
 	const char32_t *output=repl_eval(U"x + y", ctx);
 
-	const bool pass=c32scmp(ERROR_MSG[ERROR_VAR_NOT_FOUND], output);
+	const bool pass=c32scmp(ERR_VAR_NOT_FOUND, output);
 
 	free_context(ctx);
 	return pass;
@@ -317,8 +317,8 @@ TEST(repl_overflow_int_gives_error, {
 	const char32_t *output2=repl_eval(U"y = 99999999999999999999999", ctx);
 
 	const bool pass=(
-		c32scmp(ERROR_MSG[ERROR_OVERFLOW], output1) &&
-		c32scmp(ERROR_MSG[ERROR_OVERFLOW], output2)
+		c32scmp(ERR_OVERFLOW, output1) &&
+		c32scmp(ERR_OVERFLOW, output2)
 	);
 
 	free_context(ctx);
@@ -329,7 +329,7 @@ TEST(repl_define_var_without_colon_fails, {
 	context_t *ctx=make_context();
 
 	const bool pass=c32scmp(
-		ERROR_MSG[ERROR_INVALID_INPUT],
+		ERR_INVALID_INPUT,
 		repl_eval(U"x int = 0", ctx)
 	);
 
@@ -341,7 +341,7 @@ TEST(repl_missing_value_no_segfault, {
 	context_t *ctx=make_context();
 
 	const bool pass=c32scmp(
-		ERROR_MSG[ERROR_MISSING_ASSIGNMENT],
+		ERR_MISSING_ASSIGNMENT,
 		repl_eval(U"x: int =", ctx)
 	);
 
@@ -374,7 +374,7 @@ TEST(repl_auto_assign_detect_unknown_var, {
 
 	const char32_t *output=repl_eval(U"x := y", ctx);
 
-	const bool pass=(output==ERROR_MSG[ERROR_VAR_NOT_FOUND]);
+	const bool pass=(output==ERR_VAR_NOT_FOUND);
 
 	free_context(ctx);
 	return pass;
@@ -385,7 +385,7 @@ TEST(repl_auto_assign_detect_bad_token, {
 
 	const char32_t *output=repl_eval(U"x := 1234a", ctx);
 
-	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]);
+	const bool pass=(output==ERR_INVALID_INPUT);
 
 	free_context(ctx);
 	return pass;
@@ -396,7 +396,7 @@ TEST(repl_auto_assign_detect_missing_token, {
 
 	const char32_t *output=repl_eval(U"x :=", ctx);
 
-	const bool pass=(output==ERROR_MSG[ERROR_MISSING_ASSIGNMENT]);
+	const bool pass=(output==ERR_MISSING_ASSIGNMENT);
 
 	free_context(ctx);
 	return pass;
@@ -408,7 +408,7 @@ TEST(repl_assign_missing_rhs_token, {
 	repl_eval(U"mut x := 0", ctx);
 	const char32_t *output=repl_eval(U"x =", ctx);
 
-	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]);
+	const bool pass=(output==ERR_INVALID_INPUT);
 
 	free_context(ctx);
 	return pass;
@@ -436,7 +436,7 @@ TEST(repl_cannot_reassign_const, {
 
 	const bool pass=(
 		c32scmp(before, after) &&
-		output==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]
+		output==ERR_CANNOT_ASSIGN_CONST
 	);
 
 	if (!is_error_msg(output)) {

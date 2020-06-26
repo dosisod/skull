@@ -51,7 +51,7 @@ const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_cons
 	}
 
 	if (token->next->next==NULL) {
-		return ERROR_MSG[ERROR_MISSING_ASSIGNMENT];
+		return ERR_MISSING_ASSIGNMENT;
 	}
 
 	token_t *value=token->next->next->next;
@@ -64,7 +64,7 @@ const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_cons
 
 	//token after "=" or ":=" is required
 	if (value==NULL) {
-		return ERROR_MSG[ERROR_MISSING_ASSIGNMENT];
+		return ERR_MISSING_ASSIGNMENT;
 	}
 
 	MAKE_TOKEN_BUF(name, token);
@@ -95,11 +95,11 @@ const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_cons
 				type=new_var->type->name;
 			}
 			else {
-				return ERROR_MSG[ERROR_VAR_NOT_FOUND];
+				return ERR_VAR_NOT_FOUND;
 			}
 		}
 		else {
-			return ERROR_MSG[ERROR_INVALID_INPUT];
+			return ERR_INVALID_INPUT;
 		}
 		var=make_variable(type, name, false);
 	}
@@ -119,7 +119,7 @@ const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_cons
 		return NULL;
 	}
 	free_variable(var);
-	return ERROR_MSG[ERROR_VAR_ALREADY_DEFINED];
+	return ERR_VAR_ALREADY_DEFINED;
 }
 
 const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
@@ -148,7 +148,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		variable_t *var_rhs=context_find_name(ctx, rhs_buf);
 		if (var_rhs==NULL) {
 			free_tokens(token);
-			return ERROR_MSG[ERROR_VAR_NOT_FOUND];
+			return ERR_VAR_NOT_FOUND;
 		}
 
 		variable_t *result=eval_add(var, var_rhs);
@@ -161,7 +161,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 
 	free_tokens(token);
 	ast_node_t *node=make_ast_tree(str);
-	const char32_t *ret=ERROR_MSG[ERROR_INVALID_INPUT];
+	const char32_t *ret=ERR_INVALID_INPUT;
 
 	if (node->node_type==AST_NODE_NO_PARAM_FUNC && token_cmp(U"clear", node->token)) {
 		ret=c32sdup(U"\033[2J\033[;1H");
@@ -170,13 +170,13 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 
 	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
 		if (var->is_const) {
-			return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
+			return ERR_CANNOT_ASSIGN_CONST;
 		}
 		ret=eval_assign(var, node->token->next->next, ctx);
 	}
 
 	else if (node->token==NULL) {
-		ret=ERROR_MSG[ERROR_INVALID_INPUT];
+		ret=ERR_INVALID_INPUT;
 	}
 
 	else if (node->node_type==AST_NODE_VAR_DEF) {

@@ -24,12 +24,12 @@ TEST(eval_bool_single_param, {
 	return (
 		eval_bool_shim(U"true", true, NULL) &&
 		eval_bool_shim(U"false", false, NULL) &&
-		eval_bool_shim(U"not_a_bool", false, ERROR_MSG[ERROR_TYPE_MISMATCH])
+		eval_bool_shim(U"not_a_bool", false, ERR_TYPE_MISMATCH)
 	);
 })
 
 TEST(eval_bool_odd_num_tokens, {
-	return eval_bool_shim(U"bad ==", false, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	return eval_bool_shim(U"bad ==", false, ERR_TYPE_MISMATCH);
 })
 
 TEST(eval_equality_comparison, {
@@ -37,7 +37,7 @@ TEST(eval_equality_comparison, {
 		eval_bool_shim(U"true == true", true, NULL) &&
 		eval_bool_shim(U"true != true", false, NULL) &&
 		eval_bool_shim(U"false == true", false, NULL) &&
-		eval_bool_shim(U"0.0 == 0", false, ERROR_MSG[ERROR_TYPE_MISMATCH]) &&
+		eval_bool_shim(U"0.0 == 0", false, ERR_TYPE_MISMATCH) &&
 		eval_bool_shim(U"123 == 321", false, NULL) &&
 		eval_bool_shim(U"3.14 == 3.14", true, NULL) &&
 		eval_bool_shim(U"'x' == 'x'", true, NULL) &&
@@ -47,9 +47,9 @@ TEST(eval_equality_comparison, {
 
 TEST(eval_bool_with_errors, {
 	return (
-		eval_bool_shim(U"true == 1nvalid", false, ERROR_MSG[ERROR_TYPE_MISMATCH]) &&
-		eval_bool_shim(U"1nvalid == true", false, ERROR_MSG[ERROR_TYPE_MISMATCH]) &&
-		eval_bool_shim(U"1nvalid == 1nvalid", false, ERROR_MSG[ERROR_TYPE_MISMATCH])
+		eval_bool_shim(U"true == 1nvalid", false, ERR_TYPE_MISMATCH) &&
+		eval_bool_shim(U"1nvalid == true", false, ERR_TYPE_MISMATCH) &&
+		eval_bool_shim(U"1nvalid == 1nvalid", false, ERR_TYPE_MISMATCH)
 	);
 })
 

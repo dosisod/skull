@@ -8,7 +8,7 @@
 
 long double eval_float(const token_t *token, const char32_t **error) {
 	if (token->token_type!=TOKEN_FLOAT_CONST) {
-		*error=ERROR_MSG[ERROR_TYPE_MISMATCH];
+		*error=ERR_TYPE_MISMATCH;
 		return 0.0;
 	}
 

@@ -28,11 +28,11 @@ TEST(convert_negative_integer_token, {
 })
 
 TEST(integer_overflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(U"9999999999999999999", LLONG_MAX, ERROR_MSG[ERROR_OVERFLOW]);
+	TEST_EVAL_INT_CONVERT(U"9999999999999999999", LLONG_MAX, ERR_OVERFLOW);
 })
 
 TEST(integer_underflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(U"-9999999999999999999", LLONG_MIN, ERROR_MSG[ERROR_OVERFLOW]);
+	TEST_EVAL_INT_CONVERT(U"-9999999999999999999", LLONG_MIN, ERR_OVERFLOW);
 })
 
 TEST(convert_hex_integer, {
@@ -48,7 +48,7 @@ TEST(convert_binary_integer, {
 })
 
 TEST(non_integer_token_fails, {
-	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, ERR_TYPE_MISMATCH);
 })
 
 #undef TEST_EVAL_INT_CONVERT

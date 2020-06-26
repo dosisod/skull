@@ -56,7 +56,7 @@ TEST(variable_cannot_write_to_const, {
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
-		ret==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST] &&
+		ret==ERR_CANNOT_ASSIGN_CONST &&
 		val==0
 	);
 

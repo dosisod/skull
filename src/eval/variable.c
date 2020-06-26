@@ -40,7 +40,7 @@ variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_co
 
 const char32_t *variable_write(const variable_t *var, const void *data) {
 	if (var->is_const) {
-		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST];
+		return ERR_CANNOT_ASSIGN_CONST;
 	}
 
 	memcpy(var->mem, data, var->bytes);

@@ -63,31 +63,31 @@ TEST(eval_assign_str, {
 })
 
 TEST(eval_assign_int_overflow, {
-	TEST_EVAL_ASSIGN(U"int", U"99999999999999999999999999999999", int64_t, 0, ERROR_MSG[ERROR_OVERFLOW]);
+	TEST_EVAL_ASSIGN(U"int", U"99999999999999999999999999999999", int64_t, 0, ERR_OVERFLOW);
 })
 
 TEST(eval_assign_type_mismatch, {
-	TEST_EVAL_ASSIGN(U"int", U"not_an_int", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_ASSIGN(U"int", U"not_an_int", int64_t, 0, ERR_TYPE_MISMATCH);
 })
 
 TEST(eval_assign_cannot_assign_non_ints, {
-	TEST_EVAL_ASSIGN(U"int", U"3.1415", int64_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_ASSIGN(U"int", U"3.1415", int64_t, 0, ERR_TYPE_MISMATCH);
 })
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	TEST_EVAL_ASSIGN_FLOAT(U"float", U"1234", long double, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_ASSIGN_FLOAT(U"float", U"1234", long double, 0, ERR_TYPE_MISMATCH);
 })
 
 TEST(eval_assign_cannot_assign_non_bools, {
-	TEST_EVAL_ASSIGN(U"bool", U"1", bool, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_ASSIGN(U"bool", U"1", bool, 0, ERR_TYPE_MISMATCH);
 })
 
 TEST(eval_assign_cannot_assign_non_chars, {
-	TEST_EVAL_ASSIGN(U"char", U"1234", char32_t, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_ASSIGN(U"char", U"1234", char32_t, 0, ERR_TYPE_MISMATCH);
 })
 
 TEST(eval_assign_cannot_assign_non_strs, {
-	TEST_EVAL_ASSIGN(U"str", U"1234", char32_t*, 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_ASSIGN(U"str", U"1234", char32_t*, 0, ERR_TYPE_MISMATCH);
 })
 
 #undef TEST_EVAL_ASSIGN
@@ -147,7 +147,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 
 	const bool pass=c32scmp(
 		output,
-		ERROR_MSG[ERROR_TYPE_MISMATCH]
+		ERR_TYPE_MISMATCH
 	);
 
 	if (!is_error_msg(output)) {
@@ -172,7 +172,7 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 
 	const bool pass=c32scmp(
 		eval_assign(var, token, ctx),
-		ERROR_MSG[ERROR_VAR_NOT_FOUND]
+		ERR_VAR_NOT_FOUND
 	);
 
 	free_context(ctx);

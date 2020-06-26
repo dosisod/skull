@@ -18,7 +18,7 @@
 
 const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx) {
 	if (token==NULL) {
-		return ERROR_MSG[ERROR_INVALID_INPUT];
+		return ERR_INVALID_INPUT;
 	}
 
 	if (ctx!=NULL && token->token_type==TOKEN_IDENTIFIER) {
@@ -26,10 +26,10 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 		variable_t *var_found=context_find_name(ctx, buf);
 
 		if (var_found==NULL) {
-			return ERROR_MSG[ERROR_VAR_NOT_FOUND];
+			return ERR_VAR_NOT_FOUND;
 		}
 		if (var_found->type!=var->type) {
-			return ERROR_MSG[ERROR_TYPE_MISMATCH];
+			return ERR_TYPE_MISMATCH;
 		}
 
 		uint8_t mem[var_found->bytes];
@@ -74,7 +74,7 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 		SETUP_MEM(mem, char32_t*, c32sdup(buf));
 	}
 	else {
-		return ERROR_MSG[ERROR_TYPE_MISMATCH];
+		return ERR_TYPE_MISMATCH;
 	}
 
 	if (err!=NULL) {
@@ -87,14 +87,14 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 		return err;
 	}
 
-	if (variable_write(var, mem)==ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]) {
+	if (variable_write(var, mem)==ERR_CANNOT_ASSIGN_CONST) {
 		free((void*)mem);
 		if (var->type==&TYPE_STR) {
 			char32_t *str=NULL;
 			variable_read(&str, var); // NOLINT
 			free(str);
 		}
-		return ERROR_MSG[ERROR_CANNOT_ASSIGN_CONST]; // NOLINT
+		return ERR_CANNOT_ASSIGN_CONST; // NOLINT
 	}
 
 	if (var->type!=&TYPE_STR) {

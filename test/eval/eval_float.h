@@ -27,7 +27,7 @@ TEST(convert_negative_float_token, {
 })
 
 TEST(non_float_token_fails, {
-	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", 0, ERROR_MSG[ERROR_TYPE_MISMATCH]);
+	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", 0, ERR_TYPE_MISMATCH);
 })
 
 #undef TEST_EVAL_FLOAT_CONVERT
