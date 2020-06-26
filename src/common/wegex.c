@@ -1,15 +1,14 @@
 #include <stddef.h>
-#include <wctype.h>
 
 #include "str.h"
 
 #include "wegex.h"
 
-bool wegex_wc_cmp(const char32_t *begin, const char32_t *end, char32_t wc) {
+bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c) {
 	if (*begin==U'[') {
 		begin++;
 		while (begin!=end) {
-			if (wegex_wc_cmp(begin, end, wc)) {
+			if (wegex_cmp(begin, end, c)) {
 				return true;
 			}
 			begin++;
@@ -17,21 +16,21 @@ bool wegex_wc_cmp(const char32_t *begin, const char32_t *end, char32_t wc) {
 		return false;
 	}
 	if (*begin==U'\n') {
-		return iswdigit((wint_t)wc);
+		return c32isdigit(c);
 	}
 	if (*begin==U'\b') {
-		return iswxdigit((wint_t)wc);
+		return c32isxdigit(c);
 	}
 	if (*begin==U'\a') {
 		return (
-			(wc>=U'A' && wc<=U'Z') ||
-			(wc>=U'a' && wc<=U'z')
+			(c>=U'A' && c<=U'Z') ||
+			(c>=U'a' && c<=U'z')
 		);
 	}
 	if (*begin==U'\f') {
-		return iswalnum((wint_t)wc);
+		return c32isalnum(c);
 	}
-	return *begin==wc;
+	return *begin==c;
 }
 
 const char32_t *find_next_wegex(const char32_t* wegex) {
@@ -56,7 +55,7 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 			wegex++;
 			wegex_end=find_next_wegex(wegex);
 
-			while (wegex_wc_cmp(wegex, wegex_end, *match)) {
+			while (wegex_cmp(wegex, wegex_end, *match)) {
 				match++;
 			}
 		}
@@ -65,12 +64,12 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 			wegex++;
 			wegex_end=find_next_wegex(wegex);
 
-			if (!wegex_wc_cmp(wegex, wegex_end, *match)) {
+			if (!wegex_cmp(wegex, wegex_end, *match)) {
 				return false;
 			}
 
 			match++;
-			while (wegex_wc_cmp(wegex, wegex_end, *match)) {
+			while (wegex_cmp(wegex, wegex_end, *match)) {
 				match++;
 			}
 		}
@@ -79,12 +78,12 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 			wegex++;
 			wegex_end=find_next_wegex(wegex);
 
-			if (wegex_wc_cmp(wegex, wegex_end, *match)) {
+			if (wegex_cmp(wegex, wegex_end, *match)) {
 				match++;
 			}
 		}
 
-		else if (wegex_wc_cmp(wegex, wegex_end, *match)) {
+		else if (wegex_cmp(wegex, wegex_end, *match)) {
 			match++;
 			wegex_end=find_next_wegex(wegex);
 		}

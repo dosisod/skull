@@ -130,7 +130,6 @@ TEST(wegex_full_alpha_match, {
 		wegex_match(U"\f", U"X") &&
 		wegex_match(U"\f", U"Y") &&
 		wegex_match(U"\f", U"Z") &&
-		wegex_match(U"\f", U"ß") &&
 		wegex_match(U"\f", U"0") &&
 		wegex_match(U"\f", U"9") &&
 		!wegex_match(U"\f", U"!")

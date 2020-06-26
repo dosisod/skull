@@ -15,7 +15,7 @@ If char at `begin` is `'['`, then return wether `wc` matches any character withi
 
 Else, return wether `wc` and the char at `begin` are equal.
 */
-bool wegex_wc_cmp(const char32_t *begin, const char32_t *end, char32_t wc);
+bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t wc);
 
 /*
 Returns a pointer to the next searchable wegex group.

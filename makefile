@@ -96,7 +96,7 @@ test: setup | src
 
 $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
-	@$(CC) $< -c -o $@
+	@$(CC) $< -c -o $@ $(CFLAGS)
 
 docs:
 	@echo "\033[92mCompile\033[0m docs"

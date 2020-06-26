@@ -1,6 +1,6 @@
 # src/common/wegex.h
 
-#### `bool wegex_wc_cmp(const char32_t *begin, const char32_t *end, char32_t wc)`
+#### `bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t wc)`
 Returns true if `wc` matches a wegex group or a single character.
 
 If char at `begin` is `'\n'`, then return whether `wc` is a number or not.
