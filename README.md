@@ -20,13 +20,13 @@ main[] int -> [
 main[]
 ```
 
-## Building
+## Building and Running
 
 ```
 $ git clone https://github.com/dosisod/skull
 $ cd skull
-$ mkdir build
-$ make all
+$ make
+$ ./build/src/skull
 ```
 
 ## Testing

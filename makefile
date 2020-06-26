@@ -1,7 +1,8 @@
-SKULL_VERSION=0.1.0
+SKULL_VERSION = 0.1.0
 
-CC = $(shell readlink -f $(shell which cc)) -std=c11
-CFLAGS = -Wall \
+CC = $(shell readlink -f $(shell which cc))
+CFLAGS = -std=c11 \
+	-Wall \
 	-Wextra \
 	-pedantic \
 	-Werror \
@@ -54,50 +55,52 @@ all:
 
 .PHONY: src test docs
 
-src:
-	mkdir build/src -p
-	$(CC) src/main.c \
-		src/eval/context.c \
-		src/eval/repl.c \
-		src/errors.c \
-		src/common/str.c \
-		src/parse/tokenize.c \
-		src/eval/file.c \
-		src/eval/variable.c \
-		src/eval/eval_assign.c \
-		src/parse/classify.c \
-		src/parse/ast/node.c \
-		src/eval/eval_add.c \
-		src/eval/eval_integer.c \
-		src/eval/eval_float.c \
-		src/common/wegex.c \
-		src/parse/types.c \
-		-o build/src/skull $(CFLAGS)
+ODIR = build/objs
 
-test:
-	mkdir build/test -p
-	$(CC) test/main.c \
-		src/eval/context.c \
-		src/eval/repl.c \
-		src/errors.c \
-		src/common/str.c \
-		src/parse/tokenize.c \
-		src/eval/file.c \
-		src/eval/variable.c \
-		src/eval/eval_assign.c \
-		src/parse/classify.c \
-		src/parse/ast/node.c \
-		src/eval/eval_add.c \
-		src/eval/eval_integer.c \
-		src/eval/eval_float.c \
-		src/common/wegex.c \
-		src/parse/types.c \
-		src/parse/constants.c \
-		src/eval/eval_bool.c \
-		-o build/test/test $(CFLAGS)
+_OBJS = src/eval/context.o \
+	src/eval/repl.o \
+	src/errors.o \
+	src/common/str.o \
+	src/parse/tokenize.o \
+	src/eval/file.o \
+	src/eval/variable.o \
+	src/eval/eval_assign.o \
+	src/parse/classify.o \
+	src/parse/ast/node.o \
+	src/eval/eval_add.o \
+	src/eval/eval_integer.o \
+	src/eval/eval_float.o \
+	src/common/wegex.o \
+	src/parse/types.o \
+	src/parse/constants.o \
+	src/eval/eval_bool.o
+
+OBJS = $(addprefix $(ODIR)/,$(_OBJS))
+
+DIRS = build/src \
+	build/test \
+	$(ODIR)/src/eval \
+	$(ODIR)/src/parse/ast \
+	$(ODIR)/src/common
+
+setup:
+	@mkdir $(DIRS) -p
+
+src: setup | $(OBJS)
+	@echo "\033[92mCompile\033[0m skull"
+	@$(CC) src/main.c $(OBJS) -o build/src/skull $(CFLAGS)
+
+test: setup | src
+	@echo "\033[92mCompile\033[0m tests"
+	@$(CC) test/main.c $(OBJS) -o build/test/test $(CFLAGS)
+
+$(ODIR)/%.o: %.c
+	@echo "\033[92mCompile\033[0m $<"
+	@$(CC) $< -c -o $@
 
 docs:
-	python3 make_docs.py
+	@echo "\033[92mCompile\033[0m docs"
+	@python3 make_docs.py
 
 clean:
-	rm -rf build/
+	rm -rf build/*
