@@ -1,11 +1,8 @@
-if [ ! -d "build" ]; then
-	mkdir build
-fi
-
-make all
-
-./build/test/test
-
+make clean
+make src
 ./build/src/skull src/main.skull
+
+make test
+./build/test/test
 
 bash ./.github/workflows/clang_tidy.sh
