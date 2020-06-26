@@ -1,5 +1,5 @@
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../common/malloc.h"
 #include "../common/str.h"

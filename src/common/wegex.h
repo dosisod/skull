@@ -4,18 +4,18 @@
 #include <uchar.h>
 
 /*
-Returns true if `wc` matches a wegex group or a single character.
+Returns true if `c` matches a wegex group or a single character.
 
-If char at `begin` is `'\n'`, then return whether `wc` is a number or not.
-If char at `begin` is `'\b'`, then return whether `wc` is a hexadecimal number (byte) or not.
-If char at `begin` is `'\a'`, then return whether `wc` is an ASCII alpha character: `A-Z`, `a-z`
-If char at `begin` is `'\f'`, then return whether `wc` is an alphanumeric character: `0-9`, `A-Z`, `a-z`
+If char at `begin` is `'\n'`, then return whether `c` is a number or not.
+If char at `begin` is `'\b'`, then return whether `c` is a hexadecimal number (byte) or not.
+If char at `begin` is `'\a'`, then return whether `c` is an ASCII alpha character: `A-Z`, `a-z`
+If char at `begin` is `'\f'`, then return whether `c` is an alphanumeric character: `0-9`, `A-Z`, `a-z`
 
-If char at `begin` is `'['`, then return wether `wc` matches any character within `begin` and `end`.
+If char at `begin` is `'['`, then return wether `c` matches any character within `begin` and `end`.
 
-Else, return wether `wc` and the char at `begin` are equal.
+Else, return wether `c` and the char at `begin` are equal.
 */
-bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t wc);
+bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c);
 
 /*
 Returns a pointer to the next searchable wegex group.

@@ -61,12 +61,6 @@ Push a new AST node to `node` with type `node_type`
 */
 void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node);
 
-#define PUSH_AST_NODE_IF(token, last, node_type, node) \
-if (token!=*last) { \
-	push_ast_node(token, last, node_type, node); \
-	continue; \
-} \
-
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */

@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../classify.h"
 #include "../../common/malloc.h"
@@ -26,7 +27,7 @@ token_t *ast_token_cmp(token_t *token, ...) {
 	va_list args;
 	va_start(args, token);
 
-	int token_type=va_arg(args, int);
+	int token_type=va_arg(args, int); // NOLINT
 
 	while (token!=NULL && token_type!=-1) {
 		if (token->token_type!=token_type && token_type!=TOKEN_ANY_NON_BRACKET_TOKEN) {
@@ -66,8 +67,8 @@ void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t
 }
 
 #define PUSH_AST_NODE_IF(token, last, node_type, node) \
-if (token!=*last) { \
-	push_ast_node(token, last, node_type, node); \
+if ((token)!=*(last)) { \
+	push_ast_node((token), (last), (node_type), (node)); \
 	continue; \
 } \
 

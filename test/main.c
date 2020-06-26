@@ -3,19 +3,19 @@
 #include <stdio.h>
 
 #include "parse/ast/node.h"
+#include "parse/classify.h"
 #include "parse/constants.h"
 #include "parse/tokenize.h"
-#include "parse/classify.h"
 #include "parse/types.h"
 
 #include "errors.h"
 
+#include "eval/context.h"
 #include "eval/eval_add.h"
 #include "eval/eval_assign.h"
 #include "eval/eval_bool.h"
 #include "eval/eval_float.h"
 #include "eval/eval_integer.h"
-#include "eval/context.h"
 #include "eval/repl.h"
 #include "eval/variable.h"
 

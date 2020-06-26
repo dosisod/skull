@@ -1,8 +1,8 @@
 #pragma once
 
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "../src/common/color.h"
 #include "../src/common/malloc.h"

@@ -3,8 +3,12 @@
 
 #include "../src/errors.h"
 #include "../src/common/local.h"
-#include "../src/eval/repl.h"
 #include "../src/eval/file.h"
+#include "../src/eval/repl.h"
+
+#ifndef SKULL_VERSION
+#define SKULL_VERSION "<version unknown>"
+#endif
 
 /*
 If no parameters are passed, run in interactive (repl) mode.
@@ -42,7 +46,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	FILE *f=fopen(argv[1], "r");
+	FILE *f=fopen(argv[1], "re");
 	if (f==NULL) {
 		printf("\"%s\" was not found, exiting", argv[1]);
 		return 1;

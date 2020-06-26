@@ -1,7 +1,7 @@
 #include <stddef.h>
 
-#include "../../src/common/wegex.h"
 #include "../../src/common/str.h"
+#include "../../src/common/wegex.h"
 #include "tokenize.h"
 #include "types.h"
 

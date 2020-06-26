@@ -151,9 +151,9 @@ TEST(push_ast_node, {
 	const char32_t *code=str; \
 	ast_node_t *node=make_ast_tree(code); \
 	const bool pass=( \
-		node->node_type==type && \
-		node->token->begin==(code + begin_offset) && \
-		node->token_end->end==(code + end_offset) && \
+		node->node_type==(type) && \
+		node->token->begin==(code + (begin_offset)) && \
+		node->token_end->end==(code + (end_offset)) && \
 		node->last==NULL && \
 		node->next==NULL \
 	); \
