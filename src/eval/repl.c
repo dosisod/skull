@@ -51,7 +51,7 @@ const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_cons
 	}
 
 	if (token->next->next==NULL) {
-		return ERROR_MSG[ERROR_INVALID_INPUT];
+		return ERROR_MSG[ERROR_MISSING_ASSIGNMENT];
 	}
 
 	token_t *value=token->next->next->next;
@@ -64,7 +64,7 @@ const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_cons
 
 	//token after "=" or ":=" is required
 	if (value==NULL) {
-		return ERROR_MSG[ERROR_INVALID_INPUT];
+		return ERROR_MSG[ERROR_MISSING_ASSIGNMENT];
 	}
 
 	MAKE_TOKEN_BUF(name, token);
@@ -95,7 +95,7 @@ const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_cons
 				type=new_var->type->name;
 			}
 			else {
-				return ERROR_MSG[ERROR_INVALID_INPUT];
+				return ERROR_MSG[ERROR_VAR_NOT_FOUND];
 			}
 		}
 		else {
@@ -148,7 +148,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		variable_t *var_rhs=context_find_name(ctx, rhs_buf);
 		if (var_rhs==NULL) {
 			free_tokens(token);
-			return ERROR_MSG[ERROR_INVALID_INPUT];
+			return ERROR_MSG[ERROR_VAR_NOT_FOUND];
 		}
 
 		variable_t *result=eval_add(var, var_rhs);

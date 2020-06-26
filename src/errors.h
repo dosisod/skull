@@ -8,6 +8,8 @@
 #define ERROR_CANNOT_ASSIGN_CONST 2
 #define ERROR_TYPE_MISMATCH 3
 #define ERROR_OVERFLOW 4
+#define ERROR_MISSING_ASSIGNMENT 5
+#define ERROR_VAR_NOT_FOUND 6
 
 extern const char32_t *ERROR_MSG[];
 const char32_t **ERROR_MSG_LAST;

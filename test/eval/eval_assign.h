@@ -172,7 +172,7 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 
 	const bool pass=c32scmp(
 		eval_assign(var, token, ctx),
-		ERROR_MSG[ERROR_INVALID_INPUT]
+		ERROR_MSG[ERROR_VAR_NOT_FOUND]
 	);
 
 	free_context(ctx);

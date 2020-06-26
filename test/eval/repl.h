@@ -302,7 +302,7 @@ TEST(repl_cannot_add_nonexistent_var, {
 	repl_eval(U"x: int = 1", ctx);
 	const char32_t *output=repl_eval(U"x + y", ctx);
 
-	const bool pass=c32scmp(ERROR_MSG[ERROR_INVALID_INPUT], output);
+	const bool pass=c32scmp(ERROR_MSG[ERROR_VAR_NOT_FOUND], output);
 
 	free_context(ctx);
 	return pass;
@@ -341,7 +341,7 @@ TEST(repl_missing_value_no_segfault, {
 	context_t *ctx=make_context();
 
 	const bool pass=c32scmp(
-		ERROR_MSG[ERROR_INVALID_INPUT],
+		ERROR_MSG[ERROR_MISSING_ASSIGNMENT],
 		repl_eval(U"x: int =", ctx)
 	);
 
@@ -372,9 +372,9 @@ TEST(repl_assigning_variable_to_auto_type, {
 TEST(repl_auto_assign_detect_unknown_var, {
 	context_t *ctx=make_context();
 
-	const char32_t *output=repl_eval(U"x := oof", ctx);
+	const char32_t *output=repl_eval(U"x := y", ctx);
 
-	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]);
+	const bool pass=(output==ERROR_MSG[ERROR_VAR_NOT_FOUND]);
 
 	free_context(ctx);
 	return pass;
@@ -396,7 +396,7 @@ TEST(repl_auto_assign_detect_missing_token, {
 
 	const char32_t *output=repl_eval(U"x :=", ctx);
 
-	const bool pass=(output==ERROR_MSG[ERROR_INVALID_INPUT]);
+	const bool pass=(output==ERROR_MSG[ERROR_MISSING_ASSIGNMENT]);
 
 	free_context(ctx);
 	return pass;

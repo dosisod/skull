@@ -8,6 +8,8 @@ const char32_t *ERROR_MSG[] = {
 	U"cannot assign to const",
 	U"error, type mismatch",
 	U"overflow occurred",
+	U"missing value in variable assignment",
+	U"variable not found",
 	U""
 };
 const char32_t **ERROR_MSG_LAST=NULL;

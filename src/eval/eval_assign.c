@@ -26,7 +26,7 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 		variable_t *var_found=context_find_name(ctx, buf);
 
 		if (var_found==NULL) {
-			return ERROR_MSG[ERROR_INVALID_INPUT];
+			return ERROR_MSG[ERROR_VAR_NOT_FOUND];
 		}
 		if (var_found->type!=var->type) {
 			return ERROR_MSG[ERROR_TYPE_MISMATCH];
