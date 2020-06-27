@@ -132,14 +132,6 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	MAKE_TOKEN_BUF(buf, token);
 	variable_t *var=context_find_name(ctx, buf);
 
-	//print user defined variable
-	if (var!=NULL && token->next==NULL) {
-		char32_t *ret=fmt_var(var);
-
-		free_tokens(token);
-		return ret;
-	}
-
 	if (var!=NULL && token->next!=ast_token_cmp(token->next,
 		TOKEN_OPER_PLUS,
 		TOKEN_IDENTIFIER, -1))
@@ -166,6 +158,21 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	if (node->node_type==AST_NODE_NO_PARAM_FUNC && token_cmp(U"clear", node->token)) {
 		ret=c32sdup(U"\033[2J\033[;1H");
 		DIE_IF_MALLOC_FAILS(ret);
+	}
+
+	else if (node->node_type==AST_NODE_ONE_PARAM_FUNC &&
+		token_cmp(U"print", node->token) &&
+		node->token->next->next->token_type==TOKEN_IDENTIFIER)
+	{
+		MAKE_TOKEN_BUF(var_name, node->token->next->next);
+		variable_t *found_var=context_find_name(ctx, var_name);
+
+		if (found_var==NULL) {
+			ret=ERR_VAR_NOT_FOUND;
+		}
+		else {
+			ret=fmt_var(found_var);
+		}
 	}
 
 	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {

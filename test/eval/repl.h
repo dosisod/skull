@@ -269,7 +269,7 @@ TEST(repl_print_var, {
 	context_t *ctx=make_context();
 
 	repl_eval(U"x: int = 1234", ctx);
-	const char32_t *output=repl_eval(U"x", ctx);
+	const char32_t *output=repl_eval(U"print[x]", ctx);
 
 	const bool pass=c32scmp(U"1234", output);
 

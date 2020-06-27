@@ -1,4 +1,4 @@
 msg := "hello world!"
-msg
+print[msg]
 
 return 0
