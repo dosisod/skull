@@ -280,34 +280,6 @@ TEST(repl_print_var, {
 	return pass;
 })
 
-TEST(repl_add_variables, {
-	context_t *ctx=make_context();
-
-	repl_eval(U"x: int = 1", ctx);
-	repl_eval(U"y: int = 2", ctx);
-	const char32_t *output=repl_eval(U"x + y", ctx);
-
-	const bool pass=c32scmp(U"3", output);
-
-	if (!is_error_msg(output)) {
-		free((void*)output);
-	}
-	free_context(ctx);
-	return pass;
-})
-
-TEST(repl_cannot_add_nonexistent_var, {
-	context_t *ctx=make_context();
-
-	repl_eval(U"x: int = 1", ctx);
-	const char32_t *output=repl_eval(U"x + y", ctx);
-
-	const bool pass=c32scmp(ERR_VAR_NOT_FOUND, output);
-
-	free_context(ctx);
-	return pass;
-})
-
 TEST(repl_overflow_int_gives_error, {
 	context_t *ctx=make_context();
 
@@ -468,9 +440,7 @@ void repl_test_self(bool *pass) {
 		test_repl_invalid_input_returns_error,
 		test_repl_mut_cannot_be_used_alone,
 		test_repl_clear_function,
-		test_repl_add_variables,
 		test_repl_print_var,
-		test_repl_cannot_add_nonexistent_var,
 		test_repl_overflow_int_gives_error,
 		test_repl_define_var_without_colon_fails,
 		test_repl_missing_value_no_segfault,

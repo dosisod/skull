@@ -132,25 +132,6 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	MAKE_TOKEN_BUF(buf, token);
 	variable_t *var=context_find_name(ctx, buf);
 
-	if (var!=NULL && token->next!=ast_token_cmp(token->next,
-		TOKEN_OPER_PLUS,
-		TOKEN_IDENTIFIER, -1))
-	{
-		MAKE_TOKEN_BUF(rhs_buf, token->next->next);
-		variable_t *var_rhs=context_find_name(ctx, rhs_buf);
-		if (var_rhs==NULL) {
-			free_tokens(token);
-			return ERR_VAR_NOT_FOUND;
-		}
-
-		variable_t *result=eval_add(var, var_rhs);
-		char32_t *ret=fmt_var(result);
-
-		free_variable(result);
-		free_tokens(token);
-		return ret;
-	}
-
 	free_tokens(token);
 	ast_node_t *node=make_ast_tree(str);
 	const char32_t *ret=ERR_INVALID_INPUT;
