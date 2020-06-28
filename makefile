@@ -12,9 +12,7 @@ CFLAGS = -std=c11 \
 	-Wcast-align \
 	-Wdate-time \
 	-Wdisabled-optimization \
-	-Wformat-nonliteral \
-	-Wformat-security \
-	-Wformat-y2k \
+	-Wformat=2 \
 	-Winvalid-pch \
 	-Wmissing-include-dirs \
 	-Wnested-externs \
@@ -29,6 +27,7 @@ CFLAGS = -std=c11 \
 	-Wconversion \
 	-Wfloat-equal \
 	-Wwrite-strings \
+	-Wdouble-promotion \
 	-DSKULL_VERSION="\"$(SKULL_VERSION)\""
 
 #dont add gnu specific flags if compiling in clang

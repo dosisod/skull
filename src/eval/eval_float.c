@@ -9,7 +9,7 @@
 long double eval_float(const token_t *token, const char32_t **error) {
 	if (token->token_type!=TOKEN_FLOAT_CONST) {
 		*error=ERR_TYPE_MISMATCH;
-		return 0.0;
+		return 0.0L;
 	}
 
 	char *tmp=c32stombs(token->begin);
