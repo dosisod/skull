@@ -5,11 +5,11 @@
 
 #include "tokenize.h"
 
-bool is_whitespace(char32_t c) {
+__attribute__((const)) bool is_whitespace(char32_t c) {
 	return (c <= 32);
 }
 
-bool is_quote(char32_t c) {
+__attribute__((const)) bool is_quote(char32_t c) {
 	return (c=='\'' || c=='\"');
 }
 
@@ -119,7 +119,7 @@ void free_tokens(token_t *head) {
 	}
 }
 
-size_t token_len(const token_t *token) {
+__attribute__((pure)) size_t token_len(const token_t *token) {
 	return (size_t)(token->end - token->begin);
 }
 

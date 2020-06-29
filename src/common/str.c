@@ -21,7 +21,7 @@ void c32slcpy(char32_t *dest, const char32_t *src, size_t n) {
 	dest[n - 1]=U'\0';
 }
 
-size_t c32slen(const char32_t *str) {
+__attribute__((pure)) size_t c32slen(const char32_t *str) {
 	size_t len=0;
 
 	while (*str!=U'\0') {
@@ -99,7 +99,7 @@ char32_t *mbstoc32s(const char *str) {
 	return ret;
 }
 
-bool c32scmp(const char32_t *a, const char32_t *b) {
+__attribute__((pure)) bool c32scmp(const char32_t *a, const char32_t *b) {
 	while (*a!=U'\0' && *b!=U'\0') {
 		if (*a != *b) {
 			return false;
@@ -111,7 +111,7 @@ bool c32scmp(const char32_t *a, const char32_t *b) {
 	return (*a==U'\0' && *b==U'\0');
 }
 
-bool c32sncmp(const char32_t *a, const char32_t *b, size_t n) {
+__attribute__((pure)) bool c32sncmp(const char32_t *a, const char32_t *b, size_t n) {
 	while (*a!=U'\0' && *b!=U'\0' && n>0) {
 		if (*a != *b) {
 			return false;
@@ -123,7 +123,7 @@ bool c32sncmp(const char32_t *a, const char32_t *b, size_t n) {
 	return true;
 }
 
-const char32_t *c32schr(const char32_t *str, char32_t c) {
+__attribute__((pure)) const char32_t *c32schr(const char32_t *str, char32_t c) {
 	while (*str!=U'\0') {
 		if (*str==c) {
 			return str;
@@ -133,11 +133,11 @@ const char32_t *c32schr(const char32_t *str, char32_t c) {
 	return NULL;
 }
 
-bool c32isdigit(char32_t c) {
+__attribute__((const)) bool c32isdigit(char32_t c) {
 	return (c >= U'0') && (c <= U'9');
 }
 
-bool c32isxdigit(char32_t c) {
+__attribute__((const)) bool c32isxdigit(char32_t c) {
 	return (
 		((c >= U'0') && (c <= U'9')) ||
 		((c >= U'a') && (c <= U'f')) ||
@@ -145,7 +145,7 @@ bool c32isxdigit(char32_t c) {
 	);
 }
 
-bool c32isalnum(char32_t c) {
+__attribute__((const)) bool c32isalnum(char32_t c) {
 	return (
 		c32isdigit(c) ||
 		((c >= U'A') && (c <= U'Z')) ||
