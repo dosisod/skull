@@ -28,12 +28,12 @@ TEST(adding_2_floats, {
 	variable_t *var1=make_variable(U"float", U"var1", false);
 	variable_t *var2=make_variable(U"float", U"var2", false);
 
-	const long double num=1.0;
+	const long double num=1.0L;
 	variable_write(var1, &num);
 	variable_write(var2, &num);
 	variable_t *var3=eval_add(var1, var2);
 
-	long double result=0.0;
+	long double result=0.0L;
 	variable_read(&result, var3);
 
 	//casting int to make compiler happy

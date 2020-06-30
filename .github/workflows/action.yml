@@ -3,23 +3,32 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-  build-ubuntu:
+  everything:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+
     - name: Install clang-tidy
-      run: |
-        sudo apt install clang-tidy
-        clang-tidy --version
+      run: sudo apt install clang-tidy
+
     - name: Run clang-tidy
-      run: ./.github/workflows/clang_tidy.sh
-    - name: Setup dir
-      run: mkdir build
-    - name: Build
       run: |
-        make all
+        clang-tidy --version
+        ./.github/workflows/clang_tidy.sh
+
+    - name: Build (GCC)
+      run: |
+        $(which cc) -v
+        make clean all
+
+    - name: Build (Clang)
+      run: |
+        sudo ln -sf $(which clang) $(which cc)
+        $(which cc) -v
+        make clean all
+
     - name: Run tests
       run: ./build/test/test
-    - name: Run skull parser
-      run: |
-        ./build/src/skull src/main.skull
+
+    - name: Run Skull
+      run: ./build/src/skull src/main.skull

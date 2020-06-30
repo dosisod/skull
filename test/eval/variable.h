@@ -127,7 +127,7 @@ TEST(fmt_var_int, {
 })
 
 TEST(fmt_var_float, {
-	TEST_FMT_VAR(U"float", long double, 3.1415, U"3.1415");
+	TEST_FMT_VAR(U"float", long double, 3.1415L, U"3.1415");
 })
 
 TEST(fmt_var_float_zeros, {
