@@ -41,14 +41,19 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	else if (argc>2) {
+	else if (argc > 2) {
 		puts("no input files specified, exiting");
 		return 1;
 	}
 
+	if (strcmp("-v", argv[1])==0) {
+		puts("Skull " SKULL_VERSION);
+		return 0;
+	}
+
 	FILE *f=fopen(argv[1], "re");
 	if (f==NULL) {
-		printf("\"%s\" was not found, exiting", argv[1]);
+		printf("\"%s\" was not found, exiting\n", argv[1]);
 		return 1;
 	}
 
