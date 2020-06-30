@@ -32,3 +32,6 @@ jobs:
 
     - name: Run Skull
       run: ./build/src/skull src/main.skull
+
+    - name: Run Skull unit tests
+      run: ./test/sh/main.sh
