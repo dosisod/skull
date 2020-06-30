@@ -1,8 +1,5 @@
-make clean
-make src
+make clean all
 ./build/src/skull src/main.skull
-
-make test
 ./build/test/test
 
 bash ./.github/workflows/clang_tidy.sh

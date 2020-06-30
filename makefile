@@ -47,13 +47,6 @@ else
 	CFLAGS += -Wno-newline-eof
 endif
 
-all:
-	make src
-	make test
-	make docs
-
-.PHONY: src test docs
-
 ODIR = build/objs
 
 _OBJS = src/eval/context.o \
@@ -82,6 +75,10 @@ DIRS = build/src \
 	$(ODIR)/src/parse/ast \
 	$(ODIR)/src/common
 
+all: src test docs
+
+.PHONY: src test docs
+
 setup:
 	@mkdir $(DIRS) -p
 
@@ -89,7 +86,7 @@ src: setup | $(OBJS)
 	@echo "\033[92mCompile\033[0m skull"
 	@$(CC) src/main.c $(OBJS) -o build/src/skull $(CFLAGS)
 
-test: setup | src
+test: src
 	@echo "\033[92mCompile\033[0m tests"
 	@$(CC) test/main.c $(OBJS) -o build/test/test $(CFLAGS)
 
@@ -102,4 +99,4 @@ docs:
 	@python3 make_docs.py
 
 clean:
-	rm -rf build/*
+	@rm -rf build/*
