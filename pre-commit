@@ -1,5 +1,12 @@
-make clean all
-./build/src/skull src/main.skull
-./build/test/test
+stop() {
+	echo "most recent command had non-zero exit code, commit aborted"
+	exit 1
+}
 
-bash ./.github/workflows/clang_tidy.sh
+make clean all || stop
+
+./build/src/skull src/main.skull || stop
+./build/test/test || stop
+./test/sh/main.sh || stop
+
+bash ./.github/workflows/clang_tidy.sh || stop
