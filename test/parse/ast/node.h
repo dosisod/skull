@@ -233,6 +233,10 @@ TEST(make_ast_tree_return, {
 	TEST_AST_TREE(U"return 0", AST_NODE_RETURN, 0, 8);
 })
 
+TEST(make_ast_tree_return_var, {
+	TEST_AST_TREE(U"return x", AST_NODE_RETURN, 0, 8);
+})
+
 TEST(make_ast_tree_no_param_func, {
 	TEST_AST_TREE(U"func[]", AST_NODE_NO_PARAM_FUNC, 0, 6);
 })
@@ -309,6 +313,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_var_assign,
 		test_make_ast_tree_var_add,
 		test_make_ast_tree_return,
+		test_make_ast_tree_return_var,
 		test_make_ast_tree_no_param_func,
 		test_make_ast_tree_one_param_func,
 		test_make_ast_tree_int_const,

@@ -195,14 +195,27 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	}
 
 	else if (node->node_type==AST_NODE_RETURN) {
-		const char32_t *err=NULL;
-		int64_t num=eval_integer(node->token->next, &err);
+		if (node->token->next->token_type==TOKEN_IDENTIFIER) {
+			MAKE_TOKEN_BUF(var_name, node->token->next);
+			const variable_t *found_var=context_find_name(ctx, var_name);
 
-		if (err==NULL) {
-			free_ast_tree(node);
-			exit((int)num);
+			if (found_var!=NULL && found_var->type==&TYPE_INT) {
+				int64_t num=0;
+				variable_read(&num, found_var);
+				exit((int)num);
+			}
+			ret=ERR_VAR_NOT_FOUND;
 		}
-		ret=NULL;
+		else {
+			const char32_t *err=NULL;
+			int64_t num=eval_integer(node->token->next, &err);
+
+			if (err==NULL) {
+				free_ast_tree(node);
+				exit((int)num);
+			}
+			ret=NULL;
+		}
 	}
 
 	else if (node->node_type==AST_NODE_UNKNOWN) {

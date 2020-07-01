@@ -131,6 +131,12 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		PUSH_AST_NODE_IF(token, &last, AST_NODE_RETURN, &node);
 
 		token=ast_token_cmp(token,
+			TOKEN_KW_RETURN,
+			TOKEN_IDENTIFIER, -1
+		);
+		PUSH_AST_NODE_IF(token, &last, AST_NODE_RETURN, &node);
+
+		token=ast_token_cmp(token,
 			TOKEN_IDENTIFIER,
 			TOKEN_BRACKET_OPEN,
 			TOKEN_BRACKET_CLOSE, -1

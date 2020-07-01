@@ -15,5 +15,6 @@ echo "Running Skull unit tests"
 
 test "exit_code_0" 0
 test "exit_code_1" 1
+test "exit_code_variable" 1
 
 $pass || (echo "1 or more tests failed" && exit 1)
