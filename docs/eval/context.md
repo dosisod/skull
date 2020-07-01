@@ -1,4 +1,4 @@
-# src/eval/context.h
+# src/eval/context.c
 
 #### `context_t *make_context(void)`
 Returns a new variable context.

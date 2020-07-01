@@ -10,6 +10,11 @@
 
 #include "variable.h"
 
+/*
+Make a variable called `name` with type `type`, and make it const if `is_const` is true.
+
+Returns `NULL` if var cannot be created, else pointer to created var.
+*/
 variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_const) {
 	type_t *found_type=find_type(type);
 
@@ -38,6 +43,11 @@ variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_co
 	return var;
 }
 
+/*
+Write `data` to `var`.
+
+If `var` is constant, return error msg, else `NULL`.
+*/
 const char32_t *variable_write(const variable_t *var, const void *data) {
 	if (var->is_const) {
 		return ERR_CANNOT_ASSIGN_CONST;
@@ -47,10 +57,16 @@ const char32_t *variable_write(const variable_t *var, const void *data) {
 	return NULL;
 }
 
+/*
+Read variable memory of `var` into `dest`.
+*/
 void variable_read(void *dest, const variable_t *var) {
 	memcpy(dest, var->mem, var->bytes);
 }
 
+/*
+Free variable `var` and its internal memory.
+*/
 void free_variable(variable_t *var) {
 	if (var!=NULL) {
 		free((char32_t*)var->name);
@@ -59,6 +75,11 @@ void free_variable(variable_t *var) {
 	}
 }
 
+/*
+Return string representation of the variable `var`.
+
+The result of this function must be freed.
+*/
 char32_t *fmt_var(const variable_t *var) {
 	if (var->type==&TYPE_BOOL) {
 		bool data=false;

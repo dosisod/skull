@@ -5,6 +5,11 @@
 #define LINE_COMMENT_LEN 2
 const char32_t *LINE_COMMENT=U"# ";
 
+/*
+Returns pointer to the start of a single line comment in `code`.
+
+If no comment is found, a pointer to the last character is returned.
+*/
 const char32_t *find_line_comment(const char32_t *code) {
 	const size_t code_len=c32slen(code);
 

@@ -19,20 +19,8 @@ struct type_t TYPE_STR;
 
 struct type_t *TYPES_AVAILABLE;
 
-/*
-Creates a new type named `type` that allocates `bytes` bytes.
+bool make_new_type(const char32_t *, size_t);
 
-Returns false if a type called `name` already exists, and was not inserted.
-Returns true if the type `name` was inserted.
-*/
-bool make_new_type(const char32_t *name, size_t bytes);
+type_t *find_type(const char32_t *);
 
-/*
-Returns pointer to type with name `name`.
-*/
-type_t *find_type(const char32_t *name);
-
-/*
-Free all non-builtin types.
-*/
 void free_types(void);

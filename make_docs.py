@@ -8,7 +8,7 @@ def display_markdown(code):
 	for comment in re_comment.finditer(code):
 		end=comment.end()
 
-		ret+="#### `" + code[end:].split("\n")[1][:-1] + "`\n"
+		ret+="#### `" + code[end:].split("\n")[1][:-2] + "`\n"
 		ret+=code[comment.start() + 3:end - 3] + "\n\n"
 
 	return ret

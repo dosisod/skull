@@ -1,12 +1,12 @@
-# src/eval/eval_bool.h
+# src/eval/eval_bool.c
 
 #### `bool eval_bool_true(const token_t *token, const char32_t **error)`
-Returns `true` or `false` if token is `"true"` or `"false"`.
+Returns `true` or `false` if `token` is `"true"` or `"false"`.
 
-`error` is `NULL` if no error occurs, else `error` points to error msg.
+`error` is set to `NULL` if no error occurs, else `error` points to error msg.
 
 #### `bool eval_equality_comparison(const token_t *token, const char32_t **error)`
-Return the result of an equality comparison.
+Return the result of an equality comparison pointed to by `token`.
 
 Examples include:
 
@@ -17,10 +17,10 @@ Examples include:
 "3.14 == 3.14"
 ```
 
-If an error occurs on either side, `error` is set to non `NULL`.
+`error` is set to `NULL` if no error occurs, else `error` points to error msg.
 
 #### `bool eval_bool(const token_t *token, const char32_t **error)`
-Resolve a boolean expression from string into `true` or `false`.
+Resolve a boolean expression from `token` into `true` or `false`.
 
 Examples include:
 
@@ -32,5 +32,5 @@ Examples include:
 "not true"
 ```
 
-If an error an occurs, `error` is set to non `NULL`.
+`error` is set to `NULL` if no error occurs, else `error` points to error msg.
 

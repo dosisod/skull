@@ -38,6 +38,12 @@ struct type_t TYPE_STR = {
 
 struct type_t *TYPES_AVAILABLE=&TYPE_STR;
 
+/*
+Creates a new type called `name` with `bytes` bytes of memory.
+
+Returns false if a type called `name` already exists, and was not inserted.
+Returns true if the type `name` was inserted.
+*/
 bool make_new_type(const char32_t *name, size_t bytes) {
 	type_t *current=TYPES_AVAILABLE;
 	type_t *last=current;
@@ -62,6 +68,9 @@ bool make_new_type(const char32_t *name, size_t bytes) {
 	return true;
 }
 
+/*
+Returns pointer to type with name `name`.
+*/
 type_t *find_type(const char32_t *name) {
 	type_t *head=TYPES_AVAILABLE;
 
@@ -75,8 +84,11 @@ type_t *find_type(const char32_t *name) {
 	return NULL;
 }
 
+/*
+Free all non-builtin types.
+*/
 void free_types(void) {
-	//TYPE_BOOL is the last defined builtin
+	//TYPE_BOOL is the last defined builtin type
 	type_t *head=TYPE_BOOL.next;
 	type_t *tmp;
 

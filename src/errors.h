@@ -11,7 +11,4 @@ const char32_t *ERR_OVERFLOW;
 const char32_t *ERR_MISSING_ASSIGNMENT;
 const char32_t *ERR_VAR_NOT_FOUND;
 
-/*
-Returns if a given string is an error msg.
-*/
-bool is_error_msg(const char32_t *str);
+bool is_error_msg(const char32_t *);

@@ -13,6 +13,9 @@
 
 #include "repl.h"
 
+/*
+Returns pointer to UTF-32 string read from file descriptor `fd`.
+*/
 char32_t *repl_read(FILE *fd) {
 	if (fd==stdin) {
 		printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
@@ -45,6 +48,11 @@ char32_t *repl_read(FILE *fd) {
 	return ret;
 }
 
+/*
+Make and add a variable from passed `tokens` to context `ctx`.
+
+Added variable will be constant if `is_const` is true.
+*/
 const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const) {
 	if (ctx==NULL) {
 		return NULL;
@@ -122,6 +130,9 @@ const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_cons
 	return ERR_VAR_ALREADY_DEFINED;
 }
 
+/*
+Evaluates a string `str` given context `ctx`, returns result as a string (if any).
+*/
 const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	if (*str==U'\0') {
 		return NULL;

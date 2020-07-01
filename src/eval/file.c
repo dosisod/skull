@@ -6,6 +6,9 @@
 
 #include "file.h"
 
+/*
+Run a file `f`. After it is done, go into a REPL.
+*/
 noreturn void eval_file(FILE *f) {
 	context_t *ctx=make_context();
 	bool done=false;

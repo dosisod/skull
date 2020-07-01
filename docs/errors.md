@@ -1,5 +1,5 @@
-# src/errors.h
+# src/errors.c
 
-#### `bool is_error_msg(const char32_t *str)`
-Returns if a given string is an error msg.
+#### `__attribute__((pure)) bool is_error_msg(const char32_t *str)`
+Returns true if `str` is an error msg.
 

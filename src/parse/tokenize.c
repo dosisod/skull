@@ -5,14 +5,25 @@
 
 #include "tokenize.h"
 
+/*
+Return true if `c` is whitespace.
+
+Whitespace includes control-characters, non-printable characters, and spaces.
+*/
 __attribute__((const)) bool is_whitespace(char32_t c) {
 	return (c <= 32);
 }
 
+/*
+Return true if `c` is a double or single quote.
+*/
 __attribute__((const)) bool is_quote(char32_t c) {
 	return (c=='\'' || c=='\"');
 }
 
+/*
+Allocate and return a token with set defaults.
+*/
 token_t *make_token(void) {
 	token_t *token=malloc(sizeof(token_t));
 	DIE_IF_MALLOC_FAILS(token);
@@ -25,6 +36,9 @@ token_t *make_token(void) {
 	return token;
 }
 
+/*
+Tokenize `code`, return pointer to first token.
+*/
 token_t *tokenize(const char32_t *code) {
 	const char32_t *code_copy=code;
 
@@ -108,6 +122,9 @@ token_t *tokenize(const char32_t *code) {
 	return head;
 }
 
+/*
+Free all tokens from `head` and beyond.
+*/
 void free_tokens(token_t *head) {
 	token_t *tmp;
 
@@ -119,10 +136,16 @@ void free_tokens(token_t *head) {
 	}
 }
 
+/*
+Return the string length of `token`.
+*/
 __attribute__((pure)) size_t token_len(const token_t *token) {
 	return (size_t)(token->end - token->begin);
 }
 
+/*
+Returns true if `str` is equal to the value of `token`.
+*/
 bool token_cmp(const char32_t *str, const token_t *token) {
 	const size_t len=token_len(token);
 	return (
@@ -131,6 +154,11 @@ bool token_cmp(const char32_t *str, const token_t *token) {
 	);
 }
 
+/*
+Make a heap allocated copy of the data inside `token`.
+
+The result of this function must be freed.
+*/
 char32_t *token_str(const token_t *token) {
 	const size_t len=token_len(token);
 	char32_t *str=malloc((len + 1) * sizeof(char32_t));

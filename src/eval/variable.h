@@ -11,33 +11,11 @@ typedef struct variable_t {
 	uint8_t *mem;
 } variable_t;
 
-/*
-Make a variable called `name` with type `type`, and make it const if `is_const` is true.
+variable_t *make_variable(const char32_t *, const char32_t *, bool);
 
-Returns `NULL` if var cannot be created, else pointer to created var.
-*/
-variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_const);
+const char32_t *variable_write(const variable_t *, const void *);
+void variable_read(void *, const variable_t *);
 
-/*
-Write `data` to `var`.
+void free_variable(variable_t *);
 
-If `var` is constant, return error msg, else `NULL`.
-*/
-const char32_t *variable_write(const variable_t *var, const void *data);
-
-/*
-Read variable `var`s memory into `dest`.
-*/
-void variable_read(void *dest, const variable_t *var);
-
-/*
-Free a given `variable_t` variable.
-*/
-void free_variable(variable_t *var);
-
-/*
-Return string representation of a variable.
-
-The result of this function must be freed.
-*/
-char32_t *fmt_var(const variable_t *var);
+char32_t *fmt_var(const variable_t *);

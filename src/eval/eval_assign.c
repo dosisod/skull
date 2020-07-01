@@ -16,6 +16,13 @@
 	DIE_IF_MALLOC_FAILS(mem); \
 	memcpy((void*)mem, &tmp, sizeof(type));
 
+/*
+Assign the value of `token` to a variable `var`.
+
+Set `ctx` to allow for assigning variables to other variables.
+
+Return an error (as a string) if any occured, else `NULL`.
+*/
 const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx) {
 	if (token==NULL) {
 		return ERR_INVALID_INPUT;

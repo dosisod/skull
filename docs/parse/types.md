@@ -1,7 +1,7 @@
-# src/parse/types.h
+# src/parse/types.c
 
 #### `bool make_new_type(const char32_t *name, size_t bytes)`
-Creates a new type named `type` that allocates `bytes` bytes.
+Creates a new type called `name` with `bytes` bytes of memory.
 
 Returns false if a type called `name` already exists, and was not inserted.
 Returns true if the type `name` was inserted.

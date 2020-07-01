@@ -1,4 +1,4 @@
-# src/common/wegex.h
+# src/common/wegex.c
 
 #### `bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c)`
 Returns true if `c` matches a wegex group or a single character.

@@ -5,6 +5,11 @@
 
 #include "str.h"
 
+/*
+char32_t equivalent of `strncpy`.
+
+If there is room between the end of `src` and `dest[n]`, fill it with NULL.
+*/
 void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
 	memset(dest, 0, n * sizeof(char32_t));
 
@@ -16,11 +21,17 @@ void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
 	}
 }
 
+/*
+Similar to `strlcpy`, but for `char32_t` types.
+*/
 void c32slcpy(char32_t *dest, const char32_t *src, size_t n) {
 	c32sncpy(dest, src, n);
 	dest[n - 1]=U'\0';
 }
 
+/*
+Return the size of a UTF-32 string.
+*/
 __attribute__((pure)) size_t c32slen(const char32_t *str) {
 	size_t len=0;
 
@@ -32,6 +43,11 @@ __attribute__((pure)) size_t c32slen(const char32_t *str) {
 	return len;
 }
 
+/*
+Make a heap allocated version of `str`.
+
+The result of this function must be freed.
+*/
 char32_t *c32sdup(const char32_t *str) {
 	size_t len=c32slen(str);
 
@@ -43,6 +59,11 @@ char32_t *c32sdup(const char32_t *str) {
 	return ret;
 }
 
+/*
+Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
+
+The result of this function must be freed.
+*/
 char *c32stombs(const char32_t *str) {
 	if (str==NULL) {
 		return NULL;
@@ -72,6 +93,11 @@ char *c32stombs(const char32_t *str) {
 	return ret;
 }
 
+/*
+Convert a multi-byte string `str` (probably UTF-8) into a UTF-32 string.
+
+The result of this function must be freed.
+*/
 char32_t *mbstoc32s(const char *str) {
 	//allocate the max that str could expand to
 	char32_t *ret=malloc((strlen(str) + 1) * sizeof(char32_t));
@@ -99,6 +125,11 @@ char32_t *mbstoc32s(const char *str) {
 	return ret;
 }
 
+/*
+Compare two UTF-32 strings `a` and `b`.
+
+`a` and `b` must be of equal length, and match exactly.
+*/
 __attribute__((pure)) bool c32scmp(const char32_t *a, const char32_t *b) {
 	while (*a!=U'\0' && *b!=U'\0') {
 		if (*a != *b) {
@@ -111,6 +142,9 @@ __attribute__((pure)) bool c32scmp(const char32_t *a, const char32_t *b) {
 	return (*a==U'\0' && *b==U'\0');
 }
 
+/*
+Compare at most `n` chars of two UTF-32 strings, `a` and `b`.
+*/
 __attribute__((pure)) bool c32sncmp(const char32_t *a, const char32_t *b, size_t n) {
 	while (*a!=U'\0' && *b!=U'\0' && n>0) {
 		if (*a != *b) {
@@ -123,6 +157,11 @@ __attribute__((pure)) bool c32sncmp(const char32_t *a, const char32_t *b, size_t
 	return true;
 }
 
+/*
+Return pointer to first occurence of `c` in `str`.
+
+If it cannot be found, NULL is returned instead.
+*/
 __attribute__((pure)) const char32_t *c32schr(const char32_t *str, char32_t c) {
 	while (*str!=U'\0') {
 		if (*str==c) {
@@ -133,10 +172,16 @@ __attribute__((pure)) const char32_t *c32schr(const char32_t *str, char32_t c) {
 	return NULL;
 }
 
+/*
+Return whether the UTF-32 character `c` is a digit.
+*/
 __attribute__((const)) bool c32isdigit(char32_t c) {
 	return (c >= U'0') && (c <= U'9');
 }
 
+/*
+Return whether the UTF-32 character `c` is a hexidecimal digit.
+*/
 __attribute__((const)) bool c32isxdigit(char32_t c) {
 	return (
 		((c >= U'0') && (c <= U'9')) ||
@@ -145,6 +190,9 @@ __attribute__((const)) bool c32isxdigit(char32_t c) {
 	);
 }
 
+/*
+Returns whether the UTF-32 character `c` is an alpha numeric character.
+*/
 __attribute__((const)) bool c32isalnum(char32_t c) {
 	return (
 		c32isdigit(c) ||

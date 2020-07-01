@@ -10,6 +10,9 @@ const char32_t *ERR_OVERFLOW=U"overflow occurred";
 const char32_t *ERR_MISSING_ASSIGNMENT=U"missing value in variable assignment";
 const char32_t *ERR_VAR_NOT_FOUND=U"variable not found";
 
+/*
+Returns true if `str` is an error msg.
+*/
 __attribute__((pure)) bool is_error_msg(const char32_t *str) {
 	return (
 		(str==ERR_INVALID_INPUT) ||
