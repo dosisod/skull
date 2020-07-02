@@ -6,6 +6,26 @@
 #include "str.h"
 
 /*
+Return last occurence of `sub` in string `str`.
+
+`NULL` is returned if no such string is found.
+*/
+const char *strrstr(const char *str, const char *sub) {
+	size_t str_len=strlen(str);
+	size_t sub_len=strlen(sub);
+
+	const char *look=str + str_len - sub_len;
+
+	while (look >= str) {
+		if (strncmp(look, sub, sub_len)==0) {
+			return look;
+		}
+		look--;
+	}
+	return NULL;
+}
+
+/*
 char32_t equivalent of `strncpy`.
 
 If there is room between the end of `src` and `dest[n]`, fill it with NULL.

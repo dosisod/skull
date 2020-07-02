@@ -51,6 +51,11 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
+	if (strrstr(argv[1], ".skull")==NULL) {
+		puts("missing required \".skull\" extension, exiting");
+		return 1;
+	}
+
 	FILE *f=fopen(argv[1], "re");
 	if (f==NULL) {
 		printf("\"%s\" was not found, exiting\n", argv[1]);

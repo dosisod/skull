@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <uchar.h>
 
+const char *strrstr(const char *, const char *);
+
 void c32sncpy(char32_t *, const char32_t *, size_t);
 void c32slcpy(char32_t *, const char32_t *, size_t);
 size_t c32slen(const char32_t *);

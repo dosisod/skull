@@ -1,5 +1,10 @@
 # src/common/str.c
 
+#### `const char *strrstr(const char *str, const char *sub)`
+Return last occurence of `sub` in string `str`.
+
+`NULL` is returned if no such string is found.
+
 #### `void c32sncpy(char32_t *dest, const char32_t *src, size_t n)`
 char32_t equivalent of `strncpy`.
 

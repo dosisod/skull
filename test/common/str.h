@@ -5,6 +5,19 @@
 #include "../../src/common/str.h"
 #include "../../test/testing.h"
 
+TEST(strrstr, {
+	const char *str1="aaaaa";
+	const char *str2="ababab";
+	const char *str3="abcdefg";
+
+	return (
+		strrstr(str1, "a")==(str1 + 4) &&
+		strrstr(str1, "b")==NULL &&
+		strrstr(str2, "ab")==(str2 + 4) &&
+		strrstr(str3, "abc")==str3
+	);
+})
+
 TEST(c32sncpy, {
 	const char32_t *data=U"abc";
 	char32_t buf[4];
@@ -147,6 +160,7 @@ TEST(c32isxdigit, {
 
 void str_test_self(bool *pass) {
 	tests_t tests={
+		test_strrstr,
 		test_c32sncpy,
 		test_c32slcpy,
 		test_c32sdup,
