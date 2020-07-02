@@ -11,3 +11,6 @@ Added variable will be constant if `is_const` is true.
 #### `const char32_t *repl_eval(const char32_t *str, context_t *ctx)`
 Evaluates a string `str` given context `ctx`, returns result as a string (if any).
 
+#### `void repl_loop(FILE *fd, context_t *ctx)`
+Read from `fd`, eval with context `ctx`, and print out result.
+

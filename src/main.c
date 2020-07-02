@@ -20,29 +20,15 @@ int main(int argc, char *argv[]) {
 
 	if (argc==1) {
 		puts("Skull " SKULL_VERSION);
-
 		context_t *ctx=make_context();
 
-		char32_t *line;
 		while (true) {
-			line=repl_read(stdin);
-
-			const char32_t *tmp=repl_eval(line, ctx);
-			char *output=c32stombs(tmp);
-			if (output!=NULL) {
-				printf("%s\n", output);
-			}
-
-			free(output);
-			free(line);
-			if (!is_error_msg(tmp)) {
-				free((char32_t*)tmp);
-			}
+			repl_loop(stdin, ctx);
 		}
 	}
 
 	else if (argc > 2) {
-		puts("no input files specified, exiting");
+		puts("too many input files specified, exiting");
 		return 1;
 	}
 

@@ -206,15 +206,14 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 			}
 			ret=ERR_VAR_NOT_FOUND;
 		}
-		else {
-			const char32_t *err=NULL;
-			int64_t num=eval_integer(node->token->next, &err);
+		else { //token is an int
+			ret=NULL;
+			int64_t num=eval_integer(node->token->next, &ret);
 
-			if (err==NULL) {
+			if (ret==NULL) {
 				free_ast_tree(node);
 				exit((int)num);
 			}
-			ret=NULL;
 		}
 	}
 
@@ -224,4 +223,23 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 
 	free_ast_tree(node);
 	return ret;
+}
+
+/*
+Read from `fd`, eval with context `ctx`, and print out result.
+*/
+void repl_loop(FILE *fd, context_t *ctx) {
+	char32_t *line=repl_read(fd);
+
+	const char32_t *tmp=repl_eval(line, ctx);
+	char *output=c32stombs(tmp);
+	if (output!=NULL) {
+		printf("%s\n", output);
+	}
+
+	free(output);
+	free(line);
+	if (!is_error_msg(tmp)) {
+		free((char32_t*)tmp);
+	}
 }
