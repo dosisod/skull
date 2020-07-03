@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "../common/malloc.h"
+#include "../parse/constants.h"
 
 #include "tokenize.h"
 
@@ -36,6 +37,15 @@ token_t *make_token(void) {
 	return token;
 }
 
+//pinch end of current token, setup next token
+#define PINCH_TOKEN \
+	current->end=code; \
+	token_t *next_token=make_token(); \
+	next_token->begin=code; \
+	next_token->end=code + 1; \
+	current->next=next_token; \
+	current=next_token
+
 /*
 Tokenize `code`, return pointer to first token.
 */
@@ -48,9 +58,25 @@ token_t *tokenize(const char32_t *code) {
 	token_t *last=current;
 
 	char32_t quote=0;
+	bool comment=false;
 
 	while (*code!=U'\0') {
-		if (quote!=0) {
+		if (comment) {
+			if (*code==U'\n') {
+				comment=false;
+			}
+		}
+		else if (!comment && c32sncmp(code, LINE_COMMENT, LINE_COMMENT_LEN)) {
+			comment=true;
+
+			if (current->begin==NULL) {
+				current->begin=code;
+			}
+			else {
+				PINCH_TOKEN;
+			}
+		}
+		else if (quote!=0) {
 			if (*code==quote) {
 				quote=0;
 			}
@@ -63,19 +89,12 @@ token_t *tokenize(const char32_t *code) {
 			}
 		}
 		else if (*code==U'[' || *code==U']' || *code==U',' || *code==U'\n') {
-			if (current->begin!=NULL) {
-				current->end=code;
-
-				token_t *next_token=make_token();
-				next_token->begin=code;
-				next_token->end=code+1;
-
-				current->next=next_token;
-				current=next_token;
-			}
-			else {
+			if (current->begin==NULL) {
 				current->begin=code;
 				current->end=code+1;
+			}
+			else {
+				PINCH_TOKEN;
 			}
 
 			token_t *next_token=make_token();

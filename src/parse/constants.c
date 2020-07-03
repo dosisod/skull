@@ -2,7 +2,6 @@
 
 #include "constants.h"
 
-#define LINE_COMMENT_LEN 2
 const char32_t *LINE_COMMENT=U"# ";
 
 /*
