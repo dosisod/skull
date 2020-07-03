@@ -25,9 +25,9 @@ char32_t *repl_read(FILE *fd) {
 	DIE_IF_MALLOC_FAILS(str);
 
 	size_t offset=0;
-	char c=(char)getc(fd);
+	int c=getc(fd);
 
-	while (c!='\n') {
+	while (c!='\n' && c!=EOF) {
 		//read char by char until we need to reallocate more memory
 		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
 			char *new_str=realloc(str, sizeof(char) * (offset + REPL_MAX_LINE_LEN));
@@ -35,10 +35,10 @@ char32_t *repl_read(FILE *fd) {
 
 			str=new_str;
 		}
-		str[offset]=c;
+		str[offset]=(char)c;
 		offset++;
 
-		c=(char)getc(fd);
+		c=getc(fd);
 	}
 	str[offset]='\0';
 

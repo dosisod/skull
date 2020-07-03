@@ -13,7 +13,7 @@ noreturn void eval_file(FILE *f) {
 	context_t *ctx=make_context();
 
 	while (true) {
-		if (f!=stdin && getc(f)==-1) {
+		if (f!=stdin && getc(f)==EOF) {
 			fclose(f);
 			f=stdin;
 		}

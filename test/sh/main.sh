@@ -17,5 +17,6 @@ test "exit_code_0.skull" 0
 test "exit_code_1.skull" 1
 test "exit_code_variable.skull" 1
 test "missing_skull_extension_fails" 1
+test "no_eol_works.skull" 0
 
 $pass || (echo "1 or more tests failed" && exit 1)
