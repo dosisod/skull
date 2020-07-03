@@ -1,4 +1,4 @@
-SKULL_VERSION = 0.1.0
+SKULL_VERSION = 0.1.1
 
 CC = $(shell readlink -f $(shell which cc))
 CFLAGS = -std=c11 \
