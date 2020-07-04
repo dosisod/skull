@@ -229,7 +229,7 @@ TEST(token_str, {
 	return pass;
 })
 
-TEST(token_comment, {
+TEST(tokenize_comment, {
 	const char32_t *code=U"# this is a comment";
 	token_t *token=tokenize(code);
 	char32_t *buf=token_str(token);
@@ -293,7 +293,7 @@ void tokenizer_test_self(bool *pass) {
 		test_token_cmp,
 		test_token_cmp_match_exact_strings_only,
 		test_token_str,
-		test_token_comment,
+		test_tokenize_comment,
 		test_token_trailing_comment,
 		test_make_token,
 		NULL

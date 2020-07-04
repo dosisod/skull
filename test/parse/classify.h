@@ -214,6 +214,21 @@ TEST(token_str_constant, {
 	return pass;
 })
 
+TEST(token_comment, {
+	const char32_t *code=U"# this is a comment";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_COMMENT &&
+		t->begin==code &&
+		t->end==(code + 19)
+	);
+
+	free(t);
+	return pass;
+})
+
 TEST(is_valid_identifier, {
 	return (
 		is_valid_identifier_str(U"a") &&
@@ -332,6 +347,7 @@ void classifier_test_self(bool *pass) {
 		test_token_bool_constant,
 		test_token_char_constant,
 		test_token_str_constant,
+		test_token_comment,
 		test_is_valid_identifier,
 		test_is_valid_identifier_token,
 		test_new_identifier_clip_trailing_colon,

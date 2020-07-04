@@ -25,7 +25,8 @@ enum node_types {
 	AST_NODE_FLOAT_CONST,
 	AST_NODE_BOOL_CONST,
 	AST_NODE_CHAR_CONST,
-	AST_NODE_STR_CONST
+	AST_NODE_STR_CONST,
+	AST_NODE_COMMENT
 };
 
 typedef struct ast_node_t {

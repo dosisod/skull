@@ -100,7 +100,8 @@ TEST(c32sncmp, {
 		c32sncmp(U"abc", U"abcdef", 3) &&
 		c32sncmp(U"abcdef", U"abc", 3) &&
 		c32sncmp(U"ax", U"ay", 1) &&
-		!c32sncmp(U"x", U"y", 1)
+		!c32sncmp(U"x", U"y", 1) &&
+		!c32sncmp(U"aaa", U"a", 3)
 	);
 })
 

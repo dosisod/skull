@@ -269,6 +269,10 @@ TEST(make_ast_tree_str_const, {
 	TEST_AST_TREE(U"\"abc\"", AST_NODE_STR_CONST, 1, 4);
 })
 
+TEST(make_ast_tree_comment, {
+	TEST_AST_TREE(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
+})
+
 #undef TEST_AST_TREE
 
 /* Once a certain bug is fixed, this test can run
@@ -322,6 +326,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_bool_const_false,
 		test_make_ast_tree_char_const,
 		test_make_ast_tree_str_const,
+		test_make_ast_tree_comment,
 		//test_make_ast_tree_colon_suffix_required,
 		test_free_ast_tree,
 		NULL

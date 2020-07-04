@@ -156,6 +156,9 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 			token=token->next;
 			continue;
 		}
+		if (token->token_type==TOKEN_COMMENT) {
+			push_ast_node(token, &last, AST_NODE_COMMENT, &node);
+		}
 		if (token->token_type==TOKEN_INT_CONST) {
 			push_ast_node(token, &last, AST_NODE_INT_CONST, &node);
 		}

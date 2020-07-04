@@ -174,7 +174,7 @@ __attribute__((pure)) bool c32sncmp(const char32_t *a, const char32_t *b, size_t
 		b++;
 		n--;
 	}
-	return true;
+	return n==0;
 }
 
 /*

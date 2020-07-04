@@ -2,6 +2,7 @@
 
 #include "../../src/common/str.h"
 #include "../../src/common/wegex.h"
+#include "../../src/parse/constants.h"
 #include "tokenize.h"
 #include "types.h"
 
@@ -139,6 +140,9 @@ void classify_token(token_t *token) {
 	}
 	else if (token_cmp(U"->", token)) {
 		token->token_type=TOKEN_FUNCTION;
+	}
+	else if (c32sncmp(buf, LINE_COMMENT, LINE_COMMENT_LEN)) {
+		token->token_type=TOKEN_COMMENT;
 	}
 	else if (is_type_str(buf)) {
 		token->token_type=TOKEN_TYPE;

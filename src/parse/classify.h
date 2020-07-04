@@ -44,6 +44,8 @@ enum token_types {
 	TOKEN_CHAR_CONST,
 	TOKEN_STR_CONST,
 
+	TOKEN_COMMENT,
+
 	//cannot be assigned to a token directly
 	TOKEN_ANY_NON_BRACKET_TOKEN
 };

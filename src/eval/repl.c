@@ -167,6 +167,10 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		}
 	}
 
+	else if (node->node_type==AST_NODE_COMMENT) {
+		ret=NULL;
+	}
+
 	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
 		if (var->is_const) {
 			return ERR_CANNOT_ASSIGN_CONST;
