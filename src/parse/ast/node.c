@@ -179,22 +179,24 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		if (token->token_type==TOKEN_COMMENT) {
 			push_ast_node(token, &last, AST_NODE_COMMENT, &node);
 		}
-		if (token->token_type==TOKEN_INT_CONST) {
+		else if (token->token_type==TOKEN_INT_CONST) {
 			push_ast_node(token, &last, AST_NODE_INT_CONST, &node);
 		}
-		if (token->token_type==TOKEN_FLOAT_CONST) {
+		else if (token->token_type==TOKEN_FLOAT_CONST) {
 			push_ast_node(token, &last, AST_NODE_FLOAT_CONST, &node);
 		}
-		if (token->token_type==TOKEN_BOOL_CONST) {
+		else if (token->token_type==TOKEN_BOOL_CONST) {
 			push_ast_node(token, &last, AST_NODE_BOOL_CONST, &node);
 		}
-		if (token->token_type==TOKEN_CHAR_CONST) {
+		else if (token->token_type==TOKEN_CHAR_CONST) {
 			push_ast_node(token, &last, AST_NODE_CHAR_CONST, &node);
 		}
-		if (token->token_type==TOKEN_STR_CONST) {
+		else if (token->token_type==TOKEN_STR_CONST) {
 			push_ast_node(token, &last, AST_NODE_STR_CONST, &node);
 		}
-
+		else {
+			break;
+		}
 		token=token->next;
 	}
 

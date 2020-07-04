@@ -176,38 +176,6 @@ TEST(make_ast_tree_auto_mutable_variable_def, {
 	TEST_AST_TREE(U"mut x :=", AST_NODE_MUT_AUTO_VAR_DEF, 0, 8);
 })
 
-TEST(make_ast_tree_many_lines, {
-	const char32_t *code=U"x: int = 0\ny: int = 0";
-	ast_node_t *node=make_ast_tree(code);
-
-	const bool pass=(
-		node->node_type==AST_NODE_VAR_DEF &&
-		node->token->begin==code &&
-		node->token_end->end==(code + 8) &&
-		node->last==NULL &&
-		node->next!=NULL &&
-		node->next->node_type==AST_NODE_INT_CONST &&
-		node->next->token->begin==(code + 9) &&
-		node->next->token_end->end==(code + 10) &&
-		node->next->last==node &&
-		node->next->next!=NULL &&
-		node->next->next->node_type==AST_NODE_VAR_DEF &&
-		node->next->next->token->begin==(code + 11) &&
-		node->next->next->token_end->end==(code + 19) &&
-		node->next->next->last==node->next &&
-		node->next->next->next!=NULL &&
-		node->next->next->next->node_type==AST_NODE_INT_CONST &&
-		node->next->next->next->token->begin==(code + 20) &&
-		node->next->next->next->token_end->end==(code + 21) &&
-		node->next->next->next->last==node->next->next
-	);
-
-	free(node->next);
-	free(node);
-
-	return pass;
-})
-
 TEST(make_ast_tree_with_whitespace, {
 	ast_node_t *node=make_ast_tree(U"");
 
@@ -312,7 +280,6 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_mutable_variable_def,
 		test_make_ast_tree_auto_variable_def,
 		test_make_ast_tree_auto_mutable_variable_def,
-		test_make_ast_tree_many_lines,
 		test_make_ast_tree_with_whitespace,
 		test_make_ast_tree_var_assign,
 		test_make_ast_tree_var_add,
