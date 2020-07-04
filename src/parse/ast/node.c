@@ -7,6 +7,9 @@
 
 #include "node.h"
 
+/*
+Makes an ast_node_t with default values
+*/
 ast_node_t *make_ast_node(void) {
 	ast_node_t *node=malloc(sizeof(ast_node_t));
 	DIE_IF_MALLOC_FAILS(node);
@@ -20,6 +23,17 @@ ast_node_t *make_ast_node(void) {
 	return node;
 }
 
+/*
+Compare tokens agains a variable amount of token types (`...`)
+
+Each additional argument will be compared with the next token after the last token.
+
+For example, `ast_token_cmp(token, 0, 1, 2, -1)` will check up until `token->next->next`.
+
+The last `-1` is to tell the function to stop iterating.
+
+If all the args match, return last token matched, else, the passed `token`.
+*/
 token_t *ast_token_cmp(token_t *token, ...) {
 	token_t *head=token;
 	token_t *last=head;
@@ -52,6 +66,9 @@ token_t *ast_token_cmp(token_t *token, ...) {
 	return head;
 }
 
+/*
+Push a new AST node to `node` with type `node_type`
+*/
 void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node) {
 	(*node)->node_type=node_type;
 	(*node)->token=(*last);
@@ -72,6 +89,9 @@ if ((token)!=*(last)) { \
 	continue; \
 } \
 
+/*
+Makes an AST (abstract syntax tree) from a given string.
+*/
 ast_node_t *make_ast_tree(const char32_t *code) {
 	token_t *token=tokenize(code);
 	token_t *last;
@@ -186,6 +206,9 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 	return head;
 }
 
+/*
+Frees an AST tree.
+*/
 void free_ast_tree(ast_node_t *node) {
 	free_tokens(node->token);
 	free(node);
