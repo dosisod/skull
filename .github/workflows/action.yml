@@ -35,3 +35,6 @@ jobs:
 
     - name: Run Skull unit tests
       run: ./test/sh/main.sh
+
+    - name: Install Skull
+      run: sudo make install
