@@ -84,7 +84,7 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 		return ERR_TYPE_MISMATCH;
 	}
 
-	if (err!=NULL) {
+	if (err!=NULL || (err=variable_write(var, mem))==ERR_CANNOT_ASSIGN_CONST) {
 		free((void*)mem);
 		if (var->type==&TYPE_STR) {
 			char32_t *str=NULL;
@@ -92,16 +92,6 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 			free(str);
 		}
 		return err;
-	}
-
-	if (variable_write(var, mem)==ERR_CANNOT_ASSIGN_CONST) {
-		free((void*)mem);
-		if (var->type==&TYPE_STR) {
-			char32_t *str=NULL;
-			variable_read(&str, var); // NOLINT
-			free(str);
-		}
-		return ERR_CANNOT_ASSIGN_CONST; // NOLINT
 	}
 
 	if (var->type!=&TYPE_STR) {

@@ -178,7 +178,7 @@ void classify_token(token_t *token) {
 			token->end--;
 
 			MAKE_TOKEN_BUF(tmp_buf, token);
-			if (is_type_str(tmp_buf) || is_keyword_str(tmp_buf)) { // NOLINT
+			if (is_type_str(tmp_buf) || is_keyword_str(tmp_buf)) {
 				token->token_type=TOKEN_UNKNOWN;
 				token->end++;
 			}

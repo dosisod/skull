@@ -415,7 +415,7 @@ TEST(repl_cannot_reassign_const, {
 		free((char32_t*)output);
 	}
 
-	free_context(ctx); // NOLINT
+	free_context(ctx);
 	return pass;
 })
 

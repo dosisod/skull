@@ -109,7 +109,7 @@ TEST(eval_assign_variable_to_another, {
 	context_add_var(ctx, var1);
 	context_add_var(ctx, var2);
 
-	const char32_t *output=eval_assign(var1, token, ctx); // NOLINT
+	const char32_t *output=eval_assign(var1, token, ctx);
 
 	int64_t data=0;
 	variable_read(&data, var1);
@@ -143,7 +143,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 	context_add_var(ctx, var1);
 	context_add_var(ctx, var2);
 
-	const char32_t *output=eval_assign(var1, token, ctx); // NOLINT
+	const char32_t *output=eval_assign(var1, token, ctx);
 
 	const bool pass=c32scmp(
 		output,
@@ -208,7 +208,7 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	const bool pass=(
 		output==NULL &&
 		c32scmp(after_var1, str2) &&
-		c32scmp(after_var2, str2) && // NOLINT
+		c32scmp(after_var2, str2) &&
 		after_var1!=after_var2
 	);
 
