@@ -203,12 +203,19 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 			MAKE_TOKEN_BUF(var_name, node->token->next);
 			const variable_t *found_var=context_find_name(ctx, var_name);
 
-			if (found_var!=NULL && found_var->type==&TYPE_INT) {
-				int64_t num=0;
-				variable_read(&num, found_var);
-				exit((int)num);
+			if (found_var!=NULL) {
+				if (found_var->type!=&TYPE_INT) {
+					ret=ERR_TYPE_MISMATCH;
+				}
+				else {
+					int64_t num=0;
+					variable_read(&num, found_var);
+					exit((int)num);
+				}
 			}
-			ret=ERR_VAR_NOT_FOUND;
+			else {
+				ret=ERR_VAR_NOT_FOUND;
+			}
 		}
 		else { //token is an int
 			ret=NULL;

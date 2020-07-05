@@ -430,6 +430,18 @@ TEST(repl_cannot_return_non_existent_var, {
 	return pass;
 })
 
+TEST(repl_cannot_return_non_int, {
+	context_t *ctx=make_context();
+
+	repl_eval(U"x := 'a'", ctx);
+	const char32_t *output=repl_eval(U"return x", ctx);
+
+	const bool pass=(output==ERR_TYPE_MISMATCH);
+
+	free_context(ctx);
+	return pass;
+})
+
 void repl_test_self(bool *pass) {
 	tests_t tests={
 		test_repl_variable_declare,
@@ -462,6 +474,7 @@ void repl_test_self(bool *pass) {
 		test_repl_assign_missing_rhs_token,
 		test_repl_cannot_reassign_const,
 		test_repl_cannot_return_non_existent_var,
+		test_repl_cannot_return_non_int,
 		NULL
 	};
 
