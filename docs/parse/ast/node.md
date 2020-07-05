@@ -3,12 +3,12 @@
 #### `ast_node_t *make_ast_node(void)`
 Makes an ast_node_t with default values
 
-#### `token_t *ast_token_cmp(token_t *token, ...)`
-Compare tokens agains a variable amount of token types (`...`)
+#### `token_t *ast_token_cmp(token_t *token, int *token_type)`
+Compare tokens against a combonation of tokens.
 
-Each additional argument will be compared with the next token after the last token.
+Each item in `combo` will be compared with the next token after the last token.
 
-For example, `ast_token_cmp(token, 0, 1, 2, -1)` will check up until `token->next->next`.
+For example, `ast_token_cmp(token, (int[]){0, 1, 2, -1})` will check up until `token->next->next`.
 
 The last `-1` is to tell the function to stop iterating.
 
