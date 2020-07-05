@@ -36,7 +36,6 @@ TEST(make_ast_node, {
 	);
 
 	free(node);
-
 	return pass;
 })
 
@@ -45,17 +44,16 @@ TEST(ast_token_cmp, {
 	token_t *token=tokenize(code);
 	classify_tokens(token);
 
-	const bool pass=ast_token_cmp(
-		token,
-		TOKEN_NEW_IDENTIFIER,
-		TOKEN_TYPE,
-		TOKEN_OPER_EQUAL,
-		TOKEN_INT_CONST,
-		-1
-	)==token->next->next->next;
+	const bool pass=(ast_token_cmp(
+		token, (int[]){
+			TOKEN_NEW_IDENTIFIER,
+			TOKEN_TYPE,
+			TOKEN_OPER_EQUAL,
+			TOKEN_INT_CONST, -1
+		}
+	)==token->next->next->next);
 
 	free_tokens(token);
-
 	return pass;
 })
 
@@ -64,17 +62,16 @@ TEST(ast_token_cmp_extra_tokens, {
 	token_t *token=tokenize(code);
 	classify_tokens(token);
 
-	const bool pass=ast_token_cmp(
-		token,
-		TOKEN_NEW_IDENTIFIER,
-		TOKEN_TYPE,
-		TOKEN_OPER_EQUAL,
-		TOKEN_INT_CONST,
-		-1
-	)==token->next->next->next;
+	const bool pass=(ast_token_cmp(
+		token, (int[]) {
+			TOKEN_NEW_IDENTIFIER,
+			TOKEN_TYPE,
+			TOKEN_OPER_EQUAL,
+			TOKEN_INT_CONST, -1
+		}
+	)==token->next->next->next);
 
 	free_tokens(token);
-
 	return pass;
 })
 
@@ -83,18 +80,18 @@ TEST(ast_token_cmp_missing_tokens, {
 	token_t *token=tokenize(code);
 	classify_tokens(token);
 
-	const bool pass=ast_token_cmp(
-		token,
-		TOKEN_IDENTIFIER,
-		TOKEN_TYPE,
-		TOKEN_OPER_EQUAL,
-		TOKEN_INT_CONST,
-		TOKEN_UNKNOWN, // missing an extra "unknown" token
-		-1
-	)==token;
+	const bool pass=(ast_token_cmp(
+		token, (int[]) {
+			TOKEN_IDENTIFIER,
+			TOKEN_TYPE,
+			TOKEN_OPER_EQUAL,
+			TOKEN_INT_CONST,
+			TOKEN_UNKNOWN, // missing an extra "unknown" token
+			-1
+		}
+	)==token);
 
 	free_tokens(token);
-
 	return pass;
 })
 
@@ -103,16 +100,15 @@ TEST(ast_token_cmp_any_token, {
 	token_t *token=tokenize(code);
 	classify_tokens(token);
 
-	const bool pass=ast_token_cmp(
-		token,
-		TOKEN_BRACKET_OPEN,
-		TOKEN_ANY_NON_BRACKET_TOKEN,
-		TOKEN_BRACKET_CLOSE,
-		-1
-	)==token->next->next;
+	const bool pass=(ast_token_cmp(
+		token, (int[]) {
+			TOKEN_BRACKET_OPEN,
+			TOKEN_ANY_NON_BRACKET_TOKEN,
+			TOKEN_BRACKET_CLOSE, -1
+		}
+	)==token->next->next);
 
 	free_tokens(token);
-
 	return pass;
 })
 
@@ -126,14 +122,12 @@ TEST(push_ast_node, {
 	ast_node_t *node=make_ast_node();
 	ast_node_t *tmp=node;
 
-	token=ast_token_cmp(
-		token,
+	token=ast_token_cmp(token, (int[]) {
 		TOKEN_NEW_IDENTIFIER,
 		TOKEN_TYPE,
 		TOKEN_OPER_EQUAL,
-		TOKEN_INT_CONST,
-		-1
-	);
+		TOKEN_INT_CONST, -1
+	});
 	push_ast_node(token, &last, AST_NODE_VAR_DEF, &node);
 
 	const bool pass=(
@@ -143,7 +137,6 @@ TEST(push_ast_node, {
 	);
 
 	free_tokens(token);
-
 	return pass;
 })
 
