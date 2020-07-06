@@ -139,11 +139,11 @@ TEST(fmt_var_bool, {
 })
 
 TEST(fmt_var_char, {
-	TEST_FMT_VAR(U"char", char32_t, U'a', U"'a'");
+	TEST_FMT_VAR(U"char", char32_t, U'a', U"a");
 })
 
 TEST(fmt_var_wide_char_preserved, {
-	TEST_FMT_VAR(U"char", char32_t, U'存', U"'存'");
+	TEST_FMT_VAR(U"char", char32_t, U'存', U"存");
 })
 
 #undef TEST_FMT_VAR
@@ -161,7 +161,7 @@ TEST(fmt_var_str, {
 
 	const bool pass=(
 		str!=NULL &&
-		c32scmp(U"\"abc\"", str)
+		c32scmp(U"abc", str)
 	);
 
 	char32_t *mem=NULL;

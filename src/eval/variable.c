@@ -91,30 +91,20 @@ char32_t *fmt_var(const variable_t *var) {
 		return ret;
 	}
 	if (var->type==&TYPE_STR) {
-		const char32_t *data=NULL;
-		variable_read(&data, var);
+		const char32_t *str=NULL;
+		variable_read(&str, var);
 
-		size_t len=c32slen(data);
-
-		//add 3 for ""s and NULL terminator
-		char32_t *ret=malloc(sizeof(char32_t) * (len + 3));
+		char32_t *ret=c32sdup(str);
 		DIE_IF_MALLOC_FAILS(ret);
-
-		c32sncpy(ret + 1, data, len);
-		ret[0]=U'\"';
-		ret[len + 1]=U'\"';
-		ret[len + 2]=U'\0';
 
 		return ret;
 	}
 	if (var->type==&TYPE_CHAR) {
-		char32_t *ret=malloc(sizeof(char32_t) * 4);
+		char32_t *ret=malloc(sizeof(char32_t) * 2);
 		DIE_IF_MALLOC_FAILS(ret);
 
-		ret[0]=U'\'';
-		variable_read(ret + 1, var);
-		ret[2]=U'\'';
-		ret[3]=U'\0';
+		variable_read(ret, var);
+		ret[1]=U'\0';
 
 		return ret;
 	}
