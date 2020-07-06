@@ -1,8 +1,8 @@
-SKULL_VERSION = 0.1.1
+SKULL_VERSION := 0.1.1
 
-INSTALL = /usr/local
+INSTALL := /usr/local
 
-CC = $(shell readlink -f $(shell which cc))
+CC := $(shell readlink -f $(shell which cc))
 CFLAGS = -std=c11 \
 	-Wall \
 	-Wextra \
@@ -69,9 +69,9 @@ _OBJS = src/eval/context.o \
 	src/parse/constants.o \
 	src/eval/eval_bool.o
 
-OBJS = $(addprefix $(ODIR)/,$(_OBJS))
+OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 
-DIRS = build/src \
+DIRS := build/src \
 	build/test \
 	$(ODIR)/src/eval \
 	$(ODIR)/src/parse/ast \

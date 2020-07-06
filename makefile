@@ -28,6 +28,6 @@ clean:
 
 install: clean | src
 	@echo "\033[92mInstall\033[0m skull"
-	@mkdir -p $(install)/{bin,man/man1}/
 	@install build/src/skull $(INSTALL)/bin/
 	@install -m 644 docs/skull.1 $(INSTALL)/man/man1/
+	@make clean
