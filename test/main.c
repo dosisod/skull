@@ -33,21 +33,21 @@ int main(void) {
 	testing_test_self(&passed);
 
 	ast_node_test_self(&passed);
+	classifier_test_self(&passed);
 	constants_test_self(&passed);
 	tokenizer_test_self(&passed);
 	types_test_self(&passed);
-	classifier_test_self(&passed);
 
 	error_test_self(&passed);
 
+	context_test_self(&passed);
+	eval_add_test_self(&passed);
 	eval_assign_test_self(&passed);
 	eval_bool_test_self(&passed);
 	eval_float_test_self(&passed);
 	eval_integer_test_self(&passed);
-	variable_test_self(&passed);
-	context_test_self(&passed);
-	eval_add_test_self(&passed);
 	repl_test_self(&passed);
+	variable_test_self(&passed);
 
 	color_test_self(&passed);
 	str_test_self(&passed);
