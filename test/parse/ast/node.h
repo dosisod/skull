@@ -153,6 +153,10 @@ TEST(push_ast_node, {
 	free(node); \
 	return pass;
 
+TEST(make_ast_tree_identifier, {
+	TEST_AST_TREE(U"x", AST_NODE_IDENTIFIER, 0, 1);
+})
+
 TEST(make_ast_tree_variable_def, {
 	TEST_AST_TREE(U"x: int =", AST_NODE_VAR_DEF, 0, 8);
 })
@@ -269,6 +273,7 @@ void ast_node_test_self(bool *pass) {
 		test_ast_token_cmp_missing_tokens,
 		test_ast_token_cmp_any_token,
 		test_push_ast_node,
+		test_make_ast_tree_identifier,
 		test_make_ast_tree_variable_def,
 		test_make_ast_tree_mutable_variable_def,
 		test_make_ast_tree_auto_variable_def,

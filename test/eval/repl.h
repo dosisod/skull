@@ -352,17 +352,6 @@ TEST(repl_auto_assign_detect_unknown_var, {
 	return pass;
 })
 
-TEST(repl_auto_assign_detect_bad_token, {
-	context_t *ctx=make_context();
-
-	const char32_t *output=repl_eval(U"x := 1234a", ctx);
-
-	const bool pass=(output==ERR_INVALID_INPUT);
-
-	free_context(ctx);
-	return pass;
-})
-
 TEST(repl_auto_assign_detect_missing_token, {
 	context_t *ctx=make_context();
 
@@ -469,7 +458,6 @@ void repl_test_self(bool *pass) {
 		test_repl_missing_value_no_segfault,
 		test_repl_assigning_variable_to_auto_type,
 		test_repl_auto_assign_detect_unknown_var,
-		test_repl_auto_assign_detect_bad_token,
 		test_repl_auto_assign_detect_missing_token,
 		test_repl_assign_missing_rhs_token,
 		test_repl_cannot_reassign_const,
