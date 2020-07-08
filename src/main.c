@@ -13,7 +13,7 @@
 /*
 If no parameters are passed, run in interactive (repl) mode.
 
-Else, run a passed in `.skull` file.
+Else, run a passed in `.sk` file.
 */
 int main(int argc, char *argv[]) {
 	SETUP_LOCALE();
@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	if (strrstr(argv[1], ".skull")==NULL) {
-		puts("missing required \".skull\" extension, exiting");
+	if (strrstr(argv[1], ".sk")==NULL) {
+		puts("missing required \".sk\" extension, exiting");
 		return 1;
 	}
 
