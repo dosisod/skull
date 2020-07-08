@@ -8,7 +8,6 @@
 #include "../eval/eval_assign.h"
 #include "../eval/eval_float.h"
 #include "../eval/eval_integer.h"
-#include "../parse/ast/node.h"
 #include "../parse/classify.h"
 
 #include "repl.h"
@@ -53,9 +52,14 @@ Make and add a variable from passed `tokens` to context `ctx`.
 
 Added variable will be constant if `is_const` is true.
 */
-const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const) {
+const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_const) {
 	if (ctx==NULL) {
 		return NULL;
+	}
+
+	const token_t *token=node->token;
+	if (!is_const) {
+		token=token->next;
 	}
 
 	if (token->next->next==NULL) {
@@ -182,20 +186,16 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		ret=ERR_INVALID_INPUT;
 	}
 
-	else if (node->node_type==AST_NODE_VAR_DEF) {
-		ret=repl_make_var(node->token, ctx, true);
+	else if (node->node_type==AST_NODE_VAR_DEF ||
+		node->node_type==AST_NODE_AUTO_VAR_DEF)
+	{
+		ret=repl_make_var(node, ctx, true);
 	}
 
-	else if (node->node_type==AST_NODE_MUT_VAR_DEF) {
-		ret=repl_make_var(node->token->next, ctx, false);
-	}
-
-	else if (node->node_type==AST_NODE_AUTO_VAR_DEF) {
-		ret=repl_make_var(node->token, ctx, true);
-	}
-
-	else if (node->node_type==AST_NODE_MUT_AUTO_VAR_DEF) {
-		ret=repl_make_var(node->token->next, ctx, false);
+	else if (node->node_type==AST_NODE_MUT_VAR_DEF ||
+		node->node_type==AST_NODE_MUT_AUTO_VAR_DEF)
+	{
+		ret=repl_make_var(node, ctx, false);
 	}
 
 	else if (node->node_type==AST_NODE_RETURN) {

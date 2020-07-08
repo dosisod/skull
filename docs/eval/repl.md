@@ -3,7 +3,7 @@
 #### `char32_t *repl_read(FILE *fd)`
 Returns pointer to UTF-32 string read from file descriptor `fd`.
 
-#### `const char32_t *repl_make_var(const token_t *token, context_t *ctx, bool is_const)`
+#### `const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_const)`
 Make and add a variable from passed `tokens` to context `ctx`.
 
 Added variable will be constant if `is_const` is true.
