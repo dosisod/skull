@@ -5,6 +5,7 @@
 #include "../common/str.h"
 #include "../errors.h"
 #include "../parse/classify.h"
+#include "eval_add.h"
 #include "eval_float.h"
 #include "eval_integer.h"
 
@@ -17,19 +18,19 @@
 	memcpy((void*)mem, &tmp, sizeof(type));
 
 /*
-Assign the value of `token` to a variable `var`.
+Assign `node` to variable `var`.
 
 Set `ctx` to allow for assigning variables to other variables.
 
 Return an error (as a string) if any occured, else `NULL`.
 */
-const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ctx) {
-	if (token==NULL) {
+const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
+	if (node==NULL) {
 		return ERR_INVALID_INPUT;
 	}
 
-	if (ctx!=NULL && token->token_type==TOKEN_IDENTIFIER) {
-		MAKE_TOKEN_BUF(buf, token);
+	if (ctx!=NULL && node->node_type==AST_NODE_IDENTIFIER) {
+		MAKE_TOKEN_BUF(buf, node->token);
 		variable_t *var_found=context_find_name(ctx, buf);
 
 		if (var_found==NULL) {
@@ -54,22 +55,46 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 		return NULL;
 	}
 
+	if (ctx!=NULL && node->node_type==AST_NODE_ADD_VAR) {
+		MAKE_TOKEN_BUF(lhs_buf, node->token);
+		MAKE_TOKEN_BUF(rhs_buf, node->token->next->next);
+
+		variable_t *lhs_var=context_find_name(ctx, lhs_buf);
+		variable_t *rhs_var=context_find_name(ctx, rhs_buf);
+
+		if (lhs_var==NULL || rhs_var==NULL) {
+			return ERR_VAR_NOT_FOUND;
+		}
+		if (lhs_var->type!=rhs_var->type) {
+			return ERR_TYPE_MISMATCH;
+		}
+
+		variable_t *tmp=eval_add(lhs_var, rhs_var);
+		if (tmp==NULL) {
+			return ERR_TYPE_MISMATCH;
+		}
+		variable_write(var, tmp->mem);
+		free(tmp);
+
+		return NULL;
+	}
+
 	const void *mem=NULL;
 	const char32_t *err=NULL;
 
-	if (var->type==&TYPE_INT && token->token_type==TOKEN_INT_CONST) {
-		SETUP_MEM(mem, int64_t, eval_integer(token, &err));
+	if (var->type==&TYPE_INT && node->node_type==AST_NODE_INT_CONST) {
+		SETUP_MEM(mem, int64_t, eval_integer(node->token, &err));
 	}
-	else if (var->type==&TYPE_FLOAT && token->token_type==TOKEN_FLOAT_CONST) {
-		SETUP_MEM(mem, long double, eval_float(token, &err));
+	else if (var->type==&TYPE_FLOAT && node->node_type==AST_NODE_FLOAT_CONST) {
+		SETUP_MEM(mem, long double, eval_float(node->token, &err));
 	}
-	else if (var->type==&TYPE_BOOL && token->token_type==TOKEN_BOOL_CONST) {
-		SETUP_MEM(mem, bool, token_cmp(U"true", token));
+	else if (var->type==&TYPE_BOOL && node->node_type==AST_NODE_BOOL_CONST) {
+		SETUP_MEM(mem, bool, token_cmp(U"true", node->token));
 	}
-	else if (var->type==&TYPE_CHAR && token->token_type==TOKEN_CHAR_CONST) {
-		SETUP_MEM(mem, char32_t, *token->begin);
+	else if (var->type==&TYPE_CHAR && node->node_type==AST_NODE_CHAR_CONST) {
+		SETUP_MEM(mem, char32_t, *node->token->begin);
 	}
-	else if (var->type==&TYPE_STR && token->token_type==TOKEN_STR_CONST) {
+	else if (var->type==&TYPE_STR && node->node_type==AST_NODE_STR_CONST) {
 		char32_t *current=NULL;
 		variable_read(&current, var);
 
@@ -77,7 +102,7 @@ const char32_t *eval_assign(variable_t *var, token_t *token, const context_t *ct
 			free(current);
 		}
 
-		MAKE_TOKEN_BUF(buf, token);
+		MAKE_TOKEN_BUF(buf, node->token);
 		SETUP_MEM(mem, char32_t*, c32sdup(buf));
 	}
 	else {

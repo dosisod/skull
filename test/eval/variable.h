@@ -151,11 +151,9 @@ TEST(fmt_var_wide_char_preserved, {
 TEST(fmt_var_str, {
 	variable_t *var=make_variable(U"str", U"x", false);
 
-	const char32_t *data=U"\"abc\"";
-	token_t *token=tokenize(data);
-	classify_token(token);
+	ast_node_t *node=make_ast_tree(U"\"abc\"");
 
-	eval_assign(var, token, NULL);
+	eval_assign(var, node, NULL);
 
 	char32_t *str=fmt_var(var);
 

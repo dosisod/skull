@@ -88,7 +88,9 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		else if (node->next->node_type==AST_NODE_CHAR_CONST) {
 			type=U"char";
 		}
-		else if (node->next->node_type==AST_NODE_IDENTIFIER) {
+		else if (node->next->node_type==AST_NODE_IDENTIFIER ||
+			node->next->node_type==AST_NODE_ADD_VAR
+		) {
 			MAKE_TOKEN_BUF(buf, node->next->token);
 			variable_t *new_var=context_find_name(ctx, buf);
 
@@ -109,7 +111,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		var=make_variable(type, name, false);
 	}
 
-	const char32_t *tmp=eval_assign(var, node->next->token, ctx);
+	const char32_t *tmp=eval_assign(var, node->next, ctx);
 	var->is_const=is_const;
 
 	if (tmp!=NULL) {
@@ -168,7 +170,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		if (var->is_const) {
 			return ERR_CANNOT_ASSIGN_CONST;
 		}
-		ret=eval_assign(var, node->token->next->next, ctx);
+		ret=eval_assign(var, node->next, ctx);
 	}
 
 	else if (node->token==NULL) {
