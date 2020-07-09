@@ -53,6 +53,15 @@ TEST(c32sdup, {
 	return pass;
 })
 
+TEST(c32scat, {
+	char32_t *str=c32scat(U"hello", U" world!");
+
+	const bool pass=c32scmp(str, U"hello world!");
+
+	free(str);
+	return pass;
+})
+
 TEST(c32slen, {
 	return (
 		c32slen(U"abc")==3 &&
@@ -165,6 +174,7 @@ void str_test_self(bool *pass) {
 		test_c32sncpy,
 		test_c32slcpy,
 		test_c32sdup,
+		test_c32scat,
 		test_c32slen,
 		test_c32stombs,
 		test_c32stombs_with_null,

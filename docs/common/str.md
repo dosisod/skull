@@ -21,6 +21,11 @@ Make a heap allocated version of `str`.
 
 The result of this function must be freed.
 
+#### `char32_t *c32scat(const char32_t *s1, const char32_t *s2)`
+Concatenate `s1` and `s2`.
+
+The result of this function must be freed.
+
 #### `char *c32stombs(const char32_t *str)`
 Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 

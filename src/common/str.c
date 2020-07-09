@@ -80,6 +80,24 @@ char32_t *c32sdup(const char32_t *str) {
 }
 
 /*
+Concatenate `s1` and `s2`.
+
+The result of this function must be freed.
+*/
+char32_t *c32scat(const char32_t *s1, const char32_t *s2) {
+	size_t len_s1=c32slen(s1);
+	size_t len_s2=c32slen(s2);
+
+	char32_t *ret=malloc(sizeof(char32_t) * (len_s1 + len_s2 + 1));
+	DIE_IF_MALLOC_FAILS(ret);
+
+	c32sncpy(ret, s1, len_s1);
+	c32slcpy(ret + len_s1, s2, len_s2 + 1);
+
+	return ret;
+}
+
+/*
 Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 
 The result of this function must be freed.
