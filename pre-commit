@@ -5,7 +5,6 @@ stop() {
 
 make clean all || stop
 
-./build/src/skull src/main.sk || stop
 ./build/test/test || stop
 ./test/sh/main.sh || stop
 

@@ -30,9 +30,6 @@ jobs:
     - name: Run tests
       run: ./build/test/test
 
-    - name: Run Skull
-      run: ./build/src/skull src/main.sk
-
     - name: Run Skull unit tests
       run: ./test/sh/main.sh
 
