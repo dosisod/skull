@@ -36,7 +36,13 @@ struct type_t TYPE_STR = {
 	.next=&TYPE_CHAR
 };
 
-struct type_t *TYPES_AVAILABLE=&TYPE_STR;
+struct type_t TYPE_TEMPLATE = {
+	.name=U"T",
+	.bytes=sizeof(struct type_t*),
+	.next=&TYPE_STR
+};
+
+struct type_t *TYPES_AVAILABLE=&TYPE_TEMPLATE;
 
 /*
 Creates a new type called `name` with `bytes` bytes of memory.

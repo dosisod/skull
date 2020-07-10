@@ -193,6 +193,9 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		else if (token->token_type==TOKEN_IDENTIFIER) {
 			push_ast_node(token, &last, AST_NODE_IDENTIFIER, &node);
 		}
+		else if (token->token_type==TOKEN_TYPE) {
+			push_ast_node(token, &last, AST_NODE_TYPE_CONST, &node);
+		}
 		else {
 			break;
 		}

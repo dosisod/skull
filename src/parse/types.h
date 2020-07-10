@@ -16,6 +16,7 @@ struct type_t TYPE_INT;
 struct type_t TYPE_FLOAT;
 struct type_t TYPE_CHAR;
 struct type_t TYPE_STR;
+struct type_t TYPE_TEMPLATE;
 
 struct type_t *TYPES_AVAILABLE;
 

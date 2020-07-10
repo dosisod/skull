@@ -293,6 +293,26 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	return pass;
 })
 
+TEST(eval_assign_type_template, {
+	variable_t *var=make_variable(U"T", U"var", false);
+
+	ast_node_t *node=make_ast_tree(U"int");
+
+	context_t *ctx=make_context();
+	const char32_t *output=eval_assign(var, node, ctx);
+
+	type_t *after=NULL;
+	variable_read(&after, var);
+
+	const bool pass=(
+		output==NULL &&
+		after==&TYPE_INT
+	);
+
+	free_context(ctx);
+	return pass;
+})
+
 void eval_assign_test_self(bool *pass) {
 	tests_t tests={
 		test_eval_assign_int,
@@ -315,6 +335,7 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_variable_to_another_check_same_type,
 		test_eval_assign_variable_to_another_check_bad_var,
 		test_eval_assign_string_types_cannot_share_pointers,
+		test_eval_assign_type_template,
 		NULL
 	};
 
