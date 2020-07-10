@@ -90,72 +90,46 @@ bool is_valid_identifier_str(const char32_t *str) {
 	return wegex_match(U"\a*[\f_]?:", str);
 }
 
+#define TOKEN_TRY_STR(str, type) \
+	else if (token_cmp((str), token)) { \
+		token->token_type=(type); \
+	}
+
+#define TOKEN_SET_IF(cond, type) \
+	else if ((cond)) { \
+		token->token_type=(type); \
+	}
+
 /*
 Classify the token `token`.
 */
 void classify_token(token_t *token) {
 	MAKE_TOKEN_BUF(buf, token);
 
-	if (token_cmp(U"[", token)) {
-		token->token_type=TOKEN_BRACKET_OPEN;
-	}
-	else if (token_cmp(U"]", token)) {
-		token->token_type=TOKEN_BRACKET_CLOSE;
-	}
-	else if (token_cmp(U"\n", token)) {
-		token->token_type=TOKEN_NEWLINE;
-	}
-	else if (token_cmp(U",", token)) {
-		token->token_type=TOKEN_COMMA;
-	}
-	else if (token_cmp(U"mut", token)) {
-		token->token_type=TOKEN_KW_MUT;
-	}
-	else if (token_cmp(U"return", token)) {
-		token->token_type=TOKEN_KW_RETURN;
-	}
-	else if (token_cmp(U"or", token)) {
-		token->token_type=TOKEN_KW_OR;
-	}
-	else if (token_cmp(U"and", token)) {
-		token->token_type=TOKEN_KW_AND;
-	}
-	else if (token_cmp(U"not", token)) {
-		token->token_type=TOKEN_KW_NOT;
-	}
-	else if (token_cmp(U"=", token)) {
-		token->token_type=TOKEN_OPER_EQUAL;
-	}
-	else if (token_cmp(U"+", token)) {
-		token->token_type=TOKEN_OPER_PLUS;
-	}
-	else if (token_cmp(U"==", token)) {
-		token->token_type=TOKEN_OPER_EQUAL_EQUAL;
-	}
-	else if (token_cmp(U"!=", token)) {
-		token->token_type=TOKEN_OPER_NOT_EQUAL;
-	}
-	else if (token_cmp(U":=", token)) {
-		token->token_type=TOKEN_OPER_AUTO_EQUAL;
-	}
-	else if (token_cmp(U"->", token)) {
-		token->token_type=TOKEN_FUNCTION;
-	}
-	else if (c32sncmp(buf, LINE_COMMENT, LINE_COMMENT_LEN)) {
-		token->token_type=TOKEN_COMMENT;
-	}
-	else if (is_type_str(buf)) {
-		token->token_type=TOKEN_TYPE;
-	}
-	else if (is_constant_integer_str(buf)) {
-		token->token_type=TOKEN_INT_CONST;
-	}
-	else if (is_constant_float_str(buf)) {
-		token->token_type=TOKEN_FLOAT_CONST;
-	}
-	else if (is_constant_bool_str(buf)) {
-		token->token_type=TOKEN_BOOL_CONST;
-	}
+	if (false) {} // setup for macros
+
+	TOKEN_TRY_STR(U"[", TOKEN_BRACKET_OPEN)
+	TOKEN_TRY_STR(U"]", TOKEN_BRACKET_CLOSE)
+	TOKEN_TRY_STR(U"\n", TOKEN_NEWLINE)
+	TOKEN_TRY_STR(U",", TOKEN_COMMA)
+	TOKEN_TRY_STR(U"mut", TOKEN_KW_MUT)
+	TOKEN_TRY_STR(U"return", TOKEN_KW_RETURN)
+	TOKEN_TRY_STR(U"or", TOKEN_KW_OR)
+	TOKEN_TRY_STR(U"and", TOKEN_KW_AND)
+	TOKEN_TRY_STR(U"not", TOKEN_KW_NOT)
+	TOKEN_TRY_STR(U"=", TOKEN_OPER_EQUAL)
+	TOKEN_TRY_STR(U"+", TOKEN_OPER_PLUS)
+	TOKEN_TRY_STR(U"==", TOKEN_OPER_EQUAL_EQUAL)
+	TOKEN_TRY_STR(U"!=", TOKEN_OPER_NOT_EQUAL)
+	TOKEN_TRY_STR(U":=", TOKEN_OPER_AUTO_EQUAL)
+	TOKEN_TRY_STR(U"->", TOKEN_FUNCTION)
+
+	TOKEN_SET_IF(c32sncmp(buf, LINE_COMMENT, LINE_COMMENT_LEN), TOKEN_COMMENT)
+	TOKEN_SET_IF(is_type_str(buf), TOKEN_TYPE)
+	TOKEN_SET_IF(is_constant_integer_str(buf), TOKEN_INT_CONST)
+	TOKEN_SET_IF(is_constant_float_str(buf), TOKEN_FLOAT_CONST)
+	TOKEN_SET_IF(is_constant_bool_str(buf), TOKEN_BOOL_CONST)
+
 	else if (is_constant_char_str(buf)) {
 		token->token_type=TOKEN_CHAR_CONST;
 
@@ -185,6 +159,9 @@ void classify_token(token_t *token) {
 		}
 	}
 }
+
+#undef TOKEN_TRY_STR
+#undef TOKEN_SET_IF
 
 /*
 Classify all tokens pointed to from `token`.

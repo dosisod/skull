@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../common/malloc.h"
 #include "../common/str.h"
@@ -13,10 +14,7 @@ context_t *make_context(void) {
 	context_t *ctx=malloc(sizeof(context_t));
 	DIE_IF_MALLOC_FAILS(ctx);
 
-	ctx->vars_used=0;
-	ctx->child=NULL;
-	ctx->parent=NULL;
-
+	memset(ctx, 0, sizeof(context_t));
 	return ctx;
 }
 

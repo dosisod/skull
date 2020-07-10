@@ -14,12 +14,7 @@ ast_node_t *make_ast_node(void) {
 	ast_node_t *node=malloc(sizeof(ast_node_t));
 	DIE_IF_MALLOC_FAILS(node);
 
-	node->node_type=AST_NODE_UNKNOWN;
-	node->token=NULL;
-	node->token_end=NULL;
-	node->last=NULL;
-	node->next=NULL;
-
+	memset(node, 0, sizeof(ast_node_t));
 	return node;
 }
 
@@ -135,11 +130,16 @@ int ast_node_one_param_func_combo[] = {
 };
 
 #define TRY_PUSH_AST_NODE(combo, node_type) \
-token=ast_token_cmp(token, (combo)); \
-if (token!=last) { \
-	push_ast_node(token, &last, (node_type), &node); \
-	continue; \
-}
+	token=ast_token_cmp(token, (combo)); \
+	if (token!=last) { \
+		push_ast_node(token, &last, (node_type), &node); \
+		continue; \
+	}
+
+#define PUSH_NODE_IF_TOKEN(tok_type, node_type) \
+	else if (token->token_type==(tok_type)) { \
+		push_ast_node(token, &last, (node_type), &node); \
+	}
 
 /*
 Makes an AST (abstract syntax tree) from a given string.
@@ -172,33 +172,22 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 			token=token->next;
 			continue;
 		}
-		if (token->token_type==TOKEN_COMMENT) {
-			push_ast_node(token, &last, AST_NODE_COMMENT, &node);
-		}
-		else if (token->token_type==TOKEN_INT_CONST) {
-			push_ast_node(token, &last, AST_NODE_INT_CONST, &node);
-		}
-		else if (token->token_type==TOKEN_FLOAT_CONST) {
-			push_ast_node(token, &last, AST_NODE_FLOAT_CONST, &node);
-		}
-		else if (token->token_type==TOKEN_BOOL_CONST) {
-			push_ast_node(token, &last, AST_NODE_BOOL_CONST, &node);
-		}
-		else if (token->token_type==TOKEN_CHAR_CONST) {
-			push_ast_node(token, &last, AST_NODE_CHAR_CONST, &node);
-		}
-		else if (token->token_type==TOKEN_STR_CONST) {
-			push_ast_node(token, &last, AST_NODE_STR_CONST, &node);
-		}
-		else if (token->token_type==TOKEN_IDENTIFIER) {
-			push_ast_node(token, &last, AST_NODE_IDENTIFIER, &node);
-		}
-		else if (token->token_type==TOKEN_TYPE) {
-			push_ast_node(token, &last, AST_NODE_TYPE_CONST, &node);
-		}
+
+		if (false) {} // setup for macros
+
+		PUSH_NODE_IF_TOKEN(TOKEN_COMMENT, AST_NODE_COMMENT)
+		PUSH_NODE_IF_TOKEN(TOKEN_INT_CONST, AST_NODE_INT_CONST)
+		PUSH_NODE_IF_TOKEN(TOKEN_FLOAT_CONST, AST_NODE_FLOAT_CONST)
+		PUSH_NODE_IF_TOKEN(TOKEN_BOOL_CONST, AST_NODE_BOOL_CONST)
+		PUSH_NODE_IF_TOKEN(TOKEN_CHAR_CONST, AST_NODE_CHAR_CONST)
+		PUSH_NODE_IF_TOKEN(TOKEN_STR_CONST, AST_NODE_STR_CONST)
+		PUSH_NODE_IF_TOKEN(TOKEN_IDENTIFIER, AST_NODE_IDENTIFIER)
+		PUSH_NODE_IF_TOKEN(TOKEN_TYPE, AST_NODE_TYPE_CONST)
+
 		else {
 			break;
 		}
+
 		token=token->next;
 	}
 
@@ -207,8 +196,11 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		node->last=NULL;
 		free(node);
 	}
-	return head;
+	return head; // NOLINT
 }
+
+#undef TRY_PUSH_AST_NODE
+#undef PUSH_NODE_IF_TOKEN
 
 /*
 Frees an AST tree.

@@ -46,11 +46,13 @@ bool eval_equality_comparison(const token_t *token, const char32_t **error) {
 	MAKE_TOKEN_BUF(lhs, token);
 	MAKE_TOKEN_BUF(rhs, token->next->next);
 
+	const bool ret=c32scmp(lhs, rhs);
+
 	if (token->next->token_type==TOKEN_OPER_EQUAL_EQUAL) {
-		return c32scmp(lhs, rhs);
+		return ret;
 	}
 	if (token->next->token_type==TOKEN_OPER_NOT_EQUAL) {
-		return !c32scmp(lhs, rhs);
+		return !ret;
 	}
 
 	*error=ERR_TYPE_MISMATCH;
