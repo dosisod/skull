@@ -214,16 +214,15 @@ TEST(token_str_constant, {
 	return pass;
 })
 
-
-TEST(token_type_template, {
-	const char32_t *code=U"T";
+TEST(token_type_type, {
+	const char32_t *code=U"int";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
 		t->token_type==TOKEN_TYPE &&
 		t->begin==code &&
-		t->end==(code + 1)
+		t->end==(code + 3)
 	);
 
 	free(t);
@@ -363,7 +362,7 @@ void classifier_test_self(bool *pass) {
 		test_token_bool_constant,
 		test_token_char_constant,
 		test_token_str_constant,
-		test_token_type_template,
+		test_token_type_type,
 		test_token_comment,
 		test_is_valid_identifier,
 		test_is_valid_identifier_token,

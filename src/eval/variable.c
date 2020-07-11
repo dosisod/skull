@@ -108,6 +108,15 @@ char32_t *fmt_var(const variable_t *var) {
 
 		return ret;
 	}
+	if (var->type==&TYPE_TYPE) {
+		type_t *type=NULL;
+		variable_read(&type, var);
+
+		char32_t *ret=c32sdup(type->name);
+		DIE_IF_MALLOC_FAILS(ret);
+
+		return ret;
+	}
 
 	char *tmp=NULL;
 	int needed=-1;

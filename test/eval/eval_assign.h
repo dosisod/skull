@@ -293,8 +293,8 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	return pass;
 })
 
-TEST(eval_assign_type_template, {
-	variable_t *var=make_variable(U"T", U"var", false);
+TEST(eval_assign_type_type, {
+	variable_t *var=make_variable(U"type", U"var", false);
 
 	ast_node_t *node=make_ast_tree(U"int");
 
@@ -313,10 +313,10 @@ TEST(eval_assign_type_template, {
 	return pass;
 })
 
-TEST(eval_assign_type_template_cannot_be_T, {
-	variable_t *var=make_variable(U"T", U"var", false);
+TEST(eval_assign_type_var_cannot_be_type, {
+	variable_t *var=make_variable(U"type", U"var", false);
 
-	ast_node_t *node=make_ast_tree(U"T");
+	ast_node_t *node=make_ast_tree(U"type");
 
 	context_t *ctx=make_context();
 
@@ -350,8 +350,8 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_variable_to_another_check_same_type,
 		test_eval_assign_variable_to_another_check_bad_var,
 		test_eval_assign_string_types_cannot_share_pointers,
-		test_eval_assign_type_template,
-		test_eval_assign_type_template_cannot_be_T,
+		test_eval_assign_type_type,
+		test_eval_assign_type_var_cannot_be_type,
 		NULL
 	};
 
