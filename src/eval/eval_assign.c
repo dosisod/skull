@@ -121,8 +121,13 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 	}
 	else if (var->type==&TYPE_TEMPLATE && node->node_type==AST_NODE_TYPE_CONST) {
 		MAKE_TOKEN_BUF(buf, node->token);
+		const type_t *type=find_type(buf);
 
-		SETUP_MEM(mem, type_t*, find_type(buf));
+		if (type==&TYPE_TEMPLATE) {
+			return ERR_TYPE_MISMATCH;
+		}
+
+		SETUP_MEM(mem, type_t*, type);
 	}
 	else {
 		return ERR_TYPE_MISMATCH;

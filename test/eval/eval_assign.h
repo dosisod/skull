@@ -313,6 +313,21 @@ TEST(eval_assign_type_template, {
 	return pass;
 })
 
+TEST(eval_assign_type_template_cannot_be_T, {
+	variable_t *var=make_variable(U"T", U"var", false);
+
+	ast_node_t *node=make_ast_tree(U"T");
+
+	context_t *ctx=make_context();
+
+	const bool pass=(
+		eval_assign(var, node, ctx)==ERR_TYPE_MISMATCH
+	);
+
+	free_context(ctx);
+	return pass;
+})
+
 void eval_assign_test_self(bool *pass) {
 	tests_t tests={
 		test_eval_assign_int,
@@ -336,6 +351,7 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_variable_to_another_check_bad_var,
 		test_eval_assign_string_types_cannot_share_pointers,
 		test_eval_assign_type_template,
+		test_eval_assign_type_template_cannot_be_T,
 		NULL
 	};
 
