@@ -17,25 +17,6 @@ TEST(make_context, {
 	return pass;
 })
 
-TEST(context_contains_var, {
-	context_t *ctx=make_context();
-	variable_t *var1=make_variable(U"int", U"x", true);
-	variable_t *var2=make_variable(U"int", U"y", true);
-
-	context_add_var(ctx, var1);
-
-	const bool pass=(
-		context_contains_var(ctx, var1) &&
-		!context_contains_var(ctx, var2)
-	);
-
-	free(var1);
-	free(var2);
-	free(ctx);
-
-	return pass;
-})
-
 TEST(context_find_name, {
 	context_t *ctx=make_context();
 	variable_t *var=make_variable(U"int", U"x", true);
@@ -151,7 +132,6 @@ TEST(context_find_name_when_null, {
 void context_test_self(bool *pass) {
 	tests_t tests={
 		test_make_context,
-		test_context_contains_var,
 		test_context_find_name,
 		test_add_vars_to_context,
 		test_cannot_add_same_varname_to_context,

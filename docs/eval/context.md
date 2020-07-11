@@ -6,9 +6,6 @@ Returns a new variable context.
 #### `variable_t *context_find_name(const context_t *ctx, const char32_t *name)`
 Returns pointer to variable with matching `name` if found, else `NULL`
 
-#### `bool context_contains_var(context_t *ctx, const variable_t *var)`
-Returns true if `var` is defined in a given context `ctx`.
-
 #### `bool context_add_var(context_t *ctx, variable_t *var)`
 Add variable `var` to context `ctx`.
 

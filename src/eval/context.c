@@ -41,31 +41,12 @@ variable_t *context_find_name(const context_t *ctx, const char32_t *name) {
 }
 
 /*
-Returns true if `var` is defined in a given context `ctx`.
-*/
-bool context_contains_var(context_t *ctx, const variable_t *var) {
-	size_t tmp=0;
-
-	while (tmp < ctx->vars_used) {
-		if (c32scmp(ctx->vars[tmp]->name, var->name)) {
-			return true;
-		}
-		tmp++;
-	}
-
-	if (ctx->parent) {
-		return context_contains_var(ctx->parent, var);
-	}
-	return false;
-}
-
-/*
 Add variable `var` to context `ctx`.
 
 Returns `true` if `var` was added, else `false`
 */
 bool context_add_var(context_t *ctx, variable_t *var) {
-	if (context_contains_var(ctx, var)) {
+	if (context_find_name(ctx, var->name)!=NULL) {
 		return false;
 	}
 
