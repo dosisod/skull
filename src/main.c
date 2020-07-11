@@ -42,6 +42,11 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	if (strrstr(argv[1], "/.sk")!=NULL) {
+		puts("\".sk\" is not a valid name, exiting");
+		return 1;
+	}
+
 	FILE *f=fopen(argv[1], "re");
 	if (f==NULL) {
 		printf("\"%s\" was not found, exiting\n", argv[1]);

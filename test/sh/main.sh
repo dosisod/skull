@@ -11,12 +11,17 @@ test() {
 	fi
 }
 
+echo
 echo "Running Skull unit tests"
+echo
 
 test "exit_code_0.sk" 0
 test "exit_code_1.sk" 1
 test "exit_code_variable.sk" 1
 test "missing_file_extension_fails" 1
 test "no_eol_works.sk" 0
+test ".sk" 1
+
+echo
 
 $pass || (echo "1 or more tests failed" && exit 1)
