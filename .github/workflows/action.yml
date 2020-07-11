@@ -3,7 +3,7 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-  everything:
+  clang-tidy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -16,12 +16,28 @@ jobs:
         clang-tidy --version
         ./.github/workflows/clang_tidy.sh
 
-    - name: Build (GCC)
+  test-gcc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build
       run: |
         $(which cc) -v
         make clean all
 
-    - name: Build (Clang)
+    - name: Run tests
+      run: ./build/test/test
+
+    - name: Run Skull unit tests
+      run: ./test/sh/main.sh
+
+  test-clang:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build
       run: |
         sudo ln -sf $(which clang) $(which cc)
         $(which cc) -v
@@ -32,6 +48,11 @@ jobs:
 
     - name: Run Skull unit tests
       run: ./test/sh/main.sh
+
+  test-installable:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
 
     - name: Install Skull
       run: sudo make install
