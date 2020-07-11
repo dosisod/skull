@@ -25,8 +25,8 @@ main[]
 ```
 $ git clone https://github.com/dosisod/skull
 $ cd skull
-$ make
-$ ./build/src/skull
+$ sudo make install
+$ skull
 ```
 
 ## Testing
@@ -48,13 +48,11 @@ $ chmod +x .git/hooks/pre-commit
 Tests may also be ran manually:
 
 ```
-$ ./build/test/test
+$ make test && ./build/test/test
 ```
 
 ## Todo
 
-Soon to come:
-
-- [x] Runnable skull files
+- [x] Runnable Skull files
 - [ ] Skull to C function calls
-- [ ] Rich skull std library
+- [ ] Rich Skull std library
