@@ -3,7 +3,7 @@
 #include "../../src/errors.h"
 #include "../../src/eval/eval_assign.h"
 #include "../../src/parse/classify.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 #define TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, cmp) \
 	ast_node_t *node=make_ast_tree(str_value); \

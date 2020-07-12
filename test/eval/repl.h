@@ -4,7 +4,7 @@
 #include "../../src/errors.h"
 #include "../../src/eval/context.h"
 #include "../../src/eval/repl.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(repl_variable_declare, {
 	const char32_t *output=repl_eval(U"x: int = 0", NULL);

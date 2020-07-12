@@ -1,8 +1,8 @@
 #include <stddef.h>
 
-#include "../../src/common/str.h"
-#include "../../src/common/wegex.h"
-#include "../../src/parse/constants.h"
+#include "../common/str.h"
+#include "../common/wegex.h"
+#include "constants.h"
 #include "tokenize.h"
 #include "types.h"
 

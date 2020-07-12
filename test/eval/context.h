@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
 #include "../../src/eval/context.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(make_context, {
 	context_t *ctx=make_context();

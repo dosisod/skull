@@ -1,8 +1,7 @@
 #include <stdbool.h>
 
 #include "../src/errors.h"
-
-#include "../test/testing.h"
+#include "testing.h"
 
 TEST(is_error_msg, {
 	return (

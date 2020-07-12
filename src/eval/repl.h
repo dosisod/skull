@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-#include "../eval/context.h"
+#include "context.h"
 #include "../parse/ast/node.h"
 #include "../parse/tokenize.h"
 

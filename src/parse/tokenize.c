@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "../common/malloc.h"
-#include "../parse/constants.h"
+#include "constants.h"
 
 #include "tokenize.h"
 

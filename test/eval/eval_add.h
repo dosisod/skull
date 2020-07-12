@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
 #include "../../src/eval/eval_add.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(adding_2_ints, {
 	variable_t *var1=make_variable(U"int", U"var1", false);

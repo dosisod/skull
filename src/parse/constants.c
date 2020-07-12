@@ -1,4 +1,4 @@
-#include "../../src/common/str.h"
+#include "../common/str.h"
 
 #include "constants.h"
 

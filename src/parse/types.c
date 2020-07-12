@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../../src/common/str.h"
-#include "../../src/common/malloc.h"
+#include "../common/str.h"
+#include "../common/malloc.h"
 
 #include "types.h"
 

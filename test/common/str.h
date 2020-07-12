@@ -3,7 +3,7 @@
 #include <uchar.h>
 
 #include "../../src/common/str.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(strrstr, {
 	const char *str1="aaaaa";

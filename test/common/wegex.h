@@ -2,7 +2,7 @@
 
 #include "../../src/parse/tokenize.h"
 #include "../../src/common/wegex.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(no_modifiers, {
 	return (

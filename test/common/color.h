@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "../../src/common/color.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(color_names, {
 	return (

@@ -1,5 +1,5 @@
 #include "../../src/parse/constants.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(find_line_comment_at_start_of_line, {
 	const char32_t *code=U"# should be zero";

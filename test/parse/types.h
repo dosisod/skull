@@ -3,7 +3,7 @@
 
 #include "../../src/common/str.h"
 #include "../../src/parse/types.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(make_new_type, {
 	type_t *current=TYPES_AVAILABLE;

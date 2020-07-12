@@ -2,7 +2,7 @@
 
 #include "../../../src/parse/ast/node.h"
 #include "../../../src/parse/classify.h"
-#include "../../../test/testing.h"
+#include "../../testing.h"
 
 TEST(make_ast_node_struct, {
 	const char32_t *code=U"hello";

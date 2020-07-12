@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/errors.h"
-#include "../src/common/local.h"
-#include "../src/eval/file.h"
-#include "../src/eval/repl.h"
+#include "errors.h"
+#include "common/local.h"
+#include "eval/file.h"
+#include "eval/repl.h"
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<version unknown>"

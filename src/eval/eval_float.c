@@ -1,8 +1,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "../../src/errors.h"
-#include "../../src/parse/classify.h"
+#include "../errors.h"
+#include "../parse/classify.h"
 
 #include "eval_float.h"
 

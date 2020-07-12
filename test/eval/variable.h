@@ -5,7 +5,7 @@
 #include "../../src/eval/eval_assign.h"
 #include "../../src/eval/variable.h"
 #include "../../src/parse/classify.h"
-#include "../../test/testing.h"
+#include "../testing.h"
 
 TEST(create_variable, {
 	variable_t *var=make_variable(U"int", U"x", true);
