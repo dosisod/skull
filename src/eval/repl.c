@@ -4,11 +4,12 @@
 #include "../common/color.h"
 #include "../common/malloc.h"
 #include "../errors.h"
-#include "../eval/eval_add.h"
-#include "../eval/eval_assign.h"
-#include "../eval/eval_float.h"
-#include "../eval/eval_integer.h"
 #include "../parse/classify.h"
+#include "eval_add.h"
+#include "eval_assign.h"
+#include "eval_float.h"
+#include "eval_integer.h"
+#include "function.h"
 
 #include "repl.h"
 
@@ -142,23 +143,12 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	ast_node_t *node=make_ast_tree(str);
 	const char32_t *ret=ERR_INVALID_INPUT;
 
-	if (node->node_type==AST_NODE_NO_PARAM_FUNC && token_cmp(U"clear", node->token)) {
-		ret=c32sdup(U"\033[2J\033[;1H");
-		DIE_IF_MALLOC_FAILS(ret);
-	}
-
-	else if (node->node_type==AST_NODE_ONE_PARAM_FUNC &&
-		token_cmp(U"print", node->token) &&
-		node->token->next->next->token_type==TOKEN_IDENTIFIER)
-	{
-		MAKE_TOKEN_BUF(var_name, node->token->next->next);
-		variable_t *found_var=context_find_name(ctx, var_name);
-
-		if (found_var==NULL) {
-			ret=ERR_VAR_NOT_FOUND;
+	if (is_func_name(node)) {
+		if (token_cmp(U"clear", node->token)) {
+			ret=func_clear(node);
 		}
-		else {
-			ret=fmt_var(found_var);
+		else if (token_cmp(U"print", node->token)) {
+			ret=func_print(node, ctx);
 		}
 	}
 
