@@ -95,12 +95,10 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 			MAKE_TOKEN_BUF(buf, node->next->token);
 			variable_t *new_var=context_find_name(ctx, buf);
 
-			if (new_var!=NULL) {
-				type=new_var->type->name;
-			}
-			else {
+			if (new_var==NULL) {
 				return ERR_VAR_NOT_FOUND;
 			}
+			type=new_var->type->name;
 		}
 		else {
 			return ERR_INVALID_INPUT;
@@ -186,7 +184,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 
 			if (found_var!=NULL) {
 				if (found_var->type!=&TYPE_INT) {
-					ret=ERR_TYPE_MISMATCH;
+					ret=ERR_NON_INT_RETURN;
 				}
 				else {
 					int64_t num=0;

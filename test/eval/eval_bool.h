@@ -24,12 +24,12 @@ TEST(eval_bool_single_param, {
 	return (
 		eval_bool_shim(U"true", true, NULL) &&
 		eval_bool_shim(U"false", false, NULL) &&
-		eval_bool_shim(U"not_a_bool", false, ERR_TYPE_MISMATCH)
+		eval_bool_shim(U"not_a_bool", false, ERR_BOOL_BAD)
 	);
 })
 
 TEST(eval_bool_odd_num_tokens, {
-	return eval_bool_shim(U"bad ==", false, ERR_TYPE_MISMATCH);
+	return eval_bool_shim(U"bad ==", false, ERR_MISSING_TOKEN);
 })
 
 TEST(eval_equality_comparison, {

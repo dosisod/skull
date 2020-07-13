@@ -60,12 +60,12 @@ const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const con
 		return ERR_VAR_NOT_FOUND;
 	}
 	if (lhs_var->type!=rhs_var->type) {
-		return ERR_TYPE_MISMATCH;
+		return ERR_CANNOT_ADD;
 	}
 
 	variable_t *tmp=eval_add(lhs_var, rhs_var);
 	if (tmp==NULL) {
-		return ERR_TYPE_MISMATCH;
+		return ERR_ADD_UNAVAILABLE;
 	}
 	variable_write(var, tmp->mem);
 	free(tmp);
@@ -124,7 +124,7 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 		const type_t *type=find_type(buf);
 
 		if (type==&TYPE_TYPE) {
-			return ERR_TYPE_MISMATCH;
+			return ERR_TYPE_TYPE_BAD;
 		}
 
 		SETUP_MEM(mem, type_t*, type);

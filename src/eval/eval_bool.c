@@ -19,7 +19,7 @@ bool eval_bool_true(const token_t *token, const char32_t **error) {
 		return false;
 	}
 
-	*error=ERR_TYPE_MISMATCH;
+	*error=ERR_BOOL_BAD;
 	return false;
 }
 
@@ -55,7 +55,7 @@ bool eval_equality_comparison(const token_t *token, const char32_t **error) {
 		return !ret;
 	}
 
-	*error=ERR_TYPE_MISMATCH;
+	*error=ERR_COMPARISON_BAD;
 	return false;
 }
 
@@ -89,7 +89,7 @@ bool eval_bool(const token_t *token, const char32_t **error) {
 		ret=!eval_bool_true(token->next, &err);
 	}
 	else if (token->next->next==NULL) {
-		err=ERR_TYPE_MISMATCH;
+		err=ERR_MISSING_TOKEN;
 	}
 	else if (token->next->token_type==TOKEN_KW_AND) {
 		ret=(

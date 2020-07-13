@@ -425,7 +425,7 @@ TEST(repl_cannot_return_non_int, {
 	repl_eval(U"x := 'a'", ctx);
 	const char32_t *output=repl_eval(U"return x", ctx);
 
-	const bool pass=(output==ERR_TYPE_MISMATCH);
+	const bool pass=(output==ERR_NON_INT_RETURN);
 
 	free_context(ctx);
 	return pass;

@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	else if (argc > 2) {
-		puts("too many input files specified, exiting");
+		puts("too many arguments passed, exiting");
 		return 1;
 	}
 

@@ -100,7 +100,7 @@ TEST(eval_assign_add_vars_types_must_match, {
 	variable_t *var_c=make_variable(U"int", U"c", false);
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
-	const bool pass=(output==ERR_TYPE_MISMATCH);
+	const bool pass=(output==ERR_CANNOT_ADD);
 
 	free_variable(var_a);
 	free_variable(var_b);
@@ -137,7 +137,7 @@ TEST(eval_assign_add_vars_must_be_addable, {
 	variable_t *var_b=make_variable(U"int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
-	const bool pass=(output==ERR_TYPE_MISMATCH);
+	const bool pass=(output==ERR_ADD_UNAVAILABLE);
 
 	free_variable(var_a);
 	return pass;
@@ -321,7 +321,7 @@ TEST(eval_assign_type_var_cannot_be_type, {
 	context_t *ctx=make_context();
 
 	const bool pass=(
-		eval_assign(var, node, ctx)==ERR_TYPE_MISMATCH
+		eval_assign(var, node, ctx)==ERR_TYPE_TYPE_BAD
 	);
 
 	free_context(ctx);
