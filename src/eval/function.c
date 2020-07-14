@@ -8,18 +8,6 @@
 #include "function.h"
 
 /*
-Returns `true` if the given node is a function name.
-*/
-bool is_func_name(const ast_node_t *node) {
-	if (node==NULL || node->token==NULL) {
-		return false;
-	}
-	MAKE_TOKEN_BUF(name, node->token);
-
-	return c32scmp(name, U"clear") || c32scmp(name, U"print");
-}
-
-/*
 Returns string that when printed, clears the screen.
 */
 const char32_t *func_clear(ast_node_t *node) {
@@ -48,4 +36,16 @@ const char32_t *func_print(ast_node_t *node, context_t *ctx) {
 		return ERR_VAR_NOT_FOUND;
 	}
 	return fmt_var(var);
+}
+
+/*
+Returns `true` if the given node is a function name.
+*/
+bool is_func_name(const ast_node_t *node) {
+	if (node==NULL || node->token==NULL) {
+		return false;
+	}
+	MAKE_TOKEN_BUF(name, node->token);
+
+	return c32scmp(name, U"clear") || c32scmp(name, U"print");
 }

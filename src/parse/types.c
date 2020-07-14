@@ -6,44 +6,6 @@
 
 #include "types.h"
 
-struct type_t TYPE_BOOL = {
-	.name=U"bool",
-	.bytes=sizeof(bool),
-	.next=NULL
-};
-
-struct type_t TYPE_INT = {
-	.name=U"int",
-	.bytes=sizeof(int64_t),
-	.next=&TYPE_BOOL
-};
-
-struct type_t TYPE_FLOAT = {
-	.name=U"float",
-	.bytes=sizeof(long double),
-	.next=&TYPE_INT
-};
-
-struct type_t TYPE_CHAR = {
-	.name=U"char",
-	.bytes=sizeof(char32_t),
-	.next=&TYPE_FLOAT
-};
-
-struct type_t TYPE_STR = {
-	.name=U"str",
-	.bytes=sizeof(char32_t*),
-	.next=&TYPE_CHAR
-};
-
-struct type_t TYPE_TYPE = {
-	.name=U"type",
-	.bytes=sizeof(struct type_t*),
-	.next=&TYPE_STR
-};
-
-struct type_t *TYPES_AVAILABLE=&TYPE_TYPE;
-
 /*
 Creates a new type called `name` with `bytes` bytes of memory.
 
@@ -107,3 +69,41 @@ void free_types(void) {
 
 	TYPE_BOOL.next=NULL;
 }
+
+struct type_t TYPE_BOOL = {
+	.name=U"bool",
+	.bytes=sizeof(bool),
+	.next=NULL
+};
+
+struct type_t TYPE_INT = {
+	.name=U"int",
+	.bytes=sizeof(int64_t),
+	.next=&TYPE_BOOL
+};
+
+struct type_t TYPE_FLOAT = {
+	.name=U"float",
+	.bytes=sizeof(long double),
+	.next=&TYPE_INT
+};
+
+struct type_t TYPE_CHAR = {
+	.name=U"char",
+	.bytes=sizeof(char32_t),
+	.next=&TYPE_FLOAT
+};
+
+struct type_t TYPE_STR = {
+	.name=U"str",
+	.bytes=sizeof(char32_t*),
+	.next=&TYPE_CHAR
+};
+
+struct type_t TYPE_TYPE = {
+	.name=U"type",
+	.bytes=sizeof(struct type_t*),
+	.next=&TYPE_STR
+};
+
+struct type_t *TYPES_AVAILABLE=&TYPE_TYPE;

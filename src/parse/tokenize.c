@@ -6,37 +6,6 @@
 
 #include "tokenize.h"
 
-/*
-Return true if `c` is whitespace.
-
-Whitespace includes control-characters, non-printable characters, and spaces.
-*/
-__attribute__((const)) bool is_whitespace(char32_t c) {
-	return (c <= 32);
-}
-
-/*
-Return true if `c` is a double or single quote.
-*/
-__attribute__((const)) bool is_quote(char32_t c) {
-	return (c=='\'' || c=='\"');
-}
-
-/*
-Allocate and return a token with set defaults.
-*/
-token_t *make_token(void) {
-	token_t *token=malloc(sizeof(token_t));
-	DIE_IF_MALLOC_FAILS(token);
-
-	token->begin=NULL;
-	token->end=NULL;
-	token->token_type=0;
-	token->next=NULL;
-
-	return token;
-}
-
 //pinch end of current token, setup next token
 #define PINCH_TOKEN \
 	current->end=code; \
@@ -142,35 +111,34 @@ token_t *tokenize(const char32_t *code) {
 }
 
 /*
-Free all tokens from `head` and beyond.
-*/
-void free_tokens(token_t *head) {
-	token_t *tmp;
+Return true if `c` is whitespace.
 
-	while (head!=NULL) {
-		tmp=head;
-		head=head->next;
-		tmp->next=NULL;
-		free(tmp);
-	}
+Whitespace includes control-characters, non-printable characters, and spaces.
+*/
+__attribute__((const)) bool is_whitespace(char32_t c) {
+	return (c <= 32);
 }
 
 /*
-Return the string length of `token`.
+Return true if `c` is a double or single quote.
 */
-__attribute__((pure)) size_t token_len(const token_t *token) {
-	return (size_t)(token->end - token->begin);
+__attribute__((const)) bool is_quote(char32_t c) {
+	return (c=='\'' || c=='\"');
 }
 
 /*
-Returns true if `str` is equal to the value of `token`.
+Allocate and return a token with set defaults.
 */
-bool token_cmp(const char32_t *str, const token_t *token) {
-	const size_t len=token_len(token);
-	return (
-		c32slen(str)==len &&
-		c32sncmp(str, token->begin, len)
-	);
+token_t *make_token(void) {
+	token_t *token=malloc(sizeof(token_t));
+	DIE_IF_MALLOC_FAILS(token);
+
+	token->begin=NULL;
+	token->end=NULL;
+	token->token_type=0;
+	token->next=NULL;
+
+	return token;
 }
 
 /*
@@ -186,4 +154,36 @@ char32_t *token_str(const token_t *token) {
 	c32slcpy(str, token->begin, len + 1);
 
 	return str;
+}
+
+/*
+Returns true if `str` is equal to the value of `token`.
+*/
+bool token_cmp(const char32_t *str, const token_t *token) {
+	const size_t len=token_len(token);
+	return (
+		c32slen(str)==len &&
+		c32sncmp(str, token->begin, len)
+	);
+}
+
+/*
+Return the string length of `token`.
+*/
+__attribute__((pure)) size_t token_len(const token_t *token) {
+	return (size_t)(token->end - token->begin);
+}
+
+/*
+Free all tokens from `head` and beyond.
+*/
+void free_tokens(token_t *head) {
+	token_t *tmp;
+
+	while (head!=NULL) {
+		tmp=head;
+		head=head->next;
+		tmp->next=NULL;
+		free(tmp);
+	}
 }

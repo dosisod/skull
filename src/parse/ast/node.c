@@ -7,70 +7,6 @@
 
 #include "node.h"
 
-/*
-Makes an ast_node_t with default values
-*/
-ast_node_t *make_ast_node(void) {
-	ast_node_t *node=malloc(sizeof(ast_node_t));
-	DIE_IF_MALLOC_FAILS(node);
-
-	memset(node, 0, sizeof(ast_node_t));
-	return node;
-}
-
-/*
-Compare tokens against a combonation of tokens.
-
-Each item in `combo` will be compared with the next token after the last token.
-
-For example, `ast_token_cmp(token, (int[]){0, 1, 2, -1})` will check up until `token->next->next`.
-
-The last `-1` is to tell the function to stop iterating.
-
-If all the args match, return last token matched, else, the passed `token`.
-*/
-token_t *ast_token_cmp(token_t *token, int *token_type) {
-	token_t *head=token;
-	token_t *last=head;
-
-	while (token!=NULL && *token_type!=-1) {
-		if (token->token_type!=*token_type && *token_type!=TOKEN_ANY_NON_BRACKET_TOKEN) {
-			return head;
-		}
-		if (*token_type==TOKEN_ANY_NON_BRACKET_TOKEN &&
-			(token->token_type==TOKEN_BRACKET_OPEN ||
-			token->token_type==TOKEN_BRACKET_CLOSE))
-		{
-			return head;
-		}
-		last=token;
-		token=token->next;
-		token_type++;
-	}
-
-	if (*token_type==-1) {
-		return last;
-	}
-	return head;
-}
-
-/*
-Push a new AST node to `node` with type `node_type`
-*/
-void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node) {
-	(*node)->node_type=node_type;
-	(*node)->token=(*last);
-	(*node)->token_end=token;
-
-	ast_node_t *tmp=make_ast_node();
-
-	tmp->last=*node;
-	*last=token->next;
-
-	(*node)->next=tmp;
-	(*node)=tmp;
-}
-
 int ast_node_var_combo[] = {
 	TOKEN_NEW_IDENTIFIER,
 	TOKEN_TYPE,
@@ -201,6 +137,70 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 
 #undef TRY_PUSH_AST_NODE
 #undef PUSH_NODE_IF_TOKEN
+
+/*
+Compare tokens against a combonation of tokens.
+
+Each item in `combo` will be compared with the next token after the last token.
+
+For example, `ast_token_cmp(token, (int[]){0, 1, 2, -1})` will check up until `token->next->next`.
+
+The last `-1` is to tell the function to stop iterating.
+
+If all the args match, return last token matched, else, the passed `token`.
+*/
+token_t *ast_token_cmp(token_t *token, int *token_type) {
+	token_t *head=token;
+	token_t *last=head;
+
+	while (token!=NULL && *token_type!=-1) {
+		if (token->token_type!=*token_type && *token_type!=TOKEN_ANY_NON_BRACKET_TOKEN) {
+			return head;
+		}
+		if (*token_type==TOKEN_ANY_NON_BRACKET_TOKEN &&
+			(token->token_type==TOKEN_BRACKET_OPEN ||
+			token->token_type==TOKEN_BRACKET_CLOSE))
+		{
+			return head;
+		}
+		last=token;
+		token=token->next;
+		token_type++;
+	}
+
+	if (*token_type==-1) {
+		return last;
+	}
+	return head;
+}
+
+/*
+Push a new AST node to `node` with type `node_type`
+*/
+void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node) {
+	(*node)->node_type=node_type;
+	(*node)->token=(*last);
+	(*node)->token_end=token;
+
+	ast_node_t *tmp=make_ast_node();
+
+	tmp->last=*node;
+	*last=token->next;
+
+	(*node)->next=tmp;
+	(*node)=tmp;
+}
+
+/*
+Makes an ast_node_t with default values
+*/
+ast_node_t *make_ast_node(void) {
+	ast_node_t *node=malloc(sizeof(ast_node_t));
+	DIE_IF_MALLOC_FAILS(node);
+
+	memset(node, 0, sizeof(ast_node_t));
+	return node;
+}
 
 /*
 Frees an AST tree.

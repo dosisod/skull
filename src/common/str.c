@@ -6,64 +6,6 @@
 #include "str.h"
 
 /*
-Return last occurence of `sub` in string `str`.
-
-`NULL` is returned if no such string is found.
-*/
-const char *strrstr(const char *str, const char *sub) {
-	size_t str_len=strlen(str);
-	size_t sub_len=strlen(sub);
-
-	const char *look=str + str_len - sub_len;
-
-	while (look >= str) {
-		if (strncmp(look, sub, sub_len)==0) {
-			return look;
-		}
-		look--;
-	}
-	return NULL;
-}
-
-/*
-char32_t equivalent of `strncpy`.
-
-If there is room between the end of `src` and `dest[n]`, fill it with NULL.
-*/
-void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
-	memset(dest, 0, n * sizeof(char32_t));
-
-	while (*src!=U'\0' && n>0) {
-		*dest=*src;
-		src++;
-		dest++;
-		n--;
-	}
-}
-
-/*
-Similar to `strlcpy`, but for `char32_t` types.
-*/
-void c32slcpy(char32_t *dest, const char32_t *src, size_t n) {
-	c32sncpy(dest, src, n);
-	dest[n - 1]=U'\0';
-}
-
-/*
-Return the size of a UTF-32 string.
-*/
-__attribute__((pure)) size_t c32slen(const char32_t *str) {
-	size_t len=0;
-
-	while (*str!=U'\0') {
-		str++;
-		len++;
-	}
-
-	return len;
-}
-
-/*
 Make a heap allocated version of `str`.
 
 The result of this function must be freed.
@@ -98,6 +40,30 @@ char32_t *c32scat(const char32_t *s1, const char32_t *s2) {
 }
 
 /*
+Similar to `strlcpy`, but for `char32_t` types.
+*/
+void c32slcpy(char32_t *dest, const char32_t *src, size_t n) {
+	c32sncpy(dest, src, n);
+	dest[n - 1]=U'\0';
+}
+
+/*
+char32_t equivalent of `strncpy`.
+
+If there is room between the end of `src` and `dest[n]`, fill it with NULL.
+*/
+void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
+	memset(dest, 0, n * sizeof(char32_t));
+
+	while (*src!=U'\0' && n>0) {
+		*dest=*src;
+		src++;
+		dest++;
+		n--;
+	}
+}
+
+/*
 Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 
 The result of this function must be freed.
@@ -129,6 +95,20 @@ char *c32stombs(const char32_t *str) {
 	ret[offset]='\0';
 
 	return ret;
+}
+
+/*
+Return the size of a UTF-32 string.
+*/
+__attribute__((pure)) size_t c32slen(const char32_t *str) {
+	size_t len=0;
+
+	while (*str!=U'\0') {
+		str++;
+		len++;
+	}
+
+	return len;
 }
 
 /*
@@ -211,13 +191,6 @@ __attribute__((pure)) const char32_t *c32schr(const char32_t *str, char32_t c) {
 }
 
 /*
-Return whether the UTF-32 character `c` is a digit.
-*/
-__attribute__((const)) bool c32isdigit(char32_t c) {
-	return (c >= U'0') && (c <= U'9');
-}
-
-/*
 Return whether the UTF-32 character `c` is a hexidecimal digit.
 */
 __attribute__((const)) bool c32isxdigit(char32_t c) {
@@ -237,4 +210,31 @@ __attribute__((const)) bool c32isalnum(char32_t c) {
 		((c >= U'A') && (c <= U'Z')) ||
 		((c >= U'a') && (c <= U'z'))
 	);
+}
+
+/*
+Return whether the UTF-32 character `c` is a digit.
+*/
+__attribute__((const)) bool c32isdigit(char32_t c) {
+	return (c >= U'0') && (c <= U'9');
+}
+
+/*
+Return last occurence of `sub` in string `str`.
+
+`NULL` is returned if no such string is found.
+*/
+const char *strrstr(const char *str, const char *sub) {
+	size_t str_len=strlen(str);
+	size_t sub_len=strlen(sub);
+
+	const char *look=str + str_len - sub_len;
+
+	while (look >= str) {
+		if (strncmp(look, sub, sub_len)==0) {
+			return look;
+		}
+		look--;
+	}
+	return NULL;
 }

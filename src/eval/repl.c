@@ -14,117 +14,6 @@
 #include "repl.h"
 
 /*
-Returns pointer to UTF-32 string read from file descriptor `fd`.
-*/
-char32_t *repl_read(FILE *fd) {
-	if (fd==stdin) {
-		printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
-	}
-
-	char *str=malloc(sizeof(char) * REPL_MAX_LINE_LEN);
-	DIE_IF_MALLOC_FAILS(str);
-
-	size_t offset=0;
-	int c=getc(fd);
-
-	while (c!='\n' && c!=EOF) {
-		//read char by char until we need to reallocate more memory
-		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
-			char *new_str=realloc(str, sizeof(char) * (offset + REPL_MAX_LINE_LEN));
-			DIE_IF_MALLOC_FAILS(new_str);
-
-			str=new_str;
-		}
-		str[offset]=(char)c;
-		offset++;
-
-		c=getc(fd);
-	}
-	str[offset]='\0';
-
-	char32_t *ret=mbstoc32s(str);
-
-	free(str);
-	return ret;
-}
-
-/*
-Make and add a variable from `node` to context `ctx`.
-
-Added variable will be constant if `is_const` is true.
-
-Returns pointer to error message if one occurs, else `NULL`.
-*/
-const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_const) {
-	if (ctx==NULL) {
-		return NULL;
-	}
-
-	if (node->next==NULL) {
-		return ERR_MISSING_ASSIGNMENT;
-	}
-
-	const token_t *token=node->token;
-	if (!is_const) {
-		token=token->next;
-	}
-
-	MAKE_TOKEN_BUF(name, token);
-	variable_t *var=NULL;
-
-	if (token->next->token_type==TOKEN_OPER_AUTO_EQUAL) {
-		const char32_t *type=NULL;
-		if (node->next->node_type==AST_NODE_INT_CONST) {
-			type=U"int";
-		}
-		else if (node->next->node_type==AST_NODE_FLOAT_CONST) {
-			type=U"float";
-		}
-		else if (node->next->node_type==AST_NODE_BOOL_CONST) {
-			type=U"bool";
-		}
-		else if (node->next->node_type==AST_NODE_STR_CONST) {
-			type=U"str";
-		}
-		else if (node->next->node_type==AST_NODE_CHAR_CONST) {
-			type=U"char";
-		}
-		else if (node->next->node_type==AST_NODE_IDENTIFIER ||
-			node->next->node_type==AST_NODE_ADD_VAR
-		) {
-			MAKE_TOKEN_BUF(buf, node->next->token);
-			variable_t *new_var=context_find_name(ctx, buf);
-
-			if (new_var==NULL) {
-				return ERR_VAR_NOT_FOUND;
-			}
-			type=new_var->type->name;
-		}
-		else {
-			return ERR_INVALID_INPUT;
-		}
-		var=make_variable(type, name, false);
-	}
-	else {
-		MAKE_TOKEN_BUF(type, token->next);
-		var=make_variable(type, name, false);
-	}
-
-	const char32_t *tmp=eval_assign(var, node->next, ctx);
-	var->is_const=is_const;
-
-	if (tmp!=NULL) {
-		free_variable(var);
-		return tmp;
-	}
-	if (context_add_var(ctx, var)) {
-		return NULL;
-	}
-	free_variable(var);
-	return ERR_VAR_ALREADY_DEFINED;
-}
-
-/*
 Evaluates a string `str` given context `ctx`, returns result as a string (if any).
 */
 const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
@@ -216,6 +105,82 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 }
 
 /*
+Make and add a variable from `node` to context `ctx`.
+
+Added variable will be constant if `is_const` is true.
+
+Returns pointer to error message if one occurs, else `NULL`.
+*/
+const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_const) {
+	if (ctx==NULL) {
+		return NULL;
+	}
+
+	if (node->next==NULL) {
+		return ERR_MISSING_ASSIGNMENT;
+	}
+
+	const token_t *token=node->token;
+	if (!is_const) {
+		token=token->next;
+	}
+
+	MAKE_TOKEN_BUF(name, token);
+	variable_t *var=NULL;
+
+	if (token->next->token_type==TOKEN_OPER_AUTO_EQUAL) {
+		const char32_t *type=NULL;
+		if (node->next->node_type==AST_NODE_INT_CONST) {
+			type=U"int";
+		}
+		else if (node->next->node_type==AST_NODE_FLOAT_CONST) {
+			type=U"float";
+		}
+		else if (node->next->node_type==AST_NODE_BOOL_CONST) {
+			type=U"bool";
+		}
+		else if (node->next->node_type==AST_NODE_STR_CONST) {
+			type=U"str";
+		}
+		else if (node->next->node_type==AST_NODE_CHAR_CONST) {
+			type=U"char";
+		}
+		else if (node->next->node_type==AST_NODE_IDENTIFIER ||
+			node->next->node_type==AST_NODE_ADD_VAR
+		) {
+			MAKE_TOKEN_BUF(buf, node->next->token);
+			variable_t *new_var=context_find_name(ctx, buf);
+
+			if (new_var==NULL) {
+				return ERR_VAR_NOT_FOUND;
+			}
+			type=new_var->type->name;
+		}
+		else {
+			return ERR_INVALID_INPUT;
+		}
+		var=make_variable(type, name, false);
+	}
+	else {
+		MAKE_TOKEN_BUF(type, token->next);
+		var=make_variable(type, name, false);
+	}
+
+	const char32_t *tmp=eval_assign(var, node->next, ctx);
+	var->is_const=is_const;
+
+	if (tmp!=NULL) {
+		free_variable(var);
+		return tmp;
+	}
+	if (context_add_var(ctx, var)) {
+		return NULL;
+	}
+	free_variable(var);
+	return ERR_VAR_ALREADY_DEFINED;
+}
+
+/*
 Read from `fd`, eval with context `ctx`, and print out result.
 */
 void repl_loop(FILE *fd, context_t *ctx) {
@@ -232,4 +197,39 @@ void repl_loop(FILE *fd, context_t *ctx) {
 	if (!is_error_msg(tmp)) {
 		free((char32_t*)tmp);
 	}
+}
+
+/*
+Returns pointer to UTF-32 string read from file descriptor `fd`.
+*/
+char32_t *repl_read(FILE *fd) {
+	if (fd==stdin) {
+		printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
+	}
+
+	char *str=malloc(sizeof(char) * REPL_MAX_LINE_LEN);
+	DIE_IF_MALLOC_FAILS(str);
+
+	size_t offset=0;
+	int c=getc(fd);
+
+	while (c!='\n' && c!=EOF) {
+		//read char by char until we need to reallocate more memory
+		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
+			char *new_str=realloc(str, sizeof(char) * (offset + REPL_MAX_LINE_LEN));
+			DIE_IF_MALLOC_FAILS(new_str);
+
+			str=new_str;
+		}
+		str[offset]=(char)c;
+		offset++;
+
+		c=getc(fd);
+	}
+	str[offset]='\0';
+
+	char32_t *ret=mbstoc32s(str);
+
+	free(str);
+	return ret;
 }

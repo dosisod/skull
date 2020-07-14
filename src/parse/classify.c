@@ -8,88 +8,6 @@
 
 #include "classify.h"
 
-/*
-Returns true if `name` is a type string.
-*/
-bool is_type_str(const char32_t *name) {
-	type_t *current=TYPES_AVAILABLE;
-	while (current) {
-		if (c32scmp(current->name, name)) {
-			return true;
-		}
-		current=current->next;
-	}
-	return false;
-}
-
-/*
-Returns true if a `str` is a keyword.
-*/
-bool is_keyword_str(const char32_t *str) {
-	return (
-		c32scmp(U"return", str) ||
-		c32scmp(U"mut", str)
-	);
-}
-
-/*
-Returns true if `str` is a valid hex/octal/binary/decimal representation of an integer.
-
-Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
-*/
-bool is_constant_integer_str(const char32_t *str) {
-	return (
-		wegex_match(U"?-+\n", str) ||
-		wegex_match(U"0x+\b", str) ||
-		wegex_match(U"0b+[01]", str) ||
-		wegex_match(U"0o+[01234567]", str)
-	);
-}
-
-/*
-Returns true if `str` is a valid float (with decimal).
-
-Examples: `123.0`, `-123.0`, `0.0`
-*/
-bool is_constant_float_str(const char32_t *str) {
-	return wegex_match(U"?-+\n.+\n", str);
-}
-
-/*
-Returns true if `str` is a valid bool (`true` or `false`).
-*/
-bool is_constant_bool_str(const char32_t *str) {
-	return c32scmp(U"false", str) || c32scmp(U"true", str);
-}
-
-/*
-Returns true if `str` is a valid char.
-
-Examples: `'x'` and `' '`.
-Won't work: `''`, `'x '`, or `' x'`.
-*/
-bool is_constant_char_str(const char32_t *str) {
-	return c32slen(str)==3 && str[0]=='\'' && str[2]=='\'';
-}
-
-/*
-Returns true if `str` is a valid string constant.
-
-Examples: `""` and `"hello"`.
-*/
-bool is_constant_str_str(const char32_t *str) {
-	const size_t len=c32slen(str);
-
-	return len>=2 && str[0]==U'\"' && str[len - 1]==U'\"';
-}
-
-/*
-Returns true if `str` is a valid identifer.
-*/
-bool is_valid_identifier_str(const char32_t *str) {
-	return wegex_match(U"\a*[\f_]?:", str);
-}
-
 #define TOKEN_TRY_STR(str, type) \
 	else if (token_cmp((str), token)) { \
 		token->token_type=(type); \
@@ -173,4 +91,86 @@ void classify_tokens(token_t *head) {
 		classify_token(current);
 		current=current->next;
 	}
+}
+
+/*
+Returns true if `name` is a type string.
+*/
+bool is_type_str(const char32_t *name) {
+	type_t *current=TYPES_AVAILABLE;
+	while (current) {
+		if (c32scmp(current->name, name)) {
+			return true;
+		}
+		current=current->next;
+	}
+	return false;
+}
+
+/*
+Returns true if a `str` is a keyword.
+*/
+bool is_keyword_str(const char32_t *str) {
+	return (
+		c32scmp(U"return", str) ||
+		c32scmp(U"mut", str)
+	);
+}
+
+/*
+Returns true if `str` is a valid hex/octal/binary/decimal representation of an integer.
+
+Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
+*/
+bool is_constant_integer_str(const char32_t *str) {
+	return (
+		wegex_match(U"?-+\n", str) ||
+		wegex_match(U"0x+\b", str) ||
+		wegex_match(U"0b+[01]", str) ||
+		wegex_match(U"0o+[01234567]", str)
+	);
+}
+
+/*
+Returns true if `str` is a valid float (with decimal).
+
+Examples: `123.0`, `-123.0`, `0.0`
+*/
+bool is_constant_float_str(const char32_t *str) {
+	return wegex_match(U"?-+\n.+\n", str);
+}
+
+/*
+Returns true if `str` is a valid bool (`true` or `false`).
+*/
+bool is_constant_bool_str(const char32_t *str) {
+	return c32scmp(U"false", str) || c32scmp(U"true", str);
+}
+
+/*
+Returns true if `str` is a valid char.
+
+Examples: `'x'` and `' '`.
+Won't work: `''`, `'x '`, or `' x'`.
+*/
+bool is_constant_char_str(const char32_t *str) {
+	return c32slen(str)==3 && str[0]=='\'' && str[2]=='\'';
+}
+
+/*
+Returns true if `str` is a valid string constant.
+
+Examples: `""` and `"hello"`.
+*/
+bool is_constant_str_str(const char32_t *str) {
+	const size_t len=c32slen(str);
+
+	return len>=2 && str[0]==U'\"' && str[len - 1]==U'\"';
+}
+
+/*
+Returns true if `str` is a valid identifer.
+*/
+bool is_valid_identifier_str(const char32_t *str) {
+	return wegex_match(U"\a*[\f_]?:", str);
 }

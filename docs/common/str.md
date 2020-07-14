@@ -1,21 +1,5 @@
 # src/common/str.c
 
-#### `const char *strrstr(const char *str, const char *sub)`
-Return last occurence of `sub` in string `str`.
-
-`NULL` is returned if no such string is found.
-
-#### `void c32sncpy(char32_t *dest, const char32_t *src, size_t n)`
-char32_t equivalent of `strncpy`.
-
-If there is room between the end of `src` and `dest[n]`, fill it with NULL.
-
-#### `void c32slcpy(char32_t *dest, const char32_t *src, size_t n)`
-Similar to `strlcpy`, but for `char32_t` types.
-
-#### `__attribute__((pure)) size_t c32slen(const char32_t *str)`
-Return the size of a UTF-32 string.
-
 #### `char32_t *c32sdup(const char32_t *str)`
 Make a heap allocated version of `str`.
 
@@ -26,10 +10,21 @@ Concatenate `s1` and `s2`.
 
 The result of this function must be freed.
 
+#### `void c32slcpy(char32_t *dest, const char32_t *src, size_t n)`
+Similar to `strlcpy`, but for `char32_t` types.
+
+#### `void c32sncpy(char32_t *dest, const char32_t *src, size_t n)`
+char32_t equivalent of `strncpy`.
+
+If there is room between the end of `src` and `dest[n]`, fill it with NULL.
+
 #### `char *c32stombs(const char32_t *str)`
 Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 
 The result of this function must be freed.
+
+#### `__attribute__((pure)) size_t c32slen(const char32_t *str)`
+Return the size of a UTF-32 string.
 
 #### `char32_t *mbstoc32s(const char *str)`
 Convert a multi-byte string `str` (probably UTF-8) into a UTF-32 string.
@@ -49,12 +44,17 @@ Return pointer to first occurence of `c` in `str`.
 
 If it cannot be found, NULL is returned instead.
 
-#### `__attribute__((const)) bool c32isdigit(char32_t c)`
-Return whether the UTF-32 character `c` is a digit.
-
 #### `__attribute__((const)) bool c32isxdigit(char32_t c)`
 Return whether the UTF-32 character `c` is a hexidecimal digit.
 
 #### `__attribute__((const)) bool c32isalnum(char32_t c)`
 Returns whether the UTF-32 character `c` is an alpha numeric character.
+
+#### `__attribute__((const)) bool c32isdigit(char32_t c)`
+Return whether the UTF-32 character `c` is a digit.
+
+#### `const char *strrstr(const char *str, const char *sub)`
+Return last occurence of `sub` in string `str`.
+
+`NULL` is returned if no such string is found.
 

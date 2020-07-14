@@ -11,67 +11,14 @@
 
 #include "eval_assign.h"
 
+const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
+const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
+
 #define SETUP_MEM(name, type, func) \
 	const type tmp=(func); \
 	mem=malloc(sizeof(type)); \
 	DIE_IF_MALLOC_FAILS(mem); \
 	memcpy((void*)mem, &tmp, sizeof(type));
-
-/*
-Evaluate assignment via auto assignment operator.
-*/
-const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	MAKE_TOKEN_BUF(buf, node->token);
-	variable_t *var_found=context_find_name(ctx, buf);
-
-	if (var_found==NULL) {
-		return ERR_VAR_NOT_FOUND;
-	}
-	if (var_found->type!=var->type) {
-		return ERR_TYPE_MISMATCH;
-	}
-
-	uint8_t mem[var_found->bytes];
-	variable_read(mem, var_found);
-
-	if (var->type==&TYPE_STR) {
-		char32_t *str=NULL;
-		variable_read(&str, var_found);
-
-		str=c32sdup(str);
-		memcpy(mem, &str, sizeof(char32_t*));
-	}
-	variable_write(var, mem);
-
-	return NULL;
-}
-
-/*
-Evaluate assignment via adding of 2 variables.
-*/
-const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	MAKE_TOKEN_BUF(lhs_buf, node->token);
-	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next);
-
-	variable_t *lhs_var=context_find_name(ctx, lhs_buf);
-	variable_t *rhs_var=context_find_name(ctx, rhs_buf);
-
-	if (lhs_var==NULL || rhs_var==NULL) {
-		return ERR_VAR_NOT_FOUND;
-	}
-	if (lhs_var->type!=rhs_var->type) {
-		return ERR_CANNOT_ADD;
-	}
-
-	variable_t *tmp=eval_add(lhs_var, rhs_var);
-	if (tmp==NULL) {
-		return ERR_ADD_UNAVAILABLE;
-	}
-	variable_write(var, tmp->mem);
-	free(tmp);
-
-	return NULL;
-}
 
 /*
 Assign `node` to variable `var`.
@@ -150,3 +97,59 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 }
 
 #undef SETUP_MEM
+
+/*
+Evaluate assignment via auto assignment operator.
+*/
+const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
+	MAKE_TOKEN_BUF(buf, node->token);
+	variable_t *var_found=context_find_name(ctx, buf);
+
+	if (var_found==NULL) {
+		return ERR_VAR_NOT_FOUND;
+	}
+	if (var_found->type!=var->type) {
+		return ERR_TYPE_MISMATCH;
+	}
+
+	uint8_t mem[var_found->bytes];
+	variable_read(mem, var_found);
+
+	if (var->type==&TYPE_STR) {
+		char32_t *str=NULL;
+		variable_read(&str, var_found);
+
+		str=c32sdup(str);
+		memcpy(mem, &str, sizeof(char32_t*));
+	}
+	variable_write(var, mem);
+
+	return NULL;
+}
+
+/*
+Evaluate assignment via adding of 2 variables.
+*/
+const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
+	MAKE_TOKEN_BUF(lhs_buf, node->token);
+	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next);
+
+	variable_t *lhs_var=context_find_name(ctx, lhs_buf);
+	variable_t *rhs_var=context_find_name(ctx, rhs_buf);
+
+	if (lhs_var==NULL || rhs_var==NULL) {
+		return ERR_VAR_NOT_FOUND;
+	}
+	if (lhs_var->type!=rhs_var->type) {
+		return ERR_CANNOT_ADD;
+	}
+
+	variable_t *tmp=eval_add(lhs_var, rhs_var);
+	if (tmp==NULL) {
+		return ERR_ADD_UNAVAILABLE;
+	}
+	variable_write(var, tmp->mem);
+	free(tmp);
+
+	return NULL;
+}

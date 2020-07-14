@@ -1,5 +1,11 @@
 # src/parse/classify.c
 
+#### `void classify_token(token_t *token)`
+Classify the token `token`.
+
+#### `void classify_tokens(token_t *head)`
+Classify all tokens pointed to from `token`.
+
 #### `bool is_type_str(const char32_t *name)`
 Returns true if `name` is a type string.
 
@@ -32,10 +38,4 @@ Examples: `""` and `"hello"`.
 
 #### `bool is_valid_identifier_str(const char32_t *str)`
 Returns true if `str` is a valid identifer.
-
-#### `void classify_token(token_t *token)`
-Classify the token `token`.
-
-#### `void classify_tokens(token_t *head)`
-Classify all tokens pointed to from `token`.
 

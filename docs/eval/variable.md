@@ -1,5 +1,13 @@
 # src/eval/variable.c
 
+#### `char32_t *fmt_var(const variable_t *var)`
+Return string representation of the variable `var`.
+
+The result of this function must be freed.
+
+#### `void variable_read(void *dest, const variable_t *var)`
+Read variable memory of `var` into `dest`.
+
 #### `variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_const)`
 Make a variable called `name` with type `type`, and make it const if `is_const` is true.
 
@@ -10,14 +18,6 @@ Write `data` to `var`.
 
 If `var` is constant, return error msg, else `NULL`.
 
-#### `void variable_read(void *dest, const variable_t *var)`
-Read variable memory of `var` into `dest`.
-
 #### `void free_variable(variable_t *var)`
 Free variable `var` and its internal memory.
-
-#### `char32_t *fmt_var(const variable_t *var)`
-Return string representation of the variable `var`.
-
-The result of this function must be freed.
 
