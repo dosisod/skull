@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#include "../../src/common/str.h"
 #include "../../src/eval/eval_add.h"
 #include "../testing.h"
 
@@ -46,6 +47,28 @@ TEST(adding_2_floats, {
 	return pass;
 })
 
+TEST(adding_2_strs, {
+	variable_t *var1=make_variable(U"str", U"var1", false);
+	variable_t *var2=make_variable(U"str", U"var2", false);
+
+	const char32_t *str=U"x";
+	variable_write(var1, &str);
+	variable_write(var2, &str);
+	variable_t *var3=eval_add(var1, var2);
+
+	char32_t *result=NULL;
+	variable_read(&result, var3);
+
+	//casting int to make compiler happy
+	const bool pass=c32scmp(result, U"xx");
+
+	free_variable(var1);
+	free_variable(var2);
+	free_variable(var3);
+
+	return pass;
+})
+
 TEST(adding_vars_with_different_types_fail, {
 	variable_t *var1=make_variable(U"int", U"var1", false);
 	variable_t *var2=make_variable(U"float", U"var2", false);
@@ -64,6 +87,7 @@ void eval_add_test_self(bool *pass) {
 	tests_t tests={
 		test_adding_2_ints,
 		test_adding_2_floats,
+		test_adding_2_strs,
 		test_adding_vars_with_different_types_fail,
 		NULL
 	};
