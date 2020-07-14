@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -47,9 +48,15 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	errno=0;
 	FILE *f=fopen(argv[1], "re");
 	if (f==NULL) {
-		printf("\"%s\" was not found, exiting\n", argv[1]);
+		if (errno==EACCES) {
+			printf("cannot open \"%s\", permission denied\n", argv[1]);
+		}
+		else if (errno==ENOENT) {
+			printf("\"%s\" was not found, exiting\n", argv[1]);
+		}
 		return 1;
 	}
 
