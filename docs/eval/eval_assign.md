@@ -14,5 +14,5 @@ Evaluate assignment via auto assignment operator.
 Evaluate assignment via adding of 2 variables.
 
 #### `const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx)`
-Evaluate assignment via subtracint 2 variables.
+Evaluate assignment via subtracting 2 variables.
 

@@ -13,6 +13,7 @@
 #include "eval_assign.h"
 
 const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
+
 const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 
@@ -133,56 +134,37 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 	return NULL;
 }
 
+#define EVAL_ASSIGN_SETUP(func, cannot, unavail) \
+	MAKE_TOKEN_BUF(lhs_buf, node->token); \
+	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next); \
+	variable_t *lhs_var=context_find_name(ctx, lhs_buf); \
+	variable_t *rhs_var=context_find_name(ctx, rhs_buf); \
+	if (lhs_var==NULL || rhs_var==NULL) { \
+		return ERR_VAR_NOT_FOUND; \
+	} \
+	if (lhs_var->type!=rhs_var->type) { \
+		return (cannot); \
+	} \
+	variable_t *tmp=(func)(lhs_var, rhs_var); \
+	if (tmp==NULL) { \
+		return (unavail); \
+	} \
+	variable_write(var, tmp->mem); \
+	free(tmp); \
+	return NULL; \
+
 /*
 Evaluate assignment via adding of 2 variables.
 */
 const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	MAKE_TOKEN_BUF(lhs_buf, node->token);
-	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next);
-
-	variable_t *lhs_var=context_find_name(ctx, lhs_buf);
-	variable_t *rhs_var=context_find_name(ctx, rhs_buf);
-
-	if (lhs_var==NULL || rhs_var==NULL) {
-		return ERR_VAR_NOT_FOUND;
-	}
-	if (lhs_var->type!=rhs_var->type) {
-		return ERR_CANNOT_ADD;
-	}
-
-	variable_t *tmp=eval_add(lhs_var, rhs_var);
-	if (tmp==NULL) {
-		return ERR_ADD_UNAVAILABLE;
-	}
-	variable_write(var, tmp->mem);
-	free(tmp);
-
-	return NULL;
+	EVAL_ASSIGN_SETUP(eval_add, ERR_CANNOT_ADD, ERR_ADD_UNAVAILABLE);
 }
 
 /*
-Evaluate assignment via subtracint 2 variables.
+Evaluate assignment via subtracting 2 variables.
 */
 const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	MAKE_TOKEN_BUF(lhs_buf, node->token);
-	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next);
-
-	variable_t *lhs_var=context_find_name(ctx, lhs_buf);
-	variable_t *rhs_var=context_find_name(ctx, rhs_buf);
-
-	if (lhs_var==NULL || rhs_var==NULL) {
-		return ERR_VAR_NOT_FOUND;
-	}
-	if (lhs_var->type!=rhs_var->type) {
-		return ERR_CANNOT_SUB;
-	}
-
-	variable_t *tmp=eval_sub(lhs_var, rhs_var);
-	if (tmp==NULL) {
-		return ERR_SUB_UNAVAILABLE;
-	}
-	variable_write(var, tmp->mem);
-	free(tmp);
-
-	return NULL;
+	EVAL_ASSIGN_SETUP(eval_sub, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
 }
+
+#undef EVAL_ASSIGN_SETUP
