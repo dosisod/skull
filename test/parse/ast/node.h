@@ -194,6 +194,10 @@ TEST(make_ast_tree_var_add, {
 	TEST_AST_TREE(U"x + y", AST_NODE_ADD_VAR, 0, 5);
 })
 
+TEST(make_ast_tree_var_sub, {
+	TEST_AST_TREE(U"x - y", AST_NODE_SUB_VAR, 0, 5);
+})
+
 TEST(make_ast_tree_return, {
 	TEST_AST_TREE(U"return 0", AST_NODE_RETURN, 0, 8);
 })
@@ -285,6 +289,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_with_whitespace,
 		test_make_ast_tree_var_assign,
 		test_make_ast_tree_var_add,
+		test_make_ast_tree_var_sub,
 		test_make_ast_tree_return,
 		test_make_ast_tree_return_var,
 		test_make_ast_tree_no_param_func,

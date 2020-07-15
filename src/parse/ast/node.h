@@ -17,6 +17,7 @@ enum node_types {
 	AST_NODE_VAR_ASSIGN,
 
 	AST_NODE_ADD_VAR,
+	AST_NODE_SUB_VAR,
 
 	AST_NODE_RETURN,
 

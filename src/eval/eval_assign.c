@@ -8,11 +8,13 @@
 #include "eval_add.h"
 #include "eval_float.h"
 #include "eval_integer.h"
+#include "eval_sub.h"
 
 #include "eval_assign.h"
 
 const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
+const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 
 #define SETUP_MEM(name, type, func) \
 	const type tmp=(func); \
@@ -38,6 +40,10 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 
 	if (ctx!=NULL && node->node_type==AST_NODE_ADD_VAR) {
 		return eval_add_var_assign(var, node, ctx);
+	}
+
+	if (ctx!=NULL && node->node_type==AST_NODE_SUB_VAR) {
+		return eval_sub_var_assign(var, node, ctx);
 	}
 
 	const void *mem=NULL;
@@ -147,6 +153,33 @@ const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const con
 	variable_t *tmp=eval_add(lhs_var, rhs_var);
 	if (tmp==NULL) {
 		return ERR_ADD_UNAVAILABLE;
+	}
+	variable_write(var, tmp->mem);
+	free(tmp);
+
+	return NULL;
+}
+
+/*
+Evaluate assignment via subtracint 2 variables.
+*/
+const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
+	MAKE_TOKEN_BUF(lhs_buf, node->token);
+	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next);
+
+	variable_t *lhs_var=context_find_name(ctx, lhs_buf);
+	variable_t *rhs_var=context_find_name(ctx, rhs_buf);
+
+	if (lhs_var==NULL || rhs_var==NULL) {
+		return ERR_VAR_NOT_FOUND;
+	}
+	if (lhs_var->type!=rhs_var->type) {
+		return ERR_CANNOT_SUB;
+	}
+
+	variable_t *tmp=eval_sub(lhs_var, rhs_var);
+	if (tmp==NULL) {
+		return ERR_SUB_UNAVAILABLE;
 	}
 	variable_write(var, tmp->mem);
 	free(tmp);

@@ -146,7 +146,8 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 			type=U"char";
 		}
 		else if (node->next->node_type==AST_NODE_IDENTIFIER ||
-			node->next->node_type==AST_NODE_ADD_VAR
+			node->next->node_type==AST_NODE_ADD_VAR ||
+			node->next->node_type==AST_NODE_SUB_VAR
 		) {
 			MAKE_TOKEN_BUF(buf, node->next->token);
 			variable_t *new_var=context_find_name(ctx, buf);

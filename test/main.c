@@ -15,6 +15,7 @@
 #include "eval/eval_bool.h"
 #include "eval/eval_float.h"
 #include "eval/eval_integer.h"
+#include "eval/eval_sub.h"
 #include "eval/function.h"
 #include "eval/repl.h"
 #include "eval/variable.h"
@@ -46,6 +47,7 @@ int main(void) {
 	eval_bool_test_self(&passed);
 	eval_float_test_self(&passed);
 	eval_integer_test_self(&passed);
+	eval_sub_test_self(&passed);
 	function_test_self(&passed);
 	repl_test_self(&passed);
 	variable_test_self(&passed);

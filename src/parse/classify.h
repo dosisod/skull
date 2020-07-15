@@ -33,6 +33,7 @@ enum token_types {
 	//operators (add, subtract, assign)
 	TOKEN_OPER_EQUAL,
 	TOKEN_OPER_PLUS,
+	TOKEN_OPER_MINUS,
 	TOKEN_OPER_EQUAL_EQUAL,
 	TOKEN_OPER_NOT_EQUAL,
 	TOKEN_OPER_AUTO_EQUAL, // ":="
