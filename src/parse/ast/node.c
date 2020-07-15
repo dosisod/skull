@@ -195,10 +195,9 @@ void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t
 Makes an ast_node_t with default values
 */
 ast_node_t *make_ast_node(void) {
-	ast_node_t *node=malloc(sizeof(ast_node_t));
+	ast_node_t *node=calloc(1, sizeof(ast_node_t));
 	DIE_IF_MALLOC_FAILS(node);
 
-	memset(node, 0, sizeof(ast_node_t));
 	return node;
 }
 

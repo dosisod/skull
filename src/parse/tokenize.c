@@ -130,13 +130,8 @@ __attribute__((const)) bool is_quote(char32_t c) {
 Allocate and return a token with set defaults.
 */
 token_t *make_token(void) {
-	token_t *token=malloc(sizeof(token_t));
+	token_t *token=calloc(1, sizeof(token_t));
 	DIE_IF_MALLOC_FAILS(token);
-
-	token->begin=NULL;
-	token->end=NULL;
-	token->token_type=0;
-	token->next=NULL;
 
 	return token;
 }
