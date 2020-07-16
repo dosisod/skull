@@ -190,7 +190,7 @@ void repl_loop(FILE *fd, context_t *ctx) {
 	const char32_t *tmp=repl_eval(line, ctx);
 	char *output=c32stombs(tmp);
 	if (output!=NULL) {
-		printf("%s\n", output);
+		puts(output);
 	}
 
 	free(output);

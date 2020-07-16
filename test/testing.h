@@ -59,7 +59,7 @@ void run_many_tests(const char *name, tests_t tests, bool *pass) {
 		tests++;
 	}
 
-	puts("");
+	putchar('\n');
 
 	if (fails_head!=NULL) {
 		fail_t *current=fails_head;
@@ -72,7 +72,7 @@ void run_many_tests(const char *name, tests_t tests, bool *pass) {
 			current=current->next;
 			free(tmp);
 		}
-		puts("");
+		putchar('\n');
 
 		fails_last=NULL;
 		fails_head=NULL;
