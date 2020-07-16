@@ -1,2 +1,3 @@
 build/
-*.so
+
+test/sh/read_protected.sk
