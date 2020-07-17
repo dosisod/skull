@@ -8,6 +8,7 @@
 #include "eval_add.h"
 #include "eval_float.h"
 #include "eval_integer.h"
+#include "eval_mult.h"
 #include "eval_sub.h"
 
 #include "eval_assign.h"
@@ -16,6 +17,7 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 
 const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
+const char32_t *eval_mult_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 
 #define SETUP_MEM(name, type, func) \
 	const type tmp=(func); \
@@ -45,6 +47,10 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 
 	if (ctx!=NULL && node->node_type==AST_NODE_SUB_VAR) {
 		return eval_sub_var_assign(var, node, ctx);
+	}
+
+	if (ctx!=NULL && node->node_type==AST_NODE_MULT_VAR) {
+		return eval_mult_var_assign(var, node, ctx);
 	}
 
 	const void *mem=NULL;
@@ -165,6 +171,13 @@ Evaluate assignment via subtracting 2 variables.
 */
 const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
 	EVAL_ASSIGN_SETUP(eval_sub, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
+}
+
+/*
+Evaluate assignment via multuplying 2 variables.
+*/
+const char32_t *eval_mult_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
+	EVAL_ASSIGN_SETUP(eval_mult, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
 }
 
 #undef EVAL_ASSIGN_SETUP

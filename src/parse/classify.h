@@ -30,15 +30,14 @@ enum token_types {
 
 	TOKEN_TYPE,
 
-	//operators (add, subtract, assign)
 	TOKEN_OPER_EQUAL,
 	TOKEN_OPER_PLUS,
 	TOKEN_OPER_MINUS,
+	TOKEN_OPER_MULT,
 	TOKEN_OPER_EQUAL_EQUAL,
 	TOKEN_OPER_NOT_EQUAL,
 	TOKEN_OPER_AUTO_EQUAL, // ":="
 
-	//constant values, such as ints and strings
 	TOKEN_INT_CONST,
 	TOKEN_FLOAT_CONST,
 	TOKEN_BOOL_CONST,

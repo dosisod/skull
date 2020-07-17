@@ -16,3 +16,6 @@ Evaluate assignment via adding of 2 variables.
 #### `const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx)`
 Evaluate assignment via subtracting 2 variables.
 
+#### `const char32_t *eval_mult_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx)`
+Evaluate assignment via multuplying 2 variables.
+

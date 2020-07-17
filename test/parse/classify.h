@@ -152,6 +152,10 @@ TEST(token_minus_oper, {
 	TEST_CLASSIFY_TOKEN(U"-", TOKEN_OPER_MINUS);
 })
 
+TEST(token_mult_oper, {
+	TEST_CLASSIFY_TOKEN(U"*", TOKEN_OPER_MULT);
+})
+
 TEST(token_type, {
 	const char32_t *code=U"int not_a_type";
 	token_t *t=tokenize(code);
@@ -356,6 +360,7 @@ void classifier_test_self(bool *pass) {
 		test_token_equal_oper,
 		test_token_plus_oper,
 		test_token_minus_oper,
+		test_token_mult_oper,
 		test_token_equal_equal_oper,
 		test_token_not_equal_oper,
 		test_token_auto_equal_oper,

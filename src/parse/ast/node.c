@@ -48,6 +48,12 @@ int ast_node_sub_var_combo[] = {
 	TOKEN_IDENTIFIER, -1
 };
 
+int ast_node_mult_var_combo[] = {
+	TOKEN_IDENTIFIER,
+	TOKEN_OPER_MULT,
+	TOKEN_IDENTIFIER, -1
+};
+
 int ast_node_return_combo[] = {
 	TOKEN_KW_RETURN,
 	TOKEN_INT_CONST, -1
@@ -105,6 +111,7 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		TRY_PUSH_AST_NODE(ast_node_var_assign_combo, AST_NODE_VAR_ASSIGN);
 		TRY_PUSH_AST_NODE(ast_node_add_var_combo, AST_NODE_ADD_VAR);
 		TRY_PUSH_AST_NODE(ast_node_sub_var_combo, AST_NODE_SUB_VAR);
+		TRY_PUSH_AST_NODE(ast_node_mult_var_combo, AST_NODE_MULT_VAR);
 		TRY_PUSH_AST_NODE(ast_node_return_combo, AST_NODE_RETURN);
 		TRY_PUSH_AST_NODE(ast_node_return_var_combo, AST_NODE_RETURN);
 		TRY_PUSH_AST_NODE(ast_node_no_param_func_combo, AST_NODE_NO_PARAM_FUNC);
