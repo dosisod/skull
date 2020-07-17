@@ -15,9 +15,24 @@
 
 const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 
-const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
-const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
-const char32_t *eval_mult_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
+#define EVAL_ASSIGN_SETUP(func, cannot, unavail) \
+	MAKE_TOKEN_BUF(lhs_buf, node->token); \
+	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next); \
+	variable_t *lhs_var=context_find_name(ctx, lhs_buf); \
+	variable_t *rhs_var=context_find_name(ctx, rhs_buf); \
+	if (lhs_var==NULL || rhs_var==NULL) { \
+		return ERR_VAR_NOT_FOUND; \
+	} \
+	if (lhs_var->type!=rhs_var->type) { \
+		return (cannot); \
+	} \
+	variable_t *tmp=(func)(lhs_var, rhs_var); \
+	if (tmp==NULL) { \
+		return (unavail); \
+	} \
+	variable_write(var, tmp->mem); \
+	free(tmp); \
+	return NULL; \
 
 #define SETUP_MEM(name, type, func) \
 	const type tmp=(func); \
@@ -42,15 +57,15 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 	}
 
 	if (ctx!=NULL && node->node_type==AST_NODE_ADD_VAR) {
-		return eval_add_var_assign(var, node, ctx);
+		EVAL_ASSIGN_SETUP(eval_add, ERR_CANNOT_ADD, ERR_ADD_UNAVAILABLE);
 	}
 
 	if (ctx!=NULL && node->node_type==AST_NODE_SUB_VAR) {
-		return eval_sub_var_assign(var, node, ctx);
+		EVAL_ASSIGN_SETUP(eval_sub, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
 	}
 
 	if (ctx!=NULL && node->node_type==AST_NODE_MULT_VAR) {
-		return eval_mult_var_assign(var, node, ctx);
+		EVAL_ASSIGN_SETUP(eval_mult, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
 	}
 
 	const void *mem=NULL;
@@ -138,46 +153,6 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 	variable_write(var, mem);
 
 	return NULL;
-}
-
-#define EVAL_ASSIGN_SETUP(func, cannot, unavail) \
-	MAKE_TOKEN_BUF(lhs_buf, node->token); \
-	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next); \
-	variable_t *lhs_var=context_find_name(ctx, lhs_buf); \
-	variable_t *rhs_var=context_find_name(ctx, rhs_buf); \
-	if (lhs_var==NULL || rhs_var==NULL) { \
-		return ERR_VAR_NOT_FOUND; \
-	} \
-	if (lhs_var->type!=rhs_var->type) { \
-		return (cannot); \
-	} \
-	variable_t *tmp=(func)(lhs_var, rhs_var); \
-	if (tmp==NULL) { \
-		return (unavail); \
-	} \
-	variable_write(var, tmp->mem); \
-	free(tmp); \
-	return NULL; \
-
-/*
-Evaluate assignment via adding of 2 variables.
-*/
-const char32_t *eval_add_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	EVAL_ASSIGN_SETUP(eval_add, ERR_CANNOT_ADD, ERR_ADD_UNAVAILABLE);
-}
-
-/*
-Evaluate assignment via subtracting 2 variables.
-*/
-const char32_t *eval_sub_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	EVAL_ASSIGN_SETUP(eval_sub, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
-}
-
-/*
-Evaluate assignment via multuplying 2 variables.
-*/
-const char32_t *eval_mult_var_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	EVAL_ASSIGN_SETUP(eval_mult, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
 }
 
 #undef EVAL_ASSIGN_SETUP
