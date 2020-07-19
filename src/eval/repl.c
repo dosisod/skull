@@ -21,12 +21,6 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		return NULL;
 	}
 
-	token_t *token=tokenize(str);
-	classify_tokens(token);
-	MAKE_TOKEN_BUF(buf, token);
-	variable_t *var=context_find_name(ctx, buf);
-
-	free_tokens(token);
 	ast_node_t *node=make_ast_tree(str);
 	const char32_t *ret=ERR_INVALID_INPUT;
 
@@ -43,7 +37,14 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		ret=NULL;
 	}
 
-	else if (var!=NULL && node->node_type==AST_NODE_VAR_ASSIGN) {
+	else if (node->node_type==AST_NODE_VAR_ASSIGN) {
+		MAKE_TOKEN_BUF(buf, node->token);
+		variable_t *var=context_find_name(ctx, buf);
+
+		if (var==NULL) {
+			return ERR_VAR_NOT_FOUND;
+		}
+
 		if (var->is_const) {
 			return ERR_CANNOT_ASSIGN_CONST;
 		}
