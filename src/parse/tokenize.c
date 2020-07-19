@@ -27,7 +27,17 @@ token_t *tokenize(const char32_t *code) {
 	token_t *last=current;
 
 	char32_t quote=0;
-	bool comment=false;
+
+	//true if first line is a valid shebang comment
+	bool comment=(
+		code[0]!=U'\0' &&
+		code[1]!=U'\0' &&
+		c32sncmp(code, U"#!", 2)
+	);
+
+	if (comment) {
+		current->begin=code;
+	}
 
 	while (*code!=U'\0') {
 		if (comment) {

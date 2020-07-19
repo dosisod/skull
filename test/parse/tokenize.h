@@ -242,7 +242,7 @@ TEST(tokenize_comment, {
 	return pass;
 })
 
-TEST(token_trailing_comment, {
+TEST(tokenize_trailing_comment, {
 	const char32_t *code=U"stuff # this is a comment";
 	token_t *token=tokenize(code);
 	char32_t *buf1=token_str(token);
@@ -255,6 +255,17 @@ TEST(token_trailing_comment, {
 
 	free(buf1);
 	free(buf2);
+	free_tokens(token);
+
+	return pass;
+})
+
+TEST(tokenize_shebang_comment, {
+	const char32_t *code=U"#!/example/shebang";
+	token_t *token=tokenize(code);
+
+	const bool pass=c32scmp(code, token->begin);
+
 	free_tokens(token);
 
 	return pass;
@@ -294,7 +305,8 @@ void tokenizer_test_self(bool *pass) {
 		test_token_cmp_match_exact_strings_only,
 		test_token_str,
 		test_tokenize_comment,
-		test_token_trailing_comment,
+		test_tokenize_trailing_comment,
+		test_tokenize_shebang_comment,
 		test_make_token,
 		NULL
 	};

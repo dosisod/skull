@@ -55,4 +55,6 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Install Skull
-      run: sudo make install
+      run: |
+        sudo make install
+        ./test/sh/shebang.sk
