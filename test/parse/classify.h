@@ -338,6 +338,20 @@ TEST(identifier_cannot_be_keyword, {
 	return pass;
 })
 
+TEST(identifier_cannot_be_func_name, {
+	const char32_t *code=U"print: int = 0";
+	token_t *t=tokenize(code);
+	classify_tokens(t);
+
+	const bool pass=(
+		t->token_type==TOKEN_UNKNOWN &&
+		t->end==(code + 6)
+	);
+
+	free(t);
+	return pass;
+})
+
 TEST(token_classifier, {
 	const char32_t *code=U"[ ]";
 	token_t *t=tokenize(code);
@@ -395,6 +409,7 @@ void classifier_test_self(bool *pass) {
 		test_new_identifier_clip_trailing_colon,
 		test_identifier_cannot_be_type,
 		test_identifier_cannot_be_keyword,
+		test_identifier_cannot_be_func_name,
 		test_token_classifier,
 		NULL
 	};

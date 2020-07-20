@@ -9,3 +9,6 @@ Print out a variable.
 #### `bool is_func_name(const ast_node_t *node)`
 Returns `true` if the given node is a function name.
 
+#### `bool is_func_name_str(const char32_t *name)`
+Returns `true` if the given string is a function name.
+

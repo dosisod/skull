@@ -2,6 +2,7 @@
 
 #include "../common/str.h"
 #include "../common/wegex.h"
+#include "../eval/function.h"
 #include "constants.h"
 #include "tokenize.h"
 #include "types.h"
@@ -74,7 +75,10 @@ void classify_token(token_t *token) {
 			token->end--;
 
 			MAKE_TOKEN_BUF(tmp_buf, token);
-			if (is_type_str(tmp_buf) || is_keyword_str(tmp_buf)) {
+			if (is_type_str(tmp_buf) ||
+				is_keyword_str(tmp_buf) ||
+				is_func_name_str(tmp_buf))
+			{
 				token->token_type=TOKEN_UNKNOWN;
 				token->end++;
 			}

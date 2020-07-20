@@ -47,5 +47,12 @@ bool is_func_name(const ast_node_t *node) {
 	}
 	MAKE_TOKEN_BUF(name, node->token);
 
+	return is_func_name_str(name);
+}
+
+/*
+Returns `true` if the given string is a function name.
+*/
+bool is_func_name_str(const char32_t *name) {
 	return c32scmp(name, U"clear") || c32scmp(name, U"print");
 }

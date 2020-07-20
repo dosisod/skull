@@ -258,6 +258,19 @@ TEST(repl_mut_cannot_be_used_alone, {
 	);
 })
 
+TEST(repl_cannot_name_auto_var_after_func, {
+	context_t *ctx=make_context();
+
+	const bool pass=c32scmp(
+		ERR_INVALID_INPUT,
+		repl_eval(U"print := 0", ctx)
+	);
+
+	free_context(ctx);
+
+	return pass;
+})
+
 TEST(repl_clear_function, {
 	return c32scmp(
 		U"\033[2J\033[;1H",
@@ -462,6 +475,7 @@ void repl_test_self(bool *pass) {
 		test_repl_blank_line_returns_nothing,
 		test_repl_invalid_input_returns_error,
 		test_repl_mut_cannot_be_used_alone,
+		test_repl_cannot_name_auto_var_after_func,
 		test_repl_clear_function,
 		test_repl_print_var,
 		test_repl_overflow_int_gives_error,

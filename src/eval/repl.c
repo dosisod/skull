@@ -133,6 +133,10 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 	variable_t *var=NULL;
 
 	if (token->next->token_type==TOKEN_OPER_AUTO_EQUAL) {
+		if (is_func_name_str(name)) {
+			return ERR_INVALID_INPUT;
+		}
+
 		const char32_t *type=NULL;
 		if (node->next->node_type==AST_NODE_INT_CONST) {
 			type=U"int";
