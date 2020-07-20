@@ -24,7 +24,10 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	ast_node_t *node=make_ast_tree(str);
 	const char32_t *ret=ERR_INVALID_INPUT;
 
-	if (is_func_name(node)) {
+	if ((node->node_type==AST_NODE_ONE_PARAM_FUNC ||
+		node->node_type==AST_NODE_NO_PARAM_FUNC) &&
+		is_func_name(node))
+	{
 		if (token_cmp(U"clear", node->token)) {
 			ret=func_clear(node);
 		}
