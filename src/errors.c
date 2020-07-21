@@ -35,6 +35,8 @@ const char32_t *ERR_TYPE_TYPE_BAD=U"\"type\" cannot be assigned to type";
 const char32_t *ERR_BOOL_BAD=U"only \"true\" and \"false\" can be assigned to bool types";
 const char32_t *ERR_COMPARISON_BAD=U"requested comparison not understood";
 
+const char32_t *ERR_ASSIGN_FUNC=U"cannot reassign function";
+
 #undef ERR_CANNOT
 #undef ERR_UNAVAILABLE
 
@@ -62,6 +64,7 @@ __attribute__((pure)) bool is_error_msg(const char32_t *str) {
 		(str==ERR_COMPARISON_BAD) ||
 		(str==ERR_MISSING_TOKEN) ||
 		(str==ERR_UNEXPECTED_PARAM) ||
-		(str==ERR_INVALID_PARAMS)
+		(str==ERR_INVALID_PARAMS) ||
+		(str==ERR_ASSIGN_FUNC)
 	);
 }

@@ -262,7 +262,7 @@ TEST(repl_cannot_name_auto_var_after_func, {
 	context_t *ctx=make_context();
 
 	const bool pass=c32scmp(
-		ERR_INVALID_INPUT,
+		ERR_ASSIGN_FUNC,
 		repl_eval(U"print := 0", ctx)
 	);
 

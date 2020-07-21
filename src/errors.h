@@ -23,5 +23,6 @@ const char32_t *ERR_COMPARISON_BAD;
 const char32_t *ERR_MISSING_TOKEN;
 const char32_t *ERR_UNEXPECTED_PARAM;
 const char32_t *ERR_INVALID_PARAMS;
+const char32_t *ERR_ASSIGN_FUNC;
 
 bool is_error_msg(const char32_t *);

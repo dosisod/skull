@@ -134,7 +134,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 
 	if (token->next->token_type==TOKEN_OPER_AUTO_EQUAL) {
 		if (is_func_name_str(name)) {
-			return ERR_INVALID_INPUT;
+			return ERR_ASSIGN_FUNC;
 		}
 
 		const char32_t *type=NULL;
