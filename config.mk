@@ -66,6 +66,7 @@ _OBJS = src/eval/context.o \
 	src/eval/eval_float.o \
 	src/eval/eval_sub.o \
 	src/eval/eval_mult.o \
+	src/eval/eval_div.o \
 	src/eval/function.o \
 	src/common/wegex.o \
 	src/parse/types.o \

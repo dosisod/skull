@@ -127,6 +127,28 @@ TEST(eval_assign_mult_vars, {
 	return pass;
 })
 
+TEST(eval_assign_div_vars, {
+	context_t *ctx=make_context();
+
+	variable_t *var_a=make_variable(U"int", U"a", false);
+	int64_t num=2;
+	variable_write(var_a, &num);
+	context_add_var(ctx, var_a);
+
+	ast_node_t *node=make_ast_tree(U"a / a");
+	variable_t *var_b=make_variable(U"int", U"b", false);
+	eval_assign(var_b, node, ctx);
+
+	int64_t data=0;
+	variable_read(&data, var_b);
+
+	const bool pass=(data==1);
+
+	free_variable(var_a);
+	free_variable(var_b);
+	return pass;
+})
+
 TEST(eval_assign_add_vars_types_must_match, {
 	context_t *ctx=make_context();
 
@@ -199,6 +221,30 @@ TEST(eval_assign_mult_vars_types_must_match, {
 	return pass;
 })
 
+TEST(eval_assign_div_vars_types_must_match, {
+	context_t *ctx=make_context();
+
+	variable_t *var_a=make_variable(U"int", U"a", false);
+	int64_t data_a=1;
+	variable_write(var_a, &data_a);
+	context_add_var(ctx, var_a);
+
+	variable_t *var_b=make_variable(U"char", U"b", false);
+	char32_t data_b=U'b';
+	variable_write(var_b, &data_b);
+	context_add_var(ctx, var_b);
+
+	ast_node_t *node=make_ast_tree(U"a / b");
+	variable_t *var_c=make_variable(U"int", U"c", false);
+	const char32_t *output=eval_assign(var_c, node, ctx);
+
+	const bool pass=(output==ERR_CANNOT_DIV);
+
+	free_variable(var_a);
+	free_variable(var_b);
+	return pass;
+})
+
 TEST(eval_assign_add_vars_var_must_exist, {
 	context_t *ctx=make_context();
 
@@ -244,6 +290,24 @@ TEST(eval_assign_mult_vars_var_must_exist, {
 	context_add_var(ctx, var_a);
 
 	ast_node_t *node=make_ast_tree(U"a * b");
+	variable_t *var_b=make_variable(U"int", U"b", false);
+	const char32_t *output=eval_assign(var_b, node, ctx);
+
+	const bool pass=(output==ERR_VAR_NOT_FOUND);
+
+	free_variable(var_a);
+	return pass;
+})
+
+TEST(eval_assign_div_vars_var_must_exist, {
+	context_t *ctx=make_context();
+
+	variable_t *var_a=make_variable(U"int", U"a", false);
+	int64_t data_a=1;
+	variable_write(var_a, &data_a);
+	context_add_var(ctx, var_a);
+
+	ast_node_t *node=make_ast_tree(U"a / b");
 	variable_t *var_b=make_variable(U"int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
@@ -302,6 +366,24 @@ TEST(eval_assign_mult_vars_must_be_multipliable, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=(output==ERR_MULT_UNAVAILABLE);
+
+	free_variable(var_a);
+	return pass;
+})
+
+TEST(eval_assign_div_vars_must_be_divisible, {
+	context_t *ctx=make_context();
+
+	variable_t *var_a=make_variable(U"bool", U"a", false);
+	int64_t data_a=1;
+	variable_write(var_a, &data_a);
+	context_add_var(ctx, var_a);
+
+	ast_node_t *node=make_ast_tree(U"a / a");
+	variable_t *var_b=make_variable(U"int", U"b", false);
+	const char32_t *output=eval_assign(var_b, node, ctx);
+
+	const bool pass=(output==ERR_DIV_UNAVAILABLE);
 
 	free_variable(var_a);
 	return pass;
@@ -508,9 +590,14 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_sub_vars_var_must_exist,
 		test_eval_assign_sub_vars_must_be_subtractable,
 		test_eval_assign_sub_vars,
+		test_eval_assign_mult_vars,
 		test_eval_assign_mult_vars_types_must_match,
 		test_eval_assign_mult_vars_var_must_exist,
 		test_eval_assign_mult_vars_must_be_multipliable,
+		test_eval_assign_div_vars,
+		test_eval_assign_div_vars_types_must_match,
+		test_eval_assign_div_vars_var_must_exist,
+		test_eval_assign_div_vars_must_be_divisible,
 		test_eval_assign_int_overflow,
 		test_eval_assign_type_mismatch,
 		test_eval_assign_cannot_assign_non_ints,

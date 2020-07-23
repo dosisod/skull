@@ -31,6 +31,9 @@ const char32_t *ERR_SUB_UNAVAILABLE=ERR_UNAVAILABLE("subtraction");
 const char32_t *ERR_CANNOT_MULT=ERR_CANNOT("multiply");
 const char32_t *ERR_MULT_UNAVAILABLE=ERR_UNAVAILABLE("multiplication");
 
+const char32_t *ERR_CANNOT_DIV=ERR_CANNOT("divide");
+const char32_t *ERR_DIV_UNAVAILABLE=ERR_UNAVAILABLE("division");
+
 const char32_t *ERR_TYPE_TYPE_BAD=U"\"type\" cannot be assigned to type";
 const char32_t *ERR_BOOL_BAD=U"only \"true\" and \"false\" can be assigned to bool types";
 const char32_t *ERR_COMPARISON_BAD=U"requested comparison not understood";

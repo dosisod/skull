@@ -13,6 +13,7 @@
 #include "eval/eval_add.h"
 #include "eval/eval_assign.h"
 #include "eval/eval_bool.h"
+#include "eval/eval_div.h"
 #include "eval/eval_float.h"
 #include "eval/eval_integer.h"
 #include "eval/eval_mult.h"
@@ -46,6 +47,7 @@ int main(void) {
 	eval_add_test_self(&passed);
 	eval_assign_test_self(&passed);
 	eval_bool_test_self(&passed);
+	eval_div_test_self(&passed);
 	eval_float_test_self(&passed);
 	eval_integer_test_self(&passed);
 	eval_sub_test_self(&passed);

@@ -6,6 +6,7 @@
 #include "../errors.h"
 #include "../parse/classify.h"
 #include "eval_add.h"
+#include "eval_div.h"
 #include "eval_float.h"
 #include "eval_integer.h"
 #include "eval_mult.h"
@@ -66,6 +67,10 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 
 	if (ctx!=NULL && node->node_type==AST_NODE_MULT_VAR) {
 		EVAL_ASSIGN_SETUP(eval_mult, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
+	}
+
+	if (ctx!=NULL && node->node_type==AST_NODE_DIV_VAR) {
+		EVAL_ASSIGN_SETUP(eval_div, ERR_CANNOT_DIV, ERR_DIV_UNAVAILABLE);
 	}
 
 	const void *mem=NULL;
