@@ -25,6 +25,19 @@ TEST(dividing_2_ints, {
 	return pass;
 })
 
+TEST(divide_by_zero, {
+	variable_t *var=make_variable(U"int", U"var", false);
+
+	const int64_t num=0;
+	variable_write(var, &num);
+
+	const bool pass=(eval_div(var, var)==NULL);
+
+	free_variable(var);
+
+	return pass;
+})
+
 TEST(dividing_2_floats, {
 	variable_t *var1=make_variable(U"float", U"var1", false);
 	variable_t *var2=make_variable(U"float", U"var2", false);
@@ -65,6 +78,7 @@ TEST(dividing_vars_with_different_types_fail, {
 void eval_div_test_self(bool *pass) {
 	tests_t tests={
 		test_dividing_2_ints,
+		test_divide_by_zero,
 		test_dividing_2_floats,
 		test_dividing_vars_with_different_types_fail,
 		NULL

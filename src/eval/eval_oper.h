@@ -10,6 +10,6 @@
 	real_type rhs_tmp=0; \
 	variable_read(&rhs_tmp, rhs); \
 	const real_type tmp=lhs_tmp oper rhs_tmp; \
-	memcpy(ret->mem, &tmp, sizeof(real_type)); \
+	variable_write(ret, &tmp); \
 	return ret;
 

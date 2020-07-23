@@ -62,6 +62,8 @@ __attribute__((pure)) bool is_error_msg(const char32_t *str) {
 		(str==ERR_SUB_UNAVAILABLE) ||
 		(str==ERR_CANNOT_MULT) ||
 		(str==ERR_MULT_UNAVAILABLE) ||
+		(str==ERR_CANNOT_DIV) ||
+		(str==ERR_DIV_UNAVAILABLE) ||
 		(str==ERR_TYPE_TYPE_BAD) ||
 		(str==ERR_BOOL_BAD) ||
 		(str==ERR_COMPARISON_BAD) ||
