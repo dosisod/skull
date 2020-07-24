@@ -138,6 +138,10 @@ TEST(fmt_var_float_infinity, {
 	TEST_FMT_VAR(U"float", long double, 1.0L / 0.0L, U"infinity");
 })
 
+TEST(fmt_var_float_neg_infinity, {
+	TEST_FMT_VAR(U"float", long double, 1.0L / -0.0L, U"-infinity");
+})
+
 TEST(fmt_var_bool, {
 	TEST_FMT_VAR(U"bool", bool, false, U"false");
 })
@@ -189,6 +193,7 @@ void variable_test_self(bool *pass) {
 		test_fmt_var_float,
 		test_fmt_var_float_zeros,
 		test_fmt_var_float_infinity,
+		test_fmt_var_float_neg_infinity,
 		test_fmt_var_bool,
 		test_fmt_var_char,
 		test_fmt_var_wide_char_preserved,

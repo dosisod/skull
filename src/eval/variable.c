@@ -76,7 +76,15 @@ char32_t *fmt_var(const variable_t *var) {
 		variable_read(&data, var);
 
 		if (isinf(data)) {
-			return c32sdup(U"infinity");
+			char32_t *ret=NULL;
+			if (data < 0.0L) {
+				ret=c32sdup(U"-infinity");
+			}
+			else {
+				ret=c32sdup(U"infinity");
+			}
+			DIE_IF_MALLOC_FAILS(ret);
+			return ret;
 		}
 
 		needed=snprintf(NULL, 0, "%Lf", data) + 1;
