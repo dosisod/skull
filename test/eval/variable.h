@@ -135,7 +135,7 @@ TEST(fmt_var_float_zeros, {
 })
 
 TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR(U"float", long double, 1.0 / 0.0, U"infinity");
+	TEST_FMT_VAR(U"float", long double, 1.0L / 0.0L, U"infinity");
 })
 
 TEST(fmt_var_bool, {
