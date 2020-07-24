@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -73,6 +74,10 @@ char32_t *fmt_var(const variable_t *var) {
 	else if (var->type==&TYPE_FLOAT) {
 		long double data=0;
 		variable_read(&data, var);
+
+		if (isinf(data)) {
+			return c32sdup(U"infinity");
+		}
 
 		needed=snprintf(NULL, 0, "%Lf", data) + 1;
 		if (needed<0) {
