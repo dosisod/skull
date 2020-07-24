@@ -51,6 +51,8 @@ TEST(is_constant_float, {
 		is_constant_float_str(U"123.0") &&
 		is_constant_float_str(U"-123.0") &&
 		is_constant_float_str(U"0.0") &&
+		is_constant_float_str(U"Infinity") &&
+		is_constant_float_str(U"-Infinity") &&
 		!is_constant_float_str(U"123") &&
 		!is_constant_float_str(U"123.") &&
 		!is_constant_float_str(U".123") &&

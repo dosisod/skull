@@ -78,10 +78,10 @@ char32_t *fmt_var(const variable_t *var) {
 		if (isinf(data)) {
 			char32_t *ret=NULL;
 			if (data < 0.0L) {
-				ret=c32sdup(U"-infinity");
+				ret=c32sdup(U"-Infinity");
 			}
 			else {
-				ret=c32sdup(U"infinity");
+				ret=c32sdup(U"Infinity");
 			}
 			DIE_IF_MALLOC_FAILS(ret);
 			return ret;

@@ -1,5 +1,7 @@
+#include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../errors.h"
 #include "../parse/classify.h"
@@ -18,6 +20,14 @@ long double eval_float(const token_t *token, const char32_t **error) {
 	}
 
 	char *tmp=c32stombs(token->begin);
+
+	if (strcmp("Infinity", tmp)==0) {
+		return INFINITY;
+	}
+	if (strcmp("-Infinity", tmp)==0) {
+		return -INFINITY;
+	}
+
 	const long double ret=strtold(tmp, NULL);
 
 	free(tmp);

@@ -143,10 +143,13 @@ bool is_constant_integer_str(const char32_t *str) {
 /*
 Returns true if `str` is a valid float (with decimal).
 
-Examples: `123.0`, `-123.0`, `0.0`
+Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
 bool is_constant_float_str(const char32_t *str) {
-	return wegex_match(U"?-+\n.+\n", str);
+	return (
+		wegex_match(U"?-+\n.+\n", str) ||
+		wegex_match(U"?-Infinity", str)
+	);
 }
 
 /*

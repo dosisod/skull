@@ -135,11 +135,11 @@ TEST(fmt_var_float_zeros, {
 })
 
 TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR(U"float", long double, 1.0L / 0.0L, U"infinity");
+	TEST_FMT_VAR(U"float", long double, 1.0L / 0.0L, U"Infinity");
 })
 
 TEST(fmt_var_float_neg_infinity, {
-	TEST_FMT_VAR(U"float", long double, 1.0L / -0.0L, U"-infinity");
+	TEST_FMT_VAR(U"float", long double, 1.0L / -0.0L, U"-Infinity");
 })
 
 TEST(fmt_var_bool, {
