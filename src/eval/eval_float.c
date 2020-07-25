@@ -22,10 +22,10 @@ long double eval_float(const token_t *token, const char32_t **error) {
 	char *tmp=c32stombs(token->begin);
 
 	if (strcmp("Infinity", tmp)==0) {
-		return INFINITY;
+		return HUGE_VALL;
 	}
 	if (strcmp("-Infinity", tmp)==0) {
-		return -INFINITY;
+		return -HUGE_VALL;
 	}
 
 	const long double ret=strtold(tmp, NULL);

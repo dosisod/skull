@@ -20,7 +20,7 @@ Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 #### `bool is_constant_float_str(const char32_t *str)`
 Returns true if `str` is a valid float (with decimal).
 
-Examples: `123.0`, `-123.0`, `0.0`
+Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 
 #### `bool is_constant_bool_str(const char32_t *str)`
 Returns true if `str` is a valid bool (`true` or `false`).
