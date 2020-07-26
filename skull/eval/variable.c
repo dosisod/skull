@@ -1,4 +1,3 @@
-#include <math.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,108 +16,10 @@ Return string representation of the variable `var`.
 The result of this function must be freed.
 */
 char32_t *fmt_var(const variable_t *var) {
-	if (var->type==&TYPE_BOOL) {
-		bool data=false;
-		variable_read(&data, var);
-
-		char32_t *ret=c32sdup(data ? U"true" : U"false");
-		DIE_IF_MALLOC_FAILS(ret);
-
-		return ret;
+	if (var->type!=NULL && var->type->to_string!=NULL) {
+		return var->type->to_string(var);
 	}
-	if (var->type==&TYPE_STR) {
-		const char32_t *str=NULL;
-		variable_read(&str, var);
-
-		char32_t *ret=c32sdup(str);
-		DIE_IF_MALLOC_FAILS(ret);
-
-		return ret;
-	}
-	if (var->type==&TYPE_CHAR) {
-		char32_t *ret=malloc(sizeof(char32_t) * 2);
-		DIE_IF_MALLOC_FAILS(ret);
-
-		variable_read(ret, var);
-		ret[1]=U'\0';
-
-		return ret;
-	}
-	if (var->type==&TYPE_TYPE) {
-		type_t *type=NULL;
-		variable_read(&type, var);
-
-		char32_t *ret=c32sdup(type->name);
-		DIE_IF_MALLOC_FAILS(ret);
-
-		return ret;
-	}
-
-	char *tmp=NULL;
-	int needed=-1;
-	int wrote=-1;
-
-	if (var->type==&TYPE_INT) {
-		int64_t data=0;
-		variable_read(&data, var);
-
-		needed=snprintf(NULL, 0, "%li", data) + 1;
-		if (needed<0) {
-			return NULL;
-		}
-		tmp=malloc(sizeof(char) * (unsigned long int)needed);
-		DIE_IF_MALLOC_FAILS(tmp);
-
-		wrote=snprintf(tmp, (unsigned long int)needed, "%li", data);
-	}
-	else if (var->type==&TYPE_FLOAT) {
-		long double data=0;
-		variable_read(&data, var);
-
-		if (isinf(data)) {
-			char32_t *ret=NULL;
-			if (data < 0.0L) {
-				ret=c32sdup(U"-Infinity");
-			}
-			else {
-				ret=c32sdup(U"Infinity");
-			}
-			DIE_IF_MALLOC_FAILS(ret);
-			return ret;
-		}
-
-		needed=snprintf(NULL, 0, "%Lf", data) + 1;
-		if (needed<0) {
-			return NULL;
-		}
-		tmp=malloc(sizeof(char) * (unsigned long int)needed);
-		DIE_IF_MALLOC_FAILS(tmp);
-
-		wrote=snprintf(tmp, (unsigned long int)needed, "%Lf", data);
-
-		//trim excess zeros off of decimal
-		size_t len=strlen(tmp);
-		for (size_t i=len; i>0; i--) {
-			if (tmp[i-1]=='.') {
-				tmp[i]='0';
-			}
-			else if (tmp[i-1]=='0') {
-				tmp[i-1]='\0';
-				continue;
-			}
-			break;
-		}
-	}
-
-	if (wrote<0) {
-		free(tmp);
-		return NULL;
-	}
-
-	char32_t *ret=mbstoc32s(tmp);
-
-	free(tmp);
-	return ret;
+	return NULL;
 }
 
 /*

@@ -4,9 +4,13 @@
 #include <stdint.h>
 #include <uchar.h>
 
+struct variable_t;
+
 typedef struct type_t {
 	const char32_t *name;
 	size_t bytes;
+
+	char32_t *(*to_string)(const struct variable_t *);
 
 	struct type_t *next;
 } type_t;
