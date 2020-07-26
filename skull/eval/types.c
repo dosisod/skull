@@ -4,7 +4,7 @@
 #include "skull/common/str.h"
 #include "skull/common/malloc.h"
 
-#include "skull/parse/types.h"
+#include "skull/eval/types.h"
 
 /*
 Creates a new type called `name` with `bytes` bytes of memory.

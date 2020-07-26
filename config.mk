@@ -70,7 +70,7 @@ _OBJS = skull/eval/context.o \
 	skull/eval/eval_div.o \
 	skull/eval/function.o \
 	skull/common/wegex.o \
-	skull/parse/types.o \
+	skull/eval/types.o \
 	skull/parse/constants.o \
 	skull/eval/eval_bool.o
 

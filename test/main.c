@@ -5,7 +5,6 @@
 #include "parse/classify.h"
 #include "parse/constants.h"
 #include "parse/tokenize.h"
-#include "parse/types.h"
 
 #include "errors.h"
 
@@ -20,6 +19,7 @@
 #include "eval/eval_sub.h"
 #include "eval/function.h"
 #include "eval/repl.h"
+#include "eval/types.h"
 #include "eval/variable.h"
 
 #include "common/color.h"

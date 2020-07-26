@@ -2,7 +2,7 @@
 #include <stdint.h>
 
 #include "skull/common/str.h"
-#include "skull/parse/types.h"
+#include "skull/eval/types.h"
 
 #include "test/testing.h"
 
