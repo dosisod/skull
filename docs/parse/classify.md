@@ -1,4 +1,4 @@
-# src/parse/classify.c
+# skull/parse/classify.c
 
 #### `void classify_token(token_t *token)`
 Classify the token `token`.

@@ -1,4 +1,4 @@
-# src/eval/context.c
+# skull/eval/context.c
 
 #### `bool context_add_var(context_t *ctx, variable_t *var)`
 Add variable `var` to context `ctx`.

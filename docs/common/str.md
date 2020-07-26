@@ -1,4 +1,4 @@
-# src/common/str.c
+# skull/common/str.c
 
 #### `char32_t *c32sdup(const char32_t *str)`
 Make a heap allocated version of `str`.

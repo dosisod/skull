@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#include "../../src/eval/eval_div.h"
+#include "../../skull/eval/eval_div.h"
 #include "../testing.h"
 
 TEST(dividing_2_ints, {

@@ -1,4 +1,4 @@
-# src/eval/eval_bool.c
+# skull/eval/eval_bool.c
 
 #### `bool eval_bool(const token_t *token, const char32_t **error)`
 Resolve a boolean expression from `token` into `true` or `false`.

@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#include "../../src/parse/tokenize.h"
+#include "../../skull/parse/tokenize.h"
 #include "../testing.h"
 
 TEST(is_whitespace, {

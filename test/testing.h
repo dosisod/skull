@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../src/common/color.h"
-#include "../src/common/malloc.h"
+#include "../skull/common/color.h"
+#include "../skull/common/malloc.h"
 
 typedef bool (*test_t)(const char** func);
 typedef bool (*tests_t[])(const char** func);

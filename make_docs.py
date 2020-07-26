@@ -13,7 +13,7 @@ def display_markdown(code):
 
 	return ret
 
-for source in [src for src in Path("./src").rglob("*") if src.suffix in [".c", ".h"]]:
+for source in [src for src in Path("./skull").rglob("*") if src.suffix in [".c", ".h"]]:
 	with source.open() as f:
 		markdown=display_markdown(f.read())
 		if markdown:

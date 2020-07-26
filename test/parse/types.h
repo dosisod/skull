@@ -1,8 +1,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../../src/common/str.h"
-#include "../../src/parse/types.h"
+#include "../../skull/common/str.h"
+#include "../../skull/parse/types.h"
 #include "../testing.h"
 
 TEST(make_new_type, {

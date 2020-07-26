@@ -1,4 +1,4 @@
-# src/eval/function.c
+# skull/eval/function.c
 
 #### `const char32_t *func_clear(ast_node_t *node)`
 Returns string that when printed, clears the screen.

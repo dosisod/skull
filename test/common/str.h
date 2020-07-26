@@ -2,7 +2,7 @@
 #include <string.h>
 #include <uchar.h>
 
-#include "../../src/common/str.h"
+#include "../../skull/common/str.h"
 #include "../testing.h"
 
 TEST(strrstr, {

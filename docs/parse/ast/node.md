@@ -1,4 +1,4 @@
-# src/parse/ast/node.c
+# skull/parse/ast/node.c
 
 #### `ast_node_t *make_ast_tree(const char32_t *code)`
 Makes an AST (abstract syntax tree) from a given string.

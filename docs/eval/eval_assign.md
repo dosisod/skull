@@ -1,4 +1,4 @@
-# src/eval/eval_assign.c
+# skull/eval/eval_assign.c
 
 #### `const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *ctx)`
 Assign `node` to variable `var`.

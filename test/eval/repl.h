@@ -1,9 +1,9 @@
 #include <stdbool.h>
 
-#include "../../src/common/str.h"
-#include "../../src/errors.h"
-#include "../../src/eval/context.h"
-#include "../../src/eval/repl.h"
+#include "../../skull/common/str.h"
+#include "../../skull/errors.h"
+#include "../../skull/eval/context.h"
+#include "../../skull/eval/repl.h"
 #include "../testing.h"
 
 TEST(repl_variable_declare, {

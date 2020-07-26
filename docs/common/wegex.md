@@ -1,4 +1,4 @@
-# src/common/wegex.c
+# skull/common/wegex.c
 
 #### `bool wegex_match(const char32_t *wegex, const char32_t *match)`
 Returns true if the `wegex` string matches the `match` string.

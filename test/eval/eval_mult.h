@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#include "../../src/eval/eval_mult.h"
+#include "../../skull/eval/eval_mult.h"
 #include "../testing.h"
 
 TEST(multiplying_2_ints, {

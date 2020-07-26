@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#include "../src/errors.h"
+#include "../skull/errors.h"
 #include "testing.h"
 
 TEST(is_error_msg, {

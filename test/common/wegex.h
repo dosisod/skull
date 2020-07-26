@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include "../../src/parse/tokenize.h"
-#include "../../src/common/wegex.h"
+#include "../../skull/parse/tokenize.h"
+#include "../../skull/common/wegex.h"
 #include "../testing.h"
 
 TEST(no_modifiers, {

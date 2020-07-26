@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include "../../src/errors.h"
-#include "../../src/eval/function.h"
+#include "../../skull/errors.h"
+#include "../../skull/eval/function.h"
 #include "../testing.h"
 
 TEST(is_func_name, {

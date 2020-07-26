@@ -26,7 +26,7 @@
 #include "common/str.h"
 #include "common/wegex.h"
 
-#include "../src/common/local.h"
+#include "../skull/common/local.h"
 
 int main(void) {
 	SETUP_LOCALE();

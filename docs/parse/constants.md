@@ -1,4 +1,4 @@
-# src/parse/constants.c
+# skull/parse/constants.c
 
 #### `const char32_t *find_line_comment(const char32_t *code)`
 Returns pointer to the start of a single line comment in `code`.

@@ -2,9 +2,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../../src/errors.h"
-#include "../../src/eval/eval_float.h"
-#include "../../src/parse/classify.h"
+#include "../../skull/errors.h"
+#include "../../skull/eval/eval_float.h"
+#include "../../skull/parse/classify.h"
 #include "../testing.h"
 
 #define TEST_EVAL_FLOAT_CONVERT(str_value, cond, expected_error) \

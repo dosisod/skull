@@ -1,4 +1,4 @@
-# src/eval/variable.c
+# skull/eval/variable.c
 
 #### `char32_t *fmt_var(const variable_t *var)`
 Return string representation of the variable `var`.

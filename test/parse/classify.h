@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#include "../../src/parse/classify.h"
+#include "../../skull/parse/classify.h"
 #include "../testing.h"
 
 TEST(is_type_str, {

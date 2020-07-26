@@ -1,17 +1,17 @@
 include config.mk
 
-all: src test docs
+all: skull test docs
 
-.PHONY: src test docs
+.PHONY: skull test docs
 
 setup:
 	@mkdir $(DIRS) -p
 
-src: setup | $(OBJS)
+skull: setup | $(OBJS)
 	@echo "\033[92mCompile\033[0m skull"
-	@$(CC) src/main.c $(OBJS) -o build/src/skull $(CFLAGS)
+	@$(CC) skull/main.c $(OBJS) -o build/skull/skull $(CFLAGS)
 
-test: src
+test: skull
 	@echo "\033[92mCompile\033[0m tests"
 	@$(CC) test/main.c $(OBJS) -o build/test/test $(CFLAGS)
 
@@ -26,8 +26,8 @@ docs:
 clean:
 	@rm -rf build/*
 
-install: clean | src
+install: clean | skull
 	@echo "\033[92mInstall\033[0m skull"
-	@install build/src/skull $(INSTALL)/bin/
+	@install build/skull/skull $(INSTALL)/bin/
 	@install -m 644 docs/skull.1 $(INSTALL)/man/man1/
 	@make clean

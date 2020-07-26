@@ -51,32 +51,32 @@ endif
 
 ODIR = build/objs
 
-_OBJS = src/eval/context.o \
-	src/eval/repl.o \
-	src/errors.o \
-	src/common/str.o \
-	src/parse/tokenize.o \
-	src/eval/file.o \
-	src/eval/variable.o \
-	src/eval/eval_assign.o \
-	src/parse/classify.o \
-	src/parse/ast/node.o \
-	src/eval/eval_add.o \
-	src/eval/eval_integer.o \
-	src/eval/eval_float.o \
-	src/eval/eval_sub.o \
-	src/eval/eval_mult.o \
-	src/eval/eval_div.o \
-	src/eval/function.o \
-	src/common/wegex.o \
-	src/parse/types.o \
-	src/parse/constants.o \
-	src/eval/eval_bool.o
+_OBJS = skull/eval/context.o \
+	skull/eval/repl.o \
+	skull/errors.o \
+	skull/common/str.o \
+	skull/parse/tokenize.o \
+	skull/eval/file.o \
+	skull/eval/variable.o \
+	skull/eval/eval_assign.o \
+	skull/parse/classify.o \
+	skull/parse/ast/node.o \
+	skull/eval/eval_add.o \
+	skull/eval/eval_integer.o \
+	skull/eval/eval_float.o \
+	skull/eval/eval_sub.o \
+	skull/eval/eval_mult.o \
+	skull/eval/eval_div.o \
+	skull/eval/function.o \
+	skull/common/wegex.o \
+	skull/parse/types.o \
+	skull/parse/constants.o \
+	skull/eval/eval_bool.o
 
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 
-DIRS := build/src \
+DIRS := build/skull \
 	build/test \
-	$(ODIR)/src/eval \
-	$(ODIR)/src/parse/ast \
-	$(ODIR)/src/common
+	$(ODIR)/skull/eval \
+	$(ODIR)/skull/parse/ast \
+	$(ODIR)/skull/common

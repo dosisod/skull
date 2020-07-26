@@ -1,10 +1,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../../src/errors.h"
-#include "../../src/eval/eval_assign.h"
-#include "../../src/eval/variable.h"
-#include "../../src/parse/classify.h"
+#include "../../skull/errors.h"
+#include "../../skull/eval/eval_assign.h"
+#include "../../skull/eval/variable.h"
+#include "../../skull/parse/classify.h"
 #include "../testing.h"
 
 TEST(create_variable, {

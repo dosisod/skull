@@ -2,7 +2,7 @@ pass=true
 
 test() {
 	echo -n "$1 "
-	out=$(./build/src/skull ./test/sh/$1)
+	out=$(./build/skull/skull ./test/sh/$1)
 
 	if [ "$?" -ne "$2" ] || [ "$out" != "$3" ]; then
 		/bin/echo -e "\033[91mFAIL\033[0m"

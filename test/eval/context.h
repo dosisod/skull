@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#include "../../src/eval/context.h"
+#include "../../skull/eval/context.h"
 #include "../testing.h"
 
 TEST(make_context, {

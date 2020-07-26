@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../../src/common/color.h"
+#include "../../skull/common/color.h"
 #include "../testing.h"
 
 TEST(color_names, {

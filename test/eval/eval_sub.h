@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include "../../src/common/str.h"
-#include "../../src/eval/eval_sub.h"
+#include "../../skull/common/str.h"
+#include "../../skull/eval/eval_sub.h"
 #include "../testing.h"
 
 TEST(subtracting_2_ints, {

@@ -1,4 +1,4 @@
-# src/parse/tokenize.c
+# skull/parse/tokenize.c
 
 #### `token_t *tokenize(const char32_t *code)`
 Tokenize `code`, return pointer to first token.
