@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../parse/types.h"
+#include "skull/parse/types.h"
 
 typedef struct variable_t {
 	type_t *type;

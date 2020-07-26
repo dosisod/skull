@@ -1,7 +1,8 @@
 #include <stdbool.h>
 
-#include "../../skull/parse/classify.h"
-#include "../testing.h"
+#include "skull/parse/classify.h"
+
+#include "test/testing.h"
 
 TEST(is_type_str, {
 	const char32_t *code=U"int not_a_type";

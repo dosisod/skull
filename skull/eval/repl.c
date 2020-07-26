@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../common/color.h"
-#include "../common/malloc.h"
-#include "../errors.h"
-#include "../parse/classify.h"
-#include "eval_add.h"
-#include "eval_assign.h"
-#include "eval_float.h"
-#include "eval_integer.h"
-#include "function.h"
+#include "skull/common/color.h"
+#include "skull/common/malloc.h"
+#include "skull/errors.h"
+#include "skull/eval/eval_add.h"
+#include "skull/eval/eval_assign.h"
+#include "skull/eval/eval_float.h"
+#include "skull/eval/eval_integer.h"
+#include "skull/eval/function.h"
+#include "skull/parse/classify.h"
 
-#include "repl.h"
+#include "skull/eval/repl.h"
 
 /*
 Evaluates a string `str` given context `ctx`, returns result as a string (if any).

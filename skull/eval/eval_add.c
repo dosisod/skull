@@ -1,11 +1,11 @@
 #include <stddef.h>
 
-#include "../common/malloc.h"
-#include "../common/str.h"
+#include "skull/common/malloc.h"
+#include "skull/common/str.h"
 
-#include "eval_oper.h"
+#include "skull/eval/eval_oper.h"
 
-#include "eval_add.h"
+#include "skull/eval/eval_add.h"
 
 /*
 Make a new variable by adding the `lhs` and `rhs` together.

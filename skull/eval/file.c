@@ -1,10 +1,10 @@
 #include <stdlib.h>
 
-#include "../errors.h"
-#include "context.h"
-#include "repl.h"
+#include "skull/errors.h"
+#include "skull/eval/context.h"
+#include "skull/eval/repl.h"
 
-#include "file.h"
+#include "skull/eval/file.h"
 
 /*
 Run a file `f`. After it is done, go into a REPL.

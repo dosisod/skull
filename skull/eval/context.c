@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../common/malloc.h"
-#include "../common/str.h"
+#include "skull/common/malloc.h"
+#include "skull/common/str.h"
 
-#include "context.h"
+#include "skull/eval/context.h"
 
 /*
 Add variable `var` to context `ctx`.

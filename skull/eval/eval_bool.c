@@ -1,10 +1,10 @@
 #include <stddef.h>
 
-#include "../errors.h"
-#include "../parse/classify.h"
-#include "../parse/tokenize.h"
+#include "skull/errors.h"
+#include "skull/parse/classify.h"
+#include "skull/parse/tokenize.h"
 
-#include "eval_bool.h"
+#include "skull/eval/eval_bool.h"
 
 /*
 Resolve a boolean expression from `token` into `true` or `false`.

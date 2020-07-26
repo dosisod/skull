@@ -1,6 +1,6 @@
 #pragma once
 
-#include "variable.h"
+#include "skull/eval/variable.h"
 
 #define CONTEXT_MAX_VARS 256
 

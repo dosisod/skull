@@ -1,9 +1,10 @@
 #include <stdbool.h>
 
-#include "../../skull/errors.h"
-#include "../../skull/eval/eval_assign.h"
-#include "../../skull/parse/classify.h"
-#include "../testing.h"
+#include "skull/errors.h"
+#include "skull/eval/eval_assign.h"
+#include "skull/parse/classify.h"
+
+#include "test/testing.h"
 
 #define TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, cmp) \
 	ast_node_t *node=make_ast_tree(str_value); \

@@ -1,11 +1,12 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../../skull/errors.h"
-#include "../../skull/eval/eval_assign.h"
-#include "../../skull/eval/variable.h"
-#include "../../skull/parse/classify.h"
-#include "../testing.h"
+#include "skull/errors.h"
+#include "skull/eval/eval_assign.h"
+#include "skull/eval/variable.h"
+#include "skull/parse/classify.h"
+
+#include "test/testing.h"
 
 TEST(create_variable, {
 	variable_t *var=make_variable(U"int", U"x", true);

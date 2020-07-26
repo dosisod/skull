@@ -30,7 +30,8 @@ CFLAGS = -std=c11 \
 	-Wfloat-equal \
 	-Wwrite-strings \
 	-Wdouble-promotion \
-	-DSKULL_VERSION="\"$(SKULL_VERSION)\""
+	-DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
+	-I.
 
 #dont add gnu specific flags if compiling in clang
 ifeq ($(findstring clang,$(CC)),)

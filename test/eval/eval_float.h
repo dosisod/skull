@@ -2,10 +2,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../../skull/errors.h"
-#include "../../skull/eval/eval_float.h"
-#include "../../skull/parse/classify.h"
-#include "../testing.h"
+#include "skull/errors.h"
+#include "skull/eval/eval_float.h"
+#include "skull/parse/classify.h"
+
+#include "test/testing.h"
 
 #define TEST_EVAL_FLOAT_CONVERT(str_value, cond, expected_error) \
 	token_t *token=tokenize(str_value); \

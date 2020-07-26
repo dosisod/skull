@@ -1,6 +1,6 @@
-#include "../common/str.h"
+#include "skull/common/str.h"
 
-#include "constants.h"
+#include "skull/parse/constants.h"
 
 const char32_t *LINE_COMMENT=U"# ";
 

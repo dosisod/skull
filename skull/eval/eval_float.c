@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../errors.h"
-#include "../parse/classify.h"
+#include "skull/errors.h"
+#include "skull/parse/classify.h"
 
-#include "eval_float.h"
+#include "skull/eval/eval_float.h"
 
 /*
 Converts a `TOKEN_FLOAT_CONST` token to a floating point number (`long double`).

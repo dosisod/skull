@@ -1,6 +1,6 @@
 #include <stddef.h>
 
-#include "errors.h"
+#include "skull/errors.h"
 
 #define ERR_CANNOT(x) \
 	U"cannot " x U" when types differ"

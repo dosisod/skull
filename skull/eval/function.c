@@ -1,11 +1,11 @@
 #include <stdio.h>
 
-#include "../common/malloc.h"
-#include "../common/str.h"
-#include "../errors.h"
-#include "../parse/classify.h"
+#include "skull/common/malloc.h"
+#include "skull/common/str.h"
+#include "skull/errors.h"
+#include "skull/parse/classify.h"
 
-#include "function.h"
+#include "skull/eval/function.h"
 
 /*
 Returns string that when printed, clears the screen.

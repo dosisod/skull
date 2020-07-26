@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "../tokenize.h"
+#include "skull/parse/tokenize.h"
 
 enum node_types {
 	AST_NODE_UNKNOWN,

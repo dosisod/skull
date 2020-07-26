@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "malloc.h"
+#include "skull/common/malloc.h"
 
-#include "str.h"
+#include "skull/common/str.h"
 
 /*
 Make a heap allocated version of `str`.

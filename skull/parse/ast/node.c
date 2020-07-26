@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../classify.h"
-#include "../../common/malloc.h"
+#include "skull/parse/classify.h"
+#include "skull/common/malloc.h"
 
-#include "node.h"
+#include "skull/parse/ast/node.h"
 
 int ast_node_var_combo[] = {
 	TOKEN_NEW_IDENTIFIER,

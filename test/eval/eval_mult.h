@@ -1,7 +1,8 @@
 #include <stdbool.h>
 
-#include "../../skull/eval/eval_mult.h"
-#include "../testing.h"
+#include "skull/eval/eval_mult.h"
+
+#include "test/testing.h"
 
 TEST(multiplying_2_ints, {
 	variable_t *var1=make_variable(U"int", U"var1", false);

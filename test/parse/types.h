@@ -1,9 +1,10 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../../skull/common/str.h"
-#include "../../skull/parse/types.h"
-#include "../testing.h"
+#include "skull/common/str.h"
+#include "skull/parse/types.h"
+
+#include "test/testing.h"
 
 TEST(make_new_type, {
 	type_t *current=TYPES_AVAILABLE;

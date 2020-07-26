@@ -2,9 +2,9 @@
 
 #include <stdio.h>
 
-#include "context.h"
-#include "../parse/ast/node.h"
-#include "../parse/tokenize.h"
+#include "skull/eval/context.h"
+#include "skull/parse/ast/node.h"
+#include "skull/parse/tokenize.h"
 
 #define REPL_MAX_LINE_LEN 1024
 

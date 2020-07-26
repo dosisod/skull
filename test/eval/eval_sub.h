@@ -1,8 +1,9 @@
 #include <stdbool.h>
 
-#include "../../skull/common/str.h"
-#include "../../skull/eval/eval_sub.h"
-#include "../testing.h"
+#include "skull/common/str.h"
+#include "skull/eval/eval_sub.h"
+
+#include "test/testing.h"
 
 TEST(subtracting_2_ints, {
 	variable_t *var1=make_variable(U"int", U"var1", false);

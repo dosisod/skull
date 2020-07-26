@@ -1,7 +1,8 @@
 #include <stdbool.h>
 
-#include "../skull/errors.h"
-#include "testing.h"
+#include "skull/errors.h"
+
+#include "test/testing.h"
 
 TEST(is_error_msg, {
 	return (

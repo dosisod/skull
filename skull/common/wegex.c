@@ -1,8 +1,8 @@
 #include <stddef.h>
 
-#include "str.h"
+#include "skull/common/str.h"
 
-#include "wegex.h"
+#include "skull/common/wegex.h"
 
 /*
 Returns true if the `wegex` string matches the `match` string.

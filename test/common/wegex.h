@@ -1,8 +1,9 @@
 #include <stdbool.h>
 
-#include "../../skull/parse/tokenize.h"
-#include "../../skull/common/wegex.h"
-#include "../testing.h"
+#include "skull/parse/tokenize.h"
+#include "skull/common/wegex.h"
+
+#include "test/testing.h"
 
 TEST(no_modifiers, {
 	return (

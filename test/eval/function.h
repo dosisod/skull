@@ -1,8 +1,9 @@
 #include <stdbool.h>
 
-#include "../../skull/errors.h"
-#include "../../skull/eval/function.h"
-#include "../testing.h"
+#include "skull/errors.h"
+#include "skull/eval/function.h"
+
+#include "test/testing.h"
 
 TEST(is_func_name, {
 	ast_node_t *node_clear=make_ast_tree(U"clear");

@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../common/malloc.h"
-#include "../common/str.h"
-#include "../errors.h"
-#include "../parse/classify.h"
+#include "skull/common/malloc.h"
+#include "skull/common/str.h"
+#include "skull/errors.h"
+#include "skull/parse/classify.h"
 
-#include "variable.h"
+#include "skull/eval/variable.h"
 
 /*
 Return string representation of the variable `var`.

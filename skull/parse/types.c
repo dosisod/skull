@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../common/str.h"
-#include "../common/malloc.h"
+#include "skull/common/str.h"
+#include "skull/common/malloc.h"
 
-#include "types.h"
+#include "skull/parse/types.h"
 
 /*
 Creates a new type called `name` with `bytes` bytes of memory.

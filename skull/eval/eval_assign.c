@@ -1,18 +1,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../common/malloc.h"
-#include "../common/str.h"
-#include "../errors.h"
-#include "../parse/classify.h"
-#include "eval_add.h"
-#include "eval_div.h"
-#include "eval_float.h"
-#include "eval_integer.h"
-#include "eval_mult.h"
-#include "eval_sub.h"
+#include "skull/common/malloc.h"
+#include "skull/common/str.h"
+#include "skull/errors.h"
+#include "skull/eval/eval_add.h"
+#include "skull/eval/eval_div.h"
+#include "skull/eval/eval_float.h"
+#include "skull/eval/eval_integer.h"
+#include "skull/eval/eval_mult.h"
+#include "skull/eval/eval_sub.h"
+#include "skull/parse/classify.h"
 
-#include "eval_assign.h"
+#include "skull/eval/eval_assign.h"
 
 const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 

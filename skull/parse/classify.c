@@ -1,13 +1,13 @@
 #include <stddef.h>
 
-#include "../common/str.h"
-#include "../common/wegex.h"
-#include "../eval/function.h"
-#include "constants.h"
-#include "tokenize.h"
-#include "types.h"
+#include "skull/common/str.h"
+#include "skull/common/wegex.h"
+#include "skull/eval/function.h"
+#include "skull/parse/constants.h"
+#include "skull/parse/tokenize.h"
+#include "skull/parse/types.h"
 
-#include "classify.h"
+#include "skull/parse/classify.h"
 
 #define TOKEN_TRY_STR(str, type) \
 	else if (token_cmp((str), token)) { \

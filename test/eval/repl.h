@@ -1,10 +1,11 @@
 #include <stdbool.h>
 
-#include "../../skull/common/str.h"
-#include "../../skull/errors.h"
-#include "../../skull/eval/context.h"
-#include "../../skull/eval/repl.h"
-#include "../testing.h"
+#include "skull/common/str.h"
+#include "skull/errors.h"
+#include "skull/eval/context.h"
+#include "skull/eval/repl.h"
+
+#include "test/testing.h"
 
 TEST(repl_variable_declare, {
 	const char32_t *output=repl_eval(U"x: int = 0", NULL);

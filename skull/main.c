@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "errors.h"
-#include "common/local.h"
-#include "eval/file.h"
-#include "eval/repl.h"
+#include "skull/errors.h"
+#include "skull/common/local.h"
+#include "skull/eval/file.h"
+#include "skull/eval/repl.h"
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<version unknown>"

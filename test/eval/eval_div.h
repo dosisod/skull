@@ -1,7 +1,8 @@
 #include <stdbool.h>
 
-#include "../../skull/eval/eval_div.h"
-#include "../testing.h"
+#include "skull/eval/eval_div.h"
+
+#include "test/testing.h"
 
 TEST(dividing_2_ints, {
 	variable_t *var1=make_variable(U"int", U"var1", false);

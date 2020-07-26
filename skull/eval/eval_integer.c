@@ -3,10 +3,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 
-#include "../errors.h"
-#include "../parse/classify.h"
+#include "skull/errors.h"
+#include "skull/parse/classify.h"
 
-#include "eval_integer.h"
+#include "skull/eval/eval_integer.h"
 
 /*
 Converts a `TOKEN_INT_CONST` token to an actual integer (`int64_t`).

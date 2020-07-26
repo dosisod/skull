@@ -1,8 +1,9 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../../skull/common/color.h"
-#include "../testing.h"
+#include "skull/common/color.h"
+
+#include "test/testing.h"
 
 TEST(color_names, {
 	return (

@@ -1,10 +1,10 @@
 #include <stdlib.h>
 #include <stdlib.h>
 
-#include "../common/malloc.h"
-#include "constants.h"
+#include "skull/common/malloc.h"
+#include "skull/parse/constants.h"
 
-#include "tokenize.h"
+#include "skull/parse/tokenize.h"
 
 //pinch end of current token, setup next token
 #define PINCH_TOKEN \

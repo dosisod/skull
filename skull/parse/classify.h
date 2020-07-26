@@ -2,7 +2,7 @@
 
 #include <uchar.h>
 
-#include "tokenize.h"
+#include "skull/parse/tokenize.h"
 
 enum token_types {
 	//default token type

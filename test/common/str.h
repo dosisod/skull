@@ -2,8 +2,9 @@
 #include <string.h>
 #include <uchar.h>
 
-#include "../../skull/common/str.h"
-#include "../testing.h"
+#include "skull/common/str.h"
+
+#include "test/testing.h"
 
 TEST(strrstr, {
 	const char *str1="aaaaa";

@@ -1,5 +1,6 @@
-#include "../../skull/parse/constants.h"
-#include "../testing.h"
+#include "skull/parse/constants.h"
+
+#include "test/testing.h"
 
 TEST(find_line_comment_at_start_of_line, {
 	const char32_t *code=U"# should be zero";

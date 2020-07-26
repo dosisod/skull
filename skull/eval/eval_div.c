@@ -1,8 +1,8 @@
 #include <stddef.h>
 
-#include "eval_oper.h"
+#include "skull/eval/eval_oper.h"
 
-#include "eval_div.h"
+#include "skull/eval/eval_div.h"
 
 /*
 Make a new variable by dividing `rhs` from `lhs`.

@@ -1,8 +1,8 @@
 #include <stddef.h>
 
-#include "eval_oper.h"
+#include "skull/eval/eval_oper.h"
 
-#include "eval_mult.h"
+#include "skull/eval/eval_mult.h"
 
 /*
 Make a new variable by multiplying `lhs` and `rhs`.

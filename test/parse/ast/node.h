@@ -1,8 +1,9 @@
 #include <stdbool.h>
 
-#include "../../../skull/parse/ast/node.h"
-#include "../../../skull/parse/classify.h"
-#include "../../testing.h"
+#include "skull/parse/ast/node.h"
+#include "skull/parse/classify.h"
+
+#include "test/testing.h"
 
 TEST(make_ast_node_struct, {
 	const char32_t *code=U"hello";

@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../common/str.h"
+#include "skull/common/str.h"
 
 typedef struct token_t {
 	const char32_t *begin;
