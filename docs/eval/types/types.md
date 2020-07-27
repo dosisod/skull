@@ -1,4 +1,4 @@
-# skull/parse/types.c
+# skull/eval/types/types.c
 
 #### `bool make_new_type(const char32_t *name, size_t bytes)`
 Creates a new type called `name` with `bytes` bytes of memory.

@@ -19,7 +19,7 @@
 #include "eval/eval_sub.h"
 #include "eval/function.h"
 #include "eval/repl.h"
-#include "eval/types.h"
+#include "eval/types/types.h"
 #include "eval/variable.h"
 
 #include "common/color.h"

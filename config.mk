@@ -70,7 +70,7 @@ _OBJS = skull/eval/context.o \
 	skull/eval/eval_div.o \
 	skull/eval/function.o \
 	skull/common/wegex.o \
-	skull/eval/types.o \
+	skull/eval/types/types.o \
 	skull/parse/constants.o \
 	skull/eval/eval_bool.o
 
@@ -78,6 +78,6 @@ OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 
 DIRS := build/skull \
 	build/test \
-	$(ODIR)/skull/eval \
+	$(ODIR)/skull/eval/types \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common

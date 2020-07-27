@@ -10,6 +10,11 @@ typedef struct type_t {
 	const char32_t *name;
 	size_t bytes;
 
+	struct variable_t *(*add)(const struct variable_t *, const struct variable_t *);
+	struct variable_t *(*subtract)(const struct variable_t *, const struct variable_t *);
+	struct variable_t *(*divide)(const struct variable_t *, const struct variable_t *);
+	struct variable_t *(*multiply)(const struct variable_t *, const struct variable_t *);
+
 	char32_t *(*to_string)(const struct variable_t *);
 
 	struct type_t *next;

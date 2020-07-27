@@ -1,12 +1,16 @@
-#include <math.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "skull/common/str.h"
 #include "skull/common/malloc.h"
-
-#include "skull/eval/types.h"
+#include "skull/eval/types/bool.h"
+#include "skull/eval/types/char.h"
+#include "skull/eval/types/float.h"
+#include "skull/eval/types/int.h"
+#include "skull/eval/types/str.h"
+#include "skull/eval/types/type.h"
 #include "skull/eval/variable.h"
+
+#include "skull/eval/types/types.h"
 
 /*
 Creates a new type called `name` with `bytes` bytes of memory.
@@ -72,146 +76,69 @@ void free_types(void) {
 	TYPE_BOOL.next=NULL;
 }
 
-char32_t *fmt_bool_type(const variable_t *var) {
-	bool data=false;
-	variable_read(&data, var);
-
-	char32_t *ret=c32sdup(data ? U"true" : U"false");
-	DIE_IF_MALLOC_FAILS(ret);
-
-	return ret;
-}
-
 struct type_t TYPE_BOOL = {
 	.name=U"bool",
 	.bytes=sizeof(bool),
 	.to_string=&fmt_bool_type,
+	.add=NULL,
+	.subtract=NULL,
+	.divide=NULL,
+	.multiply=NULL,
 	.next=NULL
 };
-
-#define SPRINTF_FMT(fmt) \
-	int needed=snprintf(NULL, 0, (fmt), data) + 1; \
-	if (needed<0) { \
-		return NULL; \
-	} \
-	char *tmp=malloc(sizeof(char) * (unsigned long int)needed); \
-	DIE_IF_MALLOC_FAILS(tmp); \
-	int wrote=snprintf(tmp, (unsigned long int)needed, (fmt), data); \
-	if (wrote<0) { \
-		free(tmp); \
-		return NULL; \
-	} \
-
-char32_t *fmt_int_type(const variable_t *var) {
-	int64_t data=0;
-	variable_read(&data, var);
-
-	SPRINTF_FMT("%li");
-
-	char32_t *ret=mbstoc32s(tmp);
-	free(tmp);
-	return ret;
-}
 
 struct type_t TYPE_INT = {
 	.name=U"int",
 	.bytes=sizeof(int64_t),
 	.to_string=&fmt_int_type,
+	.add=add_int_type,
+	.subtract=sub_int_type,
+	.divide=div_int_type,
+	.multiply=mult_int_type,
 	.next=&TYPE_BOOL
 };
-
-char32_t *fmt_float_type(const variable_t *var) {
-	long double data=0;
-	variable_read(&data, var);
-
-	if (isinf(data)) {
-		char32_t *ret=NULL;
-		if (data < 0.0L) {
-			ret=c32sdup(U"-Infinity");
-		}
-		else {
-			ret=c32sdup(U"Infinity");
-		}
-		DIE_IF_MALLOC_FAILS(ret);
-		return ret;
-	}
-
-	SPRINTF_FMT("%Lf");
-
-	//trim excess zeros off of decimal
-	for (size_t i=strlen(tmp); i>0; i--) {
-		if (tmp[i-1]=='.') {
-			tmp[i]='0';
-		}
-		else if (tmp[i-1]=='0') {
-			tmp[i-1]='\0';
-			continue;
-		}
-		break;
-	}
-
-	char32_t *ret=mbstoc32s(tmp);
-	free(tmp);
-	return ret;
-}
-
-#undef SPRINTF_FMT
 
 struct type_t TYPE_FLOAT = {
 	.name=U"float",
 	.bytes=sizeof(long double),
 	.to_string=&fmt_float_type,
+	.add=add_float_type,
+	.subtract=sub_float_type,
+	.divide=div_float_type,
+	.multiply=mult_float_type,
 	.next=&TYPE_INT
 };
-
-char32_t *fmt_char_type(const variable_t *var) {
-	char32_t *ret=malloc(sizeof(char32_t) * 2);
-	DIE_IF_MALLOC_FAILS(ret);
-
-	variable_read(ret, var);
-	ret[1]=U'\0';
-
-	return ret;
-}
 
 struct type_t TYPE_CHAR = {
 	.name=U"char",
 	.bytes=sizeof(char32_t),
 	.to_string=&fmt_char_type,
+	.add=NULL,
+	.subtract=NULL,
+	.divide=NULL,
+	.multiply=NULL,
 	.next=&TYPE_FLOAT
 };
-
-char32_t *fmt_str_type(const variable_t *var) {
-	const char32_t *str=NULL;
-	variable_read(&str, var);
-
-	char32_t *ret=c32sdup(str);
-	DIE_IF_MALLOC_FAILS(ret);
-
-	return ret;
-}
 
 struct type_t TYPE_STR = {
 	.name=U"str",
 	.bytes=sizeof(char32_t*),
 	.to_string=&fmt_str_type,
+	.add=add_str_type,
+	.subtract=NULL,
+	.divide=NULL,
+	.multiply=NULL,
 	.next=&TYPE_CHAR
 };
-
-char32_t *fmt_type_type(const variable_t *var) {
-	type_t *type=NULL;
-	variable_read(&type, var);
-
-	char32_t *ret=c32sdup(type->name);
-	DIE_IF_MALLOC_FAILS(ret);
-
-	return ret;
-}
 
 struct type_t TYPE_TYPE = {
 	.name=U"type",
 	.bytes=sizeof(struct type_t*),
 	.to_string=&fmt_type_type,
+	.add=NULL,
+	.subtract=NULL,
+	.divide=NULL,
+	.multiply=NULL,
 	.next=&TYPE_STR
 };
 

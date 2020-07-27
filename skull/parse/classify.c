@@ -3,7 +3,7 @@
 #include "skull/common/str.h"
 #include "skull/common/wegex.h"
 #include "skull/eval/function.h"
-#include "skull/eval/types.h"
+#include "skull/eval/types/types.h"
 #include "skull/parse/constants.h"
 #include "skull/parse/tokenize.h"
 
