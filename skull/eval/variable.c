@@ -16,10 +16,10 @@ Return string representation of the variable `var`.
 The result of this function must be freed.
 */
 char32_t *fmt_var(const variable_t *var) {
-	if (var->type!=NULL && var->type->to_string!=NULL) {
-		return var->type->to_string(var);
+	if (var->type==NULL || var->type->to_string==NULL) {
+		return NULL;
 	}
-	return NULL;
+	return var->type->to_string(var);
 }
 
 /*

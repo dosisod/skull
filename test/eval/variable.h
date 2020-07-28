@@ -147,6 +147,10 @@ TEST(fmt_var_bool, {
 	TEST_FMT_VAR(U"bool", bool, false, U"false");
 })
 
+TEST(fmt_var_type, {
+	TEST_FMT_VAR(U"type", type_t *, &TYPE_INT, U"int");
+})
+
 TEST(fmt_var_char, {
 	TEST_FMT_VAR(U"char", char32_t, U'a', U"a");
 })
@@ -196,6 +200,7 @@ void variable_test_self(bool *pass) {
 		test_fmt_var_float_infinity,
 		test_fmt_var_float_neg_infinity,
 		test_fmt_var_bool,
+		test_fmt_var_type,
 		test_fmt_var_char,
 		test_fmt_var_wide_char_preserved,
 		test_fmt_var_str,
