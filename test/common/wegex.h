@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
-#include "skull/parse/tokenize.h"
 #include "skull/common/wegex.h"
+#include "skull/parse/tokenize.h"
 
 #include "test/testing.h"
 

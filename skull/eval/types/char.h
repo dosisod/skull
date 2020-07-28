@@ -1,5 +1,5 @@
-#include "skull/common/str.h"
 #include "skull/common/malloc.h"
+#include "skull/common/str.h"
 #include "skull/eval/variable.h"
 
 char32_t *fmt_char_type(const variable_t *var) {
