@@ -239,6 +239,11 @@ char32_t *repl_read(FILE *fd) {
 	}
 	str[offset]='\0';
 
+	if (c==EOF) {
+		//add extra newline if control+d is pressed
+		putchar('\n');
+	}
+
 	char32_t *ret=mbstoc32s(str);
 
 	free(str);
