@@ -3,23 +3,24 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "skull/common/malloc.h"
 #include "skull/errors.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/eval_integer.h"
 
 /*
-Converts a `TOKEN_INT_CONST` token to an actual integer (`int64_t`).
+Converts a `TOKEN_INT_CONST` token to an integer pointer (`int64_t *`).
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-int64_t eval_integer(const token_t *token, const char32_t **error) {
+void *eval_integer(const token_t *token, const char32_t **error) {
 	if (token->token_type!=TOKEN_INT_CONST) {
 		*error=ERR_TYPE_MISMATCH;
-		return 0;
+		return NULL;
 	}
 
-	int64_t ret=0;
+	int64_t *ret=malloc(sizeof(int64_t));
 	const char32_t *begin=token->begin;
 	uint8_t base=10;
 
@@ -38,10 +39,10 @@ int64_t eval_integer(const token_t *token, const char32_t **error) {
 
 	errno=0;
 	char *tmp=c32stombs(begin);
-	ret=strtoll(tmp, NULL, base);
+	*ret=strtoll(tmp, NULL, base);
 	free(tmp);
 
-	if ((ret==LLONG_MAX || ret==LLONG_MIN) && errno==ERANGE) {
+	if ((*ret==LLONG_MAX || *ret==LLONG_MIN) && errno==ERANGE) {
 		*error=ERR_OVERFLOW;
 	}
 

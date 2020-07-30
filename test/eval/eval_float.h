@@ -12,32 +12,33 @@
 	token_t *token=tokenize(str_value); \
 	classify_tokens(token); \
 	const char32_t *err=NULL; \
-	long double num=eval_float(token, &err); \
+	long double *num=eval_float(token, &err); \
 	const bool pass=( \
 		(cond) && \
 		err==(expected_error) \
 	); \
 	free(token); \
+	free(num); \
 	return pass;
 
 TEST(convert_float_token, {
-	TEST_EVAL_FLOAT_CONVERT(U"1234.0", (int)num==1234, NULL);
+	TEST_EVAL_FLOAT_CONVERT(U"1234.0", (int)*num==1234, NULL);
 })
 
 TEST(convert_negative_float_token, {
-	TEST_EVAL_FLOAT_CONVERT(U"-1234.0", (int)num==-1234, NULL);
+	TEST_EVAL_FLOAT_CONVERT(U"-1234.0", (int)*num==-1234, NULL);
 })
 
 TEST(convert_infinity_float_token, {
-	TEST_EVAL_FLOAT_CONVERT(U"Infinity", isinf(num), NULL);
+	TEST_EVAL_FLOAT_CONVERT(U"Infinity", isinf(*num), NULL);
 })
 
 TEST(convert_neg_infinity_float_token, {
-	TEST_EVAL_FLOAT_CONVERT(U"-Infinity", isinf(num), NULL);
+	TEST_EVAL_FLOAT_CONVERT(U"-Infinity", isinf(*num), NULL);
 })
 
 TEST(non_float_token_fails, {
-	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", (int)num==0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", true, ERR_TYPE_MISMATCH);
 })
 
 #undef TEST_EVAL_FLOAT_CONVERT

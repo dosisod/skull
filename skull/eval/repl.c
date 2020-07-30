@@ -91,11 +91,11 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		}
 		else { //token is an int
 			ret=NULL;
-			int64_t num=eval_integer(node->token->next, &ret);
+			int64_t *num=eval_integer(node->token->next, &ret);
 
 			if (ret==NULL) {
 				free_ast_tree(node);
-				exit((int)num);
+				exit((int)*num);
 			}
 		}
 	}

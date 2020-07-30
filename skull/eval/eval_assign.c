@@ -10,6 +10,10 @@
 #include "skull/eval/eval_integer.h"
 #include "skull/eval/eval_mult.h"
 #include "skull/eval/eval_sub.h"
+#include "skull/eval/types/bool.h"
+#include "skull/eval/types/char.h"
+#include "skull/eval/types/str.h"
+#include "skull/eval/types/type.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/eval_assign.h"
@@ -34,12 +38,6 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 	variable_write(var, tmp->mem); \
 	free(tmp); \
 	return NULL; \
-
-#define SETUP_MEM(name, type, func) \
-	const type tmp=(func); \
-	mem=malloc(sizeof(type)); \
-	DIE_IF_MALLOC_FAILS(mem); \
-	memcpy((void*)mem, &tmp, sizeof(type));
 
 /*
 Assign `node` to variable `var`.
@@ -77,16 +75,16 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 	const char32_t *err=NULL;
 
 	if (var->type==&TYPE_INT && node->node_type==AST_NODE_INT_CONST) {
-		SETUP_MEM(mem, int64_t, eval_integer(node->token, &err));
+		mem=eval_integer(node->token, &err);
 	}
 	else if (var->type==&TYPE_FLOAT && node->node_type==AST_NODE_FLOAT_CONST) {
-		SETUP_MEM(mem, long double, eval_float(node->token, &err));
+		mem=eval_float(node->token, &err);
 	}
 	else if (var->type==&TYPE_BOOL && node->node_type==AST_NODE_BOOL_CONST) {
-		SETUP_MEM(mem, bool, token_cmp(U"true", node->token));
+		mem=eval_bool(node->token, &err);
 	}
 	else if (var->type==&TYPE_CHAR && node->node_type==AST_NODE_CHAR_CONST) {
-		SETUP_MEM(mem, char32_t, *node->token->begin);
+		mem=eval_char(node->token, &err);
 	}
 	else if (var->type==&TYPE_STR && node->node_type==AST_NODE_STR_CONST) {
 		char32_t *current=NULL;
@@ -96,18 +94,10 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 			free(current);
 		}
 
-		MAKE_TOKEN_BUF(buf, node->token);
-		SETUP_MEM(mem, char32_t*, c32sdup(buf));
+		mem=eval_str(node->token, &err);
 	}
 	else if (var->type==&TYPE_TYPE && node->node_type==AST_NODE_TYPE_CONST) {
-		MAKE_TOKEN_BUF(buf, node->token);
-		const type_t *type=find_type(buf);
-
-		if (type==&TYPE_TYPE) {
-			return ERR_TYPE_TYPE_BAD;
-		}
-
-		SETUP_MEM(mem, type_t*, type);
+		mem=eval_type(node->token, &err);
 	}
 	else {
 		return ERR_TYPE_MISMATCH;
@@ -128,8 +118,6 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 	}
 	return NULL; // NOLINT
 }
-
-#undef SETUP_MEM
 
 /*
 Evaluate assignment via auto assignment operator.

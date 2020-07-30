@@ -1,13 +1,8 @@
-#include "skull/common/malloc.h"
-#include "skull/common/str.h"
+#pragma once
+
 #include "skull/eval/variable.h"
+#include "skull/parse/tokenize.h"
 
-char32_t *fmt_char_type(const variable_t *var) {
-	char32_t *ret=malloc(sizeof(char32_t) * 2);
-	DIE_IF_MALLOC_FAILS(ret);
+char32_t *fmt_char_type(const variable_t *);
 
-	variable_read(ret, var);
-	ret[1]=U'\0';
-
-	return ret;
-}
+void *eval_char(const token_t *, const char32_t **);
