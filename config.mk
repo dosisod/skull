@@ -75,7 +75,9 @@ _OBJS = skull/eval/context.o \
 	skull/eval/types/bool.o \
 	skull/eval/types/char.o \
 	skull/eval/types/str.o \
-	skull/eval/types/type.o
+	skull/eval/types/type.o \
+	skull/eval/types/float.o \
+	skull/eval/types/int.o
 
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 
