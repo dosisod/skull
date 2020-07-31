@@ -5,6 +5,9 @@
 
 #include "skull/eval/types/str.h"
 
+/*
+Returns the string representation of string `var`
+*/
 char32_t *fmt_str_type(const variable_t *var) {
 	const char32_t *str=NULL;
 	variable_read(&str, var);
@@ -15,6 +18,9 @@ char32_t *fmt_str_type(const variable_t *var) {
 	return ret;
 }
 
+/*
+Concatenate `lhs` and `rhs` strings
+*/
 variable_t *add_str_type(const variable_t *lhs, const variable_t *rhs) {
 	variable_t *ret=make_variable(U"str", U"tmp", false);
 	if (ret==NULL) {
@@ -33,6 +39,9 @@ variable_t *add_str_type(const variable_t *lhs, const variable_t *rhs) {
 	return ret;
 }
 
+/*
+Return pointer to string, converted from `token`
+*/
 void *eval_str(const token_t *token, const char32_t **error) {
 	if (token->token_type!=TOKEN_STR_CONST) {
 		*error=ERR_TYPE_MISMATCH;

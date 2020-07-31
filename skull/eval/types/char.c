@@ -5,6 +5,9 @@
 
 #include "skull/eval/types/char.h"
 
+/*
+Returns the string representation of char `var`
+*/
 char32_t *fmt_char_type(const variable_t *var) {
 	char32_t *ret=malloc(sizeof(char32_t) * 2);
 	DIE_IF_MALLOC_FAILS(ret);
@@ -15,6 +18,9 @@ char32_t *fmt_char_type(const variable_t *var) {
 	return ret;
 }
 
+/*
+Return pointer to a char, converted from `token`
+*/
 void *eval_char(const token_t *token, const char32_t **error) {
 	if (token->token_type!=TOKEN_CHAR_CONST) {
 		*error=ERR_TYPE_MISMATCH;
