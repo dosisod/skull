@@ -24,8 +24,9 @@ void *eval_type(const token_t *token, const char32_t **error) {
 	type_t **type=malloc(sizeof(type_t *));
 	DIE_IF_MALLOC_FAILS(type);
 
-	MAKE_TOKEN_BUF(buf, token);
-	*type=find_type(buf);
+	char32_t *type_name=token_str(token);
+	*type=find_type(type_name);
+	free(type_name);
 
 	if (*type==&TYPE_TYPE) {
 		*error=ERR_TYPE_TYPE_BAD;

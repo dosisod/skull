@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
@@ -29,8 +30,9 @@ const char32_t *func_print(ast_node_t *node, context_t *ctx) {
 	) {
 		return ERR_INVALID_PARAMS;
 	}
-	MAKE_TOKEN_BUF(name, node->token->next->next);
+	char32_t *name=token_str(node->token->next->next);
 	const variable_t *var=context_find_name(ctx, name);
+	free(name);
 
 	if (var==NULL) {
 		return ERR_VAR_NOT_FOUND;
@@ -45,9 +47,12 @@ bool is_func_name(const ast_node_t *node) {
 	if (node==NULL || node->token==NULL) {
 		return false;
 	}
-	MAKE_TOKEN_BUF(name, node->token);
+	char32_t *name=token_str(node->token);
 
-	return is_func_name_str(name);
+	const bool ret=is_func_name_str(name);
+
+	free(name);
+	return ret;
 }
 
 /*

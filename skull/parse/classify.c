@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <stdlib.h>
 
 #include "skull/common/str.h"
 #include "skull/common/wegex.h"
@@ -23,7 +24,7 @@
 Classify the token `token`.
 */
 void classify_token(token_t *token) {
-	MAKE_TOKEN_BUF(buf, token);
+	char32_t *str=token_str(token);
 
 	if (false) {} // setup for macros
 
@@ -46,45 +47,48 @@ void classify_token(token_t *token) {
 	TOKEN_TRY_STR(U":=", TOKEN_OPER_AUTO_EQUAL)
 	TOKEN_TRY_STR(U"->", TOKEN_FUNCTION)
 
-	TOKEN_SET_IF(c32sncmp(buf, U"#!", 2), TOKEN_COMMENT)
-	TOKEN_SET_IF(c32sncmp(buf, LINE_COMMENT, LINE_COMMENT_LEN), TOKEN_COMMENT)
+	TOKEN_SET_IF(c32sncmp(str, U"#!", 2), TOKEN_COMMENT)
+	TOKEN_SET_IF(c32sncmp(str, LINE_COMMENT, LINE_COMMENT_LEN), TOKEN_COMMENT)
 
-	TOKEN_SET_IF(is_type_str(buf), TOKEN_TYPE)
-	TOKEN_SET_IF(is_constant_integer_str(buf), TOKEN_INT_CONST)
-	TOKEN_SET_IF(is_constant_float_str(buf), TOKEN_FLOAT_CONST)
-	TOKEN_SET_IF(is_constant_bool_str(buf), TOKEN_BOOL_CONST)
+	TOKEN_SET_IF(is_type_str(str), TOKEN_TYPE)
+	TOKEN_SET_IF(is_constant_integer_str(str), TOKEN_INT_CONST)
+	TOKEN_SET_IF(is_constant_float_str(str), TOKEN_FLOAT_CONST)
+	TOKEN_SET_IF(is_constant_bool_str(str), TOKEN_BOOL_CONST)
 
-	else if (is_constant_char_str(buf)) {
+	else if (is_constant_char_str(str)) {
 		token->token_type=TOKEN_CHAR_CONST;
 
 		//dont include ''s as part of string
 		token->begin++;
 		token->end--;
 	}
-	else if (is_constant_str_str(buf)) {
+	else if (is_constant_str_str(str)) {
 		token->token_type=TOKEN_STR_CONST;
 
 		//dont include ""s as part of string
 		token->begin++;
 		token->end--;
 	}
-	else if (is_valid_identifier_str(buf)) {
+	else if (is_valid_identifier_str(str)) {
 		token->token_type=TOKEN_IDENTIFIER;
 
 		if (*(token->end - 1)==U':') {
 			token->token_type=TOKEN_NEW_IDENTIFIER;
 			token->end--;
 
-			MAKE_TOKEN_BUF(tmp_buf, token);
-			if (is_type_str(tmp_buf) ||
-				is_keyword_str(tmp_buf) ||
-				is_func_name_str(tmp_buf))
+			char32_t *new_str=token_str(token);
+
+			if (is_type_str(new_str) ||
+				is_keyword_str(new_str) ||
+				is_func_name_str(new_str))
 			{
 				token->token_type=TOKEN_UNKNOWN;
 				token->end++;
 			}
+			free(new_str);
 		}
 	}
+	free(str);
 }
 
 #undef TOKEN_TRY_STR

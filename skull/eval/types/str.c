@@ -48,8 +48,7 @@ void *eval_str(const token_t *token, const char32_t **error) {
 		return NULL;
 	}
 
-	MAKE_TOKEN_BUF(buf, token);
-	char32_t *tmp=c32sdup(buf);
+	char32_t *tmp=token_str(token);
 
 	char32_t **ret=malloc(sizeof(char32_t *));
 	DIE_IF_MALLOC_FAILS(ret);

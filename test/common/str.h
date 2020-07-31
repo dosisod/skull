@@ -34,13 +34,12 @@ TEST(c32sncpy, {
 
 TEST(c32slcpy, {
 	const char32_t *data=U"hello there!";
-	const size_t len=5;
-	char32_t buf[len + 1];
+	char32_t buf[6];
 
-	c32slcpy(buf, data, len + 1);
+	c32slcpy(buf, data, 6);
 
 	return (
-		c32slen(buf)==len &&
+		c32slen(buf)==5 &&
 		c32scmp(buf, U"hello")
 	);
 })

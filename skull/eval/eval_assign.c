@@ -21,10 +21,12 @@
 const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
 
 #define EVAL_ASSIGN_SETUP(func, cannot, unavail) \
-	MAKE_TOKEN_BUF(lhs_buf, node->token); \
-	MAKE_TOKEN_BUF(rhs_buf, node->token->next->next); \
-	variable_t *lhs_var=context_find_name(ctx, lhs_buf); \
-	variable_t *rhs_var=context_find_name(ctx, rhs_buf); \
+	char32_t *lhs_str=token_str(node->token); \
+	char32_t *rhs_str=token_str(node->token->next->next); \
+	variable_t *lhs_var=context_find_name(ctx, lhs_str); \
+	variable_t *rhs_var=context_find_name(ctx, rhs_str); \
+	free(lhs_str); \
+	free(rhs_str); \
 	if (lhs_var==NULL || rhs_var==NULL) { \
 		return ERR_VAR_NOT_FOUND; \
 	} \
@@ -123,8 +125,9 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 Evaluate assignment via auto assignment operator.
 */
 const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	MAKE_TOKEN_BUF(buf, node->token);
-	variable_t *var_found=context_find_name(ctx, buf);
+	char32_t *lookup=token_str(node->token);
+	variable_t *var_found=context_find_name(ctx, lookup);
+	free(lookup);
 
 	if (var_found==NULL) {
 		return ERR_VAR_NOT_FOUND;
@@ -133,7 +136,7 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 		return ERR_TYPE_MISMATCH;
 	}
 
-	uint8_t mem[var_found->bytes];
+	uint8_t *mem=malloc(var_found->bytes * sizeof(uint8_t));
 	variable_read(mem, var_found);
 
 	if (var->type==&TYPE_STR) {
@@ -145,6 +148,7 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 	}
 	variable_write(var, mem);
 
+	free(mem);
 	return NULL;
 }
 

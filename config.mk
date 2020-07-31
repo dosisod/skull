@@ -8,6 +8,7 @@ CFLAGS = -std=c11 \
 	-Wextra \
 	-pedantic \
 	-Werror \
+	-Werror=vla \
 	-Waggregate-return \
 	-Wbad-function-cast \
 	-Wbuiltin-macro-redefined \

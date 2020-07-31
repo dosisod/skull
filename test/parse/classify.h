@@ -8,8 +8,8 @@ TEST(is_type_str, {
 	const char32_t *code=U"int not_a_type";
 	token_t *token=tokenize(code);
 
-	MAKE_TOKEN_BUF(buf, token);
-	MAKE_TOKEN_BUF(buf_next, token->next);
+	char32_t *buf=token_str(token);
+	char32_t *buf_next=token_str(token->next);
 
 	const bool pass=(
 		is_type_str(buf) &&
@@ -17,6 +17,8 @@ TEST(is_type_str, {
 	);
 
 	free_tokens(token);
+	free(buf);
+	free(buf_next);
 	return pass;
 })
 

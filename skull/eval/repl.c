@@ -41,8 +41,9 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	}
 
 	else if (node->node_type==AST_NODE_VAR_ASSIGN) {
-		MAKE_TOKEN_BUF(buf, node->token);
-		variable_t *var=context_find_name(ctx, buf);
+		char32_t *name=token_str(node->token);
+		variable_t *var=context_find_name(ctx, name);
+		free(name);
 
 		if (var==NULL) {
 			return ERR_VAR_NOT_FOUND;
@@ -72,8 +73,9 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 
 	else if (node->node_type==AST_NODE_RETURN) {
 		if (node->token->next->token_type==TOKEN_IDENTIFIER) {
-			MAKE_TOKEN_BUF(var_name, node->token->next);
+			char32_t *var_name=token_str(node->token->next);
 			const variable_t *found_var=context_find_name(ctx, var_name);
+			free(var_name);
 
 			if (found_var!=NULL) {
 				if (found_var->type!=&TYPE_INT) {
@@ -129,11 +131,12 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		token=token->next;
 	}
 
-	MAKE_TOKEN_BUF(name, token);
+	char32_t *name=token_str(token);
 	variable_t *var=NULL;
 
 	if (token->next->token_type==TOKEN_OPER_AUTO_EQUAL) {
 		if (is_func_name_str(name)) {
+			free(name);
 			return ERR_ASSIGN_FUNC;
 		}
 
@@ -159,23 +162,28 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 			node->next->node_type==AST_NODE_MULT_VAR ||
 			node->next->node_type==AST_NODE_DIV_VAR
 		) {
-			MAKE_TOKEN_BUF(buf, node->next->token);
-			variable_t *new_var=context_find_name(ctx, buf);
+			char32_t *lookup=token_str(node->next->token);
+			variable_t *new_var=context_find_name(ctx, lookup);
+			free(lookup);
 
 			if (new_var==NULL) {
+				free(name);
 				return ERR_VAR_NOT_FOUND;
 			}
 			type=new_var->type->name;
 		}
 		else {
+			free(name);
 			return ERR_INVALID_INPUT;
 		}
 		var=make_variable(type, name, false);
 	}
 	else {
-		MAKE_TOKEN_BUF(type, token->next);
-		var=make_variable(type, name, false);
+		char32_t *type_name=token_str(token->next);
+		var=make_variable(type_name, name, false);
+		free(type_name);
 	}
+	free(name);
 
 	const char32_t *tmp=eval_assign(var, node->next, ctx);
 	var->is_const=is_const;
