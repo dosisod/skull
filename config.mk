@@ -3,7 +3,7 @@ SKULL_VERSION := 0.1.1
 INSTALL := /usr/local
 
 CC := $(shell readlink -f $(shell which cc))
-CFLAGS = -std=c11 \
+CFLAGS = -std=c18 \
 	-Wall \
 	-Wextra \
 	-pedantic \
