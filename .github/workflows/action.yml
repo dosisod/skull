@@ -23,6 +23,7 @@ jobs:
 
     - name: Build
       run: |
+        sudo ln -sf $(which gcc-8) $(which cc)
         $(which cc) -v
         make clean all
 
