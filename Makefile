@@ -24,6 +24,7 @@ docs:
 	@python3 make_docs.py
 
 clean:
+	@echo "\033[92mCleaning\033[0m"
 	@rm -rf build/*
 
 install: clean | skull
