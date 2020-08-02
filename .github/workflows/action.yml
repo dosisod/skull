@@ -55,6 +55,5 @@ jobs:
 
     - name: Install Skull
       run: |
-        export CC=$(which gcc-8)
-        sudo make install -e
+        sudo CC=$(which gcc-8) make install -e
         ./test/sh/shebang.sk
