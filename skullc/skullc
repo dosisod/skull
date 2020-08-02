@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-[ -f ./.skullc ] || make
+make skullc
 
-./.skullc > .tmp.ll
+./.skullc
 
 llc-9 .tmp.ll
 rm .tmp.ll

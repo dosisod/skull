@@ -2,8 +2,8 @@
 
 CC = g++
 
-CXXFLAGS = $(shell llvm-config-9 --cxxflags --libs) -std=c++14
+CFLAGS = $(shell llvm-config-9 --cflags --libs)
 
 skullc:
 	@echo "\033[92mCompile\033[0m skullc"
-	@$(CC) skullc.cpp -o .skullc $(CXXFLAGS)
+	@$(CC) skullc.c -o .skullc $(CFLAGS)
