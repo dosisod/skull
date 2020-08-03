@@ -33,13 +33,29 @@ int main(void) {
 		block
 	);
 
-	LLVMValueRef num = LLVMConstInt(
+	LLVMValueRef alloc = LLVMBuildAlloca(
+		builder,
 		LLVMInt64TypeInContext(ctx),
-		1,
-		true
+		"x"
 	);
 
-	LLVMValueRef ret = LLVMBuildRet(builder, num);
+	LLVMBuildStore(
+		builder,
+		LLVMConstInt(
+			LLVMInt64TypeInContext(ctx),
+			1,
+			true
+		),
+		alloc
+	);
+
+	LLVMValueRef load = LLVMBuildLoad(
+		builder,
+		alloc,
+		"1"
+	);
+
+	LLVMBuildRet(builder, load);
 
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(
