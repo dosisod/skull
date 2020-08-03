@@ -55,7 +55,18 @@ int main(void) {
 		"1"
 	);
 
-	LLVMBuildRet(builder, load);
+	LLVMValueRef added = LLVMBuildAdd(
+		builder,
+		load,
+		LLVMConstInt(
+			LLVMInt64TypeInContext(ctx),
+			1,
+			true
+		),
+		"2"
+	);
+
+	LLVMBuildRet(builder, added);
 
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(
