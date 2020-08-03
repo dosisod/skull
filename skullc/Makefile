@@ -1,6 +1,6 @@
 .PHONY: skullc
 
-CC = g++
+CC = cc
 
 CFLAGS = $(shell llvm-config-9 --cflags --libs)
 

@@ -23,5 +23,3 @@ $ ./main
 $ echo $?
 1
 ```
-
-Currently, `g++` is the recommended compiler. I was having issues setting this up with `gcc` or `clang`. This will hopefully be fixed in the future.

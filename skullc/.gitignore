@@ -1,2 +1,5 @@
 main
 .skullc
+
+*.ll
+*.s
