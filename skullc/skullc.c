@@ -3,6 +3,9 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/eval/eval_integer.h"
+#include "skull/parse/ast/node.h"
+
 int main(void) {
 	LLVMContextRef ctx = LLVMContextCreate();
 	LLVMModuleRef main_module = LLVMModuleCreateWithNameInContext("main_module", ctx);
@@ -23,7 +26,7 @@ int main(void) {
 	LLVMBasicBlockRef block = LLVMAppendBasicBlockInContext(
 		ctx,
 		main_func,
-		""
+		"entry"
 	);
 
 	LLVMBuilderRef builder = LLVMCreateBuilderInContext(ctx);
@@ -33,40 +36,21 @@ int main(void) {
 		block
 	);
 
-	LLVMValueRef alloc = LLVMBuildAlloca(
-		builder,
-		LLVMInt64TypeInContext(ctx),
-		"x"
-	);
+	ast_node_t *node=make_ast_tree(U"return 1");
 
-	LLVMBuildStore(
-		builder,
-		LLVMConstInt(
-			LLVMInt64TypeInContext(ctx),
-			1,
-			true
-		),
-		alloc
-	);
+	if (node->node_type==AST_NODE_RETURN) {
+		const char32_t *error = NULL;
+		int64_t *num = eval_integer(node->token->next, &error);
 
-	LLVMValueRef load = LLVMBuildLoad(
-		builder,
-		alloc,
-		"1"
-	);
-
-	LLVMValueRef added = LLVMBuildAdd(
-		builder,
-		load,
-		LLVMConstInt(
-			LLVMInt64TypeInContext(ctx),
-			1,
-			true
-		),
-		"2"
-	);
-
-	LLVMBuildRet(builder, added);
+		LLVMBuildRet(
+			builder,
+			LLVMConstInt(
+				LLVMInt64TypeInContext(ctx),
+				*num,
+				true
+			)
+		);
+	}
 
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(
@@ -78,8 +62,8 @@ int main(void) {
 	if (err!=NULL || status) {
 		puts("error occurred!");
 	}
-	LLVMDisposeMessage(err);
 
+	LLVMDisposeMessage(err);
 	LLVMContextDispose(ctx);
 	return 0;
 }
