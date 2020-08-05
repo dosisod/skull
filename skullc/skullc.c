@@ -36,7 +36,7 @@ int main(void) {
 		block
 	);
 
-	ast_node_t *node=make_ast_tree(U"return 1");
+	ast_node_t *node=make_ast_tree(U"return 0");
 
 	if (node->node_type==AST_NODE_RETURN) {
 		const char32_t *error = NULL;
