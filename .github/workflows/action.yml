@@ -9,11 +9,11 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Install clang-tidy
-      run: sudo apt install clang-tidy
+      run: sudo apt install clang-tidy-9
 
-    - name: Run clang-tidy
+    - name: Run clang-tidy-9
       run: |
-        clang-tidy --version
+        clang-tidy-9 --version
         ./.github/workflows/clang_tidy.sh
 
   test-gcc:

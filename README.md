@@ -31,6 +31,12 @@ $ skull
 
 ## Testing
 
+Install dependencies:
+
+```
+$ sudo apt install clang-tidy-9
+```
+
 Tests are best ran via a `pre-commit`:
 
 ```

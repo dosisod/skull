@@ -22,7 +22,7 @@ void *eval_integer(const token_t *token, const char32_t **error) {
 
 	int64_t *ret=malloc(sizeof(int64_t));
 	const char32_t *begin=token->begin;
-	uint8_t base=10;
+	uint8_t base=10; // NOLINT
 
 	if (c32sncmp(U"0b", token->begin, 2)) {
 		begin+=2;
@@ -30,11 +30,11 @@ void *eval_integer(const token_t *token, const char32_t **error) {
 	}
 	else if (c32sncmp(U"0o", token->begin, 2)) {
 		begin+=2;
-		base=8;
+		base=8; // NOLINT
 	}
 	else if (c32sncmp(U"0x", token->begin, 2)) {
 		begin+=2;
-		base=16;
+		base=16; // NOLINT
 	}
 
 	errno=0;

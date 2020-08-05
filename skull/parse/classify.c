@@ -47,8 +47,10 @@ void classify_token(token_t *token) {
 	TOKEN_TRY_STR(U":=", TOKEN_OPER_AUTO_EQUAL)
 	TOKEN_TRY_STR(U"->", TOKEN_FUNCTION)
 
-	TOKEN_SET_IF(c32sncmp(str, U"#!", 2), TOKEN_COMMENT)
-	TOKEN_SET_IF(c32sncmp(str, LINE_COMMENT, LINE_COMMENT_LEN), TOKEN_COMMENT)
+	TOKEN_SET_IF((
+		c32sncmp(str, U"#!", 2) ||
+		c32sncmp(str, LINE_COMMENT, LINE_COMMENT_LEN)
+	), TOKEN_COMMENT)
 
 	TOKEN_SET_IF(is_type_str(str), TOKEN_TYPE)
 	TOKEN_SET_IF(is_constant_integer_str(str), TOKEN_INT_CONST)
