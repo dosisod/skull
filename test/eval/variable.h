@@ -128,7 +128,7 @@ TEST(fmt_var_int, {
 })
 
 TEST(fmt_var_float, {
-	TEST_FMT_VAR(U"float", long double, 3.1415L, U"3.1415");
+	TEST_FMT_VAR(U"float", long double, 3.1415L, U"3.1415"); // NOLINT
 })
 
 TEST(fmt_var_float_zeros, {
@@ -136,11 +136,11 @@ TEST(fmt_var_float_zeros, {
 })
 
 TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR(U"float", long double, 1.0L / 0.0L, U"Infinity");
+	TEST_FMT_VAR(U"float", long double, 1.0L / 0.0L, U"Infinity"); // NOLINT
 })
 
 TEST(fmt_var_float_neg_infinity, {
-	TEST_FMT_VAR(U"float", long double, 1.0L / -0.0L, U"-Infinity");
+	TEST_FMT_VAR(U"float", long double, 1.0L / -0.0L, U"-Infinity"); // NOLINT
 })
 
 TEST(fmt_var_bool, {

@@ -24,7 +24,11 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	ast_node_t *node=make_ast_tree(str);
 	const char32_t *ret=ERR_INVALID_INPUT;
 
-	if ((node->node_type==AST_NODE_ONE_PARAM_FUNC ||
+	if (node->token==NULL) {
+		ret=ERR_INVALID_INPUT;
+	}
+
+	else if ((node->node_type==AST_NODE_ONE_PARAM_FUNC ||
 		node->node_type==AST_NODE_NO_PARAM_FUNC) &&
 		is_func_name(node))
 	{
@@ -36,7 +40,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		}
 	}
 
-	else if (node->node_type==AST_NODE_COMMENT) {
+	else if (node->node_type==AST_NODE_COMMENT || node->node_type==AST_NODE_UNKNOWN) {
 		ret=NULL;
 	}
 
@@ -53,10 +57,6 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 			return ERR_CANNOT_ASSIGN_CONST;
 		}
 		ret=eval_assign(var, node->next, ctx);
-	}
-
-	else if (node->token==NULL) {
-		ret=ERR_INVALID_INPUT;
 	}
 
 	else if (node->node_type==AST_NODE_VAR_DEF ||
@@ -100,10 +100,6 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 				exit((int)*num);
 			}
 		}
-	}
-
-	else if (node->node_type==AST_NODE_UNKNOWN) {
-		ret=NULL;
 	}
 
 	free_ast_tree(node);

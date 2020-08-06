@@ -2,7 +2,7 @@ SKULL_VERSION := 0.1.1
 
 INSTALL := /usr/local
 
-CC := $(shell readlink -f $(shell which cc))
+CC := $(shell which cc)
 CFLAGS = -std=c18 \
 	-Wall \
 	-Wextra \
@@ -53,32 +53,7 @@ endif
 
 ODIR = build/objs
 
-_OBJS = skull/eval/context.o \
-	skull/eval/repl.o \
-	skull/errors.o \
-	skull/common/str.o \
-	skull/parse/tokenize.o \
-	skull/eval/file.o \
-	skull/eval/variable.o \
-	skull/eval/eval_assign.o \
-	skull/parse/classify.o \
-	skull/parse/ast/node.o \
-	skull/eval/eval_add.o \
-	skull/eval/eval_integer.o \
-	skull/eval/eval_float.o \
-	skull/eval/eval_sub.o \
-	skull/eval/eval_mult.o \
-	skull/eval/eval_div.o \
-	skull/eval/function.o \
-	skull/common/wegex.o \
-	skull/eval/types/types.o \
-	skull/parse/constants.o \
-	skull/eval/types/bool.o \
-	skull/eval/types/char.o \
-	skull/eval/types/str.o \
-	skull/eval/types/type.o \
-	skull/eval/types/float.o \
-	skull/eval/types/int.o
+_OBJS = $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main"))
 
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 

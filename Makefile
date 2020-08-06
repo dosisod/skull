@@ -4,6 +4,11 @@ all: skull test docs
 
 .PHONY: skull test docs
 
+options:
+	@echo "\033[92mCC:\033[0m $(CC)"
+	@echo "\033[92mCFLAGS:\033[0m $(CFLAGS)"
+	@echo "\033[92mOBJS:\033[0m $(OBJS)"
+
 setup:
 	@mkdir $(DIRS) -p
 

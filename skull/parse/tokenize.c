@@ -126,7 +126,7 @@ Return true if `c` is whitespace.
 Whitespace includes control-characters, non-printable characters, and spaces.
 */
 __attribute__((const)) bool is_whitespace(char32_t c) {
-	return (c <= 32);
+	return (c <= ' ');
 }
 
 /*

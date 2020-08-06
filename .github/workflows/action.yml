@@ -9,11 +9,11 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Install clang-tidy
-      run: sudo apt install clang-tidy
+      run: sudo apt install clang-tidy-9
 
-    - name: Run clang-tidy
+    - name: Run clang-tidy-9
       run: |
-        clang-tidy --version
+        clang-tidy-9 --version
         ./.github/workflows/clang_tidy.sh
 
   test-gcc:
@@ -23,9 +23,8 @@ jobs:
 
     - name: Build
       run: |
-        sudo ln -sf $(which gcc-8) $(which cc)
-        $(which cc) -v
-        make clean all
+        export CC=$(which gcc-8)
+        make options clean all -e
 
     - name: Run tests
       run: ./build/test/test
@@ -40,9 +39,8 @@ jobs:
 
     - name: Build
       run: |
-        sudo ln -sf $(which clang) $(which cc)
-        $(which cc) -v
-        make clean all
+        export CC=$(which clang)
+        make options clean all -e
 
     - name: Run tests
       run: ./build/test/test
@@ -57,8 +55,7 @@ jobs:
 
     - name: Install Skull
       run: |
-        sudo ln -sf $(which gcc-8) $(which cc)
-        sudo make install
+        sudo CC=$(which gcc-8) make install -e
         ./test/sh/shebang.sk
 
   test-skullc:
@@ -68,8 +65,8 @@ jobs:
 
     - name: Build
       run: |
-        sudo ln -sf $(which gcc-8) $(which cc)
-        make
+        export CC=$(which gcc-8)
+        make options clean all -e
 
     - name: Run Skullc
       run: |
