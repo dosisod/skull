@@ -57,3 +57,19 @@ jobs:
       run: |
         sudo CC=$(which gcc-8) make install -e
         ./test/sh/shebang.sk
+
+  test-skullc:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build
+      run: |
+        export CC=$(which gcc-8)
+        make options clean all -e
+
+    - name: Run Skullc
+      run: |
+        cd skullc
+        ./skullc
+        ./main

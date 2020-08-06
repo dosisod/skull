@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+make skullc
+
+./.skullc
+
+llc-9 .tmp.ll
+rm .tmp.ll
+
+cc .tmp.s -o main
+rm .tmp.s
