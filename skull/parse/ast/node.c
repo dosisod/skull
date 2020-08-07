@@ -153,7 +153,7 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		node->last=NULL;
 		free(node);
 	}
-	return head; // NOLINT
+	return head;
 }
 
 #undef TRY_PUSH_AST_NODE

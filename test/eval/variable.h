@@ -128,7 +128,8 @@ TEST(fmt_var_int, {
 })
 
 TEST(fmt_var_float, {
-	TEST_FMT_VAR(U"float", long double, 3.1415L, U"3.1415"); // NOLINT
+	const long double PI = 3.1415L;
+	TEST_FMT_VAR(U"float", long double, PI, U"3.1415");
 })
 
 TEST(fmt_var_float_zeros, {

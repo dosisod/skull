@@ -118,7 +118,7 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 	if (var->type!=&TYPE_STR) {
 		free((void*)mem);
 	}
-	return NULL; // NOLINT
+	return NULL;
 }
 
 /*
