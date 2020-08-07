@@ -1,8 +1,8 @@
 include config.mk
 
-all: skull test docs
+all: skull skullc test docs
 
-.PHONY: skull test docs
+.PHONY: skull skullc test docs
 
 options:
 	@echo "\033[92mCC:\033[0m $(CC)"
@@ -15,6 +15,10 @@ setup:
 skull: setup | $(OBJS)
 	@echo "\033[92mCompile\033[0m skull"
 	@$(CC) skull/main.c $(OBJS) -o build/skull/skull $(CFLAGS)
+
+skullc: skull | $(OBJS)
+	@echo "\033[92mCompile\033[0m skullc"
+	@$(CC) skullc/skullc.c $(OBJS) -o build/skullc/.skullc $(CFLAGS) $(LLVMFLAGS)
 
 test: skull
 	@echo "\033[92mCompile\033[0m tests"

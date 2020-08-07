@@ -82,7 +82,7 @@ int main(void) {
 			builder,
 			LLVMConstInt(
 				LLVMInt64TypeInContext(ctx),
-				*num,
+				(unsigned long long)*num,
 				true
 			)
 		);

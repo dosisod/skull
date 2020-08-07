@@ -34,6 +34,8 @@ CFLAGS = -std=c18 \
 	-DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
 	-I.
 
+LLVMFLAGS = $(shell llvm-config-9 --cflags --libs)
+
 #dont add gnu specific flags if compiling in clang
 ifeq ($(findstring clang,$(CC)),)
 	CFLAGS += -Waggressive-loop-optimizations \
@@ -58,6 +60,7 @@ _OBJS = $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main"))
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 
 DIRS := build/skull \
+	build/skullc \
 	build/test \
 	$(ODIR)/skull/eval/types \
 	$(ODIR)/skull/parse/ast \

@@ -70,6 +70,8 @@ jobs:
 
     - name: Run Skullc
       run: |
-        cd skullc
+        cp skullc/main.sk build/skullc
+        cp skullc/skullc build/skullc
+        cd build/skullc
         ./skullc
         ./main

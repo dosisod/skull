@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-make skullc
-
 ./.skullc
 
 llc-9 .tmp.ll
