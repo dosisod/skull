@@ -12,24 +12,24 @@ options:
 setup:
 	@mkdir $(DIRS) -p
 
-skull: setup | $(OBJS)
-	@echo "\033[92mCompile\033[0m skull"
-	@$(CC) skull/main.c $(OBJS) -o build/skull/skull $(CFLAGS)
+skull: setup | $(ODIR)/skull/main.o $(OBJS)
+	@echo "\033[92mLink\033[0m skull"
+	@$(CC) $(ODIR)/skull/main.o $(OBJS) -o build/skull/skull $(CFLAGS)
 
 skullc: skull | $(OBJS)
 	@echo "\033[92mCompile\033[0m skullc"
 	@$(CC) skullc/skullc.c $(OBJS) -o build/skullc/.skullc $(CFLAGS) $(LLVMFLAGS)
 
-test: skull
-	@echo "\033[92mCompile\033[0m tests"
-	@$(CC) test/main.c $(OBJS) -o build/test/test $(CFLAGS)
+test: skull | $(ODIR)/test/main.o
+	@echo "\033[92mLink\033[0m tests"
+	@$(CC) $(ODIR)/test/main.o $(OBJS) -o build/test/test $(CFLAGS)
 
 $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o $@ $(CFLAGS)
 
 docs:
-	@echo "\033[92mCompile\033[0m docs"
+	@echo "\033[92Build\033[0m docs"
 	@python3 make_docs.py
 
 clean:
