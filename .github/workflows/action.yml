@@ -73,5 +73,5 @@ jobs:
         cp skullc/main.sk build/skullc
         cp skullc/skullc build/skullc
         cd build/skullc
-        ./skullc
+        ./skullc main.sk
         ./main
