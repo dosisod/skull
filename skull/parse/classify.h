@@ -5,28 +5,17 @@
 #include "skull/parse/tokenize.h"
 
 enum token_types {
-	//default token type
+	// default token type
 	TOKEN_UNKNOWN,
 
-	//identifiers are things like variable and function names
 	TOKEN_IDENTIFIER,
-	TOKEN_NEW_IDENTIFIER, //must suffix new var names with ":"
+	TOKEN_NEW_IDENTIFIER, // must suffix new var names with ":"
 
-	//indicates the start of a function
-	TOKEN_FUNCTION,
-
-	//keyword related tokens
 	TOKEN_KW_MUT,
 	TOKEN_KW_RETURN,
-	TOKEN_KW_OR,
-	TOKEN_KW_AND,
-	TOKEN_KW_NOT,
 
 	TOKEN_BRACKET_OPEN,
 	TOKEN_BRACKET_CLOSE,
-
-	TOKEN_NEWLINE,
-	TOKEN_COMMA,
 
 	TOKEN_TYPE,
 
@@ -35,8 +24,6 @@ enum token_types {
 	TOKEN_OPER_MINUS,
 	TOKEN_OPER_MULT,
 	TOKEN_OPER_DIV,
-	TOKEN_OPER_EQUAL_EQUAL,
-	TOKEN_OPER_NOT_EQUAL,
 	TOKEN_OPER_AUTO_EQUAL, // ":="
 
 	TOKEN_INT_CONST,
@@ -47,8 +34,7 @@ enum token_types {
 
 	TOKEN_COMMENT,
 
-	//cannot be assigned to a token directly
-	TOKEN_ANY_NON_BRACKET_TOKEN
+	TOKEN_END
 };
 
 bool is_type_str(const char32_t *);

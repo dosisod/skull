@@ -4,6 +4,8 @@
 
 #include "skull/parse/tokenize.h"
 
+#define TOKEN_ANY_NON_BRACKET_TOKEN (TOKEN_END + 1)
+
 enum node_types {
 	AST_NODE_UNKNOWN,
 

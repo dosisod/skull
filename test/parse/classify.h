@@ -105,14 +105,6 @@ TEST(bracket_token_close, {
 	TEST_CLASSIFY_TOKEN(U"]", TOKEN_BRACKET_CLOSE);
 })
 
-TEST(token_newline, {
-	TEST_CLASSIFY_TOKEN(U"\n", TOKEN_NEWLINE);
-})
-
-TEST(token_comma, {
-	TEST_CLASSIFY_TOKEN(U",", TOKEN_COMMA);
-})
-
 TEST(token_mut_kw, {
 	TEST_CLASSIFY_TOKEN(U"mut", TOKEN_KW_MUT);
 })
@@ -121,28 +113,8 @@ TEST(token_return_kw, {
 	TEST_CLASSIFY_TOKEN(U"return", TOKEN_KW_RETURN);
 })
 
-TEST(token_or_kw, {
-	TEST_CLASSIFY_TOKEN(U"or", TOKEN_KW_OR);
-})
-
-TEST(token_and_kw, {
-	TEST_CLASSIFY_TOKEN(U"and", TOKEN_KW_AND);
-})
-
-TEST(token_not_kw, {
-	TEST_CLASSIFY_TOKEN(U"not", TOKEN_KW_NOT);
-})
-
 TEST(token_equal_oper, {
 	TEST_CLASSIFY_TOKEN(U"=", TOKEN_OPER_EQUAL);
-})
-
-TEST(token_equal_equal_oper, {
-	TEST_CLASSIFY_TOKEN(U"==", TOKEN_OPER_EQUAL_EQUAL);
-})
-
-TEST(token_not_equal_oper, {
-	TEST_CLASSIFY_TOKEN(U"!=", TOKEN_OPER_NOT_EQUAL);
 })
 
 TEST(token_auto_equal_oper, {
@@ -177,10 +149,6 @@ TEST(token_type, {
 
 	free_tokens(t);
 	return pass;
-})
-
-TEST(token_function, {
-	TEST_CLASSIFY_TOKEN(U"->", TOKEN_FUNCTION);
 })
 
 TEST(token_unknown, {
@@ -388,23 +356,15 @@ void classifier_test_self(bool *pass) {
 		test_is_constant_str,
 		test_bracket_token_open,
 		test_bracket_token_close,
-		test_token_newline,
-		test_token_comma,
 		test_token_mut_kw,
 		test_token_return_kw,
-		test_token_or_kw,
-		test_token_and_kw,
-		test_token_not_kw,
 		test_token_equal_oper,
 		test_token_plus_oper,
 		test_token_minus_oper,
 		test_token_mult_oper,
 		test_token_div_oper,
-		test_token_equal_equal_oper,
-		test_token_not_equal_oper,
 		test_token_auto_equal_oper,
 		test_token_type,
-		test_token_function,
 		test_token_unknown,
 		test_token_integer_constant,
 		test_token_float_constant,

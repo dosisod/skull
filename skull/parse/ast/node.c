@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/parse/classify.h"
 #include "skull/common/malloc.h"
+#include "skull/parse/classify.h"
 
 #include "skull/parse/ast/node.h"
 
