@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-./.skullc
+./.skullc $@
 
 llc-9 .tmp.ll
 rm .tmp.ll

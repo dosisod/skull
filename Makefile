@@ -29,7 +29,7 @@ $(ODIR)/%.o: %.c
 	@$(CC) $< -c -o $@ $(CFLAGS)
 
 docs:
-	@echo "\033[92Build\033[0m docs"
+	@echo "\033[92mBuild\033[0m docs"
 	@python3 make_docs.py
 
 clean:

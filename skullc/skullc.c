@@ -5,12 +5,13 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/common/main.h"
 #include "skull/common/malloc.h"
 #include "skull/eval/eval_integer.h"
 #include "skull/eval/repl.h"
 #include "skull/parse/ast/node.h"
 
-int main(void) {
+int main(int argc, char *argv[]) {
 	LLVMContextRef ctx = LLVMContextCreate();
 	LLVMModuleRef main_module = LLVMModuleCreateWithNameInContext("main_module", ctx);
 
@@ -40,18 +41,18 @@ int main(void) {
 		block
 	);
 
-	errno=0;
-	FILE *fd=fopen("main.sk", "re");
-	if (fd==NULL) {
-		puts("error opening file");
+	if (argc==1) {
+		puts("expected filename, exiting");
 		return 1;
 	}
+
+	HANDLE_MAIN;
 
 	char *str=malloc(sizeof(char) * REPL_MAX_LINE_LEN);
 	DIE_IF_MALLOC_FAILS(str);
 
 	size_t offset=0;
-	int c=getc(fd);
+	int c=getc(f);
 
 	while (c!=EOF) {
 		//read char by char until we need to reallocate more memory
@@ -64,7 +65,7 @@ int main(void) {
 		str[offset]=(char)c;
 		offset++;
 
-		c=getc(fd);
+		c=getc(f);
 	}
 	str[offset]='\0';
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-
 #define COLOR_RESET "\033[0m"
 #define COLOR_BOLD "\033[1m"
 #define COLOR_UNDERLINE "\033[4m"
