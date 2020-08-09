@@ -55,7 +55,7 @@ jobs:
 
     - name: Install Skull
       run: |
-        sudo CC=$(which gcc-8) make install -e
+        sudo CC=$(which gcc-8) make options install -e
         ./test/sh/shebang.sk
 
   test-skullc:
@@ -65,13 +65,9 @@ jobs:
 
     - name: Build
       run: |
-        export CC=$(which gcc-8)
-        make options clean all -e
+        sudo CC=$(which gcc-8) make options install -e
 
     - name: Run Skullc
       run: |
-        cp skullc/main.sk build/skullc
-        cp skullc/skullc build/skullc
-        cd build/skullc
-        ./skullc main.sk
+        skullc skullc/main.sk
         ./main

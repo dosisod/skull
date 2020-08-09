@@ -18,7 +18,7 @@ skull: setup | $(ODIR)/skull/main.o $(OBJS)
 
 skullc: skull | $(OBJS)
 	@echo "\033[92mCompile\033[0m skullc"
-	@$(CC) skullc/skullc.c $(OBJS) -o build/skullc/.skullc $(CFLAGS) $(LLVMFLAGS)
+	@$(CC) skullc/skullc.c $(OBJS) -o build/skullc/_skullc $(CFLAGS) $(LLVMFLAGS)
 
 test: skull | $(ODIR)/test/main.o
 	@echo "\033[92mLink\033[0m tests"
@@ -36,8 +36,11 @@ clean:
 	@echo "\033[92mCleaning\033[0m"
 	@rm -rf build/*
 
-install: clean | skull
+install: clean | skullc
 	@echo "\033[92mInstall\033[0m skull"
 	@install build/skull/skull $(INSTALL)/bin/
 	@install -m 644 docs/skull.1 $(INSTALL)/man/man1/
+	@echo "\033[92mInstall\033[0m skullc"
+	@install skullc/skullc $(INSTALL)/bin/
+	@install build/skullc/_skullc $(INSTALL)/bin/
 	@make clean
