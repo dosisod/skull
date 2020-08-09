@@ -70,4 +70,4 @@ jobs:
     - name: Run Skullc
       run: |
         skullc skullc/main.sk
-        ./main
+        ./skullc/main
