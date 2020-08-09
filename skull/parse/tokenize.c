@@ -123,17 +123,22 @@ token_t *tokenize(const char32_t *code) {
 /*
 Return true if `c` is whitespace.
 
-Whitespace includes control-characters, non-printable characters, and spaces.
+Whitespace is considered as indent/line related control characters.
 */
 __attribute__((const)) bool is_whitespace(char32_t c) {
-	return (c <= ' ');
+	return (
+		c==' ' ||
+		c=='\t' ||
+		c=='\r' ||
+		c=='\n'
+	);
 }
 
 /*
 Return true if `c` is a double or single quote.
 */
 __attribute__((const)) bool is_quote(char32_t c) {
-	return (c=='\'' || c=='\"');
+	return c=='\'' || c=='\"';
 }
 
 /*

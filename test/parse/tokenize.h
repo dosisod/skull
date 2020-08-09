@@ -7,8 +7,11 @@
 TEST(is_whitespace, {
 	return (
 		is_whitespace(' ') &&
-		!is_whitespace('A') &&
-		!is_whitespace(U'字')
+		is_whitespace('\t') &&
+		is_whitespace('\r') &&
+		is_whitespace('\n') &&
+		!is_whitespace('\v') &&
+		!is_whitespace('A')
 	);
 })
 
@@ -55,14 +58,14 @@ TEST(tokenize_no_tokens, {
 })
 
 TEST(whitespace_between_tokens, {
-	const char32_t *code=U"token1\r\v\t token2";
+	const char32_t *code=U"token1\r\t token2";
 	token_t *t=tokenize(code);
 
 	const bool pass=(
 		t->begin==&code[0] &&
 		t->end==&code[6] &&
-		t->next->begin==&code[10] &&
-		t->next->end==&code[16]
+		t->next->begin==&code[9] &&
+		t->next->end==&code[15]
 	);
 
 	free(t->next);

@@ -6,7 +6,7 @@ Tokenize `code`, return pointer to first token.
 #### `__attribute__((const)) bool is_whitespace(char32_t c)`
 Return true if `c` is whitespace.
 
-Whitespace includes control-characters, non-printable characters, and spaces.
+Whitespace is considered as indent/line related control characters.
 
 #### `__attribute__((const)) bool is_quote(char32_t c)`
 Return true if `c` is a double or single quote.
