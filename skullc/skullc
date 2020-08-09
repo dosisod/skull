@@ -2,8 +2,8 @@
 
 $(dirname $0)/_skullc $@ || exit 1
 
-llc-9 .tmp.ll
+llc-9 .tmp.ll -filetype=obj || exit 1
 rm .tmp.ll
 
-cc .tmp.s -o main
-rm .tmp.s
+cc .tmp.o -o "${1%.*}"
+rm .tmp.o
