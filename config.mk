@@ -55,7 +55,7 @@ endif
 
 ODIR = build/objs
 
-_OBJS = $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main"))
+_OBJS = $(patsubst %.c,%.o,$(shell find skull* -name "*.c" | grep -v "main"))
 
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 
@@ -65,4 +65,5 @@ DIRS := build/skull \
 	$(ODIR)/skull/eval/types \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common \
+	$(ODIR)/skullc \
 	$(ODIR)/test

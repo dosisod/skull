@@ -16,17 +16,21 @@ skull: setup | $(ODIR)/skull/main.o $(OBJS)
 	@echo "\033[92mLink\033[0m skull"
 	@$(CC) $(ODIR)/skull/main.o $(OBJS) -o build/skull/skull $(CFLAGS)
 
-skullc: skull | $(OBJS)
-	@echo "\033[92mCompile\033[0m skullc"
-	@$(CC) skullc/skullc.c $(OBJS) -o build/skullc/_skullc $(CFLAGS) $(LLVMFLAGS)
+skullc: skull | $(ODIR)/skullc/main.o
+	@echo "\033[92mLink\033[0m skullc"
+	@$(CC) $(ODIR)/skullc/main.o $(OBJS) -o build/skullc/_skullc $(CFLAGS) $(LLVMFLAGS)
 
 test: skull | $(ODIR)/test/main.o
-	@echo "\033[92mLink\033[0m tests"
+	@echo "\033[92mLink\033[0m test"
 	@$(CC) $(ODIR)/test/main.o $(OBJS) -o build/test/test $(CFLAGS)
 
 $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o $@ $(CFLAGS)
+
+$(ODIR)/skullc/%.o: skullc/%.c
+	@echo "\033[92mCompile\033[0m $<"
+	@$(CC) $< -c -o $@ $(CFLAGS) $(LLVMFLAGS)
 
 docs:
 	@echo "\033[92mBuild\033[0m docs"
