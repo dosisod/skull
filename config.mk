@@ -2,7 +2,7 @@ SKULL_VERSION := 0.1.1
 
 INSTALL := /usr/local
 
-CC := $(shell which cc)
+CC := cc
 CFLAGS = -std=c18 \
 	-Wall \
 	-Wextra \
@@ -34,7 +34,8 @@ CFLAGS = -std=c18 \
 	-DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
 	-I.
 
-LLVMFLAGS = $(shell llvm-config-9 --cflags --libs)
+LLVM_CFLAGS = $(shell llvm-config-9 --cflags)
+LLVM_LDFLAGS = $(shell llvm-config-9 --libs)
 
 #dont add gnu specific flags if compiling in clang
 ifeq ($(findstring clang,$(CC)),)
