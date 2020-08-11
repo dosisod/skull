@@ -14,5 +14,8 @@ Returns pointer to error message if one occurs, else `NULL`.
 Read from `fd`, eval with context `ctx`, and print out result.
 
 #### `char32_t *repl_read(FILE *fd)`
+Read from `fd`, add prompt if reading from `stdin`.
+
+#### `char32_t *repl_read_raw(FILE *fd)`
 Returns pointer to UTF-32 string read from file descriptor `fd`.
 

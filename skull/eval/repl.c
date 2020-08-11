@@ -215,13 +215,20 @@ void repl_loop(FILE *fd, context_t *ctx) {
 }
 
 /*
-Returns pointer to UTF-32 string read from file descriptor `fd`.
+Read from `fd`, add prompt if reading from `stdin`.
 */
 char32_t *repl_read(FILE *fd) {
 	if (fd==stdin) {
 		printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
 	}
 
+	return repl_read_raw(fd);
+}
+
+/*
+Returns pointer to UTF-32 string read from file descriptor `fd`.
+*/
+char32_t *repl_read_raw(FILE *fd) {
 	char *str=malloc(sizeof(char) * REPL_MAX_LINE_LEN);
 	DIE_IF_MALLOC_FAILS(str);
 
@@ -242,11 +249,6 @@ char32_t *repl_read(FILE *fd) {
 		c=getc(fd);
 	}
 	str[offset]='\0';
-
-	if (c==EOF) {
-		//add extra newline if control+d is pressed
-		putchar('\n');
-	}
 
 	char32_t *ret=mbstoc32s(str);
 

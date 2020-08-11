@@ -3,13 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <llvm-c/Core.h>
-
 #include "skull/common/main.h"
-#include "skull/common/malloc.h"
-#include "skull/eval/eval_integer.h"
 #include "skull/eval/repl.h"
-#include "skull/parse/ast/node.h"
+
+#include "skullc/ast.h"
 
 int main(int argc, char *argv[]) {
 	LLVMContextRef ctx = LLVMContextCreate();
@@ -45,49 +42,9 @@ int main(int argc, char *argv[]) {
 		puts("expected filename, exiting");
 		return 1;
 	}
-
 	HANDLE_MAIN;
 
-	char *str=malloc(sizeof(char) * REPL_MAX_LINE_LEN);
-	DIE_IF_MALLOC_FAILS(str);
-
-	size_t offset=0;
-	int c=getc(f);
-
-	while (c!=EOF) {
-		//read char by char until we need to reallocate more memory
-		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
-			char *new_str=realloc(str, sizeof(char) * (offset + REPL_MAX_LINE_LEN));
-			DIE_IF_MALLOC_FAILS(new_str);
-
-			str=new_str;
-		}
-		str[offset]=(char)c;
-		offset++;
-
-		c=getc(f);
-	}
-	str[offset]='\0';
-
-	char32_t *file_str=mbstoc32s(str);
-	free(str);
-
-	ast_node_t *node=make_ast_tree(file_str);
-	free(file_str);
-
-	if (node->node_type==AST_NODE_RETURN) {
-		const char32_t *error = NULL;
-		int64_t *num = eval_integer(node->token->next, &error);
-
-		LLVMBuildRet(
-			builder,
-			LLVMConstInt(
-				LLVMInt64TypeInContext(ctx),
-				(unsigned long long)*num,
-				true
-			)
-		);
-	}
+	str_to_llvm_ir(repl_read_raw(f), builder, ctx);
 
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(
@@ -96,7 +53,7 @@ int main(int argc, char *argv[]) {
 		&err
 	);
 
-	if (err!=NULL || status) {
+	if (err != NULL || status) {
 		puts("error occurred!");
 	}
 

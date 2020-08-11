@@ -54,11 +54,12 @@ else
 	CFLAGS += -Wno-newline-eof
 endif
 
-ODIR = build/objs
+_OBJS_SKULL := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main"))
+_OBJS_SKULLC := $(patsubst %.c,%.o,$(shell find skullc -name "*.c" | grep -v "main"))
 
-_OBJS = $(patsubst %.c,%.o,$(shell find skull* -name "*.c" | grep -v "main"))
-
-OBJS := $(addprefix $(ODIR)/,$(_OBJS))
+ODIR := build/objs
+OBJS_SKULL := $(addprefix $(ODIR)/,$(_OBJS_SKULL))
+OBJS_SKULLC := $(addprefix $(ODIR)/,$(_OBJS_SKULLC))
 
 DIRS := build/skull \
 	build/skullc \

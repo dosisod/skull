@@ -7,22 +7,23 @@ all: skull skullc test docs
 options:
 	@echo "\033[92mCC:\033[0m $(CC)"
 	@echo "\033[92mCFLAGS:\033[0m $(CFLAGS)"
-	@echo "\033[92mOBJS:\033[0m $(OBJS)"
+	@echo "\033[92mOBJS_SKULL:\033[0m $(OBJS_SKULL)"
+	@echo "\033[92mOBJS_SKULLC:\033[0m $(OBJS_SKULLC)"
 
 setup:
 	@mkdir $(DIRS) -p
 
-skull: setup | $(ODIR)/skull/main.o $(OBJS)
+skull: setup | $(ODIR)/skull/main.o $(OBJS_SKULL)
 	@echo "\033[92mLink\033[0m skull"
-	@$(CC) $(ODIR)/skull/main.o $(OBJS) -o build/skull/skull $(CFLAGS)
+	@$(CC) $(ODIR)/skull/main.o $(OBJS_SKULL) -o build/skull/skull $(CFLAGS)
 
-skullc: skull | $(ODIR)/skullc/main.o
+skullc: skull | $(ODIR)/skullc/main.o $(OBJS_SKULLC)
 	@echo "\033[92mLink\033[0m skullc"
-	@$(CC) $(ODIR)/skullc/main.o $(OBJS) -o build/skullc/_skullc $(CFLAGS) $(LLVM_LDFLAGS)
+	@$(CC) $(ODIR)/skullc/main.o $(OBJS_SKULL) $(OBJS_SKULLC) -o build/skullc/_skullc $(CFLAGS) $(LLVM_LDFLAGS)
 
 test: skull | $(ODIR)/test/main.o
 	@echo "\033[92mLink\033[0m test"
-	@$(CC) $(ODIR)/test/main.o $(OBJS) -o build/test/test $(CFLAGS)
+	@$(CC) $(ODIR)/test/main.o $(OBJS_SKULL) -o build/test/test $(CFLAGS)
 
 $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
