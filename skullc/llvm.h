@@ -5,3 +5,10 @@
 		true \
 	)
 
+#define LLVM_BOOL(ctx, val) \
+	LLVMConstInt( \
+		LLVMInt1TypeInContext(ctx), \
+		val, \
+		true \
+	)
+
