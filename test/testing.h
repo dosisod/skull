@@ -35,7 +35,7 @@ void run_single_test(test_t test, bool *pass) {
 
 		fail->next=NULL;
 
-		if (fails_head==NULL) {
+		if (!fails_head) {
 			fail->next=NULL;
 			fails_head=fail;
 			fails_last=fail;
@@ -54,18 +54,18 @@ void run_single_test(test_t test, bool *pass) {
 void run_many_tests(const char *name, tests_t tests, bool *pass) {
 	printf("%s ", name);
 
-	while(*tests!=NULL) {
+	while(*tests) {
 		run_single_test(*tests, pass);
 		tests++;
 	}
 
 	putchar('\n');
 
-	if (fails_head!=NULL) {
+	if (fails_head) {
 		fail_t *current=fails_head;
 		fail_t *tmp=NULL;
 
-		while (current!=NULL) {
+		while (current) {
 			printf("%s " COLOR_BOLD COLOR_RED_FG "FAILED\n" COLOR_RESET, current->name);
 
 			tmp=current;

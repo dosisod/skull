@@ -22,7 +22,7 @@ bool make_new_type(const char32_t *name, size_t bytes) {
 	type_t *current=TYPES_AVAILABLE;
 	type_t *last=current;
 
-	while (current!=NULL) {
+	while (current) {
 		if (c32scmp(current->name, name)) {
 			return false;
 		}
@@ -48,7 +48,7 @@ Returns pointer to type with name `name`.
 type_t *find_type(const char32_t *name) {
 	type_t *head=TYPES_AVAILABLE;
 
-	while (head!=NULL) {
+	while (head) {
 		if (c32scmp(name, head->name)) {
 			return head;
 		}
@@ -66,7 +66,7 @@ void free_types(void) {
 	type_t *head=TYPE_BOOL.next;
 	type_t *tmp;
 
-	while (head!=NULL) {
+	while (head) {
 		tmp=head;
 		head=head->next;
 		tmp->next=NULL;

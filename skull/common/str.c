@@ -55,7 +55,7 @@ If there is room between the end of `src` and `dest[n]`, fill it with NULL.
 void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
 	memset(dest, 0, n * sizeof(char32_t));
 
-	while (*src!=U'\0' && n>0) {
+	while (*src && n>0) {
 		*dest=*src;
 		src++;
 		dest++;
@@ -69,7 +69,7 @@ Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 The result of this function must be freed.
 */
 char *c32stombs(const char32_t *str) {
-	if (str==NULL) {
+	if (!str) {
 		return NULL;
 	}
 
@@ -80,7 +80,7 @@ char *c32stombs(const char32_t *str) {
 	size_t offset=0;
 	static mbstate_t mbs;
 
-	while (*str!=U'\0') {
+	while (*str) {
 		size_t length=c32rtomb(ret+offset, *str, &mbs);
 
 		if ((length==0) || (length>MB_CUR_MAX)) {
@@ -103,7 +103,7 @@ Return the size of a UTF-32 string.
 __attribute__((pure)) size_t c32slen(const char32_t *str) {
 	size_t len=0;
 
-	while (*str!=U'\0') {
+	while (*str) {
 		str++;
 		len++;
 	}
@@ -126,7 +126,7 @@ char32_t *mbstoc32s(const char *str) {
 	mbstate_t mbs;
 	memset(&mbs, 0, sizeof(mbstate_t));
 
-	while (*str!='\0') {
+	while (*str) {
 		size_t length=mbrtoc32(ret+offset, str, MB_CUR_MAX, &mbs);
 
 		if ((length==0) || (length>MB_CUR_MAX)) {
@@ -149,7 +149,7 @@ Compare two UTF-32 strings `a` and `b`.
 `a` and `b` must be of equal length, and match exactly.
 */
 __attribute__((pure)) bool c32scmp(const char32_t *a, const char32_t *b) {
-	while (*a!=U'\0' && *b!=U'\0') {
+	while (*a && *b) {
 		if (*a != *b) {
 			return false;
 		}
@@ -157,14 +157,14 @@ __attribute__((pure)) bool c32scmp(const char32_t *a, const char32_t *b) {
 		b++;
 	}
 
-	return (*a==U'\0' && *b==U'\0');
+	return !*a && !*b;
 }
 
 /*
 Compare at most `n` chars of two UTF-32 strings, `a` and `b`.
 */
 __attribute__((pure)) bool c32sncmp(const char32_t *a, const char32_t *b, size_t n) {
-	while (*a!=U'\0' && *b!=U'\0' && n>0) {
+	while (*a && *b && n>0) {
 		if (*a != *b) {
 			return false;
 		}
@@ -181,7 +181,7 @@ Return pointer to first occurence of `c` in `str`.
 If it cannot be found, NULL is returned instead.
 */
 __attribute__((pure)) const char32_t *c32schr(const char32_t *str, char32_t c) {
-	while (*str!=U'\0') {
+	while (*str) {
 		if (*str==c) {
 			return str;
 		}

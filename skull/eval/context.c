@@ -13,7 +13,7 @@ Add variable `var` to context `ctx`.
 Returns `true` if `var` was added, else `false`
 */
 bool context_add_var(context_t *ctx, variable_t *var) {
-	if (context_find_name(ctx, var->name)!=NULL) {
+	if (context_find_name(ctx, var->name)) {
 		return false;
 	}
 
@@ -27,7 +27,7 @@ bool context_add_var(context_t *ctx, variable_t *var) {
 Returns pointer to variable with matching `name` if found, else `NULL`
 */
 variable_t *context_find_name(const context_t *ctx, const char32_t *name) {
-	if (ctx==NULL) {
+	if (!ctx) {
 		return NULL;
 	}
 

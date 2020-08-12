@@ -2,7 +2,7 @@
 
 #define DO_MATH(str_type, real_type, oper) \
 	variable_t *ret=make_variable(str_type, U"tmp", false); \
-	if (ret==NULL) { \
+	if (!ret) { \
 		return NULL; \
 	} \
 	real_type lhs_tmp=0; \

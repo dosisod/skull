@@ -27,14 +27,14 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 	variable_t *rhs_var=context_find_name(ctx, rhs_str); \
 	free(lhs_str); \
 	free(rhs_str); \
-	if (lhs_var==NULL || rhs_var==NULL) { \
+	if (!lhs_var || !rhs_var) { \
 		return ERR_VAR_NOT_FOUND; \
 	} \
 	if (lhs_var->type!=rhs_var->type) { \
 		return (cannot); \
 	} \
 	variable_t *tmp=(func)(lhs_var, rhs_var); \
-	if (tmp==NULL) { \
+	if (!tmp) { \
 		return (unavail); \
 	} \
 	variable_write(var, tmp->mem); \

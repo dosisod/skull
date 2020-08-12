@@ -10,7 +10,7 @@
 TEST(repl_variable_declare, {
 	const char32_t *output=repl_eval(U"x: int = 0", NULL);
 
-	return output==NULL;
+	return !output;
 })
 
 TEST(repl_variable_declare_in_context, {
@@ -27,7 +27,7 @@ TEST(repl_variable_declare_in_context, {
 	variable_read(&ret, ctx->vars[0]);
 
 	const bool pass=(
-		output==NULL &&
+		!output &&
 		ret==1234
 	);
 
@@ -113,7 +113,7 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 
 	const bool pass=(
 		result==1111 &&
-		err==NULL
+		!err
 	);
 
 	free_context(ctx);
@@ -130,7 +130,7 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 	} \
 	real_type result=0; \
 	variable_read(&result, ctx->vars[0]); \
-	const bool pass=(output==NULL && (cmp)); \
+	const bool pass=(!output && (cmp)); \
 	free_context(ctx); \
 	return pass;
 
@@ -193,7 +193,7 @@ TEST(repl_write_to_const_var_fails, {
 	real_type ret=0; \
 	variable_read(&ret, ctx->vars[0]); \
 	const bool pass=( \
-		output==NULL && \
+		!output && \
 		(cmp) \
 	);\
 	free_context(ctx); \
@@ -242,7 +242,7 @@ TEST(repl_print_fail_with_trailing_tokens, {
 })
 
 TEST(repl_blank_line_returns_nothing, {
-	return repl_eval(U"", NULL)==NULL;
+	return !repl_eval(U"", NULL);
 })
 
 TEST(repl_invalid_input_returns_error, {
@@ -347,7 +347,7 @@ TEST(repl_assigning_variable_to_auto_type, {
 
 	const bool pass=(
 		data==1234 &&
-		output==NULL &&
+		!output &&
 		var->type==&TYPE_INT
 	);
 
@@ -406,7 +406,7 @@ TEST(repl_cannot_reassign_const, {
 	repl_eval(U"x := \"anything\"", ctx);
 
 	variable_t *var=context_find_name(ctx, U"x");
-	if (var==NULL) {
+	if (!var) {
 		free_context(ctx);
 		return false;
 	}

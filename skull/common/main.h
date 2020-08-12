@@ -11,17 +11,17 @@
 		puts("Skull " SKULL_VERSION); \
 		return 0; \
 	} \
-	if (strrstr(argv[1], ".sk")==NULL) { \
+	if (!strrstr(argv[1], ".sk")) { \
 		puts("missing required \".sk\" extension, exiting"); \
 		return 1; \
 	} \
-	if (strrstr(argv[1], "/.sk")!=NULL) { \
+	if (strrstr(argv[1], "/.sk")) { \
 		puts("\".sk\" is not a valid name, exiting"); \
 		return 1; \
 	} \
 	errno=0; \
 	FILE *f=fopen(argv[1], "re"); \
-	if (f==NULL) { \
+	if (!f) { \
 		if (errno==EACCES) { \
 			printf("cannot open \"%s\", permission denied\n", argv[1]); \
 		} \

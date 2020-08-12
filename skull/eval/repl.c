@@ -17,14 +17,14 @@
 Evaluates a string `str` given context `ctx`, returns result as a string (if any).
 */
 const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
-	if (*str==U'\0') {
+	if (!*str) {
 		return NULL;
 	}
 
 	ast_node_t *node=make_ast_tree(str);
 	const char32_t *ret=ERR_INVALID_INPUT;
 
-	if (node->token==NULL) {
+	if (!node->token) {
 		ret=ERR_INVALID_INPUT;
 	}
 
@@ -49,7 +49,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		variable_t *var=context_find_name(ctx, name);
 		free(name);
 
-		if (var==NULL) {
+		if (!var) {
 			return ERR_VAR_NOT_FOUND;
 		}
 
@@ -77,7 +77,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 			const variable_t *found_var=context_find_name(ctx, var_name);
 			free(var_name);
 
-			if (found_var!=NULL) {
+			if (found_var) {
 				if (found_var->type!=&TYPE_INT) {
 					ret=ERR_NON_INT_RETURN;
 				}
@@ -95,7 +95,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 			ret=NULL;
 			int64_t *num=eval_integer(node->token->next, &ret);
 
-			if (ret==NULL) {
+			if (!ret) {
 				free_ast_tree(node);
 				exit((int)*num);
 			}
@@ -114,11 +114,11 @@ Added variable will be constant if `is_const` is true.
 Returns pointer to error message if one occurs, else `NULL`.
 */
 const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_const) {
-	if (ctx==NULL) {
+	if (!ctx) {
 		return NULL;
 	}
 
-	if (node->next==NULL) {
+	if (!node->next) {
 		return ERR_MISSING_ASSIGNMENT;
 	}
 
@@ -162,7 +162,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 			variable_t *new_var=context_find_name(ctx, lookup);
 			free(lookup);
 
-			if (new_var==NULL) {
+			if (!new_var) {
 				free(name);
 				return ERR_VAR_NOT_FOUND;
 			}
@@ -184,7 +184,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 	const char32_t *tmp=eval_assign(var, node->next, ctx);
 	var->is_const=is_const;
 
-	if (tmp!=NULL) {
+	if (tmp) {
 		free_variable(var);
 		return tmp;
 	}
@@ -203,7 +203,7 @@ void repl_loop(FILE *fd, context_t *ctx) {
 
 	const char32_t *tmp=repl_eval(line, ctx);
 	char *output=c32stombs(tmp);
-	if (output!=NULL) {
+	if (output) {
 		puts(output);
 	}
 

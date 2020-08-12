@@ -20,11 +20,11 @@ TEST(make_new_type, {
 	current=(TYPES_AVAILABLE)->next;
 	type_t *last=TYPES_AVAILABLE;
 
-	if (current==NULL) {
+	if (!current) {
 		return false;
 	}
 
-	while (current->next!=NULL) {
+	while (current->next) {
 		last=current;
 		current=current->next;
 	}
@@ -39,12 +39,12 @@ TEST(make_new_type_rejects_non_unique_type, {
 	const bool inserted1=make_new_type(U"test_type", 1);
 
 	type_t *type=find_type(U"test_type");
-	if (type==NULL) {
+	if (!type) {
 		return false;
 	}
 
 	const bool inserted2=make_new_type(U"test_type", 1);
-	if (type->next!=NULL) {
+	if (type->next) {
 		return false;
 	}
 
@@ -68,7 +68,7 @@ TEST(free_types, {
 	make_new_type(U"test_type", 1);
 
 	free_types();
-	return TYPE_BOOL.next==NULL;
+	return !TYPE_BOOL.next;
 })
 
 TEST(append_default_types, {

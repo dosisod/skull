@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
 		&err
 	);
 
-	if (err != NULL || status) {
+	if (err || status) {
 		puts("error occurred!");
 	}
 

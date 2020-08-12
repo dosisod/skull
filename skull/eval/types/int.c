@@ -39,7 +39,7 @@ If `rhs` is zero, return NULL.
 */
 variable_t *div_int_type(const variable_t *lhs, const variable_t *rhs) {
 	variable_t *ret=make_variable(U"int", U"tmp", false);
-	if (ret==NULL) {
+	if (!ret) {
 		return NULL;
 	}
 	int64_t rhs_tmp=0;

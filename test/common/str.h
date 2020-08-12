@@ -13,7 +13,7 @@ TEST(strrstr, {
 
 	return (
 		strrstr(str1, "a")==(str1 + 4) &&
-		strrstr(str1, "b")==NULL &&
+		!strrstr(str1, "b") &&
 		strrstr(str2, "ab")==(str2 + 4) &&
 		strrstr(str3, "abc")==str3
 	);
@@ -79,7 +79,7 @@ TEST(c32stombs, {
 })
 
 TEST(c32stombs_with_null, {
-	return c32stombs(NULL)==NULL;
+	return !c32stombs(NULL);
 })
 
 TEST(mbstoc32s, {
@@ -121,7 +121,7 @@ TEST(c32schr, {
 		c32schr(str, U'a')==str &&
 		c32schr(str, U'b')==(str + 1) &&
 		c32schr(str, U'c')==(str + 2) &&
-		c32schr(str, U'x')==NULL
+		!c32schr(str, U'x')
 	);
 })
 

@@ -32,7 +32,7 @@ TEST(divide_by_zero, {
 	const int64_t num=0;
 	variable_write(var, &num);
 
-	const bool pass=(eval_div(var, var)==NULL);
+	const bool pass = !eval_div(var, var);
 
 	free_variable(var);
 
@@ -67,7 +67,7 @@ TEST(dividing_vars_with_different_types_fail, {
 	variable_t *var2=make_variable(U"float", U"var2", false);
 	variable_t *var3=eval_div(var1, var2);
 
-	const bool pass=(var3==NULL);
+	const bool pass = !var3;
 
 	free_variable(var1);
 	free_variable(var2);

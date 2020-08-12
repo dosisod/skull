@@ -9,8 +9,8 @@ TEST(make_context, {
 
 	const bool pass=(
 		ctx->vars_used==0 &&
-		ctx->child==NULL &&
-		ctx->parent==NULL
+		!ctx->child &&
+		!ctx->parent
 	);
 
 	free(ctx);
@@ -26,7 +26,7 @@ TEST(context_find_name, {
 
 	const bool pass=(
 		context_find_name(ctx, U"x")==var &&
-		context_find_name(ctx, U"y")==NULL
+		!context_find_name(ctx, U"y")
 	);
 
 	free(var);
@@ -127,7 +127,7 @@ TEST(free_context, {
 })
 
 TEST(context_find_name_when_null, {
-	return context_find_name(NULL, U"anything")==NULL;
+	return !context_find_name(NULL, U"anything");
 })
 
 void context_test_self(bool *pass) {

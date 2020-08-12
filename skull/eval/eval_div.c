@@ -9,7 +9,7 @@ variable_t *eval_div(const variable_t *lhs, const variable_t *rhs) {
 	if (lhs->type!=rhs->type) {
 		return NULL;
 	}
-	if (lhs->type!=NULL && lhs->type->divide!=NULL) {
+	if (lhs->type && lhs->type->divide) {
 		return lhs->type->divide(lhs, rhs);
 	}
 	return NULL;

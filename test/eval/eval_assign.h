@@ -442,7 +442,7 @@ TEST(eval_assign_variable_to_another, {
 	variable_read(&data, var1);
 
 	const bool pass=(
-		output==NULL &&
+		!output &&
 		data==1234
 	);
 
@@ -530,7 +530,7 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	variable_read(&after_var2, var2);
 
 	const bool pass=(
-		output==NULL &&
+		!output &&
 		c32scmp(after_var1, str2) &&
 		c32scmp(after_var2, str2) &&
 		after_var1!=after_var2
@@ -552,7 +552,7 @@ TEST(eval_assign_type_type, {
 	variable_read(&after, var);
 
 	const bool pass=(
-		output==NULL &&
+		!output &&
 		after==&TYPE_INT
 	);
 

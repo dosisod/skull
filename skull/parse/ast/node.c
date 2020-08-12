@@ -107,7 +107,7 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 	ast_node_t *node=make_ast_node();
 	ast_node_t *head=node;
 
-	while (token!=NULL) {
+	while (token) {
 		last=token;
 
 		TRY_PUSH_AST_NODE(ast_node_var_combo, AST_NODE_VAR_DEF);
@@ -148,7 +148,7 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		token=token->next;
 	}
 
-	if (node->last!=NULL) {
+	if (node->last) {
 		node->last->next=NULL;
 		node->last=NULL;
 		free(node);
@@ -174,7 +174,7 @@ token_t *ast_token_cmp(token_t *token, int *token_type) {
 	token_t *head=token;
 	token_t *last=head;
 
-	while (token!=NULL && *token_type!=-1) {
+	while (token && *token_type!=-1) {
 		if (token->token_type!=*token_type && *token_type!=TOKEN_ANY_NON_BRACKET_TOKEN) {
 			return head;
 		}

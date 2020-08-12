@@ -14,7 +14,7 @@
 	const char32_t *err=0; \
 	int64_t *num=eval_integer(token, &err); \
 	const bool pass=( \
-		(num==NULL || *num==(expected_num)) && \
+		(!num || *num==(expected_num)) && \
 		err==(expected_error) \
 	); \
 	free(token); \

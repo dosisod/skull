@@ -62,10 +62,10 @@ TEST(whitespace_between_tokens, {
 	token_t *t=tokenize(code);
 
 	const bool pass=(
-		t->begin==&code[0] &&
-		t->end==&code[6] &&
-		t->next->begin==&code[9] &&
-		t->next->end==&code[15]
+		t->begin==code &&
+		t->end==(code + 6) &&
+		t->next->begin==(code + 9) &&
+		t->next->end==(code + 15)
 	);
 
 	free(t->next);
@@ -79,8 +79,8 @@ TEST(whitespace_at_eol_ignored, {
 	token_t *t=tokenize(code);
 
 	const bool pass=(
-		t->begin==&code[0] &&
-		t->end==&code[5]
+		t->begin==code &&
+		t->end==(code + 5)
 	);
 
 	free(t);
@@ -93,9 +93,9 @@ TEST(whitespace_inside_double_quotes_respected, {
 	token_t *t=tokenize(code);
 
 	const bool pass=(
-		t->next==NULL &&
-		t->begin==&code[0] &&
-		t->end==&code[24]
+		!t->next &&
+		t->begin==code &&
+		t->end==(code + 24)
 	);
 
 	free(t);
@@ -108,9 +108,9 @@ TEST(whitespace_inside_single_quotes_respected, {
 	token_t *t=tokenize(code);
 
 	const bool pass=(
-		t->next==NULL &&
-		t->begin==&code[0] &&
-		t->end==&code[24]
+		!t->next &&
+		t->begin==code &&
+		t->end==(code + 24)
 	);
 
 	free(t);
@@ -125,13 +125,13 @@ TEST(brackets_always_make_their_own_token, {
 	const bool pass=(
 		t->begin==code &&
 		t->end==(code + 4) &&
-		t->next!=NULL &&
+		t->next &&
 		t->next->begin==(code + 4) &&
 		t->next->end==(code + 5) &&
-		t->next->next!=NULL &&
+		t->next->next &&
 		t->next->next->begin==(code + 5) &&
 		t->next->next->end==(code + 6) &&
-		t->next->next->next!=NULL &&
+		t->next->next->next &&
 		t->next->next->next->begin==(code + 6) &&
 		t->next->next->next->end==(code + 11)
 	);
@@ -146,9 +146,9 @@ TEST(comma_makes_their_own_token, {
 	token_t *t=tokenize(code);
 
 	const bool pass=(
-		t->next!=NULL &&
-		t->next->begin==&code[4] &&
-		t->next->end==&code[5]
+		t->next &&
+		t->next->begin==(code + 4) &&
+		t->next->end==(code + 5)
 	);
 
 	free(t);
@@ -161,9 +161,9 @@ TEST(newlines_makes_their_own_token, {
 	token_t *t=tokenize(code);
 
 	const bool pass=(
-		t->next!=NULL &&
-		t->next->begin==&code[4] &&
-		t->next->end==&code[5]
+		t->next &&
+		t->next->begin==(code + 4) &&
+		t->next->end==(code + 5)
 	);
 
 	free(t);
@@ -279,10 +279,10 @@ TEST(make_token, {
 	token_t *token=make_token();
 
 	const bool pass=(
-		token->begin==NULL &&
-		token->end==NULL &&
-		token->token_type==0 &&
-		token->next==NULL
+		!token->begin &&
+		!token->end &&
+		!token->token_type &&
+		!token->next
 	);
 
 	free(token);

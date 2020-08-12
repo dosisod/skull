@@ -94,7 +94,7 @@ Classify all tokens pointed to from `token`.
 void classify_tokens(token_t *head) {
 	token_t *current=head;
 
-	while (current!=NULL) {
+	while (current) {
 		classify_token(current);
 		current=current->next;
 	}
@@ -164,7 +164,11 @@ Examples: `'x'` and `' '`.
 Won't work: `''`, `'x '`, or `' x'`.
 */
 bool is_constant_char_str(const char32_t *str) {
-	return c32slen(str)==3 && str[0]=='\'' && str[2]=='\'';
+	return (
+		c32slen(str)==3 &&
+		str[0]=='\''
+		&& str[2]=='\''
+	);
 }
 
 /*
@@ -175,7 +179,11 @@ Examples: `""` and `"hello"`.
 bool is_constant_str_str(const char32_t *str) {
 	const size_t len=c32slen(str);
 
-	return len>=2 && str[0]==U'\"' && str[len - 1]==U'\"';
+	return (
+		len>=2 &&
+		str[0]==U'\"' &&
+		str[len - 1]==U'\"'
+	);
 }
 
 /*

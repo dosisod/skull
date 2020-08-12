@@ -34,7 +34,7 @@ const char32_t *func_print(ast_node_t *node, context_t *ctx) {
 	const variable_t *var=context_find_name(ctx, name);
 	free(name);
 
-	if (var==NULL) {
+	if (!var) {
 		return ERR_VAR_NOT_FOUND;
 	}
 	return fmt_var(var);
@@ -44,7 +44,7 @@ const char32_t *func_print(ast_node_t *node, context_t *ctx) {
 Returns `true` if the given node is a function name.
 */
 bool is_func_name(const ast_node_t *node) {
-	if (node==NULL || node->token==NULL) {
+	if (!node || !node->token) {
 		return false;
 	}
 	char32_t *name=token_str(node->token);

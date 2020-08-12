@@ -20,8 +20,8 @@ TEST(make_ast_node_struct, {
 		node.node_type==AST_NODE_UNKNOWN &&
 		node.token->begin==token->begin &&
 		node.token_end->end==token->end &&
-		node.last==NULL &&
-		node.next==NULL
+		!node.last &&
+		!node.next
 	);
 })
 
@@ -30,10 +30,10 @@ TEST(make_ast_node, {
 
 	const bool pass=(
 		node->node_type==AST_NODE_UNKNOWN &&
-		node->token==NULL &&
-		node->token_end==NULL &&
-		node->last==NULL &&
-		node->next==NULL
+		!node->token &&
+		!node->token_end &&
+		!node->last &&
+		!node->next
 	);
 
 	free(node);
@@ -132,7 +132,7 @@ TEST(push_ast_node, {
 	push_ast_node(token, &last, AST_NODE_VAR_DEF, &node);
 
 	const bool pass=(
-		tmp->last==NULL &&
+		!tmp->last &&
 		tmp->next==node &&
 		tmp->next->last==tmp
 	);
@@ -148,8 +148,8 @@ TEST(push_ast_node, {
 		node->node_type==(type) && \
 		node->token->begin==(code + (begin_offset)) && \
 		node->token_end->end==(code + (end_offset)) && \
-		node->last==NULL && \
-		node->next==NULL \
+		!node->last && \
+		!node->next \
 	); \
 	free(node); \
 	return pass;
@@ -178,9 +178,9 @@ TEST(make_ast_tree_with_whitespace, {
 	ast_node_t *node=make_ast_tree(U"");
 
 	const bool pass=(
-		node!=NULL &&
-		node->next==NULL &&
-		node->token==NULL
+		node &&
+		!node->next &&
+		!node->token
 	);
 
 	free(node);

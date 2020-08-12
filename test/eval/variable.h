@@ -16,7 +16,7 @@ TEST(create_variable, {
 		c32scmp(var->name, U"x") &&
 		var->is_const &&
 		var->bytes==8 &&
-		var->mem != NULL
+		var->mem
 	);
 
 	free_variable(var);
@@ -25,7 +25,7 @@ TEST(create_variable, {
 })
 
 TEST(create_variable_with_invalid_type_fails, {
-	return (make_variable(U"not_a_type", U"x", true)==NULL);
+	return !make_variable(U"not_a_type", U"x", true);
 })
 
 TEST(variable_write, {
@@ -38,7 +38,7 @@ TEST(variable_write, {
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
-		ret==NULL &&
+		!ret &&
 		val==1234
 	);
 
@@ -84,7 +84,7 @@ TEST(variable_read, {
 TEST(make_variable_with_invalid_name_fails, {
 	variable_t *var=make_variable(U"int", U"1nvalid", false);
 
-	const bool pass=(var==NULL);
+	const bool pass = !var;
 
 	free_variable(var);
 
@@ -94,7 +94,7 @@ TEST(make_variable_with_invalid_name_fails, {
 TEST(free_variable, {
 	variable_t *var=make_variable(U"int", U"x", true);
 
-	if (var==NULL || var->mem==NULL) {
+	if (!var || !var->mem) {
 		free_variable(var);
 		return false;
 	}
@@ -116,7 +116,7 @@ TEST(free_null_variable_is_ok, {
 	variable_write(var, &data); \
 	char32_t *str=fmt_var(var); \
 	const bool pass=( \
-		str!=NULL && \
+		str && \
 		c32scmp(expected, str) \
 	); \
 	free(str); \
@@ -172,7 +172,7 @@ TEST(fmt_var_str, {
 	char32_t *str=fmt_var(var);
 
 	const bool pass=(
-		str!=NULL &&
+		str &&
 		c32scmp(U"abc", str)
 	);
 

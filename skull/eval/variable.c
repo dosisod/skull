@@ -16,7 +16,7 @@ Return string representation of the variable `var`.
 The result of this function must be freed.
 */
 char32_t *fmt_var(const variable_t *var) {
-	if (var->type==NULL || var->type->to_string==NULL) {
+	if (!var->type || !var->type->to_string) {
 		return NULL;
 	}
 	return var->type->to_string(var);
@@ -37,7 +37,7 @@ Returns `NULL` if var cannot be created, else pointer to created var.
 variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_const) {
 	type_t *found_type=find_type(type);
 
-	if (found_type==NULL || !is_valid_identifier_str(name)) {
+	if (!found_type || !is_valid_identifier_str(name)) {
 		return NULL;
 	}
 
@@ -80,7 +80,7 @@ const char32_t *variable_write(const variable_t *var, const void *data) {
 Free variable `var` and its internal memory.
 */
 void free_variable(variable_t *var) {
-	if (var!=NULL) {
+	if (var) {
 		free((char32_t*)var->name);
 		free(var->mem);
 		free(var);

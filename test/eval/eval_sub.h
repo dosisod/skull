@@ -55,7 +55,7 @@ TEST(subtracting_vars_with_different_types_fail, {
 	variable_t *var2=make_variable(U"float", U"var2", false);
 	variable_t *var3=eval_sub(var1, var2);
 
-	const bool pass=(var3==NULL);
+	const bool pass = !var3;
 
 	free_variable(var1);
 	free_variable(var2);

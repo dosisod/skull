@@ -17,7 +17,7 @@ const char32_t *find_line_comment(const char32_t *code) {
 		return code + code_len;
 	}
 
-	while (*code!=U'\0') {
+	while (*code) {
 		if (c32sncmp(LINE_COMMENT, code, LINE_COMMENT_LEN)) {
 			return code;
 		}

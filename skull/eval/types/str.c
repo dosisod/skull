@@ -23,7 +23,7 @@ Concatenate `lhs` and `rhs` strings
 */
 variable_t *add_str_type(const variable_t *lhs, const variable_t *rhs) {
 	variable_t *ret=make_variable(U"str", U"tmp", false);
-	if (ret==NULL) {
+	if (!ret) {
 		return NULL;
 	}
 

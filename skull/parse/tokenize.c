@@ -26,12 +26,12 @@ token_t *tokenize(const char32_t *code) {
 	token_t *current=head;
 	token_t *last=current;
 
-	char32_t quote=0;
+	char32_t quote=false;
 
 	//true if first line is a valid shebang comment
 	bool comment=(
-		code[0]!=U'\0' &&
-		code[1]!=U'\0' &&
+		code[0] &&
+		code[1] &&
 		c32sncmp(code, U"#!", 2)
 	);
 
@@ -39,7 +39,7 @@ token_t *tokenize(const char32_t *code) {
 		current->begin=code;
 	}
 
-	while (*code!=U'\0') {
+	while (*code) {
 		if (comment) {
 			if (*code==U'\n') {
 				comment=false;
@@ -48,27 +48,27 @@ token_t *tokenize(const char32_t *code) {
 		else if (!comment && c32sncmp(code, LINE_COMMENT, LINE_COMMENT_LEN)) {
 			comment=true;
 
-			if (current->begin==NULL) {
+			if (!current->begin) {
 				current->begin=code;
 			}
 			else {
 				PINCH_TOKEN;
 			}
 		}
-		else if (quote!=0) {
+		else if (quote) {
 			if (*code==quote) {
-				quote=0;
+				quote=false;
 			}
 		}
 		else if (!quote && is_quote(*code)) {
 			quote=*code;
 
-			if (current->begin==NULL) {
+			if (!current->begin) {
 				current->begin=code;
 			}
 		}
 		else if (*code==U'[' || *code==U']' || *code==U',' || *code==U'\n') {
-			if (current->begin==NULL) {
+			if (!current->begin) {
 				current->begin=code;
 				current->end=code+1;
 			}
@@ -82,12 +82,12 @@ token_t *tokenize(const char32_t *code) {
 			current->next=next_token;
 			current=next_token;
 		}
-		else if (current->begin==NULL) {
+		else if (!current->begin) {
 			if (!is_whitespace(*code)) {
 				current->begin=code;
 			}
 		}
-		else if (current->end==NULL) {
+		else if (!current->end) {
 			if (is_whitespace(*code)) {
 				current->end=code;
 
@@ -102,7 +102,7 @@ token_t *tokenize(const char32_t *code) {
 	}
 
 	//close dangling token if there was no whitespace at EOF
-	if (current->begin!=NULL) {
+	if (current->begin) {
 		current->end=code;
 	}
 	//if there is a no token to be created, pop last token
@@ -190,7 +190,7 @@ Free all tokens from `head` and beyond.
 void free_tokens(token_t *head) {
 	token_t *tmp;
 
-	while (head!=NULL) {
+	while (head) {
 		tmp=head;
 		head=head->next;
 		tmp->next=NULL;

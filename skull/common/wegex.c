@@ -15,7 +15,7 @@ Returns true if the `wegex` string matches the `match` string.
 bool wegex_match(const char32_t *wegex, const char32_t *match) {
 	const char32_t *wegex_end=wegex;
 
-	while (*wegex!=U'\0' && *match!=U'\0') {
+	while (*wegex && *match) {
 		if (*wegex==U'*') {
 			wegex++;
 			wegex_end=find_next_wegex(wegex);
@@ -85,7 +85,7 @@ const char32_t *find_next_wegex(const char32_t* wegex) {
 
 	const char32_t *bracket=c32schr(wegex, U']');
 
-	if (bracket!=NULL) {
+	if (bracket) {
 		return bracket;
 	}
 

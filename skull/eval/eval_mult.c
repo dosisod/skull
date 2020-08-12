@@ -9,7 +9,7 @@ variable_t *eval_mult(const variable_t *lhs, const variable_t *rhs) {
 	if (lhs->type!=rhs->type) {
 		return NULL;
 	}
-	if (lhs->type!=NULL && lhs->type->multiply!=NULL) {
+	if (lhs->type && lhs->type->multiply) {
 		return lhs->type->multiply(lhs, rhs);
 	}
 	return NULL;

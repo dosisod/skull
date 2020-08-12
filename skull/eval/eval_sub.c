@@ -9,7 +9,7 @@ variable_t *eval_sub(const variable_t *lhs, const variable_t *rhs) {
 	if (lhs->type!=rhs->type) {
 		return NULL;
 	}
-	if (lhs->type!=NULL && lhs->type->subtract!=NULL) {
+	if (lhs->type && lhs->type->subtract) {
 		return lhs->type->subtract(lhs, rhs);
 	}
 	return NULL;
