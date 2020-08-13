@@ -46,6 +46,22 @@ void var_to_llvm_ir(variable_t *var, LLVMBuilderRef builder, LLVMContextRef ctx)
 			ir_var
 		);
 	}
+	else if (var->type == &TYPE_CHAR) {
+		LLVMValueRef ir_var = LLVMBuildAlloca(
+			builder,
+			LLVMInt32TypeInContext(ctx),
+			var_name
+		);
+
+		char32_t c = U'\0';
+		variable_read(&c, var);
+
+		LLVMBuildStore(
+			builder,
+			LLVM_CHAR(ctx, c),
+			ir_var
+		);
+	}
 
 	free(var_name);
 }

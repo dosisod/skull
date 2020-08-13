@@ -12,3 +12,10 @@
 		true \
 	)
 
+#define LLVM_CHAR(ctx, c) \
+	LLVMConstInt( \
+		LLVMInt32TypeInContext(ctx), \
+		c, \
+		true \
+	)
+
