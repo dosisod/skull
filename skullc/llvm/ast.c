@@ -5,9 +5,10 @@
 #include "skull/eval/eval_integer.h"
 #include "skull/eval/repl.h"
 
-#include "skullc/ast.h"
-#include "skullc/llvm.h"
-#include "skullc/var.h"
+#include "skullc/llvm/aliases.h"
+#include "skullc/llvm/var.h"
+
+#include "skullc/llvm/ast.h"
 
 /*
 Convert skull code from `str` into LLVM IR (using `builder` and `ctx).

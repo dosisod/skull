@@ -4,9 +4,9 @@
 
 #include "skull/common/str.h"
 
-#include "skullc/llvm.h"
+#include "skullc/llvm/aliases.h"
 
-#include "skullc/var.h"
+#include "skullc/llvm/var.h"
 
 /*
 Convert a Skull variable `var` into the LLVM IR equivalent.

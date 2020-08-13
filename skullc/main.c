@@ -6,7 +6,7 @@
 #include "skull/common/main.h"
 #include "skull/eval/repl.h"
 
-#include "skullc/ast.h"
+#include "skullc/llvm/ast.h"
 
 int main(int argc, char *argv[]) {
 	LLVMContextRef ctx = LLVMContextCreate();
