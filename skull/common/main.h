@@ -7,7 +7,7 @@
 		puts("too many arguments passed, exiting"); \
 		return 1; \
 	} \
-	if (strcmp("-v", argv[1])==0) { \
+	if (strcmp("-v", argv[1]) == 0) { \
 		puts("Skull " SKULL_VERSION); \
 		return 0; \
 	} \
@@ -15,12 +15,12 @@
 		puts("missing required \".sk\" extension, exiting"); \
 		return 1; \
 	} \
-	if (strrstr(argv[1], "/.sk")) { \
+	if (strrstr(argv[1], ".sk") == argv[1] || strrstr(argv[1], "/.sk")) { \
 		puts("\".sk\" is not a valid name, exiting"); \
 		return 1; \
 	} \
-	errno=0; \
-	FILE *f=fopen(argv[1], "re"); \
+	errno = 0; \
+	FILE *f = fopen(argv[1], "re"); \
 	if (!f) { \
 		if (errno==EACCES) { \
 			printf("cannot open \"%s\", permission denied\n", argv[1]); \
