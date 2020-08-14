@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-$(dirname $0)/_skullc $@ || exit 1
+$(dirname $0)/_skullc $1 || exit 1
 
-llc-9 .tmp.ll -filetype=obj || exit 1
-rm .tmp.ll
+base=$(dirname $1)/.$(basename $1)
 
-cc .tmp.o -o "${1%.*}"
-rm .tmp.o
+llc-9 $base.ll -filetype=obj || exit 1
+rm $base.ll
+
+cc $base.o -o "${1%.*}"
+rm $base.o

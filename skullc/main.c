@@ -46,15 +46,35 @@ int main(int argc, char *argv[]) {
 
 	str_to_llvm_ir(repl_read_raw(f), builder, ctx);
 
+	size_t len = strlen(argv[1]);
+	char *ll_filename = malloc(sizeof(char) * (len + 5));
+
+	char *slash_pos = strrchr(argv[1], '/');
+	if (!slash_pos) {
+		ll_filename[0] = '.';
+		memcpy(ll_filename + 1, argv[1], len);
+	}
+	else {
+		long offset = (long)(slash_pos - argv[1]);
+
+		memcpy(ll_filename, argv[1], len);
+		ll_filename[offset + 1] = '.';
+		memcpy(ll_filename + offset + 2, slash_pos + 1, len - (size_t)offset);
+	}
+	memcpy(ll_filename + len + 1, ".ll\0", 4);
+
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(
 		main_module,
-		".tmp.ll",
+		ll_filename,
 		&err
 	);
+	free(ll_filename);
 
 	if (err || status) {
-		puts("error occurred!");
+		printf("error occurred: %s\n", err);
+		LLVMDisposeMessage(err);
+		return 1;
 	}
 
 	LLVMDisposeMessage(err);
