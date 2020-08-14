@@ -19,3 +19,8 @@
 		true \
 	)
 
+#define LLVM_FLOAT(ctx, str) \
+	LLVMConstRealOfString( \
+		LLVMFP128TypeInContext(ctx), \
+		str \
+	)
