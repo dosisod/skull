@@ -1,7 +1,7 @@
 #include <errno.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "skull/common/main.h"
 #include "skull/eval/repl.h"
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 	str_to_llvm_ir(repl_read_raw(f), builder, ctx);
 
 	size_t len = strlen(argv[1]);
-	char *ll_filename = malloc(sizeof(char) * (len + 5));
+	char *ll_filename = malloc(sizeof(char) * (len + 5)); // NOLINT
 
 	char *slash_pos = strrchr(argv[1], '/');
 	if (!slash_pos) {
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 		memcpy(ll_filename + 1, argv[1], len);
 	}
 	else {
-		long offset = (long)(slash_pos - argv[1]);
+		long offset = slash_pos - argv[1];
 
 		memcpy(ll_filename, argv[1], len);
 		ll_filename[offset + 1] = '.';

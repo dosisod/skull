@@ -2,6 +2,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifndef SKULL_VERSION
+#define SKULL_VERSION "<version unknown>"
+#endif
+
 #define HANDLE_MAIN \
 	if (argc > 2) { \
 		puts("too many arguments passed, exiting"); \

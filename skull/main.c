@@ -6,10 +6,6 @@
 #include "skull/eval/file.h"
 #include "skull/eval/repl.h"
 
-#ifndef SKULL_VERSION
-#define SKULL_VERSION "<version unknown>"
-#endif
-
 /*
 If no parameters are passed, run in interactive (repl) mode.
 

@@ -1,4 +1,4 @@
-SKULL_VERSION := 0.1.1
+SKULL_VERSION := 0.2.1
 
 INSTALL := /usr/local
 
