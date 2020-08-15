@@ -9,8 +9,7 @@ TEST(make_context, {
 
 	const bool pass=(
 		ctx->vars_used==0 &&
-		!ctx->child &&
-		!ctx->parent
+		!ctx->child
 	);
 
 	free(ctx);
@@ -74,47 +73,6 @@ TEST(cannot_add_same_varname_to_context, {
 	return pass;
 })
 
-TEST(add_nested_context, {
-	context_t *ctx=make_context();
-	context_t *ctx_new=make_context();
-
-	context_add_ctx(ctx, ctx_new);
-
-	const bool pass=(
-		ctx->child==ctx_new &&
-		ctx->child->parent==ctx
-	);
-
-	free_context(ctx_new);
-	free_context(ctx);
-
-	return pass;
-})
-
-TEST(cannot_add_same_varname_to_sub_context, {
-	context_t *ctx=make_context();
-	variable_t *var1=make_variable(U"int", U"x", true);
-	context_add_var(ctx, var1);
-
-	context_t *ctx_new=make_context();
-	context_add_ctx(ctx, ctx_new);
-
-	variable_t *var2=make_variable(U"int", U"x", true);
-	context_add_var(ctx_new, var2);
-
-	const bool pass=(
-		ctx->vars_used==1 &&
-		ctx_new->vars_used==0 &&
-		ctx->vars[0]==var1
-	);
-
-	free_variable(var2);
-	free_context(ctx_new);
-	free_context(ctx);
-
-	return pass;
-})
-
 TEST(free_context, {
 	context_t *ctx=make_context();
 	variable_t *var=make_variable(U"int", U"x", true);
@@ -136,8 +94,6 @@ void context_test_self(bool *pass) {
 		test_context_find_name,
 		test_add_vars_to_context,
 		test_cannot_add_same_varname_to_context,
-		test_add_nested_context,
-		test_cannot_add_same_varname_to_sub_context,
 		test_free_context,
 		test_context_find_name_when_null,
 		NULL

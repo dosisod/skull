@@ -38,10 +38,6 @@ variable_t *context_find_name(const context_t *ctx, const char32_t *name) {
 		}
 		tmp++;
 	}
-
-	if (ctx->parent) {
-		return context_find_name(ctx->parent, name);
-	}
 	return NULL;
 }
 
@@ -53,14 +49,6 @@ context_t *make_context(void) {
 	DIE_IF_MALLOC_FAILS(ctx);
 
 	return ctx;
-}
-
-/*
-Add another nested context to an existing context.
-*/
-void context_add_ctx(context_t *ctx, context_t *ctx_new) {
-	ctx->child=ctx_new;
-	ctx_new->parent=ctx;
 }
 
 /*

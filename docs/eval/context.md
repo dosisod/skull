@@ -11,9 +11,6 @@ Returns pointer to variable with matching `name` if found, else `NULL`
 #### `context_t *make_context(void)`
 Returns a new variable context.
 
-#### `void context_add_ctx(context_t *ctx, context_t *ctx_new)`
-Add another nested context to an existing context.
-
 #### `void free_context(context_t *ctx)`
 Frees a context `ctx` and all the variables inside of it.
 
