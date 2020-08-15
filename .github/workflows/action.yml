@@ -71,3 +71,11 @@ jobs:
       run: |
         skullc skullc/main.sk
         ./skullc/main
+
+  test-precommit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Run pre-commit file
+      run: ./pre-commit
