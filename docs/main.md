@@ -1,7 +1,10 @@
 # skull/main.c
 
-#### `int main(int argc, char *argv[])`
-If no parameters are passed, run in interactive (repl) mode.
+```c
+int main(int argc, char *argv[])
+```
 
-Else, run a passed in `.sk` file.
+> If no parameters are passed, run in interactive (repl) mode.
+> \
+> Else, run a passed in `.sk` file.
 

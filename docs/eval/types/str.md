@@ -1,11 +1,20 @@
 # skull/eval/types/str.c
 
-#### `char32_t *fmt_str_type(const variable_t *var)`
-Returns the string representation of string `var`
+```c
+char32_t *fmt_str_type(const variable_t *var)
+```
 
-#### `variable_t *add_str_type(const variable_t *lhs, const variable_t *rhs)`
-Concatenate `lhs` and `rhs` strings
+> Returns the string representation of string `var`
 
-#### `void *eval_str(const token_t *token, const char32_t **error)`
-Return pointer to string, converted from `token`
+```c
+variable_t *add_str_type(const variable_t *lhs, const variable_t *rhs)
+```
+
+> Concatenate `lhs` and `rhs` strings
+
+```c
+void *eval_str(const token_t *token, const char32_t **error)
+```
+
+> Return pointer to string, converted from `token`
 
