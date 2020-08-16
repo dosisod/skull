@@ -30,13 +30,13 @@ TEST(multiplying_2_floats, {
 	variable_t *var1=make_variable(U"float", U"var1", false);
 	variable_t *var2=make_variable(U"float", U"var2", false);
 
-	const long double num1=2.0L;
+	const double num1=2.0;
 	variable_write(var1, &num1);
-	const long double num2=3.0L;
+	const double num2=3.0;
 	variable_write(var2, &num2);
 	variable_t *var3=eval_mult(var1, var2);
 
-	long double result=0.0L;
+	double result=0.0;
 	variable_read(&result, var3);
 
 	//casting int to make compiler happy

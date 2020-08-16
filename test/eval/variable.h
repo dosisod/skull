@@ -128,20 +128,20 @@ TEST(fmt_var_int, {
 })
 
 TEST(fmt_var_float, {
-	const long double PI = 3.1415L;
-	TEST_FMT_VAR(U"float", long double, PI, U"3.1415");
+	const double PI = 3.1415;
+	TEST_FMT_VAR(U"float", double, PI, U"3.1415");
 })
 
 TEST(fmt_var_float_zeros, {
-	TEST_FMT_VAR(U"float", long double, 1234, U"1234.0");
+	TEST_FMT_VAR(U"float", double, 1234, U"1234.0");
 })
 
 TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR(U"float", long double, 1.0L / 0.0L, U"Infinity"); // NOLINT
+	TEST_FMT_VAR(U"float", double, 1.0 / 0.0, U"Infinity"); // NOLINT
 })
 
 TEST(fmt_var_float_neg_infinity, {
-	TEST_FMT_VAR(U"float", long double, 1.0L / -0.0L, U"-Infinity"); // NOLINT
+	TEST_FMT_VAR(U"float", double, 1.0 / -0.0, U"-Infinity"); // NOLINT
 })
 
 TEST(fmt_var_bool, {

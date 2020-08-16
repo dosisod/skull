@@ -35,18 +35,16 @@ void var_to_llvm_ir(variable_t *var, LLVMBuilderRef builder, LLVMContextRef ctx)
 	if (var->type == &TYPE_FLOAT) {
 		LLVMValueRef ir_var = LLVMBuildAlloca(
 			builder,
-			LLVMFP128TypeInContext(ctx),
+			LLVMDoubleTypeInContext(ctx),
 			var_name
 		);
 
-		// suboptimal way of converting 64bit floats to llvm
-		char32_t *tmp = var->type->to_string(var);
-		char *var_as_str = c32stombs(tmp);
-		free(tmp);
+		double num = 0;
+		variable_read(&num, var);
 
 		LLVMBuildStore(
 			builder,
-			LLVM_FLOAT(ctx, var_as_str),
+			LLVM_FLOAT(ctx, num),
 			ir_var
 		);
 	}

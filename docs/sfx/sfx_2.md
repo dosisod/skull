@@ -87,10 +87,10 @@ Below is a table of built-in types, and their C/C++ equivalents:
 
 | Skull | C/C++ | Description |
 |:----- |:----- |:----------- |
-| `bool` | `bool` | Can only be `true` or `false` |
-| `int` | `int64_t` | Stores a 64 bit integer |
-| `float` | `long double` | 128 bit floating number |
-| `char` | `char32_t` | A single UTF-32 code point |
+| `bool` | `bool` | `true` or `false` |
+| `int` | `int64_t` | 64 bit integer |
+| `float` | `double` | 64 bit floating number |
+| `char` | `char32_t` | Single UTF-32 code point |
 | `str` | `char32_t*` | String of UTF-32 code points |
 | `T` | `template<typename T>` | Templated type `*` |
 | `:=` | `auto` | Automatically deduce type |

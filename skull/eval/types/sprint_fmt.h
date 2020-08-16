@@ -8,9 +8,9 @@
 	if (needed<0) { \
 		return NULL; \
 	} \
-	char *tmp=malloc(sizeof(char) * (unsigned long int)needed); \
+	char *tmp=malloc(sizeof(char) * (unsigned long)needed); \
 	DIE_IF_MALLOC_FAILS(tmp); \
-	int wrote=snprintf(tmp, (unsigned long int)needed, (fmt), data); \
+	int wrote=snprintf(tmp, (unsigned long)needed, (fmt), data); \
 	if (wrote<0) { \
 		free(tmp); \
 		return NULL; \

@@ -152,7 +152,7 @@ TEST(repl_write_to_mutable_float_var, {
 	TEST_WRITE_TO_MUTABLE_FLOAT(
 		U"float", U"0.0",
 		U"1234.0",
-		long double, 1234.0
+		double, 1234.0
 	);
 })
 
@@ -208,7 +208,7 @@ TEST(repl_write_to_const_var_fails, {
 TEST(repl_make_float_variable, {
 	TEST_MAKE_VAR_FLOAT(
 		U"float", U"1234.0",
-		long double, 1234.0
+		double, 1234.0
 	);
 })
 

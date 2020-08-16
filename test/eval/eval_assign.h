@@ -30,7 +30,7 @@ TEST(eval_assign_int, {
 })
 
 TEST(eval_assign_float, {
-	TEST_EVAL_ASSIGN_FLOAT(U"float", U"1234.0", long double, 1234.0, NULL);
+	TEST_EVAL_ASSIGN_FLOAT(U"float", U"1234.0", double, 1234.0, NULL);
 })
 
 TEST(eval_assign_bool, {
@@ -403,7 +403,7 @@ TEST(eval_assign_cannot_assign_non_ints, {
 })
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	TEST_EVAL_ASSIGN_FLOAT(U"float", U"1234", long double, 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_ASSIGN_FLOAT(U"float", U"1234", double, 0, ERR_TYPE_MISMATCH);
 })
 
 TEST(eval_assign_cannot_assign_non_bools, {

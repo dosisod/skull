@@ -100,7 +100,7 @@ struct type_t TYPE_INT = {
 
 struct type_t TYPE_FLOAT = {
 	.name=U"float",
-	.bytes=sizeof(long double),
+	.bytes=sizeof(double),
 	.to_string=&fmt_float_type,
 	.add=add_float_type,
 	.subtract=sub_float_type,

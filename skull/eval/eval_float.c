@@ -10,7 +10,7 @@
 #include "skull/eval/eval_float.h"
 
 /*
-Converts a `TOKEN_FLOAT_CONST` token to a floating point number pointer (`long double *`).
+Converts a `TOKEN_FLOAT_CONST` token to a floating point number pointer (`double *`).
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
@@ -22,19 +22,19 @@ void *eval_float(const token_t *token, const char32_t **error) {
 
 	char *tmp=c32stombs(token->begin);
 
-	long double *ret=malloc(sizeof(long double));
+	double *ret=malloc(sizeof(double));
 	DIE_IF_MALLOC_FAILS(ret);
 
 	if (strcmp("Infinity", tmp)==0) {
-		*ret=HUGE_VALL;
+		*ret=HUGE_VAL;
 		return ret;
 	}
 	if (strcmp("-Infinity", tmp)==0) {
-		*ret=-HUGE_VALL;
+		*ret=-HUGE_VAL;
 		return ret;
 	}
 
-	*ret=strtold(tmp, NULL);
+	*ret=strtod(tmp, NULL);
 
 	free(tmp);
 	return ret;

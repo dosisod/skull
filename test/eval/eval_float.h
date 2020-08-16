@@ -12,7 +12,7 @@
 	token_t *token=tokenize(str_value); \
 	classify_tokens(token); \
 	const char32_t *err=NULL; \
-	long double *num=eval_float(token, &err); \
+	double *num=eval_float(token, &err); \
 	const bool pass=( \
 		(cond) && \
 		err==(expected_error) \
