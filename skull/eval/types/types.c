@@ -30,7 +30,8 @@ bool make_new_type(const char32_t *name, size_t bytes) {
 		current=current->next;
 	}
 
-	type_t *new_type=malloc(sizeof(type_t));
+	type_t *new_type;
+	new_type = malloc(sizeof *new_type);
 	DIE_IF_MALLOC_FAILS(new_type);
 
 	new_type->name=name;
@@ -122,7 +123,7 @@ struct type_t TYPE_CHAR = {
 
 struct type_t TYPE_STR = {
 	.name=U"str",
-	.bytes=sizeof(char32_t*),
+	.bytes=sizeof(char32_t *),
 	.to_string=&fmt_str_type,
 	.add=add_str_type,
 	.subtract=NULL,
@@ -133,7 +134,7 @@ struct type_t TYPE_STR = {
 
 struct type_t TYPE_TYPE = {
 	.name=U"type",
-	.bytes=sizeof(struct type_t*),
+	.bytes=sizeof(struct type_t *),
 	.to_string=&fmt_type_type,
 	.add=NULL,
 	.subtract=NULL,

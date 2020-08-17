@@ -84,14 +84,14 @@ int ast_node_one_param_func_combo[] = {
 };
 
 #define TRY_PUSH_AST_NODE(combo, node_type) \
-	token=ast_token_cmp(token, (combo)); \
-	if (token!=last) { \
+	token = ast_token_cmp(token, (combo)); \
+	if (token != last) { \
 		push_ast_node(token, &last, (node_type), &node); \
 		continue; \
 	}
 
 #define PUSH_NODE_IF_TOKEN(tok_type, node_type) \
-	else if (token->token_type==(tok_type)) { \
+	else if (token->token_type == (tok_type)) { \
 		push_ast_node(token, &last, (node_type), &node); \
 	}
 
@@ -99,16 +99,16 @@ int ast_node_one_param_func_combo[] = {
 Makes an AST (abstract syntax tree) from a given string.
 */
 ast_node_t *make_ast_tree(const char32_t *code) {
-	token_t *token=tokenize(code);
+	token_t *token = tokenize(code);
 	token_t *last;
 
 	classify_tokens(token);
 
-	ast_node_t *node=make_ast_node();
-	ast_node_t *head=node;
+	ast_node_t *node = make_ast_node();
+	ast_node_t *head = node;
 
 	while (token) {
-		last=token;
+		last = token;
 
 		TRY_PUSH_AST_NODE(ast_node_var_combo, AST_NODE_VAR_DEF);
 		TRY_PUSH_AST_NODE(ast_node_mut_var_def_combo, AST_NODE_MUT_VAR_DEF);
@@ -125,8 +125,8 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		TRY_PUSH_AST_NODE(ast_node_one_param_func_combo, AST_NODE_ONE_PARAM_FUNC);
 
 		//skip to next token if current token is present in last node
-		if (node->last && node->last->token_end==token) {
-			token=token->next;
+		if (node->last && node->last->token_end == token) {
+			token = token->next;
 			continue;
 		}
 
@@ -145,12 +145,12 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 			break;
 		}
 
-		token=token->next;
+		token = token->next;
 	}
 
 	if (node->last) {
-		node->last->next=NULL;
-		node->last=NULL;
+		node->last->next = NULL;
+		node->last = NULL;
 		free(node);
 	}
 	return head;
@@ -171,25 +171,28 @@ The last `-1` is to tell the function to stop iterating.
 If all the args match, return last token matched, else, the passed `token`.
 */
 token_t *ast_token_cmp(token_t *token, int *token_type) {
-	token_t *head=token;
-	token_t *last=head;
+	token_t *head = token;
+	token_t *last = head;
 
-	while (token && *token_type!=-1) {
-		if (token->token_type!=*token_type && *token_type!=TOKEN_ANY_NON_BRACKET_TOKEN) {
-			return head;
-		}
-		if (*token_type==TOKEN_ANY_NON_BRACKET_TOKEN &&
-			(token->token_type==TOKEN_BRACKET_OPEN ||
-			token->token_type==TOKEN_BRACKET_CLOSE))
+	while (token && *token_type != -1) {
+		if (
+			token->token_type != *token_type &&
+			*token_type != TOKEN_ANY_NON_BRACKET_TOKEN)
 		{
 			return head;
 		}
-		last=token;
-		token=token->next;
+		if (*token_type == TOKEN_ANY_NON_BRACKET_TOKEN &&
+			(token->token_type == TOKEN_BRACKET_OPEN ||
+			token->token_type == TOKEN_BRACKET_CLOSE))
+		{
+			return head;
+		}
+		last = token;
+		token = token->next;
 		token_type++;
 	}
 
-	if (*token_type==-1) {
+	if (*token_type == -1) {
 		return last;
 	}
 	return head;
@@ -199,24 +202,25 @@ token_t *ast_token_cmp(token_t *token, int *token_type) {
 Push a new AST node to `node` with type `node_type`
 */
 void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node) {
-	(*node)->node_type=node_type;
-	(*node)->token=(*last);
-	(*node)->token_end=token;
+	(*node)->node_type = node_type;
+	(*node)->token = *last;
+	(*node)->token_end = token;
 
-	ast_node_t *tmp=make_ast_node();
+	ast_node_t *tmp = make_ast_node();
 
-	tmp->last=*node;
-	*last=token->next;
+	tmp->last = *node;
+	*last = token->next;
 
-	(*node)->next=tmp;
-	(*node)=tmp;
+	(*node)->next = tmp;
+	(*node) = tmp;
 }
 
 /*
 Makes an ast_node_t with default values
 */
 ast_node_t *make_ast_node(void) {
-	ast_node_t *node=calloc(1, sizeof(ast_node_t));
+	ast_node_t *node;
+	node = calloc(1, sizeof *node);
 	DIE_IF_MALLOC_FAILS(node);
 
 	return node;

@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 		block
 	);
 
-	if (argc==1) {
+	if (argc == 1) {
 		puts("expected filename, exiting");
 		return 1;
 	}
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 	str_to_llvm_ir(repl_read_raw(f), builder, ctx);
 
 	size_t len = strlen(argv[1]);
-	char *ll_filename = malloc(sizeof(char) * (len + 5)); // NOLINT
+	char *ll_filename = malloc(len + 5); // NOLINT
 
 	char *slash_pos = strrchr(argv[1], '/');
 	if (!slash_pos) {

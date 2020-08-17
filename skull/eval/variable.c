@@ -35,17 +35,19 @@ Make a variable called `name` with type `type`, and make it const if `is_const` 
 Returns `NULL` if var cannot be created, else pointer to created var.
 */
 variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_const) {
-	type_t *found_type=find_type(type);
+	type_t *found_type = find_type(type);
 
 	if (!found_type || !is_valid_identifier_str(name)) {
 		return NULL;
 	}
 
-	variable_t *var=malloc(sizeof(variable_t));
+	variable_t *var;
+	var = malloc(sizeof *var);
 	DIE_IF_MALLOC_FAILS(var);
 
-	const size_t len=c32slen(name);
-	char32_t *name_copy=malloc((len + 1) * sizeof(char32_t));
+	const size_t len = c32slen(name);
+	char32_t *name_copy;
+	name_copy = malloc((len + 1) * sizeof *name_copy);
 	DIE_IF_MALLOC_FAILS(name_copy);
 
 	c32slcpy(name_copy, name, len + 1);
@@ -55,10 +57,11 @@ variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_co
 	var->is_const=is_const;
 	var->bytes=found_type->bytes;
 
-	uint8_t *mem=calloc(found_type->bytes, sizeof(uint8_t));
+	uint8_t *mem;
+	mem = calloc(found_type->bytes, sizeof *mem);
 	DIE_IF_MALLOC_FAILS(mem);
 
-	var->mem=mem;
+	var->mem = mem;
 	return var;
 }
 

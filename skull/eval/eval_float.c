@@ -15,26 +15,27 @@ Converts a `TOKEN_FLOAT_CONST` token to a floating point number pointer (`double
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
 void *eval_float(const token_t *token, const char32_t **error) {
-	if (token->token_type!=TOKEN_FLOAT_CONST) {
-		*error=ERR_TYPE_MISMATCH;
+	if (token->token_type != TOKEN_FLOAT_CONST) {
+		*error = ERR_TYPE_MISMATCH;
 		return NULL;
 	}
 
-	char *tmp=c32stombs(token->begin);
+	char *tmp = c32stombs(token->begin);
 
-	double *ret=malloc(sizeof(double));
+	double *ret;
+	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 
-	if (strcmp("Infinity", tmp)==0) {
-		*ret=HUGE_VAL;
+	if (strcmp("Infinity", tmp) == 0) {
+		*ret = HUGE_VAL;
 		return ret;
 	}
-	if (strcmp("-Infinity", tmp)==0) {
-		*ret=-HUGE_VAL;
+	if (strcmp("-Infinity", tmp) == 0) {
+		*ret = -HUGE_VAL;
 		return ret;
 	}
 
-	*ret=strtod(tmp, NULL);
+	*ret = strtod(tmp, NULL);
 
 	free(tmp);
 	return ret;

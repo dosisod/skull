@@ -17,7 +17,7 @@ bool context_add_var(context_t *ctx, variable_t *var) {
 		return false;
 	}
 
-	ctx->vars[ctx->vars_used]=var;
+	ctx->vars[ctx->vars_used] = var;
 	ctx->vars_used++;
 
 	return true;
@@ -31,7 +31,7 @@ variable_t *context_find_name(const context_t *ctx, const char32_t *name) {
 		return NULL;
 	}
 
-	size_t tmp=0;
+	size_t tmp = 0;
 	while (tmp < ctx->vars_used) {
 		if (c32scmp(ctx->vars[tmp]->name, name)) {
 			return ctx->vars[tmp];
@@ -45,7 +45,8 @@ variable_t *context_find_name(const context_t *ctx, const char32_t *name) {
 Returns a new variable context.
 */
 context_t *make_context(void) {
-	context_t *ctx=calloc(1, sizeof(context_t));
+	context_t *ctx;
+	ctx = calloc(1, sizeof *ctx);
 	DIE_IF_MALLOC_FAILS(ctx);
 
 	return ctx;
@@ -55,7 +56,7 @@ context_t *make_context(void) {
 Frees a context `ctx` and all the variables inside of it.
 */
 void free_context(context_t *ctx) {
-	size_t tmp=0;
+	size_t tmp = 0;
 
 	while (tmp < ctx->vars_used) {
 		free_variable(ctx->vars[tmp]);

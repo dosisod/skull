@@ -31,7 +31,7 @@ char32_t *fmt_float_type(const variable_t *var) {
 	const char *period = strrchr(tmp, '.');
 	if (!period && !strrchr(tmp, 'e')) {
 		const size_t len = strlen(tmp);
-		char *fixed = malloc(sizeof(char) * (len + 3));
+		char *fixed = malloc(len + 3);
 		DIE_IF_MALLOC_FAILS(fixed);
 
 		memcpy(fixed, tmp, len);

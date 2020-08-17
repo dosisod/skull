@@ -229,7 +229,7 @@ char32_t *repl_read(FILE *fd) {
 Returns pointer to UTF-32 string read from file descriptor `fd`.
 */
 char32_t *repl_read_raw(FILE *fd) {
-	char *str=malloc(sizeof(char) * REPL_MAX_LINE_LEN);
+	char *str=malloc(REPL_MAX_LINE_LEN);
 	DIE_IF_MALLOC_FAILS(str);
 
 	size_t offset=0;
@@ -238,7 +238,7 @@ char32_t *repl_read_raw(FILE *fd) {
 	while (c!='\n' && c!=EOF) {
 		//read char by char until we need to reallocate more memory
 		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
-			char *new_str=realloc(str, sizeof(char) * (offset + REPL_MAX_LINE_LEN));
+			char *new_str=realloc(str, offset + REPL_MAX_LINE_LEN);
 			DIE_IF_MALLOC_FAILS(new_str);
 
 			str=new_str;

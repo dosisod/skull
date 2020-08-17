@@ -9,10 +9,10 @@
 Returns the string representation of boolean `var`
 */
 char32_t *fmt_bool_type(const variable_t *var) {
-	bool data=false;
+	bool data = false;
 	variable_read(&data, var);
 
-	char32_t *ret=c32sdup(data ? U"true" : U"false");
+	char32_t *ret = c32sdup(data ? U"true" : U"false");
 	DIE_IF_MALLOC_FAILS(ret);
 
 	return ret;
@@ -22,13 +22,14 @@ char32_t *fmt_bool_type(const variable_t *var) {
 Return pointer to a bool, converted from `token`
 */
 void *eval_bool(const token_t *token, const char32_t **error) {
-	if (token->token_type!=TOKEN_BOOL_CONST) {
-		*error=ERR_TYPE_MISMATCH;
+	if (token->token_type != TOKEN_BOOL_CONST) {
+		*error = ERR_TYPE_MISMATCH;
 		return NULL;
 	}
-	bool *ret=malloc(sizeof(bool));
+	bool *ret;
+	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 
-	*ret=token_cmp(U"true", token);
+	*ret = token_cmp(U"true", token);
 	return ret;
 }
