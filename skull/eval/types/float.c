@@ -11,36 +11,39 @@
 Returns the string representation of float `var`
 */
 char32_t *fmt_float_type(const variable_t *var) {
-	double data=0;
+	double data = 0.0;
 	variable_read(&data, var);
 
 	if (isinf(data)) {
-		char32_t *ret=NULL;
+		char32_t *ret = NULL;
 		if (data < 0.0) {
-			ret=c32sdup(U"-Infinity");
+			ret = c32sdup(U"-Infinity");
 		}
 		else {
-			ret=c32sdup(U"Infinity");
+			ret = c32sdup(U"Infinity");
 		}
 		DIE_IF_MALLOC_FAILS(ret);
 		return ret;
 	}
 
-	SPRINTF_FMT("%lf");
+	SPRINTF_FMT("%.16lg");
 
-	//trim excess zeros off of decimal
-	for (size_t i=strlen(tmp); i>0; i--) {
-		if (tmp[i-1]=='.') {
-			tmp[i]='0';
-		}
-		else if (tmp[i-1]=='0') {
-			tmp[i-1]='\0';
-			continue;
-		}
-		break;
+	const char *period = strrchr(tmp, '.');
+	if (!period && !strrchr(tmp, 'e')) {
+		const size_t len = strlen(tmp);
+		char *fixed = malloc(sizeof(char) * (len + 3));
+		DIE_IF_MALLOC_FAILS(fixed);
+
+		memcpy(fixed, tmp, len);
+		fixed[len] = '.';
+		fixed[len + 1] = '0';
+		fixed[len + 2] = '\0';
+
+		free(tmp);
+		tmp = fixed;
 	}
 
-	char32_t *ret=mbstoc32s(tmp);
+	char32_t *ret = mbstoc32s(tmp);
 	free(tmp);
 	return ret;
 }

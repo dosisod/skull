@@ -9,13 +9,13 @@
 #include "test/testing.h"
 
 TEST(create_variable, {
-	variable_t *var=make_variable(U"int", U"x", true);
+	variable_t *var = make_variable(U"int", U"x", true);
 
-	const bool pass=(
+	const bool pass = (
 		c32scmp(var->type->name, U"int") &&
 		c32scmp(var->name, U"x") &&
 		var->is_const &&
-		var->bytes==8 &&
+		var->bytes == 8 &&
 		var->mem
 	);
 
@@ -29,17 +29,17 @@ TEST(create_variable_with_invalid_type_fails, {
 })
 
 TEST(variable_write, {
-	variable_t *var=make_variable(U"int", U"x", false);
+	variable_t *var = make_variable(U"int", U"x", false);
 
-	const int64_t data=1234;
-	const char32_t *ret=variable_write(var, &data);
+	const int64_t data = 1234;
+	const char32_t *ret = variable_write(var, &data);
 
-	int64_t val=0;
+	int64_t val = 0;
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
 		!ret &&
-		val==1234
+		val == 1234
 	);
 
 	free_variable(var);
@@ -48,17 +48,17 @@ TEST(variable_write, {
 })
 
 TEST(variable_cannot_write_to_const, {
-	variable_t *var=make_variable(U"int", U"x", true);
+	variable_t *var = make_variable(U"int", U"x", true);
 
-	const int64_t data=1234;
-	const char32_t *ret=variable_write(var, &data);
+	const int64_t data = 1234;
+	const char32_t *ret = variable_write(var, &data);
 
-	int64_t val=0;
+	int64_t val = 0;
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
-		ret==ERR_CANNOT_ASSIGN_CONST &&
-		val==0
+		ret == ERR_CANNOT_ASSIGN_CONST &&
+		val == 0
 	);
 
 	free_variable(var);
@@ -67,14 +67,14 @@ TEST(variable_cannot_write_to_const, {
 })
 
 TEST(variable_read, {
-	variable_t *var=make_variable(U"int", U"x", false);
-	const int64_t data=1234;
+	variable_t *var = make_variable(U"int", U"x", false);
+	const int64_t data = 1234;
 	variable_write(var, &data);
 
-	int64_t val=0;
+	int64_t val = 0;
 	variable_read(&val, var);
 
-	const bool pass=(val==1234);
+	const bool pass = (val == 1234);
 
 	free_variable(var);
 
@@ -82,7 +82,7 @@ TEST(variable_read, {
 })
 
 TEST(make_variable_with_invalid_name_fails, {
-	variable_t *var=make_variable(U"int", U"1nvalid", false);
+	variable_t *var = make_variable(U"int", U"1nvalid", false);
 
 	const bool pass = !var;
 
@@ -92,7 +92,7 @@ TEST(make_variable_with_invalid_name_fails, {
 })
 
 TEST(free_variable, {
-	variable_t *var=make_variable(U"int", U"x", true);
+	variable_t *var = make_variable(U"int", U"x", true);
 
 	if (!var || !var->mem) {
 		free_variable(var);
@@ -111,11 +111,11 @@ TEST(free_null_variable_is_ok, {
 })
 
 #define TEST_FMT_VAR(str_type, real_type, real_data, expected) \
-	variable_t *var=make_variable(str_type, U"x", false); \
-	real_type data=real_data; \
+	variable_t *var = make_variable(str_type, U"x", false); \
+	real_type data = real_data; \
 	variable_write(var, &data); \
-	char32_t *str=fmt_var(var); \
-	const bool pass=( \
+	char32_t *str = fmt_var(var); \
+	const bool pass = ( \
 		str && \
 		c32scmp(expected, str) \
 	); \
@@ -132,7 +132,16 @@ TEST(fmt_var_float, {
 	TEST_FMT_VAR(U"float", double, PI, U"3.1415");
 })
 
-TEST(fmt_var_float_zeros, {
+TEST(fmt_var_float_zero, {
+	TEST_FMT_VAR(U"float", double, 0.0, U"0.0");
+})
+
+TEST(fmt_var_float_small, {
+	const double SMALL = 0.0000001;
+	TEST_FMT_VAR(U"float", double, SMALL, U"1e-07");
+})
+
+TEST(fmt_var_float_trailing_zero, {
 	TEST_FMT_VAR(U"float", double, 1234, U"1234.0");
 })
 
@@ -163,20 +172,20 @@ TEST(fmt_var_wide_char_preserved, {
 #undef TEST_FMT_VAR
 
 TEST(fmt_var_str, {
-	variable_t *var=make_variable(U"str", U"x", false);
+	variable_t *var = make_variable(U"str", U"x", false);
 
-	ast_node_t *node=make_ast_tree(U"\"abc\"");
+	ast_node_t *node = make_ast_tree(U"\"abc\"");
 
 	eval_assign(var, node, NULL);
 
-	char32_t *str=fmt_var(var);
+	char32_t *str = fmt_var(var);
 
-	const bool pass=(
+	const bool pass = (
 		str &&
 		c32scmp(U"abc", str)
 	);
 
-	char32_t *mem=NULL;
+	char32_t *mem = NULL;
 	variable_read(&mem, var);
 	free(mem);
 
@@ -186,7 +195,7 @@ TEST(fmt_var_str, {
 })
 
 void variable_test_self(bool *pass) {
-	tests_t tests={
+	tests_t tests = {
 		test_create_variable,
 		test_create_variable_with_invalid_type_fails,
 		test_variable_write,
@@ -197,7 +206,9 @@ void variable_test_self(bool *pass) {
 		test_free_null_variable_is_ok,
 		test_fmt_var_int,
 		test_fmt_var_float,
-		test_fmt_var_float_zeros,
+		test_fmt_var_float_zero,
+		test_fmt_var_float_small,
+		test_fmt_var_float_trailing_zero,
 		test_fmt_var_float_infinity,
 		test_fmt_var_float_neg_infinity,
 		test_fmt_var_bool,
