@@ -2,7 +2,8 @@ SKULL_VERSION := 0.2.1
 
 INSTALL := /usr/local
 
-CC := cc
+CC := $(shell readlink -f `which cc`)
+
 CFLAGS = -std=c18 \
 	-Wall \
 	-Wextra \

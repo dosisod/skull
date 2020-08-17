@@ -23,7 +23,7 @@ jobs:
 
     - name: Build
       run: |
-        export CC=$(which gcc-8)
+        export CC=gcc-8
         make options clean all -e
 
     - name: Run tests
@@ -39,7 +39,7 @@ jobs:
 
     - name: Build
       run: |
-        export CC=$(which clang)
+        export CC=clang
         make options clean all -e
 
     - name: Run tests
@@ -55,7 +55,7 @@ jobs:
 
     - name: Install Skull
       run: |
-        sudo CC=$(which gcc-8) make options install -e
+        sudo CC=gcc-8 make options install -e
         ./test/sh/shebang.sk
 
   test-skullc:
@@ -65,7 +65,7 @@ jobs:
 
     - name: Build
       run: |
-        sudo CC=$(which gcc-8) make options install -e
+        sudo CC=gcc-8 make options install -e
 
     - name: Run Skullc
       run: |
