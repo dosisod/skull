@@ -18,9 +18,9 @@ def display_markdown(code: str):
 
     return ret
 
-for source in [src for src in Path("./skull").rglob("*") if src.suffix in [".c", ".h"]]:
+for source in [src for src in Path("./").rglob("*") if src.suffix in [".c", ".h"]]:
     with source.open() as f:
         markdown = display_markdown(f.read())
         if markdown:
-            with open(str(Path("docs") / "/".join(source.parts[1:]))[:-2] + ".md", "w+") as ff:
+            with open(str(Path("docs") / source)[:-2] + ".md", "w+") as ff:
                 ff.write(f"# {source}\n\n{markdown}")
