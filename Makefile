@@ -44,7 +44,7 @@ clean:
 install: clean | skullc
 	@echo "\033[92mInstall\033[0m skull"
 	@install build/skull/skull $(INSTALL)/bin/
-	@install -m 644 docs/skull.1 $(INSTALL)/man/man1/
+	@install -m 644 docs/skull/skull.1 $(INSTALL)/man/man1/
 	@echo "\033[92mInstall\033[0m skullc"
 	@install skullc/skullc $(INSTALL)/bin/
 	@install build/skullc/_skullc $(INSTALL)/bin/
