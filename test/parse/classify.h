@@ -229,21 +229,6 @@ TEST(token_comment, {
 	return pass;
 })
 
-TEST(token_shebang_comment, {
-	const char32_t *code=U"#!/example/shebang";
-	token_t *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_COMMENT &&
-		t->begin==code &&
-		t->end==(code + 18)
-	);
-
-	free(t);
-	return pass;
-})
-
 TEST(is_valid_identifier, {
 	return (
 		is_valid_identifier_str(U"a") &&
@@ -373,7 +358,6 @@ void classifier_test_self(bool *pass) {
 		test_token_str_constant,
 		test_token_type_type,
 		test_token_comment,
-		test_token_shebang_comment,
 		test_is_valid_identifier,
 		test_is_valid_identifier_token,
 		test_new_identifier_clip_trailing_colon,

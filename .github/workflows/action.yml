@@ -54,9 +54,7 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Install Skull
-      run: |
-        sudo CC=gcc-8 make options install -e
-        ./test/sh/shebang.sk
+      run: sudo CC=gcc-8 make options install -e
 
   test-skullc:
     runs-on: ubuntu-latest
@@ -64,8 +62,7 @@ jobs:
     - uses: actions/checkout@v1
 
     - name: Build
-      run: |
-        sudo CC=gcc-8 make options install -e
+      run: sudo CC=gcc-8 make options install -e
 
     - name: Run Skullc
       run: |
