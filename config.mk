@@ -68,6 +68,5 @@ DIRS := build/skull \
 	$(ODIR)/skull/eval/types \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common \
-	$(ODIR)/skullc \
 	$(ODIR)/skullc/llvm \
-	$(ODIR)/test
+	$(ODIR)/test/skull

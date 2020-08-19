@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "skull/common/color.h"
+#include "../skull/common/color.h"
 #include "skull/common/malloc.h"
 
 typedef bool (*test_t)(const char** func);

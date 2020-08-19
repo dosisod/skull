@@ -21,9 +21,9 @@ skullc: skull | $(ODIR)/skullc/main.o $(OBJS_SKULLC)
 	@echo "\033[92mLink\033[0m skullc"
 	@$(CC) $(ODIR)/skullc/main.o $(OBJS_SKULL) $(OBJS_SKULLC) -o build/skullc/_skullc $(CFLAGS) $(LLVM_LDFLAGS)
 
-test: skull | $(ODIR)/test/main.o
+test: skull | $(ODIR)/test/skull/main.o
 	@echo "\033[92mLink\033[0m test"
-	@$(CC) $(ODIR)/test/main.o $(OBJS_SKULL) -o build/test/test $(CFLAGS)
+	@$(CC) $(ODIR)/test/skull/main.o $(OBJS_SKULL) -o build/test/test $(CFLAGS)
 
 $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
