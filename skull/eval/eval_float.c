@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -35,8 +36,13 @@ void *eval_float(const token_t *token, const char32_t **error) {
 		return ret;
 	}
 
+	errno = 0;
 	*ret = strtod(tmp, NULL);
-
 	free(tmp);
+
+	if (isinf(*ret) && errno == ERANGE) {
+		*error = ERR_OVERFLOW;
+	}
+
 	return ret;
 }

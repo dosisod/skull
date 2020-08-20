@@ -29,6 +29,14 @@ TEST(convert_negative_float_token, {
 	TEST_EVAL_FLOAT_CONVERT(U"-1234.0", (int)*num==-1234, NULL);
 })
 
+TEST(convert_overflow_float, {
+	TEST_EVAL_FLOAT_CONVERT(
+		U"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0",
+		isinf(*num),
+		ERR_OVERFLOW
+	);
+})
+
 TEST(convert_infinity_float_token, {
 	TEST_EVAL_FLOAT_CONVERT(U"Infinity", isinf(*num), NULL);
 })
@@ -48,6 +56,7 @@ void eval_float_test_self(bool *pass) {
 		test_convert_float_token,
 		test_convert_negative_float_token,
 		test_convert_infinity_float_token,
+		test_convert_overflow_float,
 		test_convert_neg_infinity_float_token,
 		test_non_float_token_fails,
 		NULL
