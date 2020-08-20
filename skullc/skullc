@@ -2,6 +2,9 @@
 
 $(dirname $0)/_skullc $1 || exit 1
 
+# exit if passed param is not a .sk file
+[[ "$1" =~ ^.*\.sk$ ]] || exit 0
+
 base=$(dirname $1)/.$(basename $1)
 
 llc-9 $base.ll -filetype=obj || exit 1
