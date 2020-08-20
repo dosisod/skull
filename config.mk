@@ -1,6 +1,7 @@
 SKULL_VERSION := 0.2.1
 
-INSTALL := /usr/local
+BIN := /usr/local/bin/
+MANPATH := $(shell manpath | cut -d : -f1)/man1/
 
 CC := $(shell readlink -f `which cc`)
 
