@@ -46,6 +46,7 @@ install: clean | skullc
 	@install build/skull/skull $(BIN)
 	@mkdir -p $(MANPATH)
 	@install -m 644 docs/skull/skull.1 $(MANPATH)
+	@install -m 644 docs/skullc/skullc.1 $(MANPATH)
 	@echo "\033[92mInstall\033[0m skullc"
 	@install skullc/skullc $(BIN)
 	@install build/skullc/_skullc $(BIN)

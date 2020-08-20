@@ -1,9 +1,9 @@
-.TH SKULL 1 "JULY 2020" "Linux" "User Manuals"
+.TH SKULL 1 "August 2020" "Linux" "User Manuals"
 .SH NAME
-skull \- Run a skull file, or open a REPL
+skull \- REPL and skull file interpreter
 .SH SYNOPSIS
-.B skull\fR [ \fIfile\fR ]
+.B skull\fR [\fB-v\fR|\fIfile\fR]
 .SH DESCRIPTION
-Running \fBskull\fR without any parameters will open a \fBREPL\fR (read eval print loop). Each line is interpreted by \fBskull\fR, and the result (if any) is echoed to the screen. Passing a \fIfile\fR to \fBskull\fR is the same as manually typing in each line of the given \fIfile\fR into \fBskull\fR directly. skull files passed into \fBskull\fR must end with the ".sk" extenstion. All other file extensions will be ignored.
+Running \fBskull\fR without any parameters will open a \fBREPL\fR (read eval print loop). Each line is interpreted by \fBskull\fR, and the result (if any) is echoed to the screen. Passing a \fIfile\fR to \fBskull\fR is the same as manually typing in each line of the given \fIfile\fR into \fBskull\fR directly. skull files passed into \fBskull\fR must end with the ".sk" extenstion. All other file extensions will be ignored. Running \fBskull\fR with the \fB-v\fR option will display the current version.
 .SH AUTHOR
 dosisod <https://github.com/dosisod>
