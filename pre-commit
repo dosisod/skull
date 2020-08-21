@@ -7,5 +7,6 @@ make clean all || stop
 
 ./build/test/test || stop
 ./test/sh/main.sh || stop
+./test/skullc/main.sh || stop
 
 bash ./.github/workflows/clang_tidy.sh || stop
