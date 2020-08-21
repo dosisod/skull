@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "skull/common/color.h"
+#include "skull/common/io.h"
 #include "skull/common/malloc.h"
 #include "skull/errors.h"
 #include "skull/eval/eval_add.h"
@@ -222,36 +223,5 @@ char32_t *repl_read(FILE *fd) {
 		printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
 	}
 
-	return repl_read_raw(fd);
-}
-
-/*
-Returns pointer to UTF-32 string read from file descriptor `fd`.
-*/
-char32_t *repl_read_raw(FILE *fd) {
-	char *str=malloc(REPL_MAX_LINE_LEN);
-	DIE_IF_MALLOC_FAILS(str);
-
-	size_t offset=0;
-	int c=getc(fd);
-
-	while (c!='\n' && c!=EOF) {
-		//read char by char until we need to reallocate more memory
-		if (offset!=0 && ((offset + 1) % REPL_MAX_LINE_LEN)==0) {
-			char *new_str=realloc(str, offset + REPL_MAX_LINE_LEN);
-			DIE_IF_MALLOC_FAILS(new_str);
-
-			str=new_str;
-		}
-		str[offset]=(char)c;
-		offset++;
-
-		c=getc(fd);
-	}
-	str[offset]='\0';
-
-	char32_t *ret=mbstoc32s(str);
-
-	free(str);
-	return ret;
+	return read_file(fd, true);
 }

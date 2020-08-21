@@ -57,12 +57,7 @@ token_t *tokenize(const char32_t *code) {
 				current->begin = code;
 			}
 		}
-		else if (
-			*code == U'[' ||
-			*code == U']' ||
-			*code == U',' ||
-			*code == U'\n')
-		{
+		else if (*code == U'[' || *code == U']') {
 			if (!current->begin) {
 				current->begin = code;
 				current->end = code+1;

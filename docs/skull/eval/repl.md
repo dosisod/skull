@@ -28,9 +28,3 @@ char32_t *repl_read(FILE *fd)
 
 > Read from `fd`, add prompt if reading from `stdin`.
 
-```c
-char32_t *repl_read_raw(FILE *fd)
-```
-
-> Returns pointer to UTF-32 string read from file descriptor `fd`.
-
