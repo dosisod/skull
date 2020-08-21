@@ -29,6 +29,7 @@ test "declare_int.sk"
 test "declare_float.sk"
 test "declare_bool.sk"
 test "declare_str.sk"
+test "declare_many.sk"
 
 echo
 
