@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <uchar.h>
 
+const char32_t *ERR_UNEXPECTED_TOKEN;
 const char32_t *ERR_INVALID_INPUT;
 const char32_t *ERR_VAR_ALREADY_DEFINED;
 const char32_t *ERR_CANNOT_ASSIGN_CONST;

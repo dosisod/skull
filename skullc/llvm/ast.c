@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "skull/errors.h"
 #include "skull/eval/context.h"
 #include "skull/eval/eval_integer.h"
 #include "skull/eval/repl.h"
@@ -9,6 +10,12 @@
 #include "skullc/llvm/var.h"
 
 #include "skullc/llvm/ast.h"
+
+#define PANIC_ON_ERR(ptr) \
+	if (ptr) { \
+		printf("Compilation error: %s\n", c32stombs(ptr)); \
+		exit(1); \
+	}
 
 /*
 Convert skull code from `str` into LLVM IR (using `builder` and `ctx).
@@ -24,6 +31,7 @@ while (node) {
 	if (node->node_type == AST_NODE_RETURN) {
 		const char32_t *error = NULL;
 		int64_t *num = eval_integer(node->token->next, &error);
+		PANIC_ON_ERR(error);
 
 		LLVMBuildRet(
 			builder,
@@ -33,8 +41,12 @@ while (node) {
 	else if (node->node_type == AST_NODE_VAR_DEF ||
 		node->node_type == AST_NODE_AUTO_VAR_DEF)
 	{
-		repl_make_var(node, ctx, true);
+		PANIC_ON_ERR(repl_make_var(node, ctx, true));
+
 		node = node->next;
+	}
+	else {
+		PANIC_ON_ERR(ERR_UNEXPECTED_TOKEN);
 	}
 
 	if (ctx->vars_used != vars_used_last) {

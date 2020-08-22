@@ -5,7 +5,6 @@
 
 #include "skull/common/io.h"
 #include "skull/common/main.h"
-#include "skull/eval/repl.h"
 
 #include "skullc/llvm/ast.h"
 
