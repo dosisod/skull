@@ -1,5 +1,8 @@
 #include <stddef.h>
 
+#include "skull/common/malloc.h"
+#include "skull/common/str.h"
+
 #include "skull/errors.h"
 
 #define ERR_CANNOT(x) \
@@ -43,6 +46,84 @@ const char32_t *ERR_ASSIGN_FUNC = U"cannot reassign function";
 
 #undef ERR_CANNOT
 #undef ERR_UNAVAILABLE
+
+typedef struct {
+	const char32_t *percent;
+	size_t len;
+	size_t diff;
+} error_chunk_t;
+
+/*
+Format an error message.
+
+Every `%` in the string is replaced with the corresponding string in `strs`.
+
+The result of this function must be freed.
+*/
+char32_t *fmt_error(const char32_t *fmt, const char32_t *strs[]) {
+	const size_t fmt_len = c32slen(fmt);
+
+	const char32_t **tmp = strs;
+	size_t num_of_percents = 0;
+	while (*tmp) {
+		num_of_percents++;
+		tmp++;
+	}
+
+	error_chunk_t *chunks;
+	chunks = malloc((num_of_percents + 1) * sizeof *chunks);
+	DIE_IF_MALLOC_FAILS(chunks);
+
+	chunks[0].percent = c32schr(fmt, '%');
+	if (!chunks[0].percent) {
+		free(chunks);
+		return NULL;
+	}
+	chunks[0].diff = (size_t)(chunks[0].percent - fmt);
+	chunks[0].len = c32slen(strs[0]);
+
+	size_t total_str_len = chunks[0].len;
+
+	size_t at_percent = 1;
+	while (at_percent != num_of_percents) {
+		chunks[at_percent].percent = c32schr(chunks[at_percent - 1].percent + 1, '%');
+		if (!chunks[at_percent].percent) {
+			free(chunks);
+			return NULL;
+		}
+
+		chunks[at_percent].len = c32slen(strs[at_percent]);
+		chunks[at_percent].diff = (size_t)(chunks[at_percent].percent - chunks[at_percent - 1].percent - 1);
+
+		at_percent++;
+	}
+	chunks[at_percent].diff = (size_t)(fmt_len - (unsigned long)(chunks[at_percent - 1].percent - fmt) - 1);
+
+	char32_t *out;
+	out = malloc((total_str_len + fmt_len - num_of_percents) * sizeof *out);
+	DIE_IF_MALLOC_FAILS(out);
+
+	c32sncpy(out, fmt, chunks[0].diff);
+	size_t diffs = chunks[0].diff;
+	char32_t *offset = out + chunks[0].diff;
+	at_percent = 1;
+
+	while (at_percent <= num_of_percents) {
+		c32sncpy(offset, strs[at_percent - 1], chunks[at_percent - 1].len);
+		offset += chunks[at_percent - 1].len;
+		c32sncpy(offset, fmt + diffs + at_percent, chunks[at_percent].diff + 1);
+		diffs += chunks[at_percent].diff;
+		offset += chunks[at_percent].diff;
+		at_percent++;
+	}
+
+	// undo last diff addition
+	offset -= chunks[at_percent - 1].diff;
+	offset[1] = U'\0';
+
+	free(chunks);
+	return out;
+}
 
 /*
 Returns true if `str` is an error msg.

@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#include "skull/common/str.h"
 #include "skull/errors.h"
 
 #include "test/testing.h"
@@ -13,9 +14,28 @@ TEST(is_error_msg, {
 	);
 })
 
+bool fmt_error_wrapper(const char32_t *fmt, const char32_t *strs[], const char32_t *expected) {
+	char32_t *out = fmt_error(fmt, strs);
+
+	const bool pass = c32scmp(out, expected);
+
+	free(out);
+	return pass;
+}
+
+TEST(fmt_error, {
+	return (
+		fmt_error_wrapper(U"%", (const char32_t *[]){ U"abc", NULL }, U"abc") &&
+		fmt_error_wrapper(U"[%]", (const char32_t *[]){ U"abc", NULL }, U"[abc]") &&
+		fmt_error_wrapper(U"% %", (const char32_t *[]){ U"hello", U"world", NULL }, U"hello world") &&
+		fmt_error_wrapper(U"%%", (const char32_t *[]){ U"abc", U"def", NULL }, U"abcdef")
+	);
+})
+
 void error_test_self(bool *pass) {
-	tests_t tests={
+	tests_t tests = {
 		test_is_error_msg,
+		test_fmt_error,
 		NULL
 	};
 
