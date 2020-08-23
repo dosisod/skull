@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <uchar.h>
 
+#include "skull/parse/tokenize.h"
+
 const char32_t *ERR_UNEXPECTED_TOKEN;
 const char32_t *ERR_INVALID_INPUT;
 const char32_t *ERR_VAR_ALREADY_DEFINED;
@@ -28,6 +30,20 @@ const char32_t *ERR_UNEXPECTED_PARAM;
 const char32_t *ERR_INVALID_PARAMS;
 const char32_t *ERR_ASSIGN_FUNC;
 
-char32_t *fmt_error(const char32_t *fmt, const char32_t *[]);
+struct variable_t;
+
+typedef struct {
+	// dont store heap allocated strings in "str", do so in "real"
+	const char32_t *str;
+	const token_t *tok;
+	const struct variable_t *var;
+
+	// copy of string that will be used in final error msg
+	char32_t *real;
+} error_msg_t;
+
+char32_t *fmt_error(const char32_t *fmt, error_msg_t []);
+
+void fmt_error_stringify(error_msg_t *);
 
 bool is_error_msg(const char32_t *);

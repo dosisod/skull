@@ -2,6 +2,7 @@
 
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/eval/variable.h"
 
 #include "skull/errors.h"
 
@@ -56,18 +57,21 @@ typedef struct {
 /*
 Format an error message.
 
-Every `%` in the string is replaced with the corresponding string in `strs`.
+Every `%` in the string is expanded according to the corresponding `error_msg_t` in `msgs`.
 
 The result of this function must be freed.
 */
-char32_t *fmt_error(const char32_t *fmt, const char32_t *strs[]) {
+char32_t *fmt_error(const char32_t *fmt, error_msg_t msgs[]) {
 	const size_t fmt_len = c32slen(fmt);
 
-	const char32_t **tmp = strs;
+	error_msg_t *tmp = msgs;
+	fmt_error_stringify(tmp);
+
 	size_t num_of_percents = 0;
-	while (*tmp) {
+	while (tmp->real) {
 		num_of_percents++;
 		tmp++;
+		fmt_error_stringify(tmp);
 	}
 
 	error_chunk_t *chunks;
@@ -80,19 +84,20 @@ char32_t *fmt_error(const char32_t *fmt, const char32_t *strs[]) {
 		return NULL;
 	}
 	chunks[0].diff = (size_t)(chunks[0].percent - fmt);
-	chunks[0].len = c32slen(strs[0]);
+	chunks[0].len = c32slen(msgs[0].real);
 
 	size_t total_str_len = chunks[0].len;
 
 	size_t at_percent = 1;
-	while (at_percent != num_of_percents) {
+	while (at_percent < num_of_percents) {
 		chunks[at_percent].percent = c32schr(chunks[at_percent - 1].percent + 1, '%');
 		if (!chunks[at_percent].percent) {
 			free(chunks);
 			return NULL;
 		}
 
-		chunks[at_percent].len = c32slen(strs[at_percent]);
+		chunks[at_percent].len = c32slen(msgs[at_percent].real);
+		total_str_len += chunks[at_percent].len;
 		chunks[at_percent].diff = (size_t)(chunks[at_percent].percent - chunks[at_percent - 1].percent - 1);
 
 		at_percent++;
@@ -100,7 +105,7 @@ char32_t *fmt_error(const char32_t *fmt, const char32_t *strs[]) {
 	chunks[at_percent].diff = (size_t)(fmt_len - (unsigned long)(chunks[at_percent - 1].percent - fmt) - 1);
 
 	char32_t *out;
-	out = malloc((total_str_len + fmt_len - num_of_percents) * sizeof *out);
+	out = malloc((total_str_len + fmt_len - num_of_percents + 1) * sizeof *out);
 	DIE_IF_MALLOC_FAILS(out);
 
 	c32sncpy(out, fmt, chunks[0].diff);
@@ -109,7 +114,7 @@ char32_t *fmt_error(const char32_t *fmt, const char32_t *strs[]) {
 	at_percent = 1;
 
 	while (at_percent <= num_of_percents) {
-		c32sncpy(offset, strs[at_percent - 1], chunks[at_percent - 1].len);
+		c32sncpy(offset, msgs[at_percent - 1].real, chunks[at_percent - 1].len);
 		offset += chunks[at_percent - 1].len;
 		c32sncpy(offset, fmt + diffs + at_percent, chunks[at_percent].diff);
 		diffs += chunks[at_percent].diff;
@@ -123,6 +128,23 @@ char32_t *fmt_error(const char32_t *fmt, const char32_t *strs[]) {
 
 	free(chunks);
 	return out;
+}
+
+/*
+Convert error msg `msg` for use in `fmt_error`.
+
+Depending on whether `msg` is a token, a variable, or a string, the resulting feild `real` will be created differently.
+*/
+void fmt_error_stringify(error_msg_t *msg) {
+	if (msg->tok) {
+		msg->real = token_str(msg->tok);
+	}
+	else if (msg->var) {
+		msg->real = c32sdup(msg->var->name);
+	}
+	else if (msg->str) {
+		msg->real = c32sdup(msg->str);
+	}
 }
 
 /*
