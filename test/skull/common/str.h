@@ -79,7 +79,8 @@ TEST(c32scat, {
 TEST(c32slen, {
 	return (
 		c32slen(U"abc")==3 &&
-		c32slen(U"")==0
+		c32slen(U"")==0 &&
+		c32slen(NULL)==0
 	);
 })
 

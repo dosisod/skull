@@ -104,6 +104,10 @@ char *c32stombs(const char32_t *str) {
 Return the size of a UTF-32 string.
 */
 __attribute__((pure)) size_t c32slen(const char32_t *str) {
+	if (!str) {
+		return 0;
+	}
+
 	size_t len = 0;
 
 	while (*str) {

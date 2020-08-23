@@ -16,6 +16,9 @@ TEST(is_error_msg, {
 
 bool fmt_error_wrapper(const char32_t *fmt, const char32_t *strs[], const char32_t *expected) {
 	char32_t *out = fmt_error(fmt, strs);
+	if (!out) {
+		return out == expected;
+	}
 
 	const bool pass = c32scmp(out, expected);
 
@@ -25,7 +28,9 @@ bool fmt_error_wrapper(const char32_t *fmt, const char32_t *strs[], const char32
 
 TEST(fmt_error, {
 	return (
+		fmt_error_wrapper(U"%", (const char32_t *[]){ NULL }, NULL) &&
 		fmt_error_wrapper(U"%", (const char32_t *[]){ U"abc", NULL }, U"abc") &&
+		fmt_error_wrapper(U"[%]", (const char32_t *[]){ U"", NULL }, U"[]") &&
 		fmt_error_wrapper(U"[%]", (const char32_t *[]){ U"abc", NULL }, U"[abc]") &&
 		fmt_error_wrapper(U"% %", (const char32_t *[]){ U"hello", U"world", NULL }, U"hello world") &&
 		fmt_error_wrapper(U"%%", (const char32_t *[]){ U"abc", U"def", NULL }, U"abcdef")
