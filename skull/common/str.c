@@ -55,6 +55,7 @@ char32_t equivalent of `strncpy`.
 If there is room between the end of `src` and `dest[n]`, fill it with NULL.
 */
 void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
+	*dest = U'\0';
 	memset(dest, 0, n * sizeof *dest);
 
 	while (*src && n > 0) {

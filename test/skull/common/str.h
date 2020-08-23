@@ -23,12 +23,26 @@ TEST(c32sncpy, {
 	const char32_t *data=U"abc";
 	char32_t buf[4];
 
-	c32sncpy(buf, data, 3);
-	buf[3]=U'\0';
+	c32sncpy(buf, data, 4);
 
 	return (
 		c32slen(buf)==3 &&
 		c32scmp(buf, U"abc")
+	);
+})
+
+TEST(c32sncpy_fill_nulls, {
+	const char32_t *data=U"abc";
+	char32_t buf[5];
+	memset(buf, 0xff, 5 * sizeof *buf);
+
+	c32sncpy(buf, data, 5);
+
+	return (
+		c32slen(buf)==3 &&
+		c32scmp(buf, U"abc") &&
+		buf[3]==U'\0' &&
+		buf[4]==U'\0'
 	);
 })
 
@@ -172,6 +186,7 @@ void str_test_self(bool *pass) {
 	tests_t tests={
 		test_strrstr,
 		test_c32sncpy,
+		test_c32sncpy_fill_nulls,
 		test_c32slcpy,
 		test_c32sdup,
 		test_c32scat,

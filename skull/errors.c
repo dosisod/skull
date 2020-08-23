@@ -111,7 +111,7 @@ char32_t *fmt_error(const char32_t *fmt, const char32_t *strs[]) {
 	while (at_percent <= num_of_percents) {
 		c32sncpy(offset, strs[at_percent - 1], chunks[at_percent - 1].len);
 		offset += chunks[at_percent - 1].len;
-		c32sncpy(offset, fmt + diffs + at_percent, chunks[at_percent].diff + 1);
+		c32sncpy(offset, fmt + diffs + at_percent, chunks[at_percent].diff);
 		diffs += chunks[at_percent].diff;
 		offset += chunks[at_percent].diff;
 		at_percent++;
