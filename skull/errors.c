@@ -121,10 +121,7 @@ char32_t *fmt_error(const char32_t *fmt, error_msg_t msgs[]) {
 		offset += chunks[at_percent].diff;
 		at_percent++;
 	}
-
-	// undo last diff addition
-	offset -= chunks[at_percent - 1].diff;
-	offset[1] = U'\0';
+	offset[0] = U'\0';
 
 	free(chunks);
 	return out;

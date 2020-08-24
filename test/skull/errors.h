@@ -56,7 +56,17 @@ TEST(fmt_error, {
 			{ .str = U"abc" },
 			{ .str = U"def" },
 			{0}
-		}, U"abcdef")
+		}, U"abcdef") &&
+
+		fmt_error_wrapper(U"testing_%", (error_msg_t[]){
+			{ .str = U"123" },
+			{0}
+		}, U"testing_123") &&
+
+		fmt_error_wrapper(U"testing_%_testing", (error_msg_t[]){
+			{ .str = U"123" },
+			{0}
+		}, U"testing_123_testing")
 	);
 })
 
