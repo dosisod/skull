@@ -48,14 +48,18 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	else if (node->node_type==AST_NODE_VAR_ASSIGN) {
 		char32_t *name=token_str(node->token);
 		variable_t *var=context_find_name(ctx, name);
-		free(name);
 
 		if (!var) {
-			return ERR_VAR_NOT_FOUND;
+			return fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){
+				{ .real = name }, {0}
+			});
 		}
+		free(name);
 
 		if (var->is_const) {
-			return ERR_CANNOT_ASSIGN_CONST;
+			return fmt_error(ERR_CANNOT_ASSIGN_CONST, (error_msg_t[]){
+				{ .var = var }, {0}
+			});
 		}
 		ret=eval_assign(var, node->next, ctx);
 	}
@@ -76,11 +80,13 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		if (node->token->next->token_type==TOKEN_IDENTIFIER) {
 			char32_t *var_name=token_str(node->token->next);
 			const variable_t *found_var=context_find_name(ctx, var_name);
-			free(var_name);
 
 			if (found_var) {
+				free(var_name);
 				if (found_var->type!=&TYPE_INT) {
-					ret=ERR_NON_INT_RETURN;
+					ret=fmt_error(ERR_NON_INT_RETURN, (error_msg_t[]){
+						{ .var = found_var }, {0}
+					});
 				}
 				else {
 					int64_t num=0;
@@ -89,7 +95,9 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 				}
 			}
 			else {
-				ret=ERR_VAR_NOT_FOUND;
+				ret=fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){
+					{ .real = var_name }, {0}
+				});
 			}
 		}
 		else { //token is an int
@@ -119,13 +127,16 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		return NULL;
 	}
 
-	if (!node->next) {
-		return ERR_MISSING_ASSIGNMENT;
-	}
-
 	const token_t *token=node->token;
 	if (!is_const) {
 		token=token->next;
+	}
+
+	if (!node->next) {
+		//return ERR_MISSING_ASSIGNMENT;
+		return fmt_error(ERR_MISSING_ASSIGNMENT, (error_msg_t[]){
+			{ .tok = token }, {0}
+		});
 	}
 
 	char32_t *name=token_str(token);
@@ -133,8 +144,12 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 
 	if (token->next->token_type==TOKEN_OPER_AUTO_EQUAL) {
 		if (is_func_name_str(name)) {
+			char32_t *error=fmt_error(ERR_ASSIGN_FUNC, (error_msg_t[]){
+				{ .str = name }, {0}
+			});
+
 			free(name);
-			return ERR_ASSIGN_FUNC;
+			return error;
 		}
 
 		const char32_t *type=NULL;
@@ -161,12 +176,14 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		) {
 			char32_t *lookup=token_str(node->next->token);
 			variable_t *new_var=context_find_name(ctx, lookup);
-			free(lookup);
 
 			if (!new_var) {
 				free(name);
-				return ERR_VAR_NOT_FOUND;
+				return fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){
+					{ .real = lookup }, {0}
+				});
 			}
+			free(lookup);
 			type=new_var->type->name;
 		}
 		else {
@@ -180,20 +197,24 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		var=make_variable(type_name, name, false);
 		free(type_name);
 	}
-	free(name);
 
 	const char32_t *tmp=eval_assign(var, node->next, ctx);
 	var->is_const=is_const;
 
 	if (tmp) {
 		free_variable(var);
+		free(name);
 		return tmp;
 	}
 	if (context_add_var(ctx, var)) {
+		free(name);
 		return NULL;
 	}
 	free_variable(var);
-	return ERR_VAR_ALREADY_DEFINED;
+
+	return fmt_error(ERR_VAR_ALREADY_DEFINED, (error_msg_t[]){
+		{ .real = name }, {0}
+	});
 }
 
 /*

@@ -15,7 +15,7 @@
 	int64_t *num=eval_integer(token, &err); \
 	const bool pass=( \
 		(!num || *num==(expected_num)) && \
-		err==(expected_error) \
+		(err==(expected_error) || c32scmp(expected_error, err)) \
 	); \
 	free(token); \
 	free(num); \
@@ -29,13 +29,15 @@ TEST(convert_negative_integer_token, {
 	TEST_EVAL_INT_CONVERT(U"-1234", -1234, NULL);
 })
 
+#define TEMP_INT U"9999999999999999999"
 TEST(integer_overflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(U"9999999999999999999", LLONG_MAX, ERR_OVERFLOW);
+	TEST_EVAL_INT_CONVERT(TEMP_INT, LLONG_MAX, U"overflow occurred while parsing \"" TEMP_INT U"\"");
 })
 
 TEST(integer_underflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(U"-9999999999999999999", LLONG_MIN, ERR_OVERFLOW);
+	TEST_EVAL_INT_CONVERT(U"-" TEMP_INT, LLONG_MIN, U"overflow occurred while parsing \"-" TEMP_INT U"\"");
 })
+#undef TEMP_INT
 
 TEST(convert_hex_integer, {
 	TEST_EVAL_INT_CONVERT(U"0xff", 255, NULL);

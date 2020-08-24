@@ -23,20 +23,20 @@ const char32_t *ERR_MULT_UNAVAILABLE;
 const char32_t *ERR_CANNOT_DIV;
 const char32_t *ERR_DIV_UNAVAILABLE;
 const char32_t *ERR_TYPE_TYPE_BAD;
-const char32_t *ERR_BOOL_BAD;
-const char32_t *ERR_COMPARISON_BAD;
 const char32_t *ERR_MISSING_TOKEN;
 const char32_t *ERR_UNEXPECTED_PARAM;
 const char32_t *ERR_INVALID_PARAMS;
 const char32_t *ERR_ASSIGN_FUNC;
 
 struct variable_t;
+struct type_t;
 
 typedef struct {
 	// dont store heap allocated strings in "str", do so in "real"
 	const char32_t *str;
 	const token_t *tok;
 	const struct variable_t *var;
+	const struct type_t *type;
 
 	// copy of string that will be used in final error msg
 	char32_t *real;

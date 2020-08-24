@@ -57,8 +57,11 @@ TEST(variable_cannot_write_to_const, {
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
-		ret == ERR_CANNOT_ASSIGN_CONST &&
-		val == 0
+		val == 0 &&
+		c32scmp(
+			U"cannot reassign const variable \"x\"",
+			ret
+		)
 	);
 
 	free_variable(var);

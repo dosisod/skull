@@ -43,7 +43,10 @@ TEST(repl_cannot_redeclare_var, {
 
 	const bool pass=(
 		ctx->vars_used==1 &&
-		c32scmp(ERR_VAR_ALREADY_DEFINED, output)
+		c32scmp(
+			U"variable \"x\" already defined",
+			output
+		)
 	);
 
 	free_context(ctx);
@@ -89,7 +92,10 @@ TEST(repl_manually_writing_to_const_var_fails, {
 	int64_t data=1111;
 	const char32_t *err=variable_write(ctx->vars[0], &data);
 
-	const bool pass=(err==ERR_CANNOT_ASSIGN_CONST);
+	const bool pass=c32scmp(
+		U"cannot reassign const variable \"x\"",
+		err
+	);
 
 	free_context(ctx);
 	return pass;
@@ -177,7 +183,10 @@ TEST(repl_write_to_const_var_fails, {
 		return false;
 	}
 
-	const bool pass=c32scmp(ERR_CANNOT_ASSIGN_CONST, output);
+	const bool pass=c32scmp(
+		U"cannot reassign const variable \"x\"",
+		output
+	);
 
 	free_context(ctx);
 	return pass;
@@ -263,7 +272,7 @@ TEST(repl_cannot_name_auto_var_after_func, {
 	context_t *ctx=make_context();
 
 	const bool pass=c32scmp(
-		ERR_ASSIGN_FUNC,
+		U"cannot reassign built-in function \"print\"",
 		repl_eval(U"print := 0", ctx)
 	);
 
@@ -294,22 +303,24 @@ TEST(repl_print_var, {
 	return pass;
 })
 
+#define TEMP_INT U"99999999999999999999999"
 TEST(repl_overflow_int_gives_error, {
 	context_t *ctx=make_context();
 
-	const char32_t *output1=repl_eval(U"x: int = 99999999999999999999999", ctx);
+	const char32_t *output1=repl_eval(U"x: int = " TEMP_INT, ctx);
 
 	repl_eval(U"mut y: int = 0", ctx);
-	const char32_t *output2=repl_eval(U"y = 99999999999999999999999", ctx);
+	const char32_t *output2=repl_eval(U"y = " TEMP_INT, ctx);
 
 	const bool pass=(
-		c32scmp(ERR_OVERFLOW, output1) &&
-		c32scmp(ERR_OVERFLOW, output2)
+		c32scmp(U"overflow occurred while parsing \"" TEMP_INT U"\"", output1) &&
+		c32scmp(U"overflow occurred while parsing \"" TEMP_INT U"\"", output2)
 	);
 
 	free_context(ctx);
 	return pass;
 })
+#undef TEMP_INT
 
 TEST(repl_define_var_without_colon_fails, {
 	context_t *ctx=make_context();
@@ -327,7 +338,7 @@ TEST(repl_missing_value_no_segfault, {
 	context_t *ctx=make_context();
 
 	const bool pass=c32scmp(
-		ERR_MISSING_ASSIGNMENT,
+		U"missing value in assignment to variable \"x\"",
 		repl_eval(U"x: int =", ctx)
 	);
 
@@ -360,7 +371,10 @@ TEST(repl_auto_assign_detect_unknown_var, {
 
 	const char32_t *output=repl_eval(U"x := y", ctx);
 
-	const bool pass=(output==ERR_VAR_NOT_FOUND);
+	const bool pass=c32scmp(
+		U"variable \"y\" not found",
+		output
+	);
 
 	free_context(ctx);
 	return pass;
@@ -371,7 +385,10 @@ TEST(repl_auto_assign_detect_missing_token, {
 
 	const char32_t *output=repl_eval(U"x :=", ctx);
 
-	const bool pass=(output==ERR_MISSING_ASSIGNMENT);
+	const bool pass=c32scmp(
+		U"missing value in assignment to variable \"x\"",
+		output
+	);
 
 	free_context(ctx);
 	return pass;
@@ -382,7 +399,10 @@ TEST(repl_assign_detect_unknown_var, {
 
 	const char32_t *output=repl_eval(U"x =", ctx);
 
-	const bool pass=(output==ERR_VAR_NOT_FOUND);
+	const bool pass=c32scmp(
+		U"variable \"x\" not found",
+		output
+	);
 
 	free_context(ctx);
 	return pass;
@@ -422,7 +442,10 @@ TEST(repl_cannot_reassign_const, {
 
 	const bool pass=(
 		c32scmp(before, after) &&
-		output==ERR_CANNOT_ASSIGN_CONST
+		c32scmp(
+			U"cannot reassign const variable \"x\"",
+			output
+		)
 	);
 
 	if (!is_error_msg(output)) {
@@ -438,7 +461,10 @@ TEST(repl_cannot_return_non_existent_var, {
 
 	const char32_t *output=repl_eval(U"return x", ctx);
 
-	const bool pass=(output==ERR_VAR_NOT_FOUND);
+	const bool pass=c32scmp(
+		U"variable \"x\" not found",
+		output
+	);
 
 	free_context(ctx);
 	return pass;
@@ -450,7 +476,10 @@ TEST(repl_cannot_return_non_int, {
 	repl_eval(U"x := 'a'", ctx);
 	const char32_t *output=repl_eval(U"return x", ctx);
 
-	const bool pass=(output==ERR_NON_INT_RETURN);
+	const bool pass=c32scmp(
+		U"returning non-int variable \"x\" from main",
+		output
+	);
 
 	free_context(ctx);
 	return pass;

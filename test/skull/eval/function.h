@@ -40,7 +40,7 @@ TEST(func_clear_params_fail, {
 	ast_node_t *node=make_ast_tree(U"clear[x]");
 
 	const bool pass=c32scmp(
-		ERR_UNEXPECTED_PARAM,
+		U"\"clear\" function does not take any parameters",
 		func_clear(node)
 	);
 
@@ -70,7 +70,7 @@ TEST(func_print_extra_params_fail, {
 
 	const bool pass=c32scmp(
 		func_print(node, ctx),
-		ERR_INVALID_PARAMS
+		U"invalid number of parameters given in function \"print\""
 	);
 
 	free_ast_tree(node);

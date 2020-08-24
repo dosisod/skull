@@ -22,20 +22,34 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 
 #define EVAL_ASSIGN_SETUP(func, cannot, unavail) \
 	char32_t *lhs_str = token_str(node->token); \
-	char32_t *rhs_str = token_str(node->token->next->next); \
 	variable_t *lhs_var = context_find_name(ctx, lhs_str); \
-	variable_t *rhs_var = context_find_name(ctx, rhs_str); \
-	free(lhs_str); \
-	free(rhs_str); \
-	if (!lhs_var || !rhs_var) { \
-		return ERR_VAR_NOT_FOUND; \
+	if (!lhs_var) { \
+		return fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){ \
+			{ .real = lhs_str }, {0} \
+		}); \
 	} \
+	free(lhs_str); \
+	char32_t *rhs_str = token_str(node->token->next->next); \
+	variable_t *rhs_var = context_find_name(ctx, rhs_str); \
+	if (!rhs_var) { \
+		return fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){ \
+			{ .real = rhs_str }, {0} \
+		}); \
+	} \
+	free(rhs_str); \
 	if (lhs_var->type != rhs_var->type) { \
-		return (cannot); \
+		char32_t *fmt_err = fmt_error((cannot), (error_msg_t[]){ \
+			{ .type = lhs_var->type }, \
+			{ .type = rhs_var->type }, {0} \
+		}); \
+		return fmt_err; \
 	} \
 	variable_t *tmp = (func)(lhs_var, rhs_var); \
 	if (!tmp) { \
-		return (unavail); \
+		char32_t *fmt_err = fmt_error((unavail), (error_msg_t[]){ \
+			{ .type = lhs_var->type }, {0} \
+		}); \
+		return fmt_err; \
 	} \
 	variable_write(var, tmp->mem); \
 	free(tmp); \
@@ -127,11 +141,13 @@ Evaluate assignment via auto assignment operator.
 const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
 	char32_t *lookup = token_str(node->token);
 	variable_t *var_found = context_find_name(ctx, lookup);
-	free(lookup);
 
 	if (var_found == NULL) {
-		return ERR_VAR_NOT_FOUND;
+		return fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){
+			{ .real = lookup }, {0}
+		});
 	}
+	free(lookup);
 	if (var_found->type != var->type) {
 		return ERR_TYPE_MISMATCH;
 	}

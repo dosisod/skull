@@ -9,7 +9,6 @@
 TEST(is_error_msg, {
 	return (
 		is_error_msg(ERR_INVALID_INPUT) &&
-		is_error_msg(ERR_OVERFLOW) &&
 		!is_error_msg(U"not an error msg") &&
 		!is_error_msg(NULL)
 	);
@@ -29,7 +28,7 @@ bool fmt_error_wrapper(const char32_t *fmt, error_msg_t msgs[], const char32_t *
 
 TEST(fmt_error, {
 	return (
-		fmt_error_wrapper(U"%", (error_msg_t[]){ NULL }, U"") &&
+		fmt_error_wrapper(U"%", (error_msg_t[]){ {0} }, U"") &&
 
 		fmt_error_wrapper(U"%", (error_msg_t[]){
 			{ .str = U"abc" },
@@ -93,6 +92,11 @@ TEST(fmt_error_stringify, {
 		.var = var
 	};
 
+	const variable_t *type_var = make_variable(U"int", U"var_name", true);
+	error_msg_t err_type = {
+		.type = type_var->type
+	};
+
 	const char32_t *str = U"some string";
 	error_msg_t err_str = {
 		.str = str
@@ -101,7 +105,8 @@ TEST(fmt_error_stringify, {
 	return (
 		fmt_error_stringify_wrapper(&err_tok, U"xxx") &&
 		fmt_error_stringify_wrapper(&err_var, U"var_name") &&
-		fmt_error_stringify_wrapper(&err_str, U"some string")
+		fmt_error_stringify_wrapper(&err_str, U"some string") &&
+		fmt_error_stringify_wrapper(&err_type, U"int")
 	);
 })
 

@@ -72,7 +72,9 @@ If `var` is constant, return error msg, else `NULL`.
 */
 const char32_t *variable_write(const variable_t *var, const void *data) {
 	if (var->is_const) {
-		return ERR_CANNOT_ASSIGN_CONST;
+		return fmt_error(ERR_CANNOT_ASSIGN_CONST, (error_msg_t[]){
+			{ .var = var }, {0}
+		});
 	}
 
 	memcpy(var->mem, data, var->bytes);
