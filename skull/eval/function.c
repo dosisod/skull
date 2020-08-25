@@ -32,11 +32,12 @@ const char32_t *func_print(ast_node_t *node, context_t *ctx) {
 	}
 	char32_t *name=token_str(node->token->next->next);
 	const variable_t *var=context_find_name(ctx, name);
-	free(name);
 
 	if (!var) {
-		return ERR_VAR_NOT_FOUND;
+		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = name });
 	}
+
+	free(name);
 	return fmt_var(var);
 }
 

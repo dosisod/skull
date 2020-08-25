@@ -77,6 +77,19 @@ TEST(func_print_extra_params_fail, {
 	return pass;
 })
 
+TEST(func_print_bad_var, {
+	context_t *ctx=make_context();
+	ast_node_t *node=make_ast_tree(U"print[x]");
+
+	const bool pass=c32scmp(
+		func_print(node, ctx),
+		_ERR_VAR_NOT_FOUND(U"x")
+	);
+
+	free_ast_tree(node);
+	return pass;
+})
+
 void function_test_self(bool *pass) {
 	tests_t tests={
 		test_is_func_name,
@@ -85,6 +98,7 @@ void function_test_self(bool *pass) {
 		test_func_clear_params_fail,
 		test_func_print,
 		test_func_print_extra_params_fail,
+		test_func_print_bad_var,
 		NULL
 	};
 
