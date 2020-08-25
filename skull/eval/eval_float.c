@@ -41,9 +41,7 @@ void *eval_float(const token_t *token, const char32_t **error) {
 	free(tmp);
 
 	if (isinf(*ret) && errno == ERANGE) {
-		*error = fmt_error(ERR_OVERFLOW, (error_msg_t[]){
-			{ .tok = token }, {0}
-		});
+		*error = FMT_ERROR(ERR_OVERFLOW, { .tok = token });
 	}
 
 	return ret;

@@ -13,9 +13,7 @@ Returns string that when printed, clears the screen.
 */
 const char32_t *func_clear(ast_node_t *node) {
 	if (node->node_type!=AST_NODE_NO_PARAM_FUNC) {
-		return fmt_error(ERR_UNEXPECTED_PARAM, (error_msg_t[]){
-			{ .str = U"clear" }, {0}
-		});
+		return FMT_ERROR(ERR_UNEXPECTED_PARAM, { .str = U"clear" });
 	}
 	const char32_t *ret=c32sdup(U"\033[2J\033[;1H");
 	DIE_IF_MALLOC_FAILS(ret);
@@ -30,9 +28,7 @@ const char32_t *func_print(ast_node_t *node, context_t *ctx) {
 	if (node->node_type!=AST_NODE_ONE_PARAM_FUNC ||
 		node->token->next->next->token_type!=TOKEN_IDENTIFIER
 	) {
-		return fmt_error(ERR_INVALID_PARAMS, (error_msg_t[]){
-			{ .str = U"print" }, {0}
-		});
+		return FMT_ERROR(ERR_INVALID_PARAMS, { .str = U"print" });
 	}
 	char32_t *name=token_str(node->token->next->next);
 	const variable_t *var=context_find_name(ctx, name);

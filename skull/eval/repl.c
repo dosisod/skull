@@ -50,16 +50,12 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 		variable_t *var=context_find_name(ctx, name);
 
 		if (!var) {
-			return fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){
-				{ .real = name }, {0}
-			});
+			return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = name });
 		}
 		free(name);
 
 		if (var->is_const) {
-			return fmt_error(ERR_CANNOT_ASSIGN_CONST, (error_msg_t[]){
-				{ .var = var }, {0}
-			});
+			return FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .var = var });
 		}
 		ret=eval_assign(var, node->next, ctx);
 	}
@@ -84,9 +80,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 			if (found_var) {
 				free(var_name);
 				if (found_var->type!=&TYPE_INT) {
-					ret=fmt_error(ERR_NON_INT_RETURN, (error_msg_t[]){
-						{ .var = found_var }, {0}
-					});
+					ret=FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var });
 				}
 				else {
 					int64_t num=0;
@@ -95,9 +89,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 				}
 			}
 			else {
-				ret=fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){
-					{ .real = var_name }, {0}
-				});
+				ret=FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name });
 			}
 		}
 		else { //token is an int
@@ -133,10 +125,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 	}
 
 	if (!node->next) {
-		//return ERR_MISSING_ASSIGNMENT;
-		return fmt_error(ERR_MISSING_ASSIGNMENT, (error_msg_t[]){
-			{ .tok = token }, {0}
-		});
+		return FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .tok = token });
 	}
 
 	char32_t *name=token_str(token);
@@ -144,9 +133,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 
 	if (token->next->token_type==TOKEN_OPER_AUTO_EQUAL) {
 		if (is_func_name_str(name)) {
-			char32_t *error=fmt_error(ERR_ASSIGN_FUNC, (error_msg_t[]){
-				{ .str = name }, {0}
-			});
+			char32_t *error=FMT_ERROR(ERR_ASSIGN_FUNC, { .str = name });
 
 			free(name);
 			return error;
@@ -179,9 +166,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 
 			if (!new_var) {
 				free(name);
-				return fmt_error(ERR_VAR_NOT_FOUND, (error_msg_t[]){
-					{ .real = lookup }, {0}
-				});
+				return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup });
 			}
 			free(lookup);
 			type=new_var->type->name;
@@ -212,9 +197,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 	}
 	free_variable(var);
 
-	return fmt_error(ERR_VAR_ALREADY_DEFINED, (error_msg_t[]){
-		{ .real = name }, {0}
-	});
+	return FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .real = name });
 }
 
 /*

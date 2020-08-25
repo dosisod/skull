@@ -71,6 +71,11 @@ typedef struct {
 } error_msg_t;
 
 char32_t *fmt_error(const char32_t *fmt, error_msg_t []);
+#define FMT_ERROR(fmt, ...) \
+	fmt_error(fmt, (error_msg_t[]){ \
+		__VA_ARGS__, \
+		{0} \
+	})
 
 void fmt_error_stringify(error_msg_t *);
 
