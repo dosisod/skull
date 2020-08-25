@@ -168,7 +168,7 @@ TEST(eval_assign_add_vars_types_must_match, {
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
-		U"cannot add type \"int\" with type \"char\"",
+		_ERR_CANNOT(U"add", U"int", U"char"),
 		output
 	);
 
@@ -195,7 +195,7 @@ TEST(eval_assign_sub_vars_types_must_match, {
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
-		U"cannot subtract type \"int\" with type \"char\"",
+		_ERR_CANNOT(U"subtract", U"int", U"char"),
 		output
 	);
 
@@ -222,7 +222,7 @@ TEST(eval_assign_mult_vars_types_must_match, {
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
-		U"cannot multiply type \"int\" with type \"char\"",
+		_ERR_CANNOT(U"multiply", U"int", U"char"),
 		output
 	);
 
@@ -249,7 +249,7 @@ TEST(eval_assign_div_vars_types_must_match, {
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
-		U"cannot divide type \"int\" with type \"char\"",
+		_ERR_CANNOT(U"divide", U"int", U"char"),
 		output
 	);
 
@@ -271,7 +271,7 @@ TEST(eval_assign_add_vars_var_must_exist, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"variable \"b\" not found",
+		_ERR_VAR_NOT_FOUND(U"b"),
 		output
 	);
 
@@ -292,7 +292,7 @@ TEST(eval_assign_sub_vars_var_must_exist, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"variable \"b\" not found",
+		_ERR_VAR_NOT_FOUND(U"b"),
 		output
 	);
 
@@ -313,7 +313,7 @@ TEST(eval_assign_mult_vars_var_must_exist, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"variable \"b\" not found",
+		_ERR_VAR_NOT_FOUND(U"b"),
 		output
 	);
 
@@ -334,7 +334,7 @@ TEST(eval_assign_div_vars_var_must_exist, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"variable \"b\" not found",
+		_ERR_VAR_NOT_FOUND(U"b"),
 		output
 	);
 
@@ -355,7 +355,7 @@ TEST(eval_assign_check_lhs_var, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"variable \"b\" not found",
+		_ERR_VAR_NOT_FOUND(U"b"),
 		output
 	);
 
@@ -376,7 +376,7 @@ TEST(eval_assign_add_vars_must_be_addable, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"type \"bool\" does not allow for addition",
+		_ERR_UNAVAILABLE(U"addition", U"bool"),
 		output
 	);
 
@@ -397,7 +397,7 @@ TEST(eval_assign_sub_vars_must_be_subtractable, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"type \"bool\" does not allow for subtraction",
+		_ERR_UNAVAILABLE(U"subtraction", U"bool"),
 		output
 	);
 
@@ -418,7 +418,7 @@ TEST(eval_assign_mult_vars_must_be_multipliable, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"type \"bool\" does not allow for multiplication",
+		_ERR_UNAVAILABLE(U"multiplication", U"bool"),
 		output
 	);
 
@@ -439,7 +439,7 @@ TEST(eval_assign_div_vars_must_be_divisible, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		U"type \"bool\" does not allow for division",
+		_ERR_UNAVAILABLE(U"division", U"bool"),
 		output
 	);
 
@@ -454,7 +454,7 @@ TEST(eval_assign_int_overflow, {
 		TEMP_INT,
 		int64_t,
 		0,
-		U"overflow occurred while parsing \"" TEMP_INT U"\""
+		_ERR_OVERFLOW(TEMP_INT)
 	);
 })
 #undef TEMP_INT
@@ -562,7 +562,7 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 
 	const bool pass=c32scmp(
 		eval_assign(var, node, ctx),
-		U"variable \"not_a_variable\" not found"
+		_ERR_VAR_NOT_FOUND(U"not_a_variable")
 	);
 
 	free_context(ctx);

@@ -6,41 +6,41 @@
 
 #include "skull/errors.h"
 
-#define ERR_CANNOT(do_action) \
-	U"cannot " do_action U" type \"%\" with type \"%\""
-
-#define ERR_UNAVAILABLE(operation) \
-	U"type \"%\" does not allow for " operation
-
 const char32_t *ERR_UNEXPECTED_TOKEN = U"unexpected token";
 const char32_t *ERR_INVALID_INPUT = U"invalid input";
 const char32_t *ERR_TYPE_MISMATCH = U"error, type mismatch";
-const char32_t *ERR_UNEXPECTED_PARAM = U"\"%\" function does not take any parameters";
-const char32_t *ERR_INVALID_PARAMS = U"invalid number of parameters given in function \"%\"";
 
-const char32_t *ERR_VAR_ALREADY_DEFINED = U"variable \"%\" already defined";
-const char32_t *ERR_VAR_NOT_FOUND = U"variable \"%\" not found";
-const char32_t *ERR_CANNOT_ASSIGN_CONST = U"cannot reassign const variable \"%\"";
+const char32_t *ERR_UNEXPECTED_PARAM = _ERR_UNEXPECTED_PARAM(U"%");
 
-const char32_t *ERR_OVERFLOW = U"overflow occurred while parsing \"%\"";
-const char32_t *ERR_MISSING_ASSIGNMENT = U"missing value in assignment to variable \"%\"";
-const char32_t *ERR_NON_INT_RETURN = U"returning non-int variable \"%\" from main";
+const char32_t *ERR_INVALID_PARAMS = _ERR_INVALID_PARAMS(U"%");
 
-const char32_t *ERR_CANNOT_ADD = ERR_CANNOT("add");
-const char32_t *ERR_ADD_UNAVAILABLE = ERR_UNAVAILABLE("addition");
+const char32_t *ERR_VAR_ALREADY_DEFINED = _ERR_VAR_ALREADY_DEFINED(U"%");
 
-const char32_t *ERR_CANNOT_SUB = ERR_CANNOT("subtract");
-const char32_t *ERR_SUB_UNAVAILABLE = ERR_UNAVAILABLE("subtraction");
+const char32_t *ERR_VAR_NOT_FOUND = _ERR_VAR_NOT_FOUND(U"%");
 
-const char32_t *ERR_CANNOT_MULT = ERR_CANNOT("multiply");
-const char32_t *ERR_MULT_UNAVAILABLE = ERR_UNAVAILABLE("multiplication");
+const char32_t *ERR_CANNOT_ASSIGN_CONST = _ERR_CANNOT_ASSIGN_CONST(U"%");
 
-const char32_t *ERR_CANNOT_DIV = ERR_CANNOT("divide");
-const char32_t *ERR_DIV_UNAVAILABLE = ERR_UNAVAILABLE("division");
+const char32_t *ERR_OVERFLOW = _ERR_OVERFLOW(U"%");
+
+const char32_t *ERR_MISSING_ASSIGNMENT = _ERR_MISSING_ASSIGNMENT(U"%");
+
+const char32_t *ERR_NON_INT_RETURN = _ERR_NON_INT_RETURN(U"%");
+
+const char32_t *ERR_CANNOT_ADD = _ERR_CANNOT("add", U"%", U"%");
+const char32_t *ERR_ADD_UNAVAILABLE = _ERR_UNAVAILABLE("addition", U"%");
+
+const char32_t *ERR_CANNOT_SUB = _ERR_CANNOT("subtract", U"%", U"%");
+const char32_t *ERR_SUB_UNAVAILABLE = _ERR_UNAVAILABLE("subtraction", U"%");
+
+const char32_t *ERR_CANNOT_MULT = _ERR_CANNOT("multiply", U"%", U"%");
+const char32_t *ERR_MULT_UNAVAILABLE = _ERR_UNAVAILABLE("multiplication", U"%");
+
+const char32_t *ERR_CANNOT_DIV = _ERR_CANNOT("divide", U"%", U"%");
+const char32_t *ERR_DIV_UNAVAILABLE = _ERR_UNAVAILABLE("division", U"%");
 
 const char32_t *ERR_TYPE_TYPE_BAD = U"\"type\" cannot be assigned to variable of type \"type\"";
 
-const char32_t *ERR_ASSIGN_FUNC = U"cannot reassign built-in function \"%\"";
+const char32_t *ERR_ASSIGN_FUNC = _ERR_ASSIGN_FUNC(U"%");
 
 #undef ERR_CANNOT
 #undef ERR_UNAVAILABLE
@@ -152,7 +152,6 @@ __attribute__((pure)) bool is_error_msg(const char32_t *str) {
 		str == ERR_UNEXPECTED_TOKEN ||
 		str == ERR_INVALID_INPUT ||
 		str == ERR_TYPE_MISMATCH ||
-		str == ERR_TYPE_TYPE_BAD ||
-		str == ERR_MISSING_TOKEN
+		str == ERR_TYPE_TYPE_BAD
 	);
 }

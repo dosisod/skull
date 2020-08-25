@@ -34,7 +34,7 @@ TEST(convert_overflow_float, {
 	TEST_EVAL_FLOAT_CONVERT(
 		TEMP_FLOAT,
 		isinf(*num),
-		U"overflow occurred while parsing \"" TEMP_FLOAT U"\""
+		_ERR_OVERFLOW(TEMP_FLOAT)
 	);
 })
 #undef TEMP_FLOAT

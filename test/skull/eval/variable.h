@@ -59,7 +59,7 @@ TEST(variable_cannot_write_to_const, {
 	const bool pass=(
 		val == 0 &&
 		c32scmp(
-			U"cannot reassign const variable \"x\"",
+			_ERR_CANNOT_ASSIGN_CONST(U"x"),
 			ret
 		)
 	);

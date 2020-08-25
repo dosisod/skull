@@ -31,11 +31,11 @@ TEST(convert_negative_integer_token, {
 
 #define TEMP_INT U"9999999999999999999"
 TEST(integer_overflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(TEMP_INT, LLONG_MAX, U"overflow occurred while parsing \"" TEMP_INT U"\"");
+	TEST_EVAL_INT_CONVERT(TEMP_INT, LLONG_MAX, _ERR_OVERFLOW(TEMP_INT));
 })
 
 TEST(integer_underflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(U"-" TEMP_INT, LLONG_MIN, U"overflow occurred while parsing \"-" TEMP_INT U"\"");
+	TEST_EVAL_INT_CONVERT(U"-" TEMP_INT, LLONG_MIN, _ERR_OVERFLOW(U"-"TEMP_INT));
 })
 #undef TEMP_INT
 
