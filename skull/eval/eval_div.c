@@ -6,7 +6,7 @@
 Make a new variable by dividing `rhs` from `lhs`.
 */
 variable_t *eval_div(const variable_t *lhs, const variable_t *rhs) {
-	if (lhs->type!=rhs->type) {
+	if (lhs->type != rhs->type) {
 		return NULL;
 	}
 	if (lhs->type && lhs->type->divide) {

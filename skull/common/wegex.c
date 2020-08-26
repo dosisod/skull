@@ -13,21 +13,21 @@ Returns true if the `wegex` string matches the `match` string.
 * Character groups can be used, for example, `+[123]+[abc]` matches `"321cba"`.
 */
 bool wegex_match(const char32_t *wegex, const char32_t *match) {
-	const char32_t *wegex_end=wegex;
+	const char32_t *wegex_end = wegex;
 
 	while (*wegex && *match) {
-		if (*wegex==U'*') {
+		if (*wegex == U'*') {
 			wegex++;
-			wegex_end=find_next_wegex(wegex);
+			wegex_end = find_next_wegex(wegex);
 
 			while (wegex_cmp(wegex, wegex_end, *match)) {
 				match++;
 			}
 		}
 
-		else if (*wegex==U'+') {
+		else if (*wegex == U'+') {
 			wegex++;
-			wegex_end=find_next_wegex(wegex);
+			wegex_end = find_next_wegex(wegex);
 
 			if (!wegex_cmp(wegex, wegex_end, *match)) {
 				return false;
@@ -39,9 +39,9 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 			}
 		}
 
-		else if (*wegex==U'?') {
+		else if (*wegex == U'?') {
 			wegex++;
-			wegex_end=find_next_wegex(wegex);
+			wegex_end = find_next_wegex(wegex);
 
 			if (wegex_cmp(wegex, wegex_end, *match)) {
 				match++;
@@ -50,26 +50,26 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 
 		else if (wegex_cmp(wegex, wegex_end, *match)) {
 			match++;
-			wegex_end=find_next_wegex(wegex);
+			wegex_end = find_next_wegex(wegex);
 		}
 		else {
 			return false;
 		}
 
-		wegex=wegex_end + 1;
+		wegex = wegex_end + 1;
 	}
 
-	while (*wegex==U'?' || *wegex==U'*') {
-		const char32_t *tmp=find_next_wegex(wegex + 1) + 1;
-		if (tmp!=wegex) {
-			wegex=tmp;
+	while (*wegex == U'?' || *wegex == U'*') {
+		const char32_t *tmp = find_next_wegex(wegex + 1) + 1;
+		if (tmp != wegex) {
+			wegex = tmp;
 		}
 		else {
-			wegex+=2;
+			wegex += 2;
 		}
 	}
 
-	return *wegex==*match;
+	return *wegex == *match;
 }
 
 /*
@@ -79,11 +79,11 @@ If `wegex` is pointing to a `'['` character, return the corresponding `']'`.
 Else, return the passed wegex.
 */
 const char32_t *find_next_wegex(const char32_t* wegex) {
-	if (*wegex!=U'[') {
+	if (*wegex != U'[') {
 		return wegex;
 	}
 
-	const char32_t *bracket=c32schr(wegex, U']');
+	const char32_t *bracket = c32schr(wegex, U']');
 
 	if (bracket) {
 		return bracket;
@@ -105,9 +105,9 @@ If char at `begin` is `'['`, then return wether `c` matches any character within
 Else, return wether `c` and the char at `begin` are equal.
 */
 bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c) {
-	if (*begin==U'[') {
+	if (*begin == U'[') {
 		begin++;
-		while (begin!=end) {
+		while (begin != end) {
 			if (wegex_cmp(begin, end, c)) {
 				return true;
 			}
@@ -115,20 +115,20 @@ bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c) {
 		}
 		return false;
 	}
-	if (*begin==U'\n') {
+	if (*begin == U'\n') {
 		return c32isdigit(c);
 	}
-	if (*begin==U'\b') {
+	if (*begin == U'\b') {
 		return c32isxdigit(c);
 	}
-	if (*begin==U'\a') {
+	if (*begin == U'\a') {
 		return (
-			(c>=U'A' && c<=U'Z') ||
-			(c>=U'a' && c<=U'z')
+			(c >= U'A' && c <= U'Z') ||
+			(c >= U'a' && c <= U'z')
 		);
 	}
-	if (*begin==U'\f') {
+	if (*begin == U'\f') {
 		return c32isalnum(c);
 	}
-	return *begin==c;
+	return *begin == c;
 }

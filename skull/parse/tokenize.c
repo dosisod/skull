@@ -60,7 +60,7 @@ token_t *tokenize(const char32_t *code) {
 		else if (*code == U'[' || *code == U']') {
 			if (!current->begin) {
 				current->begin = code;
-				current->end = code+1;
+				current->end = code + 1;
 			}
 			else {
 				PINCH_TOKEN;

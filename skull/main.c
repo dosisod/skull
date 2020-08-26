@@ -14,9 +14,9 @@ Else, run a passed in `.sk` file.
 int main(int argc, char *argv[]) {
 	SETUP_LOCALE();
 
-	if (argc==1) {
+	if (argc == 1) {
 		puts("Skull " SKULL_VERSION);
-		context_t *ctx=make_context();
+		context_t *ctx = make_context();
 
 		while (true) {
 			repl_loop(stdin, ctx);

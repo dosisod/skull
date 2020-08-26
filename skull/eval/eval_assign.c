@@ -56,27 +56,27 @@ Set `ctx` to allow for assigning variables to other variables.
 Return an error (as a string) if any occured, else `NULL`.
 */
 const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
-	if (node == NULL) {
+	if (!node) {
 		return ERR_INVALID_INPUT;
 	}
 
-	if (ctx != NULL && node->node_type == AST_NODE_IDENTIFIER) {
+	if (ctx && node->node_type == AST_NODE_IDENTIFIER) {
 		return eval_auto_assign(var, node, ctx);
 	}
 
-	if (ctx != NULL && node->node_type == AST_NODE_ADD_VAR) {
+	if (ctx && node->node_type == AST_NODE_ADD_VAR) {
 		EVAL_ASSIGN_SETUP(eval_add, ERR_CANNOT_ADD, ERR_ADD_UNAVAILABLE);
 	}
 
-	if (ctx != NULL && node->node_type == AST_NODE_SUB_VAR) {
+	if (ctx && node->node_type == AST_NODE_SUB_VAR) {
 		EVAL_ASSIGN_SETUP(eval_sub, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
 	}
 
-	if (ctx != NULL && node->node_type == AST_NODE_MULT_VAR) {
+	if (ctx && node->node_type == AST_NODE_MULT_VAR) {
 		EVAL_ASSIGN_SETUP(eval_mult, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
 	}
 
-	if (ctx != NULL && node->node_type == AST_NODE_DIV_VAR) {
+	if (ctx && node->node_type == AST_NODE_DIV_VAR) {
 		EVAL_ASSIGN_SETUP(eval_div, ERR_CANNOT_DIV, ERR_DIV_UNAVAILABLE);
 	}
 
@@ -99,7 +99,7 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 		char32_t *current = NULL;
 		variable_read(&current, var);
 
-		if (current != NULL) {
+		if (current) {
 			free(current);
 		}
 
@@ -112,7 +112,7 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 		return ERR_TYPE_MISMATCH;
 	}
 
-	if (err != NULL || (err=variable_write(var, mem)) == ERR_CANNOT_ASSIGN_CONST) {
+	if (err || (err = variable_write(var, mem)) == ERR_CANNOT_ASSIGN_CONST) {
 		free((void*)mem);
 		if (var->type == &TYPE_STR) {
 			char32_t *str = NULL;
@@ -135,7 +135,7 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 	char32_t *lookup = token_str(node->token);
 	variable_t *var_found = context_find_name(ctx, lookup);
 
-	if (var_found == NULL) {
+	if (!var_found) {
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup });
 	}
 	free(lookup);

@@ -52,10 +52,10 @@ variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_co
 
 	c32slcpy(name_copy, name, len + 1);
 
-	var->name=name_copy;
-	var->type=found_type;
-	var->is_const=is_const;
-	var->bytes=found_type->bytes;
+	var->name = name_copy;
+	var->type = found_type;
+	var->is_const = is_const;
+	var->bytes = found_type->bytes;
 
 	uint8_t *mem;
 	mem = calloc(found_type->bytes, sizeof *mem);

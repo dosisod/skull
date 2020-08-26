@@ -42,7 +42,7 @@ void *eval_integer(const token_t *token, const char32_t **error) {
 
 	errno = 0;
 	char *tmp = c32stombs(begin);
-	*ret=strtoll(tmp, NULL, base);
+	*ret = strtoll(tmp, NULL, base);
 	free(tmp);
 
 	if ((*ret == LLONG_MAX || *ret == LLONG_MIN) && errno == ERANGE) {

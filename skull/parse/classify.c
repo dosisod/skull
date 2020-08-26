@@ -12,19 +12,19 @@
 
 #define TOKEN_TRY_STR(str, type) \
 	else if (token_cmp((str), token)) { \
-		token->token_type=(type); \
+		token->token_type = (type); \
 	}
 
 #define TOKEN_SET_IF(cond, type) \
 	else if ((cond)) { \
-		token->token_type=(type); \
+		token->token_type = (type); \
 	}
 
 /*
 Classify the token `token`.
 */
 void classify_token(token_t *token) {
-	char32_t *str=token_str(token);
+	char32_t *str = token_str(token);
 
 	if (false) {} // setup for macros
 
@@ -47,33 +47,33 @@ void classify_token(token_t *token) {
 	TOKEN_SET_IF(is_constant_bool_str(str), TOKEN_BOOL_CONST)
 
 	else if (is_constant_char_str(str)) {
-		token->token_type=TOKEN_CHAR_CONST;
+		token->token_type = TOKEN_CHAR_CONST;
 
 		//dont include ''s as part of string
 		token->begin++;
 		token->end--;
 	}
 	else if (is_constant_str_str(str)) {
-		token->token_type=TOKEN_STR_CONST;
+		token->token_type = TOKEN_STR_CONST;
 
 		//dont include ""s as part of string
 		token->begin++;
 		token->end--;
 	}
 	else if (is_valid_identifier_str(str)) {
-		token->token_type=TOKEN_IDENTIFIER;
+		token->token_type = TOKEN_IDENTIFIER;
 
-		if (*(token->end - 1)==U':') {
-			token->token_type=TOKEN_NEW_IDENTIFIER;
+		if (*(token->end - 1) == U':') {
+			token->token_type = TOKEN_NEW_IDENTIFIER;
 			token->end--;
 
-			char32_t *new_str=token_str(token);
+			char32_t *new_str = token_str(token);
 
 			if (is_type_str(new_str) ||
 				is_keyword_str(new_str) ||
 				is_func_name_str(new_str))
 			{
-				token->token_type=TOKEN_UNKNOWN;
+				token->token_type = TOKEN_UNKNOWN;
 				token->end++;
 			}
 			free(new_str);
@@ -89,11 +89,11 @@ void classify_token(token_t *token) {
 Classify all tokens pointed to from `token`.
 */
 void classify_tokens(token_t *head) {
-	token_t *current=head;
+	token_t *current = head;
 
 	while (current) {
 		classify_token(current);
-		current=current->next;
+		current = current->next;
 	}
 }
 
@@ -101,12 +101,12 @@ void classify_tokens(token_t *head) {
 Returns true if `name` is a type string.
 */
 bool is_type_str(const char32_t *name) {
-	type_t *current=TYPES_AVAILABLE;
+	type_t *current = TYPES_AVAILABLE;
 	while (current) {
 		if (c32scmp(current->name, name)) {
 			return true;
 		}
-		current=current->next;
+		current = current->next;
 	}
 	return false;
 }
@@ -162,9 +162,9 @@ Won't work: `''`, `'x '`, or `' x'`.
 */
 bool is_constant_char_str(const char32_t *str) {
 	return (
-		c32slen(str)==3 &&
-		str[0]=='\''
-		&& str[2]=='\''
+		c32slen(str) == 3 &&
+		str[0] == U'\'' &&
+		str[2] == U'\''
 	);
 }
 
@@ -174,12 +174,12 @@ Returns true if `str` is a valid string constant.
 Examples: `""` and `"hello"`.
 */
 bool is_constant_str_str(const char32_t *str) {
-	const size_t len=c32slen(str);
+	const size_t len = c32slen(str);
 
 	return (
-		len>=2 &&
-		str[0]==U'\"' &&
-		str[len - 1]==U'\"'
+		len >= 2 &&
+		str[0] == U'\"' &&
+		str[len - 1] == U'\"'
 	);
 }
 

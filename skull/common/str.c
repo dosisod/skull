@@ -11,7 +11,7 @@ Make a heap allocated version of `str`.
 The result of this function must be freed.
 */
 char32_t *c32sdup(const char32_t *str) {
-	size_t len=c32slen(str);
+	size_t len = c32slen(str);
 
 	char32_t *ret;
 	ret = malloc((len + 1) * sizeof *ret);
@@ -84,7 +84,7 @@ char *c32stombs(const char32_t *str) {
 	static mbstate_t mbs;
 
 	while (*str) {
-		size_t length = c32rtomb(ret+offset, *str, &mbs);
+		size_t length = c32rtomb(ret + offset, *str, &mbs);
 
 		if ((length == 0) || (length > MB_CUR_MAX)) {
 			break;
@@ -135,7 +135,7 @@ char32_t *mbstoc32s(const char *str) {
 	memset(&mbs, 0, sizeof mbs);
 
 	while (*str) {
-		size_t length = mbrtoc32(ret+offset, str, MB_CUR_MAX, &mbs);
+		size_t length = mbrtoc32(ret + offset, str, MB_CUR_MAX, &mbs);
 
 		if ((length == 0) || (length > MB_CUR_MAX)) {
 			break;
@@ -236,7 +236,7 @@ const char *strrstr(const char *str, const char *sub) {
 	size_t str_len = strlen(str);
 	size_t sub_len = strlen(sub);
 
-	const char *look=str + str_len - sub_len;
+	const char *look = str + str_len - sub_len;
 
 	while (look >= str) {
 		if (strncmp(look, sub, sub_len) == 0) {

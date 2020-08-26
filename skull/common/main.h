@@ -26,10 +26,10 @@
 	errno = 0; \
 	FILE *f = fopen(argv[1], "re"); \
 	if (!f) { \
-		if (errno==EACCES) { \
+		if (errno == EACCES) { \
 			printf("cannot open \"%s\", permission denied\n", argv[1]); \
 		} \
-		else if (errno==ENOENT) { \
+		else if (errno == ENOENT) { \
 			printf("\"%s\" was not found, exiting\n", argv[1]); \
 		} \
 		return 1; \
