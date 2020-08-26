@@ -25,6 +25,7 @@ test ".sk" 1 "\".sk\" is not a valid name, exiting"
 test "not_a_file.sk" 1 "\"./test/sh/not_a_file.sk\" was not found, exiting"
 test "option1\ option2" 1 "too many arguments passed, exiting"
 test "print.sk" 0 "hello world!"
+test "illegal_utf8.sk" 1 "illegal UTF8 sequence at character offset 0"
 
 touch test/sh/read_protected.sk
 chmod 200 test/sh/read_protected.sk

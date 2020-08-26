@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -135,7 +136,13 @@ char32_t *mbstoc32s(const char *str) {
 	memset(&mbs, 0, sizeof mbs);
 
 	while (*str) {
+		errno = 0;
 		size_t length = mbrtoc32(ret + offset, str, MB_CUR_MAX, &mbs);
+
+		if (errno == EILSEQ) {
+			printf("illegal UTF8 sequence at character offset %zu\n", offset);
+			exit(1);
+		}
 
 		if ((length == 0) || (length > MB_CUR_MAX)) {
 			break;
