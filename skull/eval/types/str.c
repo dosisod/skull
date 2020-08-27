@@ -48,12 +48,48 @@ void *eval_str(const token_t *token, const char32_t **error) {
 		return NULL;
 	}
 
-	char32_t *tmp = token_str(token);
+	size_t len = token_len(token);
+
+	char32_t *str;
+	str = malloc((len + 1) * sizeof *str);
+	DIE_IF_MALLOC_FAILS(str);
+
+	const char32_t *tmp = token->begin;
+	size_t wrote = 0;
+	while (*tmp && tmp < token->begin + len) {
+		if (*tmp == U'\\') {
+			if (tmp[1] == U't') {
+				str[wrote] = U'\t';
+			}
+			else if (tmp[1] == U'r') {
+				str[wrote] = U'\r';
+			}
+			else if (tmp[1] == U'\\') {
+				str[wrote] = U'\\';
+			}
+			else if (tmp[1] == U'n') {
+				str[wrote] = U'\n';
+			}
+			else {
+				free(str);
+				*error = FMT_ERROR(ERR_BAD_ESCAPE, { .tok = token });
+				return NULL;
+			}
+			tmp++;
+		}
+		else {
+			str[wrote] = *tmp;
+		}
+
+		tmp++;
+		wrote++;
+	}
+	str[wrote] = U'\0';
 
 	char32_t **ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 
-	*ret = tmp;
+	*ret = str;
 	return ret;
 }

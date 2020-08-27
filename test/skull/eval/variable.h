@@ -197,6 +197,50 @@ TEST(fmt_var_str, {
 	return pass;
 })
 
+TEST(fmt_var_str_with_escape_chars, {
+	variable_t *var = make_variable(U"str", U"x", false);
+
+	ast_node_t *node = make_ast_tree(U"\"\\r\\n\\t\\\\\"");
+
+	eval_assign(var, node, NULL);
+
+	char32_t *str = fmt_var(var);
+
+	const bool pass = (
+		str &&
+		c32scmp(U"\r\n\t\\", str)
+	);
+
+	char32_t *mem = NULL;
+	variable_read(&mem, var);
+	free(mem);
+
+	free(str);
+	free_variable(var);
+	return pass;
+})
+
+TEST(fmt_var_str_with_bad_escape, {
+	variable_t *var = make_variable(U"str", U"x", false);
+
+	ast_node_t *node = make_ast_tree(U"\"\\z\"");
+
+	const char32_t *err = eval_assign(var, node, NULL);
+
+	const bool pass = (
+		err &&
+		c32scmp(_ERR_BAD_ESCAPE(U"\\z"), err)
+	);
+
+	char32_t *mem = NULL;
+	variable_read(&mem, var);
+	free(mem);
+
+	free((char32_t *)err);
+	free_variable(var);
+	return pass;
+})
+
 void variable_test_self(bool *pass) {
 	tests_t tests = {
 		test_create_variable,
@@ -219,6 +263,8 @@ void variable_test_self(bool *pass) {
 		test_fmt_var_char,
 		test_fmt_var_wide_char_preserved,
 		test_fmt_var_str,
+		test_fmt_var_str_with_escape_chars,
+		test_fmt_var_str_with_bad_escape,
 		NULL
 	};
 

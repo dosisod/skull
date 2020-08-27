@@ -10,6 +10,8 @@ const char32_t *ERR_UNEXPECTED_TOKEN = U"unexpected token";
 const char32_t *ERR_INVALID_INPUT = U"invalid input";
 const char32_t *ERR_TYPE_MISMATCH = U"error, type mismatch";
 
+const char32_t *ERR_BAD_ESCAPE = _ERR_BAD_ESCAPE(U"%");
+
 const char32_t *ERR_UNEXPECTED_PARAM = _ERR_UNEXPECTED_PARAM(U"%");
 
 const char32_t *ERR_INVALID_PARAMS = _ERR_INVALID_PARAMS(U"%");

@@ -9,6 +9,9 @@ const char32_t *ERR_UNEXPECTED_TOKEN;
 const char32_t *ERR_INVALID_INPUT;
 const char32_t *ERR_TYPE_MISMATCH;
 
+const char32_t *ERR_BAD_ESCAPE;
+#define _ERR_BAD_ESCAPE(tok) U"bad string escape: \"" tok U"\""
+
 const char32_t *ERR_UNEXPECTED_PARAM;
 #define _ERR_UNEXPECTED_PARAM(f) U"\"" f U"\" function does not take any parameters"
 
