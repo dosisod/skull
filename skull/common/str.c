@@ -96,6 +96,7 @@ char *c32stombs(const char32_t *str) {
 
 	//shrink string to only what we need
 	ret = realloc(ret, offset + 1);
+	DIE_IF_MALLOC_FAILS(ret);
 	ret[offset] = '\0';
 
 	return ret;
@@ -153,6 +154,7 @@ char32_t *mbstoc32s(const char *str) {
 
 	//shrink string to only what we need
 	ret = realloc(ret, (offset + 1) * sizeof *ret);
+	DIE_IF_MALLOC_FAILS(ret);
 	ret[offset] = U'\0';
 
 	return ret;
