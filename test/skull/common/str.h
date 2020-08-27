@@ -3,6 +3,7 @@
 #include <uchar.h>
 
 #include "skull/common/str.h"
+#include "skull/errors.h"
 
 #include "test/testing.h"
 
@@ -183,6 +184,28 @@ TEST(c32isxdigit, {
 	);
 })
 
+bool c32sunescape_wrapper(const char32_t *str, const char32_t expected, const char32_t *expected_err) {
+	const char32_t *err = NULL;
+	char32_t c = c32sunescape(str, &err);
+
+	return (
+		expected == c &&
+		expected_err ?
+			c32scmp(expected_err, err) :
+			expected_err == err
+	);
+}
+
+TEST(c32sunescape, {
+	return (
+		c32sunescape_wrapper(U"\\\\", U'\\', NULL) &&
+		c32sunescape_wrapper(U"\\r", U'\r', NULL) &&
+		c32sunescape_wrapper(U"\\n", U'\n', NULL) &&
+		c32sunescape_wrapper(U"\\t", U'\t', NULL) &&
+		c32sunescape_wrapper(U"\\", U'\0', _ERR_BAD_ESCAPE(U"\\"))
+	);
+})
+
 void str_test_self(bool *pass) {
 	tests_t tests={
 		test_strrstr,
@@ -201,6 +224,7 @@ void str_test_self(bool *pass) {
 		test_c32isalnum,
 		test_c32isdigit,
 		test_c32isxdigit,
+		test_c32sunescape,
 		NULL
 	};
 

@@ -57,24 +57,13 @@ void *eval_str(const token_t *token, const char32_t **error) {
 	const char32_t *tmp = token->begin;
 	size_t wrote = 0;
 	while (*tmp && tmp < token->begin + len) {
-		if (*tmp == U'\\') {
-			if (tmp[1] == U't') {
-				str[wrote] = U'\t';
-			}
-			else if (tmp[1] == U'r') {
-				str[wrote] = U'\r';
-			}
-			else if (tmp[1] == U'\\') {
-				str[wrote] = U'\\';
-			}
-			else if (tmp[1] == U'n') {
-				str[wrote] = U'\n';
-			}
-			else {
-				free(str);
-				*error = FMT_ERROR(ERR_BAD_ESCAPE, { .tok = token });
-				return NULL;
-			}
+		const char32_t try_escape = c32sunescape(tmp, error);
+		if (*error) {
+			free(str);
+			return NULL;
+		}
+		if (try_escape) {
+			str[wrote] = try_escape;
 			tmp++;
 		}
 		else {

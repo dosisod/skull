@@ -100,3 +100,11 @@ const char *strrstr(const char *str, const char *sub)
 > \
 > `NULL` is returned if no such string is found.
 
+```c
+char32_t c32sunescape(const char32_t *str, const char32_t **err)
+```
+
+> Returns the unescaped version of an escaped character starting at `str`, or NULL character.
+> \
+> If an error occurs, `err` will be set to the corresponding error msg.
+

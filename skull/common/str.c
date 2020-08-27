@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "skull/common/malloc.h"
+#include "skull/errors.h"
 
 #include "skull/common/str.h"
 
@@ -254,4 +255,32 @@ const char *strrstr(const char *str, const char *sub) {
 		look--;
 	}
 	return NULL;
+}
+
+/*
+Returns the unescaped version of an escaped character starting at `str`, or NULL character.
+
+If an error occurs, `err` will be set to the corresponding error msg.
+*/
+char32_t c32sunescape(const char32_t *str, const char32_t **err) {
+	if (*str == U'\\') {
+		if (str[1] == U'\\') {
+			return U'\\';
+		}
+		if (str[1] == U't') {
+			return U'\t';
+		}
+		if (str[1] == U'r') {
+			return U'\r';
+		}
+		if (str[1] == U'n') {
+			return U'\n';
+		}
+
+		char32_t tmp[3] = { str[0], str[1], U'\0' };
+		*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = tmp });
+		return U'\0';
+	}
+
+	return U'\0';
 }

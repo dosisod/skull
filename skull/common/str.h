@@ -21,3 +21,5 @@ const char32_t *c32schr(const char32_t *, char32_t);
 bool c32isdigit(char32_t);
 bool c32isxdigit(char32_t);
 bool c32isalnum(char32_t);
+
+char32_t c32sunescape(const char32_t *, const char32_t **);
