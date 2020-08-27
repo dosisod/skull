@@ -215,7 +215,7 @@ void repl_loop(FILE *fd, context_t *ctx) {
 	free(output);
 	free(line);
 	if (!is_error_msg(tmp)) {
-		free((char32_t*)tmp);
+		free((char32_t *)tmp);
 	}
 }
 

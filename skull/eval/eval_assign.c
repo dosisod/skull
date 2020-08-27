@@ -113,7 +113,7 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 	}
 
 	if (err || (err = variable_write(var, mem)) == ERR_CANNOT_ASSIGN_CONST) {
-		free((void*)mem);
+		free((void *)mem);
 		if (var->type == &TYPE_STR) {
 			char32_t *str = NULL;
 			variable_read(&str, var);
@@ -123,7 +123,7 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 	}
 
 	if (var->type != &TYPE_STR) {
-		free((void*)mem);
+		free((void *)mem);
 	}
 	return NULL;
 }

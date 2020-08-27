@@ -297,7 +297,7 @@ TEST(repl_print_var, {
 	const bool pass=c32scmp(U"1234", output);
 
 	if (!is_error_msg(output)) {
-		free((void*)output);
+		free((void *)output);
 	}
 	free_context(ctx);
 	return pass;
@@ -449,7 +449,7 @@ TEST(repl_cannot_reassign_const, {
 	);
 
 	if (!is_error_msg(output)) {
-		free((char32_t*)output);
+		free((char32_t *)output);
 	}
 
 	free_context(ctx);

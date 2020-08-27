@@ -32,7 +32,7 @@ TEST(func_clear, {
 
 	const bool pass=c32scmp(U"\033[2J\033[;1H", str);
 
-	free((char32_t*)str);
+	free((char32_t *)str);
 	return pass;
 })
 
@@ -60,7 +60,7 @@ TEST(func_print, {
 	const bool pass=c32scmp(str, U"1234");
 
 	free_ast_tree(node);
-	free((char32_t*)str);
+	free((char32_t *)str);
 	return pass;
 })
 

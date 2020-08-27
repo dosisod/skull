@@ -84,7 +84,7 @@ Free variable `var` and its internal memory.
 */
 void free_variable(variable_t *var) {
 	if (var) {
-		free((char32_t*)var->name);
+		free((char32_t *)var->name);
 		free(var->mem);
 		free(var);
 	}

@@ -480,7 +480,7 @@ TEST(eval_assign_cannot_assign_non_chars, {
 })
 
 TEST(eval_assign_cannot_assign_non_strs, {
-	TEST_EVAL_ASSIGN(U"str", U"1234", char32_t*, 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_ASSIGN(U"str", U"1234", char32_t *, 0, ERR_TYPE_MISMATCH);
 })
 
 #undef TEST_EVAL_ASSIGN
@@ -512,7 +512,7 @@ TEST(eval_assign_variable_to_another, {
 	);
 
 	if (!is_error_msg(output)) {
-		free((char32_t*)output);
+		free((char32_t *)output);
 	}
 
 	free_context(ctx);
@@ -542,7 +542,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 	);
 
 	if (!is_error_msg(output)) {
-		free((char32_t*)output);
+		free((char32_t *)output);
 	}
 
 	free_context(ctx);

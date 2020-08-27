@@ -78,7 +78,7 @@ Returns a pointer to the next searchable wegex group.
 If `wegex` is pointing to a `'['` character, return the corresponding `']'`.
 Else, return the passed wegex.
 */
-const char32_t *find_next_wegex(const char32_t* wegex) {
+const char32_t *find_next_wegex(const char32_t *wegex) {
 	if (*wegex != U'[') {
 		return wegex;
 	}
