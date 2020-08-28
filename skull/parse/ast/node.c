@@ -83,6 +83,16 @@ int ast_node_one_param_func_combo[] = {
 	TOKEN_BRACKET_CLOSE, -1
 };
 
+int ast_node_if_combo[] = {
+	TOKEN_KW_IF,
+	TOKEN_BOOL_CONST,
+	TOKEN_BRACKET_OPEN,
+		//copied from return_combo
+		TOKEN_KW_RETURN,
+		TOKEN_INT_CONST,
+	TOKEN_BRACKET_CLOSE, -1
+};
+
 #define TRY_PUSH_AST_NODE(combo, node_type) \
 	token = ast_token_cmp(token, (combo)); \
 	if (token != last) { \
@@ -123,6 +133,7 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 		TRY_PUSH_AST_NODE(ast_node_return_var_combo, AST_NODE_RETURN);
 		TRY_PUSH_AST_NODE(ast_node_no_param_func_combo, AST_NODE_NO_PARAM_FUNC);
 		TRY_PUSH_AST_NODE(ast_node_one_param_func_combo, AST_NODE_ONE_PARAM_FUNC);
+		TRY_PUSH_AST_NODE(ast_node_if_combo, AST_NODE_IF);
 
 		//skip to next token if current token is present in last node
 		if (node->last && node->last->token_end == token) {

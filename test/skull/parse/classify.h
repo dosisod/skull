@@ -113,6 +113,10 @@ TEST(token_return_kw, {
 	TEST_CLASSIFY_TOKEN(U"return", TOKEN_KW_RETURN);
 })
 
+TEST(token_if_kw, {
+	TEST_CLASSIFY_TOKEN(U"if", TOKEN_KW_IF);
+})
+
 TEST(token_equal_oper, {
 	TEST_CLASSIFY_TOKEN(U"=", TOKEN_OPER_EQUAL);
 })
@@ -343,6 +347,7 @@ void classifier_test_self(bool *pass) {
 		test_bracket_token_close,
 		test_token_mut_kw,
 		test_token_return_kw,
+		test_token_if_kw,
 		test_token_equal_oper,
 		test_token_plus_oper,
 		test_token_minus_oper,

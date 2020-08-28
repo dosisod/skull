@@ -25,6 +25,8 @@ enum node_types {
 
 	AST_NODE_RETURN,
 
+	AST_NODE_IF,
+
 	AST_NODE_NO_PARAM_FUNC,
 	AST_NODE_ONE_PARAM_FUNC,
 

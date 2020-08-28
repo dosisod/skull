@@ -223,6 +223,10 @@ TEST(make_ast_tree_one_param_func, {
 	TEST_AST_TREE(U"func[abc]", AST_NODE_ONE_PARAM_FUNC, 0, 9);
 })
 
+TEST(make_ast_tree_if, {
+	TEST_AST_TREE(U"if true [ return 1 ]", AST_NODE_IF, 0, 20);
+})
+
 TEST(make_ast_tree_int_const, {
 	TEST_AST_TREE(U"1234", AST_NODE_INT_CONST, 0, 4);
 })
@@ -288,6 +292,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_return_var,
 		test_make_ast_tree_no_param_func,
 		test_make_ast_tree_one_param_func,
+		test_make_ast_tree_if,
 		test_make_ast_tree_int_const,
 		test_make_ast_tree_float_const,
 		test_make_ast_tree_bool_const_true,
