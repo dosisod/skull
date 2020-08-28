@@ -44,7 +44,12 @@ int main(int argc, char *argv[]) {
 	}
 	HANDLE_MAIN;
 
-	str_to_llvm_ir(read_file(f, false), builder, ctx);
+	str_to_llvm_ir(
+		read_file(f, false),
+		main_func,
+		builder,
+		ctx
+	);
 
 	size_t len = strlen(argv[1]);
 	char *ll_filename = malloc(len + 5); // NOLINT
