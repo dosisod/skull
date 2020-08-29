@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
@@ -9,11 +10,13 @@
 TEST(make_new_type, {
 	type_t *current=TYPES_AVAILABLE;
 
-	make_new_type(U"test_type", 1);
+	make_new_type("test_type", 1);
 
 	bool pass=false;
 	while (current) {
-		pass|=c32scmp(current->name, U"test_type");
+		if (strcmp(current->name, "test_type") == 0) {
+			pass=true;
+		}
 		current=current->next;
 	}
 
@@ -36,14 +39,14 @@ TEST(make_new_type, {
 })
 
 TEST(make_new_type_rejects_non_unique_type, {
-	const bool inserted1=make_new_type(U"test_type", 1);
+	const bool inserted1=make_new_type("test_type", 1);
 
-	type_t *type=find_type(U"test_type");
+	type_t *type=find_type("test_type");
 	if (!type) {
 		return false;
 	}
 
-	const bool inserted2=make_new_type(U"test_type", 1);
+	const bool inserted2=make_new_type("test_type", 1);
 	if (type->next) {
 		return false;
 	}
@@ -57,7 +60,7 @@ TEST(make_new_type_rejects_non_unique_type, {
 })
 
 TEST(find_type, {
-	type_t *type=find_type(U"int");
+	type_t *type=find_type("int");
 
 	const bool pass=(type==&TYPE_INT);
 
@@ -65,7 +68,7 @@ TEST(find_type, {
 })
 
 TEST(free_types, {
-	make_new_type(U"test_type", 1);
+	make_new_type("test_type", 1);
 
 	free_types();
 	return !TYPE_BOOL.next;

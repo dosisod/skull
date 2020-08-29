@@ -87,12 +87,12 @@ TEST(fmt_error_stringify, {
 		.tok = tok
 	};
 
-	const variable_t *var = make_variable(U"int", U"var_name", true);
+	const variable_t *var = make_variable("int", U"var_name", true);
 	error_msg_t err_var = {
 		.var = var
 	};
 
-	const variable_t *type_var = make_variable(U"int", U"var_name", true);
+	const variable_t *type_var = make_variable("int", U"var_name", true);
 	error_msg_t err_type = {
 		.type = type_var->type
 	};

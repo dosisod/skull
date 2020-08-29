@@ -139,7 +139,7 @@ void fmt_error_stringify(error_msg_t *msg) {
 		msg->real = c32sdup(msg->var->name);
 	}
 	else if (msg->type) {
-		msg->real = c32sdup(msg->type->name);
+		msg->real = mbstoc32s(msg->type->name);
 	}
 	else if (msg->str) {
 		msg->real = c32sdup(msg->str);

@@ -11,7 +11,7 @@ typedef struct variable_t {
 	uint8_t *mem;
 } variable_t;
 
-variable_t *make_variable(const char32_t *, const char32_t *, bool);
+variable_t *make_variable(const char *, const char32_t *, bool);
 
 const char32_t *variable_write(const variable_t *, const void *);
 void variable_read(void *, const variable_t *);

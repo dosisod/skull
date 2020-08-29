@@ -7,7 +7,7 @@
 struct variable_t;
 
 typedef struct type_t {
-	const char32_t *name;
+	const char *name;
 	size_t bytes;
 
 	struct variable_t *(*add)(const struct variable_t *, const struct variable_t *);
@@ -29,8 +29,8 @@ struct type_t TYPE_TYPE;
 
 struct type_t *TYPES_AVAILABLE;
 
-bool make_new_type(const char32_t *, size_t);
+bool make_new_type(const char *, size_t);
 
-type_t *find_type(const char32_t *);
+type_t *find_type(const char *);
 
 void free_types(void);

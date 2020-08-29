@@ -139,21 +139,21 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 			return error;
 		}
 
-		const char32_t *type = NULL;
+		const char *type = NULL;
 		if (node->next->node_type == AST_NODE_INT_CONST) {
-			type = U"int";
+			type = "int";
 		}
 		else if (node->next->node_type == AST_NODE_FLOAT_CONST) {
-			type = U"float";
+			type = "float";
 		}
 		else if (node->next->node_type == AST_NODE_BOOL_CONST) {
-			type = U"bool";
+			type = "bool";
 		}
 		else if (node->next->node_type == AST_NODE_STR_CONST) {
-			type = U"str";
+			type = "str";
 		}
 		else if (node->next->node_type == AST_NODE_RUNE_CONST) {
-			type = U"rune";
+			type = "rune";
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER ||
 			node->next->node_type == AST_NODE_ADD_VAR ||
@@ -178,7 +178,10 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		var = make_variable(type, name, false);
 	}
 	else {
-		char32_t *type_name = token_str(token->next);
+		char32_t *tmp_name = token_str(token->next);
+		char *type_name = c32stombs(tmp_name);
+		free(tmp_name);
+
 		var = make_variable(type_name, name, false);
 		free(type_name);
 	}

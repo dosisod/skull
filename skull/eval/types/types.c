@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include "skull/common/str.h"
 #include "skull/common/malloc.h"
@@ -18,12 +19,12 @@ Creates a new type called `name` with `bytes` bytes of memory.
 Returns false if a type called `name` already exists, and was not inserted.
 Returns true if the type `name` was inserted.
 */
-bool make_new_type(const char32_t *name, size_t bytes) {
+bool make_new_type(const char *name, size_t bytes) {
 	type_t *current = TYPES_AVAILABLE;
 	type_t *last = current;
 
 	while (current) {
-		if (c32scmp(current->name, name)) {
+		if (strcmp(current->name, name) == 0) {
 			return false;
 		}
 		last = current;
@@ -46,11 +47,11 @@ bool make_new_type(const char32_t *name, size_t bytes) {
 /*
 Returns pointer to type with name `name`.
 */
-type_t *find_type(const char32_t *name) {
+type_t *find_type(const char *name) {
 	type_t *head = TYPES_AVAILABLE;
 
 	while (head) {
-		if (c32scmp(name, head->name)) {
+		if (strcmp(name, head->name) == 0) {
 			return head;
 		}
 		head = head->next;
@@ -78,7 +79,7 @@ void free_types(void) {
 }
 
 struct type_t TYPE_BOOL = {
-	.name = U"bool",
+	.name = "bool",
 	.bytes = sizeof(bool),
 	.to_string = &fmt_bool_type,
 	.add = NULL,
@@ -89,7 +90,7 @@ struct type_t TYPE_BOOL = {
 };
 
 struct type_t TYPE_INT = {
-	.name = U"int",
+	.name = "int",
 	.bytes = sizeof(int64_t),
 	.to_string = &fmt_int_type,
 	.add = add_int_type,
@@ -100,7 +101,7 @@ struct type_t TYPE_INT = {
 };
 
 struct type_t TYPE_FLOAT = {
-	.name = U"float",
+	.name = "float",
 	.bytes = sizeof(double),
 	.to_string = &fmt_float_type,
 	.add = add_float_type,
@@ -111,7 +112,7 @@ struct type_t TYPE_FLOAT = {
 };
 
 struct type_t TYPE_RUNE = {
-	.name = U"rune",
+	.name = "rune",
 	.bytes = sizeof(char32_t),
 	.to_string = &fmt_rune_type,
 	.add = NULL,
@@ -122,7 +123,7 @@ struct type_t TYPE_RUNE = {
 };
 
 struct type_t TYPE_STR = {
-	.name = U"str",
+	.name = "str",
 	.bytes = sizeof(char32_t *),
 	.to_string = &fmt_str_type,
 	.add = add_str_type,
@@ -133,7 +134,7 @@ struct type_t TYPE_STR = {
 };
 
 struct type_t TYPE_TYPE = {
-	.name = U"type",
+	.name = "type",
 	.bytes = sizeof(struct type_t *),
 	.to_string = &fmt_type_type,
 	.add = NULL,

@@ -15,7 +15,7 @@ void variable_read(void *dest, const variable_t *var)
 > Read variable memory of `var` into `dest`.
 
 ```c
-variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_const)
+variable_t *make_variable(const char *type, const char32_t *name, bool is_const)
 ```
 
 > Make a variable called `name` with type `type`, and make it const if `is_const` is true.

@@ -34,7 +34,7 @@ Make a variable called `name` with type `type`, and make it const if `is_const` 
 
 Returns `NULL` if var cannot be created, else pointer to created var.
 */
-variable_t *make_variable(const char32_t *type, const char32_t *name, bool is_const) {
+variable_t *make_variable(const char *type, const char32_t *name, bool is_const) {
 	type_t *found_type = find_type(type);
 
 	if (!found_type || !is_valid_identifier_str(name)) {

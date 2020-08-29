@@ -1,5 +1,6 @@
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "skull/common/str.h"
 #include "skull/common/wegex.h"
@@ -104,9 +105,12 @@ Returns true if `name` is a type string.
 bool is_type_str(const char32_t *name) {
 	type_t *current = TYPES_AVAILABLE;
 	while (current) {
-		if (c32scmp(current->name, name)) {
+		char *tmp = c32stombs(name);
+		if (strcmp(current->name, tmp) == 0) {
+			free(tmp);
 			return true;
 		}
+		free(tmp);
 		current = current->next;
 	}
 	return false;

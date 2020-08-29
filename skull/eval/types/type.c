@@ -11,7 +11,7 @@ char32_t *fmt_type_type(const variable_t *var) {
 	type_t *type = NULL;
 	variable_read(&type, var);
 
-	char32_t *ret = c32sdup(type->name);
+	char32_t *ret = mbstoc32s(type->name);
 	DIE_IF_MALLOC_FAILS(ret);
 
 	return ret;
@@ -24,7 +24,10 @@ void *eval_type(const token_t *token, const char32_t **error) {
 	type_t **type = malloc(sizeof(type_t *));
 	DIE_IF_MALLOC_FAILS(type);
 
-	char32_t *type_name = token_str(token);
+	char32_t *tmp_name = token_str(token);
+	char *type_name = c32stombs(tmp_name);
+	free(tmp_name);
+
 	*type = find_type(type_name);
 	free(type_name);
 

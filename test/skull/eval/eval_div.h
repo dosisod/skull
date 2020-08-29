@@ -5,8 +5,8 @@
 #include "test/testing.h"
 
 TEST(dividing_2_ints, {
-	variable_t *var1=make_variable(U"int", U"var1", false);
-	variable_t *var2=make_variable(U"int", U"var2", false);
+	variable_t *var1=make_variable("int", U"var1", false);
+	variable_t *var2=make_variable("int", U"var2", false);
 
 	const int64_t num1=6;
 	variable_write(var1, &num1);
@@ -27,7 +27,7 @@ TEST(dividing_2_ints, {
 })
 
 TEST(divide_by_zero, {
-	variable_t *var=make_variable(U"int", U"var", false);
+	variable_t *var=make_variable("int", U"var", false);
 
 	const int64_t num=0;
 	variable_write(var, &num);
@@ -40,8 +40,8 @@ TEST(divide_by_zero, {
 })
 
 TEST(dividing_2_floats, {
-	variable_t *var1=make_variable(U"float", U"var1", false);
-	variable_t *var2=make_variable(U"float", U"var2", false);
+	variable_t *var1=make_variable("float", U"var1", false);
+	variable_t *var2=make_variable("float", U"var2", false);
 
 	const double num1=6.0;
 	variable_write(var1, &num1);
@@ -63,8 +63,8 @@ TEST(dividing_2_floats, {
 })
 
 TEST(dividing_vars_with_different_types_fail, {
-	variable_t *var1=make_variable(U"int", U"var1", false);
-	variable_t *var2=make_variable(U"float", U"var2", false);
+	variable_t *var1=make_variable("int", U"var1", false);
+	variable_t *var2=make_variable("float", U"var2", false);
 	variable_t *var3=eval_div(var1, var2);
 
 	const bool pass = !var3;

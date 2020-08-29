@@ -48,7 +48,7 @@ TEST(func_clear_params_fail, {
 })
 
 TEST(func_print, {
-	variable_t *var=make_variable(U"int", U"x", false);
+	variable_t *var=make_variable("int", U"x", false);
 	int64_t num=1234;
 	variable_write(var, &num);
 	context_t *ctx=make_context();
