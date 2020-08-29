@@ -3,9 +3,9 @@
 #include "skull/common/str.h"
 #include "skull/common/malloc.h"
 #include "skull/eval/types/bool.h"
-#include "skull/eval/types/char.h"
 #include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
+#include "skull/eval/types/rune.h"
 #include "skull/eval/types/str.h"
 #include "skull/eval/types/type.h"
 #include "skull/eval/variable.h"
@@ -77,7 +77,7 @@ void free_types(void) {
 	TYPE_BOOL.next = NULL;
 }
 
-struct type_t TYPE_BOOL  =  {
+struct type_t TYPE_BOOL = {
 	.name = U"bool",
 	.bytes = sizeof(bool),
 	.to_string = &fmt_bool_type,
@@ -88,7 +88,7 @@ struct type_t TYPE_BOOL  =  {
 	.next = NULL
 };
 
-struct type_t TYPE_INT  =  {
+struct type_t TYPE_INT = {
 	.name = U"int",
 	.bytes = sizeof(int64_t),
 	.to_string = &fmt_int_type,
@@ -99,7 +99,7 @@ struct type_t TYPE_INT  =  {
 	.next = &TYPE_BOOL
 };
 
-struct type_t TYPE_FLOAT  =  {
+struct type_t TYPE_FLOAT = {
 	.name = U"float",
 	.bytes = sizeof(double),
 	.to_string = &fmt_float_type,
@@ -110,10 +110,10 @@ struct type_t TYPE_FLOAT  =  {
 	.next = &TYPE_INT
 };
 
-struct type_t TYPE_CHAR  =  {
-	.name = U"char",
+struct type_t TYPE_RUNE = {
+	.name = U"rune",
 	.bytes = sizeof(char32_t),
-	.to_string = &fmt_char_type,
+	.to_string = &fmt_rune_type,
 	.add = NULL,
 	.subtract = NULL,
 	.divide = NULL,
@@ -121,7 +121,7 @@ struct type_t TYPE_CHAR  =  {
 	.next = &TYPE_FLOAT
 };
 
-struct type_t TYPE_STR  =  {
+struct type_t TYPE_STR = {
 	.name = U"str",
 	.bytes = sizeof(char32_t *),
 	.to_string = &fmt_str_type,
@@ -129,10 +129,10 @@ struct type_t TYPE_STR  =  {
 	.subtract = NULL,
 	.divide = NULL,
 	.multiply = NULL,
-	.next = &TYPE_CHAR
+	.next = &TYPE_RUNE
 };
 
-struct type_t TYPE_TYPE  =  {
+struct type_t TYPE_TYPE = {
 	.name = U"type",
 	.bytes = sizeof(struct type_t *),
 	.to_string = &fmt_type_type,

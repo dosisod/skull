@@ -71,11 +71,11 @@ TEST(is_constant_bool, {
 	);
 })
 
-TEST(is_constant_char, {
+TEST(is_constant_rune, {
 	return (
-		is_constant_char_str(U"'x'") &&
-		!is_constant_char_str(U"'x '") &&
-		!is_constant_char_str(U"''")
+		is_constant_rune_str(U"'x'") &&
+		!is_constant_rune_str(U"'x '") &&
+		!is_constant_rune_str(U"''")
 	);
 })
 
@@ -173,13 +173,13 @@ TEST(token_bool_constant, {
 
 #undef TEST_CLASSIFY_TOKEN
 
-TEST(token_char_constant, {
+TEST(token_rune_constant, {
 	const char32_t *code=U"'x'";
 	token_t *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
-		t->token_type==TOKEN_CHAR_CONST &&
+		t->token_type==TOKEN_RUNE_CONST &&
 		t->begin==(code + 1) &&
 		t->end==(code + 2)
 	);
@@ -341,7 +341,7 @@ void classifier_test_self(bool *pass) {
 		test_is_constant_integer,
 		test_is_constant_float,
 		test_is_constant_bool,
-		test_is_constant_char,
+		test_is_constant_rune,
 		test_is_constant_str,
 		test_bracket_token_open,
 		test_bracket_token_close,
@@ -359,7 +359,7 @@ void classifier_test_self(bool *pass) {
 		test_token_integer_constant,
 		test_token_float_constant,
 		test_token_bool_constant,
-		test_token_char_constant,
+		test_token_rune_constant,
 		test_token_str_constant,
 		test_token_type_type,
 		test_token_comment,

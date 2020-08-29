@@ -243,8 +243,8 @@ TEST(make_ast_tree_bool_const_false, {
 	TEST_AST_TREE(U"false", AST_NODE_BOOL_CONST, 0, 5);
 })
 
-TEST(make_ast_tree_char_const, {
-	TEST_AST_TREE(U"'x'", AST_NODE_CHAR_CONST, 1, 2);
+TEST(make_ast_tree_rune_const, {
+	TEST_AST_TREE(U"'x'", AST_NODE_RUNE_CONST, 1, 2);
 })
 
 TEST(make_ast_tree_str_const, {
@@ -297,7 +297,7 @@ void ast_node_test_self(bool *pass) {
 		test_make_ast_tree_float_const,
 		test_make_ast_tree_bool_const_true,
 		test_make_ast_tree_bool_const_false,
-		test_make_ast_tree_char_const,
+		test_make_ast_tree_rune_const,
 		test_make_ast_tree_str_const,
 		test_make_ast_tree_type_const,
 		test_make_ast_tree_comment,

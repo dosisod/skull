@@ -47,8 +47,8 @@ void classify_token(token_t *token) {
 	TOKEN_SET_IF(is_constant_float_str(str), TOKEN_FLOAT_CONST)
 	TOKEN_SET_IF(is_constant_bool_str(str), TOKEN_BOOL_CONST)
 
-	else if (is_constant_char_str(str)) {
-		token->token_type = TOKEN_CHAR_CONST;
+	else if (is_constant_rune_str(str)) {
+		token->token_type = TOKEN_RUNE_CONST;
 
 		//dont include ''s as part of string
 		token->begin++;
@@ -156,12 +156,12 @@ bool is_constant_bool_str(const char32_t *str) {
 }
 
 /*
-Returns true if `str` is a valid char.
+Returns true if `str` is a valid rune.
 
 Examples: `'x'`, `'\n'`, and `' '`.
 Won't work: `''`, `'\'`, `'x '`, or `' x'`.
 */
-bool is_constant_char_str(const char32_t *str) {
+bool is_constant_rune_str(const char32_t *str) {
 	const size_t len = c32slen(str);
 
 	return (

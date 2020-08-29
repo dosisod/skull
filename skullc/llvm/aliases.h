@@ -12,7 +12,7 @@
 		true \
 	)
 
-#define LLVM_CHAR(ctx, c) \
+#define LLVM_RUNE(ctx, c) \
 	LLVMConstInt( \
 		LLVMInt32TypeInContext(ctx), \
 		c, \

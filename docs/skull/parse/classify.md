@@ -47,10 +47,10 @@ bool is_constant_bool_str(const char32_t *str)
 > Returns true if `str` is a valid bool (`true` or `false`).
 
 ```c
-bool is_constant_char_str(const char32_t *str)
+bool is_constant_rune_str(const char32_t *str)
 ```
 
-> Returns true if `str` is a valid char.
+> Returns true if `str` is a valid rune.
 > \
 > Examples: `'x'`, `'\n'`, and `' '`.
 > Won't work: `''`, `'\'`, `'x '`, or `' x'`.

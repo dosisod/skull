@@ -152,8 +152,8 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		else if (node->next->node_type == AST_NODE_STR_CONST) {
 			type = U"str";
 		}
-		else if (node->next->node_type == AST_NODE_CHAR_CONST) {
-			type = U"char";
+		else if (node->next->node_type == AST_NODE_RUNE_CONST) {
+			type = U"rune";
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER ||
 			node->next->node_type == AST_NODE_ADD_VAR ||

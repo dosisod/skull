@@ -228,9 +228,9 @@ TEST(repl_make_bool_variable, {
 	);
 })
 
-TEST(repl_make_char_variable, {
+TEST(repl_make_rune_variable, {
 	TEST_MAKE_VAR(
-		U"char", U"'a'",
+		U"rune", U"'a'",
 		char32_t, U'a'
 	);
 })
@@ -500,7 +500,7 @@ void repl_test_self(bool *pass) {
 		test_repl_write_to_const_var_fails,
 		test_repl_make_float_variable,
 		test_repl_make_bool_variable,
-		test_repl_make_char_variable,
+		test_repl_make_rune_variable,
 		test_repl_print_fail_with_trailing_tokens,
 		test_repl_blank_line_returns_nothing,
 		test_repl_invalid_input_returns_error,

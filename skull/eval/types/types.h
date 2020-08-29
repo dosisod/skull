@@ -23,7 +23,7 @@ typedef struct type_t {
 struct type_t TYPE_BOOL;
 struct type_t TYPE_INT;
 struct type_t TYPE_FLOAT;
-struct type_t TYPE_CHAR;
+struct type_t TYPE_RUNE;
 struct type_t TYPE_STR;
 struct type_t TYPE_TYPE;
 

@@ -164,12 +164,12 @@ TEST(fmt_var_type, {
 	TEST_FMT_VAR(U"type", type_t *, &TYPE_INT, U"int");
 })
 
-TEST(fmt_var_char, {
-	TEST_FMT_VAR(U"char", char32_t, U'a', U"a");
+TEST(fmt_var_rune, {
+	TEST_FMT_VAR(U"rune", char32_t, U'a', U"a");
 })
 
-TEST(fmt_var_wide_char_preserved, {
-	TEST_FMT_VAR(U"char", char32_t, U'存', U"存");
+TEST(fmt_var_wide_rune_preserved, {
+	TEST_FMT_VAR(U"rune", char32_t, U'存', U"存");
 })
 
 #undef TEST_FMT_VAR
@@ -197,7 +197,7 @@ TEST(fmt_var_str, {
 	return pass;
 })
 
-TEST(fmt_var_str_with_escape_chars, {
+TEST(fmt_var_str_with_escapes, {
 	variable_t *var = make_variable(U"str", U"x", false);
 
 	ast_node_t *node = make_ast_tree(U"\"\\r\\n\\t\\\\\"");
@@ -260,10 +260,10 @@ void variable_test_self(bool *pass) {
 		test_fmt_var_float_neg_infinity,
 		test_fmt_var_bool,
 		test_fmt_var_type,
-		test_fmt_var_char,
-		test_fmt_var_wide_char_preserved,
+		test_fmt_var_rune,
+		test_fmt_var_wide_rune_preserved,
 		test_fmt_var_str,
-		test_fmt_var_str_with_escape_chars,
+		test_fmt_var_str_with_escapes,
 		test_fmt_var_str_with_bad_escape,
 		NULL
 	};

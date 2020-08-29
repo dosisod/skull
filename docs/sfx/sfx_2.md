@@ -90,7 +90,7 @@ Below is a table of built-in types, and their C/C++ equivalents:
 | `bool` | `bool` | `true` or `false` |
 | `int` | `int64_t` | 64 bit integer |
 | `float` | `double` | 64 bit floating number |
-| `char` | `char32_t` | Single UTF-32 code point |
+| `rune` | `char32_t` | Single UTF-32 code point |
 | `str` | `char32_t*` | String of UTF-32 code points |
 | `T` | `template<typename T>` | Templated type `*` |
 | `:=` | `auto` | Automatically deduce type |

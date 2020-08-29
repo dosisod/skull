@@ -30,7 +30,7 @@ enum token_types {
 	TOKEN_INT_CONST,
 	TOKEN_FLOAT_CONST,
 	TOKEN_BOOL_CONST,
-	TOKEN_CHAR_CONST,
+	TOKEN_RUNE_CONST,
 	TOKEN_STR_CONST,
 
 	TOKEN_COMMENT,
@@ -43,7 +43,7 @@ bool is_keyword_str(const char32_t *);
 bool is_constant_integer_str(const char32_t *);
 bool is_constant_float_str(const char32_t *);
 bool is_constant_bool_str(const char32_t *);
-bool is_constant_char_str(const char32_t *);
+bool is_constant_rune_str(const char32_t *);
 bool is_constant_str_str(const char32_t *);
 bool is_valid_identifier_str(const char32_t *);
 

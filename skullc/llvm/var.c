@@ -64,7 +64,7 @@ void var_to_llvm_ir(variable_t *var, LLVMBuilderRef builder, LLVMContextRef ctx)
 			ir_var
 		);
 	}
-	else if (var->type == &TYPE_CHAR) {
+	else if (var->type == &TYPE_RUNE) {
 		LLVMValueRef ir_var = LLVMBuildAlloca(
 			builder,
 			LLVMInt32TypeInContext(ctx),
@@ -76,7 +76,7 @@ void var_to_llvm_ir(variable_t *var, LLVMBuilderRef builder, LLVMContextRef ctx)
 
 		LLVMBuildStore(
 			builder,
-			LLVM_CHAR(ctx, c),
+			LLVM_RUNE(ctx, c),
 			ir_var
 		);
 	}
@@ -90,7 +90,7 @@ void var_to_llvm_ir(variable_t *var, LLVMBuilderRef builder, LLVMContextRef ctx)
 
 		size_t counter = 0;
 		while (counter < len) {
-			llvm_arr[counter] = LLVM_CHAR(ctx, str[counter]);
+			llvm_arr[counter] = LLVM_RUNE(ctx, str[counter]);
 			counter++;
 		}
 

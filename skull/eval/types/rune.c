@@ -3,12 +3,12 @@
 #include "skull/errors.h"
 #include "skull/parse/classify.h"
 
-#include "skull/eval/types/char.h"
+#include "skull/eval/types/rune.h"
 
 /*
-Returns the string representation of char `var`
+Returns the string representation of rune `var`
 */
-char32_t *fmt_char_type(const variable_t *var) {
+char32_t *fmt_rune_type(const variable_t *var) {
 	char32_t *ret;
 	ret = malloc(2 * sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
@@ -20,10 +20,10 @@ char32_t *fmt_char_type(const variable_t *var) {
 }
 
 /*
-Return pointer to a char, converted from `token`
+Return pointer to a rune type, converted from `token`
 */
-void *eval_char(const token_t *token, const char32_t **error) {
-	if (token->token_type != TOKEN_CHAR_CONST) {
+void *eval_rune(const token_t *token, const char32_t **error) {
+	if (token->token_type != TOKEN_RUNE_CONST) {
 		*error = ERR_TYPE_MISMATCH;
 		return NULL;
 	}
