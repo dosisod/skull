@@ -73,7 +73,7 @@ void *eval_str(const token_t *token, const char32_t **error) {
 		tmp++;
 		wrote++;
 	}
-	str[wrote] = U'\0';
+	str[wrote] = '\0';
 
 	char32_t **ret;
 	ret = malloc(sizeof *ret);

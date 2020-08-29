@@ -65,7 +65,7 @@ void classify_token(token_t *token) {
 	else if (is_valid_identifier_str(str)) {
 		token->token_type = TOKEN_IDENTIFIER;
 
-		if (*(token->end - 1) == U':') {
+		if (*(token->end - 1) == ':') {
 			token->token_type = TOKEN_NEW_IDENTIFIER;
 			token->end--;
 
@@ -169,11 +169,11 @@ bool is_constant_rune_str(const char32_t *str) {
 	const size_t len = c32slen(str);
 
 	return (
-		str[0] == U'\'' &&
-		str[len - 1] == U'\'' && (
+		str[0] == '\'' &&
+		str[len - 1] == '\'' && (
 		(len == 3) || (
 			len == 4 &&
-			str[1] == U'\\'
+			str[1] == '\\'
 		))
 	);
 }
@@ -188,8 +188,8 @@ bool is_constant_str_str(const char32_t *str) {
 
 	return (
 		len >= 2 &&
-		str[0] == U'\"' &&
-		str[len - 1] == U'\"'
+		str[0] == '\"' &&
+		str[len - 1] == '\"'
 	);
 }
 

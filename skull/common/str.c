@@ -48,7 +48,7 @@ Similar to `strlcpy`, but for `char32_t` types.
 */
 void c32slcpy(char32_t *dest, const char32_t *src, size_t n) {
 	c32sncpy(dest, src, n);
-	dest[n - 1] = U'\0';
+	dest[n - 1] = '\0';
 }
 
 /*
@@ -57,7 +57,7 @@ char32_t equivalent of `strncpy`.
 If there is room between the end of `src` and `dest[n]`, fill it with NULL.
 */
 void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
-	*dest = U'\0';
+	*dest = '\0';
 	memset(dest, 0, n * sizeof *dest);
 
 	while (*src && n > 0) {
@@ -156,7 +156,7 @@ char32_t *mbstoc32s(const char *str) {
 	//shrink string to only what we need
 	ret = realloc(ret, (offset + 1) * sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
-	ret[offset] = U'\0';
+	ret[offset] = '\0';
 
 	return ret;
 }
@@ -213,9 +213,9 @@ Return whether the UTF-32 character `c` is a hexidecimal digit.
 */
 __attribute__((const)) bool c32isxdigit(char32_t c) {
 	return (
-		((c >= U'0') && (c <= U'9')) ||
-		((c >= U'a') && (c <= U'f')) ||
-		((c >= U'A') && (c <= U'F'))
+		((c >= '0') && (c <= '9')) ||
+		((c >= 'a') && (c <= 'f')) ||
+		((c >= 'A') && (c <= 'F'))
 	);
 }
 
@@ -225,8 +225,8 @@ Returns whether the UTF-32 character `c` is an alpha numeric character.
 __attribute__((const)) bool c32isalnum(char32_t c) {
 	return (
 		c32isdigit(c) ||
-		((c >= U'A') && (c <= U'Z')) ||
-		((c >= U'a') && (c <= U'z'))
+		((c >= 'A') && (c <= 'Z')) ||
+		((c >= 'a') && (c <= 'z'))
 	);
 }
 
@@ -234,7 +234,7 @@ __attribute__((const)) bool c32isalnum(char32_t c) {
 Return whether the UTF-32 character `c` is a digit.
 */
 __attribute__((const)) bool c32isdigit(char32_t c) {
-	return (c >= U'0') && (c <= U'9');
+	return (c >= '0') && (c <= '9');
 }
 
 /*
@@ -263,24 +263,24 @@ Returns the unescaped version of an escaped character starting at `str`, or NULL
 If an error occurs, `err` will be set to the corresponding error msg.
 */
 char32_t c32sunescape(const char32_t *str, const char32_t **err) {
-	if (*str == U'\\') {
-		if (str[1] == U'\\') {
-			return U'\\';
+	if (*str == '\\') {
+		if (str[1] == '\\') {
+			return '\\';
 		}
-		if (str[1] == U't') {
-			return U'\t';
+		if (str[1] == 't') {
+			return '\t';
 		}
-		if (str[1] == U'r') {
-			return U'\r';
+		if (str[1] == 'r') {
+			return '\r';
 		}
-		if (str[1] == U'n') {
-			return U'\n';
+		if (str[1] == 'n') {
+			return '\n';
 		}
 
-		char32_t tmp[3] = { str[0], str[1], U'\0' };
+		char32_t tmp[3] = { str[0], str[1], '\0' };
 		*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = tmp });
-		return U'\0';
+		return '\0';
 	}
 
-	return U'\0';
+	return '\0';
 }

@@ -42,8 +42,8 @@ TEST(c32sncpy_fill_nulls, {
 	return (
 		c32slen(buf)==3 &&
 		c32scmp(buf, U"abc") &&
-		buf[3]==U'\0' &&
-		buf[4]==U'\0'
+		buf[3]=='\0' &&
+		buf[4]=='\0'
 	);
 })
 
@@ -134,53 +134,53 @@ TEST(c32schr, {
 	const char32_t *str=U"abcdefg";
 
 	return (
-		c32schr(str, U'a')==str &&
-		c32schr(str, U'b')==(str + 1) &&
-		c32schr(str, U'c')==(str + 2) &&
-		!c32schr(str, U'x')
+		c32schr(str, 'a')==str &&
+		c32schr(str, 'b')==(str + 1) &&
+		c32schr(str, 'c')==(str + 2) &&
+		!c32schr(str, 'x')
 	);
 })
 
 TEST(c32isdigit, {
 	return (
-		!c32isdigit(U'/') &&
-		c32isdigit(U'0') &&
-		c32isdigit(U'9') &&
-		!c32isdigit(U':')
+		!c32isdigit('/') &&
+		c32isdigit('0') &&
+		c32isdigit('9') &&
+		!c32isdigit(':')
 	);
 })
 
 TEST(c32isalnum, {
 	return (
-		!c32isalnum(U'/') &&
-		c32isalnum(U'0') &&
-		c32isalnum(U'9') &&
-		!c32isalnum(U':') &&
-		!c32isalnum(U'@') &&
-		c32isalnum(U'A') &&
-		c32isalnum(U'Z') &&
-		!c32isalnum(U'[') &&
-		!c32isalnum(U'`') &&
-		c32isalnum(U'a') &&
-		c32isalnum(U'z') &&
-		!c32isalnum(U'{')
+		!c32isalnum('/') &&
+		c32isalnum('0') &&
+		c32isalnum('9') &&
+		!c32isalnum(':') &&
+		!c32isalnum('@') &&
+		c32isalnum('A') &&
+		c32isalnum('Z') &&
+		!c32isalnum('[') &&
+		!c32isalnum('`') &&
+		c32isalnum('a') &&
+		c32isalnum('z') &&
+		!c32isalnum('{')
 	);
 })
 
 TEST(c32isxdigit, {
 	return (
-		!c32isxdigit(U'/') &&
-		c32isxdigit(U'0') &&
-		c32isxdigit(U'9') &&
-		!c32isxdigit(U':') &&
-		!c32isxdigit(U'@') &&
-		c32isxdigit(U'A') &&
-		c32isxdigit(U'F') &&
-		!c32isxdigit(U'G') &&
-		!c32isxdigit(U'`') &&
-		c32isxdigit(U'a') &&
-		c32isxdigit(U'f') &&
-		!c32isxdigit(U'g')
+		!c32isxdigit('/') &&
+		c32isxdigit('0') &&
+		c32isxdigit('9') &&
+		!c32isxdigit(':') &&
+		!c32isxdigit('@') &&
+		c32isxdigit('A') &&
+		c32isxdigit('F') &&
+		!c32isxdigit('G') &&
+		!c32isxdigit('`') &&
+		c32isxdigit('a') &&
+		c32isxdigit('f') &&
+		!c32isxdigit('g')
 	);
 })
 
@@ -198,11 +198,11 @@ bool c32sunescape_wrapper(const char32_t *str, const char32_t expected, const ch
 
 TEST(c32sunescape, {
 	return (
-		c32sunescape_wrapper(U"\\\\", U'\\', NULL) &&
-		c32sunescape_wrapper(U"\\r", U'\r', NULL) &&
-		c32sunescape_wrapper(U"\\n", U'\n', NULL) &&
-		c32sunescape_wrapper(U"\\t", U'\t', NULL) &&
-		c32sunescape_wrapper(U"\\", U'\0', _ERR_BAD_ESCAPE(U"\\"))
+		c32sunescape_wrapper(U"\\\\", '\\', NULL) &&
+		c32sunescape_wrapper(U"\\r", '\r', NULL) &&
+		c32sunescape_wrapper(U"\\n", '\n', NULL) &&
+		c32sunescape_wrapper(U"\\t", '\t', NULL) &&
+		c32sunescape_wrapper(U"\\", '\0', _ERR_BAD_ESCAPE(U"\\"))
 	);
 })
 

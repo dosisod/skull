@@ -231,7 +231,7 @@ TEST(repl_make_bool_variable, {
 TEST(repl_make_rune_variable, {
 	TEST_MAKE_VAR(
 		U"rune", U"'a'",
-		char32_t, U'a'
+		char32_t, 'a'
 	);
 })
 

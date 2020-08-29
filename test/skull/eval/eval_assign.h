@@ -38,11 +38,11 @@ TEST(eval_assign_bool, {
 })
 
 TEST(eval_assign_rune, {
-	TEST_EVAL_ASSIGN("rune", U"'a'", char32_t, U'a', NULL);
+	TEST_EVAL_ASSIGN("rune", U"'a'", char32_t, 'a', NULL);
 })
 
 TEST(eval_assign_rune_escaped, {
-	TEST_EVAL_ASSIGN("rune", U"'\\n'", char32_t, U'\n', NULL);
+	TEST_EVAL_ASSIGN("rune", U"'\\n'", char32_t, '\n', NULL);
 })
 
 TEST(eval_assign_str, {
@@ -163,7 +163,7 @@ TEST(eval_assign_add_vars_types_must_match, {
 	context_add_var(ctx, var_a);
 
 	variable_t *var_b=make_variable("rune", U"b", false);
-	char32_t data_b=U'b';
+	char32_t data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
@@ -190,7 +190,7 @@ TEST(eval_assign_sub_vars_types_must_match, {
 	context_add_var(ctx, var_a);
 
 	variable_t *var_b=make_variable("rune", U"b", false);
-	char32_t data_b=U'b';
+	char32_t data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
@@ -217,7 +217,7 @@ TEST(eval_assign_mult_vars_types_must_match, {
 	context_add_var(ctx, var_a);
 
 	variable_t *var_b=make_variable("rune", U"b", false);
-	char32_t data_b=U'b';
+	char32_t data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
@@ -244,7 +244,7 @@ TEST(eval_assign_div_vars_types_must_match, {
 	context_add_var(ctx, var_a);
 
 	variable_t *var_b=make_variable("rune", U"b", false);
-	char32_t data_b=U'b';
+	char32_t data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 

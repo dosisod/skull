@@ -120,7 +120,7 @@ char32_t *fmt_error(const char32_t *fmt, error_msg_t msgs[]) {
 		offset += chunks[at_percent].diff;
 		at_percent++;
 	}
-	offset[0] = U'\0';
+	offset[0] = '\0';
 
 	free(chunks);
 	return out;

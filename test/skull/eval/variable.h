@@ -165,7 +165,7 @@ TEST(fmt_var_type, {
 })
 
 TEST(fmt_var_rune, {
-	TEST_FMT_VAR("rune", char32_t, U'a', U"a");
+	TEST_FMT_VAR("rune", char32_t, 'a', U"a");
 })
 
 TEST(fmt_var_wide_rune_preserved, {

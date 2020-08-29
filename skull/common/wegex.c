@@ -16,7 +16,7 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 	const char32_t *wegex_end = wegex;
 
 	while (*wegex && *match) {
-		if (*wegex == U'*') {
+		if (*wegex == '*') {
 			wegex++;
 			wegex_end = find_next_wegex(wegex);
 
@@ -25,7 +25,7 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 			}
 		}
 
-		else if (*wegex == U'+') {
+		else if (*wegex == '+') {
 			wegex++;
 			wegex_end = find_next_wegex(wegex);
 
@@ -39,7 +39,7 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 			}
 		}
 
-		else if (*wegex == U'?') {
+		else if (*wegex == '?') {
 			wegex++;
 			wegex_end = find_next_wegex(wegex);
 
@@ -59,7 +59,7 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 		wegex = wegex_end + 1;
 	}
 
-	while (*wegex == U'?' || *wegex == U'*') {
+	while (*wegex == '?' || *wegex == '*') {
 		const char32_t *tmp = find_next_wegex(wegex + 1) + 1;
 		if (tmp != wegex) {
 			wegex = tmp;
@@ -79,11 +79,11 @@ If `wegex` is pointing to a `'['` character, return the corresponding `']'`.
 Else, return the passed wegex.
 */
 const char32_t *find_next_wegex(const char32_t *wegex) {
-	if (*wegex != U'[') {
+	if (*wegex != '[') {
 		return wegex;
 	}
 
-	const char32_t *bracket = c32schr(wegex, U']');
+	const char32_t *bracket = c32schr(wegex, ']');
 
 	if (bracket) {
 		return bracket;
@@ -105,7 +105,7 @@ If char at `begin` is `'['`, then return wether `c` matches any character within
 Else, return wether `c` and the char at `begin` are equal.
 */
 bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c) {
-	if (*begin == U'[') {
+	if (*begin == '[') {
 		begin++;
 		while (begin != end) {
 			if (wegex_cmp(begin, end, c)) {
@@ -115,19 +115,19 @@ bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c) {
 		}
 		return false;
 	}
-	if (*begin == U'\n') {
+	if (*begin == '\n') {
 		return c32isdigit(c);
 	}
-	if (*begin == U'\b') {
+	if (*begin == '\b') {
 		return c32isxdigit(c);
 	}
-	if (*begin == U'\a') {
+	if (*begin == '\a') {
 		return (
-			(c >= U'A' && c <= U'Z') ||
-			(c >= U'a' && c <= U'z')
+			(c >= 'A' && c <= 'Z') ||
+			(c >= 'a' && c <= 'z')
 		);
 	}
-	if (*begin == U'\f') {
+	if (*begin == '\f') {
 		return c32isalnum(c);
 	}
 	return *begin == c;

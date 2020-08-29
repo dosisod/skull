@@ -14,7 +14,7 @@ char32_t *fmt_rune_type(const variable_t *var) {
 	DIE_IF_MALLOC_FAILS(ret);
 
 	variable_read(ret, var);
-	ret[1] = U'\0';
+	ret[1] = '\0';
 
 	return ret;
 }
