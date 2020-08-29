@@ -41,6 +41,10 @@ TEST(eval_assign_char, {
 	TEST_EVAL_ASSIGN(U"char", U"'a'", char32_t, U'a', NULL);
 })
 
+TEST(eval_assign_char_escaped, {
+	TEST_EVAL_ASSIGN(U"char", U"'\\n'", char32_t, U'\n', NULL);
+})
+
 TEST(eval_assign_str, {
 	const char32_t *code=U"\"abc\"";
 	ast_node_t *node=make_ast_tree(code);
@@ -646,6 +650,7 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_float,
 		test_eval_assign_bool,
 		test_eval_assign_char,
+		test_eval_assign_char_escaped,
 		test_eval_assign_str,
 		test_eval_assign_add_vars,
 		test_eval_assign_add_vars_types_must_match,

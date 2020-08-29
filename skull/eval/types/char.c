@@ -32,6 +32,14 @@ void *eval_char(const token_t *token, const char32_t **error) {
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 
-	*ret = *token->begin;
+	*ret = c32sunescape(token->begin, error);
+	if (*error) {
+		free(ret);
+		return NULL;
+	}
+	if (!*ret) {
+		*ret = *token->begin;
+	}
+
 	return ret;
 }

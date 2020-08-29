@@ -158,14 +158,19 @@ bool is_constant_bool_str(const char32_t *str) {
 /*
 Returns true if `str` is a valid char.
 
-Examples: `'x'` and `' '`.
-Won't work: `''`, `'x '`, or `' x'`.
+Examples: `'x'`, `'\n'`, and `' '`.
+Won't work: `''`, `'\'`, `'x '`, or `' x'`.
 */
 bool is_constant_char_str(const char32_t *str) {
+	const size_t len = c32slen(str);
+
 	return (
-		c32slen(str) == 3 &&
 		str[0] == U'\'' &&
-		str[2] == U'\''
+		str[len - 1] == U'\'' && (
+		(len == 3) || (
+			len == 4 &&
+			str[1] == U'\\'
+		))
 	);
 }
 

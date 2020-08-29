@@ -52,8 +52,8 @@ bool is_constant_char_str(const char32_t *str)
 
 > Returns true if `str` is a valid char.
 > \
-> Examples: `'x'` and `' '`.
-> Won't work: `''`, `'x '`, or `' x'`.
+> Examples: `'x'`, `'\n'`, and `' '`.
+> Won't work: `''`, `'\'`, `'x '`, or `' x'`.
 
 ```c
 bool is_constant_str_str(const char32_t *str)
