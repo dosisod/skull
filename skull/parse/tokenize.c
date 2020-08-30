@@ -2,7 +2,6 @@
 #include <stdlib.h>
 
 #include "skull/common/malloc.h"
-#include "skull/parse/constants.h"
 
 #include "skull/parse/tokenize.h"
 
@@ -35,7 +34,7 @@ token_t *tokenize(const char32_t *code) {
 				comment = false;
 			}
 		}
-		else if (!comment && c32sncmp(code, LINE_COMMENT, LINE_COMMENT_LEN)) {
+		else if (!comment && code[0] == '#' && code[1] == ' ') {
 			comment = true;
 
 			if (!current->begin) {

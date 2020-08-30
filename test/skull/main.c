@@ -3,7 +3,6 @@
 
 #include "parse/ast/node.h"
 #include "parse/classify.h"
-#include "parse/constants.h"
 #include "parse/tokenize.h"
 
 #include "errors.h"
@@ -36,7 +35,6 @@ int main(void) {
 
 	ast_node_test_self(&passed);
 	classifier_test_self(&passed);
-	constants_test_self(&passed);
 	tokenizer_test_self(&passed);
 	types_test_self(&passed);
 

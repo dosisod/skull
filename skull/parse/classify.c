@@ -6,7 +6,6 @@
 #include "skull/common/wegex.h"
 #include "skull/eval/function.h"
 #include "skull/eval/types/types.h"
-#include "skull/parse/constants.h"
 #include "skull/parse/tokenize.h"
 
 #include "skull/parse/classify.h"
@@ -41,7 +40,10 @@ void classify_token(token_t *token) {
 	TOKEN_TRY_STR(U"/", TOKEN_OPER_DIV)
 	TOKEN_TRY_STR(U":=", TOKEN_OPER_AUTO_EQUAL)
 
-	TOKEN_SET_IF(c32sncmp(str, LINE_COMMENT, LINE_COMMENT_LEN), TOKEN_COMMENT)
+	TOKEN_SET_IF(str[0] == '#' && (
+		str[1] == ' ' ||
+		!str[1]
+	), TOKEN_COMMENT)
 
 	TOKEN_SET_IF(is_type_str(str), TOKEN_TYPE)
 	TOKEN_SET_IF(is_constant_integer_str(str), TOKEN_INT_CONST)
