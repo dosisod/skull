@@ -1,7 +1,7 @@
 # skull/common/wegex.c
 
 ```c
-bool wegex_match(const char32_t *wegex, const char32_t *match)
+bool wegex_match(const char *wegex, const char32_t *match)
 ```
 
 > Returns true if the `wegex` string matches the `match` string.
@@ -12,7 +12,7 @@ bool wegex_match(const char32_t *wegex, const char32_t *match)
 > * Character groups can be used, for example, `+[123]+[abc]` matches `"321cba"`.
 
 ```c
-const char32_t *find_next_wegex(const char32_t *wegex)
+const char *find_next_wegex(const char *wegex)
 ```
 
 > Returns a pointer to the next searchable wegex group.
@@ -21,7 +21,7 @@ const char32_t *find_next_wegex(const char32_t *wegex)
 > Else, return the passed wegex.
 
 ```c
-bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c)
+bool wegex_cmp(const char *begin, const char *end, char32_t c)
 ```
 
 > Returns true if `c` matches a wegex group or a single character.

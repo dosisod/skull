@@ -133,10 +133,10 @@ Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 */
 bool is_constant_integer_str(const char32_t *str) {
 	return (
-		wegex_match(U"?-+\n", str) ||
-		wegex_match(U"0x+\b", str) ||
-		wegex_match(U"0b+[01]", str) ||
-		wegex_match(U"0o+[01234567]", str)
+		wegex_match("?-+\n", str) ||
+		wegex_match("0x+\b", str) ||
+		wegex_match("0b+[01]", str) ||
+		wegex_match("0o+[01234567]", str)
 	);
 }
 
@@ -147,8 +147,8 @@ Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
 bool is_constant_float_str(const char32_t *str) {
 	return (
-		wegex_match(U"?-+\n.+\n", str) ||
-		wegex_match(U"?-Infinity", str)
+		wegex_match("?-+\n.+\n", str) ||
+		wegex_match("?-Infinity", str)
 	);
 }
 
@@ -197,5 +197,5 @@ bool is_constant_str_str(const char32_t *str) {
 Returns true if `str` is a valid identifer.
 */
 bool is_valid_identifier_str(const char32_t *str) {
-	return wegex_match(U"\a*[\f_]?:", str);
+	return wegex_match("\a*[\f_]?:", str);
 }

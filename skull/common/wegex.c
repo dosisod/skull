@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include <string.h>
 
 #include "skull/common/str.h"
 
@@ -12,8 +13,8 @@ Returns true if the `wegex` string matches the `match` string.
 * "wegex" strings must match exactly, as in, they are like doing `^x$` in regex.
 * Character groups can be used, for example, `+[123]+[abc]` matches `"321cba"`.
 */
-bool wegex_match(const char32_t *wegex, const char32_t *match) {
-	const char32_t *wegex_end = wegex;
+bool wegex_match(const char *wegex, const char32_t *match) {
+	const char *wegex_end = wegex;
 
 	while (*wegex && *match) {
 		if (*wegex == '*') {
@@ -60,7 +61,7 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 	}
 
 	while (*wegex == '?' || *wegex == '*') {
-		const char32_t *tmp = find_next_wegex(wegex + 1) + 1;
+		const char *tmp = find_next_wegex(wegex + 1) + 1;
 		if (tmp != wegex) {
 			wegex = tmp;
 		}
@@ -69,7 +70,7 @@ bool wegex_match(const char32_t *wegex, const char32_t *match) {
 		}
 	}
 
-	return *wegex == *match;
+	return (char32_t)*wegex == *match;
 }
 
 /*
@@ -78,12 +79,12 @@ Returns a pointer to the next searchable wegex group.
 If `wegex` is pointing to a `'['` character, return the corresponding `']'`.
 Else, return the passed wegex.
 */
-const char32_t *find_next_wegex(const char32_t *wegex) {
+const char *find_next_wegex(const char *wegex) {
 	if (*wegex != '[') {
 		return wegex;
 	}
 
-	const char32_t *bracket = c32schr(wegex, ']');
+	const char *bracket = strchr(wegex, ']');
 
 	if (bracket) {
 		return bracket;
@@ -104,7 +105,7 @@ If char at `begin` is `'['`, then return wether `c` matches any character within
 
 Else, return wether `c` and the char at `begin` are equal.
 */
-bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c) {
+bool wegex_cmp(const char *begin, const char *end, char32_t c) {
 	if (*begin == '[') {
 		begin++;
 		while (begin != end) {
@@ -130,5 +131,5 @@ bool wegex_cmp(const char32_t *begin, const char32_t *end, char32_t c) {
 	if (*begin == '\f') {
 		return c32isalnum(c);
 	}
-	return *begin == c;
+	return (char32_t)*begin == c;
 }
