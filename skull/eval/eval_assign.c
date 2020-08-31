@@ -109,7 +109,7 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 		mem = eval_type(node->token, &err);
 	}
 	else {
-		return ERR_TYPE_MISMATCH;
+		return FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 
 	if (err || (err = variable_write(var, mem)) == ERR_CANNOT_ASSIGN_CONST) {
@@ -140,7 +140,7 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 	}
 	free(lookup);
 	if (var_found->type != var->type) {
-		return ERR_TYPE_MISMATCH;
+		return FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 
 	uint8_t *mem;

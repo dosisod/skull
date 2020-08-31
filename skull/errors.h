@@ -12,6 +12,7 @@ const char32_t *ERR_INVALID_INPUT;
 #define _ERR_INVALID_INPUT(str) U"invalid input: \"" str U"\""
 
 const char32_t *ERR_TYPE_MISMATCH;
+#define _ERR_TYPE_MISMATCH(type) U"type mismatch: expected type \"" type U"\""
 
 const char32_t *ERR_BAD_ESCAPE;
 #define _ERR_BAD_ESCAPE(tok) U"bad string escape: \"" tok U"\""

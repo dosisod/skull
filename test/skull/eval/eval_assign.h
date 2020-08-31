@@ -464,27 +464,27 @@ TEST(eval_assign_int_overflow, {
 #undef TEMP_INT
 
 TEST(eval_assign_type_mismatch, {
-	TEST_EVAL_ASSIGN("int", U"not_an_int", int64_t, 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_ASSIGN("int", U"not_an_int", int64_t, 0, _ERR_TYPE_MISMATCH(U"int"));
 })
 
 TEST(eval_assign_cannot_assign_non_ints, {
-	TEST_EVAL_ASSIGN("int", U"3.1415", int64_t, 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_ASSIGN("int", U"3.1415", int64_t, 0, _ERR_TYPE_MISMATCH(U"int"));
 })
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	TEST_EVAL_ASSIGN_FLOAT("float", U"1234", double, 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_ASSIGN_FLOAT("float", U"1234", double, 0, _ERR_TYPE_MISMATCH(U"float"));
 })
 
 TEST(eval_assign_cannot_assign_non_bools, {
-	TEST_EVAL_ASSIGN("bool", U"1", bool, 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_ASSIGN("bool", U"1", bool, 0, _ERR_TYPE_MISMATCH(U"bool"));
 })
 
 TEST(eval_assign_cannot_assign_non_runes, {
-	TEST_EVAL_ASSIGN("rune", U"1234", char32_t, 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_ASSIGN("rune", U"1234", char32_t, 0, _ERR_TYPE_MISMATCH(U"rune"));
 })
 
 TEST(eval_assign_cannot_assign_non_strs, {
-	TEST_EVAL_ASSIGN("str", U"1234", char32_t *, 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_ASSIGN("str", U"1234", char32_t *, 0, _ERR_TYPE_MISMATCH(U"str"));
 })
 
 #undef TEST_EVAL_ASSIGN
@@ -542,7 +542,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 
 	const bool pass=c32scmp(
 		output,
-		ERR_TYPE_MISMATCH
+		_ERR_TYPE_MISMATCH(U"int")
 	);
 
 	if (!is_error_msg(output)) {

@@ -48,7 +48,7 @@ TEST(convert_neg_infinity_float_token, {
 })
 
 TEST(non_float_token_fails, {
-	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", true, ERR_TYPE_MISMATCH);
+	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", true, _ERR_TYPE_MISMATCH(U"float"));
 })
 
 #undef TEST_EVAL_FLOAT_CONVERT

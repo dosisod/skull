@@ -8,7 +8,6 @@
 
 TEST(is_error_msg, {
 	return (
-		is_error_msg(ERR_TYPE_MISMATCH) &&
 		is_error_msg(ERR_TYPE_TYPE_BAD) &&
 		!is_error_msg(U"not an error msg") &&
 		!is_error_msg(NULL)

@@ -52,7 +52,7 @@ TEST(convert_binary_integer, {
 })
 
 TEST(non_integer_token_fails, {
-	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, ERR_TYPE_MISMATCH);
+	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, _ERR_TYPE_MISMATCH(U"int"));
 })
 
 #undef TEST_EVAL_INT_CONVERT

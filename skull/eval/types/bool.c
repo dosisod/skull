@@ -1,6 +1,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/errors.h"
+#include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/types/bool.h"
@@ -23,7 +24,7 @@ Return pointer to a bool, converted from `token`
 */
 void *eval_bool(const token_t *token, const char32_t **error) {
 	if (token->token_type != TOKEN_BOOL_CONST) {
-		*error = ERR_TYPE_MISMATCH;
+		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_BOOL });
 		return NULL;
 	}
 	bool *ret;

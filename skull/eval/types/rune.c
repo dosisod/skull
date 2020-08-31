@@ -1,6 +1,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/errors.h"
+#include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/types/rune.h"
@@ -24,7 +25,7 @@ Return pointer to a rune type, converted from `token`
 */
 void *eval_rune(const token_t *token, const char32_t **error) {
 	if (token->token_type != TOKEN_RUNE_CONST) {
-		*error = ERR_TYPE_MISMATCH;
+		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_FLOAT });
 		return NULL;
 	}
 
