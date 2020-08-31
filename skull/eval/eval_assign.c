@@ -57,7 +57,7 @@ Return an error (as a string) if any occured, else `NULL`.
 */
 const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
 	if (!node) {
-		return ERR_INVALID_INPUT;
+		return FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
 
 	if (ctx && node->node_type == AST_NODE_IDENTIFIER) {

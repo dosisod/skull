@@ -89,7 +89,7 @@ while (node) {
 		);
 	}
 	else {
-		PANIC_ON_ERR(ERR_UNEXPECTED_TOKEN);
+		PANIC_ON_ERR(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
 	}
 
 	if (ctx->vars_used != vars_used_last) {

@@ -242,7 +242,7 @@ TEST(repl_print_fail_with_trailing_tokens, {
 	repl_eval(U"x: int = 1234", ctx);
 
 	const bool pass=c32scmp(
-		ERR_INVALID_INPUT,
+		_ERR_INVALID_INPUT(U"x random_data"),
 		repl_eval(U"x random_data", ctx)
 	);
 
@@ -256,14 +256,14 @@ TEST(repl_blank_line_returns_nothing, {
 
 TEST(repl_invalid_input_returns_error, {
 	return c32scmp(
-		ERR_INVALID_INPUT,
+		_ERR_INVALID_INPUT(U"not_valid"),
 		repl_eval(U"not_valid", NULL)
 	);
 })
 
 TEST(repl_mut_cannot_be_used_alone, {
 	return c32scmp(
-		ERR_INVALID_INPUT,
+		_ERR_INVALID_INPUT(U"mut"),
 		repl_eval(U"mut", NULL)
 	);
 })
@@ -326,7 +326,7 @@ TEST(repl_define_var_without_colon_fails, {
 	context_t *ctx=make_context();
 
 	const bool pass=c32scmp(
-		ERR_INVALID_INPUT,
+		_ERR_INVALID_INPUT("x int = 0"),
 		repl_eval(U"x int = 0", ctx)
 	);
 
@@ -414,7 +414,10 @@ TEST(repl_assign_missing_rhs_token, {
 	repl_eval(U"mut x := 0", ctx);
 	const char32_t *output=repl_eval(U"x =", ctx);
 
-	const bool pass=(output==ERR_INVALID_INPUT);
+	const bool pass=c32scmp(
+		_ERR_MISSING_ASSIGNMENT(U"x"),
+		output
+	);
 
 	free_context(ctx);
 	return pass;

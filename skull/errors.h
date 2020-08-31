@@ -6,7 +6,11 @@
 #include "skull/parse/tokenize.h"
 
 const char32_t *ERR_UNEXPECTED_TOKEN;
+#define _ERR_UNEXPECTED_TOKEN(tok) U"unexpected token: \"" tok U"\""
+
 const char32_t *ERR_INVALID_INPUT;
+#define _ERR_INVALID_INPUT(str) U"invalid input: \"" str U"\""
+
 const char32_t *ERR_TYPE_MISMATCH;
 
 const char32_t *ERR_BAD_ESCAPE;

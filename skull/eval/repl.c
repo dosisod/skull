@@ -14,6 +14,11 @@
 
 #include "skull/eval/repl.h"
 
+#define RETURN(x) \
+	const char32_t *_tmp = (x); \
+	free_ast_tree(node); \
+	return _tmp
+
 /*
 Evaluates a string `str` given context `ctx`, returns result as a string (if any).
 */
@@ -23,89 +28,86 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	}
 
 	ast_node_t *node = make_ast_tree(str);
-	const char32_t *ret = ERR_INVALID_INPUT;
 
 	if (!node->token) {
-		ret = ERR_INVALID_INPUT;
+		RETURN(FMT_ERROR(ERR_INVALID_INPUT, { .str = str }));
 	}
 
-	else if ((node->node_type == AST_NODE_ONE_PARAM_FUNC ||
+	if ((node->node_type == AST_NODE_ONE_PARAM_FUNC ||
 		node->node_type == AST_NODE_NO_PARAM_FUNC) &&
 		is_func_name(node))
 	{
 		if (token_cmp(U"clear", node->token)) {
-			ret = func_clear(node);
+			RETURN(func_clear(node));
 		}
-		else if (token_cmp(U"print", node->token)) {
-			ret = func_print(node, ctx);
+		if (token_cmp(U"print", node->token)) {
+			RETURN(func_print(node, ctx));
 		}
 	}
 
-	else if (node->node_type == AST_NODE_COMMENT || node->node_type == AST_NODE_UNKNOWN) {
-		ret = NULL;
+	if (node->node_type == AST_NODE_COMMENT || node->node_type == AST_NODE_UNKNOWN) {
+		RETURN(NULL);
 	}
 
-	else if (node->node_type == AST_NODE_VAR_ASSIGN) {
+	if (node->node_type == AST_NODE_VAR_ASSIGN) {
 		char32_t *name = token_str(node->token);
 		variable_t *var = context_find_name(ctx, name);
 
 		if (!var) {
-			return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = name });
+			RETURN(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = name }));
 		}
 		free(name);
 
 		if (var->is_const) {
-			return FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .var = var });
+			RETURN(FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .var = var }));
 		}
-		ret = eval_assign(var, node->next, ctx);
+		RETURN(eval_assign(var, node->next, ctx));
 	}
 
-	else if (node->node_type == AST_NODE_VAR_DEF ||
+	if (node->node_type == AST_NODE_VAR_DEF ||
 		node->node_type == AST_NODE_AUTO_VAR_DEF)
 	{
-		ret = repl_make_var(node, ctx, true);
+		RETURN(repl_make_var(node, ctx, true));
 	}
 
-	else if (node->node_type == AST_NODE_MUT_VAR_DEF ||
+	if (node->node_type == AST_NODE_MUT_VAR_DEF ||
 		node->node_type == AST_NODE_MUT_AUTO_VAR_DEF)
 	{
-		ret = repl_make_var(node, ctx, false);
+		RETURN(repl_make_var(node, ctx, false));
 	}
 
-	else if (node->node_type == AST_NODE_RETURN) {
+	if (node->node_type == AST_NODE_RETURN) {
 		if (node->token->next->token_type == TOKEN_IDENTIFIER) {
 			char32_t *var_name = token_str(node->token->next);
 			const variable_t *found_var = context_find_name(ctx, var_name);
 
-			if (found_var) {
-				free(var_name);
-				if (found_var->type != &TYPE_INT) {
-					ret = FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var });
-				}
-				else {
-					int64_t num = 0;
-					variable_read(&num, found_var);
-					exit((int)num);
-				}
+			if (!found_var) {
+				RETURN(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
 			}
-			else {
-				ret = FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name });
-			}
-		}
-		else { //token is an int
-			ret = NULL;
-			int64_t *num = eval_integer(node->token->next, &ret);
+			free(var_name);
 
-			if (!ret) {
-				free_ast_tree(node);
-				exit((int)*num);
+			if (found_var->type != &TYPE_INT) {
+				RETURN(FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var }));
 			}
+
+			int64_t num = 0;
+			variable_read(&num, found_var);
+			exit((int)num);
 		}
+
+		const char32_t *ret = NULL;
+		int64_t *num = eval_integer(node->token->next, &ret);
+
+		if (!ret) {
+			free_ast_tree(node);
+			exit((int)*num);
+		}
+		RETURN(ret);
 	}
 
-	free_ast_tree(node);
-	return ret;
+	RETURN(FMT_ERROR(ERR_INVALID_INPUT, { .str = str }));
 }
+#undef RETURN
 
 /*
 Make and add a variable from `node` to context `ctx`.
@@ -173,7 +175,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 		}
 		else {
 			free(name);
-			return ERR_INVALID_INPUT;
+			return FMT_ERROR(ERR_INVALID_INPUT, { .tok = node->next->token });
 		}
 		var = make_variable(type, name, false);
 	}

@@ -6,8 +6,10 @@
 
 #include "skull/errors.h"
 
-const char32_t *ERR_UNEXPECTED_TOKEN = U"unexpected token";
-const char32_t *ERR_INVALID_INPUT = U"invalid input";
+const char32_t *ERR_UNEXPECTED_TOKEN = _ERR_UNEXPECTED_TOKEN(U"%");
+
+const char32_t *ERR_INVALID_INPUT = _ERR_INVALID_INPUT(U"%");
+
 const char32_t *ERR_TYPE_MISMATCH = U"error, type mismatch";
 
 const char32_t *ERR_BAD_ESCAPE = _ERR_BAD_ESCAPE(U"%");
@@ -151,8 +153,6 @@ Returns true if `str` is an error msg.
 */
 __attribute__((pure)) bool is_error_msg(const char32_t *str) {
 	return str && (
-		str == ERR_UNEXPECTED_TOKEN ||
-		str == ERR_INVALID_INPUT ||
 		str == ERR_TYPE_MISMATCH ||
 		str == ERR_TYPE_TYPE_BAD
 	);
