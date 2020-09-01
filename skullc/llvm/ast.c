@@ -46,6 +46,13 @@ while (node) {
 
 		node = node->next;
 	}
+	else if (node->node_type == AST_NODE_MUT_VAR_DEF ||
+		node->node_type == AST_NODE_MUT_AUTO_VAR_DEF)
+	{
+		PANIC_ON_ERR(repl_make_var(node, ctx, false));
+
+		node = node->next;
+	}
 	else if (node->node_type == AST_NODE_IF) {
 		const char32_t *error = NULL;
 		const bool *cond = eval_bool(node->token->next, &error);
