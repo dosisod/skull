@@ -6,16 +6,20 @@
 #include "skull/eval/eval_integer.h"
 #include "skull/eval/repl.h"
 #include "skull/eval/types/bool.h"
+#include "skull/parse/classify.h"
 
 #include "skullc/llvm/aliases.h"
 #include "skullc/llvm/var.h"
 
 #include "skullc/llvm/ast.h"
 
-#define PANIC_ON_ERR(ptr) \
-	if (ptr) { \
-		printf("Compilation error: %s\n", c32stombs(ptr)); \
-		exit(1); \
+#define PANIC(str) \
+	printf("Compilation error: %s\n", c32stombs(str)); \
+	exit(1)
+
+#define PANIC_ON_ERR(str) \
+	if (str) { \
+		PANIC(str); \
 	}
 
 /*
@@ -30,14 +34,37 @@ void str_to_llvm_ir(char32_t *str, LLVMValueRef func, LLVMBuilderRef builder, LL
 while (node) {
 
 	if (node->node_type == AST_NODE_RETURN) {
-		const char32_t *error = NULL;
-		int64_t *num = eval_integer(node->token->next, &error);
-		PANIC_ON_ERR(error);
+		if (node->token->next->token_type == TOKEN_IDENTIFIER) {
+			char32_t *var_name = token_str(node->token->next);
+			const variable_t *found_var = context_find_name(ctx, var_name);
 
-		LLVMBuildRet(
-			builder,
-			LLVM_INT(llvm_ctx, *num)
-		);
+			if (!found_var) {
+				PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
+			}
+			free(var_name);
+
+			if (found_var->type != &TYPE_INT) {
+				PANIC(FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var }));
+			}
+
+			int64_t num = 0;
+			variable_read(&num, found_var);
+
+			LLVMBuildRet(
+				builder,
+				LLVM_INT(llvm_ctx, num)
+			);
+		}
+		else {
+			const char32_t *error = NULL;
+			int64_t *num = eval_integer(node->token->next, &error);
+			PANIC_ON_ERR(error);
+
+			LLVMBuildRet(
+				builder,
+				LLVM_INT(llvm_ctx, *num)
+			);
+		}
 	}
 	else if (node->node_type == AST_NODE_VAR_DEF ||
 		node->node_type == AST_NODE_AUTO_VAR_DEF)
@@ -96,7 +123,7 @@ while (node) {
 		);
 	}
 	else {
-		PANIC_ON_ERR(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
+		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
 	}
 
 	if (ctx->vars_used != vars_used_last) {
