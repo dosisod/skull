@@ -7,7 +7,7 @@ ast_node_t *make_ast_tree(const char32_t *code)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-token_t *ast_token_cmp(token_t *token, int *token_type)
+token_t *ast_token_cmp(token_t *token, int *token_type, bool *pass)
 ```
 
 > Compare tokens against a combonation of tokens.

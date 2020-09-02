@@ -7,6 +7,38 @@
 
 #include "skull/parse/ast/node.h"
 
+int ast_node_comment_combo[] = {
+	TOKEN_COMMENT, -1
+};
+
+int ast_node_int_combo[] = {
+	TOKEN_INT_CONST, -1
+};
+
+int ast_node_float_combo[] = {
+	TOKEN_FLOAT_CONST, -1
+};
+
+int ast_node_bool_combo[] = {
+	TOKEN_BOOL_CONST, -1
+};
+
+int ast_node_rune_combo[] = {
+	TOKEN_RUNE_CONST, -1
+};
+
+int ast_node_str_combo[] = {
+	TOKEN_STR_CONST, -1
+};
+
+int ast_node_identifier_combo[] = {
+	TOKEN_IDENTIFIER, -1
+};
+
+int ast_node_type_combo[] = {
+	TOKEN_TYPE, -1
+};
+
 int ast_node_var_combo[] = {
 	TOKEN_NEW_IDENTIFIER,
 	TOKEN_TYPE,
@@ -94,15 +126,11 @@ int ast_node_if_combo[] = {
 };
 
 #define TRY_PUSH_AST_NODE(combo, node_type) \
-	token = ast_token_cmp(token, (combo)); \
-	if (token != last) { \
+	token = ast_token_cmp(token, (combo), &passed); \
+	if (passed) { \
+		passed = false; \
 		push_ast_node(token, &last, (node_type), &node); \
 		continue; \
-	}
-
-#define PUSH_NODE_IF_TOKEN(tok_type, node_type) \
-	else if (token->token_type == (tok_type)) { \
-		push_ast_node(token, &last, (node_type), &node); \
 	}
 
 /*
@@ -116,6 +144,7 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 
 	ast_node_t *node = make_ast_node();
 	ast_node_t *head = node;
+	bool passed = false;
 
 	while (token) {
 		last = token;
@@ -143,20 +172,16 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 
 		if (false) {} // setup for macros
 
-		PUSH_NODE_IF_TOKEN(TOKEN_COMMENT, AST_NODE_COMMENT)
-		PUSH_NODE_IF_TOKEN(TOKEN_INT_CONST, AST_NODE_INT_CONST)
-		PUSH_NODE_IF_TOKEN(TOKEN_FLOAT_CONST, AST_NODE_FLOAT_CONST)
-		PUSH_NODE_IF_TOKEN(TOKEN_BOOL_CONST, AST_NODE_BOOL_CONST)
-		PUSH_NODE_IF_TOKEN(TOKEN_RUNE_CONST, AST_NODE_RUNE_CONST)
-		PUSH_NODE_IF_TOKEN(TOKEN_STR_CONST, AST_NODE_STR_CONST)
-		PUSH_NODE_IF_TOKEN(TOKEN_IDENTIFIER, AST_NODE_IDENTIFIER)
-		PUSH_NODE_IF_TOKEN(TOKEN_TYPE, AST_NODE_TYPE_CONST)
+		TRY_PUSH_AST_NODE(ast_node_comment_combo, AST_NODE_COMMENT)
+		TRY_PUSH_AST_NODE(ast_node_int_combo, AST_NODE_INT_CONST)
+		TRY_PUSH_AST_NODE(ast_node_float_combo, AST_NODE_FLOAT_CONST)
+		TRY_PUSH_AST_NODE(ast_node_bool_combo, AST_NODE_BOOL_CONST)
+		TRY_PUSH_AST_NODE(ast_node_rune_combo, AST_NODE_RUNE_CONST)
+		TRY_PUSH_AST_NODE(ast_node_str_combo, AST_NODE_STR_CONST)
+		TRY_PUSH_AST_NODE(ast_node_identifier_combo, AST_NODE_IDENTIFIER)
+		TRY_PUSH_AST_NODE(ast_node_type_combo, AST_NODE_TYPE_CONST)
 
-		else {
-			break;
-		}
-
-		token = token->next;
+		break;
 	}
 
 	if (node->last) {
@@ -168,7 +193,6 @@ ast_node_t *make_ast_tree(const char32_t *code) {
 }
 
 #undef TRY_PUSH_AST_NODE
-#undef PUSH_NODE_IF_TOKEN
 
 /*
 Compare tokens against a combonation of tokens.
@@ -181,8 +205,8 @@ The last `-1` is to tell the function to stop iterating.
 
 If all the args match, return last token matched, else, the passed `token`.
 */
-token_t *ast_token_cmp(token_t *token, int *token_type) {
-	token_t *head = token;
+token_t *ast_token_cmp(token_t *token, int *token_type, bool *pass) {
+		token_t *head = token;
 	token_t *last = head;
 
 	while (token && *token_type != -1) {
@@ -204,6 +228,7 @@ token_t *ast_token_cmp(token_t *token, int *token_type) {
 	}
 
 	if (*token_type == -1) {
+		*pass = true;
 		return last;
 	}
 	return head;
