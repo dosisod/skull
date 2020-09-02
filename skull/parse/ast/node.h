@@ -52,7 +52,11 @@ typedef struct ast_node_t {
 
 ast_node_t *make_ast_node(void);
 
-token_t *ast_token_cmp(token_t *, int *, bool *);
+typedef struct combo_t {
+	unsigned tok;
+} combo_t;
+
+token_t *ast_token_cmp(token_t *, combo_t *, bool *);
 void push_ast_node(token_t *, token_t **, uint8_t, ast_node_t **);
 
 ast_node_t *make_ast_tree(const char32_t *);

@@ -7,123 +7,126 @@
 
 #include "skull/parse/ast/node.h"
 
-int ast_node_comment_combo[] = {
-	TOKEN_COMMENT, -1
-};
+#define MAKE_COMBO(name, ...) combo_t name[] = { __VA_ARGS__, {0} }
 
-int ast_node_int_combo[] = {
-	TOKEN_INT_CONST, -1
-};
+MAKE_COMBO(ast_node_comment_combo,
+	{ .tok = TOKEN_COMMENT }
+);
 
-int ast_node_float_combo[] = {
-	TOKEN_FLOAT_CONST, -1
-};
+MAKE_COMBO(ast_node_int_combo,
+	{ .tok = TOKEN_INT_CONST }
+);
 
-int ast_node_bool_combo[] = {
-	TOKEN_BOOL_CONST, -1
-};
+MAKE_COMBO(ast_node_float_combo,
+	{ .tok = TOKEN_FLOAT_CONST }
+);
 
-int ast_node_rune_combo[] = {
-	TOKEN_RUNE_CONST, -1
-};
+MAKE_COMBO(ast_node_bool_combo,
+	{ .tok = TOKEN_BOOL_CONST }
+);
 
-int ast_node_str_combo[] = {
-	TOKEN_STR_CONST, -1
-};
+MAKE_COMBO(ast_node_rune_combo,
+	{ .tok = TOKEN_RUNE_CONST }
+);
 
-int ast_node_identifier_combo[] = {
-	TOKEN_IDENTIFIER, -1
-};
+MAKE_COMBO(ast_node_str_combo,
+	{ .tok = TOKEN_STR_CONST }
+);
 
-int ast_node_type_combo[] = {
-	TOKEN_TYPE, -1
-};
+MAKE_COMBO(ast_node_identifier_combo,
+	{ .tok = TOKEN_IDENTIFIER }
+);
 
-int ast_node_var_combo[] = {
-	TOKEN_NEW_IDENTIFIER,
-	TOKEN_TYPE,
-	TOKEN_OPER_EQUAL, -1
-};
+MAKE_COMBO(ast_node_type_combo,
+	{ .tok = TOKEN_TYPE }
+);
 
-int ast_node_mut_var_def_combo[] = {
-	TOKEN_KW_MUT,
-	TOKEN_NEW_IDENTIFIER,
-	TOKEN_TYPE,
-	TOKEN_OPER_EQUAL, -1
-};
+MAKE_COMBO(ast_node_var_combo,
+	{ .tok = TOKEN_NEW_IDENTIFIER },
+	{ .tok = TOKEN_TYPE },
+	{ .tok = TOKEN_OPER_EQUAL }
+);
 
-int ast_node_auto_var_def_combo[] = {
-	TOKEN_IDENTIFIER,
-	TOKEN_OPER_AUTO_EQUAL, -1
-};
+MAKE_COMBO(ast_node_mut_var_def_combo,
+	{ .tok = TOKEN_KW_MUT },
+	{ .tok = TOKEN_NEW_IDENTIFIER },
+	{ .tok = TOKEN_TYPE },
+	{ .tok = TOKEN_OPER_EQUAL }
+);
 
-int ast_node_mut_auto_var_def_combo[] = {
-	TOKEN_KW_MUT,
-	TOKEN_IDENTIFIER,
-	TOKEN_OPER_AUTO_EQUAL, -1
-};
+MAKE_COMBO(ast_node_auto_var_def_combo,
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_OPER_AUTO_EQUAL }
+);
 
-int ast_node_var_assign_combo[] = {
-	TOKEN_IDENTIFIER,
-	TOKEN_OPER_EQUAL, -1
-};
+MAKE_COMBO(ast_node_mut_auto_var_def_combo,
+	{ .tok = TOKEN_KW_MUT },
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_OPER_AUTO_EQUAL }
+);
 
-int ast_node_add_var_combo[] = {
-	TOKEN_IDENTIFIER,
-	TOKEN_OPER_PLUS,
-	TOKEN_IDENTIFIER, -1
-};
+MAKE_COMBO(ast_node_var_assign_combo,
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_OPER_EQUAL }
+);
 
-int ast_node_sub_var_combo[] = {
-	TOKEN_IDENTIFIER,
-	TOKEN_OPER_MINUS,
-	TOKEN_IDENTIFIER, -1
-};
+MAKE_COMBO(ast_node_add_var_combo,
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_OPER_PLUS },
+	{ .tok = TOKEN_IDENTIFIER }
+);
 
-int ast_node_mult_var_combo[] = {
-	TOKEN_IDENTIFIER,
-	TOKEN_OPER_MULT,
-	TOKEN_IDENTIFIER, -1
-};
+MAKE_COMBO(ast_node_sub_var_combo,
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_OPER_MINUS },
+	{ .tok = TOKEN_IDENTIFIER }
+);
 
-int ast_node_div_var_combo[] = {
-	TOKEN_IDENTIFIER,
-	TOKEN_OPER_DIV,
-	TOKEN_IDENTIFIER, -1
-};
+MAKE_COMBO(ast_node_mult_var_combo,
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_OPER_MULT },
+	{ .tok = TOKEN_IDENTIFIER }
+);
 
-int ast_node_return_combo[] = {
-	TOKEN_KW_RETURN,
-	TOKEN_INT_CONST, -1
-};
+MAKE_COMBO(ast_node_div_var_combo,
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_OPER_DIV },
+	{ .tok = TOKEN_IDENTIFIER }
+);
 
-int ast_node_return_var_combo[] = {
-	TOKEN_KW_RETURN,
-	TOKEN_IDENTIFIER, -1
-};
+MAKE_COMBO(ast_node_return_combo,
+	{ .tok = TOKEN_KW_RETURN },
+	{ .tok = TOKEN_INT_CONST }
+);
 
-int ast_node_no_param_func_combo[] = {
-	TOKEN_IDENTIFIER,
-	TOKEN_BRACKET_OPEN,
-	TOKEN_BRACKET_CLOSE, -1
-};
+MAKE_COMBO(ast_node_return_var_combo,
+	{ .tok = TOKEN_KW_RETURN },
+	{ .tok = TOKEN_IDENTIFIER }
+);
 
-int ast_node_one_param_func_combo[] = {
-	TOKEN_IDENTIFIER,
-	TOKEN_BRACKET_OPEN,
-	TOKEN_ANY_NON_BRACKET_TOKEN,
-	TOKEN_BRACKET_CLOSE, -1
-};
+MAKE_COMBO(ast_node_no_param_func_combo,
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_BRACKET_OPEN },
+	{ .tok = TOKEN_BRACKET_CLOSE }
+);
 
-int ast_node_if_combo[] = {
-	TOKEN_KW_IF,
-	TOKEN_BOOL_CONST,
-	TOKEN_BRACKET_OPEN,
-		//copied from return_combo
-		TOKEN_KW_RETURN,
-		TOKEN_INT_CONST,
-	TOKEN_BRACKET_CLOSE, -1
-};
+MAKE_COMBO(ast_node_one_param_func_combo,
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_BRACKET_OPEN },
+	{ .tok = TOKEN_ANY_NON_BRACKET_TOKEN },
+	{ .tok = TOKEN_BRACKET_CLOSE }
+);
+
+MAKE_COMBO(ast_node_if_combo,
+	{ .tok = TOKEN_KW_IF },
+	{ .tok = TOKEN_BOOL_CONST },
+	{ .tok = TOKEN_BRACKET_OPEN },
+		{ .tok = TOKEN_KW_RETURN },
+		{ .tok = TOKEN_INT_CONST },
+	{ .tok = TOKEN_BRACKET_CLOSE }
+);
+
+#undef MAKE_COMBO
 
 #define TRY_PUSH_AST_NODE(combo, node_type) \
 	token = ast_token_cmp(token, (combo), &passed); \
@@ -199,24 +202,35 @@ Compare tokens against a combonation of tokens.
 
 Each item in `combo` will be compared with the next token after the last token.
 
-For example, `ast_token_cmp(token, (int[]){0, 1, 2, -1})` will check up until `token->next->next`.
+For example:
 
-The last `-1` is to tell the function to stop iterating.
+```c
+ast_token_cmp(token, (combo_t[]){
+    { .tok = 0 },
+    { .tok = 1 },
+    { .tok = 2 },
+	{0}
+});
+```
+
+will check up until `token->next->next`.
+
+The last `{0}` is to tell the function to stop iterating.
 
 If all the args match, return last token matched, else, the passed `token`.
 */
-token_t *ast_token_cmp(token_t *token, int *token_type, bool *pass) {
-		token_t *head = token;
+token_t *ast_token_cmp(token_t *token, combo_t *combo, bool *pass) {
+	token_t *head = token;
 	token_t *last = head;
 
-	while (token && *token_type != -1) {
+	while (token && combo->tok) {
 		if (
-			token->token_type != *token_type &&
-			*token_type != TOKEN_ANY_NON_BRACKET_TOKEN)
+			token->token_type != combo->tok &&
+			combo->tok != TOKEN_ANY_NON_BRACKET_TOKEN)
 		{
 			return head;
 		}
-		if (*token_type == TOKEN_ANY_NON_BRACKET_TOKEN &&
+		if (combo->tok == TOKEN_ANY_NON_BRACKET_TOKEN &&
 			(token->token_type == TOKEN_BRACKET_OPEN ||
 			token->token_type == TOKEN_BRACKET_CLOSE))
 		{
@@ -224,10 +238,10 @@ token_t *ast_token_cmp(token_t *token, int *token_type, bool *pass) {
 		}
 		last = token;
 		token = token->next;
-		token_type++;
+		combo++;
 	}
 
-	if (*token_type == -1) {
+	if (!combo->tok) {
 		*pass = true;
 		return last;
 	}
