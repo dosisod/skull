@@ -32,7 +32,7 @@ token_t *ast_token_cmp(token_t *token, combo_t *combo, bool *pass)
 > If all the args match, return last token matched, else, the passed `token`.
 
 ```c
-void push_ast_node(token_t *token, token_t **last, uint8_t node_type, ast_node_t **node)
+void push_ast_node(token_t *token, token_t **last, unsigned node_type, ast_node_t **node)
 ```
 
 > Push a new AST node to `node` with type `node_type`

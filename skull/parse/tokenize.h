@@ -8,7 +8,7 @@
 typedef struct token_t {
 	const char32_t *begin;
 	const char32_t *end;
-	uint8_t token_type;
+	unsigned token_type;
 
 	struct token_t *next;
 } token_t;

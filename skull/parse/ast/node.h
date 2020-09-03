@@ -41,7 +41,7 @@ enum node_types {
 };
 
 typedef struct ast_node_t {
-	uint8_t node_type;
+	unsigned node_type;
 
 	struct token_t *token;
 	struct token_t *token_end;
@@ -58,7 +58,7 @@ typedef struct combo_t {
 } combo_t;
 
 token_t *ast_token_cmp(token_t *, combo_t *, bool *);
-void push_ast_node(token_t *, token_t **, uint8_t, ast_node_t **);
+void push_ast_node(token_t *, token_t **, unsigned, ast_node_t **);
 
 ast_node_t *make_ast_tree(const char32_t *);
 void free_ast_tree(ast_node_t *);
