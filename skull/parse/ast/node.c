@@ -121,8 +121,7 @@ MAKE_COMBO(ast_node_if_combo,
 	{ .tok = TOKEN_KW_IF },
 	{ .tok = TOKEN_BOOL_CONST },
 	{ .tok = TOKEN_BRACKET_OPEN },
-		{ .tok = TOKEN_KW_RETURN },
-		{ .tok = TOKEN_INT_CONST },
+		{ .combo = ast_node_return_combo },
 	{ .tok = TOKEN_BRACKET_CLOSE }
 );
 
@@ -223,16 +222,19 @@ token_t *ast_token_cmp(token_t *token, combo_t *combo, bool *pass) {
 	token_t *head = token;
 	token_t *last = head;
 
-	while (token && combo->tok) {
-		if (
-			token->token_type != combo->tok &&
-			combo->tok != TOKEN_ANY_NON_BRACKET_TOKEN)
-		{
-			return head;
+	while (token && (combo->tok || combo->combo)) {
+		if (combo->combo) {
+			token = ast_token_cmp(token, combo->combo, pass);
+			if (!*pass) {
+				return head;
+			}
 		}
-		if (combo->tok == TOKEN_ANY_NON_BRACKET_TOKEN &&
-			(token->token_type == TOKEN_BRACKET_OPEN ||
-			token->token_type == TOKEN_BRACKET_CLOSE))
+		else if ((token->token_type != combo->tok &&
+			combo->tok != TOKEN_ANY_NON_BRACKET_TOKEN) || (
+				combo->tok == TOKEN_ANY_NON_BRACKET_TOKEN &&
+				(token->token_type == TOKEN_BRACKET_OPEN ||
+				token->token_type == TOKEN_BRACKET_CLOSE)
+			))
 		{
 			return head;
 		}

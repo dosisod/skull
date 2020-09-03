@@ -54,6 +54,7 @@ ast_node_t *make_ast_node(void);
 
 typedef struct combo_t {
 	unsigned tok;
+	struct combo_t *combo;
 } combo_t;
 
 token_t *ast_token_cmp(token_t *, combo_t *, bool *);
