@@ -6,7 +6,7 @@
 
 TEST(is_type_str, {
 	const char32_t *code=U"int not_a_type";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 
 	char32_t *buf=token_str(token);
 	char32_t *buf_next=token_str(token->next);
@@ -91,7 +91,7 @@ TEST(is_constant_str, {
 
 #define TEST_CLASSIFY_TOKEN(str, expected) \
 	const char32_t *code=str; \
-	token_t *token=tokenize(code); \
+	Token *token=tokenize(code); \
 	classify_token(token); \
 	const bool pass=(token->token_type==(expected)); \
 	free(token); \
@@ -143,7 +143,7 @@ TEST(token_div_oper, {
 
 TEST(token_type, {
 	const char32_t *code=U"int not_a_type";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -175,7 +175,7 @@ TEST(token_bool_constant, {
 
 TEST(token_rune_constant, {
 	const char32_t *code=U"'x'";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -190,7 +190,7 @@ TEST(token_rune_constant, {
 
 TEST(token_str_constant, {
 	const char32_t *code=U"\"xyz\"";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -203,9 +203,9 @@ TEST(token_str_constant, {
 	return pass;
 })
 
-TEST(token_type_type, {
+TEST(token_Typeype, {
 	const char32_t *code=U"int";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -220,7 +220,7 @@ TEST(token_type_type, {
 
 TEST(token_comment, {
 	const char32_t *code=U"# this is a comment";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -235,7 +235,7 @@ TEST(token_comment, {
 
 TEST(token_comment_empty, {
 	const char32_t *code=U"#";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -268,7 +268,7 @@ TEST(is_valid_identifier, {
 })
 
 TEST(is_valid_identifier_token, {
-	token_t *t=tokenize(U"x");
+	Token *t=tokenize(U"x");
 	classify_tokens(t);
 
 	const bool pass=(t->token_type==TOKEN_IDENTIFIER);
@@ -279,7 +279,7 @@ TEST(is_valid_identifier_token, {
 
 TEST(new_identifier_clip_trailing_colon, {
 	const char32_t *code=U"x: int = 0";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -293,7 +293,7 @@ TEST(new_identifier_clip_trailing_colon, {
 
 TEST(identifier_cannot_be_type, {
 	const char32_t *code=U"int: int = 0";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -307,7 +307,7 @@ TEST(identifier_cannot_be_type, {
 
 TEST(identifier_cannot_be_keyword, {
 	const char32_t *code=U"mut: int = 0";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -321,7 +321,7 @@ TEST(identifier_cannot_be_keyword, {
 
 TEST(identifier_cannot_be_func_name, {
 	const char32_t *code=U"print: int = 0";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -335,7 +335,7 @@ TEST(identifier_cannot_be_func_name, {
 
 TEST(token_classifier, {
 	const char32_t *code=U"[ ]";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 	classify_tokens(t);
 
 	const bool pass=(
@@ -376,7 +376,7 @@ void classifier_test_self(bool *pass) {
 		test_token_bool_constant,
 		test_token_rune_constant,
 		test_token_str_constant,
-		test_token_type_type,
+		test_token_Typeype,
 		test_token_comment,
 		test_token_comment_empty,
 		test_is_valid_identifier,

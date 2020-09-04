@@ -1,31 +1,31 @@
 # skull/eval/types/float.c
 
 ```c
-char32_t *fmt_float_type(const variable_t *var)
+char32_t *fmt_float_type(const Variable *var)
 ```
 
 > Returns the string representation of float `var`
 
 ```c
-variable_t *add_float_type(const variable_t *lhs, const variable_t *rhs)
+Variable *add_float_type(const Variable *lhs, const Variable *rhs)
 ```
 
 > Add `lhs` and `rhs` floats together
 
 ```c
-variable_t *sub_float_type(const variable_t *lhs, const variable_t *rhs)
+Variable *sub_float_type(const Variable *lhs, const Variable *rhs)
 ```
 
 > Subtract `rhs` float from `lhs` float
 
 ```c
-variable_t *div_float_type(const variable_t *lhs, const variable_t *rhs)
+Variable *div_float_type(const Variable *lhs, const Variable *rhs)
 ```
 
 > Divide `lhs` float by `rhs` float
 
 ```c
-variable_t *mult_float_type(const variable_t *lhs, const variable_t *rhs)
+Variable *mult_float_type(const Variable *lhs, const Variable *rhs)
 ```
 
 > Multiply `lhs` and `rhs` floats together

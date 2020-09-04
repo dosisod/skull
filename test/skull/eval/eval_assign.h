@@ -7,8 +7,8 @@
 #include "test/testing.h"
 
 #define TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, cmp) \
-	ast_node_t *node=make_ast_tree(str_value); \
-	variable_t *var=make_variable(str_type, U"x", false); \
+	AstNode *node=make_ast_tree(str_value); \
+	Variable *var=make_variable(str_type, U"x", false); \
 	const char32_t *output=eval_assign(var, node, NULL); \
 	real_type data=0; \
 	variable_read(&data, var); \
@@ -47,9 +47,9 @@ TEST(eval_assign_rune_escaped, {
 
 TEST(eval_assign_str, {
 	const char32_t *code=U"\"abc\"";
-	ast_node_t *node=make_ast_tree(code);
+	AstNode *node=make_ast_tree(code);
 
-	variable_t *var=make_variable("str", U"x", false);
+	Variable *var=make_variable("str", U"x", false);
 
 	eval_assign(var, node, NULL);
 
@@ -67,15 +67,15 @@ TEST(eval_assign_str, {
 })
 
 TEST(eval_assign_add_vars, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t num=1;
 	variable_write(var_a, &num);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a + a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a + a");
+	Variable *var_b=make_variable("int", U"b", false);
 	eval_assign(var_b, node, ctx);
 
 	int64_t data=0;
@@ -89,15 +89,15 @@ TEST(eval_assign_add_vars, {
 })
 
 TEST(eval_assign_sub_vars, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t num=1;
 	variable_write(var_a, &num);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a - a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a - a");
+	Variable *var_b=make_variable("int", U"b", false);
 	eval_assign(var_b, node, ctx);
 
 	int64_t data=1;
@@ -111,15 +111,15 @@ TEST(eval_assign_sub_vars, {
 })
 
 TEST(eval_assign_mult_vars, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t num=2;
 	variable_write(var_a, &num);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a * a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a * a");
+	Variable *var_b=make_variable("int", U"b", false);
 	eval_assign(var_b, node, ctx);
 
 	int64_t data=0;
@@ -133,15 +133,15 @@ TEST(eval_assign_mult_vars, {
 })
 
 TEST(eval_assign_div_vars, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t num=2;
 	variable_write(var_a, &num);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a / a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a / a");
+	Variable *var_b=make_variable("int", U"b", false);
 	eval_assign(var_b, node, ctx);
 
 	int64_t data=0;
@@ -155,20 +155,20 @@ TEST(eval_assign_div_vars, {
 })
 
 TEST(eval_assign_add_vars_types_must_match, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	variable_t *var_b=make_variable("rune", U"b", false);
+	Variable *var_b=make_variable("rune", U"b", false);
 	char32_t data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
-	ast_node_t *node=make_ast_tree(U"a + b");
-	variable_t *var_c=make_variable("int", U"c", false);
+	AstNode *node=make_ast_tree(U"a + b");
+	Variable *var_c=make_variable("int", U"c", false);
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
@@ -182,20 +182,20 @@ TEST(eval_assign_add_vars_types_must_match, {
 })
 
 TEST(eval_assign_sub_vars_types_must_match, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	variable_t *var_b=make_variable("rune", U"b", false);
+	Variable *var_b=make_variable("rune", U"b", false);
 	char32_t data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
-	ast_node_t *node=make_ast_tree(U"a - b");
-	variable_t *var_c=make_variable("int", U"c", false);
+	AstNode *node=make_ast_tree(U"a - b");
+	Variable *var_c=make_variable("int", U"c", false);
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
@@ -209,20 +209,20 @@ TEST(eval_assign_sub_vars_types_must_match, {
 })
 
 TEST(eval_assign_mult_vars_types_must_match, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	variable_t *var_b=make_variable("rune", U"b", false);
+	Variable *var_b=make_variable("rune", U"b", false);
 	char32_t data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
-	ast_node_t *node=make_ast_tree(U"a * b");
-	variable_t *var_c=make_variable("int", U"c", false);
+	AstNode *node=make_ast_tree(U"a * b");
+	Variable *var_c=make_variable("int", U"c", false);
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
@@ -236,20 +236,20 @@ TEST(eval_assign_mult_vars_types_must_match, {
 })
 
 TEST(eval_assign_div_vars_types_must_match, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	variable_t *var_b=make_variable("rune", U"b", false);
+	Variable *var_b=make_variable("rune", U"b", false);
 	char32_t data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
-	ast_node_t *node=make_ast_tree(U"a / b");
-	variable_t *var_c=make_variable("int", U"c", false);
+	AstNode *node=make_ast_tree(U"a / b");
+	Variable *var_c=make_variable("int", U"c", false);
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
@@ -263,15 +263,15 @@ TEST(eval_assign_div_vars_types_must_match, {
 })
 
 TEST(eval_assign_add_vars_var_must_exist, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a + b");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a + b");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -284,15 +284,15 @@ TEST(eval_assign_add_vars_var_must_exist, {
 })
 
 TEST(eval_assign_sub_vars_var_must_exist, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a - b");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a - b");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -305,15 +305,15 @@ TEST(eval_assign_sub_vars_var_must_exist, {
 })
 
 TEST(eval_assign_mult_vars_var_must_exist, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a * b");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a * b");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -326,15 +326,15 @@ TEST(eval_assign_mult_vars_var_must_exist, {
 })
 
 TEST(eval_assign_div_vars_var_must_exist, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a / b");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a / b");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -347,15 +347,15 @@ TEST(eval_assign_div_vars_var_must_exist, {
 })
 
 TEST(eval_assign_check_lhs_var, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("int", U"a", false);
+	Variable *var_a=make_variable("int", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"b + a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"b + a");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -368,15 +368,15 @@ TEST(eval_assign_check_lhs_var, {
 })
 
 TEST(eval_assign_add_vars_must_be_addable, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("bool", U"a", false);
+	Variable *var_a=make_variable("bool", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a + a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a + a");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -389,15 +389,15 @@ TEST(eval_assign_add_vars_must_be_addable, {
 })
 
 TEST(eval_assign_sub_vars_must_be_subtractable, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("bool", U"a", false);
+	Variable *var_a=make_variable("bool", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a - a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a - a");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -410,15 +410,15 @@ TEST(eval_assign_sub_vars_must_be_subtractable, {
 })
 
 TEST(eval_assign_mult_vars_must_be_multipliable, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("bool", U"a", false);
+	Variable *var_a=make_variable("bool", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a * a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a * a");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -431,15 +431,15 @@ TEST(eval_assign_mult_vars_must_be_multipliable, {
 })
 
 TEST(eval_assign_div_vars_must_be_divisible, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
-	variable_t *var_a=make_variable("bool", U"a", false);
+	Variable *var_a=make_variable("bool", U"a", false);
 	int64_t data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
-	ast_node_t *node=make_ast_tree(U"a / a");
-	variable_t *var_b=make_variable("int", U"b", false);
+	AstNode *node=make_ast_tree(U"a / a");
+	Variable *var_b=make_variable("int", U"b", false);
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
@@ -489,9 +489,9 @@ TEST(eval_assign_cannot_assign_non_strs, {
 
 #undef TEST_EVAL_ASSIGN
 
-TEST(eval_assign_variable_to_another, {
-	variable_t *var1=make_variable("int", U"var1", false);
-	variable_t *var2=make_variable("int", U"var2", false);
+TEST(eval_assign_Variableo_another, {
+	Variable *var1=make_variable("int", U"var1", false);
+	Variable *var2=make_variable("int", U"var2", false);
 
 	int64_t var1_data=0;
 	int64_t var2_data=1234;
@@ -499,9 +499,9 @@ TEST(eval_assign_variable_to_another, {
 	variable_write(var2, &var2_data);
 
 	//assign var2 to var1
-	ast_node_t *node=make_ast_tree(U"var2");
+	AstNode *node=make_ast_tree(U"var2");
 
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 	context_add_var(ctx, var1);
 	context_add_var(ctx, var2);
 
@@ -523,18 +523,18 @@ TEST(eval_assign_variable_to_another, {
 	return pass;
 })
 
-TEST(eval_assign_variable_to_another_check_same_type, {
-	variable_t *var1=make_variable("int", U"var1", false);
-	variable_t *var2=make_variable("bool", U"var2", false);
+TEST(eval_assign_Variableo_another_check_same_type, {
+	Variable *var1=make_variable("int", U"var1", false);
+	Variable *var2=make_variable("bool", U"var2", false);
 
 	int64_t var1_data=0;
 	bool var2_data=false;
 	variable_write(var1, &var1_data);
 	variable_write(var2, &var2_data);
 
-	ast_node_t *node=make_ast_tree(U"var2");
+	AstNode *node=make_ast_tree(U"var2");
 
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 	context_add_var(ctx, var1);
 	context_add_var(ctx, var2);
 
@@ -553,15 +553,15 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 	return pass;
 })
 
-TEST(eval_assign_variable_to_another_check_bad_var, {
-	variable_t *var=make_variable("int", U"var", false);
+TEST(eval_assign_Variableo_another_check_bad_var, {
+	Variable *var=make_variable("int", U"var", false);
 
 	int64_t tmp=0;
 	variable_write(var, &tmp);
 
-	ast_node_t *node=make_ast_tree(U"not_a_variable");
+	AstNode *node=make_ast_tree(U"not_a_variable");
 
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 	context_add_var(ctx, var);
 
 	const bool pass=c32scmp(
@@ -574,8 +574,8 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 })
 
 TEST(eval_assign_string_types_cannot_share_pointers, {
-	variable_t *var1=make_variable("str", U"var1", false);
-	variable_t *var2=make_variable("str", U"var2", false);
+	Variable *var1=make_variable("str", U"var1", false);
+	Variable *var2=make_variable("str", U"var2", false);
 
 	const char32_t *str1=NULL;
 	variable_write(var1, &str1);
@@ -584,9 +584,9 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	variable_write(var2, &str2);
 	var2->is_const=true;
 
-	ast_node_t *node=make_ast_tree(U"var2");
+	AstNode *node=make_ast_tree(U"var2");
 
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 	context_add_var(ctx, var1);
 	context_add_var(ctx, var2);
 
@@ -609,15 +609,15 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	return pass;
 })
 
-TEST(eval_assign_type_type, {
-	variable_t *var=make_variable("type", U"var", false);
+TEST(eval_assign_Typeype, {
+	Variable *var=make_variable("type", U"var", false);
 
-	ast_node_t *node=make_ast_tree(U"int");
+	AstNode *node=make_ast_tree(U"int");
 
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 	const char32_t *output=eval_assign(var, node, ctx);
 
-	type_t *after=NULL;
+	Type *after=NULL;
 	variable_read(&after, var);
 
 	const bool pass=(
@@ -630,11 +630,11 @@ TEST(eval_assign_type_type, {
 })
 
 TEST(eval_assign_type_var_cannot_be_type, {
-	variable_t *var=make_variable("type", U"var", false);
+	Variable *var=make_variable("type", U"var", false);
 
-	ast_node_t *node=make_ast_tree(U"type");
+	AstNode *node=make_ast_tree(U"type");
 
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const bool pass=(
 		eval_assign(var, node, ctx)==ERR_TYPE_TYPE_BAD
@@ -677,11 +677,11 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_cannot_assign_non_bools,
 		test_eval_assign_cannot_assign_non_runes,
 		test_eval_assign_cannot_assign_non_strs,
-		test_eval_assign_variable_to_another,
-		test_eval_assign_variable_to_another_check_same_type,
-		test_eval_assign_variable_to_another_check_bad_var,
+		test_eval_assign_Variableo_another,
+		test_eval_assign_Variableo_another_check_same_type,
+		test_eval_assign_Variableo_another_check_bad_var,
 		test_eval_assign_string_types_cannot_share_pointers,
-		test_eval_assign_type_type,
+		test_eval_assign_Typeype,
 		test_eval_assign_type_var_cannot_be_type,
 		NULL
 	};

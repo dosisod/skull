@@ -1,25 +1,25 @@
 # skull/eval/types/int.c
 
 ```c
-char32_t *fmt_int_type(const variable_t *var)
+char32_t *fmt_int_type(const Variable *var)
 ```
 
 > Returns the string representation of int `var`
 
 ```c
-variable_t *add_int_type(const variable_t *lhs, const variable_t *rhs)
+Variable *add_int_type(const Variable *lhs, const Variable *rhs)
 ```
 
 > Add `lhs` and `rhs` ints together
 
 ```c
-variable_t *sub_int_type(const variable_t *lhs, const variable_t *rhs)
+Variable *sub_int_type(const Variable *lhs, const Variable *rhs)
 ```
 
 > Subtract `rhs` int from `lhs` int
 
 ```c
-variable_t *div_int_type(const variable_t *lhs, const variable_t *rhs)
+Variable *div_int_type(const Variable *lhs, const Variable *rhs)
 ```
 
 > Divide `lhs` int by `rhs` int
@@ -27,7 +27,7 @@ variable_t *div_int_type(const variable_t *lhs, const variable_t *rhs)
 > If `rhs` is zero, return NULL.
 
 ```c
-variable_t *mult_int_type(const variable_t *lhs, const variable_t *rhs)
+Variable *mult_int_type(const Variable *lhs, const Variable *rhs)
 ```
 
 > Multiply `lhs` and `rhs` ints together

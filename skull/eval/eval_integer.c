@@ -15,7 +15,7 @@ Converts a `TOKEN_INT_CONST` token to an integer pointer (`int64_t *`).
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-void *eval_integer(const token_t *token, const char32_t **error) {
+void *eval_integer(const Token *token, const char32_t **error) {
 	if (token->token_type != TOKEN_INT_CONST) {
 		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_INT });
 		return NULL;

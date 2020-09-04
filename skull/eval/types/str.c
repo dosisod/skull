@@ -9,7 +9,7 @@
 /*
 Returns the string representation of string `var`
 */
-char32_t *fmt_str_type(const variable_t *var) {
+char32_t *fmt_str_type(const Variable *var) {
 	const char32_t *str = NULL;
 	variable_read(&str, var);
 
@@ -22,8 +22,8 @@ char32_t *fmt_str_type(const variable_t *var) {
 /*
 Concatenate `lhs` and `rhs` strings
 */
-variable_t *add_str_type(const variable_t *lhs, const variable_t *rhs) {
-	variable_t *ret = make_variable("str", U"tmp", false);
+Variable *add_str_type(const Variable *lhs, const Variable *rhs) {
+	Variable *ret = make_variable("str", U"tmp", false);
 	if (!ret) {
 		return NULL;
 	}
@@ -43,7 +43,7 @@ variable_t *add_str_type(const variable_t *lhs, const variable_t *rhs) {
 /*
 Return pointer to string, converted from `token`
 */
-void *eval_str(const token_t *token, const char32_t **error) {
+void *eval_str(const Token *token, const char32_t **error) {
 	if (token->token_type != TOKEN_STR_CONST) {
 		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_STR });
 		return NULL;

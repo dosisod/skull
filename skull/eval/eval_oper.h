@@ -1,7 +1,7 @@
 #include <string.h>
 
 #define DO_MATH(str_type, real_type, oper) \
-	variable_t *ret = make_variable(str_type, U"tmp", false); \
+	Variable *ret = make_variable(str_type, U"tmp", false); \
 	if (!ret) { \
 		return NULL; \
 	} \

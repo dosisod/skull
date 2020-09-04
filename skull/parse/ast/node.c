@@ -7,7 +7,7 @@
 
 #include "skull/parse/ast/node.h"
 
-#define MAKE_COMBO(name, ...) combo_t name[] = { __VA_ARGS__, {0} }
+#define MAKE_COMBO(name, ...) Combo name[] = { __VA_ARGS__, {0} }
 
 MAKE_COMBO(ast_node_comment_combo,
 	{ .tok = TOKEN_COMMENT }
@@ -138,14 +138,14 @@ MAKE_COMBO(ast_node_if_combo,
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-ast_node_t *make_ast_tree(const char32_t *code) {
-	token_t *token = tokenize(code);
-	token_t *last;
+AstNode *make_ast_tree(const char32_t *code) {
+	Token *token = tokenize(code);
+	Token *last;
 
 	classify_tokens(token);
 
-	ast_node_t *node = make_ast_node();
-	ast_node_t *head = node;
+	AstNode *node = make_ast_node();
+	AstNode *head = node;
 	bool passed = false;
 
 	while (token) {
@@ -204,7 +204,7 @@ Each item in `combo` will be compared with the next token after the last token.
 For example:
 
 ```c
-ast_token_cmp(token, (combo_t[]){
+ast_token_cmp(token, (Combo[]){
     { .tok = 0 },
     { .tok = 1 },
     { .tok = 2 },
@@ -218,9 +218,9 @@ The last `{0}` is to tell the function to stop iterating.
 
 If all the args match, return last token matched, else, the passed `token`.
 */
-token_t *ast_token_cmp(token_t *token, combo_t *combo, bool *pass) {
-	token_t *head = token;
-	token_t *last = head;
+Token *ast_token_cmp(Token *token, Combo *combo, bool *pass) {
+	Token *head = token;
+	Token *last = head;
 
 	while (token && (combo->tok || combo->combo)) {
 		if (combo->combo) {
@@ -253,12 +253,12 @@ token_t *ast_token_cmp(token_t *token, combo_t *combo, bool *pass) {
 /*
 Push a new AST node to `node` with type `node_type`
 */
-void push_ast_node(token_t *token, token_t **last, unsigned node_type, ast_node_t **node) {
+void push_ast_node(Token *token, Token **last, unsigned node_type, AstNode **node) {
 	(*node)->node_type = node_type;
 	(*node)->token = *last;
 	(*node)->token_end = token;
 
-	ast_node_t *tmp = make_ast_node();
+	AstNode *tmp = make_ast_node();
 
 	tmp->last = *node;
 	*last = token->next;
@@ -268,10 +268,10 @@ void push_ast_node(token_t *token, token_t **last, unsigned node_type, ast_node_
 }
 
 /*
-Makes an ast_node_t with default values
+Makes an AstNode with default values
 */
-ast_node_t *make_ast_node(void) {
-	ast_node_t *node;
+AstNode *make_ast_node(void) {
+	AstNode *node;
 	node = calloc(1, sizeof *node);
 	DIE_IF_MALLOC_FAILS(node);
 
@@ -281,7 +281,7 @@ ast_node_t *make_ast_node(void) {
 /*
 Frees an AST tree.
 */
-void free_ast_tree(ast_node_t *node) {
+void free_ast_tree(AstNode *node) {
 	free_tokens(node->token);
 	free(node);
 }

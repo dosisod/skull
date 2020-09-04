@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
 	if (argc == 1) {
 		puts("Skull " SKULL_VERSION);
-		context_t *ctx = make_context();
+		Context *ctx = make_context();
 
 		while (true) {
 			repl_loop(stdin, ctx);

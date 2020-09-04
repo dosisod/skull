@@ -18,17 +18,17 @@
 
 #include "skull/eval/eval_assign.h"
 
-const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx);
+const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ctx);
 
 #define EVAL_ASSIGN_SETUP(func, cannot, unavail) \
 	char32_t *lhs_str = token_str(node->token); \
-	variable_t *lhs_var = context_find_name(ctx, lhs_str); \
+	Variable *lhs_var = context_find_name(ctx, lhs_str); \
 	if (!lhs_var) { \
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lhs_str }); \
 	} \
 	free(lhs_str); \
 	char32_t *rhs_str = token_str(node->token->next->next); \
-	variable_t *rhs_var = context_find_name(ctx, rhs_str); \
+	Variable *rhs_var = context_find_name(ctx, rhs_str); \
 	if (!rhs_var) { \
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = rhs_str }); \
 	} \
@@ -40,7 +40,7 @@ const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const contex
 			{ .type = rhs_var->type } \
 		); \
 	} \
-	variable_t *tmp = (func)(lhs_var, rhs_var); \
+	Variable *tmp = (func)(lhs_var, rhs_var); \
 	if (!tmp) { \
 		return FMT_ERROR((unavail), { .type = lhs_var->type }); \
 	} \
@@ -55,7 +55,7 @@ Set `ctx` to allow for assigning variables to other variables.
 
 Return an error (as a string) if any occured, else `NULL`.
 */
-const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
+const char32_t *eval_assign(Variable *var, AstNode *node, const Context *ctx) {
 	if (!node) {
 		return FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
@@ -131,9 +131,9 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 /*
 Evaluate assignment via auto assignment operator.
 */
-const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx) {
+const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ctx) {
 	char32_t *lookup = token_str(node->token);
-	variable_t *var_found = context_find_name(ctx, lookup);
+	Variable *var_found = context_find_name(ctx, lookup);
 
 	if (!var_found) {
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup });

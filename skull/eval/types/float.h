@@ -2,9 +2,9 @@
 
 #include "skull/eval/variable.h"
 
-char32_t *fmt_float_type(const variable_t *);
+char32_t *fmt_float_type(const Variable *);
 
-variable_t *add_float_type(const variable_t *, const variable_t *);
-variable_t *sub_float_type(const variable_t *, const variable_t *);
-variable_t *div_float_type(const variable_t *, const variable_t *);
-variable_t *mult_float_type(const variable_t *, const variable_t *);
+Variable *add_float_type(const Variable *, const Variable *);
+Variable *sub_float_type(const Variable *, const Variable *);
+Variable *div_float_type(const Variable *, const Variable *);
+Variable *mult_float_type(const Variable *, const Variable *);

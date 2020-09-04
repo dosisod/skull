@@ -16,7 +16,7 @@ Converts a `TOKEN_FLOAT_CONST` token to a floating point number pointer (`double
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-void *eval_float(const token_t *token, const char32_t **error) {
+void *eval_float(const Token *token, const char32_t **error) {
 	if (token->token_type != TOKEN_FLOAT_CONST) {
 		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_FLOAT });
 		return NULL;

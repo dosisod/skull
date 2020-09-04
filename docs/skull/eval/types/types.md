@@ -10,7 +10,7 @@ bool make_new_type(const char *name, size_t bytes)
 > Returns true if the type `name` was inserted.
 
 ```c
-type_t *find_type(const char *name)
+Type *find_type(const char *name)
 ```
 
 > Returns pointer to type with name `name`.

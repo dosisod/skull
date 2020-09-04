@@ -7,9 +7,9 @@
 
 TEST(make_ast_node_struct, {
 	const char32_t *code=U"hello";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 
-	ast_node_t node;
+	AstNode node;
 	node.node_type=AST_NODE_UNKNOWN;
 	node.token=token;
 	node.token_end=token;
@@ -26,7 +26,7 @@ TEST(make_ast_node_struct, {
 })
 
 TEST(make_ast_node, {
-	ast_node_t *node=make_ast_node();
+	AstNode *node=make_ast_node();
 
 	const bool pass=(
 		node->node_type==AST_NODE_UNKNOWN &&
@@ -42,12 +42,12 @@ TEST(make_ast_node, {
 
 TEST(ast_token_cmp, {
 	const char32_t *code=U"x: int = 0";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 	classify_tokens(token);
 
 	bool ast_pass=false;
-	const token_t *out=ast_token_cmp(
-		token, (combo_t[]){
+	const Token *out=ast_token_cmp(
+		token, (Combo[]){
 			{ .tok = TOKEN_NEW_IDENTIFIER },
 			{ .tok = TOKEN_TYPE },
 			{ .tok = TOKEN_OPER_EQUAL },
@@ -68,12 +68,12 @@ TEST(ast_token_cmp, {
 
 TEST(ast_token_cmp_extra_tokens, {
 	const char32_t *code=U"x: int = 0 extra";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 	classify_tokens(token);
 
 	bool ast_pass=false;
-	const token_t *out=ast_token_cmp(
-		token, (combo_t[]) {
+	const Token *out=ast_token_cmp(
+		token, (Combo[]) {
 			{ .tok = TOKEN_NEW_IDENTIFIER },
 			{ .tok = TOKEN_TYPE },
 			{ .tok = TOKEN_OPER_EQUAL },
@@ -94,12 +94,12 @@ TEST(ast_token_cmp_extra_tokens, {
 
 TEST(ast_token_cmp_missing_tokens, {
 	const char32_t *code=U"x: int = 0";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 	classify_tokens(token);
 
 	bool ast_pass=false;
-	const token_t *out=ast_token_cmp(
-		token, (combo_t[]) {
+	const Token *out=ast_token_cmp(
+		token, (Combo[]) {
 			{ .tok = TOKEN_IDENTIFIER },
 			{ .tok = TOKEN_TYPE },
 			{ .tok = TOKEN_OPER_EQUAL },
@@ -120,12 +120,12 @@ TEST(ast_token_cmp_missing_tokens, {
 
 TEST(ast_token_cmp_any_token, {
 	const char32_t *code=U"[anything]";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 	classify_tokens(token);
 
 	bool ast_pass=false;
-	const token_t *out=ast_token_cmp(
-		token, (combo_t[]) {
+	const Token *out=ast_token_cmp(
+		token, (Combo[]) {
 			{ .tok = TOKEN_BRACKET_OPEN },
 			{ .tok = TOKEN_ANY_NON_BRACKET_TOKEN },
 			{ .tok = TOKEN_BRACKET_CLOSE },
@@ -145,16 +145,16 @@ TEST(ast_token_cmp_any_token, {
 
 TEST(push_ast_node, {
 	const char32_t *code=U"x: int = 0";
-	token_t *token=tokenize(code);
-	token_t *last=token;
+	Token *token=tokenize(code);
+	Token *last=token;
 
 	classify_tokens(token);
 
-	ast_node_t *node=make_ast_node();
-	ast_node_t *tmp=node;
+	AstNode *node=make_ast_node();
+	AstNode *tmp=node;
 
 	bool ast_pass=false;
-	token=ast_token_cmp(token, (combo_t[]) {
+	token=ast_token_cmp(token, (Combo[]) {
 		{ .tok = TOKEN_NEW_IDENTIFIER },
 		{ .tok = TOKEN_TYPE },
 		{ .tok = TOKEN_OPER_EQUAL },
@@ -177,7 +177,7 @@ TEST(push_ast_node, {
 
 #define TEST_AST_TREE(str, type, begin_offset, end_offset) \
 	const char32_t *code=str; \
-	ast_node_t *node=make_ast_tree(code); \
+	AstNode *node=make_ast_tree(code); \
 	const bool pass=( \
 		node->node_type==(type) && \
 		node->token->begin==(code + (begin_offset)) && \
@@ -209,7 +209,7 @@ TEST(make_ast_tree_auto_mutable_variable_def, {
 })
 
 TEST(make_ast_tree_with_whitespace, {
-	ast_node_t *node=make_ast_tree(U"");
+	AstNode *node=make_ast_tree(U"");
 
 	const bool pass=(
 		node &&
@@ -296,13 +296,13 @@ TEST(make_ast_tree_comment, {
 #undef TEST_AST_TREE
 
 TEST(free_ast_tree, {
-	ast_node_t *node=make_ast_tree(U"hello world");
+	AstNode *node=make_ast_tree(U"hello world");
 
 	free_ast_tree(node);
 	return true;
 })
 
-void ast_node_test_self(bool *pass) {
+void AstNodeest_self(bool *pass) {
 	tests_t tests={
 		test_make_ast_node_struct,
 		test_make_ast_node,

@@ -1,19 +1,19 @@
 # skull/eval/function.c
 
 ```c
-const char32_t *func_clear(ast_node_t *node)
+const char32_t *func_clear(AstNode *node)
 ```
 
 > Returns string that when printed, clears the screen.
 
 ```c
-const char32_t *func_print(ast_node_t *node, context_t *ctx)
+const char32_t *func_print(AstNode *node, Context *ctx)
 ```
 
 > Print out a variable.
 
 ```c
-bool is_func_name(const ast_node_t *node)
+bool is_func_name(const AstNode *node)
 ```
 
 > Returns `true` if the given node is a function name.

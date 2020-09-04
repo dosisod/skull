@@ -1,13 +1,13 @@
 # skull/parse/classify.c
 
 ```c
-void classify_token(token_t *token)
+void classify_token(Token *token)
 ```
 
 > Classify the token `token`.
 
 ```c
-void classify_tokens(token_t *head)
+void classify_tokens(Token *head)
 ```
 
 > Classify all tokens pointed to from `token`.

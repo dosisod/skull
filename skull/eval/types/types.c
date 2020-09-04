@@ -20,8 +20,8 @@ Returns false if a type called `name` already exists, and was not inserted.
 Returns true if the type `name` was inserted.
 */
 bool make_new_type(const char *name, size_t bytes) {
-	type_t *current = TYPES_AVAILABLE;
-	type_t *last = current;
+	Type *current = TYPES_AVAILABLE;
+	Type *last = current;
 
 	while (current) {
 		if (strcmp(current->name, name) == 0) {
@@ -31,7 +31,7 @@ bool make_new_type(const char *name, size_t bytes) {
 		current = current->next;
 	}
 
-	type_t *new_type;
+	Type *new_type;
 	new_type  =  malloc(sizeof *new_type);
 	DIE_IF_MALLOC_FAILS(new_type);
 
@@ -47,8 +47,8 @@ bool make_new_type(const char *name, size_t bytes) {
 /*
 Returns pointer to type with name `name`.
 */
-type_t *find_type(const char *name) {
-	type_t *head = TYPES_AVAILABLE;
+Type *find_type(const char *name) {
+	Type *head = TYPES_AVAILABLE;
 
 	while (head) {
 		if (strcmp(name, head->name) == 0) {
@@ -65,8 +65,8 @@ Free all non-builtin types.
 */
 void free_types(void) {
 	//TYPE_BOOL is the last defined builtin type
-	type_t *head = TYPE_BOOL.next;
-	type_t *tmp;
+	Type *head = TYPE_BOOL.next;
+	Type *tmp;
 
 	while (head) {
 		tmp = head;
@@ -78,7 +78,7 @@ void free_types(void) {
 	TYPE_BOOL.next = NULL;
 }
 
-struct type_t TYPE_BOOL = {
+struct Type TYPE_BOOL = {
 	.name = "bool",
 	.bytes = sizeof(bool),
 	.to_string = &fmt_bool_type,
@@ -89,7 +89,7 @@ struct type_t TYPE_BOOL = {
 	.next = NULL
 };
 
-struct type_t TYPE_INT = {
+struct Type TYPE_INT = {
 	.name = "int",
 	.bytes = sizeof(int64_t),
 	.to_string = &fmt_int_type,
@@ -100,7 +100,7 @@ struct type_t TYPE_INT = {
 	.next = &TYPE_BOOL
 };
 
-struct type_t TYPE_FLOAT = {
+struct Type TYPE_FLOAT = {
 	.name = "float",
 	.bytes = sizeof(double),
 	.to_string = &fmt_float_type,
@@ -111,7 +111,7 @@ struct type_t TYPE_FLOAT = {
 	.next = &TYPE_INT
 };
 
-struct type_t TYPE_RUNE = {
+struct Type TYPE_RUNE = {
 	.name = "rune",
 	.bytes = sizeof(char32_t),
 	.to_string = &fmt_rune_type,
@@ -122,7 +122,7 @@ struct type_t TYPE_RUNE = {
 	.next = &TYPE_FLOAT
 };
 
-struct type_t TYPE_STR = {
+struct Type TYPE_STR = {
 	.name = "str",
 	.bytes = sizeof(char32_t *),
 	.to_string = &fmt_str_type,
@@ -133,9 +133,9 @@ struct type_t TYPE_STR = {
 	.next = &TYPE_RUNE
 };
 
-struct type_t TYPE_TYPE = {
+struct Type TYPE_TYPE = {
 	.name = "type",
-	.bytes = sizeof(struct type_t *),
+	.bytes = sizeof(struct Type *),
 	.to_string = &fmt_type_type,
 	.add = NULL,
 	.subtract = NULL,
@@ -144,4 +144,4 @@ struct type_t TYPE_TYPE = {
 	.next = &TYPE_STR
 };
 
-struct type_t *TYPES_AVAILABLE = &TYPE_TYPE;
+struct Type *TYPES_AVAILABLE = &TYPE_TYPE;

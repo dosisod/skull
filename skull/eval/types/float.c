@@ -10,7 +10,7 @@
 /*
 Returns the string representation of float `var`
 */
-char32_t *fmt_float_type(const variable_t *var) {
+char32_t *fmt_float_type(const Variable *var) {
 	double data = 0.0;
 	variable_read(&data, var);
 
@@ -51,27 +51,27 @@ char32_t *fmt_float_type(const variable_t *var) {
 /*
 Add `lhs` and `rhs` floats together
 */
-variable_t *add_float_type(const variable_t *lhs, const variable_t *rhs) {
+Variable *add_float_type(const Variable *lhs, const Variable *rhs) {
 	DO_MATH("float", double, +);
 }
 
 /*
 Subtract `rhs` float from `lhs` float
 */
-variable_t *sub_float_type(const variable_t *lhs, const variable_t *rhs) {
+Variable *sub_float_type(const Variable *lhs, const Variable *rhs) {
 	DO_MATH("float", double, -);
 }
 
 /*
 Divide `lhs` float by `rhs` float
 */
-variable_t *div_float_type(const variable_t *lhs, const variable_t *rhs) {
+Variable *div_float_type(const Variable *lhs, const Variable *rhs) {
 	DO_MATH("float", double, /);
 }
 
 /*
 Multiply `lhs` and `rhs` floats together
 */
-variable_t *mult_float_type(const variable_t *lhs, const variable_t *rhs) {
+Variable *mult_float_type(const Variable *lhs, const Variable *rhs) {
 	DO_MATH("float", double, *);
 }

@@ -14,7 +14,7 @@ TEST(repl_variable_declare, {
 })
 
 TEST(repl_variable_declare_in_context, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const char32_t *output=repl_eval(U"x: int = 1234", ctx);
 
@@ -36,7 +36,7 @@ TEST(repl_variable_declare_in_context, {
 })
 
 TEST(repl_cannot_redeclare_var, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"x: int = 1234", ctx);
 	const char32_t *output=repl_eval(U"x: int = 1234", ctx);
@@ -54,7 +54,7 @@ TEST(repl_cannot_redeclare_var, {
 })
 
 TEST(repl_declaring_mutable_var, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"mut x: int = 1234", ctx);
 
@@ -67,7 +67,7 @@ TEST(repl_declaring_mutable_var, {
 })
 
 TEST(repl_declaring_mutable_auto_var, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"x := 0", ctx);
 
@@ -80,7 +80,7 @@ TEST(repl_declaring_mutable_auto_var, {
 })
 
 TEST(repl_manually_writing_to_const_var_fails, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"x: int = 1234", ctx);
 
@@ -102,7 +102,7 @@ TEST(repl_manually_writing_to_const_var_fails, {
 })
 
 TEST(repl_manually_writing_to_mutable_var_works, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"mut x: int = 1234", ctx);
 
@@ -127,7 +127,7 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 })
 
 #define TEST_WRITE_TO_MUTABLE_BASE(str_type, str_val1, str_val2, real_type, expected, cmp) \
-	context_t *ctx=make_context(); \
+	Context *ctx=make_context(); \
 	repl_eval(U"mut x: " str_type  " = " str_val1, ctx); \
 	const char32_t *output=repl_eval(U"x = " str_val2, ctx); \
 	if (ctx->vars_used!=1) { \
@@ -173,7 +173,7 @@ TEST(repl_write_to_mutable_bool_var, {
 #undef TEST_WRITE_TO_MUTABLE
 
 TEST(repl_write_to_const_var_fails, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"x: int = 1234", ctx);
 	const char32_t *output=repl_eval(U"x = 5678", ctx);
@@ -193,7 +193,7 @@ TEST(repl_write_to_const_var_fails, {
 })
 
 #define TEST_MAKE_VAR_BASE(str_type, str_val, real_type, expected, cmp) \
-	context_t *ctx=make_context(); \
+	Context *ctx=make_context(); \
 	const char32_t *output=repl_eval(U"x: " str_type " = " str_val, ctx); \
 	if (ctx->vars_used!=1) { \
 		free_context(ctx); \
@@ -237,7 +237,7 @@ TEST(repl_make_rune_variable, {
 
 
 TEST(repl_print_fail_with_trailing_tokens, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"x: int = 1234", ctx);
 
@@ -269,7 +269,7 @@ TEST(repl_mut_cannot_be_used_alone, {
 })
 
 TEST(repl_cannot_name_auto_var_after_func, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const bool pass=c32scmp(
 		ERR_ASSIGN_FUNC_(U"print"),
@@ -289,7 +289,7 @@ TEST(repl_clear_function, {
 })
 
 TEST(repl_print_var, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"x: int = 1234", ctx);
 	const char32_t *output=repl_eval(U"print[x]", ctx);
@@ -305,7 +305,7 @@ TEST(repl_print_var, {
 
 #define TEMP_INT U"99999999999999999999999"
 TEST(repl_overflow_int_gives_error, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const char32_t *output1=repl_eval(U"x: int = " TEMP_INT, ctx);
 
@@ -323,7 +323,7 @@ TEST(repl_overflow_int_gives_error, {
 #undef TEMP_INT
 
 TEST(repl_define_var_without_colon_fails, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const bool pass=c32scmp(
 		ERR_INVALID_INPUT_("x int = 0"),
@@ -335,7 +335,7 @@ TEST(repl_define_var_without_colon_fails, {
 })
 
 TEST(repl_missing_value_no_segfault, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const bool pass=c32scmp(
 		ERR_MISSING_ASSIGNMENT_(U"x"),
@@ -346,13 +346,13 @@ TEST(repl_missing_value_no_segfault, {
 	return pass;
 })
 
-TEST(repl_assigning_variable_to_auto_type, {
-	context_t *ctx=make_context();
+TEST(repl_assigning_Variableo_auto_type, {
+	Context *ctx=make_context();
 
 	repl_eval(U"x: int = 1234", ctx);
 	const char32_t *output=repl_eval(U"y := x", ctx);
 
-	variable_t *var=context_find_name(ctx, U"y");
+	Variable *var=context_find_name(ctx, U"y");
 	int64_t data=0;
 	variable_read(&data, var);
 
@@ -367,7 +367,7 @@ TEST(repl_assigning_variable_to_auto_type, {
 })
 
 TEST(repl_auto_assign_detect_unknown_var, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const char32_t *output=repl_eval(U"x := y", ctx);
 
@@ -381,7 +381,7 @@ TEST(repl_auto_assign_detect_unknown_var, {
 })
 
 TEST(repl_auto_assign_detect_missing_token, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const char32_t *output=repl_eval(U"x :=", ctx);
 
@@ -395,7 +395,7 @@ TEST(repl_auto_assign_detect_missing_token, {
 })
 
 TEST(repl_assign_detect_unknown_var, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const char32_t *output=repl_eval(U"x =", ctx);
 
@@ -409,7 +409,7 @@ TEST(repl_assign_detect_unknown_var, {
 })
 
 TEST(repl_assign_missing_rhs_token, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"mut x := 0", ctx);
 	const char32_t *output=repl_eval(U"x =", ctx);
@@ -424,11 +424,11 @@ TEST(repl_assign_missing_rhs_token, {
 })
 
 TEST(repl_cannot_reassign_const, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"x := \"anything\"", ctx);
 
-	variable_t *var=context_find_name(ctx, U"x");
+	Variable *var=context_find_name(ctx, U"x");
 	if (!var) {
 		free_context(ctx);
 		return false;
@@ -460,7 +460,7 @@ TEST(repl_cannot_reassign_const, {
 })
 
 TEST(repl_cannot_return_non_existent_var, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const char32_t *output=repl_eval(U"return x", ctx);
 
@@ -474,7 +474,7 @@ TEST(repl_cannot_return_non_existent_var, {
 })
 
 TEST(repl_cannot_return_non_int, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	repl_eval(U"x := 'a'", ctx);
 	const char32_t *output=repl_eval(U"return x", ctx);
@@ -514,7 +514,7 @@ void repl_test_self(bool *pass) {
 		test_repl_overflow_int_gives_error,
 		test_repl_define_var_without_colon_fails,
 		test_repl_missing_value_no_segfault,
-		test_repl_assigning_variable_to_auto_type,
+		test_repl_assigning_Variableo_auto_type,
 		test_repl_auto_assign_detect_unknown_var,
 		test_repl_auto_assign_detect_missing_token,
 		test_repl_assign_detect_unknown_var,

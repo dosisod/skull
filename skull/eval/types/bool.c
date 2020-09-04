@@ -9,7 +9,7 @@
 /*
 Returns the string representation of boolean `var`
 */
-char32_t *fmt_bool_type(const variable_t *var) {
+char32_t *fmt_bool_type(const Variable *var) {
 	bool data = false;
 	variable_read(&data, var);
 
@@ -22,7 +22,7 @@ char32_t *fmt_bool_type(const variable_t *var) {
 /*
 Return pointer to a bool, converted from `token`
 */
-void *eval_bool(const token_t *token, const char32_t **error) {
+void *eval_bool(const Token *token, const char32_t **error) {
 	if (token->token_type != TOKEN_BOOL_CONST) {
 		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_BOOL });
 		return NULL;

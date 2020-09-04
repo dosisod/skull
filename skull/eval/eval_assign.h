@@ -6,4 +6,4 @@
 
 #include "skull/eval/variable.h"
 
-const char32_t *eval_assign(variable_t *, ast_node_t *, const context_t *);
+const char32_t *eval_assign(Variable *, AstNode *, const Context *);

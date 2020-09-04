@@ -27,8 +27,8 @@ TEST(is_quote, {
 TEST(tokenize_single_token, {
 	const char32_t *code1=U"token";
 	const char32_t *code2=U"token字";
-	token_t *t1=tokenize(code1);
-	token_t *t2=tokenize(code2);
+	Token *t1=tokenize(code1);
+	Token *t2=tokenize(code2);
 
 	const bool pass=(
 		t1->begin==code1 &&
@@ -45,7 +45,7 @@ TEST(tokenize_single_token, {
 
 TEST(tokenize_no_tokens, {
 	const char32_t *code=U"";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 
 	const bool pass=(
 		t->begin==code &&
@@ -59,7 +59,7 @@ TEST(tokenize_no_tokens, {
 
 TEST(whitespace_between_tokens, {
 	const char32_t *code=U"token1\r\t token2";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 
 	const bool pass=(
 		t->begin==code &&
@@ -76,7 +76,7 @@ TEST(whitespace_between_tokens, {
 
 TEST(whitespace_at_eol_ignored, {
 	const char32_t *code=U"token   ";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 
 	const bool pass=(
 		t->begin==code &&
@@ -90,7 +90,7 @@ TEST(whitespace_at_eol_ignored, {
 
 TEST(whitespace_inside_double_quotes_respected, {
 	const char32_t *code=U"\"this is a single token\"";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 
 	const bool pass=(
 		!t->next &&
@@ -105,7 +105,7 @@ TEST(whitespace_inside_double_quotes_respected, {
 
 TEST(whitespace_inside_single_quotes_respected, {
 	const char32_t *code=U"'this is a single token'";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 
 	const bool pass=(
 		!t->next &&
@@ -120,7 +120,7 @@ TEST(whitespace_inside_single_quotes_respected, {
 
 TEST(brackets_always_make_their_own_token, {
 	const char32_t *code=U"left[]right";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 
 	const bool pass=(
 		t->begin==code &&
@@ -143,7 +143,7 @@ TEST(brackets_always_make_their_own_token, {
 
 TEST(free_tokens, {
 	const char32_t *code=U"token token token";
-	token_t *t=tokenize(code);
+	Token *t=tokenize(code);
 
 	free_tokens(t);
 
@@ -151,14 +151,14 @@ TEST(free_tokens, {
 })
 
 TEST(token_len, {
-	token_t *token=tokenize(U"token");
+	Token *token=tokenize(U"token");
 
 	return token_len(token)==5;
 })
 
 TEST(token_cmp, {
 	const char32_t *code=U"data";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 
 	const bool pass=(
 		token_cmp(U"data", token) &&
@@ -171,10 +171,10 @@ TEST(token_cmp, {
 })
 
 TEST(token_cmp_match_exact_strings_only, {
-	token_t *token1=tokenize(U"data");
-	token_t *token2=tokenize(U"dat");
-	token_t *token3=tokenize(U"da");
-	token_t *token4=tokenize(U"d");
+	Token *token1=tokenize(U"data");
+	Token *token2=tokenize(U"dat");
+	Token *token3=tokenize(U"da");
+	Token *token4=tokenize(U"d");
 
 	const bool pass=(
 		token_cmp(U"data", token1) &&
@@ -192,7 +192,7 @@ TEST(token_cmp_match_exact_strings_only, {
 
 TEST(token_str, {
 	const char32_t *code=U"left right";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 	char32_t *buf=token_str(token);
 
 	const bool pass=c32scmp(buf, U"left");
@@ -205,7 +205,7 @@ TEST(token_str, {
 
 TEST(tokenize_comment, {
 	const char32_t *code=U"# this is a comment";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 	char32_t *buf=token_str(token);
 
 	const bool pass=c32scmp(buf, code);
@@ -218,7 +218,7 @@ TEST(tokenize_comment, {
 
 TEST(tokenize_trailing_comment, {
 	const char32_t *code=U"stuff # this is a comment";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 	char32_t *buf1=token_str(token);
 	char32_t *buf2=token_str(token->next);
 
@@ -236,7 +236,7 @@ TEST(tokenize_trailing_comment, {
 
 TEST(tokenize_shebang_comment, {
 	const char32_t *code=U"#!/example/shebang";
-	token_t *token=tokenize(code);
+	Token *token=tokenize(code);
 
 	const bool pass=c32scmp(code, token->begin);
 
@@ -246,7 +246,7 @@ TEST(tokenize_shebang_comment, {
 })
 
 TEST(make_token, {
-	token_t *token=make_token();
+	Token *token=make_token();
 
 	const bool pass=(
 		!token->begin &&

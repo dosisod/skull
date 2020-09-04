@@ -64,27 +64,26 @@ const char32_t *ERR_TYPE_TYPE_BAD;
 const char32_t *ERR_ASSIGN_FUNC;
 #define ERR_ASSIGN_FUNC_(f) U"cannot reassign built-in function \"" f U"\""
 
-struct variable_t;
-struct type_t;
+struct Variable;
 
 typedef struct {
 	// dont store heap allocated strings in "str", do so in "real"
 	const char32_t *str;
-	const token_t *tok;
-	const struct variable_t *var;
-	const struct type_t *type;
+	const Token *tok;
+	const struct Variable *var;
+	const struct Type *type;
 
 	// copy of string that will be used in final error msg
 	char32_t *real;
-} error_msg_t;
+} ErrorMsg;
 
-char32_t *fmt_error(const char32_t *fmt, error_msg_t []);
+char32_t *fmt_error(const char32_t *fmt, ErrorMsg []);
 #define FMT_ERROR(fmt, ...) \
-	fmt_error(fmt, (error_msg_t[]){ \
+	fmt_error(fmt, (ErrorMsg[]){ \
 		__VA_ARGS__, \
 		{0} \
 	})
 
-void fmt_error_stringify(error_msg_t *);
+void fmt_error_stringify(ErrorMsg *);
 
 bool is_error_msg(const char32_t *);

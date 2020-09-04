@@ -5,7 +5,7 @@
 /*
 Make a new variable by subtracting `rhs` from `lhs`.
 */
-variable_t *eval_sub(const variable_t *lhs, const variable_t *rhs) {
+Variable *eval_sub(const Variable *lhs, const Variable *rhs) {
 	if (lhs->type != rhs->type) {
 		return NULL;
 	}

@@ -33,14 +33,14 @@ int main(void) {
 
 	testing_test_self(&passed);
 
-	ast_node_test_self(&passed);
+	AstNodeest_self(&passed);
 	classifier_test_self(&passed);
 	tokenizer_test_self(&passed);
 	types_test_self(&passed);
 
 	error_test_self(&passed);
 
-	context_test_self(&passed);
+	Contextest_self(&passed);
 	eval_add_test_self(&passed);
 	eval_assign_test_self(&passed);
 	eval_div_test_self(&passed);
@@ -50,7 +50,7 @@ int main(void) {
 	eval_mult_test_self(&passed);
 	function_test_self(&passed);
 	repl_test_self(&passed);
-	variable_test_self(&passed);
+	Variableest_self(&passed);
 
 	color_test_self(&passed);
 	str_test_self(&passed);

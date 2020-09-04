@@ -9,7 +9,7 @@
 #include "test/testing.h"
 
 #define TEST_EVAL_FLOAT_CONVERT(str_value, cond, expected_error) \
-	token_t *token=tokenize(str_value); \
+	Token *token=tokenize(str_value); \
 	classify_tokens(token); \
 	const char32_t *err=NULL; \
 	double *num=eval_float(token, &err); \

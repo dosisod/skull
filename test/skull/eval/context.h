@@ -5,7 +5,7 @@
 #include "test/testing.h"
 
 TEST(make_context, {
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 
 	const bool pass=(
 		ctx->vars_used==0 &&
@@ -18,8 +18,8 @@ TEST(make_context, {
 })
 
 TEST(context_find_name, {
-	context_t *ctx=make_context();
-	variable_t *var=make_variable("int", U"x", true);
+	Context *ctx=make_context();
+	Variable *var=make_variable("int", U"x", true);
 
 	context_add_var(ctx, var);
 
@@ -35,8 +35,8 @@ TEST(context_find_name, {
 })
 
 TEST(add_vars_to_context, {
-	context_t *ctx=make_context();
-	variable_t *var=make_variable("int", U"x", true);
+	Context *ctx=make_context();
+	Variable *var=make_variable("int", U"x", true);
 
 	context_add_var(ctx, var);
 
@@ -52,9 +52,9 @@ TEST(add_vars_to_context, {
 })
 
 TEST(cannot_add_same_varname_to_context, {
-	context_t *ctx=make_context();
-	variable_t *var1=make_variable("int", U"x", true);
-	variable_t *var2=make_variable("int", U"x", true);
+	Context *ctx=make_context();
+	Variable *var1=make_variable("int", U"x", true);
+	Variable *var2=make_variable("int", U"x", true);
 
 	const bool added_var1=context_add_var(ctx, var1);
 	const bool added_var2=context_add_var(ctx, var2);
@@ -74,8 +74,8 @@ TEST(cannot_add_same_varname_to_context, {
 })
 
 TEST(free_context, {
-	context_t *ctx=make_context();
-	variable_t *var=make_variable("int", U"x", true);
+	Context *ctx=make_context();
+	Variable *var=make_variable("int", U"x", true);
 
 	context_add_var(ctx, var);
 
@@ -88,7 +88,7 @@ TEST(context_find_name_when_null, {
 	return !context_find_name(NULL, U"anything");
 })
 
-void context_test_self(bool *pass) {
+void Contextest_self(bool *pass) {
 	tests_t tests={
 		test_make_context,
 		test_context_find_name,

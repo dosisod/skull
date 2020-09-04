@@ -5,24 +5,24 @@
 
 #include "skull/common/str.h"
 
-typedef struct token_t {
+typedef struct Token {
 	const char32_t *begin;
 	const char32_t *end;
 	unsigned token_type;
 
-	struct token_t *next;
-} token_t;
+	struct Token *next;
+} Token;
 
 bool is_whitespace(char32_t);
 bool is_quote(char32_t);
 
-token_t *make_token(void);
+Token *make_token(void);
 
-token_t *tokenize(const char32_t *);
+Token *tokenize(const char32_t *);
 
-void free_tokens(token_t *);
+void free_tokens(Token *);
 
-size_t token_len(const token_t *);
-bool token_cmp(const char32_t *, const token_t *);
+size_t token_len(const Token *);
+bool token_cmp(const char32_t *, const Token *);
 
-char32_t *token_str(const token_t *);
+char32_t *token_str(const Token *);

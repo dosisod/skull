@@ -40,25 +40,25 @@ enum node_types {
 	AST_NODE_COMMENT
 };
 
-typedef struct ast_node_t {
+typedef struct AstNode {
 	unsigned node_type;
 
-	struct token_t *token;
-	struct token_t *token_end;
+	struct Token *token;
+	struct Token *token_end;
 
-	struct ast_node_t *next;
-	struct ast_node_t *last;
-} ast_node_t;
+	struct AstNode *next;
+	struct AstNode *last;
+} AstNode;
 
-ast_node_t *make_ast_node(void);
+AstNode *make_ast_node(void);
 
-typedef struct combo_t {
+typedef struct Combo {
 	unsigned tok;
-	struct combo_t *combo;
-} combo_t;
+	struct Combo *combo;
+} Combo;
 
-token_t *ast_token_cmp(token_t *, combo_t *, bool *);
-void push_ast_node(token_t *, token_t **, unsigned, ast_node_t **);
+Token *ast_token_cmp(Token *, Combo *, bool *);
+void push_ast_node(Token *, Token **, unsigned, AstNode **);
 
-ast_node_t *make_ast_tree(const char32_t *);
-void free_ast_tree(ast_node_t *);
+AstNode *make_ast_tree(const char32_t *);
+void free_ast_tree(AstNode *);

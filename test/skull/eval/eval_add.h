@@ -6,13 +6,13 @@
 #include "test/testing.h"
 
 TEST(adding_2_ints, {
-	variable_t *var1=make_variable("int", U"var1", false);
-	variable_t *var2=make_variable("int", U"var2", false);
+	Variable *var1=make_variable("int", U"var1", false);
+	Variable *var2=make_variable("int", U"var2", false);
 
 	const int64_t num=1;
 	variable_write(var1, &num);
 	variable_write(var2, &num);
-	variable_t *var3=eval_add(var1, var2);
+	Variable *var3=eval_add(var1, var2);
 
 	int64_t result=0;
 	variable_read(&result, var3);
@@ -27,13 +27,13 @@ TEST(adding_2_ints, {
 })
 
 TEST(adding_2_floats, {
-	variable_t *var1=make_variable("float", U"var1", false);
-	variable_t *var2=make_variable("float", U"var2", false);
+	Variable *var1=make_variable("float", U"var1", false);
+	Variable *var2=make_variable("float", U"var2", false);
 
 	const double num=1.0;
 	variable_write(var1, &num);
 	variable_write(var2, &num);
-	variable_t *var3=eval_add(var1, var2);
+	Variable *var3=eval_add(var1, var2);
 
 	double result=0.0;
 	variable_read(&result, var3);
@@ -49,13 +49,13 @@ TEST(adding_2_floats, {
 })
 
 TEST(adding_2_strs, {
-	variable_t *var1=make_variable("str", U"var1", false);
-	variable_t *var2=make_variable("str", U"var2", false);
+	Variable *var1=make_variable("str", U"var1", false);
+	Variable *var2=make_variable("str", U"var2", false);
 
 	const char32_t *str=U"x";
 	variable_write(var1, &str);
 	variable_write(var2, &str);
-	variable_t *var3=eval_add(var1, var2);
+	Variable *var3=eval_add(var1, var2);
 
 	char32_t *result=NULL;
 	variable_read(&result, var3);
@@ -71,9 +71,9 @@ TEST(adding_2_strs, {
 })
 
 TEST(adding_vars_with_different_types_fail, {
-	variable_t *var1=make_variable("int", U"var1", false);
-	variable_t *var2=make_variable("float", U"var2", false);
-	variable_t *var3=eval_add(var1, var2);
+	Variable *var1=make_variable("int", U"var1", false);
+	Variable *var2=make_variable("float", U"var2", false);
+	Variable *var3=eval_add(var1, var2);
 
 	const bool pass = !var3;
 

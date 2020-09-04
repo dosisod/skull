@@ -47,5 +47,5 @@ bool is_constant_rune_str(const char32_t *);
 bool is_constant_str_str(const char32_t *);
 bool is_valid_identifier_str(const char32_t *);
 
-void classify_token(token_t *);
-void classify_tokens(token_t *);
+void classify_token(Token *);
+void classify_tokens(Token *);

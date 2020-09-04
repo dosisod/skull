@@ -22,12 +22,12 @@
 /*
 Evaluates a string `str` given context `ctx`, returns result as a string (if any).
 */
-const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
+const char32_t *repl_eval(const char32_t *str, Context *ctx) {
 	if (!*str) {
 		return NULL;
 	}
 
-	ast_node_t *node = make_ast_tree(str);
+	AstNode *node = make_ast_tree(str);
 
 	if (!node->token) {
 		RETURN(FMT_ERROR(ERR_INVALID_INPUT, { .str = str }));
@@ -51,7 +51,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 
 	if (node->node_type == AST_NODE_VAR_ASSIGN) {
 		char32_t *name = token_str(node->token);
-		variable_t *var = context_find_name(ctx, name);
+		Variable *var = context_find_name(ctx, name);
 
 		if (!var) {
 			RETURN(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = name }));
@@ -79,7 +79,7 @@ const char32_t *repl_eval(const char32_t *str, context_t *ctx) {
 	if (node->node_type == AST_NODE_RETURN) {
 		if (node->token->next->token_type == TOKEN_IDENTIFIER) {
 			char32_t *var_name = token_str(node->token->next);
-			const variable_t *found_var = context_find_name(ctx, var_name);
+			const Variable *found_var = context_find_name(ctx, var_name);
 
 			if (!found_var) {
 				RETURN(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
@@ -116,12 +116,12 @@ Added variable will be constant if `is_const` is true.
 
 Returns pointer to error message if one occurs, else `NULL`.
 */
-const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_const) {
+const char32_t *repl_make_var(const AstNode *node, Context *ctx, bool is_const) {
 	if (!ctx) {
 		return NULL;
 	}
 
-	const token_t *token = node->token;
+	const Token *token = node->token;
 	if (!is_const) {
 		token = token->next;
 	}
@@ -131,7 +131,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 	}
 
 	char32_t *name = token_str(token);
-	variable_t *var = NULL;
+	Variable *var = NULL;
 
 	if (token->next->token_type == TOKEN_OPER_AUTO_EQUAL) {
 		if (is_func_name_str(name)) {
@@ -164,7 +164,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 			node->next->node_type == AST_NODE_DIV_VAR
 		) {
 			char32_t *lookup = token_str(node->next->token);
-			variable_t *new_var = context_find_name(ctx, lookup);
+			Variable *new_var = context_find_name(ctx, lookup);
 
 			if (!new_var) {
 				free(name);
@@ -208,7 +208,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 /*
 Read from `fd`, eval with context `ctx`, and print out result.
 */
-void repl_loop(FILE *fd, context_t *ctx) {
+void repl_loop(FILE *fd, Context *ctx) {
 	char32_t *line = repl_read(fd);
 
 	const char32_t *tmp = repl_eval(line, ctx);

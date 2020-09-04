@@ -9,7 +9,7 @@
 #include "test/testing.h"
 
 TEST(create_variable, {
-	variable_t *var = make_variable("int", U"x", true);
+	Variable *var = make_variable("int", U"x", true);
 
 	const bool pass = (
 		strcmp(var->type->name, "int") == 0 &&
@@ -29,7 +29,7 @@ TEST(create_variable_with_invalid_type_fails, {
 })
 
 TEST(variable_write, {
-	variable_t *var = make_variable("int", U"x", false);
+	Variable *var = make_variable("int", U"x", false);
 
 	const int64_t data = 1234;
 	const char32_t *ret = variable_write(var, &data);
@@ -48,7 +48,7 @@ TEST(variable_write, {
 })
 
 TEST(variable_cannot_write_to_const, {
-	variable_t *var = make_variable("int", U"x", true);
+	Variable *var = make_variable("int", U"x", true);
 
 	const int64_t data = 1234;
 	const char32_t *ret = variable_write(var, &data);
@@ -70,7 +70,7 @@ TEST(variable_cannot_write_to_const, {
 })
 
 TEST(variable_read, {
-	variable_t *var = make_variable("int", U"x", false);
+	Variable *var = make_variable("int", U"x", false);
 	const int64_t data = 1234;
 	variable_write(var, &data);
 
@@ -85,7 +85,7 @@ TEST(variable_read, {
 })
 
 TEST(make_variable_with_invalid_name_fails, {
-	variable_t *var = make_variable("int", U"1nvalid", false);
+	Variable *var = make_variable("int", U"1nvalid", false);
 
 	const bool pass = !var;
 
@@ -95,7 +95,7 @@ TEST(make_variable_with_invalid_name_fails, {
 })
 
 TEST(free_variable, {
-	variable_t *var = make_variable("int", U"x", true);
+	Variable *var = make_variable("int", U"x", true);
 
 	if (!var || !var->mem) {
 		free_variable(var);
@@ -114,7 +114,7 @@ TEST(free_null_variable_is_ok, {
 })
 
 #define TEST_FMT_VAR(str_type, real_type, real_data, expected) \
-	variable_t *var = make_variable(str_type, U"x", false); \
+	Variable *var = make_variable(str_type, U"x", false); \
 	real_type data = real_data; \
 	variable_write(var, &data); \
 	char32_t *str = fmt_var(var); \
@@ -161,7 +161,7 @@ TEST(fmt_var_bool, {
 })
 
 TEST(fmt_var_type, {
-	TEST_FMT_VAR("type", type_t *, &TYPE_INT, U"int");
+	TEST_FMT_VAR("type", Type *, &TYPE_INT, U"int");
 })
 
 TEST(fmt_var_rune, {
@@ -175,9 +175,9 @@ TEST(fmt_var_wide_rune_preserved, {
 #undef TEST_FMT_VAR
 
 TEST(fmt_var_str, {
-	variable_t *var = make_variable("str", U"x", false);
+	Variable *var = make_variable("str", U"x", false);
 
-	ast_node_t *node = make_ast_tree(U"\"abc\"");
+	AstNode *node = make_ast_tree(U"\"abc\"");
 
 	eval_assign(var, node, NULL);
 
@@ -198,9 +198,9 @@ TEST(fmt_var_str, {
 })
 
 TEST(fmt_var_str_with_escapes, {
-	variable_t *var = make_variable("str", U"x", false);
+	Variable *var = make_variable("str", U"x", false);
 
-	ast_node_t *node = make_ast_tree(U"\"\\r\\n\\t\\\\\"");
+	AstNode *node = make_ast_tree(U"\"\\r\\n\\t\\\\\"");
 
 	eval_assign(var, node, NULL);
 
@@ -221,9 +221,9 @@ TEST(fmt_var_str_with_escapes, {
 })
 
 TEST(fmt_var_str_with_bad_escape, {
-	variable_t *var = make_variable("str", U"x", false);
+	Variable *var = make_variable("str", U"x", false);
 
-	ast_node_t *node = make_ast_tree(U"\"\\z\"");
+	AstNode *node = make_ast_tree(U"\"\\z\"");
 
 	const char32_t *err = eval_assign(var, node, NULL);
 
@@ -241,7 +241,7 @@ TEST(fmt_var_str_with_bad_escape, {
 	return pass;
 })
 
-void variable_test_self(bool *pass) {
+void Variableest_self(bool *pass) {
 	tests_t tests = {
 		test_create_variable,
 		test_create_variable_with_invalid_type_fails,

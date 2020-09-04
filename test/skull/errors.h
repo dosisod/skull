@@ -14,7 +14,7 @@ TEST(is_error_msg, {
 	);
 })
 
-bool fmt_error_wrapper(const char32_t *fmt, error_msg_t msgs[], const char32_t *expected) {
+bool fmt_error_wrapper(const char32_t *fmt, ErrorMsg msgs[], const char32_t *expected) {
 	char32_t *out = fmt_error(fmt, msgs);
 	if (!out || !expected) {
 		return out == expected;
@@ -28,48 +28,48 @@ bool fmt_error_wrapper(const char32_t *fmt, error_msg_t msgs[], const char32_t *
 
 TEST(fmt_error, {
 	return (
-		fmt_error_wrapper(U"%", (error_msg_t[]){ {0} }, U"") &&
+		fmt_error_wrapper(U"%", (ErrorMsg[]){ {0} }, U"") &&
 
-		fmt_error_wrapper(U"%", (error_msg_t[]){
+		fmt_error_wrapper(U"%", (ErrorMsg[]){
 			{ .str = U"abc" },
 			{0}
 		}, U"abc") &&
 
-		fmt_error_wrapper(U"[%]", (error_msg_t[]){
+		fmt_error_wrapper(U"[%]", (ErrorMsg[]){
 			{ .str = U"" },
 			{0}
 		}, U"[]") &&
 
-		fmt_error_wrapper(U"[%]", (error_msg_t[]){
+		fmt_error_wrapper(U"[%]", (ErrorMsg[]){
 			{ .str = U"abc" },
 			{0}
 		}, U"[abc]") &&
 
-		fmt_error_wrapper(U"% %", (error_msg_t[]){
+		fmt_error_wrapper(U"% %", (ErrorMsg[]){
 			{ .str = U"hello" },
 			{ .str = U"world" },
 			{0}
 		}, U"hello world") &&
 
-		fmt_error_wrapper(U"%%", (error_msg_t[]){
+		fmt_error_wrapper(U"%%", (ErrorMsg[]){
 			{ .str = U"abc" },
 			{ .str = U"def" },
 			{0}
 		}, U"abcdef") &&
 
-		fmt_error_wrapper(U"testing_%", (error_msg_t[]){
+		fmt_error_wrapper(U"testing_%", (ErrorMsg[]){
 			{ .str = U"123" },
 			{0}
 		}, U"testing_123") &&
 
-		fmt_error_wrapper(U"testing_%_testing", (error_msg_t[]){
+		fmt_error_wrapper(U"testing_%_testing", (ErrorMsg[]){
 			{ .str = U"123" },
 			{0}
 		}, U"testing_123_testing")
 	);
 })
 
-bool fmt_error_stringify_wrapper(error_msg_t *error, const char32_t *expected) {
+bool fmt_error_stringify_wrapper(ErrorMsg *error, const char32_t *expected) {
 	fmt_error_stringify(error);
 
 	if (!error->real) {
@@ -82,23 +82,23 @@ bool fmt_error_stringify_wrapper(error_msg_t *error, const char32_t *expected) {
 }
 
 TEST(fmt_error_stringify, {
-	const token_t *tok = tokenize(U"xxx");
-	error_msg_t err_tok = {
+	const Token *tok = tokenize(U"xxx");
+	ErrorMsg err_tok = {
 		.tok = tok
 	};
 
-	const variable_t *var = make_variable("int", U"var_name", true);
-	error_msg_t err_var = {
+	const Variable *var = make_variable("int", U"var_name", true);
+	ErrorMsg err_var = {
 		.var = var
 	};
 
-	const variable_t *type_var = make_variable("int", U"var_name", true);
-	error_msg_t err_type = {
+	const Variable *type_var = make_variable("int", U"var_name", true);
+	ErrorMsg err_type = {
 		.type = type_var->type
 	};
 
 	const char32_t *str = U"some string";
-	error_msg_t err_str = {
+	ErrorMsg err_str = {
 		.str = str
 	};
 

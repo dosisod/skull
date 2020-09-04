@@ -9,7 +9,7 @@
 /*
 Returns the string representation of rune `var`
 */
-char32_t *fmt_rune_type(const variable_t *var) {
+char32_t *fmt_rune_type(const Variable *var) {
 	char32_t *ret;
 	ret = malloc(2 * sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
@@ -23,7 +23,7 @@ char32_t *fmt_rune_type(const variable_t *var) {
 /*
 Return pointer to a rune type, converted from `token`
 */
-void *eval_rune(const token_t *token, const char32_t **error) {
+void *eval_rune(const Token *token, const char32_t **error) {
 	if (token->token_type != TOKEN_RUNE_CONST) {
 		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_FLOAT });
 		return NULL;

@@ -26,9 +26,9 @@
 Convert skull code from `str` into LLVM IR (using `builder` and `ctx).
 */
 void str_to_llvm_ir(char32_t *str, LLVMValueRef func, LLVMBuilderRef builder, LLVMContextRef llvm_ctx) {
-	ast_node_t *node = make_ast_tree(str);
+	AstNode *node = make_ast_tree(str);
 
-	context_t *ctx = make_context();
+	Context *ctx = make_context();
 	size_t vars_used_last = 0;
 
 while (node) {
@@ -36,7 +36,7 @@ while (node) {
 	if (node->node_type == AST_NODE_RETURN) {
 		if (node->token->next->token_type == TOKEN_IDENTIFIER) {
 			char32_t *var_name = token_str(node->token->next);
-			const variable_t *found_var = context_find_name(ctx, var_name);
+			const Variable *found_var = context_find_name(ctx, var_name);
 
 			if (!found_var) {
 				PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));

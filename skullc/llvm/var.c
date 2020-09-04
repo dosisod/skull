@@ -13,7 +13,7 @@
 /*
 Convert a Skull variable `var` into the LLVM IR equivalent.
 */
-void var_to_llvm_ir(variable_t *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
+void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 	char *var_name = c32stombs(var->name);
 
 	if (var->type == &TYPE_INT) {

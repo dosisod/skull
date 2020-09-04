@@ -1,13 +1,13 @@
 # skull/eval/repl.c
 
 ```c
-const char32_t *repl_eval(const char32_t *str, context_t *ctx)
+const char32_t *repl_eval(const char32_t *str, Context *ctx)
 ```
 
 > Evaluates a string `str` given context `ctx`, returns result as a string (if any).
 
 ```c
-const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_const)
+const char32_t *repl_make_var(const AstNode *node, Context *ctx, bool is_const)
 ```
 
 > Make and add a variable from `node` to context `ctx`.
@@ -17,7 +17,7 @@ const char32_t *repl_make_var(const ast_node_t *node, context_t *ctx, bool is_co
 > Returns pointer to error message if one occurs, else `NULL`.
 
 ```c
-void repl_loop(FILE *fd, context_t *ctx)
+void repl_loop(FILE *fd, Context *ctx)
 ```
 
 > Read from `fd`, eval with context `ctx`, and print out result.

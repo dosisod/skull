@@ -23,7 +23,7 @@
 /*
 Classify the token `token`.
 */
-void classify_token(token_t *token) {
+void classify_token(Token *token) {
 	char32_t *str = token_str(token);
 
 	if (false) {} // setup for macros
@@ -92,8 +92,8 @@ void classify_token(token_t *token) {
 /*
 Classify all tokens pointed to from `token`.
 */
-void classify_tokens(token_t *head) {
-	token_t *current = head;
+void classify_tokens(Token *head) {
+	Token *current = head;
 
 	while (current) {
 		classify_token(current);
@@ -105,7 +105,7 @@ void classify_tokens(token_t *head) {
 Returns true if `name` is a type string.
 */
 bool is_type_str(const char32_t *name) {
-	type_t *current = TYPES_AVAILABLE;
+	Type *current = TYPES_AVAILABLE;
 	while (current) {
 		char *tmp = c32stombs(name);
 		if (strcmp(current->name, tmp) == 0) {

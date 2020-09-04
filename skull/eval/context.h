@@ -4,17 +4,17 @@
 
 #define CONTEXT_MAX_VARS 256
 
-typedef struct context_t {
-	struct context_t *child;
+typedef struct Context {
+	struct Context *child;
 
 	size_t vars_used;
-	variable_t *vars[CONTEXT_MAX_VARS];
-} context_t;
+	Variable *vars[CONTEXT_MAX_VARS];
+} Context;
 
-context_t *make_context(void);
+Context *make_context(void);
 
-variable_t *context_find_name(const context_t *, const char32_t *);
-bool context_contains_var(context_t *, const variable_t *);
-bool context_add_var(context_t *, variable_t *);
+Variable *context_find_name(const Context *, const char32_t *);
+bool context_contains_var(Context *, const Variable *);
+bool context_add_var(Context *, Variable *);
 
-void free_context(context_t *);
+void free_context(Context *);

@@ -4,33 +4,33 @@
 #include <stdint.h>
 #include <uchar.h>
 
-struct variable_t;
+struct Variable;
 
-typedef struct type_t {
+typedef struct Type {
 	const char *name;
 	size_t bytes;
 
-	struct variable_t *(*add)(const struct variable_t *, const struct variable_t *);
-	struct variable_t *(*subtract)(const struct variable_t *, const struct variable_t *);
-	struct variable_t *(*divide)(const struct variable_t *, const struct variable_t *);
-	struct variable_t *(*multiply)(const struct variable_t *, const struct variable_t *);
+	struct Variable *(*add)(const struct Variable *, const struct Variable *);
+	struct Variable *(*subtract)(const struct Variable *, const struct Variable *);
+	struct Variable *(*divide)(const struct Variable *, const struct Variable *);
+	struct Variable *(*multiply)(const struct Variable *, const struct Variable *);
 
-	char32_t *(*to_string)(const struct variable_t *);
+	char32_t *(*to_string)(const struct Variable *);
 
-	struct type_t *next;
-} type_t;
+	struct Type *next;
+} Type;
 
-struct type_t TYPE_BOOL;
-struct type_t TYPE_INT;
-struct type_t TYPE_FLOAT;
-struct type_t TYPE_RUNE;
-struct type_t TYPE_STR;
-struct type_t TYPE_TYPE;
+struct Type TYPE_BOOL;
+struct Type TYPE_INT;
+struct Type TYPE_FLOAT;
+struct Type TYPE_RUNE;
+struct Type TYPE_STR;
+struct Type TYPE_TYPE;
 
-struct type_t *TYPES_AVAILABLE;
+struct Type *TYPES_AVAILABLE;
 
 bool make_new_type(const char *, size_t);
 
-type_t *find_type(const char *);
+Type *find_type(const char *);
 
 void free_types(void);

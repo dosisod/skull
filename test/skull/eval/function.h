@@ -6,9 +6,9 @@
 #include "test/testing.h"
 
 TEST(is_func_name, {
-	ast_node_t *node_clear=make_ast_tree(U"clear");
-	ast_node_t *node_print=make_ast_tree(U"print");
-	ast_node_t *node_other=make_ast_tree(U"other");
+	AstNode *node_clear=make_ast_tree(U"clear");
+	AstNode *node_print=make_ast_tree(U"print");
+	AstNode *node_other=make_ast_tree(U"other");
 
 	const bool pass=(
 		is_func_name(node_clear) ||
@@ -27,7 +27,7 @@ TEST(is_func_name_with_null, {
 })
 
 TEST(func_clear, {
-	ast_node_t *node=make_ast_tree(U"clear[]");
+	AstNode *node=make_ast_tree(U"clear[]");
 	const char32_t *str=func_clear(node);
 
 	const bool pass=c32scmp(U"\033[2J\033[;1H", str);
@@ -37,7 +37,7 @@ TEST(func_clear, {
 })
 
 TEST(func_clear_params_fail, {
-	ast_node_t *node=make_ast_tree(U"clear[x]");
+	AstNode *node=make_ast_tree(U"clear[x]");
 
 	const bool pass=c32scmp(
 		ERR_UNEXPECTED_PARAM_(U"clear"),
@@ -48,13 +48,13 @@ TEST(func_clear_params_fail, {
 })
 
 TEST(func_print, {
-	variable_t *var=make_variable("int", U"x", false);
+	Variable *var=make_variable("int", U"x", false);
 	int64_t num=1234;
 	variable_write(var, &num);
-	context_t *ctx=make_context();
+	Context *ctx=make_context();
 	context_add_var(ctx, var);
 
-	ast_node_t *node=make_ast_tree(U"print[x]");
+	AstNode *node=make_ast_tree(U"print[x]");
 	const char32_t *str=func_print(node, ctx);
 
 	const bool pass=c32scmp(str, U"1234");
@@ -65,8 +65,8 @@ TEST(func_print, {
 })
 
 TEST(func_print_extra_params_fail, {
-	context_t *ctx=make_context();
-	ast_node_t *node=make_ast_tree(U"print[x, y, z]");
+	Context *ctx=make_context();
+	AstNode *node=make_ast_tree(U"print[x, y, z]");
 
 	const bool pass=c32scmp(
 		func_print(node, ctx),
@@ -78,8 +78,8 @@ TEST(func_print_extra_params_fail, {
 })
 
 TEST(func_print_bad_var, {
-	context_t *ctx=make_context();
-	ast_node_t *node=make_ast_tree(U"print[x]");
+	Context *ctx=make_context();
+	AstNode *node=make_ast_tree(U"print[x]");
 
 	const bool pass=c32scmp(
 		func_print(node, ctx),

@@ -1,7 +1,7 @@
 # skull/eval/eval_assign.c
 
 ```c
-const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *ctx)
+const char32_t *eval_assign(Variable *var, AstNode *node, const Context *ctx)
 ```
 
 > Assign `node` to variable `var`.
@@ -11,7 +11,7 @@ const char32_t *eval_assign(variable_t *var, ast_node_t *node, const context_t *
 > Return an error (as a string) if any occured, else `NULL`.
 
 ```c
-const char32_t *eval_auto_assign(variable_t *var, ast_node_t *node, const context_t *ctx)
+const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ctx)
 ```
 
 > Evaluate assignment via auto assignment operator.

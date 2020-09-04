@@ -5,14 +5,14 @@
 #include "test/testing.h"
 
 TEST(multiplying_2_ints, {
-	variable_t *var1=make_variable("int", U"var1", false);
-	variable_t *var2=make_variable("int", U"var2", false);
+	Variable *var1=make_variable("int", U"var1", false);
+	Variable *var2=make_variable("int", U"var2", false);
 
 	const int64_t num1=2;
 	variable_write(var1, &num1);
 	const int64_t num2=3;
 	variable_write(var2, &num2);
-	variable_t *var3=eval_mult(var1, var2);
+	Variable *var3=eval_mult(var1, var2);
 
 	int64_t result=0;
 	variable_read(&result, var3);
@@ -27,14 +27,14 @@ TEST(multiplying_2_ints, {
 })
 
 TEST(multiplying_2_floats, {
-	variable_t *var1=make_variable("float", U"var1", false);
-	variable_t *var2=make_variable("float", U"var2", false);
+	Variable *var1=make_variable("float", U"var1", false);
+	Variable *var2=make_variable("float", U"var2", false);
 
 	const double num1=2.0;
 	variable_write(var1, &num1);
 	const double num2=3.0;
 	variable_write(var2, &num2);
-	variable_t *var3=eval_mult(var1, var2);
+	Variable *var3=eval_mult(var1, var2);
 
 	double result=0.0;
 	variable_read(&result, var3);
@@ -50,9 +50,9 @@ TEST(multiplying_2_floats, {
 })
 
 TEST(multiplying_vars_with_different_types_fail, {
-	variable_t *var1=make_variable("int", U"var1", false);
-	variable_t *var2=make_variable("float", U"var2", false);
-	variable_t *var3=eval_mult(var1, var2);
+	Variable *var1=make_variable("int", U"var1", false);
+	Variable *var2=make_variable("float", U"var2", false);
+	Variable *var3=eval_mult(var1, var2);
 
 	const bool pass = !var3;
 

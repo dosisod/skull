@@ -10,7 +10,7 @@
 Run a file `f`. After it is done, go into a REPL.
 */
 noreturn void eval_file(FILE *f) {
-	context_t *ctx = make_context();
+	Context *ctx = make_context();
 
 	while (true) {
 		if (f != stdin && getc(f) == EOF) {

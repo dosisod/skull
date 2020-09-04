@@ -2,20 +2,20 @@
 
 #include "skull/eval/types/types.h"
 
-typedef struct variable_t {
-	type_t *type;
+typedef struct Variable {
+	Type *type;
 	const char32_t *name;
 	bool is_const;
 
 	size_t bytes;
 	uint8_t *mem;
-} variable_t;
+} Variable;
 
-variable_t *make_variable(const char *, const char32_t *, bool);
+Variable *make_variable(const char *, const char32_t *, bool);
 
-const char32_t *variable_write(const variable_t *, const void *);
-void variable_read(void *, const variable_t *);
+const char32_t *variable_write(const Variable *, const void *);
+void variable_read(void *, const Variable *);
 
-void free_variable(variable_t *);
+void free_variable(Variable *);
 
-char32_t *fmt_var(const variable_t *);
+char32_t *fmt_var(const Variable *);

@@ -1,17 +1,17 @@
 # skull/errors.c
 
 ```c
-char32_t *fmt_error(const char32_t *fmt, error_msg_t msgs[])
+char32_t *fmt_error(const char32_t *fmt, ErrorMsg msgs[])
 ```
 
 > Format an error message.
 > \
-> Every `%` in the string is expanded according to the corresponding `error_msg_t` in `msgs`.
+> Every `%` in the string is expanded according to the corresponding `ErrorMsg` in `msgs`.
 > \
 > The result of this function must be freed.
 
 ```c
-void fmt_error_stringify(error_msg_t *msg)
+void fmt_error_stringify(ErrorMsg *msg)
 ```
 
 > Convert error msg `msg` for use in `fmt_error`.

@@ -2,4 +2,4 @@
 
 #include "skull/eval/variable.h"
 
-variable_t *eval_sub(const variable_t *, const variable_t *);
+Variable *eval_sub(const Variable *, const Variable *);

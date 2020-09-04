@@ -8,7 +8,7 @@
 //pinch end of current token, setup next token
 #define PINCH_TOKEN \
 	current->end = code; \
-	token_t *next_token = make_token(); \
+	Token *next_token = make_token(); \
 	next_token->begin = code; \
 	next_token->end = code + 1; \
 	current->next = next_token; \
@@ -17,13 +17,13 @@
 /*
 Tokenize `code`, return pointer to first token.
 */
-token_t *tokenize(const char32_t *code) {
+Token *tokenize(const char32_t *code) {
 	const char32_t *code_copy = code;
 
-	token_t *head = make_token();
+	Token *head = make_token();
 
-	token_t *current = head;
-	token_t *last = current;
+	Token *current = head;
+	Token *last = current;
 
 	char32_t quote = false;
 	bool comment = false;
@@ -65,7 +65,7 @@ token_t *tokenize(const char32_t *code) {
 				PINCH_TOKEN;
 			}
 
-			token_t *next_token = make_token();
+			Token *next_token = make_token();
 
 			last = current;
 			current->next = next_token;
@@ -80,7 +80,7 @@ token_t *tokenize(const char32_t *code) {
 			if (is_whitespace(*code)) {
 				current->end = code;
 
-				token_t *next_token = make_token();
+				Token *next_token = make_token();
 
 				last = current;
 				current->next = next_token;
@@ -133,8 +133,8 @@ __attribute__((const)) bool is_quote(char32_t c) {
 /*
 Allocate and return a token with set defaults.
 */
-token_t *make_token(void) {
-	token_t *token;
+Token *make_token(void) {
+	Token *token;
 	token = calloc(1, sizeof *token);
 	DIE_IF_MALLOC_FAILS(token);
 
@@ -146,7 +146,7 @@ Make a heap allocated copy of the data inside `token`.
 
 The result of this function must be freed.
 */
-char32_t *token_str(const token_t *token) {
+char32_t *token_str(const Token *token) {
 	const size_t len = token_len(token);
 	char32_t *str;
 	str = malloc((len + 1) * sizeof *str);
@@ -160,7 +160,7 @@ char32_t *token_str(const token_t *token) {
 /*
 Returns true if `str` is equal to the value of `token`.
 */
-bool token_cmp(const char32_t *str, const token_t *token) {
+bool token_cmp(const char32_t *str, const Token *token) {
 	const size_t len = token_len(token);
 	return (
 		c32slen(str) == len &&
@@ -171,15 +171,15 @@ bool token_cmp(const char32_t *str, const token_t *token) {
 /*
 Return the string length of `token`.
 */
-__attribute__((pure)) size_t token_len(const token_t *token) {
+__attribute__((pure)) size_t token_len(const Token *token) {
 	return (size_t)(token->end - token->begin);
 }
 
 /*
 Free all tokens from `head` and beyond.
 */
-void free_tokens(token_t *head) {
-	token_t *tmp;
+void free_tokens(Token *head) {
+	Token *tmp;
 
 	while (head) {
 		tmp = head;

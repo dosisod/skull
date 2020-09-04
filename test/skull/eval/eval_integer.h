@@ -9,7 +9,7 @@
 #include "test/testing.h"
 
 #define TEST_EVAL_INT_CONVERT(str_value, expected_num, expected_error) \
-	token_t *token=tokenize(str_value); \
+	Token *token=tokenize(str_value); \
 	classify_tokens(token); \
 	const char32_t *err=0; \
 	int64_t *num=eval_integer(token, &err); \

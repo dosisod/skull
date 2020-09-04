@@ -8,7 +8,7 @@
 #include "test/testing.h"
 
 TEST(make_new_type, {
-	type_t *current=TYPES_AVAILABLE;
+	Type *current=TYPES_AVAILABLE;
 
 	make_new_type("test_type", 1);
 
@@ -21,7 +21,7 @@ TEST(make_new_type, {
 	}
 
 	current=(TYPES_AVAILABLE)->next;
-	type_t *last=TYPES_AVAILABLE;
+	Type *last=TYPES_AVAILABLE;
 
 	if (!current) {
 		return false;
@@ -41,7 +41,7 @@ TEST(make_new_type, {
 TEST(make_new_type_rejects_non_unique_type, {
 	const bool inserted1=make_new_type("test_type", 1);
 
-	type_t *type=find_type("test_type");
+	Type *type=find_type("test_type");
 	if (!type) {
 		return false;
 	}
@@ -60,7 +60,7 @@ TEST(make_new_type_rejects_non_unique_type, {
 })
 
 TEST(find_type, {
-	type_t *type=find_type("int");
+	Type *type=find_type("int");
 
 	const bool pass=(type==&TYPE_INT);
 
@@ -75,7 +75,7 @@ TEST(free_types, {
 })
 
 TEST(append_default_types, {
-	type_t *head=TYPES_AVAILABLE;
+	Type *head=TYPES_AVAILABLE;
 
 	uint8_t count=0;
 	while (head) {

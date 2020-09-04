@@ -8,7 +8,7 @@
 
 char32_t *repl_read(FILE *);
 
-const char32_t *repl_make_var(const ast_node_t *, context_t *, bool);
-const char32_t *repl_eval(const char32_t *, context_t *);
+const char32_t *repl_make_var(const AstNode *, Context *, bool);
+const char32_t *repl_eval(const char32_t *, Context *);
 
-void repl_loop(FILE *, context_t *);
+void repl_loop(FILE *, Context *);

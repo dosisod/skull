@@ -3,8 +3,8 @@
 #include "skull/eval/variable.h"
 #include "skull/parse/tokenize.h"
 
-char32_t *fmt_str_type(const variable_t *);
+char32_t *fmt_str_type(const Variable *);
 
-variable_t *add_str_type(const variable_t *, const variable_t *);
+Variable *add_str_type(const Variable *, const Variable *);
 
-void *eval_str(const token_t *, const char32_t **);
+void *eval_str(const Token *, const char32_t **);

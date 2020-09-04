@@ -1,13 +1,13 @@
 # skull/parse/ast/node.c
 
 ```c
-ast_node_t *make_ast_tree(const char32_t *code)
+AstNode *make_ast_tree(const char32_t *code)
 ```
 
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-token_t *ast_token_cmp(token_t *token, combo_t *combo, bool *pass)
+Token *ast_token_cmp(Token *token, Combo *combo, bool *pass)
 ```
 
 > Compare tokens against a combonation of tokens.
@@ -17,7 +17,7 @@ token_t *ast_token_cmp(token_t *token, combo_t *combo, bool *pass)
 > For example:
 > \
 > ```c
-> ast_token_cmp(token, (combo_t[]){
+> ast_token_cmp(token, (Combo[]){
 >     { .tok = 0 },
 >     { .tok = 1 },
 >     { .tok = 2 },
@@ -32,19 +32,19 @@ token_t *ast_token_cmp(token_t *token, combo_t *combo, bool *pass)
 > If all the args match, return last token matched, else, the passed `token`.
 
 ```c
-void push_ast_node(token_t *token, token_t **last, unsigned node_type, ast_node_t **node)
+void push_ast_node(Token *token, Token **last, unsigned node_type, AstNode **node)
 ```
 
 > Push a new AST node to `node` with type `node_type`
 
 ```c
-ast_node_t *make_ast_node(void)
+AstNode *make_ast_node(void)
 ```
 
-> Makes an ast_node_t with default values
+> Makes an AstNode with default values
 
 ```c
-void free_ast_tree(ast_node_t *node)
+void free_ast_tree(AstNode *node)
 ```
 
 > Frees an AST tree.
