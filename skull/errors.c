@@ -6,45 +6,45 @@
 
 #include "skull/errors.h"
 
-const char32_t *ERR_UNEXPECTED_TOKEN = _ERR_UNEXPECTED_TOKEN(U"%");
+const char32_t *ERR_UNEXPECTED_TOKEN = ERR_UNEXPECTED_TOKEN_(U"%");
 
-const char32_t *ERR_INVALID_INPUT = _ERR_INVALID_INPUT(U"%");
+const char32_t *ERR_INVALID_INPUT = ERR_INVALID_INPUT_(U"%");
 
-const char32_t *ERR_TYPE_MISMATCH = _ERR_TYPE_MISMATCH(U"%");
+const char32_t *ERR_TYPE_MISMATCH = ERR_TYPE_MISMATCH_(U"%");
 
-const char32_t *ERR_BAD_ESCAPE = _ERR_BAD_ESCAPE(U"%");
+const char32_t *ERR_BAD_ESCAPE = ERR_BAD_ESCAPE_(U"%");
 
-const char32_t *ERR_UNEXPECTED_PARAM = _ERR_UNEXPECTED_PARAM(U"%");
+const char32_t *ERR_UNEXPECTED_PARAM = ERR_UNEXPECTED_PARAM_(U"%");
 
-const char32_t *ERR_INVALID_PARAMS = _ERR_INVALID_PARAMS(U"%");
+const char32_t *ERR_INVALID_PARAMS = ERR_INVALID_PARAMS_(U"%");
 
-const char32_t *ERR_VAR_ALREADY_DEFINED = _ERR_VAR_ALREADY_DEFINED(U"%");
+const char32_t *ERR_VAR_ALREADY_DEFINED = ERR_VAR_ALREADY_DEFINED_(U"%");
 
-const char32_t *ERR_VAR_NOT_FOUND = _ERR_VAR_NOT_FOUND(U"%");
+const char32_t *ERR_VAR_NOT_FOUND = ERR_VAR_NOT_FOUND_(U"%");
 
-const char32_t *ERR_CANNOT_ASSIGN_CONST = _ERR_CANNOT_ASSIGN_CONST(U"%");
+const char32_t *ERR_CANNOT_ASSIGN_CONST = ERR_CANNOT_ASSIGN_CONST_(U"%");
 
-const char32_t *ERR_OVERFLOW = _ERR_OVERFLOW(U"%");
+const char32_t *ERR_OVERFLOW = ERR_OVERFLOW_(U"%");
 
-const char32_t *ERR_MISSING_ASSIGNMENT = _ERR_MISSING_ASSIGNMENT(U"%");
+const char32_t *ERR_MISSING_ASSIGNMENT = ERR_MISSING_ASSIGNMENT_(U"%");
 
-const char32_t *ERR_NON_INT_RETURN = _ERR_NON_INT_RETURN(U"%");
+const char32_t *ERR_NON_INT_RETURN = ERR_NON_INT_RETURN_(U"%");
 
-const char32_t *ERR_CANNOT_ADD = _ERR_CANNOT("add", U"%", U"%");
-const char32_t *ERR_ADD_UNAVAILABLE = _ERR_UNAVAILABLE("addition", U"%");
+const char32_t *ERR_CANNOT_ADD = ERR_CANNOT_("add", U"%", U"%");
+const char32_t *ERR_ADD_UNAVAILABLE = ERR_UNAVAILABLE_("addition", U"%");
 
-const char32_t *ERR_CANNOT_SUB = _ERR_CANNOT("subtract", U"%", U"%");
-const char32_t *ERR_SUB_UNAVAILABLE = _ERR_UNAVAILABLE("subtraction", U"%");
+const char32_t *ERR_CANNOT_SUB = ERR_CANNOT_("subtract", U"%", U"%");
+const char32_t *ERR_SUB_UNAVAILABLE = ERR_UNAVAILABLE_("subtraction", U"%");
 
-const char32_t *ERR_CANNOT_MULT = _ERR_CANNOT("multiply", U"%", U"%");
-const char32_t *ERR_MULT_UNAVAILABLE = _ERR_UNAVAILABLE("multiplication", U"%");
+const char32_t *ERR_CANNOT_MULT = ERR_CANNOT_("multiply", U"%", U"%");
+const char32_t *ERR_MULT_UNAVAILABLE = ERR_UNAVAILABLE_("multiplication", U"%");
 
-const char32_t *ERR_CANNOT_DIV = _ERR_CANNOT("divide", U"%", U"%");
-const char32_t *ERR_DIV_UNAVAILABLE = _ERR_UNAVAILABLE("division", U"%");
+const char32_t *ERR_CANNOT_DIV = ERR_CANNOT_("divide", U"%", U"%");
+const char32_t *ERR_DIV_UNAVAILABLE = ERR_UNAVAILABLE_("division", U"%");
 
 const char32_t *ERR_TYPE_TYPE_BAD = U"\"type\" cannot be assigned to variable of type \"type\"";
 
-const char32_t *ERR_ASSIGN_FUNC = _ERR_ASSIGN_FUNC(U"%");
+const char32_t *ERR_ASSIGN_FUNC = ERR_ASSIGN_FUNC_(U"%");
 
 #undef ERR_CANNOT
 #undef ERR_UNAVAILABLE

@@ -172,7 +172,7 @@ TEST(eval_assign_add_vars_types_must_match, {
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_CANNOT(U"add", U"int", U"rune"),
+		ERR_CANNOT_(U"add", U"int", U"rune"),
 		output
 	);
 
@@ -199,7 +199,7 @@ TEST(eval_assign_sub_vars_types_must_match, {
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_CANNOT(U"subtract", U"int", U"rune"),
+		ERR_CANNOT_(U"subtract", U"int", U"rune"),
 		output
 	);
 
@@ -226,7 +226,7 @@ TEST(eval_assign_mult_vars_types_must_match, {
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_CANNOT(U"multiply", U"int", U"rune"),
+		ERR_CANNOT_(U"multiply", U"int", U"rune"),
 		output
 	);
 
@@ -253,7 +253,7 @@ TEST(eval_assign_div_vars_types_must_match, {
 	const char32_t *output=eval_assign(var_c, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_CANNOT(U"divide", U"int", U"rune"),
+		ERR_CANNOT_(U"divide", U"int", U"rune"),
 		output
 	);
 
@@ -275,7 +275,7 @@ TEST(eval_assign_add_vars_var_must_exist, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_VAR_NOT_FOUND(U"b"),
+		ERR_VAR_NOT_FOUND_(U"b"),
 		output
 	);
 
@@ -296,7 +296,7 @@ TEST(eval_assign_sub_vars_var_must_exist, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_VAR_NOT_FOUND(U"b"),
+		ERR_VAR_NOT_FOUND_(U"b"),
 		output
 	);
 
@@ -317,7 +317,7 @@ TEST(eval_assign_mult_vars_var_must_exist, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_VAR_NOT_FOUND(U"b"),
+		ERR_VAR_NOT_FOUND_(U"b"),
 		output
 	);
 
@@ -338,7 +338,7 @@ TEST(eval_assign_div_vars_var_must_exist, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_VAR_NOT_FOUND(U"b"),
+		ERR_VAR_NOT_FOUND_(U"b"),
 		output
 	);
 
@@ -359,7 +359,7 @@ TEST(eval_assign_check_lhs_var, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_VAR_NOT_FOUND(U"b"),
+		ERR_VAR_NOT_FOUND_(U"b"),
 		output
 	);
 
@@ -380,7 +380,7 @@ TEST(eval_assign_add_vars_must_be_addable, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_UNAVAILABLE(U"addition", U"bool"),
+		ERR_UNAVAILABLE_(U"addition", U"bool"),
 		output
 	);
 
@@ -401,7 +401,7 @@ TEST(eval_assign_sub_vars_must_be_subtractable, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_UNAVAILABLE(U"subtraction", U"bool"),
+		ERR_UNAVAILABLE_(U"subtraction", U"bool"),
 		output
 	);
 
@@ -422,7 +422,7 @@ TEST(eval_assign_mult_vars_must_be_multipliable, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_UNAVAILABLE(U"multiplication", U"bool"),
+		ERR_UNAVAILABLE_(U"multiplication", U"bool"),
 		output
 	);
 
@@ -443,7 +443,7 @@ TEST(eval_assign_div_vars_must_be_divisible, {
 	const char32_t *output=eval_assign(var_b, node, ctx);
 
 	const bool pass=c32scmp(
-		_ERR_UNAVAILABLE(U"division", U"bool"),
+		ERR_UNAVAILABLE_(U"division", U"bool"),
 		output
 	);
 
@@ -458,33 +458,33 @@ TEST(eval_assign_int_overflow, {
 		TEMP_INT,
 		int64_t,
 		0,
-		_ERR_OVERFLOW(TEMP_INT)
+		ERR_OVERFLOW_(TEMP_INT)
 	);
 })
 #undef TEMP_INT
 
 TEST(eval_assign_type_mismatch, {
-	TEST_EVAL_ASSIGN("int", U"not_an_int", int64_t, 0, _ERR_TYPE_MISMATCH(U"int"));
+	TEST_EVAL_ASSIGN("int", U"not_an_int", int64_t, 0, ERR_TYPE_MISMATCH_(U"int"));
 })
 
 TEST(eval_assign_cannot_assign_non_ints, {
-	TEST_EVAL_ASSIGN("int", U"3.1415", int64_t, 0, _ERR_TYPE_MISMATCH(U"int"));
+	TEST_EVAL_ASSIGN("int", U"3.1415", int64_t, 0, ERR_TYPE_MISMATCH_(U"int"));
 })
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	TEST_EVAL_ASSIGN_FLOAT("float", U"1234", double, 0, _ERR_TYPE_MISMATCH(U"float"));
+	TEST_EVAL_ASSIGN_FLOAT("float", U"1234", double, 0, ERR_TYPE_MISMATCH_(U"float"));
 })
 
 TEST(eval_assign_cannot_assign_non_bools, {
-	TEST_EVAL_ASSIGN("bool", U"1", bool, 0, _ERR_TYPE_MISMATCH(U"bool"));
+	TEST_EVAL_ASSIGN("bool", U"1", bool, 0, ERR_TYPE_MISMATCH_(U"bool"));
 })
 
 TEST(eval_assign_cannot_assign_non_runes, {
-	TEST_EVAL_ASSIGN("rune", U"1234", char32_t, 0, _ERR_TYPE_MISMATCH(U"rune"));
+	TEST_EVAL_ASSIGN("rune", U"1234", char32_t, 0, ERR_TYPE_MISMATCH_(U"rune"));
 })
 
 TEST(eval_assign_cannot_assign_non_strs, {
-	TEST_EVAL_ASSIGN("str", U"1234", char32_t *, 0, _ERR_TYPE_MISMATCH(U"str"));
+	TEST_EVAL_ASSIGN("str", U"1234", char32_t *, 0, ERR_TYPE_MISMATCH_(U"str"));
 })
 
 #undef TEST_EVAL_ASSIGN
@@ -542,7 +542,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 
 	const bool pass=c32scmp(
 		output,
-		_ERR_TYPE_MISMATCH(U"int")
+		ERR_TYPE_MISMATCH_(U"int")
 	);
 
 	if (!is_error_msg(output)) {
@@ -566,7 +566,7 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 
 	const bool pass=c32scmp(
 		eval_assign(var, node, ctx),
-		_ERR_VAR_NOT_FOUND(U"not_a_variable")
+		ERR_VAR_NOT_FOUND_(U"not_a_variable")
 	);
 
 	free_context(ctx);

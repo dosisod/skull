@@ -40,7 +40,7 @@ TEST(func_clear_params_fail, {
 	ast_node_t *node=make_ast_tree(U"clear[x]");
 
 	const bool pass=c32scmp(
-		_ERR_UNEXPECTED_PARAM(U"clear"),
+		ERR_UNEXPECTED_PARAM_(U"clear"),
 		func_clear(node)
 	);
 
@@ -70,7 +70,7 @@ TEST(func_print_extra_params_fail, {
 
 	const bool pass=c32scmp(
 		func_print(node, ctx),
-		_ERR_INVALID_PARAMS(U"print")
+		ERR_INVALID_PARAMS_(U"print")
 	);
 
 	free_ast_tree(node);
@@ -83,7 +83,7 @@ TEST(func_print_bad_var, {
 
 	const bool pass=c32scmp(
 		func_print(node, ctx),
-		_ERR_VAR_NOT_FOUND(U"x")
+		ERR_VAR_NOT_FOUND_(U"x")
 	);
 
 	free_ast_tree(node);

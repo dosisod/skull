@@ -34,7 +34,7 @@ TEST(convert_overflow_float, {
 	TEST_EVAL_FLOAT_CONVERT(
 		TEMP_FLOAT,
 		isinf(*num),
-		_ERR_OVERFLOW(TEMP_FLOAT)
+		ERR_OVERFLOW_(TEMP_FLOAT)
 	);
 })
 #undef TEMP_FLOAT
@@ -48,7 +48,7 @@ TEST(convert_neg_infinity_float_token, {
 })
 
 TEST(non_float_token_fails, {
-	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", true, _ERR_TYPE_MISMATCH(U"float"));
+	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", true, ERR_TYPE_MISMATCH_(U"float"));
 })
 
 #undef TEST_EVAL_FLOAT_CONVERT

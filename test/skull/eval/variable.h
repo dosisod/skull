@@ -59,7 +59,7 @@ TEST(variable_cannot_write_to_const, {
 	const bool pass=(
 		val == 0 &&
 		c32scmp(
-			_ERR_CANNOT_ASSIGN_CONST(U"x"),
+			ERR_CANNOT_ASSIGN_CONST_(U"x"),
 			ret
 		)
 	);
@@ -229,7 +229,7 @@ TEST(fmt_var_str_with_bad_escape, {
 
 	const bool pass = (
 		err &&
-		c32scmp(_ERR_BAD_ESCAPE(U"\\z"), err)
+		c32scmp(ERR_BAD_ESCAPE_(U"\\z"), err)
 	);
 
 	char32_t *mem = NULL;

@@ -31,11 +31,11 @@ TEST(convert_negative_integer_token, {
 
 #define TEMP_INT U"9999999999999999999"
 TEST(integer_overflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(TEMP_INT, LLONG_MAX, _ERR_OVERFLOW(TEMP_INT));
+	TEST_EVAL_INT_CONVERT(TEMP_INT, LLONG_MAX, ERR_OVERFLOW_(TEMP_INT));
 })
 
 TEST(integer_underflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(U"-" TEMP_INT, LLONG_MIN, _ERR_OVERFLOW(U"-"TEMP_INT));
+	TEST_EVAL_INT_CONVERT(U"-" TEMP_INT, LLONG_MIN, ERR_OVERFLOW_(U"-"TEMP_INT));
 })
 #undef TEMP_INT
 
@@ -52,7 +52,7 @@ TEST(convert_binary_integer, {
 })
 
 TEST(non_integer_token_fails, {
-	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, _ERR_TYPE_MISMATCH(U"int"));
+	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, ERR_TYPE_MISMATCH_(U"int"));
 })
 
 #undef TEST_EVAL_INT_CONVERT

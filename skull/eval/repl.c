@@ -15,9 +15,9 @@
 #include "skull/eval/repl.h"
 
 #define RETURN(x) \
-	const char32_t *_tmp = (x); \
+	const char32_t *tmp_ = (x); \
 	free_ast_tree(node); \
-	return _tmp
+	return tmp_
 
 /*
 Evaluates a string `str` given context `ctx`, returns result as a string (if any).

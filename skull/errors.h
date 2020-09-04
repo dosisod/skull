@@ -6,45 +6,45 @@
 #include "skull/parse/tokenize.h"
 
 const char32_t *ERR_UNEXPECTED_TOKEN;
-#define _ERR_UNEXPECTED_TOKEN(tok) U"unexpected token: \"" tok U"\""
+#define ERR_UNEXPECTED_TOKEN_(tok) U"unexpected token: \"" tok U"\""
 
 const char32_t *ERR_INVALID_INPUT;
-#define _ERR_INVALID_INPUT(str) U"invalid input: \"" str U"\""
+#define ERR_INVALID_INPUT_(str) U"invalid input: \"" str U"\""
 
 const char32_t *ERR_TYPE_MISMATCH;
-#define _ERR_TYPE_MISMATCH(type) U"type mismatch: expected type \"" type U"\""
+#define ERR_TYPE_MISMATCH_(type) U"type mismatch: expected type \"" type U"\""
 
 const char32_t *ERR_BAD_ESCAPE;
-#define _ERR_BAD_ESCAPE(tok) U"bad string escape: \"" tok U"\""
+#define ERR_BAD_ESCAPE_(tok) U"bad string escape: \"" tok U"\""
 
 const char32_t *ERR_UNEXPECTED_PARAM;
-#define _ERR_UNEXPECTED_PARAM(f) U"\"" f U"\" function does not take any parameters"
+#define ERR_UNEXPECTED_PARAM_(f) U"\"" f U"\" function does not take any parameters"
 
 const char32_t *ERR_INVALID_PARAMS;
-#define _ERR_INVALID_PARAMS(f) U"invalid number of parameters given in function \"" f U"\""
+#define ERR_INVALID_PARAMS_(f) U"invalid number of parameters given in function \"" f U"\""
 
 const char32_t *ERR_VAR_ALREADY_DEFINED;
-#define _ERR_VAR_ALREADY_DEFINED(var) U"variable \"" var U"\" already defined"
+#define ERR_VAR_ALREADY_DEFINED_(var) U"variable \"" var U"\" already defined"
 
 const char32_t *ERR_VAR_NOT_FOUND;
-#define _ERR_VAR_NOT_FOUND(var) U"variable \"" var U"\" not found"
+#define ERR_VAR_NOT_FOUND_(var) U"variable \"" var U"\" not found"
 
 const char32_t *ERR_CANNOT_ASSIGN_CONST;
-#define _ERR_CANNOT_ASSIGN_CONST(var) U"cannot reassign const variable \"" var U"\""
+#define ERR_CANNOT_ASSIGN_CONST_(var) U"cannot reassign const variable \"" var U"\""
 
 const char32_t *ERR_OVERFLOW;
-#define _ERR_OVERFLOW(str) U"overflow occurred while parsing \"" str U"\""
+#define ERR_OVERFLOW_(str) U"overflow occurred while parsing \"" str U"\""
 
 const char32_t *ERR_MISSING_ASSIGNMENT;
-#define _ERR_MISSING_ASSIGNMENT(var) U"missing value in assignment to variable \"" var U"\""
+#define ERR_MISSING_ASSIGNMENT_(var) U"missing value in assignment to variable \"" var U"\""
 
 const char32_t *ERR_NON_INT_RETURN;
-#define _ERR_NON_INT_RETURN(var) U"returning non-int variable \"" var U"\" from main"
+#define ERR_NON_INT_RETURN_(var) U"returning non-int variable \"" var U"\" from main"
 
-#define _ERR_CANNOT(do_action, type1, type2) \
+#define ERR_CANNOT_(do_action, type1, type2) \
 	U"cannot " do_action U" type \"" type1 U"\" with type \"" type2 U"\""
 
-#define _ERR_UNAVAILABLE(operation, type) \
+#define ERR_UNAVAILABLE_(operation, type) \
 	U"type \"" type U"\" does not allow for " operation
 
 const char32_t *ERR_CANNOT_ADD;
@@ -62,7 +62,7 @@ const char32_t *ERR_DIV_UNAVAILABLE;
 const char32_t *ERR_TYPE_TYPE_BAD;
 
 const char32_t *ERR_ASSIGN_FUNC;
-#define _ERR_ASSIGN_FUNC(f) U"cannot reassign built-in function \"" f U"\""
+#define ERR_ASSIGN_FUNC_(f) U"cannot reassign built-in function \"" f U"\""
 
 struct variable_t;
 struct type_t;

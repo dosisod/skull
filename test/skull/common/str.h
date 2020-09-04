@@ -202,7 +202,7 @@ TEST(c32sunescape, {
 		c32sunescape_wrapper(U"\\r", '\r', NULL) &&
 		c32sunescape_wrapper(U"\\n", '\n', NULL) &&
 		c32sunescape_wrapper(U"\\t", '\t', NULL) &&
-		c32sunescape_wrapper(U"\\", '\0', _ERR_BAD_ESCAPE(U"\\"))
+		c32sunescape_wrapper(U"\\", '\0', ERR_BAD_ESCAPE_(U"\\"))
 	);
 })
 
