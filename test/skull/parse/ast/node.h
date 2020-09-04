@@ -178,6 +178,9 @@ TEST(push_ast_node, {
 #define TEST_AST_TREE(str, type, begin_offset, end_offset) \
 	const char32_t *code=str; \
 	AstNode *node=make_ast_tree(code); \
+	if (!node->node_type && !(type)) { \
+		return true; \
+	} \
 	const bool pass=( \
 		node->node_type==(type) && \
 		node->token->begin==(code + (begin_offset)) && \
@@ -293,6 +296,10 @@ TEST(make_ast_tree_comment, {
 	TEST_AST_TREE(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
 })
 
+TEST(make_ast_tree_bad_recursive_combo_fails, {
+	TEST_AST_TREE(U"if true [ return 0", AST_NODE_UNKNOWN, 0, 0);
+})
+
 #undef TEST_AST_TREE
 
 TEST(free_ast_tree, {
@@ -335,6 +342,7 @@ void AstNodeest_self(bool *pass) {
 		test_make_ast_tree_str_const,
 		test_make_ast_tree_type_const,
 		test_make_ast_tree_comment,
+		test_make_ast_tree_bad_recursive_combo_fails,
 		test_free_ast_tree,
 		NULL
 	};

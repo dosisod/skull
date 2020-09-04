@@ -228,6 +228,8 @@ Token *ast_token_cmp(Token *token, Combo *combo, bool *pass) {
 			if (!*pass) {
 				return head;
 			}
+
+			*pass = false;
 		}
 		else if ((token->token_type != combo->tok &&
 			combo->tok != TOKEN_ANY_NON_BRACKET_TOKEN) || (
