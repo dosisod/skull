@@ -22,10 +22,13 @@
 /*
 Evaluates a string `str` given context `ctx`, returns result as a string (if any).
 */
-const char32_t *repl_eval(const char32_t *str, Context *ctx) {
-	if (!*str) {
+const char32_t *repl_eval(const char *str_, Context *ctx) {
+	if (!*str_) {
 		return NULL;
 	}
+
+	const char32_t *str = mbstoc32s(str_);
+	DIE_IF_MALLOC_FAILS(str);
 
 	AstNode *node = make_ast_tree(str);
 
@@ -209,7 +212,7 @@ const char32_t *repl_make_var(const AstNode *node, Context *ctx, bool is_const) 
 Read from `fd`, eval with context `ctx`, and print out result.
 */
 void repl_loop(FILE *fd, Context *ctx) {
-	char32_t *line = repl_read(fd);
+	char *line = repl_read(fd);
 
 	const char32_t *tmp = repl_eval(line, ctx);
 	char *output = c32stombs(tmp);
@@ -225,9 +228,9 @@ void repl_loop(FILE *fd, Context *ctx) {
 }
 
 /*
-Read from `fd`, add prompt if reading from `stdin`.
+Read from `fd`, add colored prompt if reading from `stdin`.
 */
-char32_t *repl_read(FILE *fd) {
+char *repl_read(FILE *fd) {
 	if (fd == stdin) {
 		printf(COLOR_BRIGHT_GREEN_FG "> " COLOR_RESET);
 	}

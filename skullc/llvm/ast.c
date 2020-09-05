@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+#include "skull/common/malloc.h"
 #include "skull/errors.h"
 #include "skull/eval/context.h"
 #include "skull/eval/eval_integer.h"
@@ -25,7 +26,10 @@
 /*
 Convert skull code from `str` into LLVM IR (using `builder` and `ctx).
 */
-void str_to_llvm_ir(char32_t *str, LLVMValueRef func, LLVMBuilderRef builder, LLVMContextRef llvm_ctx) {
+void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMContextRef llvm_ctx) {
+	char32_t *str = mbstoc32s(str_);
+	DIE_IF_MALLOC_FAILS(str);
+
 	AstNode *node = make_ast_tree(str);
 
 	Context *ctx = make_context();

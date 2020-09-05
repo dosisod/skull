@@ -2,4 +2,4 @@
 
 #include "skull/parse/ast/node.h"
 
-void str_to_llvm_ir(char32_t *, LLVMValueRef, LLVMBuilderRef, LLVMContextRef);
+void str_to_llvm_ir(char *, LLVMValueRef, LLVMBuilderRef, LLVMContextRef);

@@ -8,9 +8,9 @@
 #define IO_BUFFER_LEN 1024
 
 /*
-Returns pointer to UTF-32 string read from file descriptor `fd`.
+Return string read from file descriptor `fd`.
 */
-char32_t *read_file(FILE *fd, bool is_repl) {
+char *read_file(FILE *fd, bool is_repl) {
 	char *str = malloc(IO_BUFFER_LEN);
 	DIE_IF_MALLOC_FAILS(str);
 
@@ -32,10 +32,7 @@ char32_t *read_file(FILE *fd, bool is_repl) {
 	}
 	str[offset] = '\0';
 
-	char32_t *ret = mbstoc32s(str);
-
-	free(str);
-	return ret;
+	return str;
 }
 
 #undef IO_BUFFER_LEN

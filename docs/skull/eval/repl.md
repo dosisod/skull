@@ -1,7 +1,7 @@
 # skull/eval/repl.c
 
 ```c
-const char32_t *repl_eval(const char32_t *str, Context *ctx)
+const char32_t *repl_eval(const char *str_, Context *ctx)
 ```
 
 > Evaluates a string `str` given context `ctx`, returns result as a string (if any).
@@ -23,8 +23,8 @@ void repl_loop(FILE *fd, Context *ctx)
 > Read from `fd`, eval with context `ctx`, and print out result.
 
 ```c
-char32_t *repl_read(FILE *fd)
+char *repl_read(FILE *fd)
 ```
 
-> Read from `fd`, add prompt if reading from `stdin`.
+> Read from `fd`, add colored prompt if reading from `stdin`.
 

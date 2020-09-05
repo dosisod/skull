@@ -8,7 +8,7 @@
 #include "test/testing.h"
 
 TEST(repl_variable_declare, {
-	const char32_t *output=repl_eval(U"x: int = 0", NULL);
+	const char32_t *output=repl_eval("x: int = 0", NULL);
 
 	return !output;
 })
@@ -16,7 +16,7 @@ TEST(repl_variable_declare, {
 TEST(repl_variable_declare_in_context, {
 	Context *ctx=make_context();
 
-	const char32_t *output=repl_eval(U"x: int = 1234", ctx);
+	const char32_t *output=repl_eval("x: int = 1234", ctx);
 
 	if (ctx->vars_used!=1) {
 		free_context(ctx);
@@ -38,8 +38,8 @@ TEST(repl_variable_declare_in_context, {
 TEST(repl_cannot_redeclare_var, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x: int = 1234", ctx);
-	const char32_t *output=repl_eval(U"x: int = 1234", ctx);
+	repl_eval("x: int = 1234", ctx);
+	const char32_t *output=repl_eval("x: int = 1234", ctx);
 
 	const bool pass=(
 		ctx->vars_used==1 &&
@@ -56,7 +56,7 @@ TEST(repl_cannot_redeclare_var, {
 TEST(repl_declaring_mutable_var, {
 	Context *ctx=make_context();
 
-	repl_eval(U"mut x: int = 1234", ctx);
+	repl_eval("mut x: int = 1234", ctx);
 
 	const bool pass=(
 		ctx->vars_used==1
@@ -69,7 +69,7 @@ TEST(repl_declaring_mutable_var, {
 TEST(repl_declaring_mutable_auto_var, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x := 0", ctx);
+	repl_eval("x := 0", ctx);
 
 	const bool pass=(
 		ctx->vars_used==1
@@ -82,7 +82,7 @@ TEST(repl_declaring_mutable_auto_var, {
 TEST(repl_manually_writing_to_const_var_fails, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x: int = 1234", ctx);
+	repl_eval("x: int = 1234", ctx);
 
 	if (ctx->vars_used!=1) {
 		free_context(ctx);
@@ -104,7 +104,7 @@ TEST(repl_manually_writing_to_const_var_fails, {
 TEST(repl_manually_writing_to_mutable_var_works, {
 	Context *ctx=make_context();
 
-	repl_eval(U"mut x: int = 1234", ctx);
+	repl_eval("mut x: int = 1234", ctx);
 
 	if (ctx->vars_used!=1) {
 		free_context(ctx);
@@ -128,8 +128,8 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 
 #define TEST_WRITE_TO_MUTABLE_BASE(str_type, str_val1, str_val2, real_type, expected, cmp) \
 	Context *ctx=make_context(); \
-	repl_eval(U"mut x: " str_type  " = " str_val1, ctx); \
-	const char32_t *output=repl_eval(U"x = " str_val2, ctx); \
+	repl_eval("mut x: " str_type " = " str_val1, ctx); \
+	const char32_t *output=repl_eval("x = " str_val2, ctx); \
 	if (ctx->vars_used!=1) { \
 		free_context(ctx); \
 		return false; \
@@ -148,24 +148,24 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 
 TEST(repl_write_to_mutable_int_var, {
 	TEST_WRITE_TO_MUTABLE(
-		U"int", U"1234",
-		U"5678",
+		"int", "1234",
+		"5678",
 		int64_t, 5678
 	);
 })
 
 TEST(repl_write_to_mutable_float_var, {
 	TEST_WRITE_TO_MUTABLE_FLOAT(
-		U"float", U"0.0",
-		U"1234.0",
+		"float", "0.0",
+		"1234.0",
 		double, 1234.0
 	);
 })
 
 TEST(repl_write_to_mutable_bool_var, {
 	TEST_WRITE_TO_MUTABLE(
-		U"bool", "false",
-		U"true",
+		"bool", "false",
+		"true",
 		bool, true
 	);
 })
@@ -175,8 +175,8 @@ TEST(repl_write_to_mutable_bool_var, {
 TEST(repl_write_to_const_var_fails, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x: int = 1234", ctx);
-	const char32_t *output=repl_eval(U"x = 5678", ctx);
+	repl_eval("x: int = 1234", ctx);
+	const char32_t *output=repl_eval("x = 5678", ctx);
 
 	if (ctx->vars_used!=1) {
 		free_context(ctx);
@@ -194,7 +194,7 @@ TEST(repl_write_to_const_var_fails, {
 
 #define TEST_MAKE_VAR_BASE(str_type, str_val, real_type, expected, cmp) \
 	Context *ctx=make_context(); \
-	const char32_t *output=repl_eval(U"x: " str_type " = " str_val, ctx); \
+	const char32_t *output=repl_eval("x: " str_type " = " str_val, ctx); \
 	if (ctx->vars_used!=1) { \
 		free_context(ctx); \
 		return false; \
@@ -216,21 +216,21 @@ TEST(repl_write_to_const_var_fails, {
 
 TEST(repl_make_float_variable, {
 	TEST_MAKE_VAR_FLOAT(
-		U"float", U"1234.0",
+		"float", "1234.0",
 		double, 1234.0
 	);
 })
 
 TEST(repl_make_bool_variable, {
 	TEST_MAKE_VAR(
-		U"bool", U"false",
+		"bool", "false",
 		bool, false
 	);
 })
 
 TEST(repl_make_rune_variable, {
 	TEST_MAKE_VAR(
-		U"rune", U"'a'",
+		"rune", "'a'",
 		char32_t, 'a'
 	);
 })
@@ -239,11 +239,11 @@ TEST(repl_make_rune_variable, {
 TEST(repl_print_fail_with_trailing_tokens, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x: int = 1234", ctx);
+	repl_eval("x: int = 1234", ctx);
 
 	const bool pass=c32scmp(
 		ERR_INVALID_INPUT_(U"x random_data"),
-		repl_eval(U"x random_data", ctx)
+		repl_eval("x random_data", ctx)
 	);
 
 	free_context(ctx);
@@ -251,20 +251,20 @@ TEST(repl_print_fail_with_trailing_tokens, {
 })
 
 TEST(repl_blank_line_returns_nothing, {
-	return !repl_eval(U"", NULL);
+	return !repl_eval("", NULL);
 })
 
 TEST(repl_invalid_input_returns_error, {
 	return c32scmp(
 		ERR_INVALID_INPUT_(U"not_valid"),
-		repl_eval(U"not_valid", NULL)
+		repl_eval("not_valid", NULL)
 	);
 })
 
 TEST(repl_mut_cannot_be_used_alone, {
 	return c32scmp(
 		ERR_INVALID_INPUT_(U"mut"),
-		repl_eval(U"mut", NULL)
+		repl_eval("mut", NULL)
 	);
 })
 
@@ -273,7 +273,7 @@ TEST(repl_cannot_name_auto_var_after_func, {
 
 	const bool pass=c32scmp(
 		ERR_ASSIGN_FUNC_(U"print"),
-		repl_eval(U"print := 0", ctx)
+		repl_eval("print := 0", ctx)
 	);
 
 	free_context(ctx);
@@ -284,15 +284,15 @@ TEST(repl_cannot_name_auto_var_after_func, {
 TEST(repl_clear_function, {
 	return c32scmp(
 		U"\033[2J\033[;1H",
-		repl_eval(U"clear[]", NULL)
+		repl_eval("clear[]", NULL)
 	);
 })
 
 TEST(repl_print_var, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x: int = 1234", ctx);
-	const char32_t *output=repl_eval(U"print[x]", ctx);
+	repl_eval("x: int = 1234", ctx);
+	const char32_t *output=repl_eval("print[x]", ctx);
 
 	const bool pass=c32scmp(U"1234", output);
 
@@ -303,14 +303,14 @@ TEST(repl_print_var, {
 	return pass;
 })
 
-#define TEMP_INT U"99999999999999999999999"
+#define TEMP_INT "99999999999999999999999"
 TEST(repl_overflow_int_gives_error, {
 	Context *ctx=make_context();
 
-	const char32_t *output1=repl_eval(U"x: int = " TEMP_INT, ctx);
+	const char32_t *output1=repl_eval("x: int = " TEMP_INT, ctx);
 
-	repl_eval(U"mut y: int = 0", ctx);
-	const char32_t *output2=repl_eval(U"y = " TEMP_INT, ctx);
+	repl_eval("mut y: int = 0", ctx);
+	const char32_t *output2=repl_eval("y = " TEMP_INT, ctx);
 
 	const bool pass=(
 		c32scmp(ERR_OVERFLOW_(TEMP_INT), output1) &&
@@ -327,7 +327,7 @@ TEST(repl_define_var_without_colon_fails, {
 
 	const bool pass=c32scmp(
 		ERR_INVALID_INPUT_("x int = 0"),
-		repl_eval(U"x int = 0", ctx)
+		repl_eval("x int = 0", ctx)
 	);
 
 	free_context(ctx);
@@ -339,7 +339,7 @@ TEST(repl_missing_value_no_segfault, {
 
 	const bool pass=c32scmp(
 		ERR_MISSING_ASSIGNMENT_(U"x"),
-		repl_eval(U"x: int =", ctx)
+		repl_eval("x: int =", ctx)
 	);
 
 	free_context(ctx);
@@ -349,8 +349,8 @@ TEST(repl_missing_value_no_segfault, {
 TEST(repl_assigning_Variableo_auto_type, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x: int = 1234", ctx);
-	const char32_t *output=repl_eval(U"y := x", ctx);
+	repl_eval("x: int = 1234", ctx);
+	const char32_t *output=repl_eval("y := x", ctx);
 
 	Variable *var=context_find_name(ctx, U"y");
 	int64_t data=0;
@@ -369,7 +369,7 @@ TEST(repl_assigning_Variableo_auto_type, {
 TEST(repl_auto_assign_detect_unknown_var, {
 	Context *ctx=make_context();
 
-	const char32_t *output=repl_eval(U"x := y", ctx);
+	const char32_t *output=repl_eval("x := y", ctx);
 
 	const bool pass=c32scmp(
 		ERR_VAR_NOT_FOUND_(U"y"),
@@ -383,7 +383,7 @@ TEST(repl_auto_assign_detect_unknown_var, {
 TEST(repl_auto_assign_detect_missing_token, {
 	Context *ctx=make_context();
 
-	const char32_t *output=repl_eval(U"x :=", ctx);
+	const char32_t *output=repl_eval("x :=", ctx);
 
 	const bool pass=c32scmp(
 		ERR_MISSING_ASSIGNMENT_(U"x"),
@@ -397,7 +397,7 @@ TEST(repl_auto_assign_detect_missing_token, {
 TEST(repl_assign_detect_unknown_var, {
 	Context *ctx=make_context();
 
-	const char32_t *output=repl_eval(U"x =", ctx);
+	const char32_t *output=repl_eval("x =", ctx);
 
 	const bool pass=c32scmp(
 		ERR_VAR_NOT_FOUND_(U"x"),
@@ -411,8 +411,8 @@ TEST(repl_assign_detect_unknown_var, {
 TEST(repl_assign_missing_rhs_token, {
 	Context *ctx=make_context();
 
-	repl_eval(U"mut x := 0", ctx);
-	const char32_t *output=repl_eval(U"x =", ctx);
+	repl_eval("mut x := 0", ctx);
+	const char32_t *output=repl_eval("x =", ctx);
 
 	const bool pass=c32scmp(
 		ERR_MISSING_ASSIGNMENT_(U"x"),
@@ -426,7 +426,7 @@ TEST(repl_assign_missing_rhs_token, {
 TEST(repl_cannot_reassign_const, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x := \"anything\"", ctx);
+	repl_eval("x := \"anything\"", ctx);
 
 	Variable *var=context_find_name(ctx, U"x");
 	if (!var) {
@@ -438,7 +438,7 @@ TEST(repl_cannot_reassign_const, {
 	variable_read(&before, var);
 	before=c32sdup(before);
 
-	const char32_t *output=repl_eval(U"x = \"something else\"", ctx);
+	const char32_t *output=repl_eval("x = \"something else\"", ctx);
 
 	char32_t *after=NULL;
 	variable_read(&after, var);
@@ -462,7 +462,7 @@ TEST(repl_cannot_reassign_const, {
 TEST(repl_cannot_return_non_existent_var, {
 	Context *ctx=make_context();
 
-	const char32_t *output=repl_eval(U"return x", ctx);
+	const char32_t *output=repl_eval("return x", ctx);
 
 	const bool pass=c32scmp(
 		ERR_VAR_NOT_FOUND_(U"x"),
@@ -476,8 +476,8 @@ TEST(repl_cannot_return_non_existent_var, {
 TEST(repl_cannot_return_non_int, {
 	Context *ctx=make_context();
 
-	repl_eval(U"x := 'a'", ctx);
-	const char32_t *output=repl_eval(U"return x", ctx);
+	repl_eval("x := 'a'", ctx);
+	const char32_t *output=repl_eval("return x", ctx);
 
 	const bool pass=c32scmp(
 		ERR_NON_INT_RETURN_(U"x"),
