@@ -104,7 +104,12 @@ while (node) {
 			end
 		);
 
-		int64_t *num = eval_integer(node->token->next->next->next->next, &error);
+		Token *num_token = node->token->next->next->next->next;
+		if (node->token->next->next->next->token_type == TOKEN_NEWLINE) {
+			num_token = num_token->next;
+		}
+
+		int64_t *num = eval_integer(num_token, &error);
 		PANIC_ON_ERR(error);
 
 		LLVMPositionBuilderAtEnd(

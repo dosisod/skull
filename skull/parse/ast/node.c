@@ -121,7 +121,9 @@ MAKE_COMBO(ast_node_if_combo,
 	{ .tok = TOKEN_KW_IF },
 	{ .tok = TOKEN_BOOL_CONST },
 	{ .tok = TOKEN_BRACKET_OPEN },
+	{ .tok = TOKEN_NEWLINE, .rule = RULE_OPTIONAL },
 		{ .combo = ast_node_return_combo },
+	{ .tok = TOKEN_NEWLINE, .rule = RULE_OPTIONAL },
 	{ .tok = TOKEN_BRACKET_CLOSE }
 );
 
@@ -150,6 +152,11 @@ AstNode *make_ast_tree(const char32_t *code) {
 
 	while (token) {
 		last = token;
+
+		if (token->token_type == TOKEN_NEWLINE) {
+			token = token->next;
+			continue;
+		}
 
 		TRY_PUSH_AST_NODE(ast_node_var_combo, AST_NODE_VAR_DEF);
 		TRY_PUSH_AST_NODE(ast_node_mut_var_def_combo, AST_NODE_MUT_VAR_DEF);
@@ -261,7 +268,7 @@ Token *ast_token_cmp(Token *token, Combo *combo, bool *pass) {
 		combo++;
 	}
 
-	if (!combo->tok || combo->rule == RULE_OPTIONAL) {
+	if (!combo->tok || (combo->rule == RULE_OPTIONAL && !(combo + 1)->tok)) {
 		*pass = true;
 		return last;
 	}
