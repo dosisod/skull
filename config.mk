@@ -5,7 +5,12 @@ MANPATH := $(shell manpath | cut -d : -f1)/man1/
 
 CC := $(shell readlink -f `which cc`)
 
-CFLAGS = -std=c18 \
+DEBUG ?= 0
+ifeq ($(DEBUG), 1)
+	CFLAGS = -g3 -Og
+endif
+
+CFLAGS += -std=c18 \
 	-Wall \
 	-Wextra \
 	-pedantic \

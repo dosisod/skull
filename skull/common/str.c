@@ -242,7 +242,7 @@ Return last occurence of `sub` in string `str`.
 
 `NULL` is returned if no such string is found.
 */
-const char *strrstr(const char *str, const char *sub) {
+const char __attribute__((pure)) *strrstr(const char *str, const char *sub) {
 	size_t str_len = strlen(str);
 	size_t sub_len = strlen(sub);
 

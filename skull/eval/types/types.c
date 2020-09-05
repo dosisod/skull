@@ -47,7 +47,7 @@ bool make_new_type(const char *name, size_t bytes) {
 /*
 Returns pointer to type with name `name`.
 */
-Type *find_type(const char *name) {
+Type __attribute__((pure)) *find_type(const char *name) {
 	Type *head = TYPES_AVAILABLE;
 
 	while (head) {

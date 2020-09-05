@@ -93,7 +93,7 @@ __attribute__((const)) bool c32isdigit(char32_t c)
 > Return whether the UTF-32 character `c` is a digit.
 
 ```c
-const char *strrstr(const char *str, const char *sub)
+const char __attribute__((pure)) *strrstr(const char *str, const char *sub)
 ```
 
 > Return last occurence of `sub` in string `str`.

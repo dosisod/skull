@@ -12,7 +12,7 @@ bool wegex_match(const char *wegex, const char32_t *match)
 > * Character groups can be used, for example, `+[123]+[abc]` matches `"321cba"`.
 
 ```c
-const char *find_next_wegex(const char *wegex)
+const char __attribute__((pure)) *find_next_wegex(const char *wegex)
 ```
 
 > Returns a pointer to the next searchable wegex group.

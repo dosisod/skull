@@ -79,7 +79,7 @@ Returns a pointer to the next searchable wegex group.
 If `wegex` is pointing to a `'['` character, return the corresponding `']'`.
 Else, return the passed wegex.
 */
-const char *find_next_wegex(const char *wegex) {
+const char __attribute__((pure)) *find_next_wegex(const char *wegex) {
 	if (*wegex != '[') {
 		return wegex;
 	}
