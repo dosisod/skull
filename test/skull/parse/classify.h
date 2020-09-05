@@ -97,6 +97,10 @@ TEST(is_constant_str, {
 	free(token); \
 	return pass;
 
+TEST(token_newline, {
+	TEST_CLASSIFY_TOKEN(U"\n", TOKEN_NEWLINE);
+})
+
 TEST(bracket_token_open, {
 	TEST_CLASSIFY_TOKEN(U"[", TOKEN_BRACKET_OPEN);
 })
@@ -358,6 +362,7 @@ void classifier_test_self(bool *pass) {
 		test_is_constant_bool,
 		test_is_constant_rune,
 		test_is_constant_str,
+		test_token_newline,
 		test_bracket_token_open,
 		test_bracket_token_close,
 		test_token_mut_kw,

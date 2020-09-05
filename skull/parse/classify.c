@@ -28,6 +28,7 @@ void classify_token(Token *token) {
 
 	if (false) {} // setup for macros
 
+	TOKEN_TRY_STR(U"\n", TOKEN_NEWLINE)
 	TOKEN_TRY_STR(U"[", TOKEN_BRACKET_OPEN)
 	TOKEN_TRY_STR(U"]", TOKEN_BRACKET_CLOSE)
 	TOKEN_TRY_STR(U"mut", TOKEN_KW_MUT)

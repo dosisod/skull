@@ -141,6 +141,26 @@ TEST(brackets_always_make_their_own_token, {
 	return pass;
 })
 
+TEST(newlines_always_make_their_own_token, {
+	const char32_t *code=U"left\nright";
+	Token *t=tokenize(code);
+
+	const bool pass=(
+		t->begin==code &&
+		t->end==(code + 4) &&
+		t->next &&
+		t->next->begin==(code + 4) &&
+		t->next->end==(code + 5) &&
+		t->next->next &&
+		t->next->next->begin==(code + 5) &&
+		t->next->next->end==(code + 10)
+	);
+
+	free(t);
+
+	return pass;
+})
+
 TEST(free_tokens, {
 	const char32_t *code=U"token token token";
 	Token *t=tokenize(code);
@@ -271,6 +291,7 @@ void tokenizer_test_self(bool *pass) {
 		test_whitespace_inside_double_quotes_respected,
 		test_whitespace_inside_single_quotes_respected,
 		test_brackets_always_make_their_own_token,
+		test_newlines_always_make_their_own_token,
 		test_free_tokens,
 		test_token_len,
 		test_token_cmp,
