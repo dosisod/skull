@@ -223,6 +223,22 @@ Token *ast_token_cmp(Token *token, Combo *combo, bool *pass) {
 	Token *last = head;
 
 	while (token && (combo->tok || combo->combo)) {
+		if (combo->rule == RULE_OPTIONAL) {
+			if (combo->tok == token->token_type) {
+				last = token;
+				token = token->next;
+
+				if (!token) {
+					if (!combo->tok) {
+						return head;
+					}
+					*pass = true;
+					return last;
+				}
+			}
+			combo++;
+			continue;
+		}
 		if (combo->combo) {
 			token = ast_token_cmp(token, combo->combo, pass);
 			if (!*pass) {
@@ -245,7 +261,7 @@ Token *ast_token_cmp(Token *token, Combo *combo, bool *pass) {
 		combo++;
 	}
 
-	if (!combo->tok) {
+	if (!combo->tok || combo->rule == RULE_OPTIONAL) {
 		*pass = true;
 		return last;
 	}

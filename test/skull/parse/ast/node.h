@@ -143,6 +143,38 @@ TEST(ast_token_cmp_any_token, {
 	return pass;
 })
 
+static Combo optional_combo[] = {
+	{ .tok = TOKEN_BRACKET_OPEN },
+	{ .tok = TOKEN_IDENTIFIER, .rule = RULE_OPTIONAL },
+	{ .tok = TOKEN_BRACKET_CLOSE },
+	{0}
+};
+
+TEST(ast_token_cmp_optional_combo, {
+	Token *token_with=tokenize(U"[ x ]");
+	classify_tokens(token_with);
+
+	Token *token_without=tokenize(U"[ ]");
+	classify_tokens(token_without);
+
+	bool ast_pass_with=false;
+	const Token *out_with=ast_token_cmp(token_with, optional_combo, &ast_pass_with);
+
+	bool ast_pass_without=false;
+	const Token *out_without=ast_token_cmp(token_without, optional_combo, &ast_pass_without);
+
+	const bool pass=(
+		ast_pass_with &&
+		token_with->next->next == out_with &&
+		ast_pass_without &&
+		token_without->next == out_without
+	);
+
+	free_tokens(token_with);
+	free_tokens(token_without);
+	return pass;
+})
+
 TEST(push_ast_node, {
 	const char32_t *code=U"x: int = 0";
 	Token *token=tokenize(code);
@@ -317,6 +349,7 @@ void AstNodeest_self(bool *pass) {
 		test_ast_token_cmp_extra_tokens,
 		test_ast_token_cmp_missing_tokens,
 		test_ast_token_cmp_any_token,
+		test_ast_token_cmp_optional_combo,
 		test_push_ast_node,
 		test_make_ast_tree_identifier,
 		test_make_ast_tree_variable_def,

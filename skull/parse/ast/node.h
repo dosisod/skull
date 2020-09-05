@@ -52,9 +52,14 @@ typedef struct AstNode {
 
 AstNode *make_ast_node(void);
 
+enum combo_rules {
+	RULE_OPTIONAL = 1
+};
+
 typedef struct Combo {
-	unsigned tok;
 	struct Combo *combo;
+	unsigned tok;
+	unsigned rule;
 } Combo;
 
 Token *ast_token_cmp(Token *, Combo *, bool *);
