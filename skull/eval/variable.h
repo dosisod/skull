@@ -8,7 +8,7 @@ typedef struct Variable {
 	bool is_const;
 
 	size_t bytes;
-	uint8_t *mem;
+	unsigned char *mem;
 } Variable;
 
 Variable *make_variable(const char *, const char32_t *, bool);

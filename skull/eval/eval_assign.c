@@ -143,7 +143,7 @@ const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ct
 		return FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 
-	uint8_t *mem;
+	unsigned char *mem;
 	mem = malloc(var_found->bytes * sizeof *mem);
 	DIE_IF_MALLOC_FAILS(mem);
 

@@ -77,7 +77,7 @@ TEST(free_types, {
 TEST(append_default_types, {
 	Type *head=TYPES_AVAILABLE;
 
-	uint8_t count=0;
+	unsigned count=0;
 	while (head) {
 		count++;
 		head=head->next;
@@ -85,7 +85,7 @@ TEST(append_default_types, {
 
 	head=TYPES_AVAILABLE;
 
-	uint8_t new_count=0;
+	unsigned new_count=0;
 	while (head) {
 		new_count++;
 		head=head->next;
