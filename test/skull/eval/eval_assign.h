@@ -2,6 +2,7 @@
 
 #include "skull/errors.h"
 #include "skull/eval/eval_assign.h"
+#include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
 #include "test/testing.h"
@@ -26,11 +27,11 @@
 	TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, data==(expected_val))
 
 TEST(eval_assign_int, {
-	TEST_EVAL_ASSIGN("int", U"1234", int64_t, 1234, NULL);
+	TEST_EVAL_ASSIGN("int", U"1234", SkullInt, 1234, NULL);
 })
 
 TEST(eval_assign_float, {
-	TEST_EVAL_ASSIGN_FLOAT("float", U"1234.0", double, 1234.0, NULL);
+	TEST_EVAL_ASSIGN_FLOAT("float", U"1234.0", SkullFloat, 1234.0, NULL);
 })
 
 TEST(eval_assign_bool, {
@@ -38,11 +39,11 @@ TEST(eval_assign_bool, {
 })
 
 TEST(eval_assign_rune, {
-	TEST_EVAL_ASSIGN("rune", U"'a'", char32_t, 'a', NULL);
+	TEST_EVAL_ASSIGN("rune", U"'a'", SkullRune, 'a', NULL);
 })
 
 TEST(eval_assign_rune_escaped, {
-	TEST_EVAL_ASSIGN("rune", U"'\\n'", char32_t, '\n', NULL);
+	TEST_EVAL_ASSIGN("rune", U"'\\n'", SkullRune, '\n', NULL);
 })
 
 TEST(eval_assign_str, {
@@ -70,7 +71,7 @@ TEST(eval_assign_add_vars, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t num=1;
+	SkullInt num=1;
 	variable_write(var_a, &num);
 	context_add_var(ctx, var_a);
 
@@ -78,7 +79,7 @@ TEST(eval_assign_add_vars, {
 	Variable *var_b=make_variable("int", U"b", false);
 	eval_assign(var_b, node, ctx);
 
-	int64_t data=0;
+	SkullInt data=0;
 	variable_read(&data, var_b);
 
 	const bool pass=(data==2);
@@ -92,7 +93,7 @@ TEST(eval_assign_sub_vars, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t num=1;
+	SkullInt num=1;
 	variable_write(var_a, &num);
 	context_add_var(ctx, var_a);
 
@@ -100,7 +101,7 @@ TEST(eval_assign_sub_vars, {
 	Variable *var_b=make_variable("int", U"b", false);
 	eval_assign(var_b, node, ctx);
 
-	int64_t data=1;
+	SkullInt data=1;
 	variable_read(&data, var_b);
 
 	const bool pass=(data==0);
@@ -114,7 +115,7 @@ TEST(eval_assign_mult_vars, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t num=2;
+	SkullInt num=2;
 	variable_write(var_a, &num);
 	context_add_var(ctx, var_a);
 
@@ -122,7 +123,7 @@ TEST(eval_assign_mult_vars, {
 	Variable *var_b=make_variable("int", U"b", false);
 	eval_assign(var_b, node, ctx);
 
-	int64_t data=0;
+	SkullInt data=0;
 	variable_read(&data, var_b);
 
 	const bool pass=(data==4);
@@ -136,7 +137,7 @@ TEST(eval_assign_div_vars, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t num=2;
+	SkullInt num=2;
 	variable_write(var_a, &num);
 	context_add_var(ctx, var_a);
 
@@ -144,7 +145,7 @@ TEST(eval_assign_div_vars, {
 	Variable *var_b=make_variable("int", U"b", false);
 	eval_assign(var_b, node, ctx);
 
-	int64_t data=0;
+	SkullInt data=0;
 	variable_read(&data, var_b);
 
 	const bool pass=(data==1);
@@ -158,12 +159,12 @@ TEST(eval_assign_add_vars_types_must_match, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
 	Variable *var_b=make_variable("rune", U"b", false);
-	char32_t data_b='b';
+	SkullRune data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
@@ -185,12 +186,12 @@ TEST(eval_assign_sub_vars_types_must_match, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
 	Variable *var_b=make_variable("rune", U"b", false);
-	char32_t data_b='b';
+	SkullRune data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
@@ -212,12 +213,12 @@ TEST(eval_assign_mult_vars_types_must_match, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
 	Variable *var_b=make_variable("rune", U"b", false);
-	char32_t data_b='b';
+	SkullRune data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
@@ -239,12 +240,12 @@ TEST(eval_assign_div_vars_types_must_match, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
 	Variable *var_b=make_variable("rune", U"b", false);
-	char32_t data_b='b';
+	SkullRune data_b='b';
 	variable_write(var_b, &data_b);
 	context_add_var(ctx, var_b);
 
@@ -266,7 +267,7 @@ TEST(eval_assign_add_vars_var_must_exist, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -287,7 +288,7 @@ TEST(eval_assign_sub_vars_var_must_exist, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -308,7 +309,7 @@ TEST(eval_assign_mult_vars_var_must_exist, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -329,7 +330,7 @@ TEST(eval_assign_div_vars_var_must_exist, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -350,7 +351,7 @@ TEST(eval_assign_check_lhs_var, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("int", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -371,7 +372,7 @@ TEST(eval_assign_add_vars_must_be_addable, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("bool", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -392,7 +393,7 @@ TEST(eval_assign_sub_vars_must_be_subtractable, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("bool", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -413,7 +414,7 @@ TEST(eval_assign_mult_vars_must_be_multipliable, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("bool", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -434,7 +435,7 @@ TEST(eval_assign_div_vars_must_be_divisible, {
 	Context *ctx=make_context();
 
 	Variable *var_a=make_variable("bool", U"a", false);
-	int64_t data_a=1;
+	SkullInt data_a=1;
 	variable_write(var_a, &data_a);
 	context_add_var(ctx, var_a);
 
@@ -456,7 +457,7 @@ TEST(eval_assign_int_overflow, {
 	TEST_EVAL_ASSIGN(
 		"int",
 		TEMP_INT,
-		int64_t,
+		SkullInt,
 		0,
 		ERR_OVERFLOW_(TEMP_INT)
 	);
@@ -464,15 +465,15 @@ TEST(eval_assign_int_overflow, {
 #undef TEMP_INT
 
 TEST(eval_assign_type_mismatch, {
-	TEST_EVAL_ASSIGN("int", U"not_an_int", int64_t, 0, ERR_TYPE_MISMATCH_(U"int"));
+	TEST_EVAL_ASSIGN("int", U"not_an_int", SkullInt, 0, ERR_TYPE_MISMATCH_(U"int"));
 })
 
 TEST(eval_assign_cannot_assign_non_ints, {
-	TEST_EVAL_ASSIGN("int", U"3.1415", int64_t, 0, ERR_TYPE_MISMATCH_(U"int"));
+	TEST_EVAL_ASSIGN("int", U"3.1415", SkullInt, 0, ERR_TYPE_MISMATCH_(U"int"));
 })
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	TEST_EVAL_ASSIGN_FLOAT("float", U"1234", double, 0, ERR_TYPE_MISMATCH_(U"float"));
+	TEST_EVAL_ASSIGN_FLOAT("float", U"1234", SkullFloat, 0, ERR_TYPE_MISMATCH_(U"float"));
 })
 
 TEST(eval_assign_cannot_assign_non_bools, {
@@ -480,21 +481,21 @@ TEST(eval_assign_cannot_assign_non_bools, {
 })
 
 TEST(eval_assign_cannot_assign_non_runes, {
-	TEST_EVAL_ASSIGN("rune", U"1234", char32_t, 0, ERR_TYPE_MISMATCH_(U"rune"));
+	TEST_EVAL_ASSIGN("rune", U"1234", SkullRune, 0, ERR_TYPE_MISMATCH_(U"rune"));
 })
 
 TEST(eval_assign_cannot_assign_non_strs, {
-	TEST_EVAL_ASSIGN("str", U"1234", char32_t *, 0, ERR_TYPE_MISMATCH_(U"str"));
+	TEST_EVAL_ASSIGN("str", U"1234", SkullStr, 0, ERR_TYPE_MISMATCH_(U"str"));
 })
 
 #undef TEST_EVAL_ASSIGN
 
-TEST(eval_assign_Variableo_another, {
+TEST(eval_assign_variable_to_another, {
 	Variable *var1=make_variable("int", U"var1", false);
 	Variable *var2=make_variable("int", U"var2", false);
 
-	int64_t var1_data=0;
-	int64_t var2_data=1234;
+	SkullInt var1_data=0;
+	SkullInt var2_data=1234;
 	variable_write(var1, &var1_data);
 	variable_write(var2, &var2_data);
 
@@ -507,7 +508,7 @@ TEST(eval_assign_Variableo_another, {
 
 	const char32_t *output=eval_assign(var1, node, ctx);
 
-	int64_t data=0;
+	SkullInt data=0;
 	variable_read(&data, var1);
 
 	const bool pass=(
@@ -523,11 +524,11 @@ TEST(eval_assign_Variableo_another, {
 	return pass;
 })
 
-TEST(eval_assign_Variableo_another_check_same_type, {
+TEST(eval_assign_variable_to_another_check_same_type, {
 	Variable *var1=make_variable("int", U"var1", false);
 	Variable *var2=make_variable("bool", U"var2", false);
 
-	int64_t var1_data=0;
+	SkullInt var1_data=0;
 	bool var2_data=false;
 	variable_write(var1, &var1_data);
 	variable_write(var2, &var2_data);
@@ -553,10 +554,10 @@ TEST(eval_assign_Variableo_another_check_same_type, {
 	return pass;
 })
 
-TEST(eval_assign_Variableo_another_check_bad_var, {
+TEST(eval_assign_variable_to_another_check_bad_var, {
 	Variable *var=make_variable("int", U"var", false);
 
-	int64_t tmp=0;
+	SkullInt tmp=0;
 	variable_write(var, &tmp);
 
 	AstNode *node=make_ast_tree(U"not_a_variable");
@@ -677,9 +678,9 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_cannot_assign_non_bools,
 		test_eval_assign_cannot_assign_non_runes,
 		test_eval_assign_cannot_assign_non_strs,
-		test_eval_assign_Variableo_another,
-		test_eval_assign_Variableo_another_check_same_type,
-		test_eval_assign_Variableo_another_check_bad_var,
+		test_eval_assign_variable_to_another,
+		test_eval_assign_variable_to_another_check_same_type,
+		test_eval_assign_variable_to_another_check_bad_var,
 		test_eval_assign_string_types_cannot_share_pointers,
 		test_eval_assign_Typeype,
 		test_eval_assign_type_var_cannot_be_type,

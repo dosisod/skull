@@ -1,6 +1,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/errors.h"
+#include "skull/eval/types/defs.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
 
@@ -10,7 +11,7 @@
 Returns the string representation of string `var`
 */
 char32_t *fmt_str_type(const Variable *var) {
-	const char32_t *str = NULL;
+	SkullStr str = NULL;
 	variable_read(&str, var);
 
 	char32_t *ret = c32sdup(str);
@@ -28,12 +29,12 @@ Variable *add_str_type(const Variable *lhs, const Variable *rhs) {
 		return NULL;
 	}
 
-	char32_t *lhs_tmp = NULL;
+	SkullStr lhs_tmp = NULL;
 	variable_read(&lhs_tmp, lhs);
-	char32_t *rhs_tmp = NULL;
+	SkullStr rhs_tmp = NULL;
 	variable_read(&rhs_tmp, rhs);
 
-	char32_t *cat = c32scat(lhs_tmp, rhs_tmp);
+	SkullStr cat = c32scat(lhs_tmp, rhs_tmp);
 	DIE_IF_MALLOC_FAILS(cat);
 
 	variable_write(ret, &cat);
@@ -76,7 +77,7 @@ void *eval_str(const Token *token, const char32_t **error) {
 	}
 	str[wrote] = '\0';
 
-	char32_t **ret;
+	SkullStr *ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 

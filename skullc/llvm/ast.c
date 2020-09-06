@@ -7,6 +7,7 @@
 #include "skull/eval/eval_integer.h"
 #include "skull/eval/repl.h"
 #include "skull/eval/types/bool.h"
+#include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
 #include "skullc/llvm/aliases.h"
@@ -51,7 +52,7 @@ while (node) {
 				PANIC(FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var }));
 			}
 
-			int64_t num = 0;
+			SkullInt num = 0;
 			variable_read(&num, found_var);
 
 			LLVMBuildRet(
@@ -61,7 +62,7 @@ while (node) {
 		}
 		else {
 			const char32_t *error = NULL;
-			int64_t *num = eval_integer(node->token->next, &error);
+			SkullInt *num = eval_integer(node->token->next, &error);
 			PANIC_ON_ERR(error);
 
 			LLVMBuildRet(
@@ -113,7 +114,7 @@ while (node) {
 			num_token = num_token->next;
 		}
 
-		int64_t *num = eval_integer(num_token, &error);
+		SkullInt *num = eval_integer(num_token, &error);
 		PANIC_ON_ERR(error);
 
 		LLVMPositionBuilderAtEnd(

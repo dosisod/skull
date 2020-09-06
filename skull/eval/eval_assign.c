@@ -11,6 +11,7 @@
 #include "skull/eval/eval_mult.h"
 #include "skull/eval/eval_sub.h"
 #include "skull/eval/types/bool.h"
+#include "skull/eval/types/defs.h"
 #include "skull/eval/types/rune.h"
 #include "skull/eval/types/str.h"
 #include "skull/eval/types/type.h"
@@ -96,7 +97,7 @@ const char32_t *eval_assign(Variable *var, AstNode *node, const Context *ctx) {
 		mem = eval_rune(node->token, &err);
 	}
 	else if (var->type == &TYPE_STR && node->node_type == AST_NODE_STR_CONST) {
-		char32_t *current = NULL;
+		SkullStr current = NULL;
 		variable_read(&current, var);
 
 		if (current) {
@@ -115,7 +116,7 @@ const char32_t *eval_assign(Variable *var, AstNode *node, const Context *ctx) {
 	if (err || (err = variable_write(var, mem)) == ERR_CANNOT_ASSIGN_CONST) {
 		free((void *)mem);
 		if (var->type == &TYPE_STR) {
-			char32_t *str = NULL;
+			SkullStr str = NULL;
 			variable_read(&str, var);
 			free(str);
 		}
@@ -150,7 +151,7 @@ const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ct
 	variable_read(mem, var_found);
 
 	if (var->type == &TYPE_STR) {
-		char32_t *str = NULL;
+		SkullStr str = NULL;
 		variable_read(&str, var_found);
 
 		str = c32sdup(str);

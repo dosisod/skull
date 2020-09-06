@@ -2,6 +2,7 @@
 
 #include "skull/errors.h"
 #include "skull/eval/function.h"
+#include "skull/eval/types/defs.h"
 
 #include "test/testing.h"
 
@@ -49,7 +50,7 @@ TEST(func_clear_params_fail, {
 
 TEST(func_print, {
 	Variable *var=make_variable("int", U"x", false);
-	int64_t num=1234;
+	SkullInt num=1234;
 	variable_write(var, &num);
 	Context *ctx=make_context();
 	context_add_var(ctx, var);

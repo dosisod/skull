@@ -1,9 +1,9 @@
 #include <limits.h>
 #include <stdbool.h>
-#include <stdint.h>
 
 #include "skull/errors.h"
 #include "skull/eval/eval_integer.h"
+#include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
 #include "test/testing.h"
@@ -12,7 +12,7 @@
 	Token *token=tokenize(str_value); \
 	classify_tokens(token); \
 	const char32_t *err=0; \
-	int64_t *num=eval_integer(token, &err); \
+	SkullInt *num=eval_integer(token, &err); \
 	const bool pass=( \
 		(!num || *num==(expected_num)) && \
 		(err==(expected_error) || c32scmp(expected_error, err)) \

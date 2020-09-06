@@ -1,5 +1,6 @@
 #include "skull/common/str.h"
 #include "skull/eval/eval_oper.h"
+#include "skull/eval/types/defs.h"
 #include "skull/eval/types/sprint_fmt.h"
 
 #include "skull/eval/types/int.h"
@@ -8,7 +9,7 @@
 Returns the string representation of int `var`
 */
 char32_t *fmt_int_type(const Variable *var) {
-	int64_t data = 0;
+	SkullInt data = 0;
 	variable_read(&data, var);
 
 	SPRINTF_FMT("%li");
@@ -22,14 +23,14 @@ char32_t *fmt_int_type(const Variable *var) {
 Add `lhs` and `rhs` ints together
 */
 Variable *add_int_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("int", int64_t, +);
+	DO_MATH("int", SkullInt, +);
 }
 
 /*
 Subtract `rhs` int from `lhs` int
 */
 Variable *sub_int_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("int", int64_t, -);
+	DO_MATH("int", SkullInt, -);
 }
 
 /*
@@ -42,17 +43,17 @@ Variable *div_int_type(const Variable *lhs, const Variable *rhs) {
 	if (!ret) {
 		return NULL;
 	}
-	int64_t rhs_tmp = 0;
+	SkullInt rhs_tmp = 0;
 	variable_read(&rhs_tmp, rhs);
 
 	if (rhs_tmp == 0) {
 		return NULL;
 	}
 
-	int64_t lhs_tmp = 0;
+	SkullInt lhs_tmp = 0;
 	variable_read(&lhs_tmp, lhs);
 
-	const int64_t tmp = lhs_tmp / rhs_tmp;
+	const SkullInt tmp = lhs_tmp / rhs_tmp;
 	variable_write(ret, &tmp);
 
 	return ret;
@@ -62,5 +63,5 @@ Variable *div_int_type(const Variable *lhs, const Variable *rhs) {
 Multiply `lhs` and `rhs` ints together
 */
 Variable *mult_int_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("int", int64_t, *);
+	DO_MATH("int", SkullInt, *);
 }

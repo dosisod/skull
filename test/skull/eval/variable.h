@@ -3,6 +3,7 @@
 
 #include "skull/errors.h"
 #include "skull/eval/eval_assign.h"
+#include "skull/eval/types/defs.h"
 #include "skull/eval/variable.h"
 #include "skull/parse/classify.h"
 
@@ -31,10 +32,10 @@ TEST(create_variable_with_invalid_type_fails, {
 TEST(variable_write, {
 	Variable *var = make_variable("int", U"x", false);
 
-	const int64_t data = 1234;
+	const SkullInt data = 1234;
 	const char32_t *ret = variable_write(var, &data);
 
-	int64_t val = 0;
+	SkullInt val = 0;
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
@@ -50,10 +51,10 @@ TEST(variable_write, {
 TEST(variable_cannot_write_to_const, {
 	Variable *var = make_variable("int", U"x", true);
 
-	const int64_t data = 1234;
+	const SkullInt data = 1234;
 	const char32_t *ret = variable_write(var, &data);
 
-	int64_t val = 0;
+	SkullInt val = 0;
 	memcpy(&val, var->mem, var->bytes);
 
 	const bool pass=(
@@ -71,10 +72,10 @@ TEST(variable_cannot_write_to_const, {
 
 TEST(variable_read, {
 	Variable *var = make_variable("int", U"x", false);
-	const int64_t data = 1234;
+	const SkullInt data = 1234;
 	variable_write(var, &data);
 
-	int64_t val = 0;
+	SkullInt val = 0;
 	variable_read(&val, var);
 
 	const bool pass = (val == 1234);
@@ -127,33 +128,33 @@ TEST(free_null_variable_is_ok, {
 	return pass;
 
 TEST(fmt_var_int, {
-	TEST_FMT_VAR("int", int64_t, 1234, U"1234");
+	TEST_FMT_VAR("int", SkullInt, 1234, U"1234");
 })
 
 TEST(fmt_var_float, {
-	const double PI = 3.1415;
-	TEST_FMT_VAR("float", double, PI, U"3.1415");
+	const SkullFloat PI = 3.1415;
+	TEST_FMT_VAR("float", SkullFloat, PI, U"3.1415");
 })
 
 TEST(fmt_var_float_zero, {
-	TEST_FMT_VAR("float", double, 0.0, U"0.0");
+	TEST_FMT_VAR("float", SkullFloat, 0.0, U"0.0");
 })
 
 TEST(fmt_var_float_small, {
-	const double SMALL = 0.0000001;
-	TEST_FMT_VAR("float", double, SMALL, U"1e-07");
+	const SkullFloat SMALL = 0.0000001;
+	TEST_FMT_VAR("float", SkullFloat, SMALL, U"1e-07");
 })
 
 TEST(fmt_var_float_trailing_zero, {
-	TEST_FMT_VAR("float", double, 1234, U"1234.0");
+	TEST_FMT_VAR("float", SkullFloat, 1234, U"1234.0");
 })
 
 TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR("float", double, 1.0 / 0.0, U"Infinity"); // NOLINT
+	TEST_FMT_VAR("float", SkullFloat, 1.0 / 0.0, U"Infinity"); // NOLINT
 })
 
 TEST(fmt_var_float_neg_infinity, {
-	TEST_FMT_VAR("float", double, 1.0 / -0.0, U"-Infinity"); // NOLINT
+	TEST_FMT_VAR("float", SkullFloat, 1.0 / -0.0, U"-Infinity"); // NOLINT
 })
 
 TEST(fmt_var_bool, {
@@ -165,11 +166,11 @@ TEST(fmt_var_type, {
 })
 
 TEST(fmt_var_rune, {
-	TEST_FMT_VAR("rune", char32_t, 'a', U"a");
+	TEST_FMT_VAR("rune", SkullRune, 'a', U"a");
 })
 
 TEST(fmt_var_wide_rune_preserved, {
-	TEST_FMT_VAR("rune", char32_t, U'存', U"存");
+	TEST_FMT_VAR("rune", SkullRune, U'存', U"存");
 })
 
 #undef TEST_FMT_VAR

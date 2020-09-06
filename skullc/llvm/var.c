@@ -5,6 +5,7 @@
 
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/eval/types/defs.h"
 
 #include "skullc/llvm/aliases.h"
 
@@ -23,7 +24,7 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 			var_name
 		);
 
-		int64_t num = 0;
+		SkullInt num = 0;
 		variable_read(&num, var);
 
 		LLVMBuildStore(
@@ -39,7 +40,7 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 			var_name
 		);
 
-		double num = 0;
+		SkullFloat num = 0;
 		variable_read(&num, var);
 
 		LLVMBuildStore(

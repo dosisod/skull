@@ -2,6 +2,7 @@
 
 #include "skull/common/str.h"
 #include "skull/eval/eval_sub.h"
+#include "skull/eval/types/defs.h"
 
 #include "test/testing.h"
 
@@ -9,13 +10,13 @@ TEST(subtracting_2_ints, {
 	Variable *var1=make_variable("int", U"var1", false);
 	Variable *var2=make_variable("int", U"var2", false);
 
-	const int64_t num1=5;
+	const SkullInt num1=5;
 	variable_write(var1, &num1);
-	const int64_t num2=3;
+	const SkullInt num2=3;
 	variable_write(var2, &num2);
 	Variable *var3=eval_sub(var1, var2);
 
-	int64_t result=0;
+	SkullInt result=0;
 	variable_read(&result, var3);
 
 	const bool pass=(result==2);
@@ -31,13 +32,13 @@ TEST(subtracting_2_floats, {
 	Variable *var1=make_variable("float", U"var1", false);
 	Variable *var2=make_variable("float", U"var2", false);
 
-	const double num1=5.0;
+	const SkullFloat num1=5.0;
 	variable_write(var1, &num1);
-	const double num2=3.0;
+	const SkullFloat num2=3.0;
 	variable_write(var2, &num2);
 	Variable *var3=eval_sub(var1, var2);
 
-	double result=0.0;
+	SkullFloat result=0.0;
 	variable_read(&result, var3);
 
 	//casting int to make compiler happy

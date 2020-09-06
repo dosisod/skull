@@ -4,6 +4,7 @@
 #include "skull/errors.h"
 #include "skull/eval/context.h"
 #include "skull/eval/repl.h"
+#include "skull/eval/types/defs.h"
 
 #include "test/testing.h"
 
@@ -23,7 +24,7 @@ TEST(repl_variable_declare_in_context, {
 		return false;
 	}
 
-	int64_t ret=0;
+	SkullInt ret=0;
 	variable_read(&ret, ctx->vars[0]);
 
 	const bool pass=(
@@ -89,7 +90,7 @@ TEST(repl_manually_writing_to_const_var_fails, {
 		return false;
 	}
 
-	int64_t data=1111;
+	SkullInt data=1111;
 	const char32_t *err=variable_write(ctx->vars[0], &data);
 
 	const bool pass=c32scmp(
@@ -111,10 +112,10 @@ TEST(repl_manually_writing_to_mutable_var_works, {
 		return false;
 	}
 
-	int64_t data=1111;
+	SkullInt data=1111;
 	const char32_t *err=variable_write(ctx->vars[0], &data);
 
-	int64_t result=0;
+	SkullInt result=0;
 	variable_read(&result, ctx->vars[0]);
 
 	const bool pass=(
@@ -150,7 +151,7 @@ TEST(repl_write_to_mutable_int_var, {
 	TEST_WRITE_TO_MUTABLE(
 		"int", "1234",
 		"5678",
-		int64_t, 5678
+		SkullInt, 5678
 	);
 })
 
@@ -158,7 +159,7 @@ TEST(repl_write_to_mutable_float_var, {
 	TEST_WRITE_TO_MUTABLE_FLOAT(
 		"float", "0.0",
 		"1234.0",
-		double, 1234.0
+		SkullFloat, 1234.0
 	);
 })
 
@@ -217,7 +218,7 @@ TEST(repl_write_to_const_var_fails, {
 TEST(repl_make_float_variable, {
 	TEST_MAKE_VAR_FLOAT(
 		"float", "1234.0",
-		double, 1234.0
+		SkullFloat, 1234.0
 	);
 })
 
@@ -231,7 +232,7 @@ TEST(repl_make_bool_variable, {
 TEST(repl_make_rune_variable, {
 	TEST_MAKE_VAR(
 		"rune", "'a'",
-		char32_t, 'a'
+		SkullRune, 'a'
 	);
 })
 
@@ -353,7 +354,7 @@ TEST(repl_assigning_Variableo_auto_type, {
 	const char32_t *output=repl_eval("y := x", ctx);
 
 	Variable *var=context_find_name(ctx, U"y");
-	int64_t data=0;
+	SkullInt data=0;
 	variable_read(&data, var);
 
 	const bool pass=(

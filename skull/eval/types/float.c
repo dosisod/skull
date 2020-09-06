@@ -3,6 +3,7 @@
 
 #include "skull/common/str.h"
 #include "skull/eval/eval_oper.h"
+#include "skull/eval/types/defs.h"
 #include "skull/eval/types/sprint_fmt.h"
 
 #include "skull/eval/types/float.h"
@@ -11,7 +12,7 @@
 Returns the string representation of float `var`
 */
 char32_t *fmt_float_type(const Variable *var) {
-	double data = 0.0;
+	SkullFloat data = 0.0;
 	variable_read(&data, var);
 
 	if (isinf(data)) {
@@ -52,26 +53,26 @@ char32_t *fmt_float_type(const Variable *var) {
 Add `lhs` and `rhs` floats together
 */
 Variable *add_float_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("float", double, +);
+	DO_MATH("float", SkullFloat, +);
 }
 
 /*
 Subtract `rhs` float from `lhs` float
 */
 Variable *sub_float_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("float", double, -);
+	DO_MATH("float", SkullFloat, -);
 }
 
 /*
 Divide `lhs` float by `rhs` float
 */
 Variable *div_float_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("float", double, /);
+	DO_MATH("float", SkullFloat, /);
 }
 
 /*
 Multiply `lhs` and `rhs` floats together
 */
 Variable *mult_float_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("float", double, *);
+	DO_MATH("float", SkullFloat, *);
 }

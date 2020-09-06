@@ -1,6 +1,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/errors.h"
+#include "skull/eval/types/defs.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
 
@@ -29,7 +30,7 @@ void *eval_rune(const Token *token, const char32_t **error) {
 		return NULL;
 	}
 
-	char32_t *ret;
+	SkullRune *ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 

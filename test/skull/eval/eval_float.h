@@ -4,6 +4,7 @@
 
 #include "skull/errors.h"
 #include "skull/eval/eval_float.h"
+#include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
 #include "test/testing.h"
@@ -12,7 +13,7 @@
 	Token *token=tokenize(str_value); \
 	classify_tokens(token); \
 	const char32_t *err=NULL; \
-	double *num=eval_float(token, &err); \
+	SkullFloat *num=eval_float(token, &err); \
 	const bool pass=( \
 		(cond) && \
 		(err==(expected_error) || c32scmp(expected_error, err)) \

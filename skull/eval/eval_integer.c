@@ -5,13 +5,14 @@
 
 #include "skull/common/malloc.h"
 #include "skull/errors.h"
+#include "skull/eval/types/defs.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/eval_integer.h"
 
 /*
-Converts a `TOKEN_INT_CONST` token to an integer pointer (`int64_t *`).
+Converts a `TOKEN_INT_CONST` token to an integer pointer (`SkullInt *`).
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
@@ -21,7 +22,7 @@ void *eval_integer(const Token *token, const char32_t **error) {
 		return NULL;
 	}
 
-	int64_t *ret;
+	SkullInt *ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 

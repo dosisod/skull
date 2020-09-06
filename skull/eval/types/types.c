@@ -4,6 +4,7 @@
 #include "skull/common/str.h"
 #include "skull/common/malloc.h"
 #include "skull/eval/types/bool.h"
+#include "skull/eval/types/defs.h"
 #include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
 #include "skull/eval/types/rune.h"
@@ -91,7 +92,7 @@ struct Type TYPE_BOOL = {
 
 struct Type TYPE_INT = {
 	.name = "int",
-	.bytes = sizeof(int64_t),
+	.bytes = sizeof(SkullInt),
 	.to_string = &fmt_int_type,
 	.add = add_int_type,
 	.subtract = sub_int_type,
@@ -102,7 +103,7 @@ struct Type TYPE_INT = {
 
 struct Type TYPE_FLOAT = {
 	.name = "float",
-	.bytes = sizeof(double),
+	.bytes = sizeof(SkullFloat),
 	.to_string = &fmt_float_type,
 	.add = add_float_type,
 	.subtract = sub_float_type,
@@ -113,7 +114,7 @@ struct Type TYPE_FLOAT = {
 
 struct Type TYPE_RUNE = {
 	.name = "rune",
-	.bytes = sizeof(char32_t),
+	.bytes = sizeof(SkullRune),
 	.to_string = &fmt_rune_type,
 	.add = NULL,
 	.subtract = NULL,
@@ -124,7 +125,7 @@ struct Type TYPE_RUNE = {
 
 struct Type TYPE_STR = {
 	.name = "str",
-	.bytes = sizeof(char32_t *),
+	.bytes = sizeof(SkullStr),
 	.to_string = &fmt_str_type,
 	.add = add_str_type,
 	.subtract = NULL,

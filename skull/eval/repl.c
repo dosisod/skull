@@ -10,6 +10,7 @@
 #include "skull/eval/eval_float.h"
 #include "skull/eval/eval_integer.h"
 #include "skull/eval/function.h"
+#include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/repl.h"
@@ -93,13 +94,13 @@ const char32_t *repl_eval(const char *str_, Context *ctx) {
 				RETURN(FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var }));
 			}
 
-			int64_t num = 0;
+			SkullInt num = 0;
 			variable_read(&num, found_var);
 			exit((int)num);
 		}
 
 		const char32_t *ret = NULL;
-		int64_t *num = eval_integer(node->token->next, &ret);
+		SkullInt *num = eval_integer(node->token->next, &ret);
 
 		if (!ret) {
 			free_ast_tree(node);
@@ -146,19 +147,19 @@ const char32_t *repl_make_var(const AstNode *node, Context *ctx, bool is_const) 
 
 		const char *type = NULL;
 		if (node->next->node_type == AST_NODE_INT_CONST) {
-			type = "int";
+			type = TYPE_INT.name;
 		}
 		else if (node->next->node_type == AST_NODE_FLOAT_CONST) {
-			type = "float";
+			type = TYPE_FLOAT.name;
 		}
 		else if (node->next->node_type == AST_NODE_BOOL_CONST) {
-			type = "bool";
+			type = TYPE_BOOL.name;
 		}
 		else if (node->next->node_type == AST_NODE_STR_CONST) {
-			type = "str";
+			type = TYPE_STR.name;
 		}
 		else if (node->next->node_type == AST_NODE_RUNE_CONST) {
-			type = "rune";
+			type = TYPE_RUNE.name;
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER ||
 			node->next->node_type == AST_NODE_ADD_VAR ||
