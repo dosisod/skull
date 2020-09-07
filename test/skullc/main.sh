@@ -48,6 +48,7 @@ test "if_true.sk"
 test "if_false.sk"
 test "declare_mut.sk"
 test "return_var.sk"
+test "ignore_comments.sk"
 
 test_err "err_var_assign.sk" "Compilation error: variable \"x\" already defined"
 test_err "err_return_int.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""

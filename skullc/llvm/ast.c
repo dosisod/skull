@@ -38,7 +38,9 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 
 while (node) {
 
-	if (node->node_type == AST_NODE_RETURN) {
+	if (node->node_type == AST_NODE_COMMENT) {}
+
+	else if (node->node_type == AST_NODE_RETURN) {
 		if (node->token->next->token_type == TOKEN_IDENTIFIER) {
 			char32_t *var_name = token_str(node->token->next);
 			const Variable *found_var = context_find_name(ctx, var_name);
@@ -141,7 +143,7 @@ while (node) {
 		vars_used_last++;
 	}
 
-node = node->next;
+	node = node->next;
 }
 
 	free(str);
