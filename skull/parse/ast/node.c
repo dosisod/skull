@@ -70,6 +70,13 @@ MAKE_COMBO(ast_node_var_assign_combo,
 	{ .tok = TOKEN_OPER_EQUAL }
 );
 
+MAKE_COMBO(ast_node_import_combo,
+	{ .tok = TOKEN_KW_IMPORT },
+	{ .tok = TOKEN_IDENTIFIER },
+	{ .tok = TOKEN_KW_FROM },
+	{ .tok = TOKEN_STR_CONST }
+);
+
 MAKE_COMBO(ast_node_add_var_combo,
 	{ .tok = TOKEN_IDENTIFIER },
 	{ .tok = TOKEN_OPER_PLUS },
@@ -165,6 +172,7 @@ AstNode *make_ast_tree(const char32_t *code) {
 		TRY_PUSH_AST_NODE(ast_node_auto_var_def_combo, AST_NODE_AUTO_VAR_DEF);
 		TRY_PUSH_AST_NODE(ast_node_mut_auto_var_def_combo, AST_NODE_MUT_AUTO_VAR_DEF);
 		TRY_PUSH_AST_NODE(ast_node_var_assign_combo, AST_NODE_VAR_ASSIGN);
+		TRY_PUSH_AST_NODE(ast_node_import_combo, AST_NODE_IMPORT);
 		TRY_PUSH_AST_NODE(ast_node_add_var_combo, AST_NODE_ADD_VAR);
 		TRY_PUSH_AST_NODE(ast_node_sub_var_combo, AST_NODE_SUB_VAR);
 		TRY_PUSH_AST_NODE(ast_node_mult_var_combo, AST_NODE_MULT_VAR);

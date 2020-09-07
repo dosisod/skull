@@ -260,6 +260,10 @@ TEST(make_ast_tree_var_assign, {
 	TEST_AST_TREE(U"x =", AST_NODE_VAR_ASSIGN, 0, 3);
 })
 
+TEST(make_ast_tree_import, {
+	TEST_AST_TREE(U"import x from \"y\"", AST_NODE_IMPORT, 0, 16);
+})
+
 TEST(make_ast_tree_var_add, {
 	TEST_AST_TREE(U"x + y", AST_NODE_ADD_VAR, 0, 5);
 })
@@ -358,6 +362,7 @@ void AstNodeest_self(bool *pass) {
 		test_make_ast_tree_auto_mutable_variable_def,
 		test_make_ast_tree_with_whitespace,
 		test_make_ast_tree_var_assign,
+		test_make_ast_tree_import,
 		test_make_ast_tree_var_add,
 		test_make_ast_tree_var_sub,
 		test_make_ast_tree_var_mult,
