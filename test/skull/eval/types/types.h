@@ -1,5 +1,4 @@
 #include <stdbool.h>
-#include <stdint.h>
 #include <string.h>
 
 #include "skull/common/str.h"

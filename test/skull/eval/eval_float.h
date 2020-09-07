@@ -1,6 +1,5 @@
 #include <math.h>
 #include <stdbool.h>
-#include <stdint.h>
 
 #include "skull/errors.h"
 #include "skull/eval/eval_float.h"

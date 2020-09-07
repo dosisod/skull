@@ -151,12 +151,14 @@ AstNode *make_ast_tree(const char32_t *code) {
 	bool passed = false;
 
 	while (token) {
-		last = token;
-
-		if (token->token_type == TOKEN_NEWLINE) {
+		if (token->token_type == TOKEN_NEWLINE || (
+			node->last && node->last->token_end == token))
+		{
 			token = token->next;
 			continue;
 		}
+
+		last = token;
 
 		TRY_PUSH_AST_NODE(ast_node_var_combo, AST_NODE_VAR_DEF);
 		TRY_PUSH_AST_NODE(ast_node_mut_var_def_combo, AST_NODE_MUT_VAR_DEF);
@@ -172,15 +174,6 @@ AstNode *make_ast_tree(const char32_t *code) {
 		TRY_PUSH_AST_NODE(ast_node_no_param_func_combo, AST_NODE_NO_PARAM_FUNC);
 		TRY_PUSH_AST_NODE(ast_node_one_param_func_combo, AST_NODE_ONE_PARAM_FUNC);
 		TRY_PUSH_AST_NODE(ast_node_if_combo, AST_NODE_IF);
-
-		//skip to next token if current token is present in last node
-		if (node->last && node->last->token_end == token) {
-			token = token->next;
-			continue;
-		}
-
-		if (false) {} // setup for macros
-
 		TRY_PUSH_AST_NODE(ast_node_comment_combo, AST_NODE_COMMENT)
 		TRY_PUSH_AST_NODE(ast_node_int_combo, AST_NODE_INT_CONST)
 		TRY_PUSH_AST_NODE(ast_node_float_combo, AST_NODE_FLOAT_CONST)

@@ -254,17 +254,6 @@ TEST(tokenize_trailing_comment, {
 	return pass;
 })
 
-TEST(tokenize_shebang_comment, {
-	const char32_t *code=U"#!/example/shebang";
-	Token *token=tokenize(code);
-
-	const bool pass=c32scmp(code, token->begin);
-
-	free_tokens(token);
-
-	return pass;
-})
-
 TEST(make_token, {
 	Token *token=make_token();
 
@@ -299,7 +288,6 @@ void tokenizer_test_self(bool *pass) {
 		test_token_str,
 		test_tokenize_comment,
 		test_tokenize_trailing_comment,
-		test_tokenize_shebang_comment,
 		test_make_token,
 		NULL
 	};
