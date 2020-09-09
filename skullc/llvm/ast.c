@@ -36,115 +36,125 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 	Context *ctx = make_context();
 	size_t vars_used_last = 0;
 
-while (node) {
+	while (node) {
+		if (node->node_type == AST_NODE_COMMENT) {}
 
-	if (node->node_type == AST_NODE_COMMENT) {}
-
-	else if (node->node_type == AST_NODE_RETURN) {
-		if (node->token->next->token_type == TOKEN_IDENTIFIER) {
-			char32_t *var_name = token_str(node->token->next);
-			const Variable *found_var = context_find_name(ctx, var_name);
-
-			if (!found_var) {
-				PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
-			}
-			free(var_name);
-
-			if (found_var->type != &TYPE_INT) {
-				PANIC(FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var }));
-			}
-
-			SkullInt num = 0;
-			variable_read(&num, found_var);
-
-			LLVMBuildRet(
-				builder,
-				LLVM_INT(llvm_ctx, num)
-			);
+		else if (node->node_type == AST_NODE_RETURN) {
+			llvm_make_return(&node, ctx, llvm_ctx, builder);
 		}
+
+		else if (node->node_type == AST_NODE_VAR_DEF ||
+			node->node_type == AST_NODE_AUTO_VAR_DEF ||
+			node->node_type == AST_NODE_MUT_VAR_DEF ||
+			node->node_type == AST_NODE_MUT_AUTO_VAR_DEF)
+		{
+			llvm_make_var_def(&node, ctx);
+		}
+
+		else if (node->node_type == AST_NODE_IF) {
+			llvm_make_if(&node, func, llvm_ctx, builder);
+		}
+
 		else {
-			const char32_t *error = NULL;
-			SkullInt *num = eval_integer(node->token->next, &error);
-			PANIC_ON_ERR(error);
-
-			LLVMBuildRet(
-				builder,
-				LLVM_INT(llvm_ctx, *num)
-			);
+			PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
 		}
-	}
-	else if (node->node_type == AST_NODE_VAR_DEF ||
-		node->node_type == AST_NODE_AUTO_VAR_DEF)
-	{
-		PANIC_ON_ERR(repl_make_var(node, ctx, true));
 
+		if (ctx->vars_used != vars_used_last) {
+			var_to_llvm_ir(ctx->vars[ctx->vars_used - 1], builder, llvm_ctx);
+			vars_used_last++;
+		}
 		node = node->next;
 	}
-	else if (node->node_type == AST_NODE_MUT_VAR_DEF ||
-		node->node_type == AST_NODE_MUT_AUTO_VAR_DEF)
-	{
-		PANIC_ON_ERR(repl_make_var(node, ctx, false));
+	free(str);
+}
 
-		node = node->next;
+void llvm_make_return(AstNode **node, Context *ctx, LLVMContextRef llvm_ctx, LLVMBuilderRef builder) {
+	if ((*node)->token->next->token_type == TOKEN_IDENTIFIER) {
+		char32_t *var_name = token_str((*node)->token->next);
+		const Variable *found_var = context_find_name(ctx, var_name);
+
+		if (!found_var) {
+			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
+		}
+		free(var_name);
+
+		if (found_var->type != &TYPE_INT) {
+			PANIC(FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var }));
+		}
+
+		SkullInt num = 0;
+		variable_read(&num, found_var);
+
+		LLVMBuildRet(
+			builder,
+			LLVM_INT(llvm_ctx, num)
+		);
 	}
-	else if (node->node_type == AST_NODE_IF) {
+	else {
 		const char32_t *error = NULL;
-		const bool *cond = eval_bool(node->token->next, &error);
+		SkullInt *num = eval_integer((*node)->token->next, &error);
 		PANIC_ON_ERR(error);
-
-		LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
-			llvm_ctx,
-			func,
-			"if_true"
-		);
-
-		LLVMBasicBlockRef end = LLVMAppendBasicBlockInContext(
-			llvm_ctx,
-			func,
-			"end"
-		);
-
-		LLVMBuildCondBr(
-			builder,
-			LLVM_BOOL(llvm_ctx, *cond),
-			if_true,
-			end
-		);
-
-		Token *num_token = node->token->next->next->next->next;
-		if (node->token->next->next->next->token_type == TOKEN_NEWLINE) {
-			num_token = num_token->next;
-		}
-
-		SkullInt *num = eval_integer(num_token, &error);
-		PANIC_ON_ERR(error);
-
-		LLVMPositionBuilderAtEnd(
-			builder,
-			if_true
-		);
 
 		LLVMBuildRet(
 			builder,
 			LLVM_INT(llvm_ctx, *num)
 		);
-
-		LLVMPositionBuilderAtEnd(
-			builder,
-			end
-		);
 	}
-	else {
-		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
-	}
-
-	if (ctx->vars_used != vars_used_last) {
-		var_to_llvm_ir(ctx->vars[ctx->vars_used - 1], builder, llvm_ctx);
-		vars_used_last++;
-	}
-
-	node = node->next;
 }
 
-	free(str);
+void llvm_make_var_def(AstNode **node, Context *ctx) {
+	PANIC_ON_ERR(repl_make_var(*node, ctx,
+		(*node)->node_type == AST_NODE_VAR_DEF ||
+		(*node)->node_type == AST_NODE_AUTO_VAR_DEF
+	));
+
+	*node = (*node)->next;
+}
+
+void llvm_make_if(AstNode **node, LLVMValueRef func, LLVMContextRef llvm_ctx, LLVMBuilderRef builder) {
+	const char32_t *error = NULL;
+	const bool *cond = eval_bool((*node)->token->next, &error);
+	PANIC_ON_ERR(error);
+
+	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
+		llvm_ctx,
+		func,
+		"if_true"
+	);
+
+	LLVMBasicBlockRef end = LLVMAppendBasicBlockInContext(
+		llvm_ctx,
+		func,
+		"end"
+	);
+
+	LLVMBuildCondBr(
+		builder,
+		LLVM_BOOL(llvm_ctx, *cond),
+		if_true,
+		end
+	);
+
+	Token *num_token = (*node)->token->next->next->next->next;
+	if ((*node)->token->next->next->next->token_type == TOKEN_NEWLINE) {
+		num_token = num_token->next;
+	}
+
+	SkullInt *num = eval_integer(num_token, &error);
+	PANIC_ON_ERR(error);
+
+	LLVMPositionBuilderAtEnd(
+		builder,
+		if_true
+	);
+
+	LLVMBuildRet(
+		builder,
+		LLVM_INT(llvm_ctx, *num)
+	);
+
+	LLVMPositionBuilderAtEnd(
+		builder,
+		end
+	);
 }
