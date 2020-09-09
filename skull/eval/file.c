@@ -1,6 +1,3 @@
-#include <stdlib.h>
-
-#include "skull/errors.h"
 #include "skull/eval/context.h"
 #include "skull/eval/repl.h"
 
@@ -9,7 +6,7 @@
 /*
 Run a file `f`. After it is done, go into a REPL.
 */
-noreturn void eval_file(FILE *f) {
+_Noreturn void eval_file(FILE *f) {
 	Context *ctx = make_context();
 
 	while (true) {

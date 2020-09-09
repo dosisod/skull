@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "skull/common/malloc.h"
+#include "skull/common/str.h"
 #include "skull/errors.h"
 #include "skull/eval/context.h"
 #include "skull/eval/eval_integer.h"

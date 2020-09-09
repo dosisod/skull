@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdbool.h>
 #include <uchar.h>
 
 #include "skull/parse/tokenize.h"
@@ -86,4 +85,4 @@ char32_t *fmt_error(const char32_t *fmt, ErrorMsg []);
 
 void fmt_error_stringify(ErrorMsg *);
 
-bool is_error_msg(const char32_t *);
+_Bool is_error_msg(const char32_t *);

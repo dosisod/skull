@@ -62,7 +62,7 @@ typedef struct Combo {
 	unsigned rule;
 } Combo;
 
-Token *ast_token_cmp(Token *, Combo *, bool *);
+Token *ast_token_cmp(Token *, Combo *, _Bool *);
 void push_ast_node(Token *, Token **, unsigned, AstNode **);
 
 AstNode *make_ast_tree(const char32_t *);

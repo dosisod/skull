@@ -1,6 +1,5 @@
 #include <stdio.h>
 
-#include "skull/errors.h"
 #include "skull/common/local.h"
 #include "skull/common/main.h"
 #include "skull/eval/file.h"

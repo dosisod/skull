@@ -1,7 +1,7 @@
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "skull/common/malloc.h"
-#include "skull/common/str.h"
 
 #include "skull/common/io.h"
 

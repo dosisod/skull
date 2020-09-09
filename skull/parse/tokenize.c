@@ -1,7 +1,7 @@
-#include <stdlib.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
 #include "skull/common/malloc.h"
+#include "skull/common/str.h"
 
 #include "skull/parse/tokenize.h"
 

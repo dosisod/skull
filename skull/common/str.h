@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdbool.h>
 #include <uchar.h>
 
 const char *strrstr(const char *, const char *);
@@ -14,12 +13,12 @@ char32_t *c32scat(const char32_t *, const char32_t *);
 char *c32stombs(const char32_t *);
 char32_t *mbstoc32s(const char *);
 
-bool c32scmp(const char32_t *, const char32_t *);
-bool c32sncmp(const char32_t *, const char32_t *, size_t);
+_Bool c32scmp(const char32_t *, const char32_t *);
+_Bool c32sncmp(const char32_t *, const char32_t *, size_t);
 
 const char32_t *c32schr(const char32_t *, char32_t);
-bool c32isdigit(char32_t);
-bool c32isxdigit(char32_t);
-bool c32isalnum(char32_t);
+_Bool c32isdigit(char32_t);
+_Bool c32isxdigit(char32_t);
+_Bool c32isalnum(char32_t);
 
 char32_t c32sunescape(const char32_t *, const char32_t **);

@@ -41,14 +41,14 @@ enum token_types {
 	TOKEN_END
 };
 
-bool is_type_str(const char32_t *);
-bool is_keyword_str(const char32_t *);
-bool is_constant_integer_str(const char32_t *);
-bool is_constant_float_str(const char32_t *);
-bool is_constant_bool_str(const char32_t *);
-bool is_constant_rune_str(const char32_t *);
-bool is_constant_str_str(const char32_t *);
-bool is_valid_identifier_str(const char32_t *);
+_Bool is_type_str(const char32_t *);
+_Bool is_keyword_str(const char32_t *);
+_Bool is_constant_integer_str(const char32_t *);
+_Bool is_constant_float_str(const char32_t *);
+_Bool is_constant_bool_str(const char32_t *);
+_Bool is_constant_rune_str(const char32_t *);
+_Bool is_constant_str_str(const char32_t *);
+_Bool is_valid_identifier_str(const char32_t *);
 
 void classify_token(Token *);
 void classify_tokens(Token *);

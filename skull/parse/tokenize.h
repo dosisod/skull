@@ -1,8 +1,6 @@
 #pragma once
 
-#include <stdbool.h>
-
-#include "skull/common/str.h"
+#include <uchar.h>
 
 typedef struct Token {
 	const char32_t *begin;
@@ -12,8 +10,8 @@ typedef struct Token {
 	struct Token *next;
 } Token;
 
-bool is_whitespace(char32_t);
-bool is_quote(char32_t);
+_Bool is_whitespace(char32_t);
+_Bool is_quote(char32_t);
 
 Token *make_token(void);
 
@@ -22,6 +20,6 @@ Token *tokenize(const char32_t *);
 void free_tokens(Token *);
 
 size_t token_len(const Token *);
-bool token_cmp(const char32_t *, const Token *);
+_Bool token_cmp(const char32_t *, const Token *);
 
 char32_t *token_str(const Token *);

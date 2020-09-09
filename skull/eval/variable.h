@@ -5,7 +5,7 @@
 typedef struct Variable {
 	Type *type;
 	const char32_t *name;
-	bool is_const;
+	_Bool is_const;
 
 	size_t bytes;
 	unsigned char *mem;
@@ -13,7 +13,7 @@ typedef struct Variable {
 	void *alloca; // only used in skullc for storing LLVMValueRef's
 } Variable;
 
-Variable *make_variable(const char *, const char32_t *, bool);
+Variable *make_variable(const char *, const char32_t *, _Bool);
 
 const char32_t *variable_write(const Variable *, const void *);
 void variable_read(void *, const Variable *);

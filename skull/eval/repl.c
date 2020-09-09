@@ -4,6 +4,7 @@
 #include "skull/common/color.h"
 #include "skull/common/io.h"
 #include "skull/common/malloc.h"
+#include "skull/common/str.h"
 #include "skull/errors.h"
 #include "skull/eval/eval_add.h"
 #include "skull/eval/eval_assign.h"

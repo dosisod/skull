@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/errors.h"

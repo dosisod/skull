@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#include "skull/common/str.h"
 #include "skull/parse/tokenize.h"
 
 #include "test/testing.h"

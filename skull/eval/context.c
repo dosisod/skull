@@ -1,6 +1,5 @@
 #include <stddef.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"

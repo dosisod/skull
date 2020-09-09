@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#include "skull/common/str.h"
 #include "skull/errors.h"
 #include "skull/eval/function.h"
 #include "skull/eval/types/defs.h"

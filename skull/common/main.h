@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "skull/common/str.h"
+
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<version unknown>"
 #endif
