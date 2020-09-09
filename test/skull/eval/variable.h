@@ -17,7 +17,8 @@ TEST(create_variable, {
 		c32scmp(var->name, U"x") &&
 		var->is_const &&
 		var->bytes == 8 &&
-		var->mem
+		var->mem &&
+		!var->alloca
 	);
 
 	free_variable(var);

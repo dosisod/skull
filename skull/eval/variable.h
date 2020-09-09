@@ -9,6 +9,8 @@ typedef struct Variable {
 
 	size_t bytes;
 	unsigned char *mem;
+
+	void *alloca; // only used in skullc for storing LLVMValueRef's
 } Variable;
 
 Variable *make_variable(const char *, const char32_t *, bool);

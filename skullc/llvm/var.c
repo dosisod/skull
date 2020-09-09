@@ -18,11 +18,13 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 	char *var_name = c32stombs(var->name);
 
 	if (var->type == &TYPE_INT) {
-		LLVMValueRef ir_var = LLVMBuildAlloca(
-			builder,
-			LLVMInt64TypeInContext(ctx),
-			var_name
-		);
+		if (!var->alloca) {
+			var->alloca = LLVMBuildAlloca(
+				builder,
+				LLVMInt64TypeInContext(ctx),
+				var_name
+			);
+		}
 
 		SkullInt num = 0;
 		variable_read(&num, var);
@@ -30,15 +32,17 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		LLVMBuildStore(
 			builder,
 			LLVM_INT(ctx, num),
-			ir_var
+			var->alloca
 		);
 	}
 	if (var->type == &TYPE_FLOAT) {
-		LLVMValueRef ir_var = LLVMBuildAlloca(
-			builder,
-			LLVMDoubleTypeInContext(ctx),
-			var_name
-		);
+		if (!var->alloca) {
+			var->alloca = LLVMBuildAlloca(
+				builder,
+				LLVMDoubleTypeInContext(ctx),
+				var_name
+			);
+		}
 
 		SkullFloat num = 0;
 		variable_read(&num, var);
@@ -46,15 +50,17 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		LLVMBuildStore(
 			builder,
 			LLVM_FLOAT(ctx, num),
-			ir_var
+			var->alloca
 		);
 	}
 	else if (var->type == &TYPE_BOOL) {
-		LLVMValueRef ir_var = LLVMBuildAlloca(
-			builder,
-			LLVMInt1TypeInContext(ctx),
-			var_name
-		);
+		if (!var->alloca) {
+			var->alloca = LLVMBuildAlloca(
+				builder,
+				LLVMInt1TypeInContext(ctx),
+				var_name
+			);
+		}
 
 		bool val = false;
 		variable_read(&val, var);
@@ -62,15 +68,17 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		LLVMBuildStore(
 			builder,
 			LLVM_BOOL(ctx, val),
-			ir_var
+			var->alloca
 		);
 	}
 	else if (var->type == &TYPE_RUNE) {
-		LLVMValueRef ir_var = LLVMBuildAlloca(
-			builder,
-			LLVMInt32TypeInContext(ctx),
-			var_name
-		);
+		if (var->alloca) {
+			var->alloca = LLVMBuildAlloca(
+				builder,
+				LLVMInt32TypeInContext(ctx),
+				var_name
+			);
+		}
 
 		char32_t c = U'\0';
 		variable_read(&c, var);
@@ -78,7 +86,7 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		LLVMBuildStore(
 			builder,
 			LLVM_RUNE(ctx, c),
-			ir_var
+			var->alloca
 		);
 	}
 	else if (var->type == &TYPE_STR) {
@@ -100,11 +108,13 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 			(unsigned)len
 		);
 
-		LLVMValueRef ir_var = LLVMBuildAlloca(
-			builder,
-			str_type,
-			var_name
-		);
+		if (!var->alloca) {
+			var->alloca = LLVMBuildAlloca(
+				builder,
+				str_type,
+				var_name
+			);
+		}
 
 		LLVMValueRef char_arr = LLVMConstArray(
 			str_type,
@@ -116,7 +126,7 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		LLVMBuildStore(
 			builder,
 			char_arr,
-			ir_var
+			var->alloca
 		);
 	}
 

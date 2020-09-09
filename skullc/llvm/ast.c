@@ -82,12 +82,14 @@ void llvm_make_return(AstNode **node, Context *ctx, LLVMContextRef llvm_ctx, LLV
 			PANIC(FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var }));
 		}
 
-		SkullInt num = 0;
-		variable_read(&num, found_var);
-
 		LLVMBuildRet(
 			builder,
-			LLVM_INT(llvm_ctx, num)
+			LLVMBuildLoad2(
+				builder,
+				LLVMInt64TypeInContext(llvm_ctx),
+				found_var->alloca,
+				""
+			)
 		);
 	}
 	else {
