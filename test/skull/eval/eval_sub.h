@@ -1,10 +1,12 @@
 #include <stdbool.h>
 
 #include "skull/common/str.h"
-#include "skull/eval/eval_sub.h"
+#include "skull/eval/eval_oper.h"
 #include "skull/eval/types/defs.h"
 
 #include "test/testing.h"
+
+#define eval_sub(x, y) eval_oper((x)->type->subtract, x, y)
 
 TEST(subtracting_2_ints, {
 	Variable *var1=make_variable("int", U"var1", false);

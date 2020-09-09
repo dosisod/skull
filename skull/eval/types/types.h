@@ -5,14 +5,16 @@
 
 struct Variable;
 
+typedef struct Variable *(*OperFunc)(const struct Variable *, const struct Variable *);
+
 typedef struct Type {
 	const char *name;
 	size_t bytes;
 
-	struct Variable *(*add)(const struct Variable *, const struct Variable *);
-	struct Variable *(*subtract)(const struct Variable *, const struct Variable *);
-	struct Variable *(*divide)(const struct Variable *, const struct Variable *);
-	struct Variable *(*multiply)(const struct Variable *, const struct Variable *);
+	OperFunc add;
+	OperFunc subtract;
+	OperFunc divide;
+	OperFunc multiply;
 
 	char32_t *(*to_string)(const struct Variable *);
 

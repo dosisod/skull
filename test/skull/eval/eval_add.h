@@ -1,10 +1,12 @@
 #include <stdbool.h>
 
 #include "skull/common/str.h"
-#include "skull/eval/eval_add.h"
+#include "skull/eval/eval_oper.h"
 #include "skull/eval/types/defs.h"
 
 #include "test/testing.h"
+
+#define eval_add(x, y) eval_oper((x)->type->add, x, y)
 
 TEST(adding_2_ints, {
 	Variable *var1=make_variable("int", U"var1", false);

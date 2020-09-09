@@ -4,12 +4,9 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/errors.h"
-#include "skull/eval/eval_add.h"
-#include "skull/eval/eval_div.h"
 #include "skull/eval/eval_float.h"
 #include "skull/eval/eval_integer.h"
-#include "skull/eval/eval_mult.h"
-#include "skull/eval/eval_sub.h"
+#include "skull/eval/eval_oper.h"
 #include "skull/eval/types/bool.h"
 #include "skull/eval/types/defs.h"
 #include "skull/eval/types/rune.h"
@@ -41,7 +38,7 @@ const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ct
 			{ .type = rhs_var->type } \
 		); \
 	} \
-	Variable *tmp = (func)(lhs_var, rhs_var); \
+	Variable *tmp = eval_oper(lhs_var->type->func, lhs_var, rhs_var); \
 	if (!tmp) { \
 		return FMT_ERROR((unavail), { .type = lhs_var->type }); \
 	} \
@@ -66,19 +63,19 @@ const char32_t *eval_assign(Variable *var, AstNode *node, const Context *ctx) {
 	}
 
 	if (ctx && node->node_type == AST_NODE_ADD_VAR) {
-		EVAL_ASSIGN_SETUP(eval_add, ERR_CANNOT_ADD, ERR_ADD_UNAVAILABLE);
+		EVAL_ASSIGN_SETUP(add, ERR_CANNOT_ADD, ERR_ADD_UNAVAILABLE);
 	}
 
 	if (ctx && node->node_type == AST_NODE_SUB_VAR) {
-		EVAL_ASSIGN_SETUP(eval_sub, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
+		EVAL_ASSIGN_SETUP(subtract, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
 	}
 
 	if (ctx && node->node_type == AST_NODE_MULT_VAR) {
-		EVAL_ASSIGN_SETUP(eval_mult, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
+		EVAL_ASSIGN_SETUP(multiply, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
 	}
 
 	if (ctx && node->node_type == AST_NODE_DIV_VAR) {
-		EVAL_ASSIGN_SETUP(eval_div, ERR_CANNOT_DIV, ERR_DIV_UNAVAILABLE);
+		EVAL_ASSIGN_SETUP(divide, ERR_CANNOT_DIV, ERR_DIV_UNAVAILABLE);
 	}
 
 	const void *mem = NULL;

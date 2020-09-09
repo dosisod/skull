@@ -1,9 +1,11 @@
 #include <stdbool.h>
 
-#include "skull/eval/eval_mult.h"
+#include "skull/eval/eval_oper.h"
 #include "skull/eval/types/defs.h"
 
 #include "test/testing.h"
+
+#define eval_mult(x, y) eval_oper((x)->type->multiply, x, y)
 
 TEST(multiplying_2_ints, {
 	Variable *var1=make_variable("int", U"var1", false);
