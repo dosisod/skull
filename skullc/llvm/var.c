@@ -72,7 +72,7 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		);
 	}
 	else if (var->type == &TYPE_RUNE) {
-		if (var->alloca) {
+		if (!var->alloca) {
 			var->alloca = LLVMBuildAlloca(
 				builder,
 				LLVMInt32TypeInContext(ctx),

@@ -16,7 +16,6 @@
 #include "eval/eval_mult.h"
 #include "eval/eval_sub.h"
 #include "eval/function.h"
-#include "eval/repl.h"
 #include "eval/types/types.h"
 #include "eval/variable.h"
 
@@ -49,7 +48,6 @@ int main(void) {
 	eval_sub_test_self(&passed);
 	eval_mult_test_self(&passed);
 	function_test_self(&passed);
-	repl_test_self(&passed);
 	Variableest_self(&passed);
 
 	color_test_self(&passed);
