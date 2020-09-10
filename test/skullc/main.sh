@@ -49,9 +49,20 @@ test "if_false.sk"
 test "declare_mut.sk"
 test "return_var.sk"
 test "ignore_comments.sk"
+test "no_eol_works.sk"
 
 test_err "err_var_assign.sk" "Compilation error: variable \"x\" already defined"
 test_err "err_return_int.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""
+test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
+test_err ".sk" "\".sk\" is not a valid name, exiting"
+test_err "not_a_file.sk" "\"./test/skullc/not_a_file.sk\" was not found, exiting"
+test_err "option1\ option2" "too many arguments passed, exiting"
+test_err "illegal_utf8.sk" "illegal UTF8 sequence at character offset 0"
+
+touch test/skullc/read_protected.sk
+chmod 200 test/skullc/read_protected.sk
+test_err "read_protected.sk" "cannot open \"./test/skullc/read_protected.sk\", permission denied"
+rm test/skullc/read_protected.sk
 
 echo
 

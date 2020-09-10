@@ -1,5 +1,0 @@
-msg := "hello world!"
-
-print[msg]
-
-return 0

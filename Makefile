@@ -1,6 +1,6 @@
 include config.mk
 
-all: skull skullc test docs
+all: skullc test docs
 
 .PHONY: skull skullc test docs
 
@@ -13,9 +13,7 @@ options:
 setup:
 	@mkdir $(DIRS) -p
 
-skull: setup | $(ODIR)/skull/main.o $(OBJS_SKULL)
-	@echo "\033[92mLink\033[0m skull"
-	@$(CC) $(ODIR)/skull/main.o $(OBJS_SKULL) -o build/skull/skull $(CFLAGS)
+skull: setup | $(OBJS_SKULL)
 
 skullc: skull | $(ODIR)/skullc/main.o $(OBJS_SKULLC)
 	@echo "\033[92mLink\033[0m skullc"
@@ -42,10 +40,7 @@ clean:
 	@rm -rf build/*
 
 install: clean | skullc
-	@echo "\033[92mInstall\033[0m skull"
-	@install build/skull/skull $(BIN)
 	@mkdir -p $(MANPATH)
-	@install -m 644 docs/skull/skull.1 $(MANPATH)
 	@install -m 644 docs/skullc/skullc.1 $(MANPATH)
 	@echo "\033[92mInstall\033[0m skullc"
 	@install skullc/skullc $(BIN)

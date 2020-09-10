@@ -29,9 +29,6 @@ jobs:
     - name: Run tests
       run: ./build/test/test
 
-    - name: Run Skull unit tests
-      run: ./test/sh/main.sh
-
     - name: Run Skullc unit tests
       run: ./test/skullc/main.sh
 
@@ -48,9 +45,6 @@ jobs:
     - name: Run tests
       run: ./build/test/test
 
-    - name: Run Skull unit tests
-      run: ./test/sh/main.sh
-
     - name: Run Skullc unit tests
       run: ./test/skullc/main.sh
 
@@ -59,7 +53,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - name: Install Skull
+    - name: Install Skullc
       run: sudo CC=gcc-8 make options install -e
 
   test-skullc:
