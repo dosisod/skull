@@ -2,7 +2,7 @@
 
 ![](https://github.com/dosisod/skull/workflows/tests/badge.svg)
 
-The Skull programming language
+The Skull Programming Language
 
 ## Syntax Proposal
 
@@ -11,13 +11,21 @@ import io.print
 
 # this is a comment!
 
-main[] int -> [
+main := [] -> int [
   print["hello world!"]
 
   return 0
 ]
 
 main[]
+```
+
+## Setup
+
+Before you build, you will need to install LLVM dev dependencies:
+
+```
+$ sudo apt install llvm-9-dev
 ```
 
 ## Building and Running
@@ -44,7 +52,7 @@ Tests are best ran via a `pre-commit`:
 $ git commit
 ```
 
-To use these `pre-commit`s, run the following:
+To use the `pre-commit`, run the following:
 
 ```
 $ cp pre-commit .git/hooks/pre-commit
@@ -60,5 +68,5 @@ $ make test && ./build/test/test
 ## Todo
 
 - [x] Runnable Skull files
-- [ ] Skull to C function calls
+- [ ] Skull to/from C bindings
 - [ ] Rich Skull std library
