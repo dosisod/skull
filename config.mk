@@ -61,18 +61,17 @@ else
 	CFLAGS += -Wno-newline-eof
 endif
 
-_OBJS_SKULL := $(patsubst %.c,%.o,$(shell find skull -name "*.c"))
-_OBJS_SKULLC := $(patsubst %.c,%.o,$(shell find skullc -name "*.c" | grep -v "main"))
+_OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|llvm"))
+_OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/llvm -name "*.c") skull/main.c)
 
 ODIR := build/objs
-OBJS_SKULL := $(addprefix $(ODIR)/,$(_OBJS_SKULL))
-OBJS_SKULLC := $(addprefix $(ODIR)/,$(_OBJS_SKULLC))
+OBJS := $(addprefix $(ODIR)/,$(_OBJS))
+OBJS_LLVM := $(addprefix $(ODIR)/,$(_OBJS_LLVM))
 
 DIRS := build/skull \
-	build/skullc \
 	build/test \
 	$(ODIR)/skull/eval/types \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common \
-	$(ODIR)/skullc/llvm \
+	$(ODIR)/skull/llvm \
 	$(ODIR)/test/skull

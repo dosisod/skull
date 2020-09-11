@@ -11,10 +11,10 @@
 #include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
-#include "skullc/llvm/aliases.h"
-#include "skullc/llvm/var.h"
+#include "skull/llvm/aliases.h"
+#include "skull/llvm/var.h"
 
-#include "skullc/llvm/ast.h"
+#include "skull/llvm/ast.h"
 
 #define PANIC(str) \
 	printf("Compilation error: %s\n", c32stombs(str)); \

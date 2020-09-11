@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-$(dirname $0)/_skullc $1 || exit 1
+$(dirname $0)/_skull $1 || exit 1
 
 # exit if passed param is not a .sk file
 [[ "$1" =~ ^.*\.sk$ ]] || exit 0

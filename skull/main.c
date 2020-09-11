@@ -4,8 +4,7 @@
 
 #include "skull/common/io.h"
 #include "skull/common/main.h"
-
-#include "skullc/llvm/ast.h"
+#include "skull/llvm/ast.h"
 
 int main(int argc, char *argv[]) {
 	LLVMContextRef ctx = LLVMContextCreate();

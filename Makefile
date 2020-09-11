@@ -1,35 +1,38 @@
 include config.mk
 
-all: skullc test docs
+all: skull test docs
 
-.PHONY: skull skullc test docs
+.PHONY: skull test docs
 
 options:
 	@echo "\033[92mCC:\033[0m $(CC)"
 	@echo "\033[92mCFLAGS:\033[0m $(CFLAGS)"
-	@echo "\033[92mOBJS_SKULL:\033[0m $(OBJS_SKULL)"
-	@echo "\033[92mOBJS_SKULLC:\033[0m $(OBJS_SKULLC)"
+	@echo "\033[92mOBJS:\033[0m $(OBJS)"
+	@echo "\033[92mOBJS_LLVM:\033[0m $(OBJS_LLVM)"
 
 setup:
 	@mkdir $(DIRS) -p
 
-skull: setup | $(OBJS_SKULL)
 
-skullc: skull | $(ODIR)/skullc/main.o $(OBJS_SKULLC)
-	@echo "\033[92mLink\033[0m skullc"
-	@$(CC) $(ODIR)/skullc/main.o $(OBJS_SKULL) $(OBJS_SKULLC) -o build/skullc/_skullc $(CFLAGS) $(LLVM_LDFLAGS)
-
-test: skull | $(ODIR)/test/skull/main.o
-	@echo "\033[92mLink\033[0m test"
-	@$(CC) $(ODIR)/test/skull/main.o $(OBJS_SKULL) -o build/test/test $(CFLAGS)
+skull: setup | $(OBJS) $(OBJS_LLVM)
+	@echo "\033[92mLink\033[0m skull"
+	@$(CC) $(OBJS) $(OBJS_LLVM) -o build/skull/_skull $(CFLAGS) $(LLVM_LDFLAGS)
 
 $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o $@ $(CFLAGS)
 
-$(ODIR)/skullc/%.o: skullc/%.c
+$(ODIR)/skull/main.o: skull/main.c
 	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o $@ $(CFLAGS) $(LLVM_CFLAGS)
+
+$(ODIR)/skull/llvm/%.o: skull/llvm/%.c
+	@echo "\033[92mCompile\033[0m $<"
+	@$(CC) $< -c -o $@ $(CFLAGS) $(LLVM_CFLAGS)
+
+test: skull | $(ODIR)/test/skull/main.o
+	@echo "\033[92mLink\033[0m test"
+	@$(CC) $(ODIR)/test/skull/main.o $(OBJS) -o build/test/test $(CFLAGS)
 
 docs:
 	@echo "\033[92mBuild\033[0m docs"
@@ -39,10 +42,10 @@ clean:
 	@echo "\033[92mCleaning\033[0m"
 	@rm -rf build/*
 
-install: clean | skullc
+install: clean | skull
 	@mkdir -p $(MANPATH)
-	@install -m 644 docs/skullc/skullc.1 $(MANPATH)
-	@echo "\033[92mInstall\033[0m skullc"
-	@install skullc/skullc $(BIN)
-	@install build/skullc/_skullc $(BIN)
+	@install -m 644 docs/skull/skull.1 $(MANPATH)
+	@echo "\033[92mInstall\033[0m skull"
+	@install skull/skull $(BIN)
+	@install build/skull/_skull $(BIN)
 	@make clean

@@ -18,24 +18,24 @@ pass_or_fail() {
 test() {
 	echo -n "$1 "
 
-	rm -f ./test/skullc/.$1.ll
-	./build/skullc/_skullc ./test/skullc/$1
+	rm -f ./test/sh/.$1.ll
+	./build/skull/_skull ./test/sh/$1
 
-	[ "$(sha ./test/skullc/.$1.ll)" != "$(sha ./test/skullc/_$1.ll)" ]
+	[ "$(sha ./test/sh/.$1.ll)" != "$(sha ./test/sh/_$1.ll)" ]
 	pass_or_fail $?
 
-	rm -f ./test/skullc/.$1.ll
+	rm -f ./test/sh/.$1.ll
 }
 
 test_err() {
 	echo -n "$1 "
 
-	[ "$(./build/skullc/_skullc ./test/skullc/$1)" != "$2" ]
+	[ "$(./build/skull/_skull ./test/sh/$1)" != "$2" ]
 	pass_or_fail $?
 }
 
 echo
-echo "Running Skullc unit tests"
+echo "Running Skull unit tests"
 echo
 
 test "return_0.sk"
@@ -58,7 +58,7 @@ test_err "err_var_assign.sk" "Compilation error: variable \"x\" already defined"
 test_err "err_return_int.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""
 test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_err ".sk" "\".sk\" is not a valid name, exiting"
-test_err "not_a_file.sk" "\"./test/skullc/not_a_file.sk\" was not found, exiting"
+test_err "not_a_file.sk" "\"./test/sh/not_a_file.sk\" was not found, exiting"
 test_err "option1\ option2" "too many arguments passed, exiting"
 test_err "illegal_utf8.sk" "illegal UTF8 sequence at character offset 0"
 test_err "redeclare_var.sk" "Compilation error: variable \"x\" already defined"
@@ -68,10 +68,10 @@ test_err "assign_unknown_var.sk" "Compilation error: variable \"y\" not found"
 test_err "return_non_existent_var.sk" "Compilation error: variable \"x\" not found"
 test_err "return_non_int.sk" "Compilation error: returning non-int variable \"x\" from main"
 
-touch test/skullc/read_protected.sk
-chmod 200 test/skullc/read_protected.sk
-test_err "read_protected.sk" "cannot open \"./test/skullc/read_protected.sk\", permission denied"
-rm test/skullc/read_protected.sk
+touch test/sh/read_protected.sk
+chmod 200 test/sh/read_protected.sk
+test_err "read_protected.sk" "cannot open \"./test/sh/read_protected.sk\", permission denied"
+rm test/sh/read_protected.sk
 
 echo
 

@@ -29,8 +29,8 @@ jobs:
     - name: Run tests
       run: ./build/test/test
 
-    - name: Run Skullc unit tests
-      run: ./test/skullc/main.sh
+    - name: Run Skull unit tests
+      run: ./test/sh/main.sh
 
   test-clang:
     runs-on: ubuntu-latest
@@ -45,18 +45,18 @@ jobs:
     - name: Run tests
       run: ./build/test/test
 
-    - name: Run Skullc unit tests
-      run: ./test/skullc/main.sh
+    - name: Run Skull unit tests
+      run: ./test/sh/main.sh
 
   test-installable:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
 
-    - name: Install Skullc
+    - name: Install Skull
       run: sudo CC=gcc-8 make options install -e
 
-  test-skullc:
+  test-skull-installed:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -64,10 +64,10 @@ jobs:
     - name: Build
       run: sudo CC=gcc-8 make options install -e
 
-    - name: Run Skullc
+    - name: Run Skull
       run: |
-        skullc skullc/main.sk
-        ./skullc/main
+        skull skull/main.sk
+        ./skull/main
 
   test-precommit:
     runs-on: ubuntu-latest

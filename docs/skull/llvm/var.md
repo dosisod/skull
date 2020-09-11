@@ -1,4 +1,4 @@
-# skullc/llvm/var.c
+# skull/llvm/var.c
 
 ```c
 void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx)
