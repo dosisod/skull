@@ -17,7 +17,7 @@ TEST(create_variable, {
 		strcmp(var->type->name, "int") == 0 &&
 		c32scmp(var->name, U"x") &&
 		var->is_const &&
-		var->bytes == 8 &&
+		var->type->bytes == 8 &&
 		var->mem &&
 		!var->alloca
 	);
@@ -38,7 +38,7 @@ TEST(variable_write, {
 	const char32_t *ret = variable_write(var, &data);
 
 	SkullInt val = 0;
-	memcpy(&val, var->mem, var->bytes);
+	memcpy(&val, var->mem, var->type->bytes);
 
 	const bool pass=(
 		!ret &&
@@ -57,7 +57,7 @@ TEST(variable_cannot_write_to_const, {
 	const char32_t *ret = variable_write(var, &data);
 
 	SkullInt val = 0;
-	memcpy(&val, var->mem, var->bytes);
+	memcpy(&val, var->mem, var->type->bytes);
 
 	const bool pass=(
 		val == 0 &&

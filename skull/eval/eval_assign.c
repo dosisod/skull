@@ -142,7 +142,7 @@ const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ct
 	}
 
 	unsigned char *mem;
-	mem = malloc(var_found->bytes * sizeof *mem);
+	mem = malloc(var_found->type->bytes * sizeof *mem);
 	DIE_IF_MALLOC_FAILS(mem);
 
 	variable_read(mem, var_found);

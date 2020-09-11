@@ -7,7 +7,6 @@ typedef struct Variable {
 	const char32_t *name;
 	_Bool is_const;
 
-	size_t bytes;
 	unsigned char *mem;
 
 	void *alloca; // only used to store LLVMValueRef's

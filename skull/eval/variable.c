@@ -25,7 +25,7 @@ char32_t *fmt_var(const Variable *var) {
 Read variable memory of `var` into `dest`.
 */
 void variable_read(void *dest, const Variable *var) {
-	memcpy(dest, var->mem, var->bytes);
+	memcpy(dest, var->mem, var->type->bytes);
 }
 
 /*
@@ -54,7 +54,6 @@ Variable *make_variable(const char *type, const char32_t *name, bool is_const) {
 	var->name = name_copy;
 	var->type = found_type;
 	var->is_const = is_const;
-	var->bytes = found_type->bytes;
 	var->alloca = NULL;
 
 	unsigned char *mem;
@@ -75,7 +74,7 @@ const char32_t *variable_write(const Variable *var, const void *data) {
 		return FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .var = var });
 	}
 
-	memcpy(var->mem, data, var->bytes);
+	memcpy(var->mem, data, var->type->bytes);
 	return NULL;
 }
 
