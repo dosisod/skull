@@ -7,7 +7,7 @@ CC := $(shell readlink -f `which cc`)
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
-	CFLAGS = -g3 -Og
+	CFLAGS = -g3 -O0
 endif
 
 CFLAGS += -std=c18 \

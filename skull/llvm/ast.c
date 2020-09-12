@@ -137,10 +137,7 @@ void llvm_make_if(AstNode **node, LLVMValueRef func, LLVMContextRef ctx, LLVMBui
 		end
 	);
 
-	Token *num_token = (*node)->token->next->next->next->next;
-	if ((*node)->token->next->next->next->token_type == TOKEN_NEWLINE) {
-		num_token = num_token->next;
-	}
+	Token *num_token = (*node)->child->token->next;
 
 	SkullInt *num = eval_integer(num_token, &error);
 	PANIC_ON_ERR(error);

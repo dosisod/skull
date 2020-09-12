@@ -297,7 +297,21 @@ TEST(make_ast_tree_one_param_func, {
 })
 
 TEST(make_ast_tree_if, {
-	TEST_AST_TREE(U"if true [ return 1 ]", AST_NODE_IF, 0, 20);
+	const char32_t *code=U"if true [ return 1 ]";
+	AstNode *node=make_ast_tree(code);
+
+	const bool pass=(
+		node->node_type==AST_NODE_IF &&
+		node->token->begin==code &&
+		node->token_end->end==(code + 7) &&
+		!node->last &&
+		node->child &&
+		node->child->token->begin==(code + 10) &&
+		node->child->token_end->end==(code + 18) &&
+		!node->next
+	);
+	free(node);
+	return pass;
 })
 
 TEST(make_ast_tree_int_const, {
@@ -333,7 +347,7 @@ TEST(make_ast_tree_comment, {
 })
 
 TEST(make_ast_tree_bad_recursive_combo_fails, {
-	TEST_AST_TREE(U"if true [ return 0", AST_NODE_UNKNOWN, 0, 0);
+	TEST_AST_TREE(U"[", AST_NODE_UNKNOWN, 0, 0);
 })
 
 #undef TEST_AST_TREE

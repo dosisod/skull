@@ -126,12 +126,7 @@ MAKE_COMBO(ast_node_one_param_func_combo,
 
 MAKE_COMBO(ast_node_if_combo,
 	{ .tok = TOKEN_KW_IF },
-	{ .tok = TOKEN_BOOL_CONST },
-	{ .tok = TOKEN_BRACKET_OPEN },
-	{ .tok = TOKEN_NEWLINE, .rule = RULE_OPTIONAL },
-		{ .combo = ast_node_return_combo },
-	{ .tok = TOKEN_NEWLINE, .rule = RULE_OPTIONAL },
-	{ .tok = TOKEN_BRACKET_CLOSE }
+	{ .tok = TOKEN_BOOL_CONST }
 );
 
 #undef MAKE_COMBO
@@ -149,15 +144,55 @@ Makes an AST (abstract syntax tree) from a given string.
 */
 AstNode *make_ast_tree(const char32_t *code) {
 	Token *token = tokenize(code);
-	Token *last;
-
 	classify_tokens(token);
+
+	AstNode *tmp = make_ast_tree_(token);
+
+	return tmp;
+}
+
+/*
+Internal AST tree generator.
+*/
+AstNode *make_ast_tree_(Token *token) {
+	Token *last = token;
 
 	AstNode *node = make_ast_node();
 	AstNode *head = node;
 	bool passed = false;
 
 	while (token) {
+		if (token->token_type == TOKEN_BRACKET_OPEN) {
+			AstNode *child = make_ast_tree_(token->next);
+
+			if (!node->last) {
+				head->child = child;
+				child->parent = head;
+			}
+			else {
+				node->last->child = child;
+				child->parent = node->last;
+			}
+
+			if (!child->token_end || !token->next) {
+				return head;
+			}
+			push_ast_node(token->next, &last, 0, &node);
+			node = node->last;
+			token = child->token_end->next;
+
+			// TODO(x): return the last token that was reached so we dont have to do this
+			while (token->token_type != TOKEN_BRACKET_CLOSE) {
+				token = token->next;
+			}
+			token = token->next;
+			continue;
+		}
+
+		if (token->token_type == TOKEN_BRACKET_CLOSE) {
+			break;
+		}
+
 		if (token->token_type == TOKEN_NEWLINE || (
 			node->last && node->last->token_end == token))
 		{
@@ -199,7 +234,7 @@ AstNode *make_ast_tree(const char32_t *code) {
 		node->last = NULL;
 		free(node);
 	}
-	return head;
+	return head; // NOLINT
 }
 
 #undef TRY_PUSH_AST_NODE
