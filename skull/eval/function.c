@@ -21,14 +21,14 @@ const char32_t *func_clear(AstNode *node) {
 /*
 Print out a variable.
 */
-const char32_t *func_print(AstNode *node, Context *ctx) {
+const char32_t *func_print(AstNode *node, Scope *scope) {
 	if (node->node_type != AST_NODE_ONE_PARAM_FUNC ||
 		node->token->next->next->token_type != TOKEN_IDENTIFIER
 	) {
 		return FMT_ERROR(ERR_INVALID_PARAMS, { .str = U"print" });
 	}
 	char32_t *name = token_str(node->token->next->next);
-	const Variable *var = context_find_name(ctx, name);
+	const Variable *var = scope_find_name(scope, name);
 
 	if (!var) {
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = name });

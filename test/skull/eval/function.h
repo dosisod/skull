@@ -53,11 +53,11 @@ TEST(func_print, {
 	Variable *var=make_variable("int", U"x", false);
 	SkullInt num=1234;
 	variable_write(var, &num);
-	Context *ctx=make_context();
-	context_add_var(ctx, var);
+	Scope *scope=make_scope();
+	scope_add_var(scope, var);
 
 	AstNode *node=make_ast_tree(U"print[x]");
-	const char32_t *str=func_print(node, ctx);
+	const char32_t *str=func_print(node, scope);
 
 	const bool pass=c32scmp(str, U"1234");
 
@@ -67,11 +67,11 @@ TEST(func_print, {
 })
 
 TEST(func_print_extra_params_fail, {
-	Context *ctx=make_context();
+	Scope *scope=make_scope();
 	AstNode *node=make_ast_tree(U"print[x, y, z]");
 
 	const bool pass=c32scmp(
-		func_print(node, ctx),
+		func_print(node, scope),
 		ERR_INVALID_PARAMS_(U"print")
 	);
 
@@ -80,11 +80,11 @@ TEST(func_print_extra_params_fail, {
 })
 
 TEST(func_print_bad_var, {
-	Context *ctx=make_context();
+	Scope *scope=make_scope();
 	AstNode *node=make_ast_tree(U"print[x]");
 
 	const bool pass=c32scmp(
-		func_print(node, ctx),
+		func_print(node, scope),
 		ERR_VAR_NOT_FOUND_(U"x")
 	);
 

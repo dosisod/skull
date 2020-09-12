@@ -11,14 +11,14 @@
 #include "skull/eval/repl.h"
 
 /*
-Make and add a variable from `node` to context `ctx`.
+Make and add a variable from `node` to `scope`.
 
 Added variable will be constant if `is_const` is true.
 
 Returns pointer to error message if one occurs, else `NULL`.
 */
-const char32_t *repl_make_var(const AstNode *node, Context *ctx, bool is_const) {
-	if (!ctx) {
+const char32_t *repl_make_var(const AstNode *node, Scope *scope, bool is_const) {
+	if (!scope) {
 		return NULL;
 	}
 
@@ -65,7 +65,7 @@ const char32_t *repl_make_var(const AstNode *node, Context *ctx, bool is_const) 
 			node->next->node_type == AST_NODE_DIV_VAR
 		) {
 			char32_t *lookup = token_str(node->next->token);
-			Variable *new_var = context_find_name(ctx, lookup);
+			Variable *new_var = scope_find_name(scope, lookup);
 
 			if (!new_var) {
 				free(name);
@@ -89,7 +89,7 @@ const char32_t *repl_make_var(const AstNode *node, Context *ctx, bool is_const) 
 		free(type_name);
 	}
 
-	const char32_t *tmp = eval_assign(var, node->next, ctx);
+	const char32_t *tmp = eval_assign(var, node->next, scope);
 	var->is_const = is_const;
 
 	if (tmp) {
@@ -97,7 +97,7 @@ const char32_t *repl_make_var(const AstNode *node, Context *ctx, bool is_const) 
 		free(name);
 		return tmp;
 	}
-	if (context_add_var(ctx, var)) {
+	if (scope_add_var(scope, var)) {
 		free(name);
 		return NULL;
 	}

@@ -16,17 +16,17 @@
 
 #include "skull/eval/eval_assign.h"
 
-const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ctx);
+const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Scope *scope);
 
 #define EVAL_ASSIGN_SETUP(func, cannot, unavail) \
 	char32_t *lhs_str = token_str(node->token); \
-	Variable *lhs_var = context_find_name(ctx, lhs_str); \
+	Variable *lhs_var = scope_find_name(scope, lhs_str); \
 	if (!lhs_var) { \
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lhs_str }); \
 	} \
 	free(lhs_str); \
 	char32_t *rhs_str = token_str(node->token->next->next); \
-	Variable *rhs_var = context_find_name(ctx, rhs_str); \
+	Variable *rhs_var = scope_find_name(scope, rhs_str); \
 	if (!rhs_var) { \
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = rhs_str }); \
 	} \
@@ -49,32 +49,32 @@ const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ct
 /*
 Assign `node` to variable `var`.
 
-Set `ctx` to allow for assigning variables to other variables.
+Set `scope` to allow for assigning variables to other variables.
 
 Return an error (as a string) if any occured, else `NULL`.
 */
-const char32_t *eval_assign(Variable *var, AstNode *node, const Context *ctx) {
+const char32_t *eval_assign(Variable *var, AstNode *node, const Scope *scope) {
 	if (!node) {
 		return FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
 
-	if (ctx && node->node_type == AST_NODE_IDENTIFIER) {
-		return eval_auto_assign(var, node, ctx);
+	if (scope && node->node_type == AST_NODE_IDENTIFIER) {
+		return eval_auto_assign(var, node, scope);
 	}
 
-	if (ctx && node->node_type == AST_NODE_ADD_VAR) {
+	if (scope && node->node_type == AST_NODE_ADD_VAR) {
 		EVAL_ASSIGN_SETUP(add, ERR_CANNOT_ADD, ERR_ADD_UNAVAILABLE);
 	}
 
-	if (ctx && node->node_type == AST_NODE_SUB_VAR) {
+	if (scope && node->node_type == AST_NODE_SUB_VAR) {
 		EVAL_ASSIGN_SETUP(subtract, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
 	}
 
-	if (ctx && node->node_type == AST_NODE_MULT_VAR) {
+	if (scope && node->node_type == AST_NODE_MULT_VAR) {
 		EVAL_ASSIGN_SETUP(multiply, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
 	}
 
-	if (ctx && node->node_type == AST_NODE_DIV_VAR) {
+	if (scope && node->node_type == AST_NODE_DIV_VAR) {
 		EVAL_ASSIGN_SETUP(divide, ERR_CANNOT_DIV, ERR_DIV_UNAVAILABLE);
 	}
 
@@ -129,9 +129,9 @@ const char32_t *eval_assign(Variable *var, AstNode *node, const Context *ctx) {
 /*
 Evaluate assignment via auto assignment operator.
 */
-const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Context *ctx) {
+const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Scope *scope) {
 	char32_t *lookup = token_str(node->token);
-	Variable *var_found = context_find_name(ctx, lookup);
+	Variable *var_found = scope_find_name(scope, lookup);
 
 	if (!var_found) {
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup });

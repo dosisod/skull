@@ -7,7 +7,7 @@ const char32_t *func_clear(AstNode *node)
 > Returns string that when printed, clears the screen.
 
 ```c
-const char32_t *func_print(AstNode *node, Context *ctx)
+const char32_t *func_print(AstNode *node, Scope *scope)
 ```
 
 > Print out a variable.

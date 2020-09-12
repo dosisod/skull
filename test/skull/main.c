@@ -7,7 +7,6 @@
 
 #include "errors.h"
 
-#include "eval/context.h"
 #include "eval/eval_add.h"
 #include "eval/eval_assign.h"
 #include "eval/eval_div.h"
@@ -16,6 +15,7 @@
 #include "eval/eval_mult.h"
 #include "eval/eval_sub.h"
 #include "eval/function.h"
+#include "eval/scope.h"
 #include "eval/types/types.h"
 #include "eval/variable.h"
 
@@ -39,7 +39,7 @@ int main(void) {
 
 	error_test_self(&passed);
 
-	Contextest_self(&passed);
+	scope_test_self(&passed);
 	eval_add_test_self(&passed);
 	eval_assign_test_self(&passed);
 	eval_div_test_self(&passed);
