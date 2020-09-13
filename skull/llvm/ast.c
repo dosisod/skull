@@ -137,6 +137,9 @@ void llvm_make_if(AstNode **node, LLVMValueRef func, LLVMContextRef ctx, LLVMBui
 		end
 	);
 
+	if (!(*node)->child->token) {
+		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = (*node)->token }));
+	}
 	Token *num_token = (*node)->child->token->next;
 
 	SkullInt *num = eval_integer(num_token, &error);

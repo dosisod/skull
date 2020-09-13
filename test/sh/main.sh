@@ -67,6 +67,8 @@ test_err "auto_assign_missing_rhs.sk" "Compilation error: missing value in assig
 test_err "assign_unknown_var.sk" "Compilation error: variable \"y\" not found"
 test_err "return_non_existent_var.sk" "Compilation error: variable \"x\" not found"
 test_err "return_non_int.sk" "Compilation error: returning non-int variable \"x\" from main"
+test_err "return_non_int.sk" "Compilation error: returning non-int variable \"x\" from main"
+test_err "if_missing_body.sk" "Compilation error: unexpected token: \"if\""
 
 touch test/sh/read_protected.sk
 chmod 200 test/sh/read_protected.sk
