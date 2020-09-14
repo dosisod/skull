@@ -180,7 +180,8 @@ TEST(fmt_var_wide_rune_preserved, {
 TEST(fmt_var_str, {
 	Variable *var = make_variable("str", U"x", false);
 
-	AstNode *node = make_ast_tree(U"\"abc\"");
+	const char32_t *error = NULL;
+	AstNode *node = make_ast_tree(U"\"abc\"", &error);
 
 	eval_assign(var, node, NULL);
 
@@ -188,6 +189,7 @@ TEST(fmt_var_str, {
 
 	const bool pass = (
 		str &&
+		!error &&
 		c32scmp(U"abc", str)
 	);
 
@@ -203,7 +205,8 @@ TEST(fmt_var_str, {
 TEST(fmt_var_str_with_escapes, {
 	Variable *var = make_variable("str", U"x", false);
 
-	AstNode *node = make_ast_tree(U"\"\\r\\n\\t\\\\\"");
+	const char32_t *error = NULL;
+	AstNode *node = make_ast_tree(U"\"\\r\\n\\t\\\\\"", &error);
 
 	eval_assign(var, node, NULL);
 
@@ -226,12 +229,14 @@ TEST(fmt_var_str_with_escapes, {
 TEST(fmt_var_str_with_bad_escape, {
 	Variable *var = make_variable("str", U"x", false);
 
-	AstNode *node = make_ast_tree(U"\"\\z\"");
+	const char32_t *ast_err = NULL;
+	AstNode *node = make_ast_tree(U"\"\\z\"", &ast_err);
 
 	const char32_t *err = eval_assign(var, node, NULL);
 
 	const bool pass = (
 		err &&
+		!ast_err &&
 		c32scmp(ERR_BAD_ESCAPE_(U"\\z"), err)
 	);
 

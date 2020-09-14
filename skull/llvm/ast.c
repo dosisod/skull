@@ -31,10 +31,15 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 	char32_t *str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
-	AstNode *node = make_ast_tree(str);
+	const char32_t *error = NULL;
+	AstNode *node = make_ast_tree(str, &error);
 
 	Scope *scope = make_scope();
 	size_t vars_used_last = 0;
+
+	if (!node) {
+		PANIC(error);
+	}
 
 	while (node) {
 		if (node->node_type == AST_NODE_COMMENT) {}

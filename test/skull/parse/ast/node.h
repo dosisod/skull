@@ -1,5 +1,7 @@
 #include <stdbool.h>
 
+#include "skull/common/str.h"
+#include "skull/errors.h"
 #include "skull/parse/ast/node.h"
 #include "skull/parse/classify.h"
 
@@ -209,7 +211,8 @@ TEST(push_ast_node, {
 
 #define TEST_AST_TREE(str, type, begin_offset, end_offset) \
 	const char32_t *code=str; \
-	AstNode *node=make_ast_tree(code); \
+	const char32_t *err=NULL; \
+	AstNode *node=make_ast_tree(code, &err); \
 	if (!node->node_type && !(type)) { \
 		return true; \
 	} \
@@ -243,13 +246,14 @@ TEST(make_ast_tree_auto_mutable_variable_def, {
 	TEST_AST_TREE(U"mut x :=", AST_NODE_MUT_AUTO_VAR_DEF, 0, 8);
 })
 
-TEST(make_ast_tree_with_whitespace, {
-	AstNode *node=make_ast_tree(U"");
+TEST(make_ast_tree_with_nothing, {
+	const char32_t *error = NULL;
+	AstNode *node=make_ast_tree(U"", &error);
 
 	const bool pass=(
-		node &&
-		!node->next &&
-		!node->token
+		error &&
+		c32scmp(ERR_UNEXPECTED_TOKEN_(U""), error) &&
+		node==NULL
 	);
 
 	free(node);
@@ -298,9 +302,11 @@ TEST(make_ast_tree_one_param_func, {
 
 TEST(make_ast_tree_if, {
 	const char32_t *code=U"if true [ return 1 ]";
-	AstNode *node=make_ast_tree(code);
+	const char32_t *error = NULL;
+	AstNode *node=make_ast_tree(code, &error);
 
 	const bool pass=(
+		!error &&
 		node->node_type==AST_NODE_IF &&
 		node->token->begin==code &&
 		node->token_end->end==(code + 7) &&
@@ -353,7 +359,8 @@ TEST(make_ast_tree_bad_recursive_combo_fails, {
 #undef TEST_AST_TREE
 
 TEST(free_ast_tree, {
-	AstNode *node=make_ast_tree(U"hello world");
+	const char32_t *error = NULL;
+	AstNode *node=make_ast_tree(U"hello world", &error);
 
 	free_ast_tree(node);
 	return true;
@@ -374,7 +381,7 @@ void AstNodeest_self(bool *pass) {
 		test_make_ast_tree_mutable_variable_def,
 		test_make_ast_tree_auto_variable_def,
 		test_make_ast_tree_auto_mutable_variable_def,
-		test_make_ast_tree_with_whitespace,
+		test_make_ast_tree_with_nothing,
 		test_make_ast_tree_var_assign,
 		test_make_ast_tree_import,
 		test_make_ast_tree_var_add,

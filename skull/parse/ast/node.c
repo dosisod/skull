@@ -3,6 +3,7 @@
 
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/errors.h"
 #include "skull/parse/classify.h"
 
 #include "skull/parse/ast/node.h"
@@ -142,19 +143,17 @@ MAKE_COMBO(ast_node_if_combo,
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-AstNode *make_ast_tree(const char32_t *code) {
+AstNode *make_ast_tree(const char32_t *code, const char32_t **error) {
 	Token *token = tokenize(code);
 	classify_tokens(token);
 
-	AstNode *tmp = make_ast_tree_(token);
-
-	return tmp;
+	return make_ast_tree_(token, error);
 }
 
 /*
 Internal AST tree generator.
 */
-AstNode *make_ast_tree_(Token *token) {
+AstNode *make_ast_tree_(Token *token, const char32_t **error) {
 	Token *last = token;
 
 	AstNode *node = make_ast_node();
@@ -163,7 +162,11 @@ AstNode *make_ast_tree_(Token *token) {
 
 	while (token) {
 		if (token->token_type == TOKEN_BRACKET_OPEN) {
-			AstNode *child = make_ast_tree_(token->next);
+			AstNode *child = make_ast_tree_(token->next, error);
+			if (!child) {
+				free(head);
+				return NULL;
+			}
 
 			if (!node->last) {
 				head->child = child;
@@ -217,16 +220,18 @@ AstNode *make_ast_tree_(Token *token) {
 		TRY_PUSH_AST_NODE(ast_node_no_param_func_combo, AST_NODE_NO_PARAM_FUNC);
 		TRY_PUSH_AST_NODE(ast_node_one_param_func_combo, AST_NODE_ONE_PARAM_FUNC);
 		TRY_PUSH_AST_NODE(ast_node_if_combo, AST_NODE_IF);
-		TRY_PUSH_AST_NODE(ast_node_comment_combo, AST_NODE_COMMENT)
-		TRY_PUSH_AST_NODE(ast_node_int_combo, AST_NODE_INT_CONST)
-		TRY_PUSH_AST_NODE(ast_node_float_combo, AST_NODE_FLOAT_CONST)
-		TRY_PUSH_AST_NODE(ast_node_bool_combo, AST_NODE_BOOL_CONST)
-		TRY_PUSH_AST_NODE(ast_node_rune_combo, AST_NODE_RUNE_CONST)
-		TRY_PUSH_AST_NODE(ast_node_str_combo, AST_NODE_STR_CONST)
-		TRY_PUSH_AST_NODE(ast_node_identifier_combo, AST_NODE_IDENTIFIER)
-		TRY_PUSH_AST_NODE(ast_node_type_combo, AST_NODE_TYPE_CONST)
+		TRY_PUSH_AST_NODE(ast_node_comment_combo, AST_NODE_COMMENT);
+		TRY_PUSH_AST_NODE(ast_node_int_combo, AST_NODE_INT_CONST);
+		TRY_PUSH_AST_NODE(ast_node_float_combo, AST_NODE_FLOAT_CONST);
+		TRY_PUSH_AST_NODE(ast_node_bool_combo, AST_NODE_BOOL_CONST);
+		TRY_PUSH_AST_NODE(ast_node_rune_combo, AST_NODE_RUNE_CONST);
+		TRY_PUSH_AST_NODE(ast_node_str_combo, AST_NODE_STR_CONST);
+		TRY_PUSH_AST_NODE(ast_node_identifier_combo, AST_NODE_IDENTIFIER);
+		TRY_PUSH_AST_NODE(ast_node_type_combo, AST_NODE_TYPE_CONST);
 
-		break;
+		free(head);
+		*error = FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token });
+		return NULL;
 	}
 
 	if (node->last) {
@@ -343,6 +348,8 @@ AstNode *make_ast_node(void) {
 Frees an AST tree.
 */
 void free_ast_tree(AstNode *node) {
-	free_tokens(node->token);
+	if (node) {
+		free_tokens(node->token);
+	}
 	free(node);
 }
