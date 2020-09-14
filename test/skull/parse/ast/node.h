@@ -366,7 +366,7 @@ TEST(free_ast_tree, {
 	return true;
 })
 
-void AstNodeest_self(bool *pass) {
+void ast_node_test_self(bool *pass) {
 	tests_t tests={
 		test_make_ast_node_struct,
 		test_make_ast_node,

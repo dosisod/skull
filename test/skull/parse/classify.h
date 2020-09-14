@@ -185,79 +185,36 @@ TEST(token_bool_constant, {
 
 #undef TEST_CLASSIFY_TOKEN
 
+#define TEST_CLASSIFY_TOKEN_WITH_LEN(str, tok_type, start_at, end_at) \
+	const char32_t *code=(str); \
+	Token *t=tokenize(code); \
+	classify_tokens(t); \
+	const bool pass=( \
+		t->token_type==(tok_type) && \
+		t->begin==(code + (start_at)) && \
+		t->end==(code + (end_at)) \
+	); \
+	free(t); \
+	return pass
+
 TEST(token_rune_constant, {
-	const char32_t *code=U"'x'";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_RUNE_CONST &&
-		t->begin==(code + 1) &&
-		t->end==(code + 2)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'x'", TOKEN_RUNE_CONST, 1, 2);
 })
 
 TEST(token_str_constant, {
-	const char32_t *code=U"\"xyz\"";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_STR_CONST &&
-		t->begin==(code + 1) &&
-		t->end==(code + 4)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"\"xyz\"", TOKEN_STR_CONST, 1, 4);
 })
 
 TEST(token_Typeype, {
-	const char32_t *code=U"int";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_TYPE &&
-		t->begin==code &&
-		t->end==(code + 3)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"int", TOKEN_TYPE, 0, 3);
 })
 
 TEST(token_comment, {
-	const char32_t *code=U"# this is a comment";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_COMMENT &&
-		t->begin==code &&
-		t->end==(code + 19)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"# this is a comment", TOKEN_COMMENT, 0, 19);
 })
 
 TEST(token_comment_empty, {
-	const char32_t *code=U"#";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_COMMENT &&
-		t->begin==code &&
-		t->end==(code + 1)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"#", TOKEN_COMMENT, 0, 1);
 })
 
 TEST(is_valid_identifier, {
@@ -280,72 +237,26 @@ TEST(is_valid_identifier, {
 })
 
 TEST(is_valid_identifier_token, {
-	Token *t=tokenize(U"x");
-	classify_tokens(t);
-
-	const bool pass=(t->token_type==TOKEN_IDENTIFIER);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"x", TOKEN_IDENTIFIER, 0, 1);
 })
 
 TEST(new_identifier_clip_trailing_colon, {
-	const char32_t *code=U"x: int = 0";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_NEW_IDENTIFIER &&
-		t->end==(code + 1)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"x: int = 0", TOKEN_NEW_IDENTIFIER, 0, 1);
 })
 
 TEST(identifier_cannot_be_type, {
-	const char32_t *code=U"int: int = 0";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_UNKNOWN &&
-		t->end==(code + 4)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"int: int = 0", TOKEN_UNKNOWN, 0, 4);
 })
 
 TEST(identifier_cannot_be_keyword, {
-	const char32_t *code=U"mut: int = 0";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_UNKNOWN &&
-		t->end==(code + 4)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"mut: int = 0", TOKEN_UNKNOWN, 0, 4);
 })
 
 TEST(identifier_cannot_be_func_name, {
-	const char32_t *code=U"print: int = 0";
-	Token *t=tokenize(code);
-	classify_tokens(t);
-
-	const bool pass=(
-		t->token_type==TOKEN_UNKNOWN &&
-		t->end==(code + 6)
-	);
-
-	free(t);
-	return pass;
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"print: int = 0", TOKEN_UNKNOWN, 0, 6);
 })
 
-TEST(token_classifier, {
+TEST(classify_tokens, {
 	const char32_t *code=U"[ ]";
 	Token *t=tokenize(code);
 	classify_tokens(t);
@@ -400,7 +311,7 @@ void classifier_test_self(bool *pass) {
 		test_identifier_cannot_be_type,
 		test_identifier_cannot_be_keyword,
 		test_identifier_cannot_be_func_name,
-		test_token_classifier,
+		test_classify_tokens,
 		NULL
 	};
 

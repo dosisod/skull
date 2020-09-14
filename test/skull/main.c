@@ -28,11 +28,11 @@
 int main(void) {
 	SETUP_LOCALE();
 
-	bool passed=true;
+	bool passed = true;
 
 	testing_test_self(&passed);
 
-	AstNodeest_self(&passed);
+	ast_node_test_self(&passed);
 	classifier_test_self(&passed);
 	tokenizer_test_self(&passed);
 	types_test_self(&passed);
@@ -48,7 +48,7 @@ int main(void) {
 	eval_sub_test_self(&passed);
 	eval_mult_test_self(&passed);
 	function_test_self(&passed);
-	Variableest_self(&passed);
+	variable_test_self(&passed);
 
 	color_test_self(&passed);
 	str_test_self(&passed);

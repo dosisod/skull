@@ -74,332 +74,135 @@ TEST(eval_assign_str, {
 	return pass;
 })
 
+#define TEST_EVAL_ASSIGN_WITH_MATH(data, oper, expected) \
+	Scope *scope=make_scope(); \
+	Variable *var_a = make_variable("int", U"a", false); \
+	SkullInt num = (data); \
+	variable_write(var_a, &num); \
+	scope_add_var(scope, var_a); \
+	const char32_t *error = NULL; \
+	AstNode *node = make_ast_tree(U"a " oper U" a", &error); \
+	Variable *var_b = make_variable("int", U"b", false); \
+	eval_assign(var_b, node, scope); \
+	SkullInt out = 0; \
+	variable_read(&out, var_b); \
+	const bool pass=( \
+		!error && \
+		out == (expected) \
+	); \
+	free_variable(var_a); \
+	free_variable(var_b); \
+	return pass
+
 TEST(eval_assign_add_vars, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt num=1;
-	variable_write(var_a, &num);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a + a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	eval_assign(var_b, node, scope);
-
-	SkullInt data=0;
-	variable_read(&data, var_b);
-
-	const bool pass=(
-		!error &&
-		data==2
-	);
-
-	free_variable(var_a);
-	free_variable(var_b);
-	return pass;
+	TEST_EVAL_ASSIGN_WITH_MATH(1, U"+", 2);
 })
 
 TEST(eval_assign_sub_vars, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt num=1;
-	variable_write(var_a, &num);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a - a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	eval_assign(var_b, node, scope);
-
-	SkullInt data=1;
-	variable_read(&data, var_b);
-
-	const bool pass=(
-		!error &&
-		data==0
-	);
-
-	free_variable(var_a);
-	free_variable(var_b);
-	return pass;
+	TEST_EVAL_ASSIGN_WITH_MATH(1, U"-", 0);
 })
 
 TEST(eval_assign_mult_vars, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt num=2;
-	variable_write(var_a, &num);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a * a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	eval_assign(var_b, node, scope);
-
-	SkullInt data=0;
-	variable_read(&data, var_b);
-
-	const bool pass=(
-		!error &&
-		data==4
-	);
-
-	free_variable(var_a);
-	free_variable(var_b);
-	return pass;
+	TEST_EVAL_ASSIGN_WITH_MATH(2, U"*", 4);
 })
 
 TEST(eval_assign_div_vars, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt num=2;
-	variable_write(var_a, &num);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a / a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	eval_assign(var_b, node, scope);
-
-	SkullInt data=0;
-	variable_read(&data, var_b);
-
-	const bool pass=(
-		!error &&
-		data==1
-	);
-
-	free_variable(var_a);
-	free_variable(var_b);
-	return pass;
+	TEST_EVAL_ASSIGN_WITH_MATH(2, U"/", 1);
 })
 
+#undef TEST_EVAL_ASSIGN_WITH_MATH
+
+#define TEST_EVAL_ASSIGN_DIFFERENT_TYPES(str_type_a, real_type_a, value_a, oper, str_type_b, real_type_b, value_b, expected) \
+	Scope *scope = make_scope(); \
+	Variable *var_a = make_variable(str_type_a, U"a", false); \
+	real_type_a data_a = (value_a); \
+	variable_write(var_a, &data_a); \
+	scope_add_var(scope, var_a); \
+	Variable *var_b = make_variable(str_type_b, U"b", false); \
+	real_type_b data_b = (value_b); \
+	variable_write(var_b, &data_b); \
+	scope_add_var(scope, var_b); \
+	const char32_t *error = NULL; \
+	AstNode *node = make_ast_tree(U"a " oper U" b", &error); \
+	Variable *var_c = make_variable("int", U"c", false); \
+	const char32_t *output = eval_assign(var_c, node, scope); \
+	const bool pass=( \
+		!error && \
+		c32scmp( \
+			(expected), \
+			output \
+		) \
+	); \
+	free_variable(var_a); \
+	free_variable(var_b); \
+	return pass
+
 TEST(eval_assign_add_vars_types_must_match, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	Variable *var_b=make_variable("rune", U"b", false);
-	SkullRune data_b='b';
-	variable_write(var_b, &data_b);
-	scope_add_var(scope, var_b);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a + b", &error);
-	Variable *var_c=make_variable("int", U"c", false);
-	const char32_t *output=eval_assign(var_c, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_CANNOT_(U"add", U"int", U"rune"),
-			output
-		)
+	TEST_EVAL_ASSIGN_DIFFERENT_TYPES(
+		"int", SkullInt, 1, U"+",
+		"rune", SkullRune, 'b',
+		ERR_CANNOT_(U"add", U"int", U"rune")
 	);
-
-	free_variable(var_a);
-	free_variable(var_b);
-	return pass;
 })
 
 TEST(eval_assign_sub_vars_types_must_match, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	Variable *var_b=make_variable("rune", U"b", false);
-	SkullRune data_b='b';
-	variable_write(var_b, &data_b);
-	scope_add_var(scope, var_b);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a - b", &error);
-	Variable *var_c=make_variable("int", U"c", false);
-	const char32_t *output=eval_assign(var_c, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_CANNOT_(U"subtract", U"int", U"rune"),
-			output
-		)
+	TEST_EVAL_ASSIGN_DIFFERENT_TYPES(
+		"int", SkullInt, 1, U"-",
+		"rune", SkullRune, 'b',
+		ERR_CANNOT_(U"subtract", U"int", U"rune")
 	);
-
-	free_variable(var_a);
-	free_variable(var_b);
-	return pass;
 })
 
 TEST(eval_assign_mult_vars_types_must_match, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	Variable *var_b=make_variable("rune", U"b", false);
-	SkullRune data_b='b';
-	variable_write(var_b, &data_b);
-	scope_add_var(scope, var_b);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a * b", &error);
-	Variable *var_c=make_variable("int", U"c", false);
-	const char32_t *output=eval_assign(var_c, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_CANNOT_(U"multiply", U"int", U"rune"),
-			output
-		)
+	TEST_EVAL_ASSIGN_DIFFERENT_TYPES(
+		"int", SkullInt, 1, U"*",
+		"rune", SkullRune, 'b',
+		ERR_CANNOT_(U"multiply", U"int", U"rune")
 	);
-
-	free_variable(var_a);
-	free_variable(var_b);
-	return pass;
 })
 
 TEST(eval_assign_div_vars_types_must_match, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	Variable *var_b=make_variable("rune", U"b", false);
-	SkullRune data_b='b';
-	variable_write(var_b, &data_b);
-	scope_add_var(scope, var_b);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a / b", &error);
-	Variable *var_c=make_variable("int", U"c", false);
-	const char32_t *output=eval_assign(var_c, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_CANNOT_(U"divide", U"int", U"rune"),
-			output
-		)
+	TEST_EVAL_ASSIGN_DIFFERENT_TYPES(
+		"int", SkullInt, 1, U"/",
+		"rune", SkullRune, 'b',
+		ERR_CANNOT_(U"divide", U"int", U"rune")
 	);
-
-	free_variable(var_a);
-	free_variable(var_b);
-	return pass;
 })
 
+#undef TEST_EVAL_ASSIGN_DIFFERENT_TYPES
+
+#define TEST_EVAL_ASSIGN_VAR_MUST_EXIST(oper) \
+	Scope *scope = make_scope(); \
+	Variable *var_a = make_variable("int", U"a", false); \
+	scope_add_var(scope, var_a); \
+	const char32_t *error = NULL; \
+	AstNode *node = make_ast_tree(U"a " oper " b", &error); \
+	Variable *var_b = make_variable("int", U"b", false); \
+	const char32_t *output=eval_assign(var_b, node, scope); \
+	const bool pass = ( \
+		!error && \
+		c32scmp( \
+			ERR_VAR_NOT_FOUND_(U"b"), \
+			output \
+		) \
+	); \
+	free_variable(var_a); \
+	return pass
+
 TEST(eval_assign_add_vars_var_must_exist, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a + b", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_VAR_NOT_FOUND_(U"b"),
-			output
-		)
-	);
-
-	free_variable(var_a);
-	return pass;
+	TEST_EVAL_ASSIGN_VAR_MUST_EXIST(U"+");
 })
 
 TEST(eval_assign_sub_vars_var_must_exist, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a - b", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_VAR_NOT_FOUND_(U"b"),
-			output
-		)
-	);
-
-	free_variable(var_a);
-	return pass;
+	TEST_EVAL_ASSIGN_VAR_MUST_EXIST(U"-");
 })
 
 TEST(eval_assign_mult_vars_var_must_exist, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a * b", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_VAR_NOT_FOUND_(U"b"),
-			output
-		)
-	);
-
-	free_variable(var_a);
-	return pass;
+	TEST_EVAL_ASSIGN_VAR_MUST_EXIST(U"*");
 })
 
 TEST(eval_assign_div_vars_var_must_exist, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a / b", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_VAR_NOT_FOUND_(U"b"),
-			output
-		)
-	);
-
-	free_variable(var_a);
-	return pass;
+	TEST_EVAL_ASSIGN_VAR_MUST_EXIST(U"/");
 })
 
 TEST(eval_assign_check_lhs_var, {
@@ -427,105 +230,53 @@ TEST(eval_assign_check_lhs_var, {
 	return pass;
 })
 
+#define TEST_EVAL_ASSIGN_OPER_AVAILABLE(oper, expected) \
+	Scope *scope=make_scope(); \
+	Variable *var_a = make_variable("bool", U"a", false); \
+	scope_add_var(scope, var_a); \
+	const char32_t *error = NULL; \
+	AstNode *node = make_ast_tree(U"a " oper U" a", &error); \
+	Variable *var_b = make_variable("int", U"b", false); \
+	const char32_t *output=eval_assign(var_b, node, scope); \
+	const bool pass=( \
+		!error && \
+		c32scmp( \
+			(expected), \
+			output \
+		) \
+	); \
+	free_variable(var_a); \
+	return pass
+
 TEST(eval_assign_add_vars_must_be_addable, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("bool", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a + a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_UNAVAILABLE_(U"addition", U"bool"),
-			output
-		)
+	TEST_EVAL_ASSIGN_OPER_AVAILABLE(
+		U"+",
+		ERR_UNAVAILABLE_(U"addition", U"bool")
 	);
-
-	free_variable(var_a);
-	return pass;
 })
 
 TEST(eval_assign_sub_vars_must_be_subtractable, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("bool", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a - a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_UNAVAILABLE_(U"subtraction", U"bool"),
-			output
-		)
+	TEST_EVAL_ASSIGN_OPER_AVAILABLE(
+		U"-",
+		ERR_UNAVAILABLE_(U"subtraction", U"bool")
 	);
-
-	free_variable(var_a);
-	return pass;
 })
 
 TEST(eval_assign_mult_vars_must_be_multipliable, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("bool", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a * a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_UNAVAILABLE_(U"multiplication", U"bool"),
-			output
-		)
+	TEST_EVAL_ASSIGN_OPER_AVAILABLE(
+		U"*",
+		ERR_UNAVAILABLE_(U"multiplication", U"bool")
 	);
-
-	free_variable(var_a);
-	return pass;
 })
 
 TEST(eval_assign_div_vars_must_be_divisible, {
-	Scope *scope=make_scope();
-
-	Variable *var_a=make_variable("bool", U"a", false);
-	SkullInt data_a=1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"a / a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
-
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_UNAVAILABLE_(U"division", U"bool"),
-			output
-		)
+	TEST_EVAL_ASSIGN_OPER_AVAILABLE(
+		U"/",
+		ERR_UNAVAILABLE_(U"division", U"bool")
 	);
-
-	free_variable(var_a);
-	return pass;
 })
+
+#undef TEST_EVAL_ASSIGN_OPER_AVAILABLE
 
 #define TEMP_INT U"99999999999999999999999999999999"
 TEST(eval_assign_int_overflow, {
@@ -697,7 +448,7 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	return pass;
 })
 
-TEST(eval_assign_Typeype, {
+TEST(eval_assign_type_type, {
 	Variable *var=make_variable("type", U"var", false);
 
 	const char32_t *error = NULL;
@@ -773,7 +524,7 @@ void eval_assign_test_self(bool *pass) {
 		test_eval_assign_variable_to_another_check_same_type,
 		test_eval_assign_variable_to_another_check_bad_var,
 		test_eval_assign_string_types_cannot_share_pointers,
-		test_eval_assign_Typeype,
+		test_eval_assign_type_type,
 		test_eval_assign_type_var_cannot_be_type,
 		NULL
 	};

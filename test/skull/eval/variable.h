@@ -249,7 +249,7 @@ TEST(fmt_var_str_with_bad_escape, {
 	return pass;
 })
 
-void Variableest_self(bool *pass) {
+void variable_test_self(bool *pass) {
 	tests_t tests = {
 		test_create_variable,
 		test_create_variable_with_invalid_type_fails,
