@@ -1,79 +1,11 @@
-#include <stdbool.h>
-
-#include "skull/common/str.h"
-#include "skull/eval/eval_oper.h"
-#include "skull/eval/types/defs.h"
+#pragma once
 
 #include "test/testing.h"
 
 #define eval_sub(x, y) eval_oper((x)->type->subtract, x, y)
 
-TEST(subtracting_2_ints, {
-	Variable *var1=make_variable("int", U"var1", false);
-	Variable *var2=make_variable("int", U"var2", false);
+TEST_DECL(subtracting_2_ints)
+TEST_DECL(subtracting_2_floats)
+TEST_DECL(subtracting_vars_with_different_types_fail)
 
-	const SkullInt num1=5;
-	variable_write(var1, &num1);
-	const SkullInt num2=3;
-	variable_write(var2, &num2);
-	Variable *var3=eval_sub(var1, var2);
-
-	SkullInt result=0;
-	variable_read(&result, var3);
-
-	const bool pass=(result==2);
-
-	free_variable(var1);
-	free_variable(var2);
-	free_variable(var3);
-
-	return pass;
-})
-
-TEST(subtracting_2_floats, {
-	Variable *var1=make_variable("float", U"var1", false);
-	Variable *var2=make_variable("float", U"var2", false);
-
-	const SkullFloat num1=5.0;
-	variable_write(var1, &num1);
-	const SkullFloat num2=3.0;
-	variable_write(var2, &num2);
-	Variable *var3=eval_sub(var1, var2);
-
-	SkullFloat result=0.0;
-	variable_read(&result, var3);
-
-	//casting int to make compiler happy
-	const bool pass=((int)result==(int)2.0);
-
-	free_variable(var1);
-	free_variable(var2);
-	free_variable(var3);
-
-	return pass;
-})
-
-TEST(subtracting_vars_with_different_types_fail, {
-	Variable *var1=make_variable("int", U"var1", false);
-	Variable *var2=make_variable("float", U"var2", false);
-	Variable *var3=eval_sub(var1, var2);
-
-	const bool pass = !var3;
-
-	free_variable(var1);
-	free_variable(var2);
-	free(var3);
-
-	return pass;
-})
-
-void eval_sub_test_self(bool *pass) {
-	tests_t tests={
-		test_subtracting_2_ints,
-		test_subtracting_2_floats,
-		test_subtracting_vars_with_different_types_fail,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+void eval_sub_test_self(_Bool *pass);

@@ -9,10 +9,10 @@ options:
 	@echo "\033[92mCFLAGS:\033[0m $(CFLAGS)"
 	@echo "\033[92mOBJS:\033[0m $(OBJS)"
 	@echo "\033[92mOBJS_LLVM:\033[0m $(OBJS_LLVM)"
+	@echo "\033[92mOBJS_TEST:\033[0m $(OBJS_TEST)"
 
 setup:
 	@mkdir $(DIRS) -p
-
 
 skull: setup | $(OBJS) $(OBJS_LLVM)
 	@echo "\033[92mLink\033[0m skull"
@@ -30,9 +30,9 @@ $(ODIR)/skull/llvm/%.o: skull/llvm/%.c
 	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o $@ $(CFLAGS) $(LLVM_CFLAGS)
 
-test: skull | $(ODIR)/test/skull/main.o
+test: skull | $(OBJS_TEST)
 	@echo "\033[92mLink\033[0m test"
-	@$(CC) $(ODIR)/test/skull/main.o $(OBJS) -o build/test/test $(CFLAGS)
+	@$(CC) $(OBJS) $(OBJS_TEST) -o build/test/test $(CFLAGS)
 
 docs:
 	@echo "\033[92mBuild\033[0m docs"

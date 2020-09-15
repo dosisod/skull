@@ -1,11 +1,4 @@
-#include <limits.h>
-#include <stdbool.h>
-
-#include "skull/common/str.h"
-#include "skull/errors.h"
-#include "skull/eval/eval_integer.h"
-#include "skull/eval/types/defs.h"
-#include "skull/parse/classify.h"
+#pragma once
 
 #include "test/testing.h"
 
@@ -22,54 +15,13 @@
 	free(num); \
 	return pass
 
-TEST(convert_integer_token, {
-	TEST_EVAL_INT_CONVERT(U"1234", 1234, NULL);
-})
+TEST_DECL(convert_integer_token)
+TEST_DECL(convert_negative_integer_token)
+TEST_DECL(integer_overflow_returns_error)
+TEST_DECL(integer_underflow_returns_error)
+TEST_DECL(convert_hex_integer)
+TEST_DECL(convert_octal_integer)
+TEST_DECL(convert_binary_integer)
+TEST_DECL(non_integer_token_fails)
 
-TEST(convert_negative_integer_token, {
-	TEST_EVAL_INT_CONVERT(U"-1234", -1234, NULL);
-})
-
-#define TEMP_INT U"9999999999999999999"
-TEST(integer_overflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(TEMP_INT, LLONG_MAX, ERR_OVERFLOW_(TEMP_INT));
-})
-
-TEST(integer_underflow_returns_error, {
-	TEST_EVAL_INT_CONVERT(U"-" TEMP_INT, LLONG_MIN, ERR_OVERFLOW_(U"-"TEMP_INT));
-})
-#undef TEMP_INT
-
-TEST(convert_hex_integer, {
-	TEST_EVAL_INT_CONVERT(U"0xff", 255, NULL);
-})
-
-TEST(convert_octal_integer, {
-	TEST_EVAL_INT_CONVERT(U"0o777", 0777, NULL);
-})
-
-TEST(convert_binary_integer, {
-	TEST_EVAL_INT_CONVERT(U"0b1111", 15, NULL);
-})
-
-TEST(non_integer_token_fails, {
-	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, ERR_TYPE_MISMATCH_(U"int"));
-})
-
-#undef TEST_EVAL_INT_CONVERT
-
-void eval_integer_test_self(bool *pass) {
-	tests_t tests={
-		test_convert_integer_token,
-		test_convert_negative_integer_token,
-		test_integer_overflow_returns_error,
-		test_integer_underflow_returns_error,
-		test_convert_hex_integer,
-		test_convert_octal_integer,
-		test_convert_binary_integer,
-		test_non_integer_token_fails,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+void eval_integer_test_self(_Bool *pass);

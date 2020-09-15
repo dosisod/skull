@@ -62,10 +62,12 @@ else
 endif
 
 _OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|llvm"))
+_OBJS_TEST := $(patsubst %.c,%.o,$(shell find test/skull -name "*.c") test/testing.c)
 _OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/llvm -name "*.c") skull/main.c)
 
 ODIR := build/objs
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
+OBJS_TEST := $(addprefix $(ODIR)/,$(_OBJS_TEST))
 OBJS_LLVM := $(addprefix $(ODIR)/,$(_OBJS_LLVM))
 
 DIRS := build/skull \
@@ -74,4 +76,6 @@ DIRS := build/skull \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common \
 	$(ODIR)/skull/llvm \
-	$(ODIR)/test/skull
+	$(ODIR)/test/skull/eval/types \
+	$(ODIR)/test/skull/parse/ast \
+	$(ODIR)/test/skull/common
