@@ -16,6 +16,19 @@ _Bool test_##name (const char **func) { \
 #define TEST_DECL(name) \
 _Bool test_##name (const char **func);
 
+#define PASS return true
+
+#define FAIL return false
+
+#define ASSERT_TRUTHY(x) \
+	if (!(x)) { return false; }
+
+#define ASSERT_FALSEY(x) \
+	if ((x)) { return false; }
+
+#define ASSERT_EQUAL(x, y) \
+	if ((x) != (y)) { return false; }
+
 typedef struct fail_t {
 	const char *name;
 	struct fail_t *next;

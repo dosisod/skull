@@ -67,13 +67,43 @@ void run_many_tests(const char *name, tests_t tests, bool *pass) {
 	}
 }
 
-TEST(dummy_function, {
-	return true;
+TEST(pass_macro, {
+	PASS;
+})
+
+bool test_fail_macro_(void) {
+	FAIL;
+}
+
+TEST(fail_macro, {
+	return test_fail_macro_() == false;
+})
+
+TEST(assert_truthy, {
+	ASSERT_TRUTHY(true);
+
+	PASS;
+})
+
+TEST(assert_falsey, {
+	ASSERT_FALSEY(false);
+
+	PASS;
+})
+
+TEST(assert_equal, {
+	ASSERT_EQUAL(1, 1);
+
+	PASS;
 })
 
 void testing_test_self(bool *pass) {
 	tests_t tests = {
-		test_dummy_function,
+		test_pass_macro,
+		test_fail_macro,
+		test_assert_truthy,
+		test_assert_falsey,
+		test_assert_equal,
 		NULL
 	};
 
