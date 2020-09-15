@@ -1,6 +1,5 @@
 #include <stdlib.h>
 
-#include "skull/common/color.h"
 #include "skull/common/str.h"
 #include "skull/errors.h"
 #include "skull/eval/eval_assign.h"

@@ -19,7 +19,6 @@
 #include "eval/types/types.h"
 #include "eval/variable.h"
 
-#include "common/color.h"
 #include "common/str.h"
 #include "common/wegex.h"
 
@@ -50,7 +49,6 @@ int main(void) {
 	function_test_self(&passed);
 	variable_test_self(&passed);
 
-	color_test_self(&passed);
 	str_test_self(&passed);
 	wegex_test_self(&passed);
 
