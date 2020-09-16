@@ -96,15 +96,10 @@ TEST(append_default_types, {
 	return new_count==count;
 })
 
-void types_test_self(bool *pass) {
-	tests_t tests={
-		test_make_new_type,
-		test_make_new_type_rejects_non_unique_type,
-		test_find_type,
-		test_free_types,
-		test_append_default_types,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(types,
+	test_make_new_type,
+	test_make_new_type_rejects_non_unique_type,
+	test_find_type,
+	test_free_types,
+	test_append_default_types
+)

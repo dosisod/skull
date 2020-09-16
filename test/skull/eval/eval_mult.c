@@ -65,13 +65,8 @@ TEST(multiplying_vars_with_different_types_fail, {
 	return pass;
 })
 
-void eval_mult_test_self(bool *pass) {
-	tests_t tests={
-		test_multiplying_2_ints,
-		test_multiplying_2_floats,
-		test_multiplying_vars_with_different_types_fail,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(eval_mult,
+	test_multiplying_2_ints,
+	test_multiplying_2_floats,
+	test_multiplying_vars_with_different_types_fail
+)

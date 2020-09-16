@@ -121,18 +121,13 @@ TEST(free_ast_node_with_null, {
 	return true;
 })
 
-void function_test_self(bool *pass) {
-	tests_t tests={
-		test_is_func_name,
-		test_is_func_name_with_null,
-		test_func_clear,
-		test_func_clear_params_fail,
-		test_func_print,
-		test_func_print_extra_params_fail,
-		test_func_print_bad_var,
-		test_free_ast_node_with_null,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(function,
+	test_is_func_name,
+	test_is_func_name_with_null,
+	test_func_clear,
+	test_func_clear_params_fail,
+	test_func_print,
+	test_func_print_extra_params_fail,
+	test_func_print_bad_var,
+	test_free_ast_node_with_null
+)

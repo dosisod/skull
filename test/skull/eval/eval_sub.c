@@ -66,13 +66,8 @@ TEST(subtracting_vars_with_different_types_fail, {
 	return pass;
 })
 
-void eval_sub_test_self(bool *pass) {
-	tests_t tests={
-		test_subtracting_2_ints,
-		test_subtracting_2_floats,
-		test_subtracting_vars_with_different_types_fail,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(eval_sub,
+	test_subtracting_2_ints,
+	test_subtracting_2_floats,
+	test_subtracting_vars_with_different_types_fail
+)

@@ -89,16 +89,11 @@ TEST(scope_find_name_when_null, {
 	return !scope_find_name(NULL, U"anything");
 })
 
-void scope_test_self(bool *pass) {
-	tests_t tests={
-		test_make_scope,
-		test_scope_find_name,
-		test_add_vars_to_scope,
-		test_cannot_add_same_varname_to_scope,
-		test_free_scope,
-		test_scope_find_name_when_null,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(scope,
+	test_make_scope,
+	test_scope_find_name,
+	test_add_vars_to_scope,
+	test_cannot_add_same_varname_to_scope,
+	test_free_scope,
+	test_scope_find_name_when_null
+)

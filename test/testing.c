@@ -97,15 +97,10 @@ TEST(assert_equal, {
 	PASS;
 })
 
-void testing_test_self(bool *pass) {
-	tests_t tests = {
-		test_pass_macro,
-		test_fail_macro,
-		test_assert_truthy,
-		test_assert_falsey,
-		test_assert_equal,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(testing,
+	test_pass_macro,
+	test_fail_macro,
+	test_assert_truthy,
+	test_assert_falsey,
+	test_assert_equal
+)

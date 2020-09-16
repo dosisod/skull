@@ -86,14 +86,9 @@ TEST(adding_vars_with_different_types_fail, {
 	return pass;
 })
 
-void eval_add_test_self(bool *pass) {
-	tests_t tests={
-		test_adding_2_ints,
-		test_adding_2_floats,
-		test_adding_2_strs,
-		test_adding_vars_with_different_types_fail,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(eval_add,
+	test_adding_2_ints,
+	test_adding_2_floats,
+	test_adding_2_strs,
+	test_adding_vars_with_different_types_fail
+)

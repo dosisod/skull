@@ -42,16 +42,11 @@ TEST(non_float_token_fails, {
 
 #undef TEST_EVAL_FLOAT_CONVERT
 
-void eval_float_test_self(bool *pass) {
-	tests_t tests={
-		test_convert_float_token,
-		test_convert_negative_float_token,
-		test_convert_infinity_float_token,
-		test_convert_overflow_float,
-		test_convert_neg_infinity_float_token,
-		test_non_float_token_fails,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(eval_float,
+	test_convert_float_token,
+	test_convert_negative_float_token,
+	test_convert_infinity_float_token,
+	test_convert_overflow_float,
+	test_convert_neg_infinity_float_token,
+	test_non_float_token_fails
+)

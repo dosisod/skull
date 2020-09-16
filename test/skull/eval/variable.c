@@ -237,32 +237,27 @@ TEST(fmt_var_str_with_bad_escape, {
 	return pass;
 })
 
-void variable_test_self(bool *pass) {
-	tests_t tests = {
-		test_create_variable,
-		test_create_variable_with_invalid_type_fails,
-		test_variable_write,
-		test_variable_cannot_write_to_const,
-		test_variable_read,
-		test_make_variable_with_invalid_name_fails,
-		test_free_variable,
-		test_free_null_variable_is_ok,
-		test_fmt_var_int,
-		test_fmt_var_float,
-		test_fmt_var_float_zero,
-		test_fmt_var_float_small,
-		test_fmt_var_float_trailing_zero,
-		test_fmt_var_float_infinity,
-		test_fmt_var_float_neg_infinity,
-		test_fmt_var_bool,
-		test_fmt_var_type,
-		test_fmt_var_rune,
-		test_fmt_var_wide_rune_preserved,
-		test_fmt_var_str,
-		test_fmt_var_str_with_escapes,
-		test_fmt_var_str_with_bad_escape,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(variable,
+	test_create_variable,
+	test_create_variable_with_invalid_type_fails,
+	test_variable_write,
+	test_variable_cannot_write_to_const,
+	test_variable_read,
+	test_make_variable_with_invalid_name_fails,
+	test_free_variable,
+	test_free_null_variable_is_ok,
+	test_fmt_var_int,
+	test_fmt_var_float,
+	test_fmt_var_float_zero,
+	test_fmt_var_float_small,
+	test_fmt_var_float_trailing_zero,
+	test_fmt_var_float_infinity,
+	test_fmt_var_float_neg_infinity,
+	test_fmt_var_bool,
+	test_fmt_var_type,
+	test_fmt_var_rune,
+	test_fmt_var_wide_rune_preserved,
+	test_fmt_var_str,
+	test_fmt_var_str_with_escapes,
+	test_fmt_var_str_with_bad_escape
+)

@@ -78,14 +78,9 @@ TEST(dividing_vars_with_different_types_fail, {
 	return pass;
 })
 
-void eval_div_test_self(bool *pass) {
-	tests_t tests={
-		test_dividing_2_ints,
-		test_divide_by_zero,
-		test_dividing_2_floats,
-		test_dividing_vars_with_different_types_fail,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(eval_div,
+	test_dividing_2_ints,
+	test_divide_by_zero,
+	test_dividing_2_floats,
+	test_dividing_vars_with_different_types_fail
+)

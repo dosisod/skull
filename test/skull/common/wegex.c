@@ -152,20 +152,15 @@ TEST(wegex_optional_modifiers_at_eol, {
 	);
 })
 
-void wegex_test_self(bool *pass) {
-	tests_t tests={
-		test_no_modifiers,
-		test_star_modifier,
-		test_plus_modifier,
-		test_ternary_modifier,
-		test_charset_syntax,
-		test_wegex_number_match,
-		test_wegex_hexadecimal_match,
-		test_wegex_ascii_alpha_match,
-		test_wegex_full_alpha_match,
-		test_wegex_optional_modifiers_at_eol,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(wegex,
+	test_no_modifiers,
+	test_star_modifier,
+	test_plus_modifier,
+	test_ternary_modifier,
+	test_charset_syntax,
+	test_wegex_number_match,
+	test_wegex_hexadecimal_match,
+	test_wegex_ascii_alpha_match,
+	test_wegex_full_alpha_match,
+	test_wegex_optional_modifiers_at_eol
+)

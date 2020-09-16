@@ -271,28 +271,23 @@ TEST(make_token, {
 	return pass;
 })
 
-void tokenizer_test_self(bool *pass) {
-	tests_t tests={
-		test_is_whitespace,
-		test_is_quote,
-		test_tokenize_single_token,
-		test_tokenize_no_tokens,
-		test_whitespace_between_tokens,
-		test_whitespace_at_eol_ignored,
-		test_whitespace_inside_double_quotes_respected,
-		test_whitespace_inside_single_quotes_respected,
-		test_brackets_always_make_their_own_token,
-		test_newlines_always_make_their_own_token,
-		test_free_tokens,
-		test_token_len,
-		test_token_cmp,
-		test_token_cmp_match_exact_strings_only,
-		test_token_str,
-		test_tokenize_comment,
-		test_tokenize_trailing_comment,
-		test_make_token,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(tokenizer,
+	test_is_whitespace,
+	test_is_quote,
+	test_tokenize_single_token,
+	test_tokenize_no_tokens,
+	test_whitespace_between_tokens,
+	test_whitespace_at_eol_ignored,
+	test_whitespace_inside_double_quotes_respected,
+	test_whitespace_inside_single_quotes_respected,
+	test_brackets_always_make_their_own_token,
+	test_newlines_always_make_their_own_token,
+	test_free_tokens,
+	test_token_len,
+	test_token_cmp,
+	test_token_cmp_match_exact_strings_only,
+	test_token_str,
+	test_tokenize_comment,
+	test_tokenize_trailing_comment,
+	test_make_token
+)

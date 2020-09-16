@@ -46,18 +46,13 @@ TEST(non_integer_token_fails, {
 
 #undef TEST_EVAL_INT_CONVERT
 
-void eval_integer_test_self(bool *pass) {
-	tests_t tests={
-		test_convert_integer_token,
-		test_convert_negative_integer_token,
-		test_integer_overflow_returns_error,
-		test_integer_underflow_returns_error,
-		test_convert_hex_integer,
-		test_convert_octal_integer,
-		test_convert_binary_integer,
-		test_non_integer_token_fails,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(eval_integer,
+	test_convert_integer_token,
+	test_convert_negative_integer_token,
+	test_integer_overflow_returns_error,
+	test_integer_underflow_returns_error,
+	test_convert_hex_integer,
+	test_convert_octal_integer,
+	test_convert_binary_integer,
+	test_non_integer_token_fails
+)

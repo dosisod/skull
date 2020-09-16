@@ -207,27 +207,22 @@ TEST(c32sunescape, {
 	);
 })
 
-void str_test_self(bool *pass) {
-	tests_t tests={
-		test_strrstr,
-		test_c32sncpy,
-		test_c32sncpy_fill_nulls,
-		test_c32slcpy,
-		test_c32sdup,
-		test_c32scat,
-		test_c32slen,
-		test_c32stombs,
-		test_c32stombs_with_null,
-		test_mbstoc32s,
-		test_c32scmp,
-		test_c32sncmp,
-		test_c32schr,
-		test_c32isalnum,
-		test_c32isdigit,
-		test_c32isxdigit,
-		test_c32sunescape,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(str,
+	test_strrstr,
+	test_c32sncpy,
+	test_c32sncpy_fill_nulls,
+	test_c32slcpy,
+	test_c32sdup,
+	test_c32scat,
+	test_c32slen,
+	test_c32stombs,
+	test_c32stombs_with_null,
+	test_mbstoc32s,
+	test_c32scmp,
+	test_c32sncmp,
+	test_c32schr,
+	test_c32isalnum,
+	test_c32isdigit,
+	test_c32isxdigit,
+	test_c32sunescape
+)

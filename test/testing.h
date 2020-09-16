@@ -16,6 +16,13 @@ _Bool test_##name (const char **func) { \
 #define TEST_DECL(name) \
 _Bool test_##name (const char **func);
 
+#define TEST_SELF(name, ...) \
+void name##_test_self (_Bool *pass) { \
+	run_many_tests(__FILE__, (tests_t){ \
+		__VA_ARGS__, NULL \
+	}, pass); \
+}
+
 #define PASS return true
 
 #define FAIL return false

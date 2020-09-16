@@ -111,13 +111,8 @@ TEST(fmt_error_stringify, {
 	);
 })
 
-void error_test_self(bool *pass) {
-	tests_t tests = {
-		test_is_error_msg,
-		test_fmt_error,
-		test_fmt_error_stringify,
-		NULL
-	};
-
-	run_many_tests(__FILE__, tests, pass);
-}
+TEST_SELF(error,
+	test_is_error_msg,
+	test_fmt_error,
+	test_fmt_error_stringify
+)
