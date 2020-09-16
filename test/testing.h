@@ -23,18 +23,18 @@ void name##_test_self (_Bool *pass) { \
 	}, pass); \
 }
 
-#define PASS return true
+#define PASS return 1
 
-#define FAIL return false
+#define FAIL return 0
 
 #define ASSERT_TRUTHY(x) \
-	if (!(x)) { return false; }
+	if (!(x)) { return 0; }
 
 #define ASSERT_FALSEY(x) \
-	if ((x)) { return false; }
+	if ((x)) { return 0; }
 
 #define ASSERT_EQUAL(x, y) \
-	if ((x) != (y)) { return false; }
+	if ((x) != (y)) { return 0; }
 
 typedef struct fail_t {
 	const char *name;

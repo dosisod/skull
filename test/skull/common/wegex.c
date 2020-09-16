@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 #include "skull/common/wegex.h"
 #include "skull/parse/tokenize.h"
 
@@ -7,149 +5,149 @@
 #include "test/testing.h"
 
 TEST(no_modifiers, {
-	return (
-		wegex_match("abc", U"abc") &&
-		!wegex_match("abc", U"abcd") &&
-		!wegex_match("abc", U"a")
-	);
+	ASSERT_TRUTHY(wegex_match("abc", U"abc"));
+	ASSERT_FALSEY(wegex_match("abc", U"abcd"));
+	ASSERT_FALSEY(wegex_match("abc", U"a"));
+
+	PASS;
 })
 
 TEST(star_modifier, {
-	return (
-		wegex_match("*x", U"x") &&
-		wegex_match("*x", U"xxx") &&
-		wegex_match("*xa", U"a") &&
-		wegex_match("*xa", U"xxxxa") &&
-		!wegex_match("*x", U"xa") &&
-		wegex_match("*x", U"")
-	);
+	ASSERT_TRUTHY(wegex_match("*x", U"x"));
+	ASSERT_TRUTHY(wegex_match("*x", U"xxx"));
+	ASSERT_TRUTHY(wegex_match("*xa", U"a"));
+	ASSERT_TRUTHY(wegex_match("*xa", U"xxxxa"));
+	ASSERT_TRUTHY(wegex_match("*x", U""));
+	ASSERT_FALSEY(wegex_match("*x", U"xa"));
+
+	PASS;
 })
 
 TEST(plus_modifier, {
-	return (
-		wegex_match("+x", U"x") &&
-		wegex_match("+x", U"xxx") &&
-		!wegex_match("+xa", U"a") &&
-		!wegex_match("+x", U"xa") &&
-		!wegex_match("+x", U"")
-	);
+	ASSERT_TRUTHY(wegex_match("+x", U"x"));
+	ASSERT_TRUTHY(wegex_match("+x", U"xxx"));
+	ASSERT_FALSEY(wegex_match("+xa", U"a"));
+	ASSERT_FALSEY(wegex_match("+x", U"xa"));
+	ASSERT_FALSEY(wegex_match("+x", U""));
+
+	PASS;
 })
 
 TEST(ternary_modifier, {
-	return (
-		wegex_match("?x", U"x") &&
-		wegex_match("?xa", U"xa") &&
-		wegex_match("?xa", U"a") &&
-		wegex_match("?x", U"")
-	);
+	ASSERT_TRUTHY(wegex_match("?x", U"x"));
+	ASSERT_TRUTHY(wegex_match("?xa", U"xa"));
+	ASSERT_TRUTHY(wegex_match("?xa", U"a"));
+	ASSERT_TRUTHY(wegex_match("?x", U""));
+
+	PASS;
 })
 
 TEST(charset_syntax, {
-	return (
-		wegex_match("+[abc]", U"a") &&
-		wegex_match("+[abc]", U"b") &&
-		wegex_match("+[abc]", U"c") &&
-		wegex_match("+[abc]", U"aabbcc") &&
-		!wegex_match("+[abc]", U"d") &&
-		!wegex_match("+[abc]", U"ax")
-	);
+	ASSERT_TRUTHY(wegex_match("+[abc]", U"a"));
+	ASSERT_TRUTHY(wegex_match("+[abc]", U"b"));
+	ASSERT_TRUTHY(wegex_match("+[abc]", U"c"));
+	ASSERT_TRUTHY(wegex_match("+[abc]", U"aabbcc"));
+	ASSERT_FALSEY(wegex_match("+[abc]", U"d"));
+	ASSERT_FALSEY(wegex_match("+[abc]", U"ax"));
+
+	PASS;
 })
 
 TEST(wegex_number_match, {
-	return (
-		wegex_match("\n", U"0") &&
-		wegex_match("\n", U"1") &&
-		wegex_match("\n", U"2") &&
-		wegex_match("\n", U"3") &&
-		wegex_match("\n", U"4") &&
-		wegex_match("\n", U"5") &&
-		wegex_match("\n", U"6") &&
-		wegex_match("\n", U"7") &&
-		wegex_match("\n", U"8") &&
-		wegex_match("\n", U"9") &&
-		wegex_match("+\n", U"1234") &&
-		!wegex_match("\n", U"abc")
-	);
+	ASSERT_TRUTHY(wegex_match("\n", U"0"));
+	ASSERT_TRUTHY(wegex_match("\n", U"1"));
+	ASSERT_TRUTHY(wegex_match("\n", U"2"));
+	ASSERT_TRUTHY(wegex_match("\n", U"3"));
+	ASSERT_TRUTHY(wegex_match("\n", U"4"));
+	ASSERT_TRUTHY(wegex_match("\n", U"5"));
+	ASSERT_TRUTHY(wegex_match("\n", U"6"));
+	ASSERT_TRUTHY(wegex_match("\n", U"7"));
+	ASSERT_TRUTHY(wegex_match("\n", U"8"));
+	ASSERT_TRUTHY(wegex_match("\n", U"9"));
+	ASSERT_TRUTHY(wegex_match("+\n", U"1234"));
+	ASSERT_FALSEY(wegex_match("\n", U"abc"));
+
+	PASS;
 })
 
 TEST(wegex_hexadecimal_match, {
-	return (
-		wegex_match("\b", U"a") &&
-		wegex_match("\b", U"b") &&
-		wegex_match("\b", U"c") &&
-		wegex_match("\b", U"d") &&
-		wegex_match("\b", U"e") &&
-		wegex_match("\b", U"f") &&
-		wegex_match("\b", U"A") &&
-		wegex_match("\b", U"B") &&
-		wegex_match("\b", U"C") &&
-		wegex_match("\b", U"D") &&
-		wegex_match("\b", U"E") &&
-		wegex_match("\b", U"F") &&
-		wegex_match("\b", U"0") &&
-		wegex_match("\b", U"1") &&
-		wegex_match("\b", U"2") &&
-		wegex_match("\b", U"3") &&
-		wegex_match("\b", U"4") &&
-		wegex_match("\b", U"5") &&
-		wegex_match("\b", U"6") &&
-		wegex_match("\b", U"7") &&
-		wegex_match("\b", U"8") &&
-		wegex_match("\b", U"9") &&
-		!wegex_match("\b", U"z")
-	);
+	ASSERT_TRUTHY(wegex_match("\b", U"a"));
+	ASSERT_TRUTHY(wegex_match("\b", U"b"));
+	ASSERT_TRUTHY(wegex_match("\b", U"c"));
+	ASSERT_TRUTHY(wegex_match("\b", U"d"));
+	ASSERT_TRUTHY(wegex_match("\b", U"e"));
+	ASSERT_TRUTHY(wegex_match("\b", U"f"));
+	ASSERT_TRUTHY(wegex_match("\b", U"A"));
+	ASSERT_TRUTHY(wegex_match("\b", U"B"));
+	ASSERT_TRUTHY(wegex_match("\b", U"C"));
+	ASSERT_TRUTHY(wegex_match("\b", U"D"));
+	ASSERT_TRUTHY(wegex_match("\b", U"E"));
+	ASSERT_TRUTHY(wegex_match("\b", U"F"));
+	ASSERT_TRUTHY(wegex_match("\b", U"0"));
+	ASSERT_TRUTHY(wegex_match("\b", U"1"));
+	ASSERT_TRUTHY(wegex_match("\b", U"2"));
+	ASSERT_TRUTHY(wegex_match("\b", U"3"));
+	ASSERT_TRUTHY(wegex_match("\b", U"4"));
+	ASSERT_TRUTHY(wegex_match("\b", U"5"));
+	ASSERT_TRUTHY(wegex_match("\b", U"6"));
+	ASSERT_TRUTHY(wegex_match("\b", U"7"));
+	ASSERT_TRUTHY(wegex_match("\b", U"8"));
+	ASSERT_TRUTHY(wegex_match("\b", U"9"));
+	ASSERT_FALSEY(wegex_match("\b", U"z"));
+
+	PASS;
 })
 
 TEST(wegex_ascii_alpha_match, {
-	return (
-		wegex_match("\a", U"a") &&
-		wegex_match("\a", U"b") &&
-		wegex_match("\a", U"c") &&
-		wegex_match("\a", U"x") &&
-		wegex_match("\a", U"y") &&
-		wegex_match("\a", U"z") &&
-		wegex_match("\a", U"A") &&
-		wegex_match("\a", U"B") &&
-		wegex_match("\a", U"C") &&
-		wegex_match("\a", U"X") &&
-		wegex_match("\a", U"Y") &&
-		wegex_match("\a", U"Z") &&
-		!wegex_match("\a", U"0")
-	);
+	ASSERT_TRUTHY(wegex_match("\a", U"a"));
+	ASSERT_TRUTHY(wegex_match("\a", U"b"));
+	ASSERT_TRUTHY(wegex_match("\a", U"c"));
+	ASSERT_TRUTHY(wegex_match("\a", U"x"));
+	ASSERT_TRUTHY(wegex_match("\a", U"y"));
+	ASSERT_TRUTHY(wegex_match("\a", U"z"));
+	ASSERT_TRUTHY(wegex_match("\a", U"A"));
+	ASSERT_TRUTHY(wegex_match("\a", U"B"));
+	ASSERT_TRUTHY(wegex_match("\a", U"C"));
+	ASSERT_TRUTHY(wegex_match("\a", U"X"));
+	ASSERT_TRUTHY(wegex_match("\a", U"Y"));
+	ASSERT_TRUTHY(wegex_match("\a", U"Z"));
+	ASSERT_FALSEY(wegex_match("\a", U"0"));
+
+	PASS;
 })
 
 TEST(wegex_full_alpha_match, {
-	return (
-		wegex_match("\f", U"a") &&
-		wegex_match("\f", U"b") &&
-		wegex_match("\f", U"c") &&
-		wegex_match("\f", U"x") &&
-		wegex_match("\f", U"y") &&
-		wegex_match("\f", U"z") &&
-		wegex_match("\f", U"A") &&
-		wegex_match("\f", U"B") &&
-		wegex_match("\f", U"C") &&
-		wegex_match("\f", U"X") &&
-		wegex_match("\f", U"Y") &&
-		wegex_match("\f", U"Z") &&
-		wegex_match("\f", U"0") &&
-		wegex_match("\f", U"9") &&
-		!wegex_match("\f", U"!")
-	);
+	ASSERT_TRUTHY(wegex_match("\f", U"a"));
+	ASSERT_TRUTHY(wegex_match("\f", U"b"));
+	ASSERT_TRUTHY(wegex_match("\f", U"c"));
+	ASSERT_TRUTHY(wegex_match("\f", U"x"));
+	ASSERT_TRUTHY(wegex_match("\f", U"y"));
+	ASSERT_TRUTHY(wegex_match("\f", U"z"));
+	ASSERT_TRUTHY(wegex_match("\f", U"A"));
+	ASSERT_TRUTHY(wegex_match("\f", U"B"));
+	ASSERT_TRUTHY(wegex_match("\f", U"C"));
+	ASSERT_TRUTHY(wegex_match("\f", U"X"));
+	ASSERT_TRUTHY(wegex_match("\f", U"Y"));
+	ASSERT_TRUTHY(wegex_match("\f", U"Z"));
+	ASSERT_TRUTHY(wegex_match("\f", U"0"));
+	ASSERT_TRUTHY(wegex_match("\f", U"9"));
+	ASSERT_FALSEY(wegex_match("\f", U"!"));
+
+	PASS;
 })
 
 TEST(wegex_optional_modifiers_at_eol, {
-	return (
-		wegex_match("x?y", U"xy") &&
-		wegex_match("x?y", U"x") &&
-		wegex_match("x*y", U"xyy") &&
-		wegex_match("x*y", U"xy") &&
-		wegex_match("x*y", U"x") &&
-		wegex_match("x?y?z", U"xyz") &&
-		wegex_match("x?y?z", U"xy") &&
-		wegex_match("x?y?z", U"xz") &&
-		wegex_match("x?y?z", U"x")
-	);
+	ASSERT_TRUTHY(wegex_match("x?y", U"xy"));
+	ASSERT_TRUTHY(wegex_match("x?y", U"x"));
+	ASSERT_TRUTHY(wegex_match("x*y", U"xyy"));
+	ASSERT_TRUTHY(wegex_match("x*y", U"xy"));
+	ASSERT_TRUTHY(wegex_match("x*y", U"x"));
+	ASSERT_TRUTHY(wegex_match("x?y?z", U"xyz"));
+	ASSERT_TRUTHY(wegex_match("x?y?z", U"xy"));
+	ASSERT_TRUTHY(wegex_match("x?y?z", U"xz"));
+	ASSERT_TRUTHY(wegex_match("x?y?z", U"x"));
+
+	PASS;
 })
 
 TEST_SELF(wegex,
