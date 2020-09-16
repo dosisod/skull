@@ -20,7 +20,8 @@ char32_t *c32sdup(const char32_t *str) {
 	ret = malloc((len + 1) * sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 
-	c32slcpy(ret, str, len + 1);
+	c32sncpy(ret, str, len + 1);
+	ret[len] = '\0';
 
 	return ret;
 }
@@ -39,17 +40,10 @@ char32_t *c32scat(const char32_t *s1, const char32_t *s2) {
 	DIE_IF_MALLOC_FAILS(ret);
 
 	c32sncpy(ret, s1, len_s1);
-	c32slcpy(ret + len_s1, s2, len_s2 + 1);
+	c32sncpy(ret + len_s1, s2, len_s2 + 1);
+	ret[len_s2 + len_s1] = '\0';
 
 	return ret;
-}
-
-/*
-Similar to `strlcpy`, but for `char32_t` types.
-*/
-void c32slcpy(char32_t *dest, const char32_t *src, size_t n) {
-	c32sncpy(dest, src, n);
-	dest[n - 1] = '\0';
 }
 
 /*

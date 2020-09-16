@@ -17,12 +17,6 @@ char32_t *c32scat(const char32_t *s1, const char32_t *s2)
 > The result of this function must be freed.
 
 ```c
-void c32slcpy(char32_t *dest, const char32_t *src, size_t n)
-```
-
-> Similar to `strlcpy`, but for `char32_t` types.
-
-```c
 void c32sncpy(char32_t *dest, const char32_t *src, size_t n)
 ```
 

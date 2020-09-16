@@ -152,7 +152,8 @@ char32_t *token_str(const Token *token) {
 	str = malloc((len + 1) * sizeof *str);
 	DIE_IF_MALLOC_FAILS(str);
 
-	c32slcpy(str, token->begin, len + 1);
+	c32sncpy(str, token->begin, len + 1);
+	str[len] = '\0';
 
 	return str;
 }

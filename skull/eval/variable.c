@@ -49,7 +49,8 @@ Variable *make_variable(const char *type, const char32_t *name, bool is_const) {
 	name_copy = malloc((len + 1) * sizeof *name_copy);
 	DIE_IF_MALLOC_FAILS(name_copy);
 
-	c32slcpy(name_copy, name, len + 1);
+	c32sncpy(name_copy, name, len + 1);
+	name_copy[len] = '\0';
 
 	var->name = name_copy;
 	var->type = found_type;

@@ -9,7 +9,6 @@ _Bool c32sunescape_wrapper(const char32_t *, const char32_t, const char32_t *);
 TEST_DECL(strrstr)
 TEST_DECL(c32sncpy)
 TEST_DECL(c32sncpy_fill_nulls)
-TEST_DECL(c32slcpy)
 TEST_DECL(c32sdup)
 TEST_DECL(c32scat)
 TEST_DECL(c32slen)

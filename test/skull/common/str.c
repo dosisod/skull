@@ -49,18 +49,6 @@ TEST(c32sncpy_fill_nulls, {
 	PASS;
 })
 
-TEST(c32slcpy, {
-	const char32_t *data = U"hello there!";
-	char32_t buf[6];
-
-	c32slcpy(buf, data, 6);
-
-	ASSERT_EQUAL(c32slen(buf), 5);
-	ASSERT_TRUTHY(c32scmp(buf, U"hello"));
-
-	PASS;
-})
-
 TEST(c32sdup, {
 	char32_t *str = c32sdup(U"hello world");
 
@@ -211,7 +199,6 @@ TEST_SELF(str,
 	test_strrstr,
 	test_c32sncpy,
 	test_c32sncpy_fill_nulls,
-	test_c32slcpy,
 	test_c32sdup,
 	test_c32scat,
 	test_c32slen,
