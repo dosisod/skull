@@ -9,7 +9,6 @@ TEST(make_scope, {
 	Scope *scope = make_scope();
 
 	ASSERT_EQUAL(scope->vars_used, 0);
-	ASSERT_FALSEY(scope->child);
 
 	free(scope);
 	PASS;

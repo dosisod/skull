@@ -4,9 +4,7 @@
 
 #define SCOPE_MAX_VARS 256
 
-typedef struct Scope {
-	struct Scope *child;
-
+typedef struct {
 	size_t vars_used;
 	Variable *vars[SCOPE_MAX_VARS];
 } Scope;
