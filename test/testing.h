@@ -33,6 +33,9 @@ void name##_test_self (_Bool *pass) { \
 #define ASSERT_FALSEY(x) \
 	if ((x)) { return 0; }
 
+#define ASSERT_NOT_EQUAL(x, y) \
+	if ((x) == (y)) { return 0; }
+
 #define ASSERT_EQUAL(x, y) \
 	if ((x) != (y)) { return 0; }
 

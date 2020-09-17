@@ -14,22 +14,22 @@
 TEST(create_variable, {
 	Variable *var = make_variable("int", U"x", true);
 
-	const bool pass = (
-		strcmp(var->type->name, "int") == 0 &&
-		c32scmp(var->name, U"x") &&
-		var->is_const &&
-		var->type->bytes == 8 &&
-		var->mem &&
-		!var->alloca
-	);
+	ASSERT_EQUAL(strcmp(var->type->name, "int"), 0);
+	ASSERT_TRUTHY(c32scmp(var->name, U"x"));
+	ASSERT_TRUTHY(var->is_const);
+	ASSERT_EQUAL(var->type->bytes, 8);
+	ASSERT_TRUTHY(var->mem);
+	ASSERT_FALSEY(var->alloca);
 
 	free_variable(var);
 
-	return pass;
+	PASS;
 })
 
 TEST(create_variable_with_invalid_type_fails, {
-	return !make_variable("not_a_type", U"x", true);
+	ASSERT_FALSEY(make_variable("not_a_type", U"x", true));
+
+	PASS;
 })
 
 TEST(variable_write, {
@@ -41,14 +41,12 @@ TEST(variable_write, {
 	SkullInt val = 0;
 	memcpy(&val, var->mem, var->type->bytes);
 
-	const bool pass=(
-		!ret &&
-		val == 1234
-	);
+	ASSERT_FALSEY(ret);
+	ASSERT_EQUAL(val, 1234);
 
 	free_variable(var);
 
-	return pass;
+	PASS;
 })
 
 TEST(variable_cannot_write_to_const, {
@@ -60,17 +58,15 @@ TEST(variable_cannot_write_to_const, {
 	SkullInt val = 0;
 	memcpy(&val, var->mem, var->type->bytes);
 
-	const bool pass=(
-		val == 0 &&
-		c32scmp(
-			ERR_CANNOT_ASSIGN_CONST_(U"x"),
-			ret
-		)
-	);
+	ASSERT_EQUAL(val, 0);
+	ASSERT_TRUTHY(c32scmp(
+		ERR_CANNOT_ASSIGN_CONST_(U"x"),
+		ret
+	));
 
 	free_variable(var);
 
-	return pass;
+	PASS;
 })
 
 TEST(variable_read, {
@@ -81,21 +77,21 @@ TEST(variable_read, {
 	SkullInt val = 0;
 	variable_read(&val, var);
 
-	const bool pass = (val == 1234);
+	ASSERT_EQUAL(val, 1234);
 
 	free_variable(var);
 
-	return pass;
+	PASS;
 })
 
 TEST(make_variable_with_invalid_name_fails, {
 	Variable *var = make_variable("int", U"1nvalid", false);
 
-	const bool pass = !var;
+	ASSERT_FALSEY(var);
 
 	free_variable(var);
 
-	return pass;
+	PASS;
 })
 
 TEST(free_variable, {
@@ -103,18 +99,18 @@ TEST(free_variable, {
 
 	if (!var || !var->mem) {
 		free_variable(var);
-		return false;
+		FAIL;
 	}
 
 	free_variable(var);
 
-	return true;
+	PASS;
 })
 
 TEST(free_null_variable_is_ok, {
 	free_variable(NULL);
 
-	return true;
+	PASS;
 })
 
 TEST(fmt_var_int, {
@@ -175,11 +171,9 @@ TEST(fmt_var_str, {
 
 	char32_t *str = fmt_var(var);
 
-	const bool pass = (
-		str &&
-		!error &&
-		c32scmp(U"abc", str)
-	);
+	ASSERT_TRUTHY(str);
+	ASSERT_FALSEY(error);
+	ASSERT_TRUTHY(c32scmp(U"abc", str));
 
 	char32_t *mem = NULL;
 	variable_read(&mem, var);
@@ -187,7 +181,7 @@ TEST(fmt_var_str, {
 
 	free(str);
 	free_variable(var);
-	return pass;
+	PASS;
 })
 
 TEST(fmt_var_str_with_escapes, {
@@ -200,10 +194,8 @@ TEST(fmt_var_str_with_escapes, {
 
 	char32_t *str = fmt_var(var);
 
-	const bool pass = (
-		str &&
-		c32scmp(U"\r\n\t\\", str)
-	);
+	ASSERT_TRUTHY(str);
+	ASSERT_TRUTHY(c32scmp(U"\r\n\t\\", str));
 
 	char32_t *mem = NULL;
 	variable_read(&mem, var);
@@ -211,7 +203,7 @@ TEST(fmt_var_str_with_escapes, {
 
 	free(str);
 	free_variable(var);
-	return pass;
+	PASS;
 })
 
 TEST(fmt_var_str_with_bad_escape, {
@@ -222,11 +214,9 @@ TEST(fmt_var_str_with_bad_escape, {
 
 	const char32_t *err = eval_assign(var, node, NULL);
 
-	const bool pass = (
-		err &&
-		!ast_err &&
-		c32scmp(ERR_BAD_ESCAPE_(U"\\z"), err)
-	);
+	ASSERT_TRUTHY(err);
+	ASSERT_FALSEY(ast_err);
+	ASSERT_TRUTHY(c32scmp(ERR_BAD_ESCAPE_(U"\\z"), err));
 
 	char32_t *mem = NULL;
 	variable_read(&mem, var);
@@ -234,7 +224,7 @@ TEST(fmt_var_str_with_bad_escape, {
 
 	free((char32_t *)err);
 	free_variable(var);
-	return pass;
+	PASS;
 })
 
 TEST_SELF(variable,

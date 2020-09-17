@@ -30,28 +30,26 @@ TEST(eval_assign_rune_escaped, {
 })
 
 TEST(eval_assign_str, {
-	const char32_t *code=U"\"abc\"";
+	const char32_t *code = U"\"abc\"";
 	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(code, &error);
+	AstNode *node = make_ast_tree(code, &error);
 
-	Variable *var=make_variable("str", U"x", false);
+	Variable *var = make_variable("str", U"x", false);
 
 	eval_assign(var, node, NULL);
 
-	char32_t *data=NULL;
+	char32_t *data = NULL;
 	variable_read(&data, var);
 
-	const bool pass=(
-		!error &&
-		c32scmp(data, U"abc")
-	);
+	ASSERT_FALSEY(error);
+	ASSERT_TRUTHY(c32scmp(data, U"abc"));
 
-	char32_t *mem=NULL;
+	char32_t *mem = NULL;
 	variable_read(&mem, var);
 	free(mem);
-
 	free_variable(var);
-	return pass;
+
+	PASS;
 })
 
 TEST(eval_assign_add_vars, {
@@ -119,28 +117,27 @@ TEST(eval_assign_div_vars_var_must_exist, {
 })
 
 TEST(eval_assign_check_lhs_var, {
-	Scope *scope=make_scope();
+	Scope *scope = make_scope();
 
-	Variable *var_a=make_variable("int", U"a", false);
-	SkullInt data_a=1;
+	Variable *var_a = make_variable("int", U"a", false);
+	SkullInt data_a = 1;
 	variable_write(var_a, &data_a);
 	scope_add_var(scope, var_a);
 
 	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"b + a", &error);
-	Variable *var_b=make_variable("int", U"b", false);
-	const char32_t *output=eval_assign(var_b, node, scope);
+	AstNode *node = make_ast_tree(U"b + a", &error);
+	Variable *var_b = make_variable("int", U"b", false);
+	const char32_t *output = eval_assign(var_b, node, scope);
 
-	const bool pass=(
-		!error &&
-		c32scmp(
-			ERR_VAR_NOT_FOUND_(U"b"),
-			output
-		)
-	);
+	ASSERT_FALSEY(error);
+
+	ASSERT_TRUTHY(c32scmp(
+		ERR_VAR_NOT_FOUND_(U"b"),
+		output
+	));
 
 	free_variable(var_a);
-	return pass;
+	PASS;
 })
 
 TEST(eval_assign_add_vars_must_be_addable, {
@@ -208,174 +205,162 @@ TEST(eval_assign_cannot_assign_non_strs, {
 })
 
 TEST(eval_assign_variable_to_another, {
-	Variable *var1=make_variable("int", U"var1", false);
-	Variable *var2=make_variable("int", U"var2", false);
+	Variable *var1 = make_variable("int", U"var1", false);
+	Variable *var2 = make_variable("int", U"var2", false);
 
-	SkullInt var1_data=0;
-	SkullInt var2_data=1234;
+	SkullInt var1_data = 0;
+	SkullInt var2_data = 1234;
 	variable_write(var1, &var1_data);
 	variable_write(var2, &var2_data);
 
 	//assign var2 to var1
 	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"var2", &error);
+	AstNode *node = make_ast_tree(U"var2", &error);
 
-	Scope *scope=make_scope();
+	Scope *scope = make_scope();
 	scope_add_var(scope, var1);
 	scope_add_var(scope, var2);
 
-	const char32_t *output=eval_assign(var1, node, scope);
+	const char32_t *output = eval_assign(var1, node, scope);
 
-	SkullInt data=0;
+	SkullInt data = 0;
 	variable_read(&data, var1);
 
-	const bool pass=(
-		!error &&
-		!output &&
-		data==1234
-	);
+	ASSERT_FALSEY(error);
+	ASSERT_FALSEY(output);
+	ASSERT_EQUAL(data, 1234);
 
 	if (!is_error_msg(output)) {
 		free((char32_t *)output);
 	}
 
 	free_scope(scope);
-	return pass;
+	PASS;
 })
 
 TEST(eval_assign_variable_to_another_check_same_type, {
-	Variable *var1=make_variable("int", U"var1", false);
-	Variable *var2=make_variable("bool", U"var2", false);
+	Variable *var1 = make_variable("int", U"var1", false);
+	Variable *var2 = make_variable("bool", U"var2", false);
 
-	SkullInt var1_data=0;
-	bool var2_data=false;
+	SkullInt var1_data = 0;
+	bool var2_data = false;
 	variable_write(var1, &var1_data);
 	variable_write(var2, &var2_data);
 
 	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"var2", &error);
+	AstNode *node = make_ast_tree(U"var2", &error);
 
-	Scope *scope=make_scope();
+	Scope *scope = make_scope();
 	scope_add_var(scope, var1);
 	scope_add_var(scope, var2);
 
-	const char32_t *output=eval_assign(var1, node, scope);
+	const char32_t *output = eval_assign(var1, node, scope);
 
-	const bool pass=(
-		!error &&
-		c32scmp(
-			output,
-			ERR_TYPE_MISMATCH_(U"int")
-		)
-	);
+	ASSERT_FALSEY(error);
+	ASSERT_TRUTHY(c32scmp(
+		output,
+		ERR_TYPE_MISMATCH_(U"int")
+	));
 
 	if (!is_error_msg(output)) {
 		free((char32_t *)output);
 	}
 
 	free_scope(scope);
-	return pass;
+	PASS;
 })
 
 TEST(eval_assign_variable_to_another_check_bad_var, {
-	Variable *var=make_variable("int", U"var", false);
+	Variable *var = make_variable("int", U"var", false);
 
-	SkullInt tmp=0;
+	SkullInt tmp = 0;
 	variable_write(var, &tmp);
 
 	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"not_a_variable", &error);
+	AstNode *node = make_ast_tree(U"not_a_variable", &error);
 
-	Scope *scope=make_scope();
+	Scope *scope = make_scope();
 	scope_add_var(scope, var);
 
-	const bool pass=(
-		!error &&
-		c32scmp(
-			eval_assign(var, node, scope),
-			ERR_VAR_NOT_FOUND_(U"not_a_variable")
-		)
-	);
+	ASSERT_FALSEY(error);
+	ASSERT_TRUTHY(c32scmp(
+		eval_assign(var, node, scope),
+		ERR_VAR_NOT_FOUND_(U"not_a_variable")
+	));
 
 	free_scope(scope);
-	return pass;
+	PASS;
 })
 
 TEST(eval_assign_string_types_cannot_share_pointers, {
-	Variable *var1=make_variable("str", U"var1", false);
-	Variable *var2=make_variable("str", U"var2", false);
+	Variable *var1 = make_variable("str", U"var1", false);
+	Variable *var2 = make_variable("str", U"var2", false);
 
-	const char32_t *str1=NULL;
+	const char32_t *str1 = NULL;
 	variable_write(var1, &str1);
 
-	const char32_t *str2=c32sdup(U"anything");
+	const char32_t *str2 = c32sdup(U"anything");
 	variable_write(var2, &str2);
-	var2->is_const=true;
+	var2->is_const = true;
 
 	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"var2", &error);
+	AstNode *node = make_ast_tree(U"var2", &error);
 
-	Scope *scope=make_scope();
+	Scope *scope = make_scope();
 	scope_add_var(scope, var1);
 	scope_add_var(scope, var2);
 
-	const char32_t *output=eval_assign(var1, node, scope);
+	const char32_t *output = eval_assign(var1, node, scope);
 
-	char32_t *after_var1=NULL;
+	char32_t *after_var1 = NULL;
 	variable_read(&after_var1, var1);
 
-	char32_t *after_var2=NULL;
+	char32_t *after_var2 = NULL;
 	variable_read(&after_var2, var2);
 
-	const bool pass=(
-		!error &&
-		!output &&
-		c32scmp(after_var1, str2) &&
-		c32scmp(after_var2, str2) &&
-		after_var1!=after_var2
-	);
+	ASSERT_FALSEY(error);
+	ASSERT_FALSEY(output);
+	ASSERT_TRUTHY(c32scmp(after_var1, str2));
+	ASSERT_TRUTHY(c32scmp(after_var1, str2));
+	ASSERT_NOT_EQUAL(after_var1, after_var2);
 
 	free_scope(scope);
-	return pass;
+	PASS;
 })
 
 TEST(eval_assign_type_type, {
-	Variable *var=make_variable("type", U"var", false);
+	Variable *var = make_variable("type", U"var", false);
 
 	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"int", &error);
+	AstNode *node = make_ast_tree(U"int", &error);
 
-	Scope *scope=make_scope();
-	const char32_t *output=eval_assign(var, node, scope);
+	Scope *scope = make_scope();
+	const char32_t *output = eval_assign(var, node, scope);
 
-	Type *after=NULL;
+	Type *after = NULL;
 	variable_read(&after, var);
 
-	const bool pass=(
-		!error &&
-		!output &&
-		after==&TYPE_INT
-	);
+	ASSERT_FALSEY(error);
+	ASSERT_FALSEY(output);
+	ASSERT_EQUAL(after, &TYPE_INT);
 
 	free_scope(scope);
-	return pass;
+	PASS;
 })
 
 TEST(eval_assign_type_var_cannot_be_type, {
-	Variable *var=make_variable("type", U"var", false);
+	Variable *var = make_variable("type", U"var", false);
 
 	const char32_t *error = NULL;
-	AstNode *node=make_ast_tree(U"type", &error);
+	AstNode *node = make_ast_tree(U"type", &error);
 
-	Scope *scope=make_scope();
+	Scope *scope = make_scope();
 
-	const bool pass=(
-		!error &&
-		eval_assign(var, node, scope)==ERR_TYPE_TYPE_BAD
-	);
+	ASSERT_FALSEY(error);
+	ASSERT_EQUAL(eval_assign(var, node, scope), ERR_TYPE_TYPE_BAD);
 
 	free_scope(scope);
-	return pass;
+	PASS;
 })
 
 TEST_SELF(eval_assign,

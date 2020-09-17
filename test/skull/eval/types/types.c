@@ -8,92 +8,89 @@
 #include "test/testing.h"
 
 TEST(make_new_type, {
-	Type *current=TYPES_AVAILABLE;
+	Type *current = TYPES_AVAILABLE;
 
 	make_new_type("test_type", 1);
 
-	bool pass=false;
+	bool pass = false;
 	while (current) {
 		if (strcmp(current->name, "test_type") == 0) {
-			pass=true;
+			pass = true;
 		}
-		current=current->next;
+		current = current->next;
 	}
 
-	current=(TYPES_AVAILABLE)->next;
-	Type *last=TYPES_AVAILABLE;
+	current = (TYPES_AVAILABLE)->next;
+	Type *last = TYPES_AVAILABLE;
 
-	if (!current) {
-		return false;
-	}
+	ASSERT_TRUTHY(current);
 
 	while (current->next) {
-		last=current;
-		current=current->next;
+		last = current;
+		current = current->next;
 	}
 
 	free(current);
-	last->next=NULL;
+	last->next = NULL;
 
 	return pass;
 })
 
 TEST(make_new_type_rejects_non_unique_type, {
-	const bool inserted1=make_new_type("test_type", 1);
+	const bool inserted1 = make_new_type("test_type", 1);
 
-	Type *type=find_type("test_type");
-	if (!type) {
-		return false;
-	}
+	Type *type = find_type("test_type");
+	ASSERT_TRUTHY(type);
 
-	const bool inserted2=make_new_type("test_type", 1);
-	if (type->next) {
-		return false;
-	}
+	const bool inserted2 = make_new_type("test_type", 1);
+	ASSERT_FALSEY(type->next);
 
 	free_types();
 
-	return (
-		inserted1 &&
-		!inserted2
-	);
+	ASSERT_TRUTHY(inserted1);
+	ASSERT_FALSEY(inserted2);
+	PASS;
 })
 
 TEST(find_type, {
-	Type *type=find_type("int");
+	Type *type = find_type("int");
 
-	const bool pass=(type==&TYPE_INT);
+	ASSERT_EQUAL(type, &TYPE_INT);
 
-	return pass;
+	PASS;
 })
 
 TEST(free_types, {
 	make_new_type("test_type", 1);
 
 	free_types();
-	return !TYPE_BOOL.next;
+	ASSERT_FALSEY(TYPE_BOOL.next);
+
+	PASS;
 })
 
 TEST(append_default_types, {
-	Type *head=TYPES_AVAILABLE;
+	Type *head = TYPES_AVAILABLE;
 
-	unsigned count=0;
+	unsigned count = 0;
 	while (head) {
 		count++;
-		head=head->next;
+		head = head->next;
 	}
 
-	head=TYPES_AVAILABLE;
+	head = TYPES_AVAILABLE;
 
-	unsigned new_count=0;
+	unsigned new_count = 0;
 	while (head) {
 		new_count++;
-		head=head->next;
+		head = head->next;
 	}
 
 	free_types();
 
-	return new_count==count;
+	ASSERT_EQUAL(new_count, count);
+
+	PASS;
 })
 
 TEST_SELF(types,

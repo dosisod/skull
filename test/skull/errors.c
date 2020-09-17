@@ -8,11 +8,11 @@
 #include "test/testing.h"
 
 TEST(is_error_msg, {
-	return (
-		is_error_msg(ERR_TYPE_TYPE_BAD) &&
-		!is_error_msg(U"not an error msg") &&
-		!is_error_msg(NULL)
-	);
+	ASSERT_TRUTHY(is_error_msg(ERR_TYPE_TYPE_BAD));
+	ASSERT_FALSEY(is_error_msg(U"not an error msg"));
+	ASSERT_FALSEY(is_error_msg(NULL));
+
+	PASS;
 })
 
 bool fmt_error_wrapper(const char32_t *fmt, ErrorMsg msgs[], const char32_t *expected) {
@@ -28,46 +28,66 @@ bool fmt_error_wrapper(const char32_t *fmt, ErrorMsg msgs[], const char32_t *exp
 }
 
 TEST(fmt_error, {
-	return (
-		fmt_error_wrapper(U"%", (ErrorMsg[]){ {0} }, U"") &&
+	ASSERT_TRUTHY(
+		fmt_error_wrapper(U"%", (ErrorMsg[]){ {0} }, U"")
+	);
 
+	ASSERT_TRUTHY(
+		fmt_error_wrapper(U"%", (ErrorMsg[]){ {0} }, U"")
+	);
+
+	ASSERT_TRUTHY(
 		fmt_error_wrapper(U"%", (ErrorMsg[]){
 			{ .str = U"abc" },
 			{0}
-		}, U"abc") &&
+		}, U"abc")
+	);
 
+	ASSERT_TRUTHY(
 		fmt_error_wrapper(U"[%]", (ErrorMsg[]){
 			{ .str = U"" },
 			{0}
-		}, U"[]") &&
+		}, U"[]")
+	);
 
+	ASSERT_TRUTHY(
 		fmt_error_wrapper(U"[%]", (ErrorMsg[]){
 			{ .str = U"abc" },
 			{0}
-		}, U"[abc]") &&
+		}, U"[abc]")
+	);
 
+	ASSERT_TRUTHY(
 		fmt_error_wrapper(U"% %", (ErrorMsg[]){
 			{ .str = U"hello" },
 			{ .str = U"world" },
 			{0}
-		}, U"hello world") &&
+		}, U"hello world")
+	);
 
+	ASSERT_TRUTHY(
 		fmt_error_wrapper(U"%%", (ErrorMsg[]){
 			{ .str = U"abc" },
 			{ .str = U"def" },
 			{0}
-		}, U"abcdef") &&
+		}, U"abcdef")
+	);
 
+	ASSERT_TRUTHY(
 		fmt_error_wrapper(U"testing_%", (ErrorMsg[]){
 			{ .str = U"123" },
 			{0}
-		}, U"testing_123") &&
+		}, U"testing_123")
+	);
 
+	ASSERT_TRUTHY(
 		fmt_error_wrapper(U"testing_%_testing", (ErrorMsg[]){
 			{ .str = U"123" },
 			{0}
 		}, U"testing_123_testing")
 	);
+
+	PASS;
 })
 
 bool fmt_error_stringify_wrapper(ErrorMsg *error, const char32_t *expected) {
@@ -103,12 +123,12 @@ TEST(fmt_error_stringify, {
 		.str = str
 	};
 
-	return (
-		fmt_error_stringify_wrapper(&err_tok, U"xxx") &&
-		fmt_error_stringify_wrapper(&err_var, U"var_name") &&
-		fmt_error_stringify_wrapper(&err_str, U"some string") &&
-		fmt_error_stringify_wrapper(&err_type, U"int")
-	);
+	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_tok, U"xxx"));
+	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_var, U"var_name"));
+	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_str, U"some string"));
+	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_type, U"int"));
+
+	PASS;
 })
 
 TEST_SELF(error,
