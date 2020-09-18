@@ -48,8 +48,6 @@ TEST(eval_assign_str, {
 	variable_read(&mem, var);
 	free(mem);
 	free_variable(var);
-
-	PASS;
 })
 
 TEST(eval_assign_add_vars, {
@@ -137,7 +135,6 @@ TEST(eval_assign_check_lhs_var, {
 	));
 
 	free_variable(var_a);
-	PASS;
 })
 
 TEST(eval_assign_add_vars_must_be_addable, {
@@ -235,7 +232,6 @@ TEST(eval_assign_variable_to_another, {
 	}
 
 	free_scope(scope);
-	PASS;
 })
 
 TEST(eval_assign_variable_to_another_check_same_type, {
@@ -267,7 +263,6 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 	}
 
 	free_scope(scope);
-	PASS;
 })
 
 TEST(eval_assign_variable_to_another_check_bad_var, {
@@ -289,7 +284,6 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 	));
 
 	free_scope(scope);
-	PASS;
 })
 
 TEST(eval_assign_string_types_cannot_share_pointers, {
@@ -325,7 +319,6 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	ASSERT_NOT_EQUAL(after_var1, after_var2);
 
 	free_scope(scope);
-	PASS;
 })
 
 TEST(eval_assign_type_type, {
@@ -345,7 +338,6 @@ TEST(eval_assign_type_type, {
 	ASSERT_EQUAL(after, &TYPE_INT);
 
 	free_scope(scope);
-	PASS;
 })
 
 TEST(eval_assign_type_var_cannot_be_type, {
@@ -360,7 +352,6 @@ TEST(eval_assign_type_var_cannot_be_type, {
 	ASSERT_EQUAL(eval_assign(var, node, scope), ERR_TYPE_TYPE_BAD);
 
 	free_scope(scope);
-	PASS;
 })
 
 TEST_SELF(eval_assign,

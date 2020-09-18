@@ -22,13 +22,10 @@ TEST(is_func_name, {
 	free(node_clear);
 	free(node_print);
 	free(node_other);
-	PASS;
 })
 
 TEST(is_func_name_with_null, {
 	ASSERT_FALSEY(is_func_name(NULL));
-
-	PASS;
 })
 
 TEST(func_clear, {
@@ -41,7 +38,6 @@ TEST(func_clear, {
 	ASSERT_TRUTHY(c32scmp(U"\033[2J\033[;1H", str));
 
 	free((char32_t *)str);
-	PASS;
 })
 
 TEST(func_clear_params_fail, {
@@ -53,8 +49,6 @@ TEST(func_clear_params_fail, {
 		ERR_UNEXPECTED_PARAM_(U"clear"),
 		func_clear(node)
 	));
-
-	PASS;
 })
 
 TEST(func_print, {
@@ -73,7 +67,6 @@ TEST(func_print, {
 
 	free_ast_tree(node);
 	free((char32_t *)str);
-	PASS;
 })
 
 TEST(func_print_extra_params_fail, {
@@ -87,7 +80,6 @@ TEST(func_print_extra_params_fail, {
 	));
 
 	free_ast_tree(node);
-	PASS;
 })
 
 TEST(func_print_bad_var, {
@@ -102,13 +94,10 @@ TEST(func_print_bad_var, {
 	));
 
 	free_ast_tree(node);
-	PASS;
 })
 
 TEST(free_ast_node_with_null, {
 	free_ast_tree(NULL);
-
-	PASS;
 })
 
 TEST_SELF(function,

@@ -24,8 +24,6 @@ TEST(multiplying_2_ints, {
 	free_variable(var1);
 	free_variable(var2);
 	free_variable(var3);
-
-	PASS;
 })
 
 TEST(multiplying_2_floats, {
@@ -46,8 +44,6 @@ TEST(multiplying_2_floats, {
 	free_variable(var1);
 	free_variable(var2);
 	free_variable(var3);
-
-	PASS;
 })
 
 TEST(multiplying_vars_with_different_types_fail, {
@@ -60,8 +56,6 @@ TEST(multiplying_vars_with_different_types_fail, {
 	free_variable(var1);
 	free_variable(var2);
 	free(var3);
-
-	PASS;
 })
 
 TEST_SELF(eval_mult,

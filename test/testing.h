@@ -11,6 +11,7 @@ typedef _Bool (*tests_t[])(const char** func);
 _Bool test_##name (const char **func) { \
 	*func = __func__; \
 	code; \
+	return 1; \
 }
 
 #define TEST_DECL(name) \

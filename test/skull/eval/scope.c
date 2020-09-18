@@ -11,7 +11,6 @@ TEST(make_scope, {
 	ASSERT_EQUAL(scope->vars_used, 0);
 
 	free(scope);
-	PASS;
 })
 
 TEST(scope_find_name, {
@@ -25,8 +24,6 @@ TEST(scope_find_name, {
 
 	free(var);
 	free(scope);
-
-	PASS;
 })
 
 TEST(add_vars_to_scope, {
@@ -40,8 +37,6 @@ TEST(add_vars_to_scope, {
 
 	free(var);
 	free(scope);
-
-	PASS;
 })
 
 TEST(cannot_add_same_varname_to_scope, {
@@ -60,8 +55,6 @@ TEST(cannot_add_same_varname_to_scope, {
 	free(var1);
 	free(var2);
 	free(scope);
-
-	PASS;
 })
 
 TEST(free_scope, {
@@ -71,13 +64,10 @@ TEST(free_scope, {
 	scope_add_var(scope, var);
 
 	free_scope(scope);
-	PASS;
 })
 
 TEST(scope_find_name_when_null, {
 	ASSERT_FALSEY(scope_find_name(NULL, U"anything"));
-
-	PASS;
 })
 
 TEST_SELF(scope,

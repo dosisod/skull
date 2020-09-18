@@ -24,8 +24,6 @@ TEST(dividing_2_ints, {
 	free_variable(var1);
 	free_variable(var2);
 	free_variable(var3);
-
-	PASS;
 })
 
 TEST(divide_by_zero, {
@@ -37,7 +35,6 @@ TEST(divide_by_zero, {
 	ASSERT_FALSEY(eval_div(var, var));
 
 	free_variable(var);
-	PASS;
 })
 
 TEST(dividing_2_floats, {
@@ -58,8 +55,6 @@ TEST(dividing_2_floats, {
 	free_variable(var1);
 	free_variable(var2);
 	free_variable(var3);
-
-	PASS;
 })
 
 TEST(dividing_vars_with_different_types_fail, {
@@ -72,8 +67,6 @@ TEST(dividing_vars_with_different_types_fail, {
 	free_variable(var1);
 	free_variable(var2);
 	free(var3);
-
-	PASS;
 })
 
 TEST_SELF(eval_div,

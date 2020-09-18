@@ -24,8 +24,6 @@ TEST(make_ast_node_struct, {
 	ASSERT_EQUAL(node.token_end->end, token->end);
 	ASSERT_FALSEY(node.last);
 	ASSERT_FALSEY(node.next);
-
-	PASS;
 })
 
 TEST(make_ast_node, {
@@ -38,7 +36,6 @@ TEST(make_ast_node, {
 	ASSERT_FALSEY(node->next);
 
 	free(node);
-	PASS;
 })
 
 TEST(ast_token_cmp, {
@@ -62,7 +59,6 @@ TEST(ast_token_cmp, {
 	ASSERT_EQUAL(token->next->next->next, out);
 
 	free_tokens(token);
-	PASS;
 })
 
 TEST(ast_token_cmp_extra_tokens, {
@@ -86,7 +82,6 @@ TEST(ast_token_cmp_extra_tokens, {
 	ASSERT_EQUAL(token->next->next->next, out);
 
 	free_tokens(token);
-	PASS;
 })
 
 TEST(ast_token_cmp_missing_tokens, {
@@ -111,7 +106,6 @@ TEST(ast_token_cmp_missing_tokens, {
 	ASSERT_EQUAL(token, out);
 
 	free_tokens(token);
-	PASS;
 })
 
 TEST(ast_token_cmp_any_token, {
@@ -134,7 +128,6 @@ TEST(ast_token_cmp_any_token, {
 	ASSERT_EQUAL(token->next->next, out);
 
 	free_tokens(token);
-	PASS;
 })
 
 static Combo optional_combo[] = {
@@ -164,7 +157,6 @@ TEST(ast_token_cmp_optional_combo, {
 
 	free_tokens(token_with);
 	free_tokens(token_without);
-	PASS;
 })
 
 TEST(push_ast_node, {
@@ -194,7 +186,6 @@ TEST(push_ast_node, {
 	ASSERT_EQUAL(tmp->next->last, tmp);
 
 	free_tokens(token);
-	PASS;
 })
 
 TEST(make_ast_tree_identifier, {
@@ -226,7 +217,6 @@ TEST(make_ast_tree_with_nothing, {
 	ASSERT_FALSEY(node);
 
 	free(node);
-	PASS;
 })
 
 TEST(make_ast_tree_var_assign, {
@@ -285,7 +275,6 @@ TEST(make_ast_tree_if, {
 	ASSERT_FALSEY(node->next);
 
 	free(node);
-	PASS;
 })
 
 TEST(make_ast_tree_int_const, {
@@ -329,7 +318,6 @@ TEST(free_ast_tree, {
 	AstNode *node = make_ast_tree(U"hello world", &error);
 
 	free_ast_tree(node);
-	PASS;
 })
 
 TEST_SELF(ast_node,

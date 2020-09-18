@@ -8,8 +8,6 @@ TEST(no_modifiers, {
 	ASSERT_TRUTHY(wegex_match("abc", U"abc"));
 	ASSERT_FALSEY(wegex_match("abc", U"abcd"));
 	ASSERT_FALSEY(wegex_match("abc", U"a"));
-
-	PASS;
 })
 
 TEST(star_modifier, {
@@ -19,8 +17,6 @@ TEST(star_modifier, {
 	ASSERT_TRUTHY(wegex_match("*xa", U"xxxxa"));
 	ASSERT_TRUTHY(wegex_match("*x", U""));
 	ASSERT_FALSEY(wegex_match("*x", U"xa"));
-
-	PASS;
 })
 
 TEST(plus_modifier, {
@@ -29,8 +25,6 @@ TEST(plus_modifier, {
 	ASSERT_FALSEY(wegex_match("+xa", U"a"));
 	ASSERT_FALSEY(wegex_match("+x", U"xa"));
 	ASSERT_FALSEY(wegex_match("+x", U""));
-
-	PASS;
 })
 
 TEST(ternary_modifier, {
@@ -38,8 +32,6 @@ TEST(ternary_modifier, {
 	ASSERT_TRUTHY(wegex_match("?xa", U"xa"));
 	ASSERT_TRUTHY(wegex_match("?xa", U"a"));
 	ASSERT_TRUTHY(wegex_match("?x", U""));
-
-	PASS;
 })
 
 TEST(charset_syntax, {
@@ -49,8 +41,6 @@ TEST(charset_syntax, {
 	ASSERT_TRUTHY(wegex_match("+[abc]", U"aabbcc"));
 	ASSERT_FALSEY(wegex_match("+[abc]", U"d"));
 	ASSERT_FALSEY(wegex_match("+[abc]", U"ax"));
-
-	PASS;
 })
 
 TEST(wegex_number_match, {
@@ -66,8 +56,6 @@ TEST(wegex_number_match, {
 	ASSERT_TRUTHY(wegex_match("\n", U"9"));
 	ASSERT_TRUTHY(wegex_match("+\n", U"1234"));
 	ASSERT_FALSEY(wegex_match("\n", U"abc"));
-
-	PASS;
 })
 
 TEST(wegex_hexadecimal_match, {
@@ -94,8 +82,6 @@ TEST(wegex_hexadecimal_match, {
 	ASSERT_TRUTHY(wegex_match("\b", U"8"));
 	ASSERT_TRUTHY(wegex_match("\b", U"9"));
 	ASSERT_FALSEY(wegex_match("\b", U"z"));
-
-	PASS;
 })
 
 TEST(wegex_ascii_alpha_match, {
@@ -112,8 +98,6 @@ TEST(wegex_ascii_alpha_match, {
 	ASSERT_TRUTHY(wegex_match("\a", U"Y"));
 	ASSERT_TRUTHY(wegex_match("\a", U"Z"));
 	ASSERT_FALSEY(wegex_match("\a", U"0"));
-
-	PASS;
 })
 
 TEST(wegex_full_alpha_match, {
@@ -132,8 +116,6 @@ TEST(wegex_full_alpha_match, {
 	ASSERT_TRUTHY(wegex_match("\f", U"0"));
 	ASSERT_TRUTHY(wegex_match("\f", U"9"));
 	ASSERT_FALSEY(wegex_match("\f", U"!"));
-
-	PASS;
 })
 
 TEST(wegex_optional_modifiers_at_eol, {
@@ -146,8 +128,6 @@ TEST(wegex_optional_modifiers_at_eol, {
 	ASSERT_TRUTHY(wegex_match("x?y?z", U"xy"));
 	ASSERT_TRUTHY(wegex_match("x?y?z", U"xz"));
 	ASSERT_TRUTHY(wegex_match("x?y?z", U"x"));
-
-	PASS;
 })
 
 TEST_SELF(wegex,

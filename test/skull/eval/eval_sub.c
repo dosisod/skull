@@ -25,8 +25,6 @@ TEST(subtracting_2_ints, {
 	free_variable(var1);
 	free_variable(var2);
 	free_variable(var3);
-
-	PASS;
 })
 
 TEST(subtracting_2_floats, {
@@ -47,8 +45,6 @@ TEST(subtracting_2_floats, {
 	free_variable(var1);
 	free_variable(var2);
 	free_variable(var3);
-
-	PASS;
 })
 
 TEST(subtracting_vars_with_different_types_fail, {
@@ -61,8 +57,6 @@ TEST(subtracting_vars_with_different_types_fail, {
 	free_variable(var1);
 	free_variable(var2);
 	free(var3);
-
-	PASS;
 })
 
 TEST_SELF(eval_sub,

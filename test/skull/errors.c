@@ -11,8 +11,6 @@ TEST(is_error_msg, {
 	ASSERT_TRUTHY(is_error_msg(ERR_TYPE_TYPE_BAD));
 	ASSERT_FALSEY(is_error_msg(U"not an error msg"));
 	ASSERT_FALSEY(is_error_msg(NULL));
-
-	PASS;
 })
 
 bool fmt_error_wrapper(const char32_t *fmt, ErrorMsg msgs[], const char32_t *expected) {
@@ -86,8 +84,6 @@ TEST(fmt_error, {
 			{0}
 		}, U"testing_123_testing")
 	);
-
-	PASS;
 })
 
 bool fmt_error_stringify_wrapper(ErrorMsg *error, const char32_t *expected) {
@@ -127,8 +123,6 @@ TEST(fmt_error_stringify, {
 	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_var, U"var_name"));
 	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_str, U"some string"));
 	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_type, U"int"));
-
-	PASS;
 })
 
 TEST_SELF(error,

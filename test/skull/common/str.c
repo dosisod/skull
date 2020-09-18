@@ -18,8 +18,6 @@ TEST(strrstr, {
 	ASSERT_EQUAL(strrstr(str1, "a"), str1 + 4);
 	ASSERT_EQUAL(strrstr(str2, "ab"), str2 + 4);
 	ASSERT_EQUAL(strrstr(str3, "abc"), str3);
-
-	PASS;
 })
 
 TEST(c32sncpy, {
@@ -30,8 +28,6 @@ TEST(c32sncpy, {
 
 	ASSERT_EQUAL(c32slen(buf), 3);
 	ASSERT_TRUTHY(c32scmp(buf, U"abc"));
-
-	PASS;
 })
 
 TEST(c32sncpy_fill_nulls, {
@@ -45,8 +41,6 @@ TEST(c32sncpy_fill_nulls, {
 	ASSERT_EQUAL(c32slen(buf), 3);
 	ASSERT_EQUAL(buf[3], '\0');
 	ASSERT_EQUAL(buf[4], '\0');
-
-	PASS;
 })
 
 TEST(c32sdup, {
@@ -55,7 +49,6 @@ TEST(c32sdup, {
 	ASSERT_TRUTHY(c32scmp(str, U"hello world"));
 
 	free(str);
-	PASS;
 })
 
 TEST(c32scat, {
@@ -64,15 +57,12 @@ TEST(c32scat, {
 	ASSERT_TRUTHY(c32scmp(str, U"hello world!"));
 
 	free(str);
-	PASS;
 })
 
 TEST(c32slen, {
 	ASSERT_EQUAL(c32slen(U"abc"), 3);
 	ASSERT_EQUAL(c32slen(U""), 0);
 	ASSERT_EQUAL(c32slen(NULL), 0);
-
-	PASS;
 })
 
 TEST(c32stombs, {
@@ -81,13 +71,10 @@ TEST(c32stombs, {
 	ASSERT_EQUAL(strcmp(str, "hello world! 存"), 0);
 
 	free(str);
-	PASS;
 })
 
 TEST(c32stombs_with_null, {
 	ASSERT_FALSEY(c32stombs(NULL));
-
-	PASS;
 })
 
 TEST(mbstoc32s, {
@@ -96,7 +83,6 @@ TEST(mbstoc32s, {
 	ASSERT_TRUTHY(c32scmp(str, U"left 字 right"));
 
 	free(str);
-	PASS;
 })
 
 TEST(c32scmp, {
@@ -104,8 +90,6 @@ TEST(c32scmp, {
 	ASSERT_FALSEY(c32scmp(U"abc", U"abcdef"));
 	ASSERT_FALSEY(c32scmp(U"abcdef", U"abc"));
 	ASSERT_FALSEY(c32scmp(U"x", U"y"));
-
-	PASS;
 })
 
 TEST(c32sncmp, {
@@ -115,8 +99,6 @@ TEST(c32sncmp, {
 	ASSERT_TRUTHY(c32sncmp(U"ax", U"ay", 1));
 	ASSERT_FALSEY(c32sncmp(U"x", U"y", 1));
 	ASSERT_FALSEY(c32sncmp(U"aaa", U"a", 3));
-
-	PASS;
 })
 
 TEST(c32schr, {
@@ -126,8 +108,6 @@ TEST(c32schr, {
 	ASSERT_EQUAL(c32schr(str, 'b'), str + 1);
 	ASSERT_EQUAL(c32schr(str, 'c'), str + 2);
 	ASSERT_FALSEY(c32schr(str, 'x'));
-
-	PASS;
 })
 
 TEST(c32isdigit, {
@@ -135,8 +115,6 @@ TEST(c32isdigit, {
 	ASSERT_TRUTHY(c32isdigit('0'));
 	ASSERT_TRUTHY(c32isdigit('9'));
 	ASSERT_FALSEY(c32isdigit(':'));
-
-	PASS;
 })
 
 TEST(c32isalnum, {
@@ -152,8 +130,6 @@ TEST(c32isalnum, {
 	ASSERT_TRUTHY(c32isalnum('a'));
 	ASSERT_TRUTHY(c32isalnum('z'));
 	ASSERT_FALSEY(c32isalnum('{'));
-
-	PASS;
 })
 
 TEST(c32isxdigit, {
@@ -169,8 +145,6 @@ TEST(c32isxdigit, {
 	ASSERT_TRUTHY(c32isxdigit('a'));
 	ASSERT_TRUTHY(c32isxdigit('f'));
 	ASSERT_FALSEY(c32isxdigit('g'));
-
-	PASS;
 })
 
 bool c32sunescape_wrapper(const char32_t *str, const char32_t expected, const char32_t *expected_err) {
@@ -191,8 +165,6 @@ TEST(c32sunescape, {
 	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\n", '\n', NULL));
 	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\t", '\t', NULL));
 	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\", '\0', ERR_BAD_ESCAPE_(U"\\")));
-
-	PASS;
 })
 
 TEST_SELF(str,

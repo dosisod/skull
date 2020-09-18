@@ -81,27 +81,21 @@ TEST(fail_macro, {
 
 TEST(assert_truthy, {
 	ASSERT_TRUTHY(true);
-
-	PASS;
 })
 
 TEST(assert_falsey, {
 	ASSERT_FALSEY(false);
-
-	PASS;
 })
 
 TEST(assert_equal, {
 	ASSERT_EQUAL(1, 1);
-
-	PASS;
 })
 
 TEST(assert_not_equal, {
 	ASSERT_NOT_EQUAL(1, 2);
-
-	PASS;
 })
+
+TEST(empty_test_passes, {})
 
 TEST_SELF(testing,
 	test_pass_macro,
@@ -109,5 +103,6 @@ TEST_SELF(testing,
 	test_assert_truthy,
 	test_assert_falsey,
 	test_assert_equal,
-	test_assert_not_equal
+	test_assert_not_equal,
+	test_empty_test_passes
 )

@@ -49,15 +49,12 @@ TEST(make_new_type_rejects_non_unique_type, {
 
 	ASSERT_TRUTHY(inserted1);
 	ASSERT_FALSEY(inserted2);
-	PASS;
 })
 
 TEST(find_type, {
 	Type *type = find_type("int");
 
 	ASSERT_EQUAL(type, &TYPE_INT);
-
-	PASS;
 })
 
 TEST(free_types, {
@@ -65,8 +62,6 @@ TEST(free_types, {
 
 	free_types();
 	ASSERT_FALSEY(TYPE_BOOL.next);
-
-	PASS;
 })
 
 TEST(append_default_types, {
@@ -89,8 +84,6 @@ TEST(append_default_types, {
 	free_types();
 
 	ASSERT_EQUAL(new_count, count);
-
-	PASS;
 })
 
 TEST_SELF(types,

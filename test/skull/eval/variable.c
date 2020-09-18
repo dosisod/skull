@@ -22,14 +22,10 @@ TEST(create_variable, {
 	ASSERT_FALSEY(var->alloca);
 
 	free_variable(var);
-
-	PASS;
 })
 
 TEST(create_variable_with_invalid_type_fails, {
 	ASSERT_FALSEY(make_variable("not_a_type", U"x", true));
-
-	PASS;
 })
 
 TEST(variable_write, {
@@ -45,8 +41,6 @@ TEST(variable_write, {
 	ASSERT_EQUAL(val, 1234);
 
 	free_variable(var);
-
-	PASS;
 })
 
 TEST(variable_cannot_write_to_const, {
@@ -65,8 +59,6 @@ TEST(variable_cannot_write_to_const, {
 	));
 
 	free_variable(var);
-
-	PASS;
 })
 
 TEST(variable_read, {
@@ -80,8 +72,6 @@ TEST(variable_read, {
 	ASSERT_EQUAL(val, 1234);
 
 	free_variable(var);
-
-	PASS;
 })
 
 TEST(make_variable_with_invalid_name_fails, {
@@ -90,8 +80,6 @@ TEST(make_variable_with_invalid_name_fails, {
 	ASSERT_FALSEY(var);
 
 	free_variable(var);
-
-	PASS;
 })
 
 TEST(free_variable, {
@@ -103,14 +91,10 @@ TEST(free_variable, {
 	}
 
 	free_variable(var);
-
-	PASS;
 })
 
 TEST(free_null_variable_is_ok, {
 	free_variable(NULL);
-
-	PASS;
 })
 
 TEST(fmt_var_int, {
@@ -181,7 +165,6 @@ TEST(fmt_var_str, {
 
 	free(str);
 	free_variable(var);
-	PASS;
 })
 
 TEST(fmt_var_str_with_escapes, {
@@ -203,7 +186,6 @@ TEST(fmt_var_str_with_escapes, {
 
 	free(str);
 	free_variable(var);
-	PASS;
 })
 
 TEST(fmt_var_str_with_bad_escape, {
@@ -224,7 +206,6 @@ TEST(fmt_var_str_with_bad_escape, {
 
 	free((char32_t *)err);
 	free_variable(var);
-	PASS;
 })
 
 TEST_SELF(variable,
