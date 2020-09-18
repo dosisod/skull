@@ -186,6 +186,10 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error) {
 
 			// TODO(x): return the last token that was reached so we dont have to do this
 			while (token->token_type != TOKEN_BRACKET_CLOSE) {
+				if (!token->next) {
+					*error = FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token });
+					return NULL;
+				}
 				token = token->next;
 			}
 			token = token->next;
