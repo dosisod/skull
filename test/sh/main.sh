@@ -53,6 +53,7 @@ test "return_var.sk"
 test "ignore_comments.sk"
 test "no_eol_works.sk"
 test "assign_variable_auto.sk"
+test "simple_function_call.sk"
 
 test_err "err_var_assign.sk" "Compilation error: variable \"x\" already defined"
 test_err "err_return_int.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""
