@@ -46,7 +46,8 @@ int main(int argc, char *argv[]) {
 		read_file(f, false),
 		main_func,
 		builder,
-		ctx
+		ctx,
+		main_module
 	);
 
 	size_t len = strlen(argv[1]);

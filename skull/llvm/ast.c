@@ -27,7 +27,7 @@
 /*
 Convert skull code from `str` into LLVM IR (using `builder`, `ctx`,  and `scope`).
 */
-void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMContextRef ctx) {
+void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMContextRef ctx, LLVMModuleRef mod) {
 	char32_t *str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
@@ -58,6 +58,10 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 
 		else if (node->node_type == AST_NODE_IF) {
 			llvm_make_if(&node, func, ctx, builder);
+		}
+
+		else if (node->node_type == AST_NODE_NO_PARAM_FUNC) {
+			llvm_make_func(&node, ctx, builder, mod);
 		}
 
 		else {
@@ -163,5 +167,41 @@ void llvm_make_if(AstNode **node, LLVMValueRef func, LLVMContextRef ctx, LLVMBui
 	LLVMPositionBuilderAtEnd(
 		builder,
 		end
+	);
+}
+
+void llvm_make_func(AstNode **node, LLVMContextRef ctx, LLVMBuilderRef builder, LLVMModuleRef mod) {
+	LLVMTypeRef args[] = {
+		LLVMVoidTypeInContext(ctx)
+	};
+
+	LLVMTypeRef type = LLVMFunctionType(
+		LLVMVoidTypeInContext(ctx),
+		args,
+		0,
+		false
+	);
+
+	char32_t *tmp = token_str((*node)->token);
+	char *func_name = c32stombs(tmp);
+	free(tmp);
+
+	LLVMValueRef func = LLVMAddFunction(
+		mod,
+		func_name,
+		type
+	);
+
+	free(func_name);
+
+	LLVMSetLinkage(func, LLVMExternalLinkage);
+
+	LLVMBuildCall2(
+		builder,
+		type,
+		func,
+		NULL,
+		0,
+		""
 	);
 }
