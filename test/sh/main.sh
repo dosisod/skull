@@ -70,6 +70,8 @@ test_err "return_non_int.sk" "Compilation error: returning non-int variable \"x\
 test_err "return_non_int.sk" "Compilation error: returning non-int variable \"x\" from main"
 test_err "if_missing_body.sk" "Compilation error: unexpected token: \"if\""
 test_err "err_mismatched_bracket.sk" "Compilation error: unexpected token: \"[\""
+test_err "err_stray_close_bracket.sk" "Compilation error: unexpected token: \"]\""
+test_err "err_extra_close_bracket.sk" "Compilation error: unexpected token: \"]\""
 
 touch test/sh/read_protected.sk
 chmod 200 test/sh/read_protected.sk

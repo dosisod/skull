@@ -137,6 +137,9 @@ MAKE_COMBO(ast_node_if_combo,
 	if (passed) { \
 		passed = false; \
 		push_ast_node(token, &last, (node_type), &node); \
+		if (token->token_type == TOKEN_BRACKET_CLOSE) { \
+			allow_top_lvl_bracket = true; \
+		} \
 		continue; \
 	}
 
@@ -147,22 +150,23 @@ AstNode *make_ast_tree(const char32_t *code, const char32_t **error) {
 	Token *token = tokenize(code);
 	classify_tokens(token);
 
-	return make_ast_tree_(token, error);
+	return make_ast_tree_(token, error, 0);
 }
 
 /*
 Internal AST tree generator.
 */
-AstNode *make_ast_tree_(Token *token, const char32_t **error) {
+AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lvl) {
 	Token *last = token;
 
 	AstNode *node = make_ast_node();
 	AstNode *head = node;
 	bool passed = false;
+	bool allow_top_lvl_bracket = false;
 
 	while (token) {
 		if (token->token_type == TOKEN_BRACKET_OPEN) {
-			AstNode *child = make_ast_tree_(token->next, error);
+			AstNode *child = make_ast_tree_(token->next, error, indent_lvl + 1);
 			if (!child) {
 				free(head);
 				return NULL;
@@ -197,6 +201,12 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error) {
 		}
 
 		if (token->token_type == TOKEN_BRACKET_CLOSE) {
+			if (indent_lvl == 0 && !allow_top_lvl_bracket) {
+				free(head);
+				*error = FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token });
+				return NULL;
+			}
+
 			break;
 		}
 
