@@ -302,7 +302,11 @@ TEST(make_ast_tree_comment, {
 })
 
 TEST(make_ast_tree_bad_recursive_combo_fails, {
-	TEST_AST_TREE(U"[", AST_NODE_UNKNOWN, 0, 0);
+	const char32_t *error = NULL;
+	AstNode *node = make_ast_tree(U"[", &error);
+
+	ASSERT_TRUTHY(c32scmp(ERR_EOF_NO_BRACKET, error));
+	ASSERT_FALSEY(node);
 })
 
 TEST(free_ast_tree, {

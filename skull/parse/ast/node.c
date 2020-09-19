@@ -233,6 +233,12 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 		return NULL;
 	}
 
+	if (!token && indent_lvl != 0) {
+		free(head);
+		*error = ERR_EOF_NO_BRACKET;
+		return NULL;
+	}
+
 	if (node->last) {
 		node->last->next = NULL;
 		node->last = NULL;

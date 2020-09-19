@@ -8,6 +8,8 @@
 
 const char32_t *ERR_UNEXPECTED_TOKEN = ERR_UNEXPECTED_TOKEN_(U"%");
 
+const char32_t *ERR_EOF_NO_BRACKET = U"Reached EOF, expected closing bracket";
+
 const char32_t *ERR_INVALID_INPUT = ERR_INVALID_INPUT_(U"%");
 
 const char32_t *ERR_TYPE_MISMATCH = ERR_TYPE_MISMATCH_(U"%");

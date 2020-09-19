@@ -7,6 +7,8 @@
 const char32_t *ERR_UNEXPECTED_TOKEN;
 #define ERR_UNEXPECTED_TOKEN_(tok) U"unexpected token: \"" tok U"\""
 
+const char32_t *ERR_EOF_NO_BRACKET;
+
 const char32_t *ERR_INVALID_INPUT;
 #define ERR_INVALID_INPUT_(str) U"invalid input: \"" str U"\""
 
