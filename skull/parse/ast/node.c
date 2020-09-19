@@ -112,19 +112,6 @@ MAKE_COMBO(ast_node_return_var_combo,
 	{ .tok = TOKEN_IDENTIFIER }
 );
 
-MAKE_COMBO(ast_node_no_param_func_combo,
-	{ .tok = TOKEN_IDENTIFIER },
-	{ .tok = TOKEN_BRACKET_OPEN },
-	{ .tok = TOKEN_BRACKET_CLOSE }
-);
-
-MAKE_COMBO(ast_node_one_param_func_combo,
-	{ .tok = TOKEN_IDENTIFIER },
-	{ .tok = TOKEN_BRACKET_OPEN },
-	{ .tok = TOKEN_ANY_NON_BRACKET_TOKEN },
-	{ .tok = TOKEN_BRACKET_CLOSE }
-);
-
 MAKE_COMBO(ast_node_if_combo,
 	{ .tok = TOKEN_KW_IF },
 	{ .tok = TOKEN_BOOL_CONST }
@@ -231,8 +218,6 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 		TRY_PUSH_AST_NODE(ast_node_div_var_combo, AST_NODE_DIV_VAR);
 		TRY_PUSH_AST_NODE(ast_node_return_combo, AST_NODE_RETURN);
 		TRY_PUSH_AST_NODE(ast_node_return_var_combo, AST_NODE_RETURN);
-		TRY_PUSH_AST_NODE(ast_node_no_param_func_combo, AST_NODE_NO_PARAM_FUNC);
-		TRY_PUSH_AST_NODE(ast_node_one_param_func_combo, AST_NODE_ONE_PARAM_FUNC);
 		TRY_PUSH_AST_NODE(ast_node_if_combo, AST_NODE_IF);
 		TRY_PUSH_AST_NODE(ast_node_comment_combo, AST_NODE_COMMENT);
 		TRY_PUSH_AST_NODE(ast_node_int_combo, AST_NODE_INT_CONST);

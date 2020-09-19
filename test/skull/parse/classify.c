@@ -231,10 +231,6 @@ TEST(identifier_cannot_be_keyword, {
 	TEST_CLASSIFY_TOKEN_WITH_LEN(U"mut: int = 0", TOKEN_UNKNOWN, 0, 4);
 })
 
-TEST(identifier_cannot_be_func_name, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"print: int = 0", TOKEN_UNKNOWN, 0, 6);
-})
-
 TEST(classify_tokens, {
 	const char32_t *code=U"[ ]";
 	Token *t=tokenize(code);
@@ -288,6 +284,5 @@ TEST_SELF(classifier,
 	test_new_identifier_clip_trailing_colon,
 	test_identifier_cannot_be_type,
 	test_identifier_cannot_be_keyword,
-	test_identifier_cannot_be_func_name,
 	test_classify_tokens
 )

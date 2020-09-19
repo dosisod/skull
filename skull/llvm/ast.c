@@ -60,7 +60,7 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 			llvm_make_if(&node, func, ctx, builder);
 		}
 
-		else if (node->node_type == AST_NODE_NO_PARAM_FUNC) {
+		else if (node->node_type == AST_NODE_IDENTIFIER && *node->token->next->begin == '[') {
 			llvm_make_func(&node, ctx, builder, mod);
 		}
 

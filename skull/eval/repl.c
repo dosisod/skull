@@ -3,7 +3,6 @@
 #include "skull/common/str.h"
 #include "skull/errors.h"
 #include "skull/eval/eval_assign.h"
-#include "skull/eval/function.h"
 #include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
@@ -34,13 +33,6 @@ const char32_t *repl_make_var(const AstNode *node, Scope *scope, bool is_const) 
 	Variable *var = NULL;
 
 	if (token->next->token_type == TOKEN_OPER_AUTO_EQUAL) {
-		if (is_func_name_str(name)) {
-			char32_t *error = FMT_ERROR(ERR_ASSIGN_FUNC, { .str = name });
-
-			free(name);
-			return error;
-		}
-
 		const char *type = NULL;
 		if (node->next->node_type == AST_NODE_INT_CONST) {
 			type = TYPE_INT.name;

@@ -4,7 +4,6 @@
 
 #include "skull/common/str.h"
 #include "skull/common/wegex.h"
-#include "skull/eval/function.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/tokenize.h"
 
@@ -77,8 +76,7 @@ void classify_token(Token *token) {
 			char32_t *new_str = token_str(token);
 
 			if (is_type_str(new_str) ||
-				is_keyword_str(new_str) ||
-				is_func_name_str(new_str))
+				is_keyword_str(new_str))
 			{
 				token->token_type = TOKEN_UNKNOWN;
 				token->end++;

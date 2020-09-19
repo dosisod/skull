@@ -251,14 +251,6 @@ TEST(make_ast_tree_return_var, {
 	TEST_AST_TREE(U"return x", AST_NODE_RETURN, 0, 8);
 })
 
-TEST(make_ast_tree_no_param_func, {
-	TEST_AST_TREE(U"func[]", AST_NODE_NO_PARAM_FUNC, 0, 6);
-})
-
-TEST(make_ast_tree_one_param_func, {
-	TEST_AST_TREE(U"func[abc]", AST_NODE_ONE_PARAM_FUNC, 0, 9);
-})
-
 TEST(make_ast_tree_if, {
 	const char32_t *code = U"if true [ return 1 ]";
 	const char32_t *error = NULL;
@@ -343,8 +335,6 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_var_div,
 	test_make_ast_tree_return,
 	test_make_ast_tree_return_var,
-	test_make_ast_tree_no_param_func,
-	test_make_ast_tree_one_param_func,
 	test_make_ast_tree_if,
 	test_make_ast_tree_int_const,
 	test_make_ast_tree_float_const,

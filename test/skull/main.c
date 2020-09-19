@@ -14,7 +14,6 @@
 #include "eval/eval_integer.h"
 #include "eval/eval_mult.h"
 #include "eval/eval_sub.h"
-#include "eval/function.h"
 #include "eval/scope.h"
 #include "eval/types/types.h"
 #include "eval/variable.h"
@@ -46,7 +45,6 @@ int main(void) {
 	eval_integer_test_self(&passed);
 	eval_sub_test_self(&passed);
 	eval_mult_test_self(&passed);
-	function_test_self(&passed);
 	variable_test_self(&passed);
 
 	str_test_self(&passed);

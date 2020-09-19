@@ -56,7 +56,6 @@ TEST_DECL(is_valid_identifier_token)
 TEST_DECL(new_identifier_clip_trailing_colon)
 TEST_DECL(identifier_cannot_be_type)
 TEST_DECL(identifier_cannot_be_keyword)
-TEST_DECL(identifier_cannot_be_func_name)
 TEST_DECL(classify_tokens)
 
 void classifier_test_self(_Bool *pass);
