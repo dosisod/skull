@@ -2,7 +2,7 @@
 
 Having the ability to directly integrate with C programs allows you to give more power to your Skull programs.
 
-This document assumes you have Skull installed. If you do not, refer to the [README](/#setup).
+This document assumes you have Skull installed. If you do not, refer to the [README](/README.md#setup).
 
 Let us look at a simple example of how to call C functions from inside Skull:
 
