@@ -204,6 +204,4 @@ void llvm_make_func(AstNode **node, LLVMContextRef ctx, LLVMBuilderRef builder, 
 		0,
 		""
 	);
-
-	*node = (*node)->next;
 }

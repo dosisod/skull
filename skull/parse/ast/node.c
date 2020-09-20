@@ -168,12 +168,14 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 				child->parent = node->last;
 			}
 
-			if (!child->token_end || !token->next) {
-				return head;
+			if (!child->token_end) {
+				if (!token->next) {
+					return head;
+				}
 			}
-			push_ast_node(token->next, &last, 0, &node);
-			node = node->last;
-			token = child->token_end->next;
+			else {
+				token = child->token_end->next;
+			}
 
 			// TODO(x): return the last token that was reached so we dont have to do this
 			while (token->token_type != TOKEN_BRACKET_CLOSE) {
