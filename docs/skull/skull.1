@@ -1,9 +1,9 @@
-.TH SKULL 1 "August 2020" "Linux" "User Manuals"
+.TH SKULL 1 "September 2020" "Linux" "User Manuals"
 .SH NAME
-skull \- Compile a skull file
+skull \- A strict, static, strongly typed programming language.
 .SH SYNOPSIS
-.B skull\fR [\fB-v\fR|\fIfile\fR]
+.B skull\fR [\fB-v\fR | \fIfile\fR [\fIfiles\fR...]]
 .SH DESCRIPTION
-When the \fB-v\fR option is passed, print the current version. Otherwise, try and compile \fBfile\fR, which must end in ".sk". If compilation succeeds, a new binary file (with the ".sk" extension removed) will be put into the same directory as \fBfile\fR.
+When the \fB-v\fR option is passed, print the current version. Otherwise, try and compile \fIfile\fR, which must end in ".sk". If compilation succeeds, a new binary file (with the ".sk" extension removed) will be put into the same directory as \fIfile\fR. If any extra \fIfiles\fR are passed, they will compiled in with the compiled version of \fIfile\fR. These files can be any of the following extensions: ".c", ".o", ".so", ".s", or any other C compilable file extention. Only ".c" extensions can be compiled directly by \fBskull\fR. Other file extensions must be compiled first before passing them to \fBskull\fR.
 .SH AUTHOR
 dosisod <https://github.com/dosisod>
