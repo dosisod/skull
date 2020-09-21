@@ -53,14 +53,14 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLV
 	ctx = ctx_;
 	module = module_;
 
-	str_to_llvm_ir_(node);
+	node_to_llvm_ir(node);
 	free(str);
 }
 
 /*
 Internal LLVM IR parser.
 */
-void str_to_llvm_ir_(AstNode *node) {
+void node_to_llvm_ir(AstNode *node) {
 	while (node) {
 		if (node->node_type == AST_NODE_COMMENT) {}
 
@@ -186,7 +186,9 @@ void llvm_make_if(AstNode *node) {
 		if_true
 	);
 
-	llvm_make_return(node->child);
+	node_to_llvm_ir(node->child);
+
+	LLVMBuildBr(builder, end);
 
 	LLVMPositionBuilderAtEnd(
 		builder,

@@ -7,7 +7,7 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLV
 > Convert skull code from `str` into LLVM IR (using `builder` and `ctx`).
 
 ```c
-void str_to_llvm_ir_(AstNode *node)
+void node_to_llvm_ir(AstNode *node)
 ```
 
 > Internal LLVM IR parser.

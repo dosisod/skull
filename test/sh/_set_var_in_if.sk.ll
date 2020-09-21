@@ -6,9 +6,10 @@ entry:
   br i1 true, label %if_true, label %end
 
 if_true:                                          ; preds = %entry
-  ret i64 0
+  %x = alloca i64
+  store i64 1, i64* %x
   br label %end
 
 end:                                              ; preds = %if_true, %entry
-  ret i64 1
+  ret i64 0
 }

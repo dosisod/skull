@@ -3,7 +3,7 @@
 #include "skull/parse/ast/node.h"
 
 void str_to_llvm_ir(char *, LLVMValueRef, LLVMBuilderRef, LLVMContextRef, LLVMModuleRef);
-void str_to_llvm_ir_(AstNode *);
+void node_to_llvm_ir(AstNode *);
 
 void llvm_make_return(AstNode *);
 void llvm_make_var_def(AstNode **);
