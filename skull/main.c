@@ -2,10 +2,15 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "skull/common/io.h"
-#include "skull/common/main.h"
+#include "skull/common/str.h"
 #include "skull/llvm/ast.h"
+
+#ifndef SKULL_VERSION
+#define SKULL_VERSION "<version unknown>"
+#endif
 
 int main(int argc, char *argv[]) {
 	LLVMContextRef ctx = LLVMContextCreate();
@@ -41,10 +46,41 @@ int main(int argc, char *argv[]) {
 		puts("expected filename, exiting");
 		return 1;
 	}
-	HANDLE_MAIN;
+
+	if (argc > 2) {
+		puts("too many arguments passed, exiting");
+		return 1;
+	}
+
+	if (strcmp("-v", argv[1]) == 0) {
+		puts("Skull "SKULL_VERSION);
+		return 0;
+	}
+
+	if (!strrstr(argv[1], ".sk")) {
+		puts("missing required \".sk\" extension, exiting");
+		return 1;
+	}
+
+	if (strrstr(argv[1], ".sk") == argv[1] || strrstr(argv[1], "/.sk")) {
+		puts("\".sk\" is not a valid name, exiting");
+		return 1;
+	}
+
+	errno = 0;
+	FILE *f = fopen(argv[1], "re");
+	if (!f) {
+		if (errno == EACCES) {
+			printf("cannot open \"%s\", permission denied\n", argv[1]);
+		}
+		else if (errno == ENOENT) {
+			printf("\"%s\" was not found, exiting\n", argv[1]);
+		}
+		return 1;
+	}
 
 	str_to_llvm_ir(
-		read_file(f, false),
+		read_file(f),
 		main_func,
 		builder,
 		ctx,
@@ -66,7 +102,7 @@ int main(int argc, char *argv[]) {
 		ll_filename[offset + 1] = '.';
 		memcpy(ll_filename + offset + 2, slash_pos + 1, len - (size_t)offset);
 	}
-	memcpy(ll_filename + len + 1, ".ll\0", 4);
+	memcpy(ll_filename + len + 1, ".ll", 4);
 
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(
