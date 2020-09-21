@@ -24,10 +24,18 @@
 		PANIC(str); \
 	}
 
+// global variables only accessible from functions in this file
+static Scope *scope;
+static size_t vars_used_last;
+static LLVMValueRef func;
+static LLVMBuilderRef builder;
+static LLVMContextRef ctx;
+static LLVMModuleRef module;
+
 /*
-Convert skull code from `str` into LLVM IR (using `builder`, `ctx`,  and `scope`).
+Convert skull code from `str` into LLVM IR (using `builder` and `ctx`).
 */
-void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMContextRef ctx, LLVMModuleRef mod) {
+void str_to_llvm_ir(char *str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLVMContextRef ctx_, LLVMModuleRef module_) {
 	char32_t *str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
@@ -38,22 +46,26 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 		PANIC(error);
 	}
 
-	str_to_llvm_ir_(node, func, builder, ctx, mod);
+	scope = make_scope();
+	vars_used_last = 0;
+	func = func_;
+	builder = builder_;
+	ctx = ctx_;
+	module = module_;
+
+	str_to_llvm_ir_(node);
 	free(str);
 }
 
 /*
 Internal LLVM IR parser.
 */
-void str_to_llvm_ir_(AstNode *node, LLVMValueRef func, LLVMBuilderRef builder, LLVMContextRef ctx, LLVMModuleRef mod) {
-	Scope *scope = make_scope();
-	size_t vars_used_last = 0;
-
+void str_to_llvm_ir_(AstNode *node) {
 	while (node) {
 		if (node->node_type == AST_NODE_COMMENT) {}
 
 		else if (node->node_type == AST_NODE_RETURN) {
-			llvm_make_return(node, scope, ctx, builder);
+			llvm_make_return(node);
 		}
 
 		else if (node->node_type == AST_NODE_VAR_DEF ||
@@ -61,15 +73,15 @@ void str_to_llvm_ir_(AstNode *node, LLVMValueRef func, LLVMBuilderRef builder, L
 			node->node_type == AST_NODE_MUT_VAR_DEF ||
 			node->node_type == AST_NODE_MUT_AUTO_VAR_DEF)
 		{
-			llvm_make_var_def(&node, scope);
+			llvm_make_var_def(&node);
 		}
 
 		else if (node->node_type == AST_NODE_IF) {
-			llvm_make_if(node, scope, func, ctx, builder);
+			llvm_make_if(node);
 		}
 
 		else if (node->node_type == AST_NODE_IDENTIFIER && *node->token->next->begin == '[') {
-			llvm_make_func(node, ctx, builder, mod);
+			llvm_make_function(node);
 		}
 
 		else {
@@ -84,7 +96,10 @@ void str_to_llvm_ir_(AstNode *node, LLVMValueRef func, LLVMBuilderRef builder, L
 	}
 }
 
-void llvm_make_return(AstNode *node, Scope *scope, LLVMContextRef ctx, LLVMBuilderRef builder) {
+/*
+Builds an return statement from `node`.
+*/
+void llvm_make_return(AstNode *node) {
 	if (node->node_type != AST_NODE_RETURN) {
 		PANIC(U"Return expected");
 	}
@@ -124,7 +139,10 @@ void llvm_make_return(AstNode *node, Scope *scope, LLVMContextRef ctx, LLVMBuild
 	}
 }
 
-void llvm_make_var_def(AstNode **node, Scope *scope) {
+/*
+Builds a variable from `node`.
+*/
+void llvm_make_var_def(AstNode **node) {
 	PANIC_ON_ERR(repl_make_var(*node, scope,
 		(*node)->node_type == AST_NODE_VAR_DEF ||
 		(*node)->node_type == AST_NODE_AUTO_VAR_DEF
@@ -133,7 +151,10 @@ void llvm_make_var_def(AstNode **node, Scope *scope) {
 	*node = (*node)->next;
 }
 
-void llvm_make_if(AstNode *node, Scope *scope, LLVMValueRef func, LLVMContextRef ctx, LLVMBuilderRef builder) {
+/*
+Builds an if block from `node`.
+*/
+void llvm_make_if(AstNode *node) {
 	const char32_t *error = NULL;
 	const bool *cond = eval_bool(node->token->next, &error);
 	PANIC_ON_ERR(error);
@@ -165,7 +186,7 @@ void llvm_make_if(AstNode *node, Scope *scope, LLVMValueRef func, LLVMContextRef
 		if_true
 	);
 
-	llvm_make_return(node->child, scope, ctx, builder);
+	llvm_make_return(node->child);
 
 	LLVMPositionBuilderAtEnd(
 		builder,
@@ -173,7 +194,10 @@ void llvm_make_if(AstNode *node, Scope *scope, LLVMValueRef func, LLVMContextRef
 	);
 }
 
-void llvm_make_func(AstNode *node, LLVMContextRef ctx, LLVMBuilderRef builder, LLVMModuleRef mod) {
+/*
+Builds a function declaration from `node`.
+*/
+void llvm_make_function(AstNode *node) {
 	LLVMTypeRef args[] = {
 		LLVMVoidTypeInContext(ctx)
 	};
@@ -189,20 +213,20 @@ void llvm_make_func(AstNode *node, LLVMContextRef ctx, LLVMBuilderRef builder, L
 	char *func_name = c32stombs(tmp);
 	free(tmp);
 
-	LLVMValueRef func = LLVMAddFunction(
-		mod,
+	LLVMValueRef function = LLVMAddFunction(
+		module,
 		func_name,
 		type
 	);
 
 	free(func_name);
 
-	LLVMSetLinkage(func, LLVMExternalLinkage);
+	LLVMSetLinkage(function, LLVMExternalLinkage);
 
 	LLVMBuildCall2(
 		builder,
 		type,
-		func,
+		function,
 		NULL,
 		0,
 		""
