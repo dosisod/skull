@@ -38,6 +38,14 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 		PANIC(error);
 	}
 
+	str_to_llvm_ir_(node, func, builder, ctx, mod);
+	free(str);
+}
+
+/*
+Internal LLVM IR parser.
+*/
+void str_to_llvm_ir_(AstNode *node, LLVMValueRef func, LLVMBuilderRef builder, LLVMContextRef ctx, LLVMModuleRef mod) {
 	Scope *scope = make_scope();
 	size_t vars_used_last = 0;
 
@@ -57,11 +65,11 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 		}
 
 		else if (node->node_type == AST_NODE_IF) {
-			llvm_make_if(&node, scope, func, ctx, builder);
+			llvm_make_if(node, scope, func, ctx, builder);
 		}
 
 		else if (node->node_type == AST_NODE_IDENTIFIER && *node->token->next->begin == '[') {
-			llvm_make_func(&node, ctx, builder, mod);
+			llvm_make_func(node, ctx, builder, mod);
 		}
 
 		else {
@@ -74,7 +82,6 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 		}
 		node = node->next;
 	}
-	free(str);
 }
 
 void llvm_make_return(AstNode *node, Scope *scope, LLVMContextRef ctx, LLVMBuilderRef builder) {
@@ -126,9 +133,9 @@ void llvm_make_var_def(AstNode **node, Scope *scope) {
 	*node = (*node)->next;
 }
 
-void llvm_make_if(AstNode **node, Scope *scope, LLVMValueRef func, LLVMContextRef ctx, LLVMBuilderRef builder) {
+void llvm_make_if(AstNode *node, Scope *scope, LLVMValueRef func, LLVMContextRef ctx, LLVMBuilderRef builder) {
 	const char32_t *error = NULL;
-	const bool *cond = eval_bool((*node)->token->next, &error);
+	const bool *cond = eval_bool(node->token->next, &error);
 	PANIC_ON_ERR(error);
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
@@ -150,15 +157,15 @@ void llvm_make_if(AstNode **node, Scope *scope, LLVMValueRef func, LLVMContextRe
 		end
 	);
 
-	if (!(*node)->child->token) {
-		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = (*node)->token }));
+	if (!node->child->token) {
+		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
 	}
 	LLVMPositionBuilderAtEnd(
 		builder,
 		if_true
 	);
 
-	llvm_make_return((*node)->child, scope, ctx, builder);
+	llvm_make_return(node->child, scope, ctx, builder);
 
 	LLVMPositionBuilderAtEnd(
 		builder,
@@ -166,7 +173,7 @@ void llvm_make_if(AstNode **node, Scope *scope, LLVMValueRef func, LLVMContextRe
 	);
 }
 
-void llvm_make_func(AstNode **node, LLVMContextRef ctx, LLVMBuilderRef builder, LLVMModuleRef mod) {
+void llvm_make_func(AstNode *node, LLVMContextRef ctx, LLVMBuilderRef builder, LLVMModuleRef mod) {
 	LLVMTypeRef args[] = {
 		LLVMVoidTypeInContext(ctx)
 	};
@@ -178,7 +185,7 @@ void llvm_make_func(AstNode **node, LLVMContextRef ctx, LLVMBuilderRef builder, 
 		false
 	);
 
-	char32_t *tmp = token_str((*node)->token);
+	char32_t *tmp = token_str(node->token);
 	char *func_name = c32stombs(tmp);
 	free(tmp);
 
