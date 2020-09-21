@@ -34,18 +34,18 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(str, &error);
 
-	Scope *scope = make_scope();
-	size_t vars_used_last = 0;
-
 	if (!node) {
 		PANIC(error);
 	}
+
+	Scope *scope = make_scope();
+	size_t vars_used_last = 0;
 
 	while (node) {
 		if (node->node_type == AST_NODE_COMMENT) {}
 
 		else if (node->node_type == AST_NODE_RETURN) {
-			llvm_make_return(&node, scope, ctx, builder);
+			llvm_make_return(node, scope, ctx, builder);
 		}
 
 		else if (node->node_type == AST_NODE_VAR_DEF ||
@@ -57,7 +57,7 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 		}
 
 		else if (node->node_type == AST_NODE_IF) {
-			llvm_make_if(&node, func, ctx, builder);
+			llvm_make_if(&node, scope, func, ctx, builder);
 		}
 
 		else if (node->node_type == AST_NODE_IDENTIFIER && *node->token->next->begin == '[') {
@@ -77,9 +77,13 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func, LLVMBuilderRef builder, LLVMC
 	free(str);
 }
 
-void llvm_make_return(AstNode **node, Scope *scope, LLVMContextRef ctx, LLVMBuilderRef builder) {
-	if ((*node)->token->next->token_type == TOKEN_IDENTIFIER) {
-		char32_t *var_name = token_str((*node)->token->next);
+void llvm_make_return(AstNode *node, Scope *scope, LLVMContextRef ctx, LLVMBuilderRef builder) {
+	if (node->node_type != AST_NODE_RETURN) {
+		PANIC(U"Return expected");
+	}
+
+	if (node->token->next->token_type == TOKEN_IDENTIFIER) {
+		char32_t *var_name = token_str(node->token->next);
 		const Variable *found_var = scope_find_name(scope, var_name);
 
 		if (!found_var) {
@@ -103,7 +107,7 @@ void llvm_make_return(AstNode **node, Scope *scope, LLVMContextRef ctx, LLVMBuil
 	}
 	else {
 		const char32_t *error = NULL;
-		SkullInt *num = eval_integer((*node)->token->next, &error);
+		SkullInt *num = eval_integer(node->token->next, &error);
 		PANIC_ON_ERR(error);
 
 		LLVMBuildRet(
@@ -122,7 +126,7 @@ void llvm_make_var_def(AstNode **node, Scope *scope) {
 	*node = (*node)->next;
 }
 
-void llvm_make_if(AstNode **node, LLVMValueRef func, LLVMContextRef ctx, LLVMBuilderRef builder) {
+void llvm_make_if(AstNode **node, Scope *scope, LLVMValueRef func, LLVMContextRef ctx, LLVMBuilderRef builder) {
 	const char32_t *error = NULL;
 	const bool *cond = eval_bool((*node)->token->next, &error);
 	PANIC_ON_ERR(error);
@@ -149,20 +153,12 @@ void llvm_make_if(AstNode **node, LLVMValueRef func, LLVMContextRef ctx, LLVMBui
 	if (!(*node)->child->token) {
 		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = (*node)->token }));
 	}
-	Token *num_token = (*node)->child->token->next;
-
-	SkullInt *num = eval_integer(num_token, &error);
-	PANIC_ON_ERR(error);
-
 	LLVMPositionBuilderAtEnd(
 		builder,
 		if_true
 	);
 
-	LLVMBuildRet(
-		builder,
-		LLVM_INT(ctx, *num)
-	);
+	llvm_make_return((*node)->child, scope, ctx, builder);
 
 	LLVMPositionBuilderAtEnd(
 		builder,

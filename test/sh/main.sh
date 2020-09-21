@@ -75,6 +75,7 @@ test_err "err_mismatched_bracket.sk" "Compilation error: Reached EOF, expected c
 test_err "err_stray_close_bracket.sk" "Compilation error: unexpected token: \"]\""
 test_err "err_extra_close_bracket.sk" "Compilation error: unexpected token: \"]\""
 test_err "err_no_closing_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
+test_err "err_invalid_return_if.sk" "Compilation error: Return expected"
 
 touch test/sh/read_protected.sk
 chmod 200 test/sh/read_protected.sk
