@@ -8,16 +8,16 @@
 
 #include "test/testing.h"
 
-fail_t *fails_head = NULL;
-fail_t *fails_last = NULL;
+static Fail *fails_head = NULL;
+static Fail *fails_last = NULL;
 
-void run_single_test(test_t test, bool *pass) {
+void run_single_test(Test test, bool *pass) {
 	const char *name = NULL;
 	if (!test(&name)) {
 		printf(COLOR_BOLD COLOR_RED_FG "F" COLOR_RESET);
 		*pass = false;
 
-		fail_t *fail;
+		Fail *fail;
 		fail = malloc(sizeof *fail);
 		DIE_IF_MALLOC_FAILS(fail);
 
@@ -39,7 +39,7 @@ void run_single_test(test_t test, bool *pass) {
 	}
 }
 
-void run_many_tests(const char *name, tests_t tests, bool *pass) {
+void run_many_tests(const char *name, Test tests[], bool *pass) {
 	printf("%s ", name);
 
 	while(*tests) {
@@ -50,8 +50,8 @@ void run_many_tests(const char *name, tests_t tests, bool *pass) {
 	putchar('\n');
 
 	if (fails_head) {
-		fail_t *current = fails_head;
-		fail_t *tmp = NULL;
+		Fail *current = fails_head;
+		Fail *tmp = NULL;
 
 		while (current) {
 			printf("%s " COLOR_BOLD COLOR_RED_FG "FAILED\n" COLOR_RESET, current->name);

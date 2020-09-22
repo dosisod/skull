@@ -4,8 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef _Bool (*test_t)(const char** func);
-typedef _Bool (*tests_t[])(const char** func);
+typedef _Bool (*Test)(const char** func);
 
 #define TEST(name, code) \
 _Bool test_##name (const char **func) { \
@@ -19,7 +18,7 @@ _Bool test_##name (const char **func);
 
 #define TEST_SELF(name, ...) \
 void name##_test_self (_Bool *pass) { \
-	run_many_tests(__FILE__, (tests_t){ \
+	run_many_tests(__FILE__, (Test[]){ \
 		__VA_ARGS__, NULL \
 	}, pass); \
 }
@@ -40,16 +39,13 @@ void name##_test_self (_Bool *pass) { \
 #define ASSERT_EQUAL(x, y) \
 	if ((x) != (y)) { return 0; }
 
-typedef struct fail_t {
+typedef struct Fail {
 	const char *name;
-	struct fail_t *next;
-} fail_t;
+	struct Fail *next;
+} Fail;
 
-fail_t *fails_head;
-fail_t *fails_last;
+void run_single_test(Test, _Bool *);
 
-void run_single_test(test_t test, _Bool *pass);
+void run_many_tests(const char *, Test [], _Bool *);
 
-void run_many_tests(const char *name, tests_t tests, _Bool *pass);
-
-void testing_test_self(_Bool *pass);
+void testing_test_self(_Bool *);
