@@ -4,17 +4,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef _Bool (*Test)(const char** func);
+typedef _Bool (*Test)(const char **, const char **);
 
 #define TEST(name, code) \
-_Bool test_##name (const char **func) { \
+_Bool test_##name (const char **func, const char **msg) { \
+	*msg = NULL; \
 	*func = __func__; \
 	code; \
 	return 1; \
 }
 
 #define TEST_DECL(name) \
-_Bool test_##name (const char **func);
+_Bool test_##name (const char **func, const char **msg);
 
 #define TEST_SELF(name, ...) \
 void name##_test_self (_Bool *pass) { \
@@ -28,19 +29,32 @@ void name##_test_self (_Bool *pass) { \
 #define FAIL return 0
 
 #define ASSERT_TRUTHY(x) \
-	if (!(x)) { return 0; }
+	if (!(x)) { \
+		*msg = "Expected `" #x "` to be truthy"; \
+		return 0; \
+	}
 
 #define ASSERT_FALSEY(x) \
-	if ((x)) { return 0; }
+	if ((x)) { \
+		*msg = "Expected `" #x "` to be falsey"; \
+		return 0; \
+	}
 
 #define ASSERT_NOT_EQUAL(x, y) \
-	if ((x) == (y)) { return 0; }
+	if ((x) == (y)) { \
+		*msg = "Expected `" #x "` and `" #y "` to be not be equal"; \
+		return 0; \
+	}
 
 #define ASSERT_EQUAL(x, y) \
-	if ((x) != (y)) { return 0; }
+	if ((x) != (y)) { \
+		*msg = "Expected `" #x "` and `" #y "` to be be equal"; \
+		return 0; \
+	}
 
 typedef struct Fail {
 	const char *name;
+	const char *msg;
 	struct Fail *next;
 } Fail;
 

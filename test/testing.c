@@ -13,7 +13,9 @@ static Fail *fails_last = NULL;
 
 void run_single_test(Test test, bool *pass) {
 	const char *name = NULL;
-	if (!test(&name)) {
+	const char *msg = NULL;
+
+	if (!test(&name, &msg)) {
 		printf(COLOR_BOLD COLOR_RED_FG "F" COLOR_RESET);
 		*pass = false;
 
@@ -32,6 +34,7 @@ void run_single_test(Test test, bool *pass) {
 			fails_last->next = fail;
 			fails_last = fail;
 		}
+		fails_last->msg = msg;
 		fails_last->name = name;
 	}
 	else {
@@ -55,12 +58,12 @@ void run_many_tests(const char *name, Test tests[], bool *pass) {
 
 		while (current) {
 			printf("%s " COLOR_BOLD COLOR_RED_FG "FAILED\n" COLOR_RESET, current->name);
+			printf("  %s\n\n", current->msg);
 
 			tmp = current;
 			current = current->next;
 			free(tmp);
 		}
-		putchar('\n');
 
 		fails_last = NULL;
 		fails_head = NULL;
