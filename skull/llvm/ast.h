@@ -1,3 +1,5 @@
+#pragma once
+
 #include <llvm-c/Core.h>
 
 #include "skull/parse/ast/node.h"

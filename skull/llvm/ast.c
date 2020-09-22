@@ -5,7 +5,6 @@
 #include "skull/common/str.h"
 #include "skull/errors.h"
 #include "skull/eval/eval_integer.h"
-#include "skull/eval/repl.h"
 #include "skull/eval/types/bool.h"
 #include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
@@ -143,7 +142,7 @@ void llvm_make_return(AstNode *node) {
 Builds a variable from `node`.
 */
 void llvm_make_var_def(AstNode **node) {
-	PANIC_ON_ERR(repl_make_var(*node, scope,
+	PANIC_ON_ERR(node_make_var(*node, scope,
 		(*node)->node_type == AST_NODE_VAR_DEF ||
 		(*node)->node_type == AST_NODE_AUTO_VAR_DEF
 	));
