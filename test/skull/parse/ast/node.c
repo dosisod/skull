@@ -269,6 +269,24 @@ TEST(make_ast_tree_if, {
 	free(node);
 })
 
+TEST(make_ast_tree_if_with_var, {
+	const char32_t *code = U"if x [ return 1 ]";
+	const char32_t *error = NULL;
+	AstNode *node = make_ast_tree(code, &error);
+
+	ASSERT_FALSEY(error);
+	ASSERT_EQUAL(node->node_type, AST_NODE_IF);
+	ASSERT_EQUAL(node->token->begin, code);
+	ASSERT_EQUAL(node->token_end->end, code + 4);
+	ASSERT_FALSEY(node->last);
+	ASSERT_TRUTHY(node->child);
+	ASSERT_EQUAL(node->child->token->begin, code + 7);
+	ASSERT_EQUAL(node->child->token_end->end, code + 15);
+	ASSERT_FALSEY(node->next);
+
+	free(node);
+})
+
 TEST(make_ast_tree_int_const, {
 	TEST_AST_TREE(U"1234", AST_NODE_INT_CONST, 0, 4);
 })
@@ -340,6 +358,7 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_return,
 	test_make_ast_tree_return_var,
 	test_make_ast_tree_if,
+	test_make_ast_tree_if_with_var,
 	test_make_ast_tree_int_const,
 	test_make_ast_tree_float_const,
 	test_make_ast_tree_bool_const_true,

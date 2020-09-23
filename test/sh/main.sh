@@ -56,6 +56,8 @@ test "assign_variable_auto.sk"
 test "simple_function_call.sk"
 test "nodes_after_call_not_ignored.sk"
 test "set_var_in_if.sk"
+test "if_with_var_true.sk"
+test "if_with_var_false.sk"
 
 test_err "err_var_assign.sk" "Compilation error: variable \"x\" already defined"
 test_err "err_return_int.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""
@@ -77,6 +79,7 @@ test_err "err_stray_close_bracket.sk" "Compilation error: unexpected token: \"]\
 test_err "err_extra_close_bracket.sk" "Compilation error: unexpected token: \"]\""
 test_err "err_no_closing_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
 test_err "err_invalid_return_if.sk" "Compilation error: unexpected token: \"x\""
+test_err "err_if_with_var.sk" "Compilation error: variable \"x\" not found"
 
 touch test/sh/read_protected.sk
 chmod 200 test/sh/read_protected.sk

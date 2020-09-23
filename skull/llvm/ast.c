@@ -154,9 +154,29 @@ void llvm_make_var_def(AstNode **node) {
 Builds an if block from `node`.
 */
 void llvm_make_if(AstNode *node) {
-	const char32_t *error = NULL;
-	const bool *cond = eval_bool(node->token->next, &error);
-	PANIC_ON_ERR(error);
+	bool cond;
+
+	if (node->token->next->token_type == TOKEN_BOOL_CONST) {
+		const char32_t *error = NULL;
+		const bool *tmp = eval_bool(node->token->next, &error);
+		PANIC_ON_ERR(error);
+		cond = *tmp;
+	}
+	else {
+		char32_t *var_name = token_str(node->token->next);
+		const Variable *found_var = scope_find_name(scope, var_name);
+
+		if (!found_var) {
+			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
+		}
+		free(var_name);
+
+		if (found_var->type != &TYPE_BOOL) {
+			PANIC(FMT_ERROR(U"Expected \"%\" to be of type bool", { .var = found_var }));
+		}
+
+		variable_read(&cond, found_var);
+	}
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
 		ctx,
@@ -172,7 +192,7 @@ void llvm_make_if(AstNode *node) {
 
 	LLVMBuildCondBr(
 		builder,
-		LLVM_BOOL(ctx, *cond),
+		LLVM_BOOL(ctx, cond),
 		if_true,
 		end
 	);

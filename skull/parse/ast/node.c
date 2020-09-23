@@ -117,6 +117,11 @@ MAKE_COMBO(ast_node_if_combo,
 	{ .tok = TOKEN_BOOL_CONST }
 );
 
+MAKE_COMBO(ast_node_if_var_combo,
+	{ .tok = TOKEN_KW_IF },
+	{ .tok = TOKEN_IDENTIFIER }
+);
+
 #undef MAKE_COMBO
 
 #define TRY_PUSH_AST_NODE(combo, node_type) \
@@ -221,6 +226,7 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 		TRY_PUSH_AST_NODE(ast_node_return_combo, AST_NODE_RETURN);
 		TRY_PUSH_AST_NODE(ast_node_return_var_combo, AST_NODE_RETURN);
 		TRY_PUSH_AST_NODE(ast_node_if_combo, AST_NODE_IF);
+		TRY_PUSH_AST_NODE(ast_node_if_var_combo, AST_NODE_IF);
 		TRY_PUSH_AST_NODE(ast_node_comment_combo, AST_NODE_COMMENT);
 		TRY_PUSH_AST_NODE(ast_node_int_combo, AST_NODE_INT_CONST);
 		TRY_PUSH_AST_NODE(ast_node_float_combo, AST_NODE_FLOAT_CONST);
