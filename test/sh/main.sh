@@ -59,32 +59,31 @@ test "set_var_in_if.sk"
 test "if_with_var_true.sk"
 test "if_with_var_false.sk"
 
-test_err "err_var_assign.sk" "Compilation error: variable \"x\" already defined"
-test_err "err_return_int.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""
 test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_err ".sk" "\".sk\" is not a valid name, exiting"
 test_err "not_a_file.sk" "\"./test/sh/not_a_file.sk\" was not found, exiting"
 test_err "option1\ option2" "too many arguments passed, exiting"
-test_err "illegal_utf8.sk" "illegal UTF8 sequence at character offset 0"
-test_err "redeclare_var.sk" "Compilation error: variable \"x\" already defined"
-test_err "assign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
-test_err "auto_assign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
-test_err "assign_unknown_var.sk" "Compilation error: variable \"y\" not found"
-test_err "return_non_existent_var.sk" "Compilation error: variable \"x\" not found"
-test_err "return_non_int.sk" "Compilation error: returning non-int variable \"x\" from main"
-test_err "return_non_int.sk" "Compilation error: returning non-int variable \"x\" from main"
-test_err "if_missing_body.sk" "Compilation error: unexpected token: \"if\""
-test_err "err_mismatched_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
-test_err "err_stray_close_bracket.sk" "Compilation error: unexpected token: \"]\""
-test_err "err_extra_close_bracket.sk" "Compilation error: unexpected token: \"]\""
-test_err "err_no_closing_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
-test_err "err_invalid_return_if.sk" "Compilation error: unexpected token: \"x\""
-test_err "err_if_with_var.sk" "Compilation error: variable \"x\" not found"
 
-touch test/sh/read_protected.sk
-chmod 200 test/sh/read_protected.sk
-test_err "read_protected.sk" "cannot open \"./test/sh/read_protected.sk\", permission denied"
-rm test/sh/read_protected.sk
+test_err "error/var_already_defined.sk" "Compilation error: variable \"x\" already defined"
+test_err "error/return_int_overflow.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""
+test_err "error/illegal_utf8.sk" "illegal UTF8 sequence at character offset 0"
+test_err "error/assign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
+test_err "error/auto_assign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
+test_err "error/assign_unknown_var.sk" "Compilation error: variable \"y\" not found"
+test_err "error/return_non_existent_var.sk" "Compilation error: variable \"x\" not found"
+test_err "error/return_non_int.sk" "Compilation error: returning non-int variable \"x\" from main"
+test_err "error/if_missing_body.sk" "Compilation error: unexpected token: \"if\""
+test_err "error/mismatched_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
+test_err "error/stray_close_bracket.sk" "Compilation error: unexpected token: \"]\""
+test_err "error/extra_close_bracket.sk" "Compilation error: unexpected token: \"]\""
+test_err "error/no_closing_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
+test_err "error/invalid_return_if.sk" "Compilation error: unexpected token: \"x\""
+test_err "error/if_with_nonexisting_var.sk" "Compilation error: variable \"x\" not found"
+
+touch test/sh/error/read_protected.sk
+chmod 200 test/sh/error/read_protected.sk
+test_err "error/read_protected.sk" "cannot open \"./test/sh/error/read_protected.sk\", permission denied"
+rm test/sh/error/read_protected.sk
 
 echo
 
