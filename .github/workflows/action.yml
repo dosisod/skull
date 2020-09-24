@@ -56,7 +56,7 @@ jobs:
     - name: Install Skull
       run: sudo CC=gcc-8 make options install -e
 
-  test-skull-installed:
+  tests-with-skull-installed:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
@@ -66,8 +66,14 @@ jobs:
 
     - name: Run Skull
       run: |
-        skull skull/main.sk
-        ./skull/main
+        skull test/main.sk
+        ./test/main
+
+    - name: Run C integration test
+      run: |
+        cd test/docs/c-integration
+        skull hello.sk hello.c
+        ./hello
 
   test-precommit:
     runs-on: ubuntu-latest
