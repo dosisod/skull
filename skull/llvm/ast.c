@@ -79,7 +79,11 @@ void node_to_llvm_ir(AstNode *node) {
 			llvm_make_if(node);
 		}
 
-		else if (node->node_type == AST_NODE_IDENTIFIER && *node->token->next->begin == '[') {
+		else if (
+			node->node_type == AST_NODE_IDENTIFIER &&
+			node->token->next &&
+			*node->token->next->begin == '['
+		) {
 			llvm_make_function(node);
 		}
 

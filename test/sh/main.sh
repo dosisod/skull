@@ -79,6 +79,7 @@ test_err "error/extra_close_bracket.sk" "Compilation error: unexpected token: \"
 test_err "error/no_closing_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
 test_err "error/invalid_return_if.sk" "Compilation error: unexpected token: \"x\""
 test_err "error/if_with_nonexisting_var.sk" "Compilation error: variable \"x\" not found"
+test_err "error/only_identifier_fails.sk" "Compilation error: unexpected token: \"x\""
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
