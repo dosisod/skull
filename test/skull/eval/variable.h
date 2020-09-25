@@ -7,13 +7,10 @@
 	real_type data = real_data; \
 	variable_write(var, &data); \
 	char32_t *str = fmt_var(var); \
-	const bool pass = ( \
-		str && \
-		c32scmp(expected, str) \
-	); \
+	ASSERT_TRUTHY(str); \
+	ASSERT_TRUTHY(c32scmp(expected, str)); \
 	free(str); \
-	free_variable(var); \
-	return pass;
+	free_variable(var)
 
 TEST_DECL(create_variable)
 TEST_DECL(create_variable_with_invalid_type_fails)

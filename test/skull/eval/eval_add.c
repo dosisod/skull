@@ -8,12 +8,14 @@
 #include "test/testing.h"
 
 TEST(adding_2_ints, {
-	Variable *var1 = make_variable("int", U"var1", false);
-	Variable *var2 = make_variable("int", U"var2", false);
-
 	const SkullInt num = 1;
+
+	Variable *var1 = make_variable("int", U"var1", false);
 	variable_write(var1, &num);
+
+	Variable *var2 = make_variable("int", U"var2", false);
 	variable_write(var2, &num);
+
 	Variable *var3 = eval_add(var1, var2);
 
 	SkullInt result = 0;
@@ -27,12 +29,14 @@ TEST(adding_2_ints, {
 })
 
 TEST(adding_2_floats, {
-	Variable *var1 = make_variable("float", U"var1", false);
-	Variable *var2 = make_variable("float", U"var2", false);
-
 	const SkullFloat num = 1.0;
+
+	Variable *var1 = make_variable("float", U"var1", false);
 	variable_write(var1, &num);
+
+	Variable *var2 = make_variable("float", U"var2", false);
 	variable_write(var2, &num);
+
 	Variable *var3 = eval_add(var1, var2);
 
 	SkullFloat result = 0.0;
@@ -47,12 +51,14 @@ TEST(adding_2_floats, {
 })
 
 TEST(adding_2_strs, {
-	Variable *var1 = make_variable("str", U"var1", false);
-	Variable *var2 = make_variable("str", U"var2", false);
-
 	const char32_t *str = U"x";
+
+	Variable *var1 = make_variable("str", U"var1", false);
 	variable_write(var1, &str);
+
+	Variable *var2 = make_variable("str", U"var2", false);
 	variable_write(var2, &str);
+
 	Variable *var3 = eval_add(var1, var2);
 
 	char32_t *result = NULL;

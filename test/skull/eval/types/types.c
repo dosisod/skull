@@ -37,24 +37,19 @@ TEST(make_new_type, {
 })
 
 TEST(make_new_type_rejects_non_unique_type, {
-	const bool inserted1 = make_new_type("test_type", 1);
+	ASSERT_TRUTHY(make_new_type("test_type", 1));
 
 	Type *type = find_type("test_type");
 	ASSERT_TRUTHY(type);
 
-	const bool inserted2 = make_new_type("test_type", 1);
+	ASSERT_FALSEY(make_new_type("test_type", 1));
 	ASSERT_FALSEY(type->next);
 
 	free_types();
-
-	ASSERT_TRUTHY(inserted1);
-	ASSERT_FALSEY(inserted2);
 })
 
 TEST(find_type, {
-	Type *type = find_type("int");
-
-	ASSERT_EQUAL(type, &TYPE_INT);
+	ASSERT_EQUAL(find_type("int"), &TYPE_INT);
 })
 
 TEST(free_types, {

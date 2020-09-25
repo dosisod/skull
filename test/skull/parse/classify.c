@@ -6,88 +6,72 @@
 #include "test/testing.h"
 
 TEST(is_type_str, {
-	const char32_t *code=U"int not_a_type";
-	Token *token=tokenize(code);
+	Token *token = tokenize(U"int not_a_type");
 
-	char32_t *buf=token_str(token);
-	char32_t *buf_next=token_str(token->next);
+	char32_t *buf = token_str(token);
+	char32_t *buf_next = token_str(token->next);
 
-	const bool pass=(
-		is_type_str(buf) &&
-		!is_type_str(buf_next)
-	);
+	ASSERT_TRUTHY(is_type_str(buf));
+	ASSERT_FALSEY(is_type_str(buf_next));
 
 	free_tokens(token);
 	free(buf);
 	free(buf_next);
-	return pass;
 })
 
 TEST(is_keyword_str, {
-	return (
-		is_keyword_str(U"return") &&
-		is_keyword_str(U"mut") &&
-		!is_keyword_str(U"not_a_keyword")
-	);
+	ASSERT_TRUTHY(is_keyword_str(U"return"));
+	ASSERT_TRUTHY(is_keyword_str(U"mut"));
+	ASSERT_FALSEY(is_keyword_str(U"not_a_keyword"));
 })
 
 TEST(is_constant_integer, {
-	return (
-		is_constant_integer_str(U"123") &&
-		is_constant_integer_str(U"-123") &&
-		is_constant_integer_str(U"0x123") &&
-		is_constant_integer_str(U"0x0123456789ABCDEF") &&
-		is_constant_integer_str(U"0xabcdef") &&
-		is_constant_integer_str(U"0b10101") &&
-		is_constant_integer_str(U"0o01234567") &&
-		!is_constant_integer_str(U"0b") &&
-		!is_constant_integer_str(U"0x") &&
-		!is_constant_integer_str(U"0o") &&
-		!is_constant_integer_str(U"-") &&
-		!is_constant_integer_str(U"123aaa") &&
-		!is_constant_integer_str(U"-123aaa") &&
-		!is_constant_integer_str(U"")
-	);
+	ASSERT_TRUTHY(is_constant_integer_str(U"123"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"-123"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"0x123"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"0x0123456789ABCDEF"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"0xabcdef"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"0b10101"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"0o01234567"));
+	ASSERT_FALSEY(is_constant_integer_str(U"0b"));
+	ASSERT_FALSEY(is_constant_integer_str(U"0x"));
+	ASSERT_FALSEY(is_constant_integer_str(U"0o"));
+	ASSERT_FALSEY(is_constant_integer_str(U"-"));
+	ASSERT_FALSEY(is_constant_integer_str(U"123aaa"));
+	ASSERT_FALSEY(is_constant_integer_str(U"-123aaa"));
+	ASSERT_FALSEY(is_constant_integer_str(U""));
 })
 
 TEST(is_constant_float, {
-	return (
-		is_constant_float_str(U"123.0") &&
-		is_constant_float_str(U"-123.0") &&
-		is_constant_float_str(U"0.0") &&
-		is_constant_float_str(U"Infinity") &&
-		is_constant_float_str(U"-Infinity") &&
-		!is_constant_float_str(U"123") &&
-		!is_constant_float_str(U"123.") &&
-		!is_constant_float_str(U".123") &&
-		!is_constant_float_str(U"123aaa")
-	);
+	ASSERT_TRUTHY(is_constant_float_str(U"123.0"));
+	ASSERT_TRUTHY(is_constant_float_str(U"-123.0"));
+	ASSERT_TRUTHY(is_constant_float_str(U"0.0"));
+	ASSERT_TRUTHY(is_constant_float_str(U"Infinity"));
+	ASSERT_TRUTHY(is_constant_float_str(U"-Infinity"));
+	ASSERT_FALSEY(is_constant_float_str(U"123"));
+	ASSERT_FALSEY(is_constant_float_str(U"123."));
+	ASSERT_FALSEY(is_constant_float_str(U".123"));
+	ASSERT_FALSEY(is_constant_float_str(U"123aaa"));
 })
 
 TEST(is_constant_bool, {
-	return (
-		is_constant_bool_str(U"true") &&
-		is_constant_bool_str(U"false") &&
-		!is_constant_bool_str(U"not_bool")
-	);
+	ASSERT_TRUTHY(is_constant_bool_str(U"true"));
+	ASSERT_TRUTHY(is_constant_bool_str(U"false"));
+	ASSERT_FALSEY(is_constant_bool_str(U"not_bool"));
 })
 
 TEST(is_constant_rune, {
-	return (
-		is_constant_rune_str(U"'x'") &&
-		!is_constant_rune_str(U"'x '") &&
-		!is_constant_rune_str(U"''")
-	);
+	ASSERT_TRUTHY(is_constant_rune_str(U"'x'"));
+	ASSERT_FALSEY(is_constant_rune_str(U"'x '"));
+	ASSERT_FALSEY(is_constant_rune_str(U"''"));
 })
 
 TEST(is_constant_str, {
-	return (
-		is_constant_str_str(U"\"\"") &&
-		is_constant_str_str(U"\"x\"") &&
-		is_constant_str_str(U"\"xyz\"") &&
-		!is_constant_str_str(U"\"bad") &&
-		!is_constant_str_str(U"bad\"")
-	);
+	ASSERT_TRUTHY(is_constant_str_str(U"\"\""));
+	ASSERT_TRUTHY(is_constant_str_str(U"\"x\""));
+	ASSERT_TRUTHY(is_constant_str_str(U"\"xyz\""));
+	ASSERT_FALSEY(is_constant_str_str(U"\"bad"));
+	ASSERT_FALSEY(is_constant_str_str(U"bad\""));
 })
 
 TEST(token_newline, {
@@ -147,17 +131,13 @@ TEST(token_div_oper, {
 })
 
 TEST(token_type, {
-	const char32_t *code=U"int not_a_type";
-	Token *t=tokenize(code);
+	Token *t = tokenize(U"int not_a_type");
 	classify_tokens(t);
 
-	const bool pass=(
-		t->token_type==TOKEN_TYPE &&
-		t->next->token_type!=TOKEN_TYPE
-	);
+	ASSERT_EQUAL(t->token_type, TOKEN_TYPE);
+	ASSERT_NOT_EQUAL(t->next->token_type, TOKEN_TYPE);
 
 	free_tokens(t);
-	return pass;
 })
 
 TEST(token_unknown, {
@@ -197,22 +177,20 @@ TEST(token_comment_empty, {
 })
 
 TEST(is_valid_identifier, {
-	return (
-		is_valid_identifier_str(U"a") &&
-		is_valid_identifier_str(U"z") &&
-		is_valid_identifier_str(U"A") &&
-		is_valid_identifier_str(U"Z") &&
-		!is_valid_identifier_str(U"0") &&
-		!is_valid_identifier_str(U"_") &&
-		!is_valid_identifier_str(U"~") &&
-		is_valid_identifier_str(U"a:") &&
-		is_valid_identifier_str(U"abc:") &&
-		!is_valid_identifier_str(U"1var") &&
-		is_valid_identifier_str(U"var1") &&
-		is_valid_identifier_str(U"x1") &&
-		is_valid_identifier_str(U"x_") &&
-		!is_valid_identifier_str(U"_x")
-	);
+	ASSERT_TRUTHY(is_valid_identifier_str(U"a"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"z"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"A"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"Z"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"0"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"_"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"~"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"a:"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"abc:"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"1var"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"var1"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"x1"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"x_"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"_x"));
 })
 
 TEST(is_valid_identifier_token, {
@@ -232,19 +210,13 @@ TEST(identifier_cannot_be_keyword, {
 })
 
 TEST(classify_tokens, {
-	const char32_t *code=U"[ ]";
-	Token *t=tokenize(code);
+	Token *t = tokenize(U"[ ]");
 	classify_tokens(t);
 
-	const bool pass=(
-		t->token_type==TOKEN_BRACKET_OPEN &&
-		t->next->token_type==TOKEN_BRACKET_CLOSE
-	);
+	ASSERT_EQUAL(t->token_type, TOKEN_BRACKET_OPEN);
+	ASSERT_EQUAL(t->next->token_type, TOKEN_BRACKET_CLOSE);
 
-	free(t->next);
-	free(t);
-
-	return pass;
+	free_tokens(t);
 })
 
 TEST_SELF(classifier,

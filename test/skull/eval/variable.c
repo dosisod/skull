@@ -171,14 +171,14 @@ TEST(fmt_var_str_with_escapes, {
 	Variable *var = make_variable("str", U"x", false);
 
 	const char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"\"\\r\\n\\t\\\\\"", &error);
+	AstNode *node = make_ast_tree(U"\" \\r \\n \\t \\\\ \"", &error);
 
 	eval_assign(var, node, NULL);
 
 	char32_t *str = fmt_var(var);
 
 	ASSERT_TRUTHY(str);
-	ASSERT_TRUTHY(c32scmp(U"\r\n\t\\", str));
+	ASSERT_TRUTHY(c32scmp(U" \r \n \t \\ ", str));
 
 	char32_t *mem = NULL;
 	variable_read(&mem, var);

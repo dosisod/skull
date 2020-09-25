@@ -9,8 +9,7 @@
 #include "test/testing.h"
 
 TEST(make_ast_node_struct, {
-	const char32_t *code = U"hello";
-	Token *token = tokenize(code);
+	Token *token = tokenize(U"hello");
 
 	AstNode node;
 	node.node_type = AST_NODE_UNKNOWN;
@@ -39,8 +38,7 @@ TEST(make_ast_node, {
 })
 
 TEST(ast_token_cmp, {
-	const char32_t *code = U"x: int = 0";
-	Token *token = tokenize(code);
+	Token *token = tokenize(U"x: int = 0");
 	classify_tokens(token);
 
 	bool ast_pass = false;
@@ -62,8 +60,7 @@ TEST(ast_token_cmp, {
 })
 
 TEST(ast_token_cmp_extra_tokens, {
-	const char32_t *code = U"x: int = 0 extra";
-	Token *token = tokenize(code);
+	Token *token = tokenize(U"x: int = 0 extra");
 	classify_tokens(token);
 
 	bool ast_pass = false;
@@ -85,8 +82,7 @@ TEST(ast_token_cmp_extra_tokens, {
 })
 
 TEST(ast_token_cmp_missing_tokens, {
-	const char32_t *code = U"x: int = 0";
-	Token *token = tokenize(code);
+	Token *token = tokenize(U"x: int = 0");
 	classify_tokens(token);
 
 	bool ast_pass = false;
@@ -109,8 +105,7 @@ TEST(ast_token_cmp_missing_tokens, {
 })
 
 TEST(ast_token_cmp_any_token, {
-	const char32_t *code = U"[anything]";
-	Token *token = tokenize(code);
+	Token *token = tokenize(U"[anything]");
 	classify_tokens(token);
 
 	bool ast_pass = false;
@@ -160,8 +155,7 @@ TEST(ast_token_cmp_optional_combo, {
 })
 
 TEST(push_ast_node, {
-	const char32_t *code = U"x: int = 0";
-	Token *token = tokenize(code);
+	Token *token = tokenize(U"x: int = 0");
 	Token *last = token;
 
 	classify_tokens(token);
@@ -170,7 +164,7 @@ TEST(push_ast_node, {
 	AstNode *tmp = node;
 
 	bool ast_pass = false;
-	token=ast_token_cmp(token, (Combo[]) {
+	token = ast_token_cmp(token, (Combo[]) {
 		{ .tok = TOKEN_NEW_IDENTIFIER },
 		{ .tok = TOKEN_TYPE },
 		{ .tok = TOKEN_OPER_EQUAL },

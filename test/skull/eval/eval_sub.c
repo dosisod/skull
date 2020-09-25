@@ -9,12 +9,13 @@
 
 TEST(subtracting_2_ints, {
 	Variable *var1 = make_variable("int", U"var1", false);
-	Variable *var2 = make_variable("int", U"var2", false);
-
 	const SkullInt num1 = 5;
 	variable_write(var1, &num1);
+
+	Variable *var2 = make_variable("int", U"var2", false);
 	const SkullInt num2 = 3;
 	variable_write(var2, &num2);
+
 	Variable *var3 = eval_sub(var1, var2);
 
 	SkullInt result = 0;
@@ -29,12 +30,13 @@ TEST(subtracting_2_ints, {
 
 TEST(subtracting_2_floats, {
 	Variable *var1 = make_variable("float", U"var1", false);
-	Variable *var2 = make_variable("float", U"var2", false);
-
 	const SkullFloat num1 = 5.0;
 	variable_write(var1, &num1);
+
+	Variable *var2 = make_variable("float", U"var2", false);
 	const SkullFloat num2 = 3.0;
 	variable_write(var2, &num2);
+
 	Variable *var3 = eval_sub(var1, var2);
 
 	SkullFloat result = 0.0;

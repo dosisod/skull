@@ -44,13 +44,11 @@ TEST(cannot_add_same_varname_to_scope, {
 	Variable *var1 = make_variable("int", U"x", true);
 	Variable *var2 = make_variable("int", U"x", true);
 
-	const bool added_var1 = scope_add_var(scope, var1);
-	const bool added_var2 = scope_add_var(scope, var2);
+	ASSERT_TRUTHY(scope_add_var(scope, var1));
+	ASSERT_FALSEY(scope_add_var(scope, var2));
 
 	ASSERT_EQUAL(scope->vars_used, 1);
 	ASSERT_EQUAL(scope->vars[0], var1);
-	ASSERT_TRUTHY(added_var1);
-	ASSERT_FALSEY(added_var2);
 
 	free(var1);
 	free(var2);

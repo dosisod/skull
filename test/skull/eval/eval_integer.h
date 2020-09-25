@@ -3,17 +3,14 @@
 #include "test/testing.h"
 
 #define TEST_EVAL_INT_CONVERT(str_value, expected_num, expected_error) \
-	Token *token=tokenize(str_value); \
+	Token *token = tokenize(str_value); \
 	classify_tokens(token); \
-	const char32_t *err=0; \
-	SkullInt *num=eval_integer(token, &err); \
-	const bool pass=( \
-		(!num || *num==(expected_num)) && \
-		(err==(expected_error) || c32scmp(expected_error, err)) \
-	); \
+	const char32_t *err = 0; \
+	SkullInt *num = eval_integer(token, &err); \
+	ASSERT_TRUTHY(!num || *num == (expected_num)); \
+	ASSERT_TRUTHY(err == (expected_error) || c32scmp(expected_error, err)); \
 	free(token); \
-	free(num); \
-	return pass
+	free(num)
 
 TEST_DECL(convert_integer_token)
 TEST_DECL(convert_negative_integer_token)

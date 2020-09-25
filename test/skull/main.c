@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdio.h>
 
 #include "parse/ast/node.h"
@@ -26,7 +25,7 @@
 int main(void) {
 	SETUP_LOCALE();
 
-	bool passed = true;
+	_Bool passed = 1;
 
 	testing_test_self(&passed);
 

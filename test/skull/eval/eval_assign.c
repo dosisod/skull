@@ -14,7 +14,7 @@ TEST(eval_assign_int, {
 })
 
 TEST(eval_assign_float, {
-	TEST_EVAL_ASSIGN_FLOAT("float", U"1234.0", SkullFloat, 1234.0, NULL);
+	TEST_EVAL_ASSIGN_FLOAT("float", U"1234.0", SkullFloat, 1234.0, NULL); // NOLINT
 })
 
 TEST(eval_assign_bool, {
@@ -30,9 +30,9 @@ TEST(eval_assign_rune_escaped, {
 })
 
 TEST(eval_assign_str, {
-	const char32_t *code = U"\"abc\"";
 	const char32_t *error = NULL;
-	AstNode *node = make_ast_tree(code, &error);
+	AstNode *node = make_ast_tree(U"\"abc\"", &error);
+	ASSERT_FALSEY(error);
 
 	Variable *var = make_variable("str", U"x", false);
 
@@ -41,7 +41,6 @@ TEST(eval_assign_str, {
 	char32_t *data = NULL;
 	variable_read(&data, var);
 
-	ASSERT_FALSEY(error);
 	ASSERT_TRUTHY(c32scmp(data, U"abc"));
 
 	char32_t *mem = NULL;
@@ -124,10 +123,10 @@ TEST(eval_assign_check_lhs_var, {
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"b + a", &error);
+	ASSERT_FALSEY(error);
+
 	Variable *var_b = make_variable("int", U"b", false);
 	const char32_t *output = eval_assign(var_b, node, scope);
-
-	ASSERT_FALSEY(error);
 
 	ASSERT_TRUTHY(c32scmp(
 		ERR_VAR_NOT_FOUND_(U"b"),
@@ -213,18 +212,18 @@ TEST(eval_assign_variable_to_another, {
 	//assign var2 to var1
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"var2", &error);
+	ASSERT_FALSEY(error);
 
 	Scope *scope = make_scope();
 	scope_add_var(scope, var1);
 	scope_add_var(scope, var2);
 
 	const char32_t *output = eval_assign(var1, node, scope);
+	ASSERT_FALSEY(output);
 
 	SkullInt data = 0;
 	variable_read(&data, var1);
 
-	ASSERT_FALSEY(error);
-	ASSERT_FALSEY(output);
 	ASSERT_EQUAL(data, 1234);
 
 	if (!is_error_msg(output)) {
@@ -245,6 +244,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"var2", &error);
+	ASSERT_FALSEY(error);
 
 	Scope *scope = make_scope();
 	scope_add_var(scope, var1);
@@ -252,7 +252,6 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 
 	const char32_t *output = eval_assign(var1, node, scope);
 
-	ASSERT_FALSEY(error);
 	ASSERT_TRUTHY(c32scmp(
 		output,
 		ERR_TYPE_MISMATCH_(U"int")
@@ -273,11 +272,11 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"not_a_variable", &error);
+	ASSERT_FALSEY(error);
 
 	Scope *scope = make_scope();
 	scope_add_var(scope, var);
 
-	ASSERT_FALSEY(error);
 	ASSERT_TRUTHY(c32scmp(
 		eval_assign(var, node, scope),
 		ERR_VAR_NOT_FOUND_(U"not_a_variable")
@@ -288,34 +287,32 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 
 TEST(eval_assign_string_types_cannot_share_pointers, {
 	Variable *var1 = make_variable("str", U"var1", false);
-	Variable *var2 = make_variable("str", U"var2", false);
-
 	const char32_t *str1 = NULL;
 	variable_write(var1, &str1);
 
+	Variable *var2 = make_variable("str", U"var2", false);
 	const char32_t *str2 = c32sdup(U"anything");
 	variable_write(var2, &str2);
-	var2->is_const = true;
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"var2", &error);
+	ASSERT_FALSEY(error);
 
 	Scope *scope = make_scope();
 	scope_add_var(scope, var1);
 	scope_add_var(scope, var2);
 
 	const char32_t *output = eval_assign(var1, node, scope);
+	ASSERT_FALSEY(output);
 
 	char32_t *after_var1 = NULL;
 	variable_read(&after_var1, var1);
+	ASSERT_TRUTHY(c32scmp(after_var1, str2));
 
 	char32_t *after_var2 = NULL;
 	variable_read(&after_var2, var2);
+	ASSERT_TRUTHY(c32scmp(after_var1, str2));
 
-	ASSERT_FALSEY(error);
-	ASSERT_FALSEY(output);
-	ASSERT_TRUTHY(c32scmp(after_var1, str2));
-	ASSERT_TRUTHY(c32scmp(after_var1, str2));
 	ASSERT_NOT_EQUAL(after_var1, after_var2);
 
 	free_scope(scope);
@@ -326,15 +323,15 @@ TEST(eval_assign_type_type, {
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"int", &error);
+	ASSERT_FALSEY(error);
 
 	Scope *scope = make_scope();
 	const char32_t *output = eval_assign(var, node, scope);
+	ASSERT_FALSEY(output);
 
 	Type *after = NULL;
 	variable_read(&after, var);
 
-	ASSERT_FALSEY(error);
-	ASSERT_FALSEY(output);
 	ASSERT_EQUAL(after, &TYPE_INT);
 
 	free_scope(scope);
@@ -345,10 +342,10 @@ TEST(eval_assign_type_var_cannot_be_type, {
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"type", &error);
+	ASSERT_FALSEY(error);
 
 	Scope *scope = make_scope();
 
-	ASSERT_FALSEY(error);
 	ASSERT_EQUAL(eval_assign(var, node, scope), ERR_TYPE_TYPE_BAD);
 
 	free_scope(scope);
