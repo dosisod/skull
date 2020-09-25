@@ -1,10 +1,10 @@
 #include <stdbool.h>
 
 #include "skull/common/str.h"
-#include "skull/errors.h"
+#include "skull/common/errors.h"
 #include "skull/eval/variable.h"
 
-#include "test/skull/errors.h"
+#include "test/skull/common/errors.h"
 #include "test/testing.h"
 
 TEST(is_error_msg, {

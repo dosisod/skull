@@ -4,8 +4,6 @@
 #include "parse/classify.h"
 #include "parse/tokenize.h"
 
-#include "errors.h"
-
 #include "eval/eval_add.h"
 #include "eval/eval_assign.h"
 #include "eval/eval_div.h"
@@ -17,6 +15,7 @@
 #include "eval/types/types.h"
 #include "eval/variable.h"
 
+#include "common/errors.h"
 #include "common/str.h"
 #include "common/wegex.h"
 

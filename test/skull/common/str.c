@@ -2,8 +2,8 @@
 #include <string.h>
 #include <uchar.h>
 
+#include "skull/common/errors.h"
 #include "skull/common/str.h"
-#include "skull/errors.h"
 
 #include "test/skull/common/str.h"
 #include "test/testing.h"

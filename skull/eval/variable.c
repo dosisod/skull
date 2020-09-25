@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/errors.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/variable.h"

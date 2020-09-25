@@ -2,7 +2,7 @@
 
 #include <uchar.h>
 
-#include "skull/errors.h"
+#include "skull/common/errors.h"
 #include "test/testing.h"
 
 _Bool fmt_error_wrapper(const char32_t *, ErrorMsg [], const char32_t *);

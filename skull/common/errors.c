@@ -4,7 +4,7 @@
 #include "skull/common/str.h"
 #include "skull/eval/variable.h"
 
-#include "skull/errors.h"
+#include "skull/common/errors.h"
 
 const char32_t *ERR_UNEXPECTED_TOKEN = ERR_UNEXPECTED_TOKEN_(U"%");
 

@@ -1,6 +1,6 @@
+#include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/errors.h"
 
 #include "skull/eval/types/type.h"
 

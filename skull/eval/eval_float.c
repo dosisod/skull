@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/errors.h"
 #include "skull/eval/types/defs.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"

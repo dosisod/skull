@@ -1,7 +1,7 @@
 #include <stdbool.h>
 
+#include "skull/common/errors.h"
 #include "skull/common/str.h"
-#include "skull/errors.h"
 #include "skull/eval/eval_assign.h"
 #include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
