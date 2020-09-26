@@ -4,6 +4,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/eval/eval_assign.h"
 #include "skull/eval/eval_integer.h"
 #include "skull/eval/types/bool.h"
 #include "skull/eval/types/defs.h"
@@ -85,6 +86,12 @@ void node_to_llvm_ir(AstNode *node) {
 			*node->token->next->begin == '['
 		) {
 			llvm_make_function(node);
+		}
+
+		else if (node->node_type == AST_NODE_VAR_ASSIGN) {
+			llvm_make_assign(node);
+
+			node = node->next;
 		}
 
 		else {
@@ -262,4 +269,25 @@ void llvm_make_function(AstNode *node) {
 		0,
 		""
 	);
+}
+
+/*
+Build a LLVM `load` operation from `node`.
+*/
+void llvm_make_assign(AstNode *node) {
+	char32_t *var_name = token_str(node->token);
+	Variable *found_var = scope_find_name(scope, var_name);
+
+	if (!found_var) {
+		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
+	}
+
+	if (found_var->is_const) {
+		PANIC(FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .real = var_name }));
+	}
+
+	PANIC_ON_ERR(eval_assign(found_var, node->next, scope));
+	var_to_llvm_ir(found_var, builder, ctx);
+
+	free(var_name);
 }

@@ -36,3 +36,9 @@ void llvm_make_function(AstNode *node)
 
 > Builds a function declaration from `node`.
 
+```c
+void llvm_make_assign(AstNode *node)
+```
+
+> Build a LLVM `load` operation from `node`.
+

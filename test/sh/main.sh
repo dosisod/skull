@@ -58,6 +58,7 @@ test "nodes_after_call_not_ignored.sk"
 test "set_var_in_if.sk"
 test "if_with_var_true.sk"
 test "if_with_var_false.sk"
+test "reassign_var.sk"
 
 test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_err ".sk" "\".sk\" is not a valid name, exiting"
@@ -80,6 +81,9 @@ test_err "error/no_closing_bracket.sk" "Compilation error: Reached EOF, expected
 test_err "error/invalid_return_if.sk" "Compilation error: unexpected token: \"x\""
 test_err "error/if_with_nonexisting_var.sk" "Compilation error: variable \"x\" not found"
 test_err "error/only_identifier_fails.sk" "Compilation error: unexpected token: \"x\""
+test_err "error/reassign_non_existet_var.sk" "Compilation error: variable \"x\" not found"
+test_err "error/reassign_const_var.sk" "Compilation error: cannot reassign const variable \"x\""
+test_err "error/reassign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
