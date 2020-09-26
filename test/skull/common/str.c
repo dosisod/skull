@@ -153,9 +153,9 @@ bool c32sunescape_wrapper(const char32_t *str, const char32_t expected, const ch
 
 	return (
 		expected == c &&
-		expected_err ?
+		(expected_err ?
 			c32scmp(expected_err, err) :
-			expected_err == err
+			expected_err == err)
 	);
 }
 
@@ -165,6 +165,13 @@ TEST(c32sunescape, {
 	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\n", '\n', NULL));
 	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\t", '\t', NULL));
 	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\", '\0', ERR_BAD_ESCAPE_(U"\\")));
+
+	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\x", '\0', ERR_BAD_ESCAPE_(U"\\x")));
+	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\x4", '\0', ERR_BAD_ESCAPE_(U"\\x4")));
+	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\xz", '\0', ERR_BAD_ESCAPE_(U"\\xz")));
+	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\x1z", '\0', ERR_BAD_ESCAPE_(U"\\x1z")));
+	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\x41", 'A', NULL));
+	ASSERT_TRUTHY(c32sunescape_wrapper(U"\\xff", U'\xff', NULL));
 })
 
 TEST_SELF(str,

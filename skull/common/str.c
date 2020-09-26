@@ -259,20 +259,33 @@ If an error occurs, `err` will be set to the corresponding error msg.
 */
 char32_t c32sunescape(const char32_t *str, const char32_t **err) {
 	if (*str == '\\') {
-		if (str[1] == '\\') {
+		char32_t escape = str[1];
+		char32_t opt1 = '\0';
+		char32_t opt2 = '\0';
+
+		if (escape == '\\') {
 			return '\\';
 		}
-		if (str[1] == 't') {
+		if (escape == 't') {
 			return '\t';
 		}
-		if (str[1] == 'r') {
+		if (escape == 'r') {
 			return '\r';
 		}
-		if (str[1] == 'n') {
+		if (escape == 'n') {
 			return '\n';
 		}
+		if (escape == 'x' && str[2]) {
+			opt1 = str[2];
+			opt2 = str[3];
 
-		char32_t tmp[3] = { str[0], str[1], '\0' };
+			if (c32isxdigit(str[2]) && c32isxdigit(str[3])) {
+				char hex[3] = { (char)opt1, (char)opt2, '\0' };
+				return (char32_t)strtol(hex, NULL, 16); // NOLINT
+			}
+		}
+
+		char32_t tmp[5] = { '\\', escape, opt1, opt2, '\0' }; // NOLINT
 		*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = tmp });
 		return '\0';
 	}
