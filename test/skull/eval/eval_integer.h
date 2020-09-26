@@ -8,7 +8,10 @@
 	const char32_t *err = 0; \
 	SkullInt *num = eval_integer(token, &err); \
 	ASSERT_TRUTHY(!num || *num == (expected_num)); \
-	ASSERT_TRUTHY(err == (expected_error) || c32scmp(expected_error, err)); \
+	ASSERT_TRUTHY(c32scmp( \
+		(_Bool)(expected_error) ? (expected_error) : U"", \
+		(_Bool)(err) ? (err) : U"") \
+	); \
 	free(token); \
 	free(num)
 

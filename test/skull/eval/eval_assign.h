@@ -11,7 +11,10 @@
 	variable_read(&data, var); \
 	ASSERT_FALSEY(error); \
 	ASSERT_TRUTHY(cmp); \
-	ASSERT_TRUTHY(output == (expected_error) || c32scmp(expected_error, output)); \
+	ASSERT_TRUTHY(c32scmp( \
+		(_Bool)(expected_error) ? (expected_error) : U"", \
+		(_Bool)(output) ? (output) : U"" \
+	)); \
 	free_variable(var)
 
 #define TEST_EVAL_ASSIGN_FLOAT(str_type, str_value, real_type, expected_val, expected_error) \
