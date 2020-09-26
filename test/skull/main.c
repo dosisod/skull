@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <stdio.h>
 
 #include "parse/ast/node.h"
@@ -21,10 +22,17 @@
 
 #include "skull/common/local.h"
 
+void segfault_handler() {
+	// add newline when segfault occurs so you can see what file cause it
+	putchar('\n');
+}
+
 int main(void) {
 	SETUP_LOCALE();
 
 	_Bool passed = 1;
+
+	signal(SIGSEGV, segfault_handler);
 
 	testing_test_self(&passed);
 
