@@ -281,11 +281,11 @@ char32_t c32sunescape(const char32_t *str, const char32_t **err) {
 
 			if (c32isxdigit(str[2]) && c32isxdigit(str[3])) {
 				char hex[3] = { (char)opt1, (char)opt2, '\0' };
-				return (char32_t)strtol(hex, NULL, 16); // NOLINT
+				return (char32_t)strtol(hex, NULL, 16);
 			}
 		}
 
-		char32_t tmp[5] = { '\\', escape, opt1, opt2, '\0' }; // NOLINT
+		char32_t tmp[5] = { '\\', escape, opt1, opt2, '\0' };
 		*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = tmp });
 		return '\0';
 	}

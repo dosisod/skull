@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 	);
 
 	size_t len = strlen(argv[1]);
-	char *ll_filename = malloc(len + 5); // NOLINT
+	char *ll_filename = malloc(len + 5);
 
 	char *slash_pos = strrchr(argv[1], '/');
 	if (!slash_pos) {

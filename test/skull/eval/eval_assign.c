@@ -14,7 +14,7 @@ TEST(eval_assign_int, {
 })
 
 TEST(eval_assign_float, {
-	TEST_EVAL_ASSIGN_FLOAT("float", U"1234.0", SkullFloat, 1234.0, NULL); // NOLINT
+	TEST_EVAL_ASSIGN_FLOAT("float", U"1234.0", SkullFloat, 1234.0, NULL);
 })
 
 TEST(eval_assign_bool, {

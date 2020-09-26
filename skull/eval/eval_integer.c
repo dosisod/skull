@@ -28,7 +28,7 @@ void *eval_integer(const Token *token, const char32_t **error) {
 	DIE_IF_MALLOC_FAILS(ret);
 
 	const char32_t *begin = token->begin;
-	int base = 10; // NOLINT
+	int base = 10;
 
 	if (c32sncmp(U"0b", token->begin, 2)) {
 		begin += 2;
@@ -36,11 +36,11 @@ void *eval_integer(const Token *token, const char32_t **error) {
 	}
 	else if (c32sncmp(U"0o", token->begin, 2)) {
 		begin += 2;
-		base = 8; // NOLINT
+		base = 8;
 	}
 	else if (c32sncmp(U"0x", token->begin, 2)) {
 		begin += 2;
-		base = 16; // NOLINT
+		base = 16;
 	}
 
 	char *tmp = c32stombs(begin);

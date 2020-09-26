@@ -120,11 +120,11 @@ TEST(fmt_var_float_trailing_zero, {
 })
 
 TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR("float", SkullFloat, 1.0 / 0.0, U"Infinity"); // NOLINT
+	TEST_FMT_VAR("float", SkullFloat, 1.0 / 0.0, U"Infinity");
 })
 
 TEST(fmt_var_float_neg_infinity, {
-	TEST_FMT_VAR("float", SkullFloat, 1.0 / -0.0, U"-Infinity"); // NOLINT
+	TEST_FMT_VAR("float", SkullFloat, 1.0 / -0.0, U"-Infinity");
 })
 
 TEST(fmt_var_bool, {
