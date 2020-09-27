@@ -4,7 +4,7 @@
 
 #define TOKEN_ANY_NON_BRACKET_TOKEN (TOKEN_END + 1)
 
-enum node_types {
+typedef enum {
 	AST_NODE_UNKNOWN,
 
 	AST_NODE_IDENTIFIER,
@@ -35,10 +35,10 @@ enum node_types {
 	AST_NODE_TYPE_CONST,
 
 	AST_NODE_COMMENT
-};
+} NodeType;
 
 typedef struct AstNode {
-	unsigned node_type;
+	NodeType node_type;
 
 	struct Token *token;
 	struct Token *token_end;
@@ -52,18 +52,18 @@ typedef struct AstNode {
 
 AstNode *make_ast_node(void);
 
-enum combo_rules {
+typedef enum {
 	RULE_OPTIONAL = 1
-};
+} ComboRule;
 
 typedef struct Combo {
 	struct Combo *combo;
 	unsigned tok;
-	unsigned rule;
+	ComboRule rule;
 } Combo;
 
 Token *ast_token_cmp(Token *, Combo *, _Bool *);
-void push_ast_node(Token *, Token **, unsigned, AstNode **);
+void push_ast_node(Token *, Token **, NodeType, AstNode **);
 
 AstNode *make_ast_tree(const char32_t *, const char32_t **);
 AstNode *make_ast_tree_(Token *, const char32_t **, unsigned);

@@ -332,7 +332,7 @@ Token *ast_token_cmp(Token *token, Combo *combo, bool *pass) {
 /*
 Push a new AST node to `node` with type `node_type`
 */
-void push_ast_node(Token *token, Token **last, unsigned node_type, AstNode **node) {
+void push_ast_node(Token *token, Token **last, NodeType node_type, AstNode **node) {
 	(*node)->node_type = node_type;
 	(*node)->token = *last;
 	(*node)->token_end = token;

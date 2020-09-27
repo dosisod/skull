@@ -4,7 +4,7 @@
 
 #include "skull/parse/tokenize.h"
 
-enum token_types {
+typedef enum {
 	// default token type
 	TOKEN_UNKNOWN,
 
@@ -39,7 +39,7 @@ enum token_types {
 	TOKEN_COMMENT,
 
 	TOKEN_END
-};
+} TokenType;
 
 _Bool is_type_str(const char32_t *);
 _Bool is_keyword_str(const char32_t *);
