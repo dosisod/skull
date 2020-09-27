@@ -214,15 +214,14 @@ void llvm_make_if(AstNode *node) {
 		end
 	);
 
-	if (!node->child->token) {
-		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
-	}
 	LLVMPositionBuilderAtEnd(
 		builder,
 		if_true
 	);
 
-	node_to_llvm_ir(node->child);
+	if (node->child->token) {
+		node_to_llvm_ir(node->child);
+	}
 
 	LLVMBuildBr(builder, end);
 
