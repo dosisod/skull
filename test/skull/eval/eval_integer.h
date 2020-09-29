@@ -15,13 +15,4 @@
 	free(token); \
 	free(num)
 
-TEST_DECL(convert_integer_token)
-TEST_DECL(convert_negative_integer_token)
-TEST_DECL(integer_overflow_returns_error)
-TEST_DECL(integer_underflow_returns_error)
-TEST_DECL(convert_hex_integer)
-TEST_DECL(convert_octal_integer)
-TEST_DECL(convert_binary_integer)
-TEST_DECL(non_integer_token_fails)
-
 void eval_integer_test_self(_Bool *pass);

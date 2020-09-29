@@ -15,11 +15,4 @@
 	free(token); \
 	free(num)
 
-TEST_DECL(convert_float_token)
-TEST_DECL(convert_negative_float_token)
-TEST_DECL(convert_overflow_float)
-TEST_DECL(convert_infinity_float_token)
-TEST_DECL(convert_neg_infinity_float_token)
-TEST_DECL(non_float_token_fails)
-
 void eval_float_test_self(_Bool *);

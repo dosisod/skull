@@ -14,9 +14,6 @@ _Bool test_##name (const char **func, const char **msg) { \
 	return 1; \
 }
 
-#define TEST_DECL(name) \
-_Bool test_##name (const char **func, const char **msg);
-
 #define TEST_SELF(name, ...) \
 void name##_test_self (_Bool *pass) { \
 	run_many_tests(__FILE__, (Test[]){ \
