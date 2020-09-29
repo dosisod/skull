@@ -165,20 +165,21 @@ bool is_constant_bool_str(const char32_t *str) {
 /*
 Returns true if `str` is a valid rune.
 
-Examples: `'x'`, `'\n'`, and `' '`.
+Examples: `'x'`, `'\n'`, `'\xFF'`, and `' '`.
 Won't work: `''`, `'\'`, `'x '`, or `' x'`.
 */
 bool is_constant_rune_str(const char32_t *str) {
 	const size_t len = c32slen(str);
 
-	return (
-		str[0] == '\'' &&
-		str[len - 1] == '\'' && (
-		(len == 3) || (
-			len == 4 &&
-			str[1] == '\\'
-		))
-	);
+	if (*str != '\'' || str[len - 1] != '\'') {
+		return false;
+	}
+
+	if (len == 4 || len == 6) {
+		return str[1] == '\\';
+	}
+
+	return len == 3;
 }
 
 /*

@@ -52,7 +52,7 @@ bool is_constant_rune_str(const char32_t *str)
 
 > Returns true if `str` is a valid rune.
 > \
-> Examples: `'x'`, `'\n'`, and `' '`.
+> Examples: `'x'`, `'\n'`, `'\xFF'`, and `' '`.
 > Won't work: `''`, `'\'`, `'x '`, or `' x'`.
 
 ```c
