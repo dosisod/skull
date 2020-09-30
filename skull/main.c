@@ -14,9 +14,13 @@
 
 #define DIE(x) puts(x); return 1
 
+#define PRINT_VERSION puts("Skull "SKULL_VERSION)
+
 int main(int argc, char *argv[]) {
 	if (argc == 1) {
-		DIE("expected filename, exiting");
+		PRINT_VERSION;
+		puts("\nusage: skull [-v | file [files...]]");
+		return 0;
 	}
 
 	if (argc > 2) {
@@ -24,7 +28,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (strcmp("-v", argv[1]) == 0) {
-		DIE("Skull "SKULL_VERSION);
+		PRINT_VERSION;
+		return 0;
 	}
 
 	if (!strrstr(argv[1], ".sk")) {
