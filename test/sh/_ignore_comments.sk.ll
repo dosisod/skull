@@ -1,5 +1,5 @@
-; ModuleID = 'main_module'
-source_filename = "main_module"
+; ModuleID = './test/sh/ignore_comments.sk'
+source_filename = "./test/sh/ignore_comments.sk"
 
 define i64 @main() {
 entry:

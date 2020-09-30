@@ -35,8 +35,20 @@ int main(int argc, char *argv[]) {
 		DIE("\".sk\" is not a valid name, exiting");
 	}
 
+	errno = 0;
+	FILE *f = fopen(argv[1], "re");
+	if (!f) {
+		if (errno == EACCES) {
+			printf("cannot open \"%s\", permission denied\n", argv[1]);
+		}
+		else if (errno == ENOENT) {
+			printf("\"%s\" was not found, exiting\n", argv[1]);
+		}
+		return 1;
+	}
+
 	LLVMContextRef ctx = LLVMContextCreate();
-	LLVMModuleRef main_module = LLVMModuleCreateWithNameInContext("main_module", ctx);
+	LLVMModuleRef main_module = LLVMModuleCreateWithNameInContext(argv[1], ctx);
 
 	LLVMTypeRef main_func_type = LLVMFunctionType(
 		LLVMInt64Type(),
@@ -63,18 +75,6 @@ int main(int argc, char *argv[]) {
 		builder,
 		entry
 	);
-
-	errno = 0;
-	FILE *f = fopen(argv[1], "re");
-	if (!f) {
-		if (errno == EACCES) {
-			printf("cannot open \"%s\", permission denied\n", argv[1]);
-		}
-		else if (errno == ENOENT) {
-			printf("\"%s\" was not found, exiting\n", argv[1]);
-		}
-		return 1;
-	}
 
 	str_to_llvm_ir(
 		read_file(f),

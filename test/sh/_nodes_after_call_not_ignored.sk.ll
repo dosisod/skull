@@ -1,5 +1,5 @@
-; ModuleID = 'main_module'
-source_filename = "main_module"
+; ModuleID = './test/sh/nodes_after_call_not_ignored.sk'
+source_filename = "./test/sh/nodes_after_call_not_ignored.sk"
 
 define i64 @main() {
 entry:

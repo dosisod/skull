@@ -1,5 +1,5 @@
-; ModuleID = 'main_module'
-source_filename = "main_module"
+; ModuleID = './test/sh/reassign_var.sk'
+source_filename = "./test/sh/reassign_var.sk"
 
 define i64 @main() {
 entry:

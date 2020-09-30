@@ -1,5 +1,5 @@
-; ModuleID = 'main_module'
-source_filename = "main_module"
+; ModuleID = './test/sh/if_empty_body.sk'
+source_filename = "./test/sh/if_empty_body.sk"
 
 define i64 @main() {
 entry:

@@ -1,5 +1,5 @@
-; ModuleID = 'main_module'
-source_filename = "main_module"
+; ModuleID = './test/sh/set_var_in_if.sk'
+source_filename = "./test/sh/set_var_in_if.sk"
 
 define i64 @main() {
 entry:

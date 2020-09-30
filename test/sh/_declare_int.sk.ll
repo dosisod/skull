@@ -1,5 +1,5 @@
-; ModuleID = 'main_module'
-source_filename = "main_module"
+; ModuleID = './test/sh/declare_int.sk'
+source_filename = "./test/sh/declare_int.sk"
 
 define i64 @main() {
 entry:
