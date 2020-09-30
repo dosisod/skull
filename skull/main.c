@@ -12,7 +12,29 @@
 #define SKULL_VERSION "<version unknown>"
 #endif
 
+#define DIE(x) puts(x); return 1
+
 int main(int argc, char *argv[]) {
+	if (argc == 1) {
+		DIE("expected filename, exiting");
+	}
+
+	if (argc > 2) {
+		DIE("too many arguments passed, exiting");
+	}
+
+	if (strcmp("-v", argv[1]) == 0) {
+		DIE("Skull "SKULL_VERSION);
+	}
+
+	if (!strrstr(argv[1], ".sk")) {
+		DIE("missing required \".sk\" extension, exiting");
+	}
+
+	if (strrstr(argv[1], ".sk") == argv[1] || strrstr(argv[1], "/.sk")) {
+		DIE("\".sk\" is not a valid name, exiting");
+	}
+
 	LLVMContextRef ctx = LLVMContextCreate();
 	LLVMModuleRef main_module = LLVMModuleCreateWithNameInContext("main_module", ctx);
 
@@ -29,7 +51,7 @@ int main(int argc, char *argv[]) {
 		main_func_type
 	);
 
-	LLVMBasicBlockRef block = LLVMAppendBasicBlockInContext(
+	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
 		ctx,
 		main_func,
 		"entry"
@@ -39,33 +61,8 @@ int main(int argc, char *argv[]) {
 
 	LLVMPositionBuilderAtEnd(
 		builder,
-		block
+		entry
 	);
-
-	if (argc == 1) {
-		puts("expected filename, exiting");
-		return 1;
-	}
-
-	if (argc > 2) {
-		puts("too many arguments passed, exiting");
-		return 1;
-	}
-
-	if (strcmp("-v", argv[1]) == 0) {
-		puts("Skull "SKULL_VERSION);
-		return 0;
-	}
-
-	if (!strrstr(argv[1], ".sk")) {
-		puts("missing required \".sk\" extension, exiting");
-		return 1;
-	}
-
-	if (strrstr(argv[1], ".sk") == argv[1] || strrstr(argv[1], "/.sk")) {
-		puts("\".sk\" is not a valid name, exiting");
-		return 1;
-	}
 
 	errno = 0;
 	FILE *f = fopen(argv[1], "re");
