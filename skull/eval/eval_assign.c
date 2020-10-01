@@ -18,34 +18,6 @@
 
 const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Scope *scope);
 
-#define EVAL_ASSIGN_SETUP(func, cannot, unavail) \
-	char32_t *lhs_str = token_str(node->token); \
-	Variable *lhs_var = scope_find_name(scope, lhs_str); \
-	if (!lhs_var) { \
-		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lhs_str }); \
-	} \
-	free(lhs_str); \
-	char32_t *rhs_str = token_str(node->token->next->next); \
-	Variable *rhs_var = scope_find_name(scope, rhs_str); \
-	if (!rhs_var) { \
-		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = rhs_str }); \
-	} \
-	free(rhs_str); \
-	if (lhs_var->type != rhs_var->type) { \
-		return FMT_ERROR( \
-			(cannot), \
-			{ .type = lhs_var->type }, \
-			{ .type = rhs_var->type } \
-		); \
-	} \
-	Variable *tmp = eval_oper(lhs_var->type->func, lhs_var, rhs_var); \
-	if (!tmp) { \
-		return FMT_ERROR((unavail), { .type = lhs_var->type }); \
-	} \
-	variable_write(var, tmp->mem); \
-	free(tmp); \
-	return NULL; \
-
 /*
 Assign `node` to variable `var`.
 
@@ -60,22 +32,6 @@ const char32_t *eval_assign(Variable *var, AstNode *node, const Scope *scope) {
 
 	if (scope && node->node_type == AST_NODE_IDENTIFIER) {
 		return eval_auto_assign(var, node, scope);
-	}
-
-	if (scope && node->node_type == AST_NODE_ADD_VAR) {
-		EVAL_ASSIGN_SETUP(add, ERR_CANNOT_ADD, ERR_ADD_UNAVAILABLE);
-	}
-
-	if (scope && node->node_type == AST_NODE_SUB_VAR) {
-		EVAL_ASSIGN_SETUP(subtract, ERR_CANNOT_SUB, ERR_SUB_UNAVAILABLE);
-	}
-
-	if (scope && node->node_type == AST_NODE_MULT_VAR) {
-		EVAL_ASSIGN_SETUP(multiply, ERR_CANNOT_MULT, ERR_MULT_UNAVAILABLE);
-	}
-
-	if (scope && node->node_type == AST_NODE_DIV_VAR) {
-		EVAL_ASSIGN_SETUP(divide, ERR_CANNOT_DIV, ERR_DIV_UNAVAILABLE);
 	}
 
 	const void *mem = NULL;

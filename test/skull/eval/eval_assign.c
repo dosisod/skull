@@ -49,114 +49,6 @@ TEST(eval_assign_str, {
 	free_variable(var);
 })
 
-TEST(eval_assign_add_vars, {
-	TEST_EVAL_ASSIGN_WITH_MATH(1, U"+", 2);
-})
-
-TEST(eval_assign_sub_vars, {
-	TEST_EVAL_ASSIGN_WITH_MATH(1, U"-", 0);
-})
-
-TEST(eval_assign_mult_vars, {
-	TEST_EVAL_ASSIGN_WITH_MATH(2, U"*", 4);
-})
-
-TEST(eval_assign_div_vars, {
-	TEST_EVAL_ASSIGN_WITH_MATH(2, U"/", 1);
-})
-
-TEST(eval_assign_add_vars_types_must_match, {
-	TEST_EVAL_ASSIGN_DIFFERENT_TYPES(
-		"int", SkullInt, 1, U"+",
-		"rune", SkullRune, 'b',
-		ERR_CANNOT_(U"add", U"int", U"rune")
-	);
-})
-
-TEST(eval_assign_sub_vars_types_must_match, {
-	TEST_EVAL_ASSIGN_DIFFERENT_TYPES(
-		"int", SkullInt, 1, U"-",
-		"rune", SkullRune, 'b',
-		ERR_CANNOT_(U"subtract", U"int", U"rune")
-	);
-})
-
-TEST(eval_assign_mult_vars_types_must_match, {
-	TEST_EVAL_ASSIGN_DIFFERENT_TYPES(
-		"int", SkullInt, 1, U"*",
-		"rune", SkullRune, 'b',
-		ERR_CANNOT_(U"multiply", U"int", U"rune")
-	);
-})
-
-TEST(eval_assign_div_vars_types_must_match, {
-	TEST_EVAL_ASSIGN_DIFFERENT_TYPES(
-		"int", SkullInt, 1, U"/",
-		"rune", SkullRune, 'b',
-		ERR_CANNOT_(U"divide", U"int", U"rune")
-	);
-})
-
-TEST(eval_assign_add_vars_var_must_exist, {
-	TEST_EVAL_ASSIGN_VAR_MUST_EXIST(U"+");
-})
-
-TEST(eval_assign_sub_vars_var_must_exist, {
-	TEST_EVAL_ASSIGN_VAR_MUST_EXIST(U"-");
-})
-
-TEST(eval_assign_mult_vars_var_must_exist, {
-	TEST_EVAL_ASSIGN_VAR_MUST_EXIST(U"*");
-})
-
-TEST(eval_assign_div_vars_var_must_exist, {
-	TEST_EVAL_ASSIGN_VAR_MUST_EXIST(U"/");
-})
-
-TEST(eval_assign_check_lhs_var, {
-	Scope *scope = make_scope();
-
-	Variable *var_a = make_variable("int", U"a", false);
-	SkullInt data_a = 1;
-	variable_write(var_a, &data_a);
-	scope_add_var(scope, var_a);
-
-	const char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"b + a", &error);
-	ASSERT_FALSEY(error);
-
-	Variable *var_b = make_variable("int", U"b", false);
-	const char32_t *output = eval_assign(var_b, node, scope);
-
-	ASSERT_TRUTHY(c32scmp(
-		ERR_VAR_NOT_FOUND_(U"b"),
-		output
-	));
-
-	free_variable(var_a);
-})
-
-TEST(eval_assign_add_vars_must_be_addable, {
-	TEST_EVAL_ASSIGN_OPER_AVAILABLE(
-		U"+",
-		ERR_UNAVAILABLE_(U"addition", U"bool")
-	);
-})
-
-TEST(eval_assign_sub_vars_must_be_subtractable, {
-	TEST_EVAL_ASSIGN_OPER_AVAILABLE(
-		U"-",
-		ERR_UNAVAILABLE_(U"subtraction", U"bool")
-	);
-})
-
-TEST(eval_assign_mult_vars_must_be_multipliable, {
-	TEST_EVAL_ASSIGN_OPER_AVAILABLE(
-		U"*",
-		ERR_UNAVAILABLE_(U"multiplication", U"bool")
-	);
-})
-
 TEST(eval_assign_div_vars_must_be_divisible, {
 	TEST_EVAL_ASSIGN_OPER_AVAILABLE(
 		U"/",
@@ -358,24 +250,6 @@ TEST_SELF(eval_assign,
 	test_eval_assign_rune,
 	test_eval_assign_rune_escaped,
 	test_eval_assign_str,
-	test_eval_assign_add_vars,
-	test_eval_assign_add_vars_types_must_match,
-	test_eval_assign_add_vars_var_must_exist,
-	test_eval_assign_check_lhs_var,
-	test_eval_assign_add_vars_must_be_addable,
-	test_eval_assign_sub_vars,
-	test_eval_assign_sub_vars_types_must_match,
-	test_eval_assign_sub_vars_var_must_exist,
-	test_eval_assign_sub_vars_must_be_subtractable,
-	test_eval_assign_sub_vars,
-	test_eval_assign_mult_vars,
-	test_eval_assign_mult_vars_types_must_match,
-	test_eval_assign_mult_vars_var_must_exist,
-	test_eval_assign_mult_vars_must_be_multipliable,
-	test_eval_assign_div_vars,
-	test_eval_assign_div_vars_types_must_match,
-	test_eval_assign_div_vars_var_must_exist,
-	test_eval_assign_div_vars_must_be_divisible,
 	test_eval_assign_int_overflow,
 	test_eval_assign_type_mismatch,
 	test_eval_assign_cannot_assign_non_ints,

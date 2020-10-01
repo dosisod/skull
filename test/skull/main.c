@@ -5,13 +5,9 @@
 #include "parse/classify.h"
 #include "parse/tokenize.h"
 
-#include "eval/eval_add.h"
 #include "eval/eval_assign.h"
-#include "eval/eval_div.h"
 #include "eval/eval_float.h"
 #include "eval/eval_integer.h"
-#include "eval/eval_mult.h"
-#include "eval/eval_sub.h"
 #include "eval/scope.h"
 #include "eval/types/types.h"
 #include "eval/variable.h"
@@ -44,13 +40,9 @@ int main(void) {
 	error_test_self(&passed);
 
 	scope_test_self(&passed);
-	eval_add_test_self(&passed);
 	eval_assign_test_self(&passed);
-	eval_div_test_self(&passed);
 	eval_float_test_self(&passed);
 	eval_integer_test_self(&passed);
-	eval_sub_test_self(&passed);
-	eval_mult_test_self(&passed);
 	variable_test_self(&passed);
 
 	str_test_self(&passed);
