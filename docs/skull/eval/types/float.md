@@ -30,3 +30,11 @@ Variable *mult_float_type(const Variable *lhs, const Variable *rhs)
 
 > Multiply `lhs` and `rhs` floats together
 
+```c
+void *eval_float(const Token *token, const char32_t **error)
+```
+
+> Converts a `TOKEN_FLOAT_CONST` token to a floating point number pointer (`SkullFloat *`).
+> \
+> `error` is `NULL` if no error occurs, else `error` points to error msg.
+

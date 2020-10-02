@@ -5,9 +5,9 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/eval/eval_assign.h"
-#include "skull/eval/eval_integer.h"
 #include "skull/eval/types/bool.h"
 #include "skull/eval/types/defs.h"
+#include "skull/eval/types/int.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/aliases.h"

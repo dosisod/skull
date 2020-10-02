@@ -3,8 +3,8 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
-#include "skull/eval/eval_integer.h"
 #include "skull/eval/types/defs.h"
+#include "skull/eval/types/int.h"
 #include "skull/parse/classify.h"
 
 #include "test/skull/eval/eval_integer.h"
