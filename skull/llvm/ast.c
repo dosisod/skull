@@ -26,7 +26,6 @@
 
 // global variables only accessible from functions in this file
 static Scope *scope;
-static size_t vars_used_last;
 static LLVMValueRef func;
 static LLVMBuilderRef builder;
 static LLVMContextRef ctx;
@@ -47,7 +46,6 @@ void str_to_llvm_ir(char *str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLV
 	}
 
 	scope = make_scope();
-	vars_used_last = 0;
 	func = func_;
 	builder = builder_;
 	ctx = ctx_;
@@ -89,19 +87,13 @@ void node_to_llvm_ir(AstNode *node) {
 		}
 
 		else if (node->node_type == AST_NODE_VAR_ASSIGN) {
-			llvm_make_assign(node);
-
-			node = node->next;
+			llvm_make_assign(&node);
 		}
 
 		else {
 			PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
 		}
 
-		if (scope->vars_used != vars_used_last) {
-			var_to_llvm_ir(scope->vars[scope->vars_used - 1], builder, ctx);
-			vars_used_last++;
-		}
 		node = node->next;
 	}
 }
@@ -153,12 +145,17 @@ void llvm_make_return(AstNode *node) {
 Builds a variable from `node`.
 */
 void llvm_make_var_def(AstNode **node) {
+	static size_t vars_used_last = 0;
+
 	PANIC_ON_ERR(node_make_var(*node, scope,
 		(*node)->node_type == AST_NODE_VAR_DEF ||
 		(*node)->node_type == AST_NODE_AUTO_VAR_DEF
 	));
 
 	*node = (*node)->next;
+
+	var_to_llvm_ir(scope->vars[scope->vars_used - 1], builder, ctx);
+	vars_used_last++;
 }
 
 /*
@@ -273,8 +270,8 @@ void llvm_make_function(AstNode *node) {
 /*
 Build a LLVM `load` operation from `node`.
 */
-void llvm_make_assign(AstNode *node) {
-	char32_t *var_name = token_str(node->token);
+void llvm_make_assign(AstNode **node) {
+	char32_t *var_name = token_str((*node)->token);
 	Variable *found_var = scope_find_name(scope, var_name);
 
 	if (!found_var) {
@@ -285,8 +282,10 @@ void llvm_make_assign(AstNode *node) {
 		PANIC(FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .real = var_name }));
 	}
 
-	PANIC_ON_ERR(eval_assign(found_var, node->next, scope));
+	PANIC_ON_ERR(eval_assign(found_var, (*node)->next, scope));
 	var_to_llvm_ir(found_var, builder, ctx);
 
 	free(var_name);
+
+	*node = (*node)->next;
 }
