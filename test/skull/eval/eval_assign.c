@@ -10,23 +10,23 @@
 #include "test/testing.h"
 
 TEST(eval_assign_int, {
-	TEST_EVAL_ASSIGN("int", U"1234", SkullInt, 1234, NULL);
+	TEST_EVAL_ASSIGN(&TYPE_INT, U"1234", SkullInt, 1234, NULL);
 })
 
 TEST(eval_assign_float, {
-	TEST_EVAL_ASSIGN_FLOAT("float", U"1234.0", SkullFloat, 1234.0, NULL);
+	TEST_EVAL_ASSIGN_FLOAT(&TYPE_FLOAT, U"1234.0", SkullFloat, 1234.0, NULL);
 })
 
 TEST(eval_assign_bool, {
-	TEST_EVAL_ASSIGN("bool", U"true", bool, true, NULL);
+	TEST_EVAL_ASSIGN(&TYPE_BOOL, U"true", bool, true, NULL);
 })
 
 TEST(eval_assign_rune, {
-	TEST_EVAL_ASSIGN("rune", U"'a'", SkullRune, 'a', NULL);
+	TEST_EVAL_ASSIGN(&TYPE_RUNE, U"'a'", SkullRune, 'a', NULL);
 })
 
 TEST(eval_assign_rune_escaped, {
-	TEST_EVAL_ASSIGN("rune", U"'\\n'", SkullRune, '\n', NULL);
+	TEST_EVAL_ASSIGN(&TYPE_RUNE, U"'\\n'", SkullRune, '\n', NULL);
 })
 
 TEST(eval_assign_str, {
@@ -34,7 +34,7 @@ TEST(eval_assign_str, {
 	AstNode *node = make_ast_tree(U"\"abc\"", &error);
 	ASSERT_FALSEY(error);
 
-	Variable *var = make_variable("str", U"x", false);
+	Variable *var = make_variable(&TYPE_STR, U"x", false);
 
 	eval_assign(var, node, NULL);
 
@@ -59,7 +59,7 @@ TEST(eval_assign_div_vars_must_be_divisible, {
 #define TEMP_INT U"99999999999999999999999999999999"
 TEST(eval_assign_int_overflow, {
 	TEST_EVAL_ASSIGN(
-		"int",
+		&TYPE_INT,
 		TEMP_INT,
 		SkullInt,
 		0,
@@ -69,32 +69,32 @@ TEST(eval_assign_int_overflow, {
 #undef TEMP_INT
 
 TEST(eval_assign_type_mismatch, {
-	TEST_EVAL_ASSIGN("int", U"not_an_int", SkullInt, 0, ERR_TYPE_MISMATCH_(U"int"));
+	TEST_EVAL_ASSIGN(&TYPE_INT, U"not_an_int", SkullInt, 0, ERR_TYPE_MISMATCH_(U"int"));
 })
 
 TEST(eval_assign_cannot_assign_non_ints, {
-	TEST_EVAL_ASSIGN("int", U"3.1415", SkullInt, 0, ERR_TYPE_MISMATCH_(U"int"));
+	TEST_EVAL_ASSIGN(&TYPE_INT, U"3.1415", SkullInt, 0, ERR_TYPE_MISMATCH_(U"int"));
 })
 
 TEST(eval_assign_cannot_assign_non_floats, {
-	TEST_EVAL_ASSIGN_FLOAT("float", U"1234", SkullFloat, 0, ERR_TYPE_MISMATCH_(U"float"));
+	TEST_EVAL_ASSIGN_FLOAT(&TYPE_FLOAT, U"1234", SkullFloat, 0, ERR_TYPE_MISMATCH_(U"float"));
 })
 
 TEST(eval_assign_cannot_assign_non_bools, {
-	TEST_EVAL_ASSIGN("bool", U"1", bool, 0, ERR_TYPE_MISMATCH_(U"bool"));
+	TEST_EVAL_ASSIGN(&TYPE_BOOL, U"1", bool, 0, ERR_TYPE_MISMATCH_(U"bool"));
 })
 
 TEST(eval_assign_cannot_assign_non_runes, {
-	TEST_EVAL_ASSIGN("rune", U"1234", SkullRune, 0, ERR_TYPE_MISMATCH_(U"rune"));
+	TEST_EVAL_ASSIGN(&TYPE_RUNE, U"1234", SkullRune, 0, ERR_TYPE_MISMATCH_(U"rune"));
 })
 
 TEST(eval_assign_cannot_assign_non_strs, {
-	TEST_EVAL_ASSIGN("str", U"1234", SkullStr, 0, ERR_TYPE_MISMATCH_(U"str"));
+	TEST_EVAL_ASSIGN(&TYPE_STR, U"1234", SkullStr, 0, ERR_TYPE_MISMATCH_(U"str"));
 })
 
 TEST(eval_assign_variable_to_another, {
-	Variable *var1 = make_variable("int", U"var1", false);
-	Variable *var2 = make_variable("int", U"var2", false);
+	Variable *var1 = make_variable(&TYPE_INT, U"var1", false);
+	Variable *var2 = make_variable(&TYPE_INT, U"var2", false);
 
 	SkullInt var1_data = 0;
 	SkullInt var2_data = 1234;
@@ -126,8 +126,8 @@ TEST(eval_assign_variable_to_another, {
 })
 
 TEST(eval_assign_variable_to_another_check_same_type, {
-	Variable *var1 = make_variable("int", U"var1", false);
-	Variable *var2 = make_variable("bool", U"var2", false);
+	Variable *var1 = make_variable(&TYPE_INT, U"var1", false);
+	Variable *var2 = make_variable(&TYPE_BOOL, U"var2", false);
 
 	SkullInt var1_data = 0;
 	bool var2_data = false;
@@ -157,7 +157,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 })
 
 TEST(eval_assign_variable_to_another_check_bad_var, {
-	Variable *var = make_variable("int", U"var", false);
+	Variable *var = make_variable(&TYPE_INT, U"var", false);
 
 	SkullInt tmp = 0;
 	variable_write(var, &tmp);
@@ -178,11 +178,11 @@ TEST(eval_assign_variable_to_another_check_bad_var, {
 })
 
 TEST(eval_assign_string_types_cannot_share_pointers, {
-	Variable *var1 = make_variable("str", U"var1", false);
+	Variable *var1 = make_variable(&TYPE_STR, U"var1", false);
 	const char32_t *str1 = NULL;
 	variable_write(var1, &str1);
 
-	Variable *var2 = make_variable("str", U"var2", false);
+	Variable *var2 = make_variable(&TYPE_STR, U"var2", false);
 	const char32_t *str2 = c32sdup(U"anything");
 	variable_write(var2, &str2);
 
@@ -211,7 +211,7 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 })
 
 TEST(eval_assign_type_type, {
-	Variable *var = make_variable("type", U"var", false);
+	Variable *var = make_variable(&TYPE_TYPE, U"var", false);
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"int", &error);
@@ -230,7 +230,7 @@ TEST(eval_assign_type_type, {
 })
 
 TEST(eval_assign_type_var_cannot_be_type, {
-	Variable *var = make_variable("type", U"var", false);
+	Variable *var = make_variable(&TYPE_TYPE, U"var", false);
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"type", &error);

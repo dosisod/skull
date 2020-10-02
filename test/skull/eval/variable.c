@@ -12,9 +12,9 @@
 #include "test/testing.h"
 
 TEST(create_variable, {
-	Variable *var = make_variable("int", U"x", true);
+	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
-	ASSERT_EQUAL(strcmp(var->type->name, "int"), 0);
+	ASSERT_EQUAL(strcmp(var->type->name, *&TYPE_INT.name), 0);
 	ASSERT_TRUTHY(c32scmp(var->name, U"x"));
 	ASSERT_TRUTHY(var->is_const);
 	ASSERT_EQUAL(var->type->bytes, 8);
@@ -25,11 +25,11 @@ TEST(create_variable, {
 })
 
 TEST(create_variable_with_invalid_type_fails, {
-	ASSERT_FALSEY(make_variable("not_a_type", U"x", true));
+	ASSERT_FALSEY(make_variable(NULL, U"x", true));
 })
 
 TEST(variable_write, {
-	Variable *var = make_variable("int", U"x", false);
+	Variable *var = make_variable(&TYPE_INT, U"x", false);
 
 	const SkullInt data = 1234;
 	const char32_t *ret = variable_write(var, &data);
@@ -44,7 +44,7 @@ TEST(variable_write, {
 })
 
 TEST(variable_cannot_write_to_const, {
-	Variable *var = make_variable("int", U"x", true);
+	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
 	const SkullInt data = 1234;
 	const char32_t *ret = variable_write(var, &data);
@@ -62,7 +62,7 @@ TEST(variable_cannot_write_to_const, {
 })
 
 TEST(variable_read, {
-	Variable *var = make_variable("int", U"x", false);
+	Variable *var = make_variable(&TYPE_INT, U"x", false);
 	const SkullInt data = 1234;
 	variable_write(var, &data);
 
@@ -75,7 +75,7 @@ TEST(variable_read, {
 })
 
 TEST(make_variable_with_invalid_name_fails, {
-	Variable *var = make_variable("int", U"1nvalid", false);
+	Variable *var = make_variable(&TYPE_INT, U"1nvalid", false);
 
 	ASSERT_FALSEY(var);
 
@@ -83,7 +83,7 @@ TEST(make_variable_with_invalid_name_fails, {
 })
 
 TEST(free_variable, {
-	Variable *var = make_variable("int", U"x", true);
+	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
 	if (!var || !var->mem) {
 		free_variable(var);
@@ -98,55 +98,55 @@ TEST(free_null_variable_is_ok, {
 })
 
 TEST(fmt_var_int, {
-	TEST_FMT_VAR("int", SkullInt, 1234, U"1234");
+	TEST_FMT_VAR(&TYPE_INT, SkullInt, 1234, U"1234");
 })
 
 TEST(fmt_var_float, {
 	const SkullFloat PI = 3.1415;
-	TEST_FMT_VAR("float", SkullFloat, PI, U"3.1415");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, PI, U"3.1415");
 })
 
 TEST(fmt_var_float_zero, {
-	TEST_FMT_VAR("float", SkullFloat, 0.0, U"0.0");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 0.0, U"0.0");
 })
 
 TEST(fmt_var_float_small, {
 	const SkullFloat SMALL = 0.0000001;
-	TEST_FMT_VAR("float", SkullFloat, SMALL, U"1e-07");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, SMALL, U"1e-07");
 })
 
 TEST(fmt_var_float_trailing_zero, {
-	TEST_FMT_VAR("float", SkullFloat, 1234, U"1234.0");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1234, U"1234.0");
 })
 
 TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR("float", SkullFloat, 1.0 / 0.0, U"Infinity");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1.0 / 0.0, U"Infinity");
 })
 
 TEST(fmt_var_float_neg_infinity, {
-	TEST_FMT_VAR("float", SkullFloat, 1.0 / -0.0, U"-Infinity");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1.0 / -0.0, U"-Infinity");
 })
 
 TEST(fmt_var_bool, {
-	TEST_FMT_VAR("bool", bool, false, U"false");
+	TEST_FMT_VAR(&TYPE_BOOL, bool, false, U"false");
 })
 
 TEST(fmt_var_type, {
-	TEST_FMT_VAR("type", Type *, &TYPE_INT, U"int");
+	TEST_FMT_VAR(&TYPE_TYPE, Type *, &TYPE_INT, U"int");
 })
 
 TEST(fmt_var_rune, {
-	TEST_FMT_VAR("rune", SkullRune, 'a', U"a");
+	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, 'a', U"a");
 })
 
 TEST(fmt_var_wide_rune_preserved, {
-	TEST_FMT_VAR("rune", SkullRune, U'存', U"存");
+	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, U'存', U"存");
 })
 
 #undef TEST_FMT_VAR
 
 TEST(fmt_var_str, {
-	Variable *var = make_variable("str", U"x", false);
+	Variable *var = make_variable(&TYPE_STR, U"x", false);
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"\"abc\"", &error);
@@ -168,7 +168,7 @@ TEST(fmt_var_str, {
 })
 
 TEST(fmt_var_str_with_escapes, {
-	Variable *var = make_variable("str", U"x", false);
+	Variable *var = make_variable(&TYPE_STR, U"x", false);
 
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"\" \\r \\n \\t \\\\ \"", &error);
@@ -189,7 +189,7 @@ TEST(fmt_var_str_with_escapes, {
 })
 
 TEST(fmt_var_str_with_bad_escape, {
-	Variable *var = make_variable("str", U"x", false);
+	Variable *var = make_variable(&TYPE_STR, U"x", false);
 
 	const char32_t *ast_err = NULL;
 	AstNode *node = make_ast_tree(U"\"\\z\"", &ast_err);

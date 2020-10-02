@@ -23,14 +23,14 @@ char32_t *fmt_int_type(const Variable *var) {
 Add `lhs` and `rhs` ints together
 */
 Variable *add_int_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("int", SkullInt, +);
+	DO_MATH(&TYPE_INT, SkullInt, +);
 }
 
 /*
 Subtract `rhs` int from `lhs` int
 */
 Variable *sub_int_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("int", SkullInt, -);
+	DO_MATH(&TYPE_INT, SkullInt, -);
 }
 
 /*
@@ -39,7 +39,7 @@ Divide `lhs` int by `rhs` int
 If `rhs` is zero, return NULL.
 */
 Variable *div_int_type(const Variable *lhs, const Variable *rhs) {
-	Variable *ret = make_variable("int", U"tmp", false);
+	Variable *ret = make_variable(&TYPE_INT, U"tmp", false);
 	if (!ret) {
 		return NULL;
 	}
@@ -63,5 +63,5 @@ Variable *div_int_type(const Variable *lhs, const Variable *rhs) {
 Multiply `lhs` and `rhs` ints together
 */
 Variable *mult_int_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("int", SkullInt, *);
+	DO_MATH(&TYPE_INT, SkullInt, *);
 }

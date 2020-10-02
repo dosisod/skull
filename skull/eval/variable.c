@@ -33,10 +33,8 @@ Make a variable called `name` with type `type`, and make it const if `is_const` 
 
 Returns `NULL` if var cannot be created, else pointer to created var.
 */
-Variable *make_variable(const char *type, const char32_t *name, bool is_const) {
-	Type *found_type = find_type(type);
-
-	if (!found_type || !is_valid_identifier_str(name)) {
+Variable *make_variable(const Type *type, const char32_t *name, bool is_const) {
+	if (!type || !is_valid_identifier_str(name)) {
 		return NULL;
 	}
 
@@ -53,12 +51,12 @@ Variable *make_variable(const char *type, const char32_t *name, bool is_const) {
 	name_copy[len] = '\0';
 
 	var->name = name_copy;
-	var->type = found_type;
+	var->type = type;
 	var->is_const = is_const;
 	var->alloca = NULL;
 
 	unsigned char *mem;
-	mem = calloc(found_type->bytes, sizeof *mem);
+	mem = calloc(type->bytes, sizeof *mem);
 	DIE_IF_MALLOC_FAILS(mem);
 
 	var->mem = mem;

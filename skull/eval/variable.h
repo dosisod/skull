@@ -3,7 +3,7 @@
 #include "skull/eval/types/types.h"
 
 typedef struct Variable {
-	Type *type;
+	const Type *type;
 	const char32_t *name;
 	_Bool is_const;
 
@@ -12,7 +12,7 @@ typedef struct Variable {
 	void *alloca; // only used to store LLVMValueRef's
 } Variable;
 
-Variable *make_variable(const char *, const char32_t *, _Bool);
+Variable *make_variable(const Type *, const char32_t *, _Bool);
 
 const char32_t *variable_write(const Variable *, const void *);
 void variable_read(void *, const Variable *);

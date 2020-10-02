@@ -53,26 +53,26 @@ char32_t *fmt_float_type(const Variable *var) {
 Add `lhs` and `rhs` floats together
 */
 Variable *add_float_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("float", SkullFloat, +);
+	DO_MATH(&TYPE_FLOAT, SkullFloat, +);
 }
 
 /*
 Subtract `rhs` float from `lhs` float
 */
 Variable *sub_float_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("float", SkullFloat, -);
+	DO_MATH(&TYPE_FLOAT, SkullFloat, -);
 }
 
 /*
 Divide `lhs` float by `rhs` float
 */
 Variable *div_float_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("float", SkullFloat, /);
+	DO_MATH(&TYPE_FLOAT, SkullFloat, /);
 }
 
 /*
 Multiply `lhs` and `rhs` floats together
 */
 Variable *mult_float_type(const Variable *lhs, const Variable *rhs) {
-	DO_MATH("float", SkullFloat, *);
+	DO_MATH(&TYPE_FLOAT, SkullFloat, *);
 }

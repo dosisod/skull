@@ -161,21 +161,21 @@ const char32_t *node_make_var(const AstNode *node, Scope *scope, bool is_const) 
 	Variable *var = NULL;
 
 	if (token->next->token_type == TOKEN_OPER_AUTO_EQUAL) {
-		const char *type = NULL;
+		const Type *type = NULL;
 		if (node->next->node_type == AST_NODE_INT_CONST) {
-			type = TYPE_INT.name;
+			type = &TYPE_INT;
 		}
 		else if (node->next->node_type == AST_NODE_FLOAT_CONST) {
-			type = TYPE_FLOAT.name;
+			type = &TYPE_FLOAT;
 		}
 		else if (node->next->node_type == AST_NODE_BOOL_CONST) {
-			type = TYPE_BOOL.name;
+			type = &TYPE_BOOL;
 		}
 		else if (node->next->node_type == AST_NODE_STR_CONST) {
-			type = TYPE_STR.name;
+			type = &TYPE_STR;
 		}
 		else if (node->next->node_type == AST_NODE_RUNE_CONST) {
-			type = TYPE_RUNE.name;
+			type = &TYPE_RUNE;
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER ||
 			node->next->node_type == AST_NODE_ADD_VAR ||
@@ -191,7 +191,7 @@ const char32_t *node_make_var(const AstNode *node, Scope *scope, bool is_const) 
 				return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup });
 			}
 			free(lookup);
-			type = new_var->type->name;
+			type = new_var->type;
 		}
 		else {
 			free(name);
@@ -204,7 +204,7 @@ const char32_t *node_make_var(const AstNode *node, Scope *scope, bool is_const) 
 		char *type_name = c32stombs(tmp_name);
 		free(tmp_name);
 
-		var = make_variable(type_name, name, false);
+		var = make_variable(find_type(type_name), name, false);
 		free(type_name);
 	}
 

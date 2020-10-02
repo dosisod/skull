@@ -24,7 +24,7 @@ char32_t *fmt_str_type(const Variable *var) {
 Concatenate `lhs` and `rhs` strings
 */
 Variable *add_str_type(const Variable *lhs, const Variable *rhs) {
-	Variable *ret = make_variable("str", U"tmp", false);
+	Variable *ret = make_variable(&TYPE_STR, U"tmp", false);
 	if (!ret) {
 		return NULL;
 	}
