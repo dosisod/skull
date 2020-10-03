@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <llvm-c/Core.h>
 
@@ -95,42 +96,23 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 	else if (var->type == &TYPE_STR) {
 		char32_t *str = NULL;
 		variable_read(&str, var);
-		const size_t len = c32slen(str) + 1;
+		char *mbs = c32stombs(str);
+		free(str);
+		unsigned len = (unsigned)strlen(mbs);
 
-		LLVMValueRef *llvm_arr = malloc(sizeof(LLVMValueRef) * len);
-		DIE_IF_MALLOC_FAILS(llvm_arr);
-
-		size_t counter = 0;
-		while (counter < len) {
-			llvm_arr[counter] = LLVM_RUNE(ctx, str[counter]);
-			counter++;
-		}
-
-		LLVMTypeRef str_type = LLVMArrayType(
-			LLVMInt32TypeInContext(ctx),
-			(unsigned)len
-		);
+		LLVMValueRef llvm_str = LLVMConstStringInContext(ctx, mbs, len, false);
 
 		if (!var->alloca) {
 			var->alloca = LLVMBuildAlloca(
 				builder,
-				str_type,
+				LLVMArrayType(
+					LLVMInt8TypeInContext(ctx),
+					len + 1
+				),
 				var_name
 			);
 		}
-
-		LLVMValueRef char_arr = LLVMConstArray(
-			str_type,
-			llvm_arr,
-			(unsigned)len
-		);
-		free(llvm_arr);
-
-		LLVMBuildStore(
-			builder,
-			char_arr,
-			var->alloca
-		);
+		LLVMBuildStore(builder, llvm_str, var->alloca);
 	}
 
 	free(var_name);
