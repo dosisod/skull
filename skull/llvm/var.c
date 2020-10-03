@@ -139,16 +139,15 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 /*
 Make and add a variable from `node` to `scope`.
 
-Added variable will be constant if `is_const` is true.
-
 Returns pointer to error message if one occurs, else `NULL`.
 */
-const char32_t *node_make_var(const AstNode *node, Scope *scope, bool is_const) {
+const char32_t *node_make_var(const AstNode *node, Scope *scope) {
 	if (!scope) {
 		return NULL;
 	}
 
 	const Token *token = node->token;
+	const bool is_const = ATTR(AstNodeVarDef, node, is_const);
 	if (!is_const) {
 		token = token->next;
 	}
@@ -160,7 +159,7 @@ const char32_t *node_make_var(const AstNode *node, Scope *scope, bool is_const) 
 	char32_t *name = token_str(token);
 	Variable *var = NULL;
 
-	if (token->next->token_type == TOKEN_OPER_AUTO_EQUAL) {
+	if (ATTR(AstNodeVarDef, node, is_implicit)) {
 		const Type *type = NULL;
 		if (node->next->node_type == AST_NODE_INT_CONST) {
 			type = &TYPE_INT;

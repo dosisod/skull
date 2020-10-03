@@ -66,11 +66,7 @@ void node_to_llvm_ir(AstNode *node) {
 			llvm_make_return(node);
 		}
 
-		else if (node->node_type == AST_NODE_VAR_DEF ||
-			node->node_type == AST_NODE_AUTO_VAR_DEF ||
-			node->node_type == AST_NODE_MUT_VAR_DEF ||
-			node->node_type == AST_NODE_MUT_AUTO_VAR_DEF)
-		{
+		else if (node->node_type == AST_NODE_VAR_DEF) {
 			llvm_make_var_def(&node);
 		}
 
@@ -147,10 +143,7 @@ Builds a variable from `node`.
 void llvm_make_var_def(AstNode **node) {
 	static size_t vars_used_last = 0;
 
-	PANIC_ON_ERR(node_make_var(*node, scope,
-		(*node)->node_type == AST_NODE_VAR_DEF ||
-		(*node)->node_type == AST_NODE_AUTO_VAR_DEF
-	));
+	PANIC_ON_ERR(node_make_var(*node, scope));
 
 	*node = (*node)->next;
 

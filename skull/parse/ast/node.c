@@ -124,6 +124,21 @@ MAKE_COMBO(ast_node_if_var_combo,
 
 #undef MAKE_COMBO
 
+#define TRY_PUSH_AST_NODE_ATTR(combo, node_type, type, data) \
+	token = ast_token_cmp(token, (combo), &passed); \
+	if (passed) { \
+		passed = false; \
+		type *tmp = malloc(sizeof(type)); /* NOLINT */ \
+		DIE_IF_MALLOC_FAILS(tmp); \
+		*tmp = data; \
+		node->attr = tmp; \
+		push_ast_node(token, &last, (node_type), &node); \
+		if (token->token_type == TOKEN_BRACKET_CLOSE) { \
+			allow_top_lvl_bracket = true; \
+		} \
+		continue; \
+	}
+
 #define TRY_PUSH_AST_NODE(combo, node_type) \
 	token = ast_token_cmp(token, (combo), &passed); \
 	if (passed) { \
@@ -213,10 +228,11 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 
 		last = token;
 
-		TRY_PUSH_AST_NODE(ast_node_var_combo, AST_NODE_VAR_DEF);
-		TRY_PUSH_AST_NODE(ast_node_mut_var_def_combo, AST_NODE_MUT_VAR_DEF);
-		TRY_PUSH_AST_NODE(ast_node_auto_var_def_combo, AST_NODE_AUTO_VAR_DEF);
-		TRY_PUSH_AST_NODE(ast_node_mut_auto_var_def_combo, AST_NODE_MUT_AUTO_VAR_DEF);
+		TRY_PUSH_AST_NODE_ATTR(ast_node_var_combo, AST_NODE_VAR_DEF, AstNodeVarDef, ((AstNodeVarDef){ .is_const = true, .is_implicit = false }));
+		TRY_PUSH_AST_NODE_ATTR(ast_node_mut_var_def_combo, AST_NODE_VAR_DEF, AstNodeVarDef, ((AstNodeVarDef){ .is_const = false, .is_implicit = false }));
+		TRY_PUSH_AST_NODE_ATTR(ast_node_auto_var_def_combo, AST_NODE_VAR_DEF, AstNodeVarDef, ((AstNodeVarDef){ .is_const = true, .is_implicit = true }));
+		TRY_PUSH_AST_NODE_ATTR(ast_node_mut_auto_var_def_combo, AST_NODE_VAR_DEF, AstNodeVarDef, ((AstNodeVarDef){ .is_const = false, .is_implicit = true }));
+
 		TRY_PUSH_AST_NODE(ast_node_var_assign_combo, AST_NODE_VAR_ASSIGN);
 		TRY_PUSH_AST_NODE(ast_node_import_combo, AST_NODE_IMPORT);
 		TRY_PUSH_AST_NODE(ast_node_add_var_combo, AST_NODE_ADD_VAR);
@@ -363,6 +379,9 @@ Frees an AST tree.
 void free_ast_tree(AstNode *node) {
 	if (node) {
 		free_tokens(node->token);
+		if (node->attr) {
+			free(node->attr);
+		}
 	}
 	free(node);
 }

@@ -191,15 +191,15 @@ TEST(make_ast_tree_variable_def, {
 })
 
 TEST(make_ast_tree_mutable_variable_def, {
-	TEST_AST_TREE(U"mut x: int =", AST_NODE_MUT_VAR_DEF, 0, 12);
+	TEST_AST_TREE(U"mut x: int =", AST_NODE_VAR_DEF, 0, 12);
 })
 
 TEST(make_ast_tree_auto_variable_def, {
-	TEST_AST_TREE(U"x :=", AST_NODE_AUTO_VAR_DEF, 0, 4);
+	TEST_AST_TREE(U"x :=", AST_NODE_VAR_DEF, 0, 4);
 })
 
 TEST(make_ast_tree_auto_mutable_variable_def, {
-	TEST_AST_TREE(U"mut x :=", AST_NODE_MUT_AUTO_VAR_DEF, 0, 8);
+	TEST_AST_TREE(U"mut x :=", AST_NODE_VAR_DEF, 0, 8);
 })
 
 TEST(make_ast_tree_with_nothing, {

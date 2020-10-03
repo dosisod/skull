@@ -4,15 +4,14 @@
 
 #define TOKEN_ANY_NON_BRACKET_TOKEN (TOKEN_END + 1)
 
+#define ATTR(from, node, prop) ((from *)(node)->attr)->prop
+
 typedef enum {
 	AST_NODE_UNKNOWN,
 
 	AST_NODE_IDENTIFIER,
 
 	AST_NODE_VAR_DEF,
-	AST_NODE_MUT_VAR_DEF,
-	AST_NODE_AUTO_VAR_DEF,
-	AST_NODE_MUT_AUTO_VAR_DEF,
 
 	AST_NODE_VAR_ASSIGN,
 
@@ -48,7 +47,16 @@ typedef struct AstNode {
 
 	struct AstNode *child;
 	struct AstNode *parent;
+
+	// used to store arbitrary data associated with a certain node type
+	void *attr;
 } AstNode;
+
+typedef struct AstNodeVarDef {
+	// these probably should be turned into bitflags
+	_Bool is_implicit;
+	_Bool is_const;
+} AstNodeVarDef;
 
 AstNode *make_ast_node(void);
 
