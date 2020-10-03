@@ -8,9 +8,13 @@ def display_markdown(code: str):
     for comment in re_comment.finditer(code):
         end = comment.end()
 
+        doc = code[comment.start() + 3:end - 3]
+        if "NOLINT" in doc:
+            continue
+
         ret += "```c\n" + code[end:].split("\n")[1][:-2] + "\n```\n\n"
 
-        for line in code[comment.start() + 3:end - 3].split("\n"):
+        for line in doc.split("\n"):
             ret += "> " + line if line else "> \\"
             ret += "\n"
 
