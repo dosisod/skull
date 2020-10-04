@@ -34,13 +34,13 @@ void *eval_rune(const Token *token, const char32_t **error) {
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 
-	*ret = c32sunescape(token->begin, error);
+	*ret = c32sunescape(token->begin + 1, error);
 	if (*error) {
 		free(ret);
 		return NULL;
 	}
 	if (!*ret) {
-		*ret = *token->begin;
+		*ret = token->begin[1];
 	}
 
 	return ret;

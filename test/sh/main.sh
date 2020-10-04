@@ -85,6 +85,7 @@ test_err "error/only_identifier_fails.sk" "Compilation error: unexpected token: 
 test_err "error/reassign_non_existet_var.sk" "Compilation error: variable \"x\" not found"
 test_err "error/reassign_const_var.sk" "Compilation error: cannot reassign const variable \"x\""
 test_err "error/reassign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
+test_err "error/unexpected_str_fails.sk" "Compilation error: unexpected token: \"\"this will fail\"\""
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

@@ -157,19 +157,19 @@ TEST(token_bool_constant, {
 })
 
 TEST(token_rune_constant, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'x'", TOKEN_RUNE_CONST, 1, 2);
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'x'", TOKEN_RUNE_CONST, 0, 3);
 })
 
 TEST(token_rune_constant_simple_escape, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'\\r'", TOKEN_RUNE_CONST, 1, 3);
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'\\r'", TOKEN_RUNE_CONST, 0, 4);
 })
 
 TEST(token_rune_constant_hex_escape, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'\\xFF'", TOKEN_RUNE_CONST, 1, 5);
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'\\xFF'", TOKEN_RUNE_CONST, 0, 6);
 })
 
 TEST(token_str_constant, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"\"xyz\"", TOKEN_STR_CONST, 1, 4);
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"\"xyz\"", TOKEN_STR_CONST, 0, 5);
 })
 
 TEST(token_Typeype, {

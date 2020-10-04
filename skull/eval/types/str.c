@@ -50,15 +50,13 @@ void *eval_str(const Token *token, const char32_t **error) {
 		return NULL;
 	}
 
-	size_t len = token_len(token);
-
 	char32_t *str;
-	str = malloc((len + 1) * sizeof *str);
+	str = malloc((token_len(token) - 1) * sizeof *str);
 	DIE_IF_MALLOC_FAILS(str);
 
-	const char32_t *tmp = token->begin;
+	const char32_t *tmp = token->begin + 1;
 	size_t wrote = 0;
-	while (*tmp && tmp < token->begin + len) {
+	while (*tmp && tmp < token->end - 1) {
 		const char32_t try_escape = c32sunescape(tmp, error);
 		if (*error) {
 			free(str);

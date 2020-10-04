@@ -54,17 +54,9 @@ void classify_token(Token *token) {
 
 	else if (is_constant_rune_str(str)) {
 		token->token_type = TOKEN_RUNE_CONST;
-
-		//dont include ''s as part of string
-		token->begin++;
-		token->end--;
 	}
 	else if (is_constant_str_str(str)) {
 		token->token_type = TOKEN_STR_CONST;
-
-		//dont include ""s as part of string
-		token->begin++;
-		token->end--;
 	}
 	else if (is_valid_identifier_str(str)) {
 		token->token_type = TOKEN_IDENTIFIER;

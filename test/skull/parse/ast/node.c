@@ -218,7 +218,7 @@ TEST(make_ast_tree_var_assign, {
 })
 
 TEST(make_ast_tree_import, {
-	TEST_AST_TREE(U"import x from \"y\"", AST_NODE_IMPORT, 0, 16);
+	TEST_AST_TREE(U"import x from \"y\"", AST_NODE_IMPORT, 0, 17);
 })
 
 TEST(make_ast_tree_var_add, {
@@ -298,11 +298,11 @@ TEST(make_ast_tree_bool_const_false, {
 })
 
 TEST(make_ast_tree_rune_const, {
-	TEST_AST_TREE(U"'x'", AST_NODE_RUNE_CONST, 1, 2);
+	TEST_AST_TREE(U"'x'", AST_NODE_RUNE_CONST, 0, 3);
 })
 
 TEST(make_ast_tree_str_const, {
-	TEST_AST_TREE(U"\"abc\"", AST_NODE_STR_CONST, 1, 4);
+	TEST_AST_TREE(U"\"abc\"", AST_NODE_STR_CONST, 0, 5);
 })
 
 TEST(make_ast_tree_type_const, {
