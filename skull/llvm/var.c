@@ -99,19 +99,39 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		char *mbs = c32stombs(str);
 		unsigned len = (unsigned)strlen(mbs);
 
-		LLVMValueRef llvm_str = LLVMConstStringInContext(ctx, mbs, len, false);
-
-		if (!var->alloca) {
-			var->alloca = LLVMBuildAlloca(
+		LLVMBuildStore(
+			builder,
+			LLVMConstStringInContext(ctx, mbs, len, false),
+			LLVMBuildAlloca(
 				builder,
 				LLVMArrayType(
 					LLVMInt8TypeInContext(ctx),
 					len + 1
 				),
+				""
+			)
+		);
+
+		LLVMTypeRef str_ptr = LLVMPointerType(LLVMInt8TypeInContext(ctx), 0);
+
+		if (!var->alloca) {
+			var->alloca = LLVMBuildAlloca(
+				builder,
+				str_ptr,
 				var_name
 			);
 		}
-		LLVMBuildStore(builder, llvm_str, var->alloca);
+
+		LLVMBuildStore(
+			builder,
+			LLVMBuildBitCast(
+				builder,
+				var->alloca,
+				str_ptr,
+				""
+			),
+			var->alloca
+		);
 	}
 
 	free(var_name);
