@@ -97,7 +97,6 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		char32_t *str = NULL;
 		variable_read(&str, var);
 		char *mbs = c32stombs(str);
-		free(str);
 		unsigned len = (unsigned)strlen(mbs);
 
 		LLVMValueRef llvm_str = LLVMConstStringInContext(ctx, mbs, len, false);
