@@ -1,9 +1,9 @@
-.TH SKULL 1 "September 2020" "Linux" "User Manuals"
+.TH SKULL 1 "October 2020" "Linux" "User Manuals"
 .SH NAME
 skull \- A strict, static, strongly typed programming language.
 .SH SYNOPSIS
-.B skull\fR [\fB-v\fR | \fIfile\fR [\fIfiles\fR...]]
+.B skull\fR [\fB-v\fR | \fIfile\fR [ -- \fIargs\fR ]]
 .SH DESCRIPTION
-When the \fB-v\fR option is passed, print the current version. Otherwise, try and compile \fIfile\fR, which must end in ".sk". If compilation succeeds, a new binary file (with the ".sk" extension removed) will be put into the same directory as \fIfile\fR. If any extra \fIfiles\fR are passed, they will compiled in with the compiled version of \fIfile\fR. These files can be any of the following extensions: ".c", ".o", ".so", ".s", or any other C compilable file extention. Only ".c" extensions can be compiled directly by \fBskull\fR. Other file extensions must be compiled first before passing them to \fBskull\fR.
+When the \fB-v\fR option is passed, print the current version. Otherwise, try and compile \fIfile\fR, which must end in ".sk". If compilation succeeds, a new binary file (with the ".sk" extension removed) will be put into the same directory as \fIfile\fR. If any \fIargs\fR are passed after \fB\-\-\fR, they will forwarded to \fBcc\fR during the final compilation of \fIfile\fR. This allows the user more fine-grained control of how their C code is compiled with \fBSkull\fR code.
 .SH AUTHOR
 dosisod <https://github.com/dosisod>

@@ -29,15 +29,17 @@ return 0
 Now, to compile these files together:
 
 ```
-$ skull hello.sk hello.c
+$ skull hello.sk -- hello.c
 $ ./hello
 ```
+
+Everything after `--` is passed as arguments to `cc`, in this case, `hello.c`.
 
 Skull can also compile `.o` and `.so` files, but you will need to compile them yourself:
 
 ```
 $ cc -c hello.c
-$ skull hello.sk hello.o
+$ skull hello.sk -- hello.o
 $ ./hello
 ```
 

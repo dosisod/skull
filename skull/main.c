@@ -17,7 +17,7 @@
 
 int main(int argc, char *argv[]) {
 	if (argc == 1) {
-		puts("usage: skull [-v | file [files...]]");
+		puts("usage: skull [-v | file [ -- args ]]");
 		return 0;
 	}
 

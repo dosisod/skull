@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 
-$(dirname $0)/_skull $1 || exit 1
+sep=$(( $# + 1 ))
+
+for (( i=1; i<=$#; i++ ))
+do
+	[ "${!i}" == "--" ] && sep=$i
+done
+
+if [ "$sep" == "$(( $# + 1 ))" ]; then
+	pre="${@:1}"
+else
+	pre="${@:1:$(($sep - 1))}"
+fi
+
+$(dirname $0)/_skull $pre || exit 1
 
 # exit if passed param is not a .sk file
 [[ "$1" =~ ^.*\.sk$ ]] || exit 0
@@ -10,5 +23,5 @@ base=$(dirname $1)/.$(basename $1)
 llc-9 $base.ll -filetype=obj || exit 1
 rm $base.ll
 
-cc $base.o ${@:2} -o "${1%.*}"
+cc $base.o -o "${1%.*}" "${@:$(($sep + 1))}"
 rm $base.o
