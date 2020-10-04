@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/common/color.h"
 #include "skull/common/io.h"
 #include "skull/common/str.h"
 #include "skull/llvm/ast.h"
@@ -14,12 +15,9 @@
 
 #define DIE(x) puts(x); return 1
 
-#define PRINT_VERSION puts("Skull "SKULL_VERSION)
-
 int main(int argc, char *argv[]) {
 	if (argc == 1) {
-		PRINT_VERSION;
-		puts("\nusage: skull [-v | file [files...]]");
+		puts("usage: skull [-v | file [files...]]");
 		return 0;
 	}
 
@@ -28,7 +26,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (strcmp("-v", argv[1]) == 0) {
-		PRINT_VERSION;
+		puts(COLOR_GREEN_FG "Skull " COLOR_RESET SKULL_VERSION);
 		return 0;
 	}
 
