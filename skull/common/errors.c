@@ -76,6 +76,7 @@ char32_t *fmt_error(const char32_t *fmt, ErrorMsg msgs[]) {
 		tmp++;
 		fmt_error_stringify(tmp);
 	}
+	tmp = msgs;
 
 	ErrorChunk *chunks;
 	chunks = malloc((num_of_percents + 1) * sizeof *chunks);
@@ -125,6 +126,11 @@ char32_t *fmt_error(const char32_t *fmt, ErrorMsg msgs[]) {
 		at_percent++;
 	}
 	offset[0] = '\0';
+
+	while (tmp->real) {
+		free(tmp->real);
+		tmp++;
+	}
 
 	free(chunks);
 	return out;

@@ -16,7 +16,10 @@
 #include "skull/llvm/ast.h"
 
 #define PANIC(str) \
-	printf("Compilation error: %s\n", c32stombs(str)); \
+	char *panic_str = c32stombs(str); \
+	printf("Compilation error: %s\n", panic_str); \
+	free(panic_str); \
+	LLVMContextDispose(ctx); \
 	exit(1)
 
 #define PANIC_ON_ERR(str) \
@@ -134,6 +137,8 @@ void llvm_make_return(AstNode *node) {
 			builder,
 			LLVM_INT(ctx, *num)
 		);
+
+		free(num);
 	}
 }
 

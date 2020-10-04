@@ -157,7 +157,12 @@ AstNode *make_ast_tree(const char32_t *code, const char32_t **error) {
 	Token *token = tokenize(code);
 	classify_tokens(token);
 
-	return make_ast_tree_(token, error, 0);
+	AstNode *ret = make_ast_tree_(token, error, 0);
+	if (!ret) {
+		free_tokens(token);
+	}
+
+	return ret;
 }
 
 /*

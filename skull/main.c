@@ -81,13 +81,17 @@ int main(int argc, char *argv[]) {
 		entry
 	);
 
+	char *file_contents = read_file(f);
+
 	str_to_llvm_ir(
-		read_file(f),
+		file_contents,
 		main_func,
 		builder,
 		ctx,
 		main_module
 	);
+
+	free(file_contents);
 
 	size_t len = strlen(argv[1]);
 	char *ll_filename = malloc(len + 5);
@@ -117,6 +121,7 @@ int main(int argc, char *argv[]) {
 	if (err || status) {
 		printf("error occurred: %s\n", err);
 		LLVMDisposeMessage(err);
+		LLVMContextDispose(ctx);
 		return 1;
 	}
 
