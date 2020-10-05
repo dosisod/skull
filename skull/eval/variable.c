@@ -5,6 +5,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/variable.h"
@@ -82,6 +83,11 @@ Free variable `var` and its internal memory.
 */
 void free_variable(Variable *var) {
 	if (var) {
+		if (var->type == &TYPE_STR) {
+			SkullStr str_mem = NULL;
+			variable_read(&str_mem, var);
+			free(str_mem);
+		}
 		free((char32_t *)var->name);
 		free(var->mem);
 		free(var);

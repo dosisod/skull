@@ -76,9 +76,7 @@ const char32_t *eval_assign(Variable *var, AstNode *node, const Scope *scope) {
 		return err;
 	}
 
-	if (var->type != &TYPE_STR) {
-		free((void *)mem);
-	}
+	free((void *)mem);
 	return NULL;
 }
 

@@ -43,9 +43,6 @@ TEST(eval_assign_str, {
 
 	ASSERT_TRUTHY(c32scmp(data, U"abc"));
 
-	char32_t *mem = NULL;
-	variable_read(&mem, var);
-	free(mem);
 	free_variable(var);
 })
 

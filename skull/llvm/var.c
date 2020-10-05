@@ -111,6 +111,7 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 				""
 			)
 		);
+		free(mbs);
 
 		LLVMTypeRef str_ptr = LLVMPointerType(LLVMInt8TypeInContext(ctx), 0);
 
