@@ -14,7 +14,7 @@ Make a heap allocated version of `str`.
 The result of this function must be freed.
 */
 char32_t *c32sdup(const char32_t *str) {
-	size_t len = c32slen(str);
+	const size_t len = c32slen(str);
 
 	char32_t *ret;
 	ret = malloc((len + 1) * sizeof *ret);
@@ -32,8 +32,8 @@ Concatenate `s1` and `s2`.
 The result of this function must be freed.
 */
 char32_t *c32scat(const char32_t *s1, const char32_t *s2) {
-	size_t len_s1 = c32slen(s1);
-	size_t len_s2 = c32slen(s2);
+	const size_t len_s1 = c32slen(s1);
+	const size_t len_s2 = c32slen(s2);
 
 	char32_t *ret;
 	ret = malloc((len_s1 + len_s2 + 1) * sizeof *ret);
@@ -229,7 +229,7 @@ __attribute__((const)) bool c32isalnum(char32_t c) {
 Return whether the UTF-32 character `c` is a digit.
 */
 __attribute__((const)) bool c32isdigit(char32_t c) {
-	return (c >= '0') && (c <= '9');
+	return c >= '0' && c <= '9';
 }
 
 /*
@@ -238,8 +238,8 @@ Return last occurence of `sub` in string `str`.
 `NULL` is returned if no such string is found.
 */
 const char __attribute__((pure)) *strrstr(const char *str, const char *sub) {
-	size_t str_len = strlen(str);
-	size_t sub_len = strlen(sub);
+	const size_t str_len = strlen(str);
+	const size_t sub_len = strlen(sub);
 
 	const char *look = str + str_len - sub_len;
 
@@ -258,37 +258,37 @@ Returns the unescaped version of an escaped character starting at `str`, or NULL
 If an error occurs, `err` will be set to the corresponding error msg.
 */
 char32_t c32sunescape(const char32_t *str, const char32_t **err) {
-	if (*str == '\\') {
-		char32_t escape = str[1];
-		char32_t opt1 = '\0';
-		char32_t opt2 = '\0';
-
-		if (escape == '\\') {
-			return '\\';
-		}
-		if (escape == 't') {
-			return '\t';
-		}
-		if (escape == 'r') {
-			return '\r';
-		}
-		if (escape == 'n') {
-			return '\n';
-		}
-		if (escape == 'x' && str[2]) {
-			opt1 = str[2];
-			opt2 = str[3];
-
-			if (c32isxdigit(str[2]) && c32isxdigit(str[3])) {
-				char hex[3] = { (char)opt1, (char)opt2, '\0' };
-				return (char32_t)strtol(hex, NULL, 16);
-			}
-		}
-
-		char32_t tmp[5] = { '\\', escape, opt1, opt2, '\0' };
-		*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = tmp });
+	if (*str != '\\') {
 		return '\0';
 	}
 
+	const char32_t escape = str[1];
+	char32_t opt1 = '\0';
+	char32_t opt2 = '\0';
+
+	if (escape == '\\') {
+		return '\\';
+	}
+	if (escape == 't') {
+		return '\t';
+	}
+	if (escape == 'r') {
+		return '\r';
+	}
+	if (escape == 'n') {
+		return '\n';
+	}
+	if (escape == 'x' && str[2]) {
+		opt1 = str[2];
+		opt2 = str[3];
+
+		if (c32isxdigit(str[2]) && c32isxdigit(str[3])) {
+			char hex[3] = { (char)opt1, (char)opt2, '\0' };
+			return (char32_t)strtol(hex, NULL, 16);
+		}
+	}
+
+	char32_t tmp[5] = { '\\', escape, opt1, opt2, '\0' };
+	*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = tmp });
 	return '\0';
 }
