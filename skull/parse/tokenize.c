@@ -18,7 +18,7 @@
 Tokenize `code`, return pointer to first token.
 */
 Token *tokenize(const char32_t *code) {
-	const char32_t *code_copy = code;
+	const char32_t * const code_copy = code;
 
 	Token *head = make_token();
 
@@ -161,7 +161,7 @@ char32_t *token_str(const Token *token) {
 /*
 Returns true if `str` is equal to the value of `token`.
 */
-bool token_cmp(const char32_t *str, const Token *token) {
+bool token_cmp(const char32_t *const str, const Token *const token) {
 	const size_t len = token_len(token);
 	return (
 		c32slen(str) == len &&
@@ -172,7 +172,7 @@ bool token_cmp(const char32_t *str, const Token *token) {
 /*
 Return the string length of `token`.
 */
-__attribute__((pure)) size_t token_len(const Token *token) {
+__attribute__((pure)) size_t token_len(const Token *const token) {
 	return (size_t)(token->end - token->begin);
 }
 

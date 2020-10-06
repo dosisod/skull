@@ -128,7 +128,7 @@ MAKE_COMBO(ast_node_if_var_combo,
 	token = ast_token_cmp(token, (combo), &passed); \
 	if (passed) { \
 		passed = false; \
-		type *tmp = malloc(sizeof(type)); /* NOLINT */ \
+		type *const tmp = malloc(sizeof(type)); /* NOLINT */ \
 		DIE_IF_MALLOC_FAILS(tmp); \
 		*tmp = data; \
 		node->attr = tmp; \
@@ -153,11 +153,11 @@ MAKE_COMBO(ast_node_if_var_combo,
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-AstNode *make_ast_tree(const char32_t *code, const char32_t **error) {
-	Token *token = tokenize(code);
+AstNode *make_ast_tree(const char32_t *const code, const char32_t **error) {
+	Token *const token = tokenize(code);
 	classify_tokens(token);
 
-	AstNode *ret = make_ast_tree_(token, error, 0);
+	AstNode *const ret = make_ast_tree_(token, error, 0);
 	if (!ret) {
 		free_tokens(token);
 	}
@@ -178,7 +178,7 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 
 	while (token) {
 		if (token->token_type == TOKEN_BRACKET_OPEN) {
-			AstNode *child = make_ast_tree_(token->next, error, indent_lvl + 1);
+			AstNode *const child = make_ast_tree_(token->next, error, indent_lvl + 1);
 			if (!child) {
 				free(head);
 				return NULL;
@@ -300,7 +300,7 @@ The last `{0}` is to tell the function to stop iterating.
 
 If all the args match, return last token matched, else, the passed `token`.
 */
-Token *ast_token_cmp(Token *token, Combo *combo, bool *pass) {
+Token *ast_token_cmp(Token *token, Combo *combo, bool *const pass) {
 	Token *head = token;
 	Token *last = head;
 
@@ -353,12 +353,12 @@ Token *ast_token_cmp(Token *token, Combo *combo, bool *pass) {
 /*
 Push a new AST node to `node` with type `node_type`
 */
-void push_ast_node(Token *token, Token **last, NodeType node_type, AstNode **node) {
+void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode **node) {
 	(*node)->node_type = node_type;
 	(*node)->token = *last;
 	(*node)->token_end = token;
 
-	AstNode *tmp = make_ast_node();
+	AstNode *const tmp = make_ast_node();
 
 	tmp->last = *node;
 	*last = token->next;

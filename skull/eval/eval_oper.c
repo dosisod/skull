@@ -7,7 +7,7 @@ Handle operation `func` on 2 variables, `lhs` and `rhs`.
 
 Returns new variable resulting from operation, or `NULL` on error.
 */
-Variable *eval_oper(OperFunc func, const Variable *lhs, const Variable *rhs) {
+Variable *eval_oper(OperFunc func, const Variable *const lhs, const Variable *const rhs) {
 	if (lhs->type != rhs->type) {
 		return NULL;
 	}

@@ -35,13 +35,13 @@ char32_t *token_str(const Token *token)
 > The result of this function must be freed.
 
 ```c
-bool token_cmp(const char32_t *str, const Token *token)
+bool token_cmp(const char32_t *const str, const Token *const token)
 ```
 
 > Returns true if `str` is equal to the value of `token`.
 
 ```c
-__attribute__((pure)) size_t token_len(const Token *token)
+__attribute__((pure)) size_t token_len(const Token *const token)
 ```
 
 > Return the string length of `token`.

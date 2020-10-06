@@ -15,7 +15,7 @@ Return string representation of the variable `var`.
 
 The result of this function must be freed.
 */
-char32_t *fmt_var(const Variable *var) {
+char32_t *fmt_var(const Variable *const var) {
 	if (!var->type || !var->type->to_string) {
 		return NULL;
 	}
@@ -25,7 +25,7 @@ char32_t *fmt_var(const Variable *var) {
 /*
 Read variable memory of `var` into `dest`.
 */
-void variable_read(void *dest, const Variable *var) {
+void variable_read(void *const dest, const Variable *const var) {
 	memcpy(dest, var->mem, var->type->bytes);
 }
 
@@ -34,7 +34,7 @@ Make a variable called `name` with type `type`, and make it const if `is_const` 
 
 Returns `NULL` if var cannot be created, else pointer to created var.
 */
-Variable *make_variable(const Type *type, const char32_t *name, bool is_const) {
+Variable *make_variable(const Type *const type, const char32_t *const name, bool is_const) {
 	if (!type || !is_valid_identifier_str(name)) {
 		return NULL;
 	}
@@ -69,7 +69,7 @@ Write `data` to `var`.
 
 If `var` is constant, return error msg, else `NULL`.
 */
-const char32_t *variable_write(const Variable *var, const void *data) {
+const char32_t *variable_write(const Variable *const var, const void *const data) {
 	if (var->is_const) {
 		return FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .var = var });
 	}

@@ -10,11 +10,11 @@
 /*
 Returns the string representation of string `var`
 */
-char32_t *fmt_str_type(const Variable *var) {
+char32_t *fmt_str_type(const Variable *const var) {
 	SkullStr str = NULL;
 	variable_read(&str, var);
 
-	char32_t *ret = c32sdup(str);
+	char32_t *const ret = c32sdup(str);
 	DIE_IF_MALLOC_FAILS(ret);
 
 	return ret;
@@ -23,7 +23,7 @@ char32_t *fmt_str_type(const Variable *var) {
 /*
 Concatenate `lhs` and `rhs` strings
 */
-Variable *add_str_type(const Variable *lhs, const Variable *rhs) {
+Variable *add_str_type(const Variable *const lhs, const Variable *const rhs) {
 	Variable *ret = make_variable(&TYPE_STR, U"tmp", false);
 	if (!ret) {
 		return NULL;
@@ -44,7 +44,7 @@ Variable *add_str_type(const Variable *lhs, const Variable *rhs) {
 /*
 Return pointer to string, converted from `token`
 */
-void *eval_str(const Token *token, const char32_t **error) {
+void *eval_str(const Token *const token, const char32_t **error) {
 	if (token->token_type != TOKEN_STR_CONST) {
 		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_STR });
 		return NULL;

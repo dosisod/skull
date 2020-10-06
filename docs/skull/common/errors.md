@@ -1,7 +1,7 @@
 # skull/common/errors.c
 
 ```c
-char32_t *fmt_error(const char32_t *fmt, ErrorMsg msgs[])
+char32_t *fmt_error(const char32_t *const fmt, ErrorMsg msgs[])
 ```
 
 > Format an error message.
@@ -11,7 +11,7 @@ char32_t *fmt_error(const char32_t *fmt, ErrorMsg msgs[])
 > The result of this function must be freed.
 
 ```c
-void fmt_error_stringify(ErrorMsg *msg)
+void fmt_error_stringify(ErrorMsg *const msg)
 ```
 
 > Convert error msg `msg` for use in `fmt_error`.
@@ -19,7 +19,7 @@ void fmt_error_stringify(ErrorMsg *msg)
 > Depending on whether `msg` is a token, a variable, or a string, the resulting feild `real` will be created differently.
 
 ```c
-__attribute__((pure)) bool is_error_msg(const char32_t *str)
+__attribute__((pure)) bool is_error_msg(const char32_t *const str)
 ```
 
 > Returns true if `str` is an error msg.

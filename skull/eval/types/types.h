@@ -30,8 +30,8 @@ Type TYPE_TYPE;
 
 Type *TYPES_AVAILABLE;
 
-bool make_new_type(const char *, size_t);
+bool make_new_type(const char *const, size_t);
 
-Type *find_type(const char *);
+Type *find_type(const char *const);
 
 void free_types(void);

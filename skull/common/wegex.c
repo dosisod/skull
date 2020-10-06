@@ -62,7 +62,7 @@ bool wegex_match(const char *wegex, const char32_t *match) {
 	}
 
 	while (*wegex == '?' || *wegex == '*') {
-		const char *tmp = find_next_wegex(wegex + 1) + 1;
+		const char *const tmp = find_next_wegex(wegex + 1) + 1;
 		if (tmp != wegex) {
 			wegex = tmp;
 		}
@@ -80,12 +80,12 @@ Returns a pointer to the next searchable wegex group.
 If `wegex` is pointing to a `'['` character, return the corresponding `']'`.
 Else, return the passed wegex.
 */
-const char __attribute__((pure)) *find_next_wegex(const char *wegex) {
+const char __attribute__((pure)) *find_next_wegex(const char *const wegex) {
 	if (*wegex != '[') {
 		return wegex;
 	}
 
-	const char *bracket = strchr(wegex, ']');
+	const char *const bracket = strchr(wegex, ']');
 
 	if (bracket) {
 		return bracket;
@@ -106,7 +106,7 @@ If char at `begin` is `'['`, then return wether `c` matches any character within
 
 Else, return wether `c` and the char at `begin` are equal.
 */
-bool wegex_cmp(const char *begin, const char *end, char32_t c) {
+bool wegex_cmp(const char *begin, const char *const end, char32_t c) {
 	if (*begin == '[') {
 		begin++;
 		while (begin != end) {

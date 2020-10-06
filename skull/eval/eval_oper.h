@@ -3,7 +3,7 @@
 #include "skull/eval/variable.h"
 
 #define DO_MATH(str_type, real_type, oper) \
-	Variable *ret = make_variable(str_type, U"tmp", false); \
+	Variable *const ret = make_variable(str_type, U"tmp", false); \
 	if (!ret) { \
 		return NULL; \
 	} \
@@ -15,4 +15,4 @@
 	variable_write(ret, &tmp); \
 	return ret;
 
-Variable *eval_oper(OperFunc func, const Variable *lhs, const Variable *rhs);
+Variable *eval_oper(OperFunc func, const Variable *const, const Variable *const);

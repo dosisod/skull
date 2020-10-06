@@ -4,4 +4,4 @@
 #include "skull/eval/variable.h"
 #include "skull/parse/ast/node.h"
 
-const char32_t *eval_assign(Variable *, AstNode *, const Scope *);
+const char32_t *eval_assign(Variable *const, const AstNode *const, const Scope *);

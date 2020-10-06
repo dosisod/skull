@@ -14,28 +14,27 @@
 /*
 Returns the string representation of float `var`
 */
-char32_t *fmt_float_type(const Variable *var) {
+char32_t *fmt_float_type(const Variable *const var) {
 	SkullFloat data = 0.0;
 	variable_read(&data, var);
 
 	if (isinf(data)) {
-		char32_t *ret = NULL;
-		if (data < 0.0) {
-			ret = c32sdup(U"-Infinity");
-		}
-		else {
-			ret = c32sdup(U"Infinity");
-		}
+		char32_t *const ret = c32sdup(
+			(data < 0.0) ?
+			U"-Infinity" :
+			U"Infinity"
+		);
+
 		DIE_IF_MALLOC_FAILS(ret);
 		return ret;
 	}
 
 	SPRINTF_FMT("%.16lg");
 
-	const char *period = strrchr(tmp, '.');
+	const char *const period = strrchr(tmp, '.');
 	if (!period && !strrchr(tmp, 'e')) {
 		const size_t len = strlen(tmp);
-		char *fixed = malloc(len + 3);
+		char *const fixed = malloc(len + 3);
 		DIE_IF_MALLOC_FAILS(fixed);
 
 		memcpy(fixed, tmp, len);
@@ -47,7 +46,7 @@ char32_t *fmt_float_type(const Variable *var) {
 		tmp = fixed;
 	}
 
-	char32_t *ret = mbstoc32s(tmp);
+	char32_t *const ret = mbstoc32s(tmp);
 	free(tmp);
 	return ret;
 }
@@ -55,28 +54,28 @@ char32_t *fmt_float_type(const Variable *var) {
 /*
 Add `lhs` and `rhs` floats together
 */
-Variable *add_float_type(const Variable *lhs, const Variable *rhs) {
+Variable *add_float_type(const Variable *const lhs, const Variable *const rhs) {
 	DO_MATH(&TYPE_FLOAT, SkullFloat, +);
 }
 
 /*
 Subtract `rhs` float from `lhs` float
 */
-Variable *sub_float_type(const Variable *lhs, const Variable *rhs) {
+Variable *sub_float_type(const Variable *const lhs, const Variable *const rhs) {
 	DO_MATH(&TYPE_FLOAT, SkullFloat, -);
 }
 
 /*
 Divide `lhs` float by `rhs` float
 */
-Variable *div_float_type(const Variable *lhs, const Variable *rhs) {
+Variable *div_float_type(const Variable *const lhs, const Variable *const rhs) {
 	DO_MATH(&TYPE_FLOAT, SkullFloat, /);
 }
 
 /*
 Multiply `lhs` and `rhs` floats together
 */
-Variable *mult_float_type(const Variable *lhs, const Variable *rhs) {
+Variable *mult_float_type(const Variable *const lhs, const Variable *const rhs) {
 	DO_MATH(&TYPE_FLOAT, SkullFloat, *);
 }
 
@@ -85,13 +84,13 @@ Converts a `TOKEN_FLOAT_CONST` token to a floating point number pointer (`SkullF
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-void *eval_float(const Token *token, const char32_t **error) {
+void *eval_float(const Token *const token, const char32_t **error) {
 	if (token->token_type != TOKEN_FLOAT_CONST) {
 		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_FLOAT });
 		return NULL;
 	}
 
-	char *tmp = c32stombs(token->begin);
+	char *const tmp = c32stombs(token->begin);
 
 	SkullFloat *ret;
 	ret = malloc(sizeof *ret);

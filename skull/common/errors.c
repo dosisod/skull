@@ -64,7 +64,7 @@ Every `%` in the string is expanded according to the corresponding `ErrorMsg` in
 
 The result of this function must be freed.
 */
-char32_t *fmt_error(const char32_t *fmt, ErrorMsg msgs[]) {
+char32_t *fmt_error(const char32_t *const fmt, ErrorMsg msgs[]) {
 	const size_t fmt_len = c32slen(fmt);
 
 	ErrorMsg *tmp = msgs;
@@ -141,7 +141,7 @@ Convert error msg `msg` for use in `fmt_error`.
 
 Depending on whether `msg` is a token, a variable, or a string, the resulting feild `real` will be created differently.
 */
-void fmt_error_stringify(ErrorMsg *msg) {
+void fmt_error_stringify(ErrorMsg *const msg) {
 	if (msg->tok) {
 		msg->real = token_str(msg->tok);
 	}
@@ -159,6 +159,6 @@ void fmt_error_stringify(ErrorMsg *msg) {
 /*
 Returns true if `str` is an error msg.
 */
-__attribute__((pure)) bool is_error_msg(const char32_t *str) {
+__attribute__((pure)) bool is_error_msg(const char32_t *const str) {
 	return str == ERR_TYPE_TYPE_BAD;
 }

@@ -7,7 +7,7 @@
 /*
 Return string read from file descriptor `fd`.
 */
-char *read_file(FILE *fd) {
+char *read_file(FILE *const fd) {
 	fseek(fd, 0, SEEK_END);
 
 	const long len = ftell(fd);
@@ -17,7 +17,7 @@ char *read_file(FILE *fd) {
 
 	fseek(fd, 0, SEEK_SET);
 
-	char *str = malloc((size_t)len + 1);
+	char *const str = malloc((size_t)len + 1);
 	fread(str, 1, (size_t)len, fd);
 
 	str[len] = '\0';

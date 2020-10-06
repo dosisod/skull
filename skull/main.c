@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	errno = 0;
-	FILE *f = fopen(argv[1], "re");
+	FILE *const f = fopen(argv[1], "re");
 	if (!f) {
 		if (errno == EACCES) {
 			printf("cannot open \"%s\", permission denied\n", argv[1]);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 		entry
 	);
 
-	char *file_contents = read_file(f);
+	char *const file_contents = read_file(f);
 
 	str_to_llvm_ir(
 		file_contents,
@@ -91,16 +91,16 @@ int main(int argc, char *argv[]) {
 
 	free(file_contents);
 
-	size_t len = strlen(argv[1]);
-	char *ll_filename = malloc(len + 5);
+	const size_t len = strlen(argv[1]);
+	char *const ll_filename = malloc(len + 5);
 
-	char *slash_pos = strrchr(argv[1], '/');
+	const char *const slash_pos = strrchr(argv[1], '/');
 	if (!slash_pos) {
 		ll_filename[0] = '.';
 		memcpy(ll_filename + 1, argv[1], len);
 	}
 	else {
-		long offset = slash_pos - argv[1];
+		const long offset = slash_pos - argv[1];
 
 		memcpy(ll_filename, argv[1], len);
 		ll_filename[offset + 1] = '.';

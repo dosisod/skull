@@ -11,7 +11,7 @@ Add variable `var` to `scope`.
 
 Returns `true` if `var` was added, else `false`
 */
-bool scope_add_var(Scope *scope, Variable *var) {
+bool scope_add_var(Scope *const scope, Variable *var) {
 	if (scope_find_name(scope, var->name)) {
 		return false;
 	}

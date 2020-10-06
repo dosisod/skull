@@ -22,8 +22,8 @@
 /*
 Classify the token `token`.
 */
-void classify_token(Token *token) {
-	char32_t *str = token_str(token);
+void classify_token(Token *const token) {
+	char32_t *const str = token_str(token);
 
 	if (false) {} // setup for macros
 
@@ -61,11 +61,11 @@ void classify_token(Token *token) {
 	else if (is_valid_identifier_str(str)) {
 		token->token_type = TOKEN_IDENTIFIER;
 
-		if (*(token->end - 1) == ':') {
+		if (token->end[-1] == ':') {
 			token->token_type = TOKEN_NEW_IDENTIFIER;
 			token->end--;
 
-			char32_t *new_str = token_str(token);
+			char32_t *const new_str = token_str(token);
 
 			if (is_type_str(new_str) ||
 				is_keyword_str(new_str))
@@ -97,10 +97,10 @@ void classify_tokens(Token *head) {
 /*
 Returns true if `name` is a type string.
 */
-bool is_type_str(const char32_t *name) {
+bool is_type_str(const char32_t *const name) {
 	Type *current = TYPES_AVAILABLE;
 	while (current) {
-		char *tmp = c32stombs(name);
+		char *const tmp = c32stombs(name);
 		if (strcmp(current->name, tmp) == 0) {
 			free(tmp);
 			return true;
@@ -114,7 +114,7 @@ bool is_type_str(const char32_t *name) {
 /*
 Returns true if a `str` is a keyword.
 */
-bool is_keyword_str(const char32_t *str) {
+bool is_keyword_str(const char32_t *const str) {
 	return (
 		c32scmp(U"return", str) ||
 		c32scmp(U"mut", str)
@@ -126,7 +126,7 @@ Returns true if `str` is a valid hex/octal/binary/decimal representation of an i
 
 Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 */
-bool is_constant_integer_str(const char32_t *str) {
+bool is_constant_integer_str(const char32_t *const str) {
 	return (
 		wegex_match("?-+\n", str) ||
 		wegex_match("0x+\b", str) ||
@@ -140,7 +140,7 @@ Returns true if `str` is a valid float (with decimal).
 
 Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
-bool is_constant_float_str(const char32_t *str) {
+bool is_constant_float_str(const char32_t *const str) {
 	return (
 		wegex_match("?-+\n.+\n", str) ||
 		wegex_match("?-Infinity", str)
@@ -150,7 +150,7 @@ bool is_constant_float_str(const char32_t *str) {
 /*
 Returns true if `str` is a valid bool (`true` or `false`).
 */
-bool is_constant_bool_str(const char32_t *str) {
+bool is_constant_bool_str(const char32_t *const str) {
 	return c32scmp(U"false", str) || c32scmp(U"true", str);
 }
 
@@ -160,7 +160,7 @@ Returns true if `str` is a valid rune.
 Examples: `'x'`, `'\n'`, `'\xFF'`, and `' '`.
 Won't work: `''`, `'\'`, `'x '`, or `' x'`.
 */
-bool is_constant_rune_str(const char32_t *str) {
+bool is_constant_rune_str(const char32_t *const str) {
 	const size_t len = c32slen(str);
 
 	if (*str != '\'' || str[len - 1] != '\'') {
@@ -179,7 +179,7 @@ Returns true if `str` is a valid string constant.
 
 Examples: `""` and `"hello"`.
 */
-bool is_constant_str_str(const char32_t *str) {
+bool is_constant_str_str(const char32_t *const str) {
 	const size_t len = c32slen(str);
 
 	return (
@@ -192,6 +192,6 @@ bool is_constant_str_str(const char32_t *str) {
 /*
 Returns true if `str` is a valid identifer.
 */
-bool is_valid_identifier_str(const char32_t *str) {
+bool is_valid_identifier_str(const char32_t *const str) {
 	return wegex_match("\a*[\f_]?:", str);
 }

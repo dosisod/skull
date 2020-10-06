@@ -7,11 +7,11 @@
 /*
 Returns the string representation of type variable `var`
 */
-char32_t *fmt_type_type(const Variable *var) {
-	Type *type = NULL;
+char32_t *fmt_type_type(const Variable *const var) {
+	const Type *type = NULL;
 	variable_read(&type, var);
 
-	char32_t *ret = mbstoc32s(type->name);
+	char32_t *const ret = mbstoc32s(type->name);
 	DIE_IF_MALLOC_FAILS(ret);
 
 	return ret;
@@ -20,12 +20,12 @@ char32_t *fmt_type_type(const Variable *var) {
 /*
 Return pointer to a variable type, converted from `token`
 */
-void *eval_type(const Token *token, const char32_t **error) {
+void *eval_type(const Token *const token, const char32_t **error) {
 	Type **type = malloc(sizeof(Type *));
 	DIE_IF_MALLOC_FAILS(type);
 
-	char32_t *tmp_name = token_str(token);
-	char *type_name = c32stombs(tmp_name);
+	char32_t *const tmp_name = token_str(token);
+	char *const type_name = c32stombs(tmp_name);
 	free(tmp_name);
 
 	*type = find_type(type_name);

@@ -16,7 +16,7 @@
 #include "skull/llvm/ast.h"
 
 #define PANIC(str) \
-	char *panic_str = c32stombs(str); \
+	char *const panic_str = c32stombs(str); \
 	printf("Compilation error: %s\n", panic_str); \
 	free(panic_str); \
 	LLVMContextDispose(ctx); \
@@ -37,12 +37,12 @@ static LLVMModuleRef module;
 /*
 Convert skull code from `str` into LLVM IR (using `builder` and `ctx`).
 */
-void str_to_llvm_ir(char *str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLVMContextRef ctx_, LLVMModuleRef module_) {
-	char32_t *str = mbstoc32s(str_);
+void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLVMContextRef ctx_, LLVMModuleRef module_) {
+	char32_t *const str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
 	const char32_t *error = NULL;
-	AstNode *node = make_ast_tree(str, &error);
+	AstNode *const node = make_ast_tree(str, &error);
 
 	if (!node) {
 		PANIC(error);
@@ -106,8 +106,8 @@ void llvm_make_return(AstNode *node) {
 	}
 
 	if (node->token->next->token_type == TOKEN_IDENTIFIER) {
-		char32_t *var_name = token_str(node->token->next);
-		const Variable *found_var = scope_find_name(scope, var_name);
+		char32_t *const var_name = token_str(node->token->next);
+		const Variable *const found_var = scope_find_name(scope, var_name);
 
 		if (!found_var) {
 			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
@@ -130,7 +130,7 @@ void llvm_make_return(AstNode *node) {
 	}
 	else {
 		const char32_t *error = NULL;
-		SkullInt *num = eval_integer(node->token->next, &error);
+		SkullInt *const num = eval_integer(node->token->next, &error);
 		PANIC_ON_ERR(error);
 
 		LLVMBuildRet(
@@ -164,15 +164,15 @@ void llvm_make_if(AstNode *node) {
 
 	if (node->token->next->token_type == TOKEN_BOOL_CONST) {
 		const char32_t *error = NULL;
-		bool *tmp = eval_bool(node->token->next, &error);
+		bool *const tmp = eval_bool(node->token->next, &error);
 		PANIC_ON_ERR(error);
 
 		cond = LLVM_BOOL(ctx, *tmp);
 		free(tmp);
 	}
 	else {
-		char32_t *var_name = token_str(node->token->next);
-		const Variable *found_var = scope_find_name(scope, var_name);
+		char32_t *const var_name = token_str(node->token->next);
+		const Variable *const found_var = scope_find_name(scope, var_name);
 
 		if (!found_var) {
 			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
@@ -242,8 +242,8 @@ void llvm_make_function(AstNode *node) {
 		false
 	);
 
-	char32_t *tmp = token_str(node->token);
-	char *func_name = c32stombs(tmp);
+	char32_t *const tmp = token_str(node->token);
+	char *const func_name = c32stombs(tmp);
 	free(tmp);
 
 	LLVMValueRef function = LLVMAddFunction(
@@ -270,8 +270,8 @@ void llvm_make_function(AstNode *node) {
 Build a LLVM `load` operation from `node`.
 */
 void llvm_make_assign(AstNode **node) {
-	char32_t *var_name = token_str((*node)->token);
-	Variable *found_var = scope_find_name(scope, var_name);
+	char32_t *const var_name = token_str((*node)->token);
+	Variable *const found_var = scope_find_name(scope, var_name);
 
 	if (!found_var) {
 		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));

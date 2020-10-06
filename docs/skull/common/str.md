@@ -1,7 +1,7 @@
 # skull/common/str.c
 
 ```c
-char32_t *c32sdup(const char32_t *str)
+char32_t *c32sdup(const char32_t *const str)
 ```
 
 > Make a heap allocated version of `str`.
@@ -9,7 +9,7 @@ char32_t *c32sdup(const char32_t *str)
 > The result of this function must be freed.
 
 ```c
-char32_t *c32scat(const char32_t *s1, const char32_t *s2)
+char32_t *c32scat(const char32_t *const s1, const char32_t *const s2)
 ```
 
 > Concatenate `s1` and `s2`.
@@ -87,7 +87,7 @@ __attribute__((const)) bool c32isdigit(char32_t c)
 > Return whether the UTF-32 character `c` is a digit.
 
 ```c
-const char __attribute__((pure)) *strrstr(const char *str, const char *sub)
+const char __attribute__((pure)) *strrstr(const char *const str, const char *const sub)
 ```
 
 > Return last occurence of `sub` in string `str`.
@@ -95,7 +95,7 @@ const char __attribute__((pure)) *strrstr(const char *str, const char *sub)
 > `NULL` is returned if no such string is found.
 
 ```c
-char32_t c32sunescape(const char32_t *str, const char32_t **err)
+char32_t c32sunescape(const char32_t *const str, const char32_t **err)
 ```
 
 > Returns the unescaped version of an escaped character starting at `str`, or NULL character.

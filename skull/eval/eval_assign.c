@@ -16,7 +16,7 @@
 
 #include "skull/eval/eval_assign.h"
 
-const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Scope *scope);
+const char32_t *eval_auto_assign(Variable *const var, const AstNode *const node, const Scope *scope);
 
 /*
 Assign `node` to variable `var`.
@@ -25,7 +25,7 @@ Set `scope` to allow for assigning variables to other variables.
 
 Return an error (as a string) if any occured, else `NULL`.
 */
-const char32_t *eval_assign(Variable *var, AstNode *node, const Scope *scope) {
+const char32_t *eval_assign(Variable *const var, const AstNode *const node, const Scope *scope) {
 	if (!node) {
 		return FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
@@ -83,9 +83,9 @@ const char32_t *eval_assign(Variable *var, AstNode *node, const Scope *scope) {
 /*
 Evaluate assignment via auto assignment operator.
 */
-const char32_t *eval_auto_assign(Variable *var, AstNode *node, const Scope *scope) {
-	char32_t *lookup = token_str(node->token);
-	Variable *var_found = scope_find_name(scope, lookup);
+const char32_t *eval_auto_assign(Variable *const var, const AstNode *const node, const Scope *scope) {
+	char32_t *const lookup = token_str(node->token);
+	const Variable *const var_found = scope_find_name(scope, lookup);
 
 	if (!var_found) {
 		return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup });

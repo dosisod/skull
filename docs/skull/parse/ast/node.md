@@ -1,7 +1,7 @@
 # skull/parse/ast/node.c
 
 ```c
-AstNode *make_ast_tree(const char32_t *code, const char32_t **error)
+AstNode *make_ast_tree(const char32_t *const code, const char32_t **error)
 ```
 
 > Makes an AST (abstract syntax tree) from a given string.
@@ -13,7 +13,7 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 > Internal AST tree generator.
 
 ```c
-Token *ast_token_cmp(Token *token, Combo *combo, bool *pass)
+Token *ast_token_cmp(Token *token, Combo *combo, bool *const pass)
 ```
 
 > Compare tokens against a combonation of tokens.
@@ -38,7 +38,7 @@ Token *ast_token_cmp(Token *token, Combo *combo, bool *pass)
 > If all the args match, return last token matched, else, the passed `token`.
 
 ```c
-void push_ast_node(Token *token, Token **last, NodeType node_type, AstNode **node)
+void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode **node)
 ```
 
 > Push a new AST node to `node` with type `node_type`

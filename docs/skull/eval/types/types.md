@@ -1,7 +1,7 @@
 # skull/eval/types/types.c
 
 ```c
-bool make_new_type(const char *name, size_t bytes)
+bool make_new_type(const char *const name, size_t bytes)
 ```
 
 > Creates a new type called `name` with `bytes` bytes of memory.
@@ -10,7 +10,7 @@ bool make_new_type(const char *name, size_t bytes)
 > Returns true if the type `name` was inserted.
 
 ```c
-Type __attribute__((pure)) *find_type(const char *name)
+Type __attribute__((pure)) *find_type(const char *const name)
 ```
 
 > Returns pointer to type with name `name`.

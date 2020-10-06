@@ -86,6 +86,6 @@ char32_t *fmt_error(const char32_t *fmt, ErrorMsg []);
 		{0} \
 	})
 
-void fmt_error_stringify(ErrorMsg *);
+void fmt_error_stringify(ErrorMsg *const);
 
-_Bool is_error_msg(const char32_t *);
+_Bool is_error_msg(const char32_t *const);

@@ -13,13 +13,13 @@
 /*
 Returns the string representation of int `var`
 */
-char32_t *fmt_int_type(const Variable *var) {
+char32_t *fmt_int_type(const Variable *const var) {
 	SkullInt data = 0;
 	variable_read(&data, var);
 
 	SPRINTF_FMT("%li");
 
-	char32_t *ret = mbstoc32s(tmp);
+	char32_t *const ret = mbstoc32s(tmp);
 	free(tmp);
 	return ret;
 }
@@ -27,14 +27,14 @@ char32_t *fmt_int_type(const Variable *var) {
 /*
 Add `lhs` and `rhs` ints together
 */
-Variable *add_int_type(const Variable *lhs, const Variable *rhs) {
+Variable *add_int_type(const Variable *const lhs, const Variable *const rhs) {
 	DO_MATH(&TYPE_INT, SkullInt, +);
 }
 
 /*
 Subtract `rhs` int from `lhs` int
 */
-Variable *sub_int_type(const Variable *lhs, const Variable *rhs) {
+Variable *sub_int_type(const Variable *const lhs, const Variable *const rhs) {
 	DO_MATH(&TYPE_INT, SkullInt, -);
 }
 
@@ -43,7 +43,7 @@ Divide `lhs` int by `rhs` int
 
 If `rhs` is zero, return NULL.
 */
-Variable *div_int_type(const Variable *lhs, const Variable *rhs) {
+Variable *div_int_type(const Variable *const lhs, const Variable *const rhs) {
 	Variable *ret = make_variable(&TYPE_INT, U"tmp", false);
 	if (!ret) {
 		return NULL;
@@ -67,7 +67,7 @@ Variable *div_int_type(const Variable *lhs, const Variable *rhs) {
 /*
 Multiply `lhs` and `rhs` ints together
 */
-Variable *mult_int_type(const Variable *lhs, const Variable *rhs) {
+Variable *mult_int_type(const Variable *const lhs, const Variable *const rhs) {
 	DO_MATH(&TYPE_INT, SkullInt, *);
 }
 
@@ -76,7 +76,7 @@ Converts a `TOKEN_INT_CONST` token to an integer pointer (`SkullInt *`).
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-void *eval_integer(const Token *token, const char32_t **error) {
+void *eval_integer(const Token *const token, const char32_t **error) {
 	if (token->token_type != TOKEN_INT_CONST) {
 		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_INT });
 		return NULL;
@@ -102,7 +102,7 @@ void *eval_integer(const Token *token, const char32_t **error) {
 		base = 16;
 	}
 
-	char *tmp = c32stombs(begin);
+	char *const tmp = c32stombs(begin);
 
 	errno = 0;
 	*ret = strtoll(tmp, NULL, base);

@@ -13,7 +13,7 @@ Make a heap allocated version of `str`.
 
 The result of this function must be freed.
 */
-char32_t *c32sdup(const char32_t *str) {
+char32_t *c32sdup(const char32_t *const str) {
 	const size_t len = c32slen(str);
 
 	char32_t *ret;
@@ -31,7 +31,7 @@ Concatenate `s1` and `s2`.
 
 The result of this function must be freed.
 */
-char32_t *c32scat(const char32_t *s1, const char32_t *s2) {
+char32_t *c32scat(const char32_t *const s1, const char32_t *const s2) {
 	const size_t len_s1 = c32slen(s1);
 	const size_t len_s2 = c32slen(s2);
 
@@ -134,7 +134,7 @@ char32_t *mbstoc32s(const char *str) {
 
 	while (*str) {
 		errno = 0;
-		size_t length = mbrtoc32(ret + offset, str, MB_CUR_MAX, &mbs);
+		const size_t length = mbrtoc32(ret + offset, str, MB_CUR_MAX, &mbs);
 
 		if (errno == EILSEQ) {
 			printf("illegal UTF8 sequence at character offset %zu\n", offset);
@@ -237,7 +237,7 @@ Return last occurence of `sub` in string `str`.
 
 `NULL` is returned if no such string is found.
 */
-const char __attribute__((pure)) *strrstr(const char *str, const char *sub) {
+const char __attribute__((pure)) *strrstr(const char *const str, const char *const sub) {
 	const size_t str_len = strlen(str);
 	const size_t sub_len = strlen(sub);
 
@@ -257,7 +257,7 @@ Returns the unescaped version of an escaped character starting at `str`, or NULL
 
 If an error occurs, `err` will be set to the corresponding error msg.
 */
-char32_t c32sunescape(const char32_t *str, const char32_t **err) {
+char32_t c32sunescape(const char32_t *const str, const char32_t **err) {
 	if (*str != '\\') {
 		return '\0';
 	}
@@ -288,7 +288,7 @@ char32_t c32sunescape(const char32_t *str, const char32_t **err) {
 		}
 	}
 
-	char32_t tmp[5] = { '\\', escape, opt1, opt2, '\0' };
+	const char32_t tmp[5] = { '\\', escape, opt1, opt2, '\0' };
 	*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = tmp });
 	return '\0';
 }

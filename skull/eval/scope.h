@@ -12,7 +12,6 @@ typedef struct {
 Scope *make_scope(void);
 
 Variable *scope_find_name(const Scope *, const char32_t *);
-_Bool scope_contains_var(Scope *, const Variable *);
-_Bool scope_add_var(Scope *, Variable *);
+_Bool scope_add_var(Scope *const, Variable *);
 
 void free_scope(Scope *);

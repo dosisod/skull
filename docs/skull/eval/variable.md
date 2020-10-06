@@ -1,7 +1,7 @@
 # skull/eval/variable.c
 
 ```c
-char32_t *fmt_var(const Variable *var)
+char32_t *fmt_var(const Variable *const var)
 ```
 
 > Return string representation of the variable `var`.
@@ -9,13 +9,13 @@ char32_t *fmt_var(const Variable *var)
 > The result of this function must be freed.
 
 ```c
-void variable_read(void *dest, const Variable *var)
+void variable_read(void *const dest, const Variable *const var)
 ```
 
 > Read variable memory of `var` into `dest`.
 
 ```c
-Variable *make_variable(const Type *type, const char32_t *name, bool is_const)
+Variable *make_variable(const Type *const type, const char32_t *const name, bool is_const)
 ```
 
 > Make a variable called `name` with type `type`, and make it const if `is_const` is true.
@@ -23,7 +23,7 @@ Variable *make_variable(const Type *type, const char32_t *name, bool is_const)
 > Returns `NULL` if var cannot be created, else pointer to created var.
 
 ```c
-const char32_t *variable_write(const Variable *var, const void *data)
+const char32_t *variable_write(const Variable *const var, const void *const data)
 ```
 
 > Write `data` to `var`.

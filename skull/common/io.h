@@ -2,4 +2,4 @@
 
 #include <stdio.h>
 
-char *read_file(FILE *);
+char *read_file(FILE *const);

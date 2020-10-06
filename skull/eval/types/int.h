@@ -5,9 +5,9 @@
 
 char32_t *fmt_int_type(const Variable *);
 
-Variable *add_int_type(const Variable *, const Variable *);
-Variable *sub_int_type(const Variable *, const Variable *);
-Variable *div_int_type(const Variable *, const Variable *);
-Variable *mult_int_type(const Variable *, const Variable *);
+Variable *add_int_type(const Variable *const, const Variable *const);
+Variable *sub_int_type(const Variable *const, const Variable *const);
+Variable *div_int_type(const Variable *const, const Variable *const);
+Variable *mult_int_type(const Variable *const, const Variable *const);
 
 void *eval_integer(const Token *, const char32_t **);

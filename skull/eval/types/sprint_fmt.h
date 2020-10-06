@@ -4,7 +4,7 @@
 #include "skull/common/malloc.h"
 
 #define SPRINTF_FMT(fmt) \
-	int needed = snprintf(NULL, 0, (fmt), data) + 1; \
+	const int needed = snprintf(NULL, 0, (fmt), data) + 1; \
 	if (needed < 0) { \
 		return NULL; \
 	} \

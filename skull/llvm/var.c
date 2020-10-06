@@ -19,7 +19,7 @@
 Convert a Skull variable `var` into the LLVM IR equivalent.
 */
 void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
-	char *var_name = c32stombs(var->name);
+	char *const var_name = c32stombs(var->name);
 
 	if (var->type == &TYPE_INT) {
 		if (!var->alloca) {
@@ -94,10 +94,10 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx) {
 		);
 	}
 	else if (var->type == &TYPE_STR) {
-		char32_t *str = NULL;
+		const char32_t *str = NULL;
 		variable_read(&str, var);
-		char *mbs = c32stombs(str);
-		unsigned len = (unsigned)strlen(mbs);
+		char *const mbs = c32stombs(str);
+		const unsigned len = (unsigned)strlen(mbs);
 
 		LLVMBuildStore(
 			builder,
@@ -143,7 +143,7 @@ Make and add a variable from `node` to `scope`.
 
 Returns pointer to error message if one occurs, else `NULL`.
 */
-const char32_t *node_make_var(const AstNode *node, Scope *scope) {
+const char32_t *node_make_var(const AstNode *const node, Scope *const scope) {
 	if (!scope) {
 		return NULL;
 	}
@@ -158,7 +158,7 @@ const char32_t *node_make_var(const AstNode *node, Scope *scope) {
 		return FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .tok = token });
 	}
 
-	char32_t *name = token_str(token);
+	char32_t *const name = token_str(token);
 	Variable *var = NULL;
 
 	if (ATTR(AstNodeVarDef, node, is_implicit)) {
@@ -184,8 +184,8 @@ const char32_t *node_make_var(const AstNode *node, Scope *scope) {
 			node->next->node_type == AST_NODE_MULT_VAR ||
 			node->next->node_type == AST_NODE_DIV_VAR
 		) {
-			char32_t *lookup = token_str(node->next->token);
-			Variable *new_var = scope_find_name(scope, lookup);
+			char32_t *const lookup = token_str(node->next->token);
+			Variable *const new_var = scope_find_name(scope, lookup);
 
 			if (!new_var) {
 				free(name);
@@ -201,15 +201,15 @@ const char32_t *node_make_var(const AstNode *node, Scope *scope) {
 		var = make_variable(type, name, false);
 	}
 	else {
-		char32_t *tmp_name = token_str(token->next);
-		char *type_name = c32stombs(tmp_name);
+		char32_t *const tmp_name = token_str(token->next);
+		char *const type_name = c32stombs(tmp_name);
 		free(tmp_name);
 
 		var = make_variable(find_type(type_name), name, false);
 		free(type_name);
 	}
 
-	const char32_t *tmp = eval_assign(var, node->next, scope);
+	const char32_t *const tmp = eval_assign(var, node->next, scope);
 	var->is_const = is_const;
 
 	if (tmp) {

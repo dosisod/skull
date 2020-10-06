@@ -1,7 +1,7 @@
 # skull/eval/eval_oper.c
 
 ```c
-Variable *eval_oper(OperFunc func, const Variable *lhs, const Variable *rhs)
+Variable *eval_oper(OperFunc func, const Variable *const lhs, const Variable *const rhs)
 ```
 
 > Handle operation `func` on 2 variables, `lhs` and `rhs`.
