@@ -79,7 +79,7 @@ void free_types(void) {
 	TYPE_BOOL.next = NULL;
 }
 
-struct Type TYPE_BOOL = {
+Type TYPE_BOOL = {
 	.name = "bool",
 	.bytes = sizeof(bool),
 	.to_string = &fmt_bool_type,
@@ -90,7 +90,7 @@ struct Type TYPE_BOOL = {
 	.next = NULL
 };
 
-struct Type TYPE_INT = {
+Type TYPE_INT = {
 	.name = "int",
 	.bytes = sizeof(SkullInt),
 	.to_string = &fmt_int_type,
@@ -101,7 +101,7 @@ struct Type TYPE_INT = {
 	.next = &TYPE_BOOL
 };
 
-struct Type TYPE_FLOAT = {
+Type TYPE_FLOAT = {
 	.name = "float",
 	.bytes = sizeof(SkullFloat),
 	.to_string = &fmt_float_type,
@@ -112,7 +112,7 @@ struct Type TYPE_FLOAT = {
 	.next = &TYPE_INT
 };
 
-struct Type TYPE_RUNE = {
+Type TYPE_RUNE = {
 	.name = "rune",
 	.bytes = sizeof(SkullRune),
 	.to_string = &fmt_rune_type,
@@ -123,7 +123,7 @@ struct Type TYPE_RUNE = {
 	.next = &TYPE_FLOAT
 };
 
-struct Type TYPE_STR = {
+Type TYPE_STR = {
 	.name = "str",
 	.bytes = sizeof(SkullStr),
 	.to_string = &fmt_str_type,
@@ -134,9 +134,9 @@ struct Type TYPE_STR = {
 	.next = &TYPE_RUNE
 };
 
-struct Type TYPE_TYPE = {
+Type TYPE_TYPE = {
 	.name = "type",
-	.bytes = sizeof(struct Type *),
+	.bytes = sizeof(Type *),
 	.to_string = &fmt_type_type,
 	.add = NULL,
 	.subtract = NULL,
@@ -145,4 +145,4 @@ struct Type TYPE_TYPE = {
 	.next = &TYPE_STR
 };
 
-struct Type *TYPES_AVAILABLE = &TYPE_TYPE;
+Type *TYPES_AVAILABLE = &TYPE_TYPE;

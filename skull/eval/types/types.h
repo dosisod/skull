@@ -3,9 +3,9 @@
 #include <stdbool.h>
 #include <uchar.h>
 
-struct Variable;
+typedef struct Variable Variable;
 
-typedef struct Variable *(*OperFunc)(const struct Variable *, const struct Variable *);
+typedef Variable *(*OperFunc)(const Variable *, const Variable *);
 
 typedef struct Type {
 	const char *name;
@@ -16,19 +16,19 @@ typedef struct Type {
 	OperFunc divide;
 	OperFunc multiply;
 
-	char32_t *(*to_string)(const struct Variable *);
+	char32_t *(*to_string)(const Variable *);
 
 	struct Type *next;
 } Type;
 
-struct Type TYPE_BOOL;
-struct Type TYPE_INT;
-struct Type TYPE_FLOAT;
-struct Type TYPE_RUNE;
-struct Type TYPE_STR;
-struct Type TYPE_TYPE;
+Type TYPE_BOOL;
+Type TYPE_INT;
+Type TYPE_FLOAT;
+Type TYPE_RUNE;
+Type TYPE_STR;
+Type TYPE_TYPE;
 
-struct Type *TYPES_AVAILABLE;
+Type *TYPES_AVAILABLE;
 
 bool make_new_type(const char *, size_t);
 

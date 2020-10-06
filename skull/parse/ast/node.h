@@ -36,23 +36,25 @@ typedef enum {
 	AST_NODE_COMMENT
 } NodeType;
 
+typedef struct AstNode AstNode;
+
 typedef struct AstNode {
 	NodeType node_type;
 
-	struct Token *token;
-	struct Token *token_end;
+	Token *token;
+	Token *token_end;
 
-	struct AstNode *next;
-	struct AstNode *last;
+	AstNode *next;
+	AstNode *last;
 
-	struct AstNode *child;
-	struct AstNode *parent;
+	AstNode *child;
+	AstNode *parent;
 
 	// used to store arbitrary data associated with a certain node type
 	void *attr;
 } AstNode;
 
-typedef struct AstNodeVarDef {
+typedef struct {
 	// these probably should be turned into bitflags
 	_Bool is_implicit;
 	_Bool is_const;
@@ -64,8 +66,10 @@ typedef enum {
 	RULE_OPTIONAL = 1
 } ComboRule;
 
+typedef struct Combo Combo;
+
 typedef struct Combo {
-	struct Combo *combo;
+	Combo *combo;
 	unsigned tok;
 	ComboRule rule;
 } Combo;

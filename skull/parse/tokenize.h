@@ -2,12 +2,14 @@
 
 #include <uchar.h>
 
+typedef struct Token Token;
+
 typedef struct Token {
 	const char32_t *begin;
 	const char32_t *end;
 	unsigned token_type;
 
-	struct Token *next;
+	Token *next;
 } Token;
 
 _Bool is_whitespace(char32_t);
