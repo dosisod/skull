@@ -50,8 +50,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	LLVMContextRef ctx = LLVMContextCreate();
-	LLVMModuleRef main_module = LLVMModuleCreateWithNameInContext(argv[1], ctx);
+	LLVMModuleRef main_module = LLVMModuleCreateWithName(argv[1]);
 
 	LLVMTypeRef main_func_type = LLVMFunctionType(
 		LLVMInt64Type(),
@@ -66,13 +65,12 @@ int main(int argc, char *argv[]) {
 		main_func_type
 	);
 
-	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
-		ctx,
+	LLVMBasicBlockRef entry = LLVMAppendBasicBlock(
 		main_func,
 		"entry"
 	);
 
-	LLVMBuilderRef builder = LLVMCreateBuilderInContext(ctx);
+	LLVMBuilderRef builder = LLVMCreateBuilder();
 
 	LLVMPositionBuilderAtEnd(
 		builder,
@@ -85,7 +83,6 @@ int main(int argc, char *argv[]) {
 		file_contents,
 		main_func,
 		builder,
-		ctx,
 		main_module
 	);
 
@@ -119,11 +116,9 @@ int main(int argc, char *argv[]) {
 	if (err || status) {
 		printf("error occurred: %s\n", err);
 		LLVMDisposeMessage(err);
-		LLVMContextDispose(ctx);
 		return 1;
 	}
 
 	LLVMDisposeMessage(err);
-	LLVMContextDispose(ctx);
 	return 0;
 }

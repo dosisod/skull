@@ -19,7 +19,6 @@
 	char *const panic_str = c32stombs(str); \
 	printf("Compilation error: %s\n", panic_str); \
 	free(panic_str); \
-	LLVMContextDispose(ctx); \
 	exit(1)
 
 #define PANIC_ON_ERR(str) \
@@ -31,13 +30,12 @@
 static Scope *scope;
 static LLVMValueRef func;
 static LLVMBuilderRef builder;
-static LLVMContextRef ctx;
 static LLVMModuleRef module;
 
 /*
-Convert skull code from `str` into LLVM IR (using `builder` and `ctx`).
+Convert skull code from `str_` into LLVM IR (using `func_`, `builder_`, and `module_`).
 */
-void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLVMContextRef ctx_, LLVMModuleRef module_) {
+void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLVMModuleRef module_) {
 	char32_t *const str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
@@ -51,7 +49,6 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMBuilderRef builder
 	scope = make_scope();
 	func = func_;
 	builder = builder_;
-	ctx = ctx_;
 	module = module_;
 
 	node_to_llvm_ir(node);
@@ -122,7 +119,7 @@ void llvm_make_return(AstNode *node) {
 			builder,
 			LLVMBuildLoad2(
 				builder,
-				LLVMInt64TypeInContext(ctx),
+				LLVMInt64Type(),
 				found_var->alloca,
 				""
 			)
@@ -135,7 +132,7 @@ void llvm_make_return(AstNode *node) {
 
 		LLVMBuildRet(
 			builder,
-			LLVM_INT(ctx, *num)
+			LLVM_INT(*num)
 		);
 
 		free(num);
@@ -152,7 +149,7 @@ void llvm_make_var_def(AstNode **node) {
 
 	*node = (*node)->next;
 
-	var_to_llvm_ir(scope->vars[scope->vars_used - 1], builder, ctx);
+	var_to_llvm_ir(scope->vars[scope->vars_used - 1], builder);
 	vars_used_last++;
 }
 
@@ -167,7 +164,7 @@ void llvm_make_if(AstNode *node) {
 		bool *const tmp = eval_bool(node->token->next, &error);
 		PANIC_ON_ERR(error);
 
-		cond = LLVM_BOOL(ctx, *tmp);
+		cond = LLVM_BOOL(*tmp);
 		free(tmp);
 	}
 	else {
@@ -185,23 +182,14 @@ void llvm_make_if(AstNode *node) {
 
 		cond = LLVMBuildLoad2(
 			builder,
-			LLVMInt64TypeInContext(ctx),
+			LLVMInt64Type(),
 			found_var->alloca,
 			""
 		);
 	}
 
-	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
-		ctx,
-		func,
-		"if_true"
-	);
-
-	LLVMBasicBlockRef end = LLVMAppendBasicBlockInContext(
-		ctx,
-		func,
-		"end"
-	);
+	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(func, "if_true");
+	LLVMBasicBlockRef end = LLVMAppendBasicBlock(func, "end");
 
 	LLVMBuildCondBr(
 		builder,
@@ -231,12 +219,10 @@ void llvm_make_if(AstNode *node) {
 Builds a function declaration from `node`.
 */
 void llvm_make_function(AstNode *node) {
-	LLVMTypeRef args[] = {
-		LLVMVoidTypeInContext(ctx)
-	};
+	LLVMTypeRef args[] = { LLVMVoidType() };
 
 	LLVMTypeRef type = LLVMFunctionType(
-		LLVMVoidTypeInContext(ctx),
+		LLVMVoidType(),
 		args,
 		0,
 		false
@@ -282,7 +268,7 @@ void llvm_make_assign(AstNode **node) {
 	}
 
 	PANIC_ON_ERR(eval_assign(found_var, (*node)->next, scope));
-	var_to_llvm_ir(found_var, builder, ctx);
+	var_to_llvm_ir(found_var, builder);
 
 	free(var_name);
 

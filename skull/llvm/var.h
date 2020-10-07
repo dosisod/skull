@@ -6,6 +6,6 @@
 #include "skull/eval/variable.h"
 #include "skull/parse/ast/node.h"
 
-void var_to_llvm_ir(Variable *, LLVMBuilderRef, LLVMContextRef);
+void var_to_llvm_ir(Variable *, LLVMBuilderRef);
 
 const char32_t *node_make_var(const AstNode *const, Scope *const);

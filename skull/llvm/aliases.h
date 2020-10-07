@@ -1,26 +1,26 @@
-#define LLVM_INT(ctx, num) \
+#define LLVM_INT(num) \
 	LLVMConstInt( \
-		LLVMInt64TypeInContext(ctx), \
+		LLVMInt64Type(), \
 		(unsigned long long)(num), \
 		true \
 	)
 
-#define LLVM_BOOL(ctx, val) \
+#define LLVM_BOOL(val) \
 	LLVMConstInt( \
-		LLVMInt1TypeInContext(ctx), \
+		LLVMInt1Type(), \
 		val, \
 		true \
 	)
 
-#define LLVM_RUNE(ctx, c) \
+#define LLVM_RUNE(c) \
 	LLVMConstInt( \
-		LLVMInt32TypeInContext(ctx), \
+		LLVMInt32Type(), \
 		c, \
 		true \
 	)
 
-#define LLVM_FLOAT(ctx, num) \
+#define LLVM_FLOAT(num) \
 	LLVMConstReal( \
-		LLVMDoubleTypeInContext(ctx), \
+		LLVMDoubleType(), \
 		num \
 	)

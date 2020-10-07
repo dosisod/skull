@@ -1,7 +1,7 @@
 # skull/llvm/var.c
 
 ```c
-void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder, LLVMContextRef ctx)
+void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder)
 ```
 
 > Convert a Skull variable `var` into the LLVM IR equivalent.
