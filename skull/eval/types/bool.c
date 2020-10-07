@@ -1,3 +1,7 @@
+#define _XOPEN_SOURCE 700
+#include <string.h>
+#undef _XOPEN_SOURCE
+
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
@@ -9,11 +13,11 @@
 /*
 Returns the string representation of boolean `var`
 */
-char32_t *fmt_bool_type(const Variable *const var) {
+char *fmt_bool_type(const Variable *const var) {
 	bool data = false;
 	variable_read(&data, var);
 
-	char32_t *const ret = c32sdup(data ? U"true" : U"false");
+	char *const ret = strdup(data ? "true" : "false");
 	DIE_IF_MALLOC_FAILS(ret);
 
 	return ret;

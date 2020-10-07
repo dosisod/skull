@@ -10,14 +10,11 @@
 /*
 Returns the string representation of string `var`
 */
-char32_t *fmt_str_type(const Variable *const var) {
+char *fmt_str_type(const Variable *const var) {
 	SkullStr str = NULL;
 	variable_read(&str, var);
 
-	char32_t *const ret = c32sdup(str);
-	DIE_IF_MALLOC_FAILS(ret);
-
-	return ret;
+	return c32stombs(str);
 }
 
 /*

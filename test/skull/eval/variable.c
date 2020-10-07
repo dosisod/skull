@@ -98,49 +98,49 @@ TEST(free_null_variable_is_ok, {
 })
 
 TEST(fmt_var_int, {
-	TEST_FMT_VAR(&TYPE_INT, SkullInt, 1234, U"1234");
+	TEST_FMT_VAR(&TYPE_INT, SkullInt, 1234, "1234");
 })
 
 TEST(fmt_var_float, {
 	const SkullFloat PI = 3.1415;
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, PI, U"3.1415");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, PI, "3.1415");
 })
 
 TEST(fmt_var_float_zero, {
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 0.0, U"0.0");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 0.0, "0.0");
 })
 
 TEST(fmt_var_float_small, {
 	const SkullFloat SMALL = 0.0000001;
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, SMALL, U"1e-07");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, SMALL, "1e-07");
 })
 
 TEST(fmt_var_float_trailing_zero, {
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1234, U"1234.0");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1234, "1234.0");
 })
 
 TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1.0 / 0.0, U"Infinity");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1.0 / 0.0, "Infinity");
 })
 
 TEST(fmt_var_float_neg_infinity, {
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1.0 / -0.0, U"-Infinity");
+	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1.0 / -0.0, "-Infinity");
 })
 
 TEST(fmt_var_bool, {
-	TEST_FMT_VAR(&TYPE_BOOL, bool, false, U"false");
+	TEST_FMT_VAR(&TYPE_BOOL, bool, false, "false");
 })
 
 TEST(fmt_var_type, {
-	TEST_FMT_VAR(&TYPE_TYPE, Type *, &TYPE_INT, U"int");
+	TEST_FMT_VAR(&TYPE_TYPE, Type *, &TYPE_INT, "int");
 })
 
 TEST(fmt_var_rune, {
-	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, 'a', U"a");
+	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, 'a', "a");
 })
 
 TEST(fmt_var_wide_rune_preserved, {
-	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, U'存', U"存");
+	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, U'存', "存");
 })
 
 #undef TEST_FMT_VAR
@@ -153,11 +153,11 @@ TEST(fmt_var_str, {
 
 	eval_assign(var, node, NULL);
 
-	char32_t *str = fmt_var(var);
+	char *str = fmt_var(var);
 
 	ASSERT_TRUTHY(str);
 	ASSERT_FALSEY(error);
-	ASSERT_TRUTHY(c32scmp(U"abc", str));
+	ASSERT_EQUAL(strcmp("abc", str), 0);
 
 	char32_t *mem = NULL;
 	variable_read(&mem, var);
@@ -175,10 +175,10 @@ TEST(fmt_var_str_with_escapes, {
 
 	eval_assign(var, node, NULL);
 
-	char32_t *str = fmt_var(var);
+	char *str = fmt_var(var);
 
 	ASSERT_TRUTHY(str);
-	ASSERT_TRUTHY(c32scmp(U" \r \n \t \\ ", str));
+	ASSERT_EQUAL(strcmp(" \r \n \t \\ ", str), 0);
 
 	char32_t *mem = NULL;
 	variable_read(&mem, var);

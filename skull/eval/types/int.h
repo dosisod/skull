@@ -3,7 +3,7 @@
 #include "skull/eval/variable.h"
 #include "skull/parse/tokenize.h"
 
-char32_t *fmt_int_type(const Variable *);
+char *fmt_int_type(const Variable *);
 
 Variable *add_int_type(const Variable *const, const Variable *const);
 Variable *sub_int_type(const Variable *const, const Variable *const);

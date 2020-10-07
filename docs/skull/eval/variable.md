@@ -1,7 +1,7 @@
 # skull/eval/variable.c
 
 ```c
-char32_t *fmt_var(const Variable *const var)
+char *fmt_var(const Variable *const var)
 ```
 
 > Return string representation of the variable `var`.

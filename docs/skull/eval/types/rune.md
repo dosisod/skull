@@ -1,7 +1,7 @@
 # skull/eval/types/rune.c
 
 ```c
-char32_t *fmt_rune_type(const Variable *const var)
+char *fmt_rune_type(const Variable *const var)
 ```
 
 > Returns the string representation of rune `var`

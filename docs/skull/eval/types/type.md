@@ -1,7 +1,7 @@
 # skull/eval/types/type.c
 
 ```c
-char32_t *fmt_type_type(const Variable *const var)
+char *fmt_type_type(const Variable *const var)
 ```
 
 > Returns the string representation of type variable `var`

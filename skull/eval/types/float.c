@@ -1,6 +1,8 @@
+#define _XOPEN_SOURCE 700
 #include <errno.h>
 #include <math.h>
 #include <string.h>
+#undef _XOPEN_SOURCE
 
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
@@ -14,15 +16,15 @@
 /*
 Returns the string representation of float `var`
 */
-char32_t *fmt_float_type(const Variable *const var) {
+char *fmt_float_type(const Variable *const var) {
 	SkullFloat data = 0.0;
 	variable_read(&data, var);
 
 	if (isinf(data)) {
-		char32_t *const ret = c32sdup(
+		char *const ret = strdup(
 			(data < 0.0) ?
-			U"-Infinity" :
-			U"Infinity"
+			"-Infinity" :
+			"Infinity"
 		);
 
 		DIE_IF_MALLOC_FAILS(ret);
@@ -46,9 +48,7 @@ char32_t *fmt_float_type(const Variable *const var) {
 		tmp = fixed;
 	}
 
-	char32_t *const ret = mbstoc32s(tmp);
-	free(tmp);
-	return ret;
+	return tmp;
 }
 
 /*

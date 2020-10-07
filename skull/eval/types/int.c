@@ -13,15 +13,12 @@
 /*
 Returns the string representation of int `var`
 */
-char32_t *fmt_int_type(const Variable *const var) {
+char *fmt_int_type(const Variable *const var) {
 	SkullInt data = 0;
 	variable_read(&data, var);
 
 	SPRINTF_FMT("%li");
-
-	char32_t *const ret = mbstoc32s(tmp);
-	free(tmp);
-	return ret;
+	return tmp;
 }
 
 /*

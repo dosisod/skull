@@ -10,15 +10,15 @@
 /*
 Returns the string representation of rune `var`
 */
-char32_t *fmt_rune_type(const Variable *const var) {
-	char32_t *ret;
-	ret = malloc(2 * sizeof *ret);
-	DIE_IF_MALLOC_FAILS(ret);
+char *fmt_rune_type(const Variable *const var) {
+	char32_t *tmp;
+	tmp = malloc(2 * sizeof *tmp);
+	DIE_IF_MALLOC_FAILS(tmp);
 
-	variable_read(ret, var);
-	ret[1] = '\0';
+	variable_read(tmp, var);
+	tmp[1] = '\0';
 
-	return ret;
+	return c32stombs(tmp);
 }
 
 /*

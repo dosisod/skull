@@ -1,5 +1,7 @@
 #pragma once
 
+#include <uchar.h>
+
 #include "skull/eval/types/types.h"
 
 typedef struct Variable {
@@ -19,4 +21,4 @@ void variable_read(void *const, const Variable *const);
 
 void free_variable(Variable *);
 
-char32_t *fmt_var(const Variable *const);
+char *fmt_var(const Variable *const);

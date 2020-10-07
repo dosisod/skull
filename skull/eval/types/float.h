@@ -3,7 +3,7 @@
 #include "skull/eval/variable.h"
 #include "skull/parse/tokenize.h"
 
-char32_t *fmt_float_type(const Variable *const);
+char *fmt_float_type(const Variable *const);
 
 Variable *add_float_type(const Variable *const, const Variable *const);
 Variable *sub_float_type(const Variable *const, const Variable *const);

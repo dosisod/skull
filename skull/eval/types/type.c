@@ -1,3 +1,7 @@
+#define _XOPEN_SOURCE 700
+#include <string.h>
+#undef _XOPEN_SOURCE
+
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
@@ -7,14 +11,11 @@
 /*
 Returns the string representation of type variable `var`
 */
-char32_t *fmt_type_type(const Variable *const var) {
+char *fmt_type_type(const Variable *const var) {
 	const Type *type = NULL;
 	variable_read(&type, var);
 
-	char32_t *const ret = mbstoc32s(type->name);
-	DIE_IF_MALLOC_FAILS(ret);
-
-	return ret;
+	return strdup(type->name);
 }
 
 /*

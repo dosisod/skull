@@ -15,7 +15,7 @@ Return string representation of the variable `var`.
 
 The result of this function must be freed.
 */
-char32_t *fmt_var(const Variable *const var) {
+char *fmt_var(const Variable *const var) {
 	if (!var->type || !var->type->to_string) {
 		return NULL;
 	}

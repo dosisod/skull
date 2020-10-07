@@ -6,9 +6,9 @@
 	Variable *var = make_variable(type, U"x", false); \
 	real_type data = real_data; \
 	variable_write(var, &data); \
-	char32_t *str = fmt_var(var); \
+	char *str = fmt_var(var); \
 	ASSERT_TRUTHY(str); \
-	ASSERT_TRUTHY(c32scmp(expected, str)); \
+	ASSERT_EQUAL(strcmp(expected, str), 0); \
 	free(str); \
 	free_variable(var)
 

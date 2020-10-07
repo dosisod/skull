@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include <uchar.h>
+#include <stddef.h>
 
 typedef struct Variable Variable;
 
@@ -16,7 +16,7 @@ typedef struct Type {
 	OperFunc divide;
 	OperFunc multiply;
 
-	char32_t *(*to_string)(const Variable *);
+	char *(*to_string)(const Variable *);
 
 	struct Type *next;
 } Type;
