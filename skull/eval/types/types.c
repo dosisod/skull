@@ -9,7 +9,6 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/types/rune.h"
 #include "skull/eval/types/str.h"
-#include "skull/eval/types/type.h"
 #include "skull/eval/variable.h"
 
 #include "skull/eval/types/types.h"
@@ -134,15 +133,4 @@ Type TYPE_STR = {
 	.next = &TYPE_RUNE
 };
 
-Type TYPE_TYPE = {
-	.name = "type",
-	.bytes = sizeof(Type *),
-	.to_string = &fmt_type_type,
-	.add = NULL,
-	.subtract = NULL,
-	.divide = NULL,
-	.multiply = NULL,
-	.next = &TYPE_STR
-};
-
-Type *TYPES_AVAILABLE = &TYPE_TYPE;
+Type *TYPES_AVAILABLE = &TYPE_STR;

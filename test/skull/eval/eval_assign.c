@@ -115,10 +115,7 @@ TEST(eval_assign_variable_to_another, {
 
 	ASSERT_EQUAL(data, 1234);
 
-	if (!is_error_msg(output)) {
-		free((char32_t *)output);
-	}
-
+	free((char32_t *)output);
 	free_scope(scope);
 })
 
@@ -146,10 +143,7 @@ TEST(eval_assign_variable_to_another_check_same_type, {
 		ERR_TYPE_MISMATCH_(U"int")
 	));
 
-	if (!is_error_msg(output)) {
-		free((char32_t *)output);
-	}
-
+	free((char32_t *)output);
 	free_scope(scope);
 })
 
@@ -207,39 +201,6 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	free_scope(scope);
 })
 
-TEST(eval_assign_type_type, {
-	Variable *var = make_variable(&TYPE_TYPE, U"var", false);
-
-	const char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"int", &error);
-	ASSERT_FALSEY(error);
-
-	Scope *scope = make_scope();
-	const char32_t *output = eval_assign(var, node, scope);
-	ASSERT_FALSEY(output);
-
-	Type *after = NULL;
-	variable_read(&after, var);
-
-	ASSERT_EQUAL(after, &TYPE_INT);
-
-	free_scope(scope);
-})
-
-TEST(eval_assign_type_var_cannot_be_type, {
-	Variable *var = make_variable(&TYPE_TYPE, U"var", false);
-
-	const char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"type", &error);
-	ASSERT_FALSEY(error);
-
-	Scope *scope = make_scope();
-
-	ASSERT_EQUAL(eval_assign(var, node, scope), ERR_TYPE_TYPE_BAD);
-
-	free_scope(scope);
-})
-
 TEST_SELF(eval_assign,
 	test_eval_assign_int,
 	test_eval_assign_float,
@@ -257,7 +218,5 @@ TEST_SELF(eval_assign,
 	test_eval_assign_variable_to_another,
 	test_eval_assign_variable_to_another_check_same_type,
 	test_eval_assign_variable_to_another_check_bad_var,
-	test_eval_assign_string_types_cannot_share_pointers,
-	test_eval_assign_type_type,
-	test_eval_assign_type_var_cannot_be_type
+	test_eval_assign_string_types_cannot_share_pointers
 )

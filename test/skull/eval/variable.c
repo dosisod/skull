@@ -131,10 +131,6 @@ TEST(fmt_var_bool, {
 	TEST_FMT_VAR(&TYPE_BOOL, bool, false, "false");
 })
 
-TEST(fmt_var_type, {
-	TEST_FMT_VAR(&TYPE_TYPE, Type *, &TYPE_INT, "int");
-})
-
 TEST(fmt_var_rune, {
 	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, 'a', "a");
 })
@@ -225,7 +221,6 @@ TEST_SELF(variable,
 	test_fmt_var_float_infinity,
 	test_fmt_var_float_neg_infinity,
 	test_fmt_var_bool,
-	test_fmt_var_type,
 	test_fmt_var_rune,
 	test_fmt_var_wide_rune_preserved,
 	test_fmt_var_str,

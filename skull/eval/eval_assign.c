@@ -11,7 +11,6 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/types/rune.h"
 #include "skull/eval/types/str.h"
-#include "skull/eval/types/type.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/eval_assign.h"
@@ -58,9 +57,6 @@ const char32_t *eval_assign(Variable *const var, const AstNode *const node, cons
 		}
 
 		mem = eval_str(node->token, &err);
-	}
-	else if (var->type == &TYPE_TYPE && node->node_type == AST_NODE_TYPE_CONST) {
-		mem = eval_type(node->token, &err);
 	}
 	else {
 		return FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type });

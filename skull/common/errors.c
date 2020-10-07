@@ -44,8 +44,6 @@ const char32_t *ERR_MULT_UNAVAILABLE = ERR_UNAVAILABLE_("multiplication", U"%");
 const char32_t *ERR_CANNOT_DIV = ERR_CANNOT_("divide", U"%", U"%");
 const char32_t *ERR_DIV_UNAVAILABLE = ERR_UNAVAILABLE_("division", U"%");
 
-const char32_t *ERR_TYPE_TYPE_BAD = U"\"type\" cannot be assigned to variable of type \"type\"";
-
 const char32_t *ERR_ASSIGN_FUNC = ERR_ASSIGN_FUNC_(U"%");
 
 #undef ERR_CANNOT
@@ -154,11 +152,4 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 	else if (msg->str) {
 		msg->real = c32sdup(msg->str);
 	}
-}
-
-/*
-Returns true if `str` is an error msg.
-*/
-__attribute__((pure)) bool is_error_msg(const char32_t *const str) {
-	return str == ERR_TYPE_TYPE_BAD;
 }

@@ -7,12 +7,6 @@
 #include "test/skull/common/errors.h"
 #include "test/testing.h"
 
-TEST(is_error_msg, {
-	ASSERT_TRUTHY(is_error_msg(ERR_TYPE_TYPE_BAD));
-	ASSERT_FALSEY(is_error_msg(U"not an error msg"));
-	ASSERT_FALSEY(is_error_msg(NULL));
-})
-
 bool fmt_error_wrapper(const char32_t *fmt, ErrorMsg msgs[], const char32_t *expected) {
 	char32_t *out = fmt_error(fmt, msgs);
 	if (!out || !expected) {
@@ -126,7 +120,6 @@ TEST(fmt_error_stringify, {
 })
 
 TEST_SELF(error,
-	test_is_error_msg,
 	test_fmt_error,
 	test_fmt_error_stringify
 )

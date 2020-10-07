@@ -60,8 +60,6 @@ const char32_t *ERR_MULT_UNAVAILABLE;
 const char32_t *ERR_CANNOT_DIV;
 const char32_t *ERR_DIV_UNAVAILABLE;
 
-const char32_t *ERR_TYPE_TYPE_BAD;
-
 const char32_t *ERR_ASSIGN_FUNC;
 #define ERR_ASSIGN_FUNC_(f) U"cannot reassign built-in function \"" f U"\""
 
@@ -87,5 +85,3 @@ char32_t *fmt_error(const char32_t *fmt, ErrorMsg []);
 	})
 
 void fmt_error_stringify(ErrorMsg *const);
-
-_Bool is_error_msg(const char32_t *const);
