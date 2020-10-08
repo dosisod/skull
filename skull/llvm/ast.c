@@ -161,11 +161,10 @@ void llvm_make_if(AstNode *node) {
 
 	if (node->token->next->token_type == TOKEN_BOOL_CONST) {
 		const char32_t *error = NULL;
-		bool *const tmp = eval_bool(node->token->next, &error);
+		LLVMValueRef *ref = eval_bool(node->token->next, &error);
 		PANIC_ON_ERR(error);
 
-		cond = LLVM_BOOL(*tmp);
-		free(tmp);
+		cond = *ref;
 	}
 	else {
 		char32_t *const var_name = token_str(node->token->next);

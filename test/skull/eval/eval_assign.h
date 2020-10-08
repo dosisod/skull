@@ -1,5 +1,9 @@
 #pragma once
 
+#include <string.h>
+
+#include <llvm-c/Core.h>
+
 #include "test/testing.h"
 
 #define TEST_EVAL_ASSIGN_BASE(type, str_value, real_type, expected_val, expected_error, cmp) \
@@ -19,6 +23,9 @@
 
 #define TEST_EVAL_ASSIGN_FLOAT(str_type, str_value, real_type, expected_val, expected_error) \
 	TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, (int)data == (int)(expected_val))
+
+#define TEST_EVAL_ASSIGN_LLVM(str_type, str_value, expected_val, expected_error) \
+	TEST_EVAL_ASSIGN_BASE(str_type, str_value, LLVMValueRef, expected_val, expected_error, strcmp(LLVMPrintValueToString(data), expected_val) == 0)
 
 #define TEST_EVAL_ASSIGN(str_type, str_value, real_type, expected_val, expected_error) \
 	TEST_EVAL_ASSIGN_BASE(str_type, str_value, real_type, expected_val, expected_error, data == (expected_val))

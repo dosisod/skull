@@ -80,7 +80,7 @@ void free_types(void) {
 
 Type TYPE_BOOL = {
 	.name = "bool",
-	.bytes = sizeof(bool),
+	.bytes = sizeof(void *),
 	.to_string = &fmt_bool_type,
 	.add = NULL,
 	.subtract = NULL,

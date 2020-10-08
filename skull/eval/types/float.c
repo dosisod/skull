@@ -1,8 +1,6 @@
-#define _XOPEN_SOURCE 700
 #include <errno.h>
 #include <math.h>
 #include <string.h>
-#undef _XOPEN_SOURCE
 
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
