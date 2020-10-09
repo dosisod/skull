@@ -4,7 +4,7 @@
 
 #include "skull/parse/ast/node.h"
 
-void str_to_llvm_ir(char *const, LLVMValueRef, LLVMBuilderRef, LLVMModuleRef);
+void str_to_llvm_ir(char *const, LLVMValueRef, LLVMModuleRef);
 void node_to_llvm_ir(AstNode *);
 
 void llvm_make_return(AstNode *);

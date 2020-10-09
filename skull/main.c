@@ -15,6 +15,8 @@
 
 #define DIE(x) puts(x); return 1
 
+LLVMBuilderRef builder;
+
 int main(int argc, char *argv[]) {
 	if (argc == 1) {
 		puts("usage: skull [-v | file [ -- args ]]");
@@ -70,7 +72,7 @@ int main(int argc, char *argv[]) {
 		"entry"
 	);
 
-	LLVMBuilderRef builder = LLVMCreateBuilder();
+	builder = LLVMCreateBuilder();
 
 	LLVMPositionBuilderAtEnd(
 		builder,
@@ -82,7 +84,6 @@ int main(int argc, char *argv[]) {
 	str_to_llvm_ir(
 		file_contents,
 		main_func,
-		builder,
 		main_module
 	);
 

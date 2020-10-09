@@ -15,10 +15,12 @@
 
 #include "skull/llvm/var.h"
 
+extern LLVMBuilderRef builder;
+
 /*
 Convert a Skull variable `var` into the LLVM IR equivalent.
 */
-void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder) {
+void var_to_llvm_ir(Variable *var) {
 	char *const var_name = c32stombs(var->name);
 
 	if (var->type == &TYPE_INT) {

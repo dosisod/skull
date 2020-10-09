@@ -26,16 +26,17 @@
 		PANIC(str); \
 	}
 
-// global variables only accessible from functions in this file
+// module-level variables only accessible from functions in this file
 static Scope *scope;
 static LLVMValueRef func;
-static LLVMBuilderRef builder;
 static LLVMModuleRef module;
 
+extern LLVMBuilderRef builder;
+
 /*
-Convert skull code from `str_` into LLVM IR (using `func_`, `builder_`, and `module_`).
+Convert skull code from `str_` into LLVM IR (using `func_` and `module_`).
 */
-void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMBuilderRef builder_, LLVMModuleRef module_) {
+void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_) {
 	char32_t *const str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
@@ -48,7 +49,6 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMBuilderRef builder
 
 	scope = make_scope();
 	func = func_;
-	builder = builder_;
 	module = module_;
 
 	node_to_llvm_ir(node);
@@ -149,7 +149,7 @@ void llvm_make_var_def(AstNode **node) {
 
 	*node = (*node)->next;
 
-	var_to_llvm_ir(scope->vars[scope->vars_used - 1], builder);
+	var_to_llvm_ir(scope->vars[scope->vars_used - 1]);
 	vars_used_last++;
 }
 
@@ -268,7 +268,7 @@ void llvm_make_assign(AstNode **node) {
 	}
 
 	PANIC_ON_ERR(eval_assign(found_var, (*node)->next, scope));
-	var_to_llvm_ir(found_var, builder);
+	var_to_llvm_ir(found_var);
 
 	free(var_name);
 
