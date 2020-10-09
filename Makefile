@@ -20,11 +20,19 @@ skull: setup | $(OBJS) $(OBJS_LLVM)
 
 $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
+	@$(CC) $< -c -o $@ $(CFLAGS)
+
+$(ODIR)/skull/main.o: skull/main.c
+	@echo "\033[92mCompile\033[0m $<"
+	@$(CC) $< -c -o $@ $(CFLAGS) $(LLVM_CFLAGS)
+
+$(ODIR)/skull/llvm/%.o: skull/llvm/%.c
+	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o $@ $(CFLAGS) $(LLVM_CFLAGS)
 
 test: skull | $(OBJS_TEST)
 	@echo "\033[92mLink\033[0m test"
-	@$(CC) $(OBJS) $(OBJS_TEST) -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
+	@$(CC) $(OBJS) $(OBJS_TEST) -o build/test/test $(CFLAGS)
 
 docs:
 	@echo "\033[92mBuild\033[0m docs"

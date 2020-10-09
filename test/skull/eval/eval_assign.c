@@ -18,7 +18,7 @@ TEST(eval_assign_float, {
 })
 
 TEST(eval_assign_bool, {
-	TEST_EVAL_ASSIGN_LLVM(&TYPE_BOOL, U"true", "i1 true", NULL);
+	TEST_EVAL_ASSIGN(&TYPE_BOOL, U"true", bool, true, NULL);
 })
 
 TEST(eval_assign_rune, {

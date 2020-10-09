@@ -66,12 +66,12 @@ void var_to_llvm_ir(Variable *var, LLVMBuilderRef builder) {
 			);
 		}
 
-		LLVMValueRef ref = NULL;
-		variable_read(&ref, var);
+		bool val = false;
+		variable_read(&val, var);
 
 		LLVMBuildStore(
 			builder,
-			ref,
+			LLVM_BOOL(val),
 			var->alloca
 		);
 	}
