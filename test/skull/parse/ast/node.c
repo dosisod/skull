@@ -221,22 +221,6 @@ TEST(make_ast_tree_import, {
 	TEST_AST_TREE(U"import x from \"y\"", AST_NODE_IMPORT, 0, 17);
 })
 
-TEST(make_ast_tree_var_add, {
-	TEST_AST_TREE(U"x + y", AST_NODE_ADD_VAR, 0, 5);
-})
-
-TEST(make_ast_tree_var_sub, {
-	TEST_AST_TREE(U"x - y", AST_NODE_SUB_VAR, 0, 5);
-})
-
-TEST(make_ast_tree_var_mult, {
-	TEST_AST_TREE(U"x * y", AST_NODE_MULT_VAR, 0, 5);
-})
-
-TEST(make_ast_tree_var_div, {
-	TEST_AST_TREE(U"x / y", AST_NODE_DIV_VAR, 0, 5);
-})
-
 TEST(make_ast_tree_return, {
 	TEST_AST_TREE(U"return 0", AST_NODE_RETURN, 0, 8);
 })
@@ -345,10 +329,6 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_with_nothing,
 	test_make_ast_tree_var_assign,
 	test_make_ast_tree_import,
-	test_make_ast_tree_var_add,
-	test_make_ast_tree_var_sub,
-	test_make_ast_tree_var_mult,
-	test_make_ast_tree_var_div,
 	test_make_ast_tree_return,
 	test_make_ast_tree_return_var,
 	test_make_ast_tree_if,

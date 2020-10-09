@@ -180,12 +180,7 @@ const char32_t *node_make_var(const AstNode *const node, Scope *const scope) {
 		else if (node->next->node_type == AST_NODE_RUNE_CONST) {
 			type = &TYPE_RUNE;
 		}
-		else if (node->next->node_type == AST_NODE_IDENTIFIER ||
-			node->next->node_type == AST_NODE_ADD_VAR ||
-			node->next->node_type == AST_NODE_SUB_VAR ||
-			node->next->node_type == AST_NODE_MULT_VAR ||
-			node->next->node_type == AST_NODE_DIV_VAR
-		) {
+		else if (node->next->node_type == AST_NODE_IDENTIFIER) {
 			char32_t *const lookup = token_str(node->next->token);
 			Variable *const new_var = scope_find_name(scope, lookup);
 

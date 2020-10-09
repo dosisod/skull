@@ -82,10 +82,6 @@ Type TYPE_BOOL = {
 	.name = "bool",
 	.bytes = sizeof(bool),
 	.to_string = &fmt_bool_type,
-	.add = NULL,
-	.subtract = NULL,
-	.divide = NULL,
-	.multiply = NULL,
 	.next = NULL
 };
 
@@ -93,10 +89,6 @@ Type TYPE_INT = {
 	.name = "int",
 	.bytes = sizeof(SkullInt),
 	.to_string = &fmt_int_type,
-	.add = add_int_type,
-	.subtract = sub_int_type,
-	.divide = div_int_type,
-	.multiply = mult_int_type,
 	.next = &TYPE_BOOL
 };
 
@@ -104,10 +96,6 @@ Type TYPE_FLOAT = {
 	.name = "float",
 	.bytes = sizeof(SkullFloat),
 	.to_string = &fmt_float_type,
-	.add = add_float_type,
-	.subtract = sub_float_type,
-	.divide = div_float_type,
-	.multiply = mult_float_type,
 	.next = &TYPE_INT
 };
 
@@ -115,10 +103,6 @@ Type TYPE_RUNE = {
 	.name = "rune",
 	.bytes = sizeof(SkullRune),
 	.to_string = &fmt_rune_type,
-	.add = NULL,
-	.subtract = NULL,
-	.divide = NULL,
-	.multiply = NULL,
 	.next = &TYPE_FLOAT
 };
 
@@ -126,10 +110,6 @@ Type TYPE_STR = {
 	.name = "str",
 	.bytes = sizeof(SkullStr),
 	.to_string = &fmt_str_type,
-	.add = add_str_type,
-	.subtract = NULL,
-	.divide = NULL,
-	.multiply = NULL,
 	.next = &TYPE_RUNE
 };
 

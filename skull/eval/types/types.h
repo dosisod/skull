@@ -5,16 +5,9 @@
 
 typedef struct Variable Variable;
 
-typedef Variable *(*OperFunc)(const Variable *, const Variable *);
-
 typedef struct Type {
 	const char *name;
 	size_t bytes;
-
-	OperFunc add;
-	OperFunc subtract;
-	OperFunc divide;
-	OperFunc multiply;
 
 	char *(*to_string)(const Variable *);
 

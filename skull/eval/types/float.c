@@ -4,7 +4,6 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
-#include "skull/eval/eval_oper.h"
 #include "skull/eval/types/defs.h"
 #include "skull/eval/types/sprint_fmt.h"
 #include "skull/parse/classify.h"
@@ -47,34 +46,6 @@ char *fmt_float_type(const Variable *const var) {
 	}
 
 	return tmp;
-}
-
-/*
-Add `lhs` and `rhs` floats together
-*/
-Variable *add_float_type(const Variable *const lhs, const Variable *const rhs) {
-	DO_MATH(&TYPE_FLOAT, SkullFloat, +);
-}
-
-/*
-Subtract `rhs` float from `lhs` float
-*/
-Variable *sub_float_type(const Variable *const lhs, const Variable *const rhs) {
-	DO_MATH(&TYPE_FLOAT, SkullFloat, -);
-}
-
-/*
-Divide `lhs` float by `rhs` float
-*/
-Variable *div_float_type(const Variable *const lhs, const Variable *const rhs) {
-	DO_MATH(&TYPE_FLOAT, SkullFloat, /);
-}
-
-/*
-Multiply `lhs` and `rhs` floats together
-*/
-Variable *mult_float_type(const Variable *const lhs, const Variable *const rhs) {
-	DO_MATH(&TYPE_FLOAT, SkullFloat, *);
 }
 
 /*

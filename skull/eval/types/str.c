@@ -18,27 +18,6 @@ char *fmt_str_type(const Variable *const var) {
 }
 
 /*
-Concatenate `lhs` and `rhs` strings
-*/
-Variable *add_str_type(const Variable *const lhs, const Variable *const rhs) {
-	Variable *ret = make_variable(&TYPE_STR, U"tmp", false);
-	if (!ret) {
-		return NULL;
-	}
-
-	SkullStr lhs_tmp = NULL;
-	variable_read(&lhs_tmp, lhs);
-	SkullStr rhs_tmp = NULL;
-	variable_read(&rhs_tmp, rhs);
-
-	SkullStr cat = c32scat(lhs_tmp, rhs_tmp);
-	DIE_IF_MALLOC_FAILS(cat);
-
-	variable_write(ret, &cat);
-	return ret;
-}
-
-/*
 Return pointer to string, converted from `token`
 */
 void *eval_str(const Token *const token, const char32_t **error) {
