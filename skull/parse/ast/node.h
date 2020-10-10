@@ -2,8 +2,6 @@
 
 #include "skull/parse/tokenize.h"
 
-#define TOKEN_ANY_NON_BRACKET_TOKEN (TOKEN_END + 1)
-
 #define ATTR(from, node, prop) ((from *)(node)->attr)->prop
 
 typedef enum {
@@ -61,19 +59,6 @@ typedef struct {
 
 AstNode *make_ast_node(void);
 
-typedef enum {
-	RULE_OPTIONAL = 1
-} ComboRule;
-
-typedef struct Combo Combo;
-
-typedef struct Combo {
-	Combo *combo;
-	unsigned tok;
-	ComboRule rule;
-} Combo;
-
-Token *ast_token_cmp(Token *, Combo *, _Bool *const);
 void push_ast_node(Token *const, Token **, NodeType, AstNode **);
 
 AstNode *make_ast_tree(const char32_t *const, const char32_t **);

@@ -37,123 +37,6 @@ TEST(make_ast_node, {
 	free(node);
 })
 
-TEST(ast_token_cmp, {
-	Token *token = tokenize(U"x: int = 0");
-	classify_tokens(token);
-
-	bool ast_pass = false;
-	const Token *out = ast_token_cmp(
-		token, (Combo[]){
-			{ .tok = TOKEN_NEW_IDENTIFIER },
-			{ .tok = TOKEN_TYPE },
-			{ .tok = TOKEN_OPER_EQUAL },
-			{ .tok = TOKEN_INT_CONST },
-			{0}
-		},
-		&ast_pass
-	);
-
-	ASSERT_TRUTHY(ast_pass);
-	ASSERT_EQUAL(token->next->next->next, out);
-
-	free_tokens(token);
-})
-
-TEST(ast_token_cmp_extra_tokens, {
-	Token *token = tokenize(U"x: int = 0 extra");
-	classify_tokens(token);
-
-	bool ast_pass = false;
-	const Token *out = ast_token_cmp(
-		token, (Combo[]) {
-			{ .tok = TOKEN_NEW_IDENTIFIER },
-			{ .tok = TOKEN_TYPE },
-			{ .tok = TOKEN_OPER_EQUAL },
-			{ .tok = TOKEN_INT_CONST },
-			{0}
-		},
-		&ast_pass
-	);
-
-	ASSERT_TRUTHY(ast_pass);
-	ASSERT_EQUAL(token->next->next->next, out);
-
-	free_tokens(token);
-})
-
-TEST(ast_token_cmp_missing_tokens, {
-	Token *token = tokenize(U"x: int = 0");
-	classify_tokens(token);
-
-	bool ast_pass = false;
-	const Token *out = ast_token_cmp(
-		token, (Combo[]) {
-			{ .tok = TOKEN_IDENTIFIER },
-			{ .tok = TOKEN_TYPE },
-			{ .tok = TOKEN_OPER_EQUAL },
-			{ .tok = TOKEN_INT_CONST },
-			{ .tok = TOKEN_UNKNOWN }, // missing an extra "unknown" token
-			{0}
-		},
-		&ast_pass
-	);
-
-	ASSERT_FALSEY(ast_pass);
-	ASSERT_EQUAL(token, out);
-
-	free_tokens(token);
-})
-
-TEST(ast_token_cmp_any_token, {
-	Token *token = tokenize(U"[anything]");
-	classify_tokens(token);
-
-	bool ast_pass = false;
-	const Token *out = ast_token_cmp(
-		token, (Combo[]) {
-			{ .tok = TOKEN_BRACKET_OPEN },
-			{ .tok = TOKEN_ANY_NON_BRACKET_TOKEN },
-			{ .tok = TOKEN_BRACKET_CLOSE },
-			{0}
-		},
-		&ast_pass
-	);
-
-	ASSERT_TRUTHY(ast_pass);
-	ASSERT_EQUAL(token->next->next, out);
-
-	free_tokens(token);
-})
-
-static Combo optional_combo[] = {
-	{ .tok = TOKEN_BRACKET_OPEN },
-	{ .tok = TOKEN_IDENTIFIER, .rule = RULE_OPTIONAL },
-	{ .tok = TOKEN_BRACKET_CLOSE },
-	{0}
-};
-
-TEST(ast_token_cmp_optional_combo, {
-	Token *token_with = tokenize(U"[ x ]");
-	classify_tokens(token_with);
-
-	Token *token_without = tokenize(U"[ ]");
-	classify_tokens(token_without);
-
-	bool ast_pass_with = false;
-	const Token *out_with = ast_token_cmp(token_with, optional_combo, &ast_pass_with);
-
-	bool ast_pass_without = false;
-	const Token *out_without = ast_token_cmp(token_without, optional_combo, &ast_pass_without);
-
-	ASSERT_TRUTHY(ast_pass_with);
-	ASSERT_EQUAL(token_with->next->next, out_with);
-	ASSERT_TRUTHY(ast_pass_without);
-	ASSERT_EQUAL(token_without->next, out_without);
-
-	free_tokens(token_with);
-	free_tokens(token_without);
-})
-
 TEST(push_ast_node, {
 	Token *token = tokenize(U"x: int = 0");
 	Token *last = token;
@@ -163,18 +46,8 @@ TEST(push_ast_node, {
 	AstNode *node = make_ast_node();
 	AstNode *tmp = node;
 
-	bool ast_pass = false;
-	token = ast_token_cmp(token, (Combo[]) {
-		{ .tok = TOKEN_NEW_IDENTIFIER },
-		{ .tok = TOKEN_TYPE },
-		{ .tok = TOKEN_OPER_EQUAL },
-		{ .tok = TOKEN_INT_CONST },
-		{0}
-	}, &ast_pass);
-
 	push_ast_node(token, &last, AST_NODE_VAR_DEF, &node);
 
-	ASSERT_TRUTHY(ast_pass);
 	ASSERT_FALSEY(tmp->last);
 	ASSERT_EQUAL(tmp->next, node);
 	ASSERT_EQUAL(tmp->next->last, tmp);
@@ -297,7 +170,7 @@ TEST(make_ast_tree_comment, {
 	TEST_AST_TREE(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
 })
 
-TEST(make_ast_tree_bad_recursive_combo_fails, {
+TEST(make_ast_tree_recursive_check_fails, {
 	const char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"[", &error);
 
@@ -315,11 +188,6 @@ TEST(free_ast_tree, {
 TEST_SELF(ast_node,
 	test_make_ast_node_struct,
 	test_make_ast_node,
-	test_ast_token_cmp,
-	test_ast_token_cmp_extra_tokens,
-	test_ast_token_cmp_missing_tokens,
-	test_ast_token_cmp_any_token,
-	test_ast_token_cmp_optional_combo,
 	test_push_ast_node,
 	test_make_ast_tree_identifier,
 	test_make_ast_tree_variable_def,
@@ -341,6 +209,6 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_str_const,
 	test_make_ast_tree_type_const,
 	test_make_ast_tree_comment,
-	test_make_ast_tree_bad_recursive_combo_fails,
+	test_make_ast_tree_recursive_check_fails,
 	test_free_ast_tree
 )

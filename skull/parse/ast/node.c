@@ -8,124 +8,6 @@
 
 #include "skull/parse/ast/node.h"
 
-#define MAKE_COMBO(name, ...) Combo name[] = { __VA_ARGS__, {0} }
-
-MAKE_COMBO(ast_node_comment_combo,
-	{ .tok = TOKEN_COMMENT }
-);
-
-MAKE_COMBO(ast_node_int_combo,
-	{ .tok = TOKEN_INT_CONST }
-);
-
-MAKE_COMBO(ast_node_float_combo,
-	{ .tok = TOKEN_FLOAT_CONST }
-);
-
-MAKE_COMBO(ast_node_bool_combo,
-	{ .tok = TOKEN_BOOL_CONST }
-);
-
-MAKE_COMBO(ast_node_rune_combo,
-	{ .tok = TOKEN_RUNE_CONST }
-);
-
-MAKE_COMBO(ast_node_str_combo,
-	{ .tok = TOKEN_STR_CONST }
-);
-
-MAKE_COMBO(ast_node_identifier_combo,
-	{ .tok = TOKEN_IDENTIFIER }
-);
-
-MAKE_COMBO(ast_node_type_combo,
-	{ .tok = TOKEN_TYPE }
-);
-
-MAKE_COMBO(ast_node_var_combo,
-	{ .tok = TOKEN_NEW_IDENTIFIER },
-	{ .tok = TOKEN_TYPE },
-	{ .tok = TOKEN_OPER_EQUAL }
-);
-
-MAKE_COMBO(ast_node_mut_var_def_combo,
-	{ .tok = TOKEN_KW_MUT },
-	{ .tok = TOKEN_NEW_IDENTIFIER },
-	{ .tok = TOKEN_TYPE },
-	{ .tok = TOKEN_OPER_EQUAL }
-);
-
-MAKE_COMBO(ast_node_auto_var_def_combo,
-	{ .tok = TOKEN_IDENTIFIER },
-	{ .tok = TOKEN_OPER_AUTO_EQUAL }
-);
-
-MAKE_COMBO(ast_node_mut_auto_var_def_combo,
-	{ .tok = TOKEN_KW_MUT },
-	{ .tok = TOKEN_IDENTIFIER },
-	{ .tok = TOKEN_OPER_AUTO_EQUAL }
-);
-
-MAKE_COMBO(ast_node_var_assign_combo,
-	{ .tok = TOKEN_IDENTIFIER },
-	{ .tok = TOKEN_OPER_EQUAL }
-);
-
-MAKE_COMBO(ast_node_import_combo,
-	{ .tok = TOKEN_KW_IMPORT },
-	{ .tok = TOKEN_IDENTIFIER },
-	{ .tok = TOKEN_KW_FROM },
-	{ .tok = TOKEN_STR_CONST }
-);
-
-MAKE_COMBO(ast_node_return_combo,
-	{ .tok = TOKEN_KW_RETURN },
-	{ .tok = TOKEN_INT_CONST }
-);
-
-MAKE_COMBO(ast_node_return_var_combo,
-	{ .tok = TOKEN_KW_RETURN },
-	{ .tok = TOKEN_IDENTIFIER }
-);
-
-MAKE_COMBO(ast_node_if_combo,
-	{ .tok = TOKEN_KW_IF },
-	{ .tok = TOKEN_BOOL_CONST }
-);
-
-MAKE_COMBO(ast_node_if_var_combo,
-	{ .tok = TOKEN_KW_IF },
-	{ .tok = TOKEN_IDENTIFIER }
-);
-
-#undef MAKE_COMBO
-
-#define TRY_PUSH_AST_NODE_ATTR(combo, node_type, type, data) \
-	token = ast_token_cmp(token, (combo), &passed); \
-	if (passed) { \
-		passed = false; \
-		type *const tmp = malloc(sizeof(type)); /* NOLINT */ \
-		DIE_IF_MALLOC_FAILS(tmp); \
-		*tmp = data; \
-		node->attr = tmp; \
-		push_ast_node(token, &last, (node_type), &node); \
-		if (token->token_type == TOKEN_BRACKET_CLOSE) { \
-			allow_top_lvl_bracket = true; \
-		} \
-		continue; \
-	}
-
-#define TRY_PUSH_AST_NODE(combo, node_type) \
-	token = ast_token_cmp(token, (combo), &passed); \
-	if (passed) { \
-		passed = false; \
-		push_ast_node(token, &last, (node_type), &node); \
-		if (token->token_type == TOKEN_BRACKET_CLOSE) { \
-			allow_top_lvl_bracket = true; \
-		} \
-		continue; \
-	}
-
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
@@ -141,6 +23,58 @@ AstNode *make_ast_tree(const char32_t *const code, const char32_t **error) {
 	return ret;
 }
 
+bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
+	bool is_const = true;
+	bool is_implicit = true;
+
+	// too lazy to dereference each `token`
+	Token *token = *_token;
+
+	if (token->token_type == TOKEN_KW_MUT) {
+		is_const = false;
+		token = token->next;
+
+		if (!token) {
+			return false;
+		}
+	}
+
+	if (token->token_type == TOKEN_NEW_IDENTIFIER &&
+		token->next &&
+		token->next->token_type == TOKEN_TYPE &&
+		token->next->next &&
+		token->next->next->token_type == TOKEN_OPER_EQUAL
+	) {
+		is_implicit = false;
+		*_token = token->next->next;
+	}
+
+	else if (token->token_type == TOKEN_IDENTIFIER &&
+		token->next &&
+		token->next->token_type == TOKEN_OPER_AUTO_EQUAL
+	) {
+		*_token = token->next;
+	}
+
+	else {
+		return false;
+	}
+
+	AstNodeVarDef *attr;
+	attr = malloc(sizeof *attr);
+	DIE_IF_MALLOC_FAILS(attr);
+
+	*attr = (AstNodeVarDef){
+		.is_const = is_const,
+		.is_implicit = is_implicit
+	};
+
+	(*node)->attr = attr;
+
+	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
+	return true;
+}
+
 /*
 Internal AST tree generator.
 */
@@ -149,7 +83,6 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 
 	AstNode *node = make_ast_node();
 	AstNode *head = node;
-	bool passed = false;
 	bool allow_top_lvl_bracket = false;
 
 	while (token) {
@@ -201,33 +134,95 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 		}
 
 		if (token->token_type == TOKEN_NEWLINE || (
-			node->last && node->last->token_end == token))
-		{
+			node->last && node->last->token_end == token)
+		) {
 			token = token->next;
 			continue;
 		}
 
 		last = token;
 
-		TRY_PUSH_AST_NODE_ATTR(ast_node_var_combo, AST_NODE_VAR_DEF, AstNodeVarDef, ((AstNodeVarDef){ .is_const = true, .is_implicit = false }));
-		TRY_PUSH_AST_NODE_ATTR(ast_node_mut_var_def_combo, AST_NODE_VAR_DEF, AstNodeVarDef, ((AstNodeVarDef){ .is_const = false, .is_implicit = false }));
-		TRY_PUSH_AST_NODE_ATTR(ast_node_auto_var_def_combo, AST_NODE_VAR_DEF, AstNodeVarDef, ((AstNodeVarDef){ .is_const = true, .is_implicit = true }));
-		TRY_PUSH_AST_NODE_ATTR(ast_node_mut_auto_var_def_combo, AST_NODE_VAR_DEF, AstNodeVarDef, ((AstNodeVarDef){ .is_const = false, .is_implicit = true }));
+		if (is_ast_var_def(&token, &last, &node)) {
+			continue;
+		}
 
-		TRY_PUSH_AST_NODE(ast_node_var_assign_combo, AST_NODE_VAR_ASSIGN);
-		TRY_PUSH_AST_NODE(ast_node_import_combo, AST_NODE_IMPORT);
-		TRY_PUSH_AST_NODE(ast_node_return_combo, AST_NODE_RETURN);
-		TRY_PUSH_AST_NODE(ast_node_return_var_combo, AST_NODE_RETURN);
-		TRY_PUSH_AST_NODE(ast_node_if_combo, AST_NODE_IF);
-		TRY_PUSH_AST_NODE(ast_node_if_var_combo, AST_NODE_IF);
-		TRY_PUSH_AST_NODE(ast_node_comment_combo, AST_NODE_COMMENT);
-		TRY_PUSH_AST_NODE(ast_node_int_combo, AST_NODE_INT_CONST);
-		TRY_PUSH_AST_NODE(ast_node_float_combo, AST_NODE_FLOAT_CONST);
-		TRY_PUSH_AST_NODE(ast_node_bool_combo, AST_NODE_BOOL_CONST);
-		TRY_PUSH_AST_NODE(ast_node_rune_combo, AST_NODE_RUNE_CONST);
-		TRY_PUSH_AST_NODE(ast_node_str_combo, AST_NODE_STR_CONST);
-		TRY_PUSH_AST_NODE(ast_node_identifier_combo, AST_NODE_IDENTIFIER);
-		TRY_PUSH_AST_NODE(ast_node_type_combo, AST_NODE_TYPE_CONST);
+		if (token->token_type == TOKEN_IDENTIFIER &&
+			token->next &&
+			token->next->token_type == TOKEN_OPER_EQUAL
+		) {
+			token = token->next;
+			push_ast_node(token, &last, AST_NODE_VAR_ASSIGN, &node);
+			continue;
+		}
+
+		if (token->token_type == TOKEN_KW_IMPORT &&
+			token->next &&
+			token->next->token_type == TOKEN_IDENTIFIER &&
+			token->next->next &&
+			token->next->next->token_type == TOKEN_KW_FROM &&
+			token->next->next->next &&
+			token->next->next->next->token_type == TOKEN_STR_CONST
+		) {
+			token = token->next->next->next;
+			push_ast_node(token, &last, AST_NODE_IMPORT, &node);
+			continue;
+		}
+
+		if (token->token_type == TOKEN_KW_RETURN &&
+			token->next && (
+			token->next->token_type == TOKEN_IDENTIFIER ||
+			token->next->token_type == TOKEN_INT_CONST)
+		) {
+			token = token->next;
+			push_ast_node(token, &last, AST_NODE_RETURN, &node);
+			continue;
+		}
+
+		if (token->token_type == TOKEN_KW_IF &&
+			token->next && (
+			token->next->token_type == TOKEN_IDENTIFIER ||
+			token->next->token_type == TOKEN_BOOL_CONST)
+		) {
+			token = token->next;
+			push_ast_node(token, &last, AST_NODE_IF, &node);
+			if (token->token_type == TOKEN_BRACKET_CLOSE) {
+				allow_top_lvl_bracket = true;
+			}
+			continue;
+		}
+
+		if (token->token_type == TOKEN_IDENTIFIER) {
+			push_ast_node(token, &last, AST_NODE_IDENTIFIER, &node);
+			continue;
+		}
+		if (token->token_type == TOKEN_COMMENT) {
+			push_ast_node(token, &last, AST_NODE_COMMENT, &node);
+			continue;
+		}
+		if (token->token_type == TOKEN_INT_CONST) {
+			push_ast_node(token, &last, AST_NODE_INT_CONST, &node);
+			continue;
+		}
+		if (token->token_type == TOKEN_FLOAT_CONST) {
+			push_ast_node(token, &last, AST_NODE_FLOAT_CONST, &node);
+			continue;
+		}
+		if (token->token_type == TOKEN_BOOL_CONST) {
+			push_ast_node(token, &last, AST_NODE_BOOL_CONST, &node);
+			continue;
+		}
+		if (token->token_type == TOKEN_RUNE_CONST) {
+			push_ast_node(token, &last, AST_NODE_RUNE_CONST, &node);
+			continue;
+		}
+		if (token->token_type == TOKEN_STR_CONST) {
+			push_ast_node(token, &last, AST_NODE_STR_CONST, &node);
+			continue;
+		}
+		if (token->token_type == TOKEN_TYPE) {
+			push_ast_node(token, &last, AST_NODE_TYPE_CONST, &node);
+			continue;
+		}
 
 		free(head);
 		*error = FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token });
@@ -246,80 +241,6 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 		free(node);
 	}
 	return head; // NOLINT
-}
-
-#undef TRY_PUSH_AST_NODE
-
-/*
-Compare tokens against a combonation of tokens.
-
-Each item in `combo` will be compared with the next token after the last token.
-
-For example:
-
-```c
-ast_token_cmp(token, (Combo[]){
-    { .tok = 0 },
-    { .tok = 1 },
-    { .tok = 2 },
-	{0}
-});
-```
-
-will check up until `token->next->next`.
-
-The last `{0}` is to tell the function to stop iterating.
-
-If all the args match, return last token matched, else, the passed `token`.
-*/
-Token *ast_token_cmp(Token *token, Combo *combo, bool *const pass) {
-	Token *head = token;
-	Token *last = head;
-
-	while (token && (combo->tok || combo->combo)) {
-		if (combo->rule == RULE_OPTIONAL) {
-			if (combo->tok == token->token_type) {
-				last = token;
-				token = token->next;
-
-				if (!token) {
-					if (!combo->tok) {
-						return head;
-					}
-					*pass = true;
-					return last;
-				}
-			}
-			combo++;
-			continue;
-		}
-		if (combo->combo) {
-			token = ast_token_cmp(token, combo->combo, pass);
-			if (!*pass) {
-				return head;
-			}
-
-			*pass = false;
-		}
-		else if ((token->token_type != combo->tok &&
-			combo->tok != TOKEN_ANY_NON_BRACKET_TOKEN) || (
-				combo->tok == TOKEN_ANY_NON_BRACKET_TOKEN &&
-				(token->token_type == TOKEN_BRACKET_OPEN ||
-				token->token_type == TOKEN_BRACKET_CLOSE)
-			))
-		{
-			return head;
-		}
-		last = token;
-		token = token->next;
-		combo++;
-	}
-
-	if (!combo->tok || (combo->rule == RULE_OPTIONAL && !(combo + 1)->tok)) {
-		*pass = true;
-		return last;
-	}
-	return head;
 }
 
 /*
