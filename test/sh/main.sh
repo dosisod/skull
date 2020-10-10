@@ -86,6 +86,7 @@ test_err "error/reassign_non_existet_var.sk" "Compilation error: variable \"x\" 
 test_err "error/reassign_const_var.sk" "Compilation error: cannot reassign const variable \"x\""
 test_err "error/reassign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
 test_err "error/unexpected_str_fails.sk" "Compilation error: unexpected token: \"\"this will fail\"\""
+test_err "error/add_mismatched_consts.sk" "Compilation error: cannot add \"1\" and \"\"fail\"\""
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

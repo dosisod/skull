@@ -74,6 +74,10 @@ void node_to_llvm_ir(AstNode *node) {
 			llvm_make_if(node);
 		}
 
+		else if (node->node_type == AST_NODE_ADD_CONSTS) {
+			llvm_make_add(&node);
+		}
+
 		else if (
 			node->node_type == AST_NODE_IDENTIFIER &&
 			node->token->next &&
@@ -213,6 +217,25 @@ void llvm_make_if(AstNode *node) {
 		builder,
 		end
 	);
+}
+
+/*
+Build LLVM for adding variables from `node`.
+*/
+void llvm_make_add(AstNode **node) {
+	const Token *lhs = (*node)->token;
+	const Token *rhs = (*node)->token->next->next;
+
+	if (lhs->token_type == rhs->token_type) {
+		*node = (*node)->next;
+		return;
+	}
+
+	PANIC(FMT_ERROR(
+		U"cannot add \"%\" and \"%\"",
+		{ .tok = lhs },
+		{ .tok = rhs }
+	));
 }
 
 /*

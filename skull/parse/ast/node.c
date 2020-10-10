@@ -75,6 +75,16 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
+bool is_const_literal(Token *token) {
+	return (
+		token->token_type == TOKEN_INT_CONST ||
+		token->token_type == TOKEN_FLOAT_CONST ||
+		token->token_type == TOKEN_BOOL_CONST ||
+		token->token_type == TOKEN_RUNE_CONST ||
+		token->token_type == TOKEN_STR_CONST
+	);
+}
+
 /*
 Internal AST tree generator.
 */
@@ -189,6 +199,16 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 				allow_top_lvl_bracket = true;
 			}
 			continue;
+		}
+
+		if (is_const_literal(token) &&
+			token->next &&
+			token->next->token_type == TOKEN_OPER_PLUS &&
+			token->next->next &&
+			is_const_literal(token->next->next)
+		) {
+			token = token->next->next;
+			push_ast_node(token, &last, AST_NODE_ADD_CONSTS, &node);
 		}
 
 		if (token->token_type == TOKEN_IDENTIFIER) {
