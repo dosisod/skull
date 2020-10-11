@@ -1,6 +1,5 @@
 #include <string.h>
 
-#include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
@@ -24,11 +23,7 @@ char *fmt_bool_type(const Variable *const var) {
 /*
 Return pointer to a bool, converted from `token`
 */
-void *eval_bool(const Token *const token, const char32_t **error) {
-	if (token->token_type != TOKEN_BOOL_CONST) {
-		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_BOOL });
-		return NULL;
-	}
+void *eval_bool(const Token *const token) {
 	bool *ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);

@@ -5,4 +5,4 @@
 
 char *fmt_bool_type(const Variable *const);
 
-void *eval_bool(const Token *const, const char32_t **);
+void *eval_bool(const Token *const);

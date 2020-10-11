@@ -26,11 +26,6 @@ Converts a `TOKEN_INT_CONST` token to an integer pointer (`SkullInt *`).
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
 void *eval_integer(const Token *const token, const char32_t **error) {
-	if (token->token_type != TOKEN_INT_CONST) {
-		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_INT });
-		return NULL;
-	}
-
 	SkullInt *ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);

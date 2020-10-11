@@ -36,10 +36,6 @@ TEST(convert_neg_infinity_float_token, {
 	TEST_EVAL_FLOAT_CONVERT(U"-Infinity", isinf(*num), NULL);
 })
 
-TEST(non_float_token_fails, {
-	TEST_EVAL_FLOAT_CONVERT(U"not_a_float", true, ERR_TYPE_MISMATCH_(U"float"));
-})
-
 #undef TEST_EVAL_FLOAT_CONVERT
 
 TEST_SELF(eval_float,
@@ -47,6 +43,5 @@ TEST_SELF(eval_float,
 	test_convert_negative_float_token,
 	test_convert_infinity_float_token,
 	test_convert_overflow_float,
-	test_convert_neg_infinity_float_token,
-	test_non_float_token_fails
+	test_convert_neg_infinity_float_token
 )

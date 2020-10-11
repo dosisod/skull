@@ -25,11 +25,6 @@ char *fmt_rune_type(const Variable *const var) {
 Return pointer to a rune type, converted from `token`
 */
 void *eval_rune(const Token *const token, const char32_t **error) {
-	if (token->token_type != TOKEN_RUNE_CONST) {
-		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_FLOAT });
-		return NULL;
-	}
-
 	SkullRune *ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);

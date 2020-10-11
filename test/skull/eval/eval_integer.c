@@ -40,10 +40,6 @@ TEST(convert_binary_integer, {
 	TEST_EVAL_INT_CONVERT(U"0b1111", 15, NULL);
 })
 
-TEST(non_integer_token_fails, {
-	TEST_EVAL_INT_CONVERT(U"not_an_int", 0, ERR_TYPE_MISMATCH_(U"int"));
-})
-
 #undef TEST_EVAL_INT_CONVERT
 
 TEST_SELF(eval_integer,
@@ -53,6 +49,5 @@ TEST_SELF(eval_integer,
 	test_integer_underflow_returns_error,
 	test_convert_hex_integer,
 	test_convert_octal_integer,
-	test_convert_binary_integer,
-	test_non_integer_token_fails
+	test_convert_binary_integer
 )

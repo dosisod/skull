@@ -21,11 +21,6 @@ char *fmt_str_type(const Variable *const var) {
 Return pointer to string, converted from `token`
 */
 void *eval_str(const Token *const token, const char32_t **error) {
-	if (token->token_type != TOKEN_STR_CONST) {
-		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_STR });
-		return NULL;
-	}
-
 	char32_t *str;
 	str = malloc((token_len(token) - 1) * sizeof *str);
 	DIE_IF_MALLOC_FAILS(str);

@@ -54,11 +54,6 @@ Converts a `TOKEN_FLOAT_CONST` token to a floating point number pointer (`SkullF
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
 void *eval_float(const Token *const token, const char32_t **error) {
-	if (token->token_type != TOKEN_FLOAT_CONST) {
-		*error = FMT_ERROR(ERR_TYPE_MISMATCH, { .type = &TYPE_FLOAT });
-		return NULL;
-	}
-
 	char *const tmp = c32stombs(token->begin);
 
 	SkullFloat *ret;

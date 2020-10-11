@@ -42,7 +42,7 @@ const char32_t *eval_assign(Variable *const var, const AstNode *const node, cons
 		mem = eval_float(node->token, &err);
 	}
 	else if (var->type == &TYPE_BOOL && node->node_type == AST_NODE_BOOL_CONST) {
-		mem = eval_bool(node->token, &err);
+		mem = eval_bool(node->token);
 	}
 	else if (var->type == &TYPE_RUNE && node->node_type == AST_NODE_RUNE_CONST) {
 		mem = eval_rune(node->token, &err);
