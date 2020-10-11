@@ -139,8 +139,6 @@ TEST(fmt_var_wide_rune_preserved, {
 	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, U'存', "存");
 })
 
-#undef TEST_FMT_VAR
-
 TEST(fmt_var_str, {
 	Variable *var = make_variable(&TYPE_STR, U"x", false);
 

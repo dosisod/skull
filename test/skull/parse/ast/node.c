@@ -8,23 +8,6 @@
 #include "test/skull/parse/ast/node.h"
 #include "test/testing.h"
 
-TEST(make_ast_node_struct, {
-	Token *token = tokenize(U"hello");
-
-	AstNode node;
-	node.node_type = AST_NODE_UNKNOWN;
-	node.token = token;
-	node.token_end = token;
-	node.next = NULL;
-	node.last = NULL;
-
-	ASSERT_EQUAL(node.node_type, AST_NODE_UNKNOWN);
-	ASSERT_EQUAL(node.token->begin, token->begin);
-	ASSERT_EQUAL(node.token_end->end, token->end);
-	ASSERT_FALSEY(node.last);
-	ASSERT_FALSEY(node.next);
-})
-
 TEST(make_ast_node, {
 	AstNode *node = make_ast_node();
 
@@ -186,7 +169,6 @@ TEST(free_ast_tree, {
 })
 
 TEST_SELF(ast_node,
-	test_make_ast_node_struct,
 	test_make_ast_node,
 	test_push_ast_node,
 	test_make_ast_tree_identifier,
