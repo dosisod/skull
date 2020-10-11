@@ -15,6 +15,12 @@
 
 #include "skull/llvm/var.h"
 
+#define PANIC(str) \
+	char *const panic_str = c32stombs(str); \
+	printf("Compilation error: %s\n", panic_str); \
+	free(panic_str); \
+	exit(1)
+
 extern LLVMBuilderRef builder;
 
 /*
@@ -142,12 +148,10 @@ void var_to_llvm_ir(Variable *var) {
 
 /*
 Make and add a variable from `node` to `scope`.
-
-Returns pointer to error message if one occurs, else `NULL`.
 */
-const char32_t *node_make_var(const AstNode *const node, Scope *const scope) {
+void node_make_var(const AstNode *const node, Scope *const scope) {
 	if (!scope) {
-		return NULL;
+		return;
 	}
 
 	const Token *token = node->token;
@@ -157,7 +161,7 @@ const char32_t *node_make_var(const AstNode *const node, Scope *const scope) {
 	}
 
 	if (!node->next) {
-		return FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .tok = token });
+		PANIC(FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .tok = token }));
 	}
 
 	char32_t *const name = token_str(token);
@@ -186,14 +190,14 @@ const char32_t *node_make_var(const AstNode *const node, Scope *const scope) {
 
 			if (!new_var) {
 				free(name);
-				return FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup });
+				PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup }));
 			}
 			free(lookup);
 			type = new_var->type;
 		}
 		else {
 			free(name);
-			return FMT_ERROR(ERR_INVALID_INPUT, { .tok = node->next->token });
+			PANIC(FMT_ERROR(ERR_INVALID_INPUT, { .tok = node->next->token }));
 		}
 		var = make_variable(type, name, false);
 	}
@@ -206,19 +210,19 @@ const char32_t *node_make_var(const AstNode *const node, Scope *const scope) {
 		free(type_name);
 	}
 
-	const char32_t *const tmp = eval_assign(var, node->next, scope);
+	const char32_t *const assign_err = eval_assign(var, node->next, scope);
 	var->is_const = is_const;
 
-	if (tmp) {
+	if (assign_err) {
 		free_variable(var);
 		free(name);
-		return tmp;
+		PANIC(assign_err);
 	}
 	if (scope_add_var(scope, var)) {
 		free(name);
-		return NULL;
+		return;
 	}
 	free_variable(var);
 
-	return FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .real = name });
+	PANIC(FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .real = name }));
 }

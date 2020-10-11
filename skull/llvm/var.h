@@ -8,4 +8,4 @@
 
 void var_to_llvm_ir(Variable *);
 
-const char32_t *node_make_var(const AstNode *const, Scope *const);
+void node_make_var(const AstNode *const, Scope *const);

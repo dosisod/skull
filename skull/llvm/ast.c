@@ -147,14 +147,10 @@ void llvm_make_return(AstNode *node) {
 Builds a variable from `node`.
 */
 void llvm_make_var_def(AstNode **node) {
-	static size_t vars_used_last = 0;
-
-	PANIC_ON_ERR(node_make_var(*node, scope));
+	node_make_var(*node, scope);
+	var_to_llvm_ir(scope->vars[scope->vars_used - 1]);
 
 	*node = (*node)->next;
-
-	var_to_llvm_ir(scope->vars[scope->vars_used - 1]);
-	vars_used_last++;
 }
 
 /*
