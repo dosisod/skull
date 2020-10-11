@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -98,17 +99,12 @@ void classify_tokens(Token *head) {
 Returns true if `name` is a type string.
 */
 bool is_type_str(const char32_t *const name) {
-	Type *current = TYPES_AVAILABLE;
-	while (current) {
-		char *const tmp = c32stombs(name);
-		if (strcmp(current->name, tmp) == 0) {
-			free(tmp);
-			return true;
-		}
-		free(tmp);
-		current = current->next;
-	}
-	return false;
+	char *const type_name = c32stombs(name);
+
+	const bool is_type = find_type(type_name);
+	free(type_name);
+
+	return is_type;
 }
 
 /*

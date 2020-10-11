@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdbool.h>
 #include <stddef.h>
 
 typedef struct Variable Variable;
@@ -10,20 +9,14 @@ typedef struct Type {
 	size_t bytes;
 
 	char *(*to_string)(const Variable *);
-
-	struct Type *next;
 } Type;
 
-Type TYPE_BOOL;
-Type TYPE_INT;
-Type TYPE_FLOAT;
-Type TYPE_RUNE;
-Type TYPE_STR;
+const Type TYPE_BOOL;
+const Type TYPE_INT;
+const Type TYPE_FLOAT;
+const Type TYPE_RUNE;
+const Type TYPE_STR;
 
-Type *TYPES_AVAILABLE;
+const Type **TYPES_AVAILABLE;
 
-bool make_new_type(const char *const, size_t);
-
-Type *find_type(const char *const);
-
-void free_types(void);
+const Type *find_type(const char *const);

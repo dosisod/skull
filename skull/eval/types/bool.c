@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <string.h>
 
 #include "skull/common/malloc.h"
