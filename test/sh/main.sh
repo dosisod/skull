@@ -44,6 +44,8 @@ test "declare_float.sk"
 test "declare_bool.sk"
 test "declare_str.sk"
 test "declare_rune.sk"
+test "declare_rune_escaped.sk"
+test "declare_from_var.sk"
 test "declare_many.sk"
 test "if_true.sk"
 test "if_false.sk"
@@ -69,6 +71,7 @@ test_err "option1\ option2" "too many arguments passed, exiting"
 
 test_err "error/var_already_defined.sk" "Compilation error: variable \"x\" already defined"
 test_err "error/return_int_overflow.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""
+test_err "error/declare_int_overflow.sk" "Compilation error: overflow occurred while parsing \"99999999999999999999999999999999\""
 test_err "error/illegal_utf8.sk" "illegal UTF8 sequence at character offset 0"
 test_err "error/assign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
 test_err "error/auto_assign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
@@ -87,6 +90,7 @@ test_err "error/reassign_const_var.sk" "Compilation error: cannot reassign const
 test_err "error/reassign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
 test_err "error/unexpected_str_fails.sk" "Compilation error: unexpected token: \"\"this will fail\"\""
 test_err "error/add_mismatched_consts.sk" "Compilation error: cannot add \"1\" and \"\"fail\"\""
+test_err "error/assign_mismatch_var_type.sk" "Compilation error: type mismatch: expected type \"bool\""
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

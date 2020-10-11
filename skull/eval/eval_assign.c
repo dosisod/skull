@@ -14,7 +14,7 @@
 
 #include "skull/eval/eval_assign.h"
 
-const char32_t *eval_auto_assign(Variable *const var, const AstNode *const node, const Scope *scope);
+const char32_t *eval_identifier_assign(Variable *const var, const AstNode *const node, const Scope *scope);
 
 /*
 Assign `node` to variable `var`.
@@ -29,7 +29,7 @@ const char32_t *eval_assign(Variable *const var, const AstNode *const node, cons
 	}
 
 	if (scope && node->node_type == AST_NODE_IDENTIFIER) {
-		return eval_auto_assign(var, node, scope);
+		return eval_identifier_assign(var, node, scope);
 	}
 
 	const void *mem = NULL;
@@ -76,9 +76,9 @@ const char32_t *eval_assign(Variable *const var, const AstNode *const node, cons
 }
 
 /*
-Evaluate assignment via auto assignment operator.
+Evaluate assignment of another variable to `var`.
 */
-const char32_t *eval_auto_assign(Variable *const var, const AstNode *const node, const Scope *scope) {
+const char32_t *eval_identifier_assign(Variable *const var, const AstNode *const node, const Scope *scope) {
 	char32_t *const lookup = token_str(node->token);
 	const Variable *const var_found = scope_find_name(scope, lookup);
 
