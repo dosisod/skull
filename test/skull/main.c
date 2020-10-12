@@ -31,7 +31,9 @@ int main(void) {
 
 	_Bool passed = 1;
 
-	signal(SIGSEGV, segfault_handler);
+	struct sigaction sa;
+	sa.sa_handler = &segfault_handler;
+	sigaction(SIGSEGV, &sa, NULL);
 
 	testing_test_self(&passed);
 
