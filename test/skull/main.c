@@ -1,5 +1,6 @@
 #include <signal.h>
 #include <stdio.h>
+#include <stdnoreturn.h>
 
 #include "parse/ast/node.h"
 #include "parse/classify.h"
@@ -18,9 +19,11 @@
 
 #include "skull/common/local.h"
 
-void segfault_handler() {
+noreturn void segfault_handler() {
 	// add newline when segfault occurs so you can see what file cause it
 	putchar('\n');
+
+	exit(1);
 }
 
 int main(void) {
