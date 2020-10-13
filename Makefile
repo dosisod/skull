@@ -22,7 +22,7 @@ $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o $@ $(CFLAGS) $(LLVM_CFLAGS)
 
-test: skull | $(OBJS_TEST)
+test: setup | $(OBJS) $(OBJS_TEST)
 	@echo "\033[92mLink\033[0m test"
 	@$(CC) $(OBJS) $(OBJS_TEST) -o build/test/test $(CFLAGS)
 
