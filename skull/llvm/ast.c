@@ -41,7 +41,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_)
 	char32_t *const str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
-	const char32_t *error = NULL;
+	char32_t *error = NULL;
 	AstNode *const node = make_ast_tree(str, &error);
 
 	if (!node) {
@@ -131,7 +131,7 @@ void llvm_make_return(AstNode *node) {
 		);
 	}
 	else {
-		const char32_t *error = NULL;
+		char32_t *error = NULL;
 		SkullInt *const num = eval_integer(node->token->next, &error);
 		PANIC_ON_ERR(error);
 

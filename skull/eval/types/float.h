@@ -5,4 +5,4 @@
 
 char *fmt_float_type(const Variable *const);
 
-void *eval_float(const Token *const, const char32_t **);
+void *eval_float(const Token *const, char32_t **);

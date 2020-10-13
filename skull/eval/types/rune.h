@@ -5,4 +5,4 @@
 
 char *fmt_rune_type(const Variable *const);
 
-void *eval_rune(const Token *const, const char32_t **);
+void *eval_rune(const Token *const, char32_t **);

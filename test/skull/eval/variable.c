@@ -32,7 +32,7 @@ TEST(variable_write, {
 	Variable *var = make_variable(&TYPE_INT, U"x", false);
 
 	const SkullInt data = 1234;
-	const char32_t *ret = variable_write(var, &data);
+	char32_t *ret = variable_write(var, &data);
 
 	SkullInt val = 0;
 	memcpy(&val, var->mem, var->type->bytes);
@@ -47,7 +47,7 @@ TEST(variable_cannot_write_to_const, {
 	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
 	const SkullInt data = 1234;
-	const char32_t *ret = variable_write(var, &data);
+	char32_t *ret = variable_write(var, &data);
 
 	SkullInt val = 0;
 	memcpy(&val, var->mem, var->type->bytes);
@@ -142,7 +142,7 @@ TEST(fmt_var_wide_rune_preserved, {
 TEST(fmt_var_str, {
 	Variable *var = make_variable(&TYPE_STR, U"x", false);
 
-	const char32_t *error = NULL;
+	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"\"abc\"", &error);
 
 	eval_assign(var, node, NULL);
@@ -164,7 +164,7 @@ TEST(fmt_var_str, {
 TEST(fmt_var_str_with_escapes, {
 	Variable *var = make_variable(&TYPE_STR, U"x", false);
 
-	const char32_t *error = NULL;
+	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"\" \\r \\n \\t \\\\ \"", &error);
 
 	eval_assign(var, node, NULL);
@@ -185,10 +185,10 @@ TEST(fmt_var_str_with_escapes, {
 TEST(fmt_var_str_with_bad_escape, {
 	Variable *var = make_variable(&TYPE_STR, U"x", false);
 
-	const char32_t *ast_err = NULL;
+	char32_t *ast_err = NULL;
 	AstNode *node = make_ast_tree(U"\"\\z\"", &ast_err);
 
-	const char32_t *err = eval_assign(var, node, NULL);
+	char32_t *err = eval_assign(var, node, NULL);
 
 	ASSERT_TRUTHY(err);
 	ASSERT_FALSEY(ast_err);
@@ -198,7 +198,7 @@ TEST(fmt_var_str_with_bad_escape, {
 	variable_read(&mem, var);
 	free(mem);
 
-	free((char32_t *)err);
+	free(err);
 	free_variable(var);
 })
 

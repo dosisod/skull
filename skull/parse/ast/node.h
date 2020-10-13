@@ -59,6 +59,6 @@ AstNode *make_ast_node(void);
 
 void push_ast_node(Token *const, Token **, NodeType, AstNode **);
 
-AstNode *make_ast_tree(const char32_t *const, const char32_t **);
-AstNode *make_ast_tree_(Token *, const char32_t **, unsigned);
+AstNode *make_ast_tree(const char32_t *const, char32_t **);
+AstNode *make_ast_tree_(Token *, char32_t **, unsigned);
 void free_ast_tree(AstNode *);

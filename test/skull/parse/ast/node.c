@@ -59,7 +59,7 @@ TEST(make_ast_tree_auto_mutable_variable_def, {
 })
 
 TEST(make_ast_tree_with_nothing, {
-	const char32_t *error = NULL;
+	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"", &error);
 
 	ASSERT_TRUTHY(error);
@@ -87,7 +87,7 @@ TEST(make_ast_tree_return_var, {
 
 TEST(make_ast_tree_if, {
 	const char32_t *code = U"if true [ return 1 ]";
-	const char32_t *error = NULL;
+	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(code, &error);
 
 	ASSERT_FALSEY(error);
@@ -105,7 +105,7 @@ TEST(make_ast_tree_if, {
 
 TEST(make_ast_tree_if_with_var, {
 	const char32_t *code = U"if x [ return 1 ]";
-	const char32_t *error = NULL;
+	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(code, &error);
 
 	ASSERT_FALSEY(error);
@@ -154,7 +154,7 @@ TEST(make_ast_tree_comment, {
 })
 
 TEST(make_ast_tree_recursive_check_fails, {
-	const char32_t *error = NULL;
+	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"[", &error);
 
 	ASSERT_TRUTHY(c32scmp(ERR_EOF_NO_BRACKET, error));
@@ -162,7 +162,7 @@ TEST(make_ast_tree_recursive_check_fails, {
 })
 
 TEST(free_ast_tree, {
-	const char32_t *error = NULL;
+	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"hello world", &error);
 
 	free_ast_tree(node);

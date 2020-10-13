@@ -11,7 +11,7 @@
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-AstNode *make_ast_tree(const char32_t *const code, const char32_t **error) {
+AstNode *make_ast_tree(const char32_t *const code, char32_t **error) {
 	Token *const token = tokenize(code);
 	classify_tokens(token);
 
@@ -88,7 +88,7 @@ __attribute__((pure)) bool is_const_literal(Token *token) {
 /*
 Internal AST tree generator.
 */
-AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lvl) {
+AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 	Token *last = token;
 
 	AstNode *node = make_ast_node();
@@ -251,7 +251,7 @@ AstNode *make_ast_tree_(Token *token, const char32_t **error, unsigned indent_lv
 
 	if (!token && indent_lvl != 0) {
 		free(head);
-		*error = ERR_EOF_NO_BRACKET;
+		*error = c32sdup(ERR_EOF_NO_BRACKET);
 		return NULL;
 	}
 

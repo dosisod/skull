@@ -20,7 +20,7 @@ char *fmt_str_type(const Variable *const var) {
 /*
 Return pointer to string, converted from `token`
 */
-void *eval_str(const Token *const token, const char32_t **error) {
+void *eval_str(const Token *const token, char32_t **error) {
 	char32_t *str;
 	str = malloc((token_len(token) - 1) * sizeof *str);
 	DIE_IF_MALLOC_FAILS(str);
@@ -28,7 +28,7 @@ void *eval_str(const Token *const token, const char32_t **error) {
 	const char32_t *tmp = token->begin + 1;
 	size_t wrote = 0;
 	while (*tmp && tmp < token->end - 1) {
-		const char32_t try_escape = c32sunescape(tmp, error);
+		const char32_t try_escape = c32sunescape(tmp, (const char32_t **)error);
 		if (*error) {
 			free(str);
 			return NULL;

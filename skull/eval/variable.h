@@ -6,7 +6,7 @@
 
 typedef struct Variable {
 	const Type *type;
-	const char32_t *name;
+	char32_t *name;
 	_Bool is_const;
 
 	unsigned char *mem;
@@ -16,7 +16,7 @@ typedef struct Variable {
 
 Variable *make_variable(const Type *const, const char32_t *const, _Bool);
 
-const char32_t *variable_write(const Variable *const, const void *const);
+char32_t *variable_write(const Variable *const, const void *const);
 void variable_read(void *const, const Variable *const);
 
 void free_variable(Variable *);

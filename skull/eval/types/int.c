@@ -25,7 +25,7 @@ Converts a `TOKEN_INT_CONST` token to an integer pointer (`SkullInt *`).
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-void *eval_integer(const Token *const token, const char32_t **error) {
+void *eval_integer(const Token *const token, char32_t **error) {
 	SkullInt *ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);

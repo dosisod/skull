@@ -14,7 +14,7 @@
 
 #include "skull/eval/eval_assign.h"
 
-const char32_t *eval_identifier_assign(Variable *const var, const AstNode *const node, const Scope *scope);
+char32_t *eval_identifier_assign(Variable *const var, const AstNode *const node, const Scope *scope);
 
 /*
 Assign `node` to variable `var`.
@@ -23,7 +23,7 @@ Set `scope` to allow for assigning variables to other variables.
 
 Return an error (as a string) if any occured, else `NULL`.
 */
-const char32_t *eval_assign(Variable *const var, const AstNode *const node, const Scope *scope) {
+char32_t *eval_assign(Variable *const var, const AstNode *const node, const Scope *scope) {
 	if (!node) {
 		return FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
@@ -33,7 +33,7 @@ const char32_t *eval_assign(Variable *const var, const AstNode *const node, cons
 	}
 
 	const void *mem = NULL;
-	const char32_t *err = NULL;
+	char32_t *err = NULL;
 
 	if (var->type == &TYPE_INT && node->node_type == AST_NODE_INT_CONST) {
 		mem = eval_integer(node->token, &err);
@@ -78,7 +78,7 @@ const char32_t *eval_assign(Variable *const var, const AstNode *const node, cons
 /*
 Evaluate assignment of another variable to `var`.
 */
-const char32_t *eval_identifier_assign(Variable *const var, const AstNode *const node, const Scope *scope) {
+char32_t *eval_identifier_assign(Variable *const var, const AstNode *const node, const Scope *scope) {
 	char32_t *const lookup = token_str(node->token);
 	const Variable *const var_found = scope_find_name(scope, lookup);
 

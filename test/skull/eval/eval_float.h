@@ -5,7 +5,7 @@
 #define TEST_EVAL_FLOAT_CONVERT(str_value, cond, expected_error) \
 	Token *token = tokenize(str_value); \
 	classify_tokens(token); \
-	const char32_t *err = NULL; \
+	char32_t *err = NULL; \
 	SkullFloat *num = eval_float(token, &err); \
 	ASSERT_TRUTHY(cond); \
 	ASSERT_TRUTHY(c32scmp( \

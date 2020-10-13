@@ -70,7 +70,7 @@ Write `data` to `var`.
 
 If `var` is constant, return error msg, else `NULL`.
 */
-const char32_t *variable_write(const Variable *const var, const void *const data) {
+char32_t *variable_write(const Variable *const var, const void *const data) {
 	if (var->is_const) {
 		return FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .var = var });
 	}
@@ -89,7 +89,7 @@ void free_variable(Variable *var) {
 			variable_read(&str_mem, var);
 			free(str_mem);
 		}
-		free((char32_t *)var->name);
+		free(var->name);
 		free(var->mem);
 		free(var);
 	}

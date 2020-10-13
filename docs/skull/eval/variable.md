@@ -23,7 +23,7 @@ Variable *make_variable(const Type *const type, const char32_t *const name, bool
 > Returns `NULL` if var cannot be created, else pointer to created var.
 
 ```c
-const char32_t *variable_write(const Variable *const var, const void *const data)
+char32_t *variable_write(const Variable *const var, const void *const data)
 ```
 
 > Write `data` to `var`.

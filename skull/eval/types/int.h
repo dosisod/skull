@@ -5,4 +5,4 @@
 
 char *fmt_int_type(const Variable *);
 
-void *eval_integer(const Token *, const char32_t **);
+void *eval_integer(const Token *, char32_t **);

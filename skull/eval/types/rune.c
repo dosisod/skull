@@ -24,12 +24,12 @@ char *fmt_rune_type(const Variable *const var) {
 /*
 Return pointer to a rune type, converted from `token`
 */
-void *eval_rune(const Token *const token, const char32_t **error) {
+void *eval_rune(const Token *const token, char32_t **error) {
 	SkullRune *ret;
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 
-	*ret = c32sunescape(token->begin + 1, error);
+	*ret = c32sunescape(token->begin + 1, (const char32_t **)error);
 	if (*error) {
 		free(ret);
 		return NULL;
