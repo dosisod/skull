@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "skull/common/str.h"
-#include "skull/common/wegex.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/tokenize.h"
 
@@ -117,18 +116,46 @@ bool is_keyword_str(const char32_t *const str) {
 	);
 }
 
+#define EXHAUST_STR(cond) \
+	while (*str) { \
+		if (!(cond)) { \
+			return false; \
+		} \
+		str++; \
+	}
+
 /*
 Returns true if `str` is a valid hex/octal/binary/decimal representation of an integer.
 
 Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 */
-bool is_constant_integer_str(const char32_t *const str) {
-	return (
-		wegex_match("?-+\n", str) ||
-		wegex_match("0x+\b", str) ||
-		wegex_match("0b+[01]", str) ||
-		wegex_match("0o+[01234567]", str)
-	);
+bool is_constant_integer_str(const char32_t *str) {
+	if (*str == '0' && str[1] && str[2]) {
+		str += 2;
+
+		if (str[-1] == 'x') {
+			EXHAUST_STR(c32isxdigit(*str));
+		}
+		else if (str[-1] == 'b') {
+			EXHAUST_STR(*str == '0' || *str == '1');
+		}
+		else if (str[-1] == 'o') {
+			EXHAUST_STR('0' <= *str && *str <= '7');
+		}
+
+		return true;
+	}
+
+	if (*str == '-') {
+		str++;
+	}
+	if (!*str) {
+		return false;
+	}
+
+	EXHAUST_STR(c32isdigit(*str));
+
+	return !*str;
 }
 
 /*
@@ -136,11 +163,35 @@ Returns true if `str` is a valid float (with decimal).
 
 Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
-bool is_constant_float_str(const char32_t *const str) {
-	return (
-		wegex_match("?-+\n.+\n", str) ||
-		wegex_match("?-Infinity", str)
-	);
+bool is_constant_float_str(const char32_t *str) {
+	if (*str == '-') {
+		str++;
+	}
+
+	if (c32scmp(U"Infinity", str)) {
+		return true;
+	}
+
+	if (*str == '.') {
+		return false;
+	}
+
+	while (*str && *str != '.') {
+		if (!c32isdigit(*str)) {
+			return false;
+		}
+
+		str++;
+	}
+
+	if (!*str || !str[1]) {
+		return false;
+	}
+	str++;
+
+	EXHAUST_STR(c32isdigit(*str));
+
+	return true;
 }
 
 /*
@@ -188,6 +239,19 @@ bool is_constant_str_str(const char32_t *const str) {
 /*
 Returns true if `str` is a valid identifer.
 */
-bool is_valid_identifier_str(const char32_t *const str) {
-	return wegex_match("\a*[\f_]?:", str);
+bool is_valid_identifier_str(const char32_t *str) {
+	if (*str < 'A' || ('Z' < *str && *str < 'a') || *str > 'z') {
+		return false;
+	}
+	str++;
+
+	EXHAUST_STR(!c32isalnum(*str) || *str != '_');
+
+	if (*str == ':') {
+		str++;
+	}
+
+	return !*str;
 }
+
+#undef EXHAUST_STR

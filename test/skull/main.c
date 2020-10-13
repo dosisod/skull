@@ -15,7 +15,6 @@
 
 #include "common/errors.h"
 #include "common/str.h"
-#include "common/wegex.h"
 
 #include "skull/common/local.h"
 
@@ -51,7 +50,6 @@ int main(void) {
 	variable_test_self(&passed);
 
 	str_test_self(&passed);
-	wegex_test_self(&passed);
 
 	if (!passed) {
 		puts("\n1 or more errors occurred.");
