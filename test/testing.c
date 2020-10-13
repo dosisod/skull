@@ -74,7 +74,7 @@ TEST(pass_macro, {
 	PASS;
 })
 
-bool test_fail_macro_(void) {
+__attribute__((const)) bool test_fail_macro_(void) {
 	FAIL;
 }
 

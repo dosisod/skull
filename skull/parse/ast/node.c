@@ -75,7 +75,7 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
-bool is_const_literal(Token *token) {
+__attribute__((pure)) bool is_const_literal(Token *token) {
 	return (
 		token->token_type == TOKEN_INT_CONST ||
 		token->token_type == TOKEN_FLOAT_CONST ||
