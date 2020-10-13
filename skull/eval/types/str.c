@@ -28,7 +28,7 @@ void *eval_str(const Token *const token, char32_t **error) {
 	const char32_t *tmp = token->begin + 1;
 	size_t wrote = 0;
 	while (*tmp && tmp < token->end - 1) {
-		const char32_t try_escape = c32sunescape(tmp, (const char32_t **)error);
+		const char32_t try_escape = c32sunescape(tmp, error);
 		if (*error) {
 			free(str);
 			return NULL;

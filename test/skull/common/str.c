@@ -148,15 +148,18 @@ TEST(c32isxdigit, {
 })
 
 bool c32sunescape_wrapper(const char32_t *str, const char32_t expected, const char32_t *expected_err) {
-	const char32_t *err = NULL;
+	char32_t *err = NULL;
 	char32_t c = c32sunescape(str, &err);
 
-	return (
+	const bool pass = (
 		expected == c &&
 		(expected_err ?
 			c32scmp(expected_err, err) :
 			expected_err == err)
 	);
+
+	free(err);
+	return pass;
 }
 
 TEST(c32sunescape, {

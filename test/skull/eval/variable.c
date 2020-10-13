@@ -32,12 +32,12 @@ TEST(variable_write, {
 	Variable *var = make_variable(&TYPE_INT, U"x", false);
 
 	const SkullInt data = 1234;
-	char32_t *ret = variable_write(var, &data);
+	char32_t *err = variable_write(var, &data);
 
 	SkullInt val = 0;
 	memcpy(&val, var->mem, var->type->bytes);
 
-	ASSERT_FALSEY(ret);
+	ASSERT_FALSEY(err);
 	ASSERT_EQUAL(val, 1234);
 
 	free_variable(var);
@@ -47,7 +47,7 @@ TEST(variable_cannot_write_to_const, {
 	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
 	const SkullInt data = 1234;
-	char32_t *ret = variable_write(var, &data);
+	char32_t *err = variable_write(var, &data);
 
 	SkullInt val = 0;
 	memcpy(&val, var->mem, var->type->bytes);
@@ -55,9 +55,10 @@ TEST(variable_cannot_write_to_const, {
 	ASSERT_EQUAL(val, 0);
 	ASSERT_TRUTHY(c32scmp(
 		ERR_CANNOT_ASSIGN_CONST_(U"x"),
-		ret
+		err
 	));
 
+	free(err);
 	free_variable(var);
 })
 

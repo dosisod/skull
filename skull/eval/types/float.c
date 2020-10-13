@@ -62,10 +62,12 @@ void *eval_float(const Token *const token, char32_t **error) {
 
 	if (strcmp("Infinity", tmp) == 0) {
 		*ret = HUGE_VAL;
+		free(tmp);
 		return ret;
 	}
 	if (strcmp("-Infinity", tmp) == 0) {
 		*ret = -HUGE_VAL;
+		free(tmp);
 		return ret;
 	}
 

@@ -18,7 +18,9 @@ char *fmt_rune_type(const Variable *const var) {
 	variable_read(tmp, var);
 	tmp[1] = '\0';
 
-	return c32stombs(tmp);
+	char *ret = c32stombs(tmp);
+	free(tmp);
+	return ret;
 }
 
 /*
@@ -29,7 +31,7 @@ void *eval_rune(const Token *const token, char32_t **error) {
 	ret = malloc(sizeof *ret);
 	DIE_IF_MALLOC_FAILS(ret);
 
-	*ret = c32sunescape(token->begin + 1, (const char32_t **)error);
+	*ret = c32sunescape(token->begin + 1, error);
 	if (*error) {
 		free(ret);
 		return NULL;

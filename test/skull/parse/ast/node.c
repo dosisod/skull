@@ -62,10 +62,10 @@ TEST(make_ast_tree_with_nothing, {
 	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"", &error);
 
-	ASSERT_TRUTHY(error);
 	ASSERT_TRUTHY(c32scmp(ERR_UNEXPECTED_TOKEN_(U""), error));
 	ASSERT_FALSEY(node);
 
+	free(error);
 	free(node);
 })
 

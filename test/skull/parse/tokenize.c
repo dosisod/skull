@@ -33,8 +33,8 @@ TEST(tokenize_single_token, {
 	ASSERT_EQUAL(t2->begin, code2);
 	ASSERT_EQUAL(t2->end, code2 + 6);
 
-	free(t1);
-	free(t2);
+	free_tokens(t1);
+	free_tokens(t2);
 })
 
 TEST(tokenize_no_tokens, {
@@ -44,7 +44,7 @@ TEST(tokenize_no_tokens, {
 	ASSERT_EQUAL(t->begin, code);
 	ASSERT_EQUAL(t->end, code);
 
-	free(t);
+	free_tokens(t);
 })
 
 TEST(whitespace_between_tokens, {
@@ -56,8 +56,7 @@ TEST(whitespace_between_tokens, {
 	ASSERT_EQUAL(t->next->begin, code + 9);
 	ASSERT_EQUAL(t->next->end, code + 15);
 
-	free(t->next);
-	free(t);
+	free_tokens(t);
 })
 
 TEST(whitespace_at_eol_ignored, {
@@ -67,7 +66,7 @@ TEST(whitespace_at_eol_ignored, {
 	ASSERT_EQUAL(t->begin, code);
 	ASSERT_EQUAL(t->end, code + 5);
 
-	free(t);
+	free_tokens(t);
 })
 
 TEST(whitespace_inside_double_quotes_respected, {
@@ -78,7 +77,7 @@ TEST(whitespace_inside_double_quotes_respected, {
 	ASSERT_EQUAL(t->begin, code);
 	ASSERT_EQUAL(t->end, code + 24);
 
-	free(t);
+	free_tokens(t);
 })
 
 TEST(whitespace_inside_single_quotes_respected, {
@@ -89,7 +88,7 @@ TEST(whitespace_inside_single_quotes_respected, {
 	ASSERT_EQUAL(t->begin, code);
 	ASSERT_EQUAL(t->end, code + 24);
 
-	free(t);
+	free_tokens(t);
 })
 
 TEST(brackets_always_make_their_own_token, {
@@ -108,7 +107,7 @@ TEST(brackets_always_make_their_own_token, {
 	ASSERT_EQUAL(t->next->next->next->begin, code + 6);
 	ASSERT_EQUAL(t->next->next->next->end, code + 11);
 
-	free(t);
+	free_tokens(t);
 })
 
 TEST(newlines_always_make_their_own_token, {
@@ -124,11 +123,7 @@ TEST(newlines_always_make_their_own_token, {
 	ASSERT_EQUAL(t->next->next->begin, code + 5);
 	ASSERT_EQUAL(t->next->next->end, code + 10);
 
-	free(t);
-})
-
-TEST(free_tokens, {
-	free_tokens(tokenize(U"token token token"));
+	free_tokens(t);
 })
 
 TEST(token_len, {
@@ -145,7 +140,7 @@ TEST(token_cmp, {
 	ASSERT_TRUTHY(token_cmp(U"data", token));
 	ASSERT_FALSEY(token_cmp(U"not_data", token));
 
-	free(token);
+	free_tokens(token);
 })
 
 TEST(token_cmp_match_exact_strings_only, {
@@ -159,10 +154,10 @@ TEST(token_cmp_match_exact_strings_only, {
 	ASSERT_FALSEY(token_cmp(U"data", token3));
 	ASSERT_FALSEY(token_cmp(U"data", token4));
 
-	free(token1);
-	free(token2);
-	free(token3);
-	free(token4);
+	free_tokens(token1);
+	free_tokens(token2);
+	free_tokens(token3);
+	free_tokens(token4);
 })
 
 TEST(token_str, {
@@ -207,7 +202,7 @@ TEST(make_token, {
 	ASSERT_FALSEY(token->token_type);
 	ASSERT_FALSEY(token->next);
 
-	free(token);
+	free_tokens(token);
 })
 
 TEST_SELF(tokenizer,
@@ -221,7 +216,6 @@ TEST_SELF(tokenizer,
 	test_whitespace_inside_single_quotes_respected,
 	test_brackets_always_make_their_own_token,
 	test_newlines_always_make_their_own_token,
-	test_free_tokens,
 	test_token_len,
 	test_token_cmp,
 	test_token_cmp_match_exact_strings_only,

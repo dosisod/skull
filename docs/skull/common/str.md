@@ -95,7 +95,7 @@ const char __attribute__((pure)) *strrstr(const char *const str, const char *con
 > `NULL` is returned if no such string is found.
 
 ```c
-char32_t c32sunescape(const char32_t *const str, const char32_t **err)
+char32_t c32sunescape(const char32_t *const str, char32_t **err)
 ```
 
 > Returns the unescaped version of an escaped character starting at `str`, or NULL character.

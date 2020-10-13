@@ -13,6 +13,7 @@
 		(_Bool)(err) ? (err) : U"") \
 	); \
 	free(token); \
+	free(err); \
 	free(num)
 
 void eval_integer_test_self(_Bool *pass);

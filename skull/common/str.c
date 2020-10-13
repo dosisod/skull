@@ -257,7 +257,7 @@ Returns the unescaped version of an escaped character starting at `str`, or NULL
 
 If an error occurs, `err` will be set to the corresponding error msg.
 */
-char32_t c32sunescape(const char32_t *const str, const char32_t **err) {
+char32_t c32sunescape(const char32_t *const str, char32_t **err) {
 	if (*str != '\\') {
 		return '\0';
 	}
