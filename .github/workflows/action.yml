@@ -84,3 +84,19 @@ jobs:
       run: |
         sudo ln -sf $(which gcc-8) $(which cc)
         ./pre-commit
+
+  test-valgrind:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build
+      run: |
+        export CC=gcc-8
+        make options clean test -e
+
+    - name: Install Valgrind
+    - run: sudo apt install valgrind
+
+    - name: Run Valgrind on tests
+      run: valgrind --leak-check=full ./build/test/test
