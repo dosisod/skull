@@ -53,6 +53,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_)
 	module = module_;
 
 	node_to_llvm_ir(node);
+	free_ast_tree(node);
 	free(str);
 }
 

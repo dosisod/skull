@@ -297,9 +297,28 @@ Frees an AST tree.
 void free_ast_tree(AstNode *node) {
 	if (node) {
 		free_tokens(node->token);
+		free_ast_tree_(node);
+	};
+}
+
+/*
+Internal AST freeing function, dont call directly.
+*/
+void free_ast_tree_(AstNode *node) {
+	AstNode *tmp = NULL;
+
+	while (node) {
 		if (node->attr) {
 			free(node->attr);
 		}
+
+		if (node->child) {
+			free_ast_tree_(node->child);
+		}
+
+		tmp = node;
+		node = node->next;
+		tmp->next = NULL;
+		free(tmp);
 	}
-	free(node);
 }

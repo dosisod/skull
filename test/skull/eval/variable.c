@@ -158,8 +158,9 @@ TEST(fmt_var_str, {
 	variable_read(&mem, var);
 	free(mem);
 
-	free(str);
 	free_variable(var);
+	free_ast_tree(node);
+	free(str);
 })
 
 TEST(fmt_var_str_with_escapes, {
@@ -179,8 +180,9 @@ TEST(fmt_var_str_with_escapes, {
 	variable_read(&mem, var);
 	free(mem);
 
-	free(str);
 	free_variable(var);
+	free(str);
+	free_ast_tree(node);
 })
 
 TEST(fmt_var_str_with_bad_escape, {
@@ -201,6 +203,7 @@ TEST(fmt_var_str_with_bad_escape, {
 
 	free(err);
 	free_variable(var);
+	free_ast_tree(node);
 })
 
 TEST_SELF(variable,

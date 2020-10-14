@@ -30,3 +30,9 @@ void free_ast_tree(AstNode *node)
 
 > Frees an AST tree.
 
+```c
+void free_ast_tree_(AstNode *node)
+```
+
+> Internal AST freeing function, dont call directly.
+

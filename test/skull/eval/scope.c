@@ -22,8 +22,7 @@ TEST(scope_find_name, {
 	ASSERT_EQUAL(scope_find_name(scope, U"x"), var);
 	ASSERT_FALSEY(scope_find_name(scope, U"y"));
 
-	free(var);
-	free(scope);
+	free_scope(scope);
 })
 
 TEST(add_vars_to_scope, {
@@ -35,8 +34,7 @@ TEST(add_vars_to_scope, {
 	ASSERT_EQUAL(scope->vars_used, 1);
 	ASSERT_EQUAL(scope->vars[0], var);
 
-	free(var);
-	free(scope);
+	free_scope(scope);
 })
 
 TEST(cannot_add_same_varname_to_scope, {
@@ -50,9 +48,8 @@ TEST(cannot_add_same_varname_to_scope, {
 	ASSERT_EQUAL(scope->vars_used, 1);
 	ASSERT_EQUAL(scope->vars[0], var1);
 
-	free(var1);
-	free(var2);
-	free(scope);
+	free_variable(var2);
+	free_scope(scope);
 })
 
 TEST(free_scope, {

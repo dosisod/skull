@@ -29,6 +29,8 @@ TEST(eval_assign_string_types_cannot_share_pointers, {
 	char32_t *output = eval_assign(var1, node, scope);
 	ASSERT_FALSEY(output);
 
+	free_ast_tree(node);
+
 	char32_t *after_var1 = NULL;
 	variable_read(&after_var1, var1);
 	ASSERT_TRUTHY(c32scmp(after_var1, str2));

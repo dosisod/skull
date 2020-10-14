@@ -14,6 +14,6 @@
 	ASSERT_EQUAL(node->token_end->end, code + (end_offset)); \
 	ASSERT_FALSEY(node->last); \
 	ASSERT_FALSEY(node->next); \
-	free(node)
+	free_ast_tree(node)
 
 void ast_node_test_self(_Bool *pass);

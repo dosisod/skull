@@ -17,7 +17,7 @@ TEST(make_ast_node, {
 	ASSERT_FALSEY(node->last);
 	ASSERT_FALSEY(node->next);
 
-	free(node);
+	free_ast_tree(node);
 })
 
 TEST(push_ast_node, {
@@ -35,7 +35,7 @@ TEST(push_ast_node, {
 	ASSERT_EQUAL(tmp->next, node);
 	ASSERT_EQUAL(tmp->next->last, tmp);
 
-	free_tokens(token);
+	free_ast_tree(tmp);
 })
 
 TEST(make_ast_tree_identifier, {
@@ -66,7 +66,7 @@ TEST(make_ast_tree_with_nothing, {
 	ASSERT_FALSEY(node);
 
 	free(error);
-	free(node);
+	free_ast_tree(node);
 })
 
 TEST(make_ast_tree_var_assign, {
@@ -100,7 +100,7 @@ TEST(make_ast_tree_if, {
 	ASSERT_EQUAL(node->child->token_end->end, code + 18);
 	ASSERT_FALSEY(node->next);
 
-	free(node);
+	free_ast_tree(node);
 })
 
 TEST(make_ast_tree_if_with_var, {
@@ -118,7 +118,7 @@ TEST(make_ast_tree_if_with_var, {
 	ASSERT_EQUAL(node->child->token_end->end, code + 15);
 	ASSERT_FALSEY(node->next);
 
-	free(node);
+	free_ast_tree(node);
 })
 
 TEST(make_ast_tree_int_const, {
@@ -159,6 +159,9 @@ TEST(make_ast_tree_recursive_check_fails, {
 
 	ASSERT_TRUTHY(c32scmp(ERR_EOF_NO_BRACKET, error));
 	ASSERT_FALSEY(node);
+
+	free_ast_tree(node);
+	free(error);
 })
 
 TEST(free_ast_tree, {
