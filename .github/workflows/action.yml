@@ -75,10 +75,21 @@ jobs:
         skull hello.sk -- hello.c
         ./hello
 
-  test-precommit:
+  test-valgrind-and-precommit:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+
+    - name: Build tests
+      run: |
+        export CC=gcc-8
+        make options clean test -e
+
+    - name: Install Valgrind
+      run: sudo apt install valgrind
+
+    - name: Run Valgrind on tests
+      run: valgrind --leak-check=full ./build/test/test
 
     - name: Run pre-commit file
       run: |

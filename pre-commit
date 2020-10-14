@@ -8,4 +8,7 @@ make clean all || stop
 ./build/test/test || stop
 ./test/sh/main.sh || stop
 
+valgrind --leak-check=full ./build/test/test || stop
+echo
+
 bash ./.github/workflows/clang_tidy.sh || stop
