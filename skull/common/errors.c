@@ -76,6 +76,10 @@ char32_t *fmt_error(const char32_t *const fmt, ErrorMsg msgs[]) {
 	}
 	tmp = msgs;
 
+	if (!num_of_percents) {
+		return c32sdup(fmt);
+	}
+
 	ErrorChunk *chunks;
 	chunks = malloc((num_of_percents + 1) * sizeof *chunks);
 	DIE_IF_MALLOC_FAILS(chunks);

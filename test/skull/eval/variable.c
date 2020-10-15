@@ -154,10 +154,6 @@ TEST(fmt_var_str, {
 	ASSERT_FALSEY(error);
 	ASSERT_EQUAL(strcmp("abc", str), 0);
 
-	char32_t *mem = NULL;
-	variable_read(&mem, var);
-	free(mem);
-
 	free_variable(var);
 	free_ast_tree(node);
 	free(str);
@@ -176,13 +172,9 @@ TEST(fmt_var_str_with_escapes, {
 	ASSERT_TRUTHY(str);
 	ASSERT_EQUAL(strcmp(" \r \n \t \\ ", str), 0);
 
-	char32_t *mem = NULL;
-	variable_read(&mem, var);
-	free(mem);
-
 	free_variable(var);
-	free(str);
 	free_ast_tree(node);
+	free(str);
 })
 
 TEST(fmt_var_str_with_bad_escape, {

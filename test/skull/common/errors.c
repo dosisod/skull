@@ -21,11 +21,7 @@ bool fmt_error_wrapper(const char32_t *fmt, ErrorMsg msgs[], const char32_t *exp
 
 TEST(fmt_error, {
 	ASSERT_TRUTHY(
-		fmt_error_wrapper(U"%", (ErrorMsg[]){ {0} }, U"")
-	);
-
-	ASSERT_TRUTHY(
-		fmt_error_wrapper(U"%", (ErrorMsg[]){ {0} }, U"")
+		fmt_error_wrapper(U"error here", (ErrorMsg[]){ {0} }, U"error here")
 	);
 
 	ASSERT_TRUTHY(
