@@ -56,12 +56,8 @@ Variable *make_variable(const Type *const type, const char32_t *const name, bool
 	var->type = type;
 	var->is_const = is_const;
 	var->alloca = NULL;
+	var->mem = NULL;
 
-	unsigned char *mem;
-	mem = calloc(type->bytes, sizeof *mem);
-	DIE_IF_MALLOC_FAILS(mem);
-
-	var->mem = mem;
 	return var;
 }
 
@@ -70,9 +66,17 @@ Write `data` to `var`.
 
 If `var` is constant, return error msg, else `NULL`.
 */
-char32_t *variable_write(const Variable *const var, const void *const data) {
-	if (var->is_const) {
+char32_t *variable_write(Variable *const var, const void *const data) {
+	if (var->is_const && var->mem) {
 		return FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .var = var });
+	}
+
+	if (!var->mem) {
+		unsigned char *mem;
+		mem = calloc(var->type->bytes, 1);
+		DIE_IF_MALLOC_FAILS(mem);
+
+		var->mem = mem;
 	}
 
 	memcpy(var->mem, data, var->type->bytes);
@@ -84,7 +88,7 @@ Free variable `var` and its internal memory.
 */
 void free_variable(Variable *var) {
 	if (var) {
-		if (var->type == &TYPE_STR) {
+		if (var->type == &TYPE_STR && var->mem) {
 			SkullStr str_mem = NULL;
 			variable_read(&str_mem, var);
 			free(str_mem);

@@ -48,11 +48,13 @@ char32_t *eval_assign(Variable *const var, const AstNode *const node, const Scop
 		mem = eval_rune(node->token, &err);
 	}
 	else if (var->type == &TYPE_STR && node->node_type == AST_NODE_STR_CONST) {
-		SkullStr current = NULL;
-		variable_read(&current, var);
+		if (var->mem) {
+			SkullStr current = NULL;
+			variable_read(&current, var);
 
-		if (current) {
-			free(current);
+			if (current) {
+				free(current);
+			}
 		}
 
 		mem = eval_str(node->token, &err);
@@ -63,7 +65,7 @@ char32_t *eval_assign(Variable *const var, const AstNode *const node, const Scop
 
 	if (err || (err = variable_write(var, mem)) == ERR_CANNOT_ASSIGN_CONST) {
 		free((void *)mem);
-		if (var->type == &TYPE_STR) {
+		if (var->type == &TYPE_STR && var->mem) {
 			SkullStr str = NULL;
 			variable_read(&str, var);
 			free(str);

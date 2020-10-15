@@ -18,7 +18,7 @@ TEST(create_variable, {
 	ASSERT_TRUTHY(c32scmp(var->name, U"x"));
 	ASSERT_TRUTHY(var->is_const);
 	ASSERT_EQUAL(var->type->bytes, 8);
-	ASSERT_TRUTHY(var->mem);
+	ASSERT_FALSEY(var->mem);
 	ASSERT_FALSEY(var->alloca);
 
 	free_variable(var);
@@ -46,13 +46,17 @@ TEST(variable_write, {
 TEST(variable_cannot_write_to_const, {
 	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
-	const SkullInt data = 1234;
+	// initial write
+	SkullInt data = 1234;
+	variable_write(var, &data);
+
+	data = -1234;
 	char32_t *err = variable_write(var, &data);
 
 	SkullInt val = 0;
 	memcpy(&val, var->mem, var->type->bytes);
 
-	ASSERT_EQUAL(val, 0);
+	ASSERT_EQUAL(val, 1234);
 	ASSERT_TRUTHY(c32scmp(
 		ERR_CANNOT_ASSIGN_CONST_(U"x"),
 		err
@@ -84,14 +88,7 @@ TEST(make_variable_with_invalid_name_fails, {
 })
 
 TEST(free_variable, {
-	Variable *var = make_variable(&TYPE_INT, U"x", true);
-
-	if (!var || !var->mem) {
-		free_variable(var);
-		FAIL;
-	}
-
-	free_variable(var);
+	free_variable(make_variable(&TYPE_INT, U"x", true));
 })
 
 TEST(free_null_variable_is_ok, {
@@ -188,10 +185,6 @@ TEST(fmt_var_str_with_bad_escape, {
 	ASSERT_TRUTHY(err);
 	ASSERT_FALSEY(ast_err);
 	ASSERT_TRUTHY(c32scmp(ERR_BAD_ESCAPE_(U"\\z"), err));
-
-	char32_t *mem = NULL;
-	variable_read(&mem, var);
-	free(mem);
 
 	free(err);
 	free_variable(var);

@@ -16,7 +16,7 @@ typedef struct Variable {
 
 Variable *make_variable(const Type *const, const char32_t *const, _Bool);
 
-char32_t *variable_write(const Variable *const, const void *const);
+char32_t *variable_write(Variable *const, const void *const);
 void variable_read(void *const, const Variable *const);
 
 void free_variable(Variable *);
