@@ -1,7 +1,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/eval/types/defs.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
 
@@ -18,9 +17,9 @@ char *fmt_str_type(const Variable *const var) {
 }
 
 /*
-Return pointer to string, converted from `token`
+Return Skull string converted from `token`
 */
-void *eval_str(const Token *const token, char32_t **error) {
+SkullStr eval_str(const Token *const token, char32_t **error) {
 	char32_t *str;
 	str = malloc((token_len(token) - 1) * sizeof *str);
 	DIE_IF_MALLOC_FAILS(str);
@@ -46,10 +45,5 @@ void *eval_str(const Token *const token, char32_t **error) {
 	}
 	str[wrote] = '\0';
 
-	SkullStr *ret;
-	ret = malloc(sizeof *ret);
-	DIE_IF_MALLOC_FAILS(ret);
-
-	*ret = str;
-	return ret;
+	return str;
 }

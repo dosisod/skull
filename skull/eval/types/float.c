@@ -4,7 +4,6 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
-#include "skull/eval/types/defs.h"
 #include "skull/eval/types/sprint_fmt.h"
 #include "skull/parse/classify.h"
 
@@ -49,33 +48,27 @@ char *fmt_float_type(const Variable *const var) {
 }
 
 /*
-Converts a `TOKEN_FLOAT_CONST` token to a floating point number pointer (`SkullFloat *`).
+Returns a Skull float parsed from `token`.
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-void *eval_float(const Token *const token, char32_t **error) {
+SkullFloat eval_float(const Token *const token, char32_t **error) {
 	char *const tmp = c32stombs(token->begin);
 
-	SkullFloat *ret;
-	ret = malloc(sizeof *ret);
-	DIE_IF_MALLOC_FAILS(ret);
-
 	if (strcmp("Infinity", tmp) == 0) {
-		*ret = HUGE_VAL;
 		free(tmp);
-		return ret;
+		return HUGE_VAL;
 	}
 	if (strcmp("-Infinity", tmp) == 0) {
-		*ret = -HUGE_VAL;
 		free(tmp);
-		return ret;
+		return -HUGE_VAL;
 	}
 
 	errno = 0;
-	*ret = strtod(tmp, NULL);
+	SkullFloat ret = strtod(tmp, NULL);
 	free(tmp);
 
-	if (isinf(*ret) && errno == ERANGE) {
+	if (isinf(ret) && errno == ERANGE) {
 		*error = FMT_ERROR(ERR_OVERFLOW, { .tok = token });
 	}
 

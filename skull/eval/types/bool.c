@@ -22,13 +22,8 @@ char *fmt_bool_type(const Variable *const var) {
 }
 
 /*
-Return pointer to a bool, converted from `token`
+Return bool converted from `token`
 */
-void *eval_bool(const Token *const token) {
-	bool *ret;
-	ret = malloc(sizeof *ret);
-	DIE_IF_MALLOC_FAILS(ret);
-
-	*ret = token_cmp(U"true", token);
-	return ret;
+bool eval_bool(const Token *const token) {
+	return token_cmp(U"true", token);
 }

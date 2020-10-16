@@ -6,14 +6,13 @@
 	Token *token = tokenize(str_value); \
 	classify_tokens(token); \
 	char32_t *err = 0; \
-	SkullInt *num = eval_integer(token, &err); \
-	ASSERT_TRUTHY(!num || *num == (expected_num)); \
+	SkullInt num = eval_integer(token, &err); \
+	ASSERT_TRUTHY(num == (expected_num)); \
 	ASSERT_TRUTHY(c32scmp( \
 		(_Bool)(expected_error) ? (expected_error) : U"", \
 		(_Bool)(err) ? (err) : U"") \
 	); \
 	free(token); \
-	free(err); \
-	free(num)
+	free(err)
 
 void eval_integer_test_self(_Bool *pass);

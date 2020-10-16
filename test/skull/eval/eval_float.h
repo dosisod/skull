@@ -6,14 +6,13 @@
 	Token *token = tokenize(str_value); \
 	classify_tokens(token); \
 	char32_t *err = NULL; \
-	SkullFloat *num = eval_float(token, &err); \
+	SkullFloat num = eval_float(token, &err); \
 	ASSERT_TRUTHY(cond); \
 	ASSERT_TRUTHY(c32scmp( \
 		(_Bool)(expected_error) ? (expected_error) : U"", \
 		(_Bool)(err) ? (err) : U"") \
 	); \
 	free(token); \
-	free(err); \
-	free(num)
+	free(err)
 
 void eval_float_test_self(_Bool *);
