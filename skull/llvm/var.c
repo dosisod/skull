@@ -150,10 +150,6 @@ void var_to_llvm_ir(Variable *var) {
 Make and add a variable from `node` to `scope`.
 */
 void node_make_var(const AstNode *const node, Scope *const scope) {
-	if (!scope) {
-		return;
-	}
-
 	const Token *token = node->token;
 	const bool is_const = ATTR(AstNodeVarDef, node, is_const);
 	if (!is_const) {

@@ -29,7 +29,7 @@ int main(void) {
 
 	_Bool passed = 1;
 
-	struct sigaction sa;
+	struct sigaction sa = {0};
 	sa.sa_handler = &segfault_handler;
 	sigaction(SIGSEGV, &sa, NULL);
 

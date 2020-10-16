@@ -303,7 +303,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		PANIC(FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .var = var }));
 	}
 
-	if (scope && node->node_type == AST_NODE_IDENTIFIER) {
+	if (node->node_type == AST_NODE_IDENTIFIER) {
 		llvm_assign_identifier(var, node);
 		return;
 	}
