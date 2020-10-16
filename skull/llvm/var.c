@@ -8,7 +8,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/eval/eval_assign.h"
 #include "skull/eval/types/defs.h"
 #include "skull/parse/classify.h"
 
@@ -200,25 +199,17 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 			free(name);
 			PANIC(FMT_ERROR(ERR_INVALID_INPUT, { .tok = node->next->token }));
 		}
-		var = make_variable(type, name, false);
+		var = make_variable(type, name, is_const);
 	}
 	else {
 		char32_t *const tmp_name = token_str(token->next);
 		char *const type_name = c32stombs(tmp_name);
 		free(tmp_name);
 
-		var = make_variable(find_type(type_name), name, false);
+		var = make_variable(find_type(type_name), name, is_const);
 		free(type_name);
 	}
 
-	const char32_t *const assign_err = eval_assign(var, node->next, scope);
-	var->is_const = is_const;
-
-	if (assign_err) {
-		free_variable(var);
-		free(name);
-		PANIC(assign_err);
-	}
 	if (scope_add_var(scope, var)) {
 		free(name);
 		return;

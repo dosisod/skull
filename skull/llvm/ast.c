@@ -1,14 +1,18 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/eval/eval_assign.h"
 #include "skull/eval/types/bool.h"
 #include "skull/eval/types/defs.h"
+#include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
+#include "skull/eval/types/rune.h"
+#include "skull/eval/types/str.h"
+#include "skull/llvm/aliases.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/aliases.h"
@@ -33,6 +37,9 @@ static LLVMValueRef func;
 static LLVMModuleRef module;
 
 extern LLVMBuilderRef builder;
+
+LLVMTypeRef type_to_llvm(const Type *const);
+void llvm_assign_identifier(Variable *const var, const AstNode *const node);
 
 /*
 Convert skull code from `str_` into LLVM IR (using `func_` and `module_`).
@@ -150,7 +157,8 @@ Builds a variable from `node`.
 */
 void llvm_make_var_def(AstNode **node) {
 	node_make_var(*node, scope);
-	var_to_llvm_ir(scope->vars[scope->vars_used - 1]);
+
+	llvm_make_assign_(scope->vars[scope->vars_used - 1], (*node)->next);
 
 	*node = (*node)->next;
 }
@@ -285,11 +293,181 @@ void llvm_make_assign(AstNode **node) {
 	if (found_var->is_const) {
 		PANIC(FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .real = var_name }));
 	}
-
-	PANIC_ON_ERR(eval_assign(found_var, (*node)->next, scope));
-	var_to_llvm_ir(found_var);
-
 	free(var_name);
 
+	llvm_make_assign_(found_var, (*node)->next);
+
 	*node = (*node)->next;
+}
+
+/*
+Internal function to build LLVM assignment from `node` to `var.
+*/
+void llvm_make_assign_(Variable *const var, const AstNode *const node) {
+	if (!node) {
+		PANIC(FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .var = var }));
+	}
+
+	if (scope && node->node_type == AST_NODE_IDENTIFIER) {
+		llvm_assign_identifier(var, node);
+		return;
+	}
+
+	char32_t *err = NULL;
+
+	char *const var_name = c32stombs(var->name);
+
+	if (!var->alloca) {
+		var->alloca = LLVMBuildAlloca(
+			builder,
+			type_to_llvm(var->type),
+			var_name
+		);
+	}
+
+	if (var->type == &TYPE_INT && node->node_type == AST_NODE_INT_CONST) {
+		SkullInt num = *(SkullInt *)eval_integer(node->token, &err);
+		PANIC_ON_ERR(err);
+
+		LLVMBuildStore(
+			builder,
+			LLVM_INT(num),
+			var->alloca
+		);
+	}
+	else if (var->type == &TYPE_FLOAT && node->node_type == AST_NODE_FLOAT_CONST) {
+		SkullFloat num = *(SkullFloat *)eval_float(node->token, &err);
+		PANIC_ON_ERR(err);
+
+		LLVMBuildStore(
+			builder,
+			LLVM_FLOAT(num),
+			var->alloca
+		);
+	}
+	else if (var->type == &TYPE_BOOL && node->node_type == AST_NODE_BOOL_CONST) {
+		bool val = *(bool *)eval_bool(node->token);
+
+		LLVMBuildStore(
+			builder,
+			LLVM_BOOL(val),
+			var->alloca
+		);
+	}
+	else if (var->type == &TYPE_RUNE && node->node_type == AST_NODE_RUNE_CONST) {
+		SkullRune c = *(SkullRune *)eval_rune(node->token, &err);
+
+		LLVMBuildStore(
+			builder,
+			LLVM_RUNE(c),
+			var->alloca
+		);
+	}
+	else if (var->type == &TYPE_STR && node->node_type == AST_NODE_STR_CONST) {
+		if (var->mem) {
+			SkullStr current = NULL;
+			variable_read(&current, var);
+
+			if (current) {
+				free(current);
+			}
+		}
+
+		SkullStr str = *(SkullStr *)eval_str(node->token, &err);
+
+		char *const mbs = c32stombs(str);
+		const unsigned len = (unsigned)strlen(mbs);
+
+		LLVMBuildStore(
+			builder,
+			LLVMConstString(mbs, len, false),
+			LLVMBuildAlloca(
+				builder,
+				LLVMArrayType(
+					LLVMInt8Type(),
+					len + 1
+				),
+				""
+			)
+		);
+		free(mbs);
+
+		LLVMTypeRef str_ptr = LLVMPointerType(LLVMInt8Type(), 0);
+
+		LLVMBuildStore(
+			builder,
+			LLVMBuildBitCast(
+				builder,
+				var->alloca,
+				str_ptr,
+				""
+			),
+			var->alloca
+		);
+	}
+	else {
+		PANIC(FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type }));
+	}
+
+	free(var_name);
+}
+
+/*
+Build LLVM to assign an existing identifier `node` to `var`.
+*/
+void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
+	char32_t *const lookup = token_str(node->token);
+	const Variable *const var_found = scope_find_name(scope, lookup);
+
+	if (!var_found) {
+		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup }));
+	}
+	free(lookup);
+	if (var_found->type != var->type) {
+		PANIC(FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type }));
+	}
+
+	LLVMTypeRef type = type_to_llvm(var->type);
+
+	var->alloca = LLVMBuildAlloca(
+		builder,
+		type,
+		c32stombs(var->name)
+	);
+
+	LLVMValueRef load = LLVMBuildLoad2(
+		builder,
+		type,
+		var_found->alloca,
+		""
+	);
+
+	LLVMBuildStore(
+		builder,
+		load,
+		var->alloca
+	);
+}
+
+/*
+Returns the LLVM type equivalent of `type`.
+*/
+LLVMTypeRef type_to_llvm(const Type *const type) {
+	if (type == &TYPE_INT) {
+		return LLVMInt64Type();
+	}
+	if (type == &TYPE_FLOAT) {
+		return LLVMDoubleType();
+	}
+	if (type == &TYPE_BOOL) {
+		return LLVMInt1Type();
+	}
+	if (type == &TYPE_RUNE) {
+		return LLVMInt32Type();
+	}
+	if (type == &TYPE_STR) {
+		return LLVMPointerType(LLVMInt8Type(), 0);
+	}
+
+	return NULL;
 }

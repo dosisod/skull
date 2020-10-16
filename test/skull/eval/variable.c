@@ -3,7 +3,6 @@
 
 #include "skull/common/str.h"
 #include "skull/common/errors.h"
-#include "skull/eval/eval_assign.h"
 #include "skull/eval/types/defs.h"
 #include "skull/eval/variable.h"
 #include "skull/parse/classify.h"
@@ -137,60 +136,6 @@ TEST(fmt_var_wide_rune_preserved, {
 	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, U'存', "存");
 })
 
-TEST(fmt_var_str, {
-	Variable *var = make_variable(&TYPE_STR, U"x", false);
-
-	char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"\"abc\"", &error);
-
-	eval_assign(var, node, NULL);
-
-	char *str = fmt_var(var);
-
-	ASSERT_TRUTHY(str);
-	ASSERT_FALSEY(error);
-	ASSERT_EQUAL(strcmp("abc", str), 0);
-
-	free_variable(var);
-	free_ast_tree(node);
-	free(str);
-})
-
-TEST(fmt_var_str_with_escapes, {
-	Variable *var = make_variable(&TYPE_STR, U"x", false);
-
-	char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"\" \\r \\n \\t \\\\ \"", &error);
-
-	eval_assign(var, node, NULL);
-
-	char *str = fmt_var(var);
-
-	ASSERT_TRUTHY(str);
-	ASSERT_EQUAL(strcmp(" \r \n \t \\ ", str), 0);
-
-	free_variable(var);
-	free_ast_tree(node);
-	free(str);
-})
-
-TEST(fmt_var_str_with_bad_escape, {
-	Variable *var = make_variable(&TYPE_STR, U"x", false);
-
-	char32_t *ast_err = NULL;
-	AstNode *node = make_ast_tree(U"\"\\z\"", &ast_err);
-
-	char32_t *err = eval_assign(var, node, NULL);
-
-	ASSERT_TRUTHY(err);
-	ASSERT_FALSEY(ast_err);
-	ASSERT_TRUTHY(c32scmp(ERR_BAD_ESCAPE_(U"\\z"), err));
-
-	free(err);
-	free_variable(var);
-	free_ast_tree(node);
-})
-
 TEST_SELF(variable,
 	test_create_variable,
 	test_create_variable_with_invalid_type_fails,
@@ -209,8 +154,5 @@ TEST_SELF(variable,
 	test_fmt_var_float_neg_infinity,
 	test_fmt_var_bool,
 	test_fmt_var_rune,
-	test_fmt_var_wide_rune_preserved,
-	test_fmt_var_str,
-	test_fmt_var_str_with_escapes,
-	test_fmt_var_str_with_bad_escape
+	test_fmt_var_wide_rune_preserved
 )
