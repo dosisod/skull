@@ -51,13 +51,9 @@ void classify_token(Token *const token) {
 	TOKEN_SET_IF(is_constant_integer_str(str), TOKEN_INT_CONST)
 	TOKEN_SET_IF(is_constant_float_str(str), TOKEN_FLOAT_CONST)
 	TOKEN_SET_IF(is_constant_bool_str(str), TOKEN_BOOL_CONST)
+	TOKEN_SET_IF(is_constant_rune_str(str), TOKEN_RUNE_CONST)
+	TOKEN_SET_IF(is_constant_str_str(str), TOKEN_STR_CONST)
 
-	else if (is_constant_rune_str(str)) {
-		token->token_type = TOKEN_RUNE_CONST;
-	}
-	else if (is_constant_str_str(str)) {
-		token->token_type = TOKEN_STR_CONST;
-	}
 	else if (is_valid_identifier_str(str)) {
 		token->token_type = TOKEN_IDENTIFIER;
 
@@ -141,6 +137,9 @@ bool is_constant_integer_str(const char32_t *str) {
 		}
 		else if (str[-1] == 'o') {
 			EXHAUST_STR('0' <= *str && *str <= '7');
+		}
+		else {
+			return false;
 		}
 
 		return true;

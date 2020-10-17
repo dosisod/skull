@@ -41,6 +41,7 @@ echo
 test "return_0.sk"
 test "declare_int.sk"
 test "declare_float.sk"
+test "declare_float_zero.sk"
 test "declare_bool.sk"
 test "declare_str.sk"
 test "declare_rune.sk"
