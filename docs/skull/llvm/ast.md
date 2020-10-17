@@ -43,6 +43,12 @@ void llvm_make_sub(Variable *var, const AstNode *node)
 > Build LLVM for subtracting values from `node` to `var`.
 
 ```c
+void llvm_make_mult(Variable *var, const AstNode *node)
+```
+
+> Build LLVM for multiplying values from `node` to `var`.
+
+```c
 void llvm_make_function(AstNode *node)
 ```
 

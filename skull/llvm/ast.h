@@ -13,5 +13,6 @@ void llvm_make_var_def(AstNode **);
 void llvm_make_if(AstNode *);
 void llvm_make_add(Variable *, const AstNode *);
 void llvm_make_sub(Variable *, const AstNode *);
+void llvm_make_mult(Variable *, const AstNode *);
 void llvm_make_function(AstNode *);
 void llvm_make_assign(AstNode **);
