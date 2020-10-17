@@ -374,6 +374,59 @@ panic:;
 }
 
 /*
+Build LLVM for dividing values from `node` to `var`.
+*/
+void llvm_make_div(Variable *var, const AstNode *node) {
+	const Token *lhs = node->token;
+	const Token *rhs = node->token->next->next;
+
+	if (lhs->token_type == rhs->token_type) {
+		char32_t *error = NULL;
+		LLVMValueRef div;
+
+		if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
+			div = LLVMBuildSDiv(
+				builder,
+				LLVM_INT(eval_integer(lhs, &error)),
+				LLVM_INT(eval_integer(rhs, &error)),
+				""
+			);
+		}
+
+		else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+			div = LLVMBuildFDiv(
+				builder,
+				LLVM_FLOAT(eval_float(lhs, &error)),
+				LLVM_FLOAT(eval_float(rhs, &error)),
+				""
+			);
+		}
+
+		else {
+			goto panic;
+		}
+
+		PANIC_ON_ERR(error);
+
+		LLVMBuildStore(
+			builder,
+			div,
+			var->alloca
+		);
+
+		return;
+	}
+
+panic:;
+
+	PANIC(FMT_ERROR(
+		U"cannot divide \"%\" and \"%\"",
+		{ .tok = lhs },
+		{ .tok = rhs }
+	));
+}
+
+/*
 Builds a function declaration from `node`.
 */
 void llvm_make_function(AstNode *node) {
@@ -456,6 +509,11 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 
 	if (node->node_type == AST_NODE_MULT_CONSTS) {
 		llvm_make_mult(var, node);
+		return;
+	}
+
+	if (node->node_type == AST_NODE_DIV_CONSTS) {
+		llvm_make_div(var, node);
 		return;
 	}
 

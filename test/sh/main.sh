@@ -69,6 +69,8 @@ test "sub_int_consts.sk"
 test "sub_float_consts.sk"
 test "mult_int_consts.sk"
 test "mult_float_consts.sk"
+test "div_int_consts.sk"
+test "div_float_consts.sk"
 
 test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_err ".sk" "\".sk\" is not a valid name, exiting"
@@ -98,6 +100,7 @@ test_err "error/unexpected_str_fails.sk" "Compilation error: unexpected token: \
 test_err "error/add_mismatched_consts.sk" "Compilation error: cannot add \"1\" and \"\"fail\"\""
 test_err "error/sub_mismatched_consts.sk" "Compilation error: cannot subtract \"1\" and \"\"fail\"\""
 test_err "error/mult_mismatched_consts.sk" "Compilation error: cannot multiply \"1\" and \"\"fail\"\""
+test_err "error/div_mismatched_consts.sk" "Compilation error: cannot divide \"1\" and \"\"fail\"\""
 test_err "error/assign_mismatch_var_type.sk" "Compilation error: type mismatch: expected type \"bool\""
 
 touch test/sh/error/read_protected.sk

@@ -49,6 +49,12 @@ void llvm_make_mult(Variable *var, const AstNode *node)
 > Build LLVM for multiplying values from `node` to `var`.
 
 ```c
+void llvm_make_div(Variable *var, const AstNode *node)
+```
+
+> Build LLVM for dividing values from `node` to `var`.
+
+```c
 void llvm_make_function(AstNode *node)
 ```
 
