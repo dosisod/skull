@@ -225,7 +225,7 @@ void llvm_make_add(Variable *var, const AstNode *node) {
 		char32_t *error = NULL;
 		LLVMValueRef add;
 
-		if (lhs->token_type == TOKEN_INT_CONST) {
+		if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
 			add = LLVMBuildAdd(
 				builder,
 				LLVM_INT(eval_integer(lhs, &error)),
@@ -234,7 +234,7 @@ void llvm_make_add(Variable *var, const AstNode *node) {
 			);
 		}
 
-		else if (lhs->token_type == TOKEN_FLOAT_CONST) {
+		else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
 			add = LLVMBuildFAdd(
 				builder,
 				LLVM_FLOAT(eval_float(lhs, &error)),
@@ -278,7 +278,7 @@ void llvm_make_sub(Variable *var, const AstNode *node) {
 		char32_t *error = NULL;
 		LLVMValueRef sub;
 
-		if (lhs->token_type == TOKEN_INT_CONST) {
+		if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
 			sub = LLVMBuildSub(
 				builder,
 				LLVM_INT(eval_integer(lhs, &error)),
@@ -287,7 +287,7 @@ void llvm_make_sub(Variable *var, const AstNode *node) {
 			);
 		}
 
-		else if (lhs->token_type == TOKEN_FLOAT_CONST) {
+		else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
 			sub = LLVMBuildFSub(
 				builder,
 				LLVM_FLOAT(eval_float(lhs, &error)),
