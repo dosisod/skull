@@ -31,10 +31,10 @@ void llvm_make_if(AstNode *node)
 > Builds an if block from `node`.
 
 ```c
-void llvm_make_add(AstNode **node)
+void llvm_make_add(Variable *var, const AstNode *node)
 ```
 
-> Build LLVM for adding variables from `node`.
+> Build LLVM for adding values from `node` to `var`.
 
 ```c
 void llvm_make_function(AstNode *node)

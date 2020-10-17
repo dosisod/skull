@@ -83,10 +83,6 @@ void node_to_llvm_ir(AstNode *node) {
 			llvm_make_if(node);
 		}
 
-		else if (node->node_type == AST_NODE_ADD_CONSTS) {
-			llvm_make_add(&node);
-		}
-
 		else if (
 			node->node_type == AST_NODE_IDENTIFIER &&
 			node->token->next &&
@@ -219,14 +215,27 @@ void llvm_make_if(AstNode *node) {
 }
 
 /*
-Build LLVM for adding variables from `node`.
+Build LLVM for adding values from `node` to `var`.
 */
-void llvm_make_add(AstNode **node) {
-	const Token *lhs = (*node)->token;
-	const Token *rhs = (*node)->token->next->next;
+void llvm_make_add(Variable *var, const AstNode *node) {
+	const Token *lhs = node->token;
+	const Token *rhs = node->token->next->next;
 
-	if (lhs->token_type == rhs->token_type) {
-		*node = (*node)->next;
+	if (lhs->token_type == rhs->token_type && lhs->token_type == TOKEN_INT_CONST) {
+		char32_t *error = NULL;
+
+		LLVMBuildStore(
+			builder,
+			LLVMBuildAdd(
+				builder,
+				LLVM_INT(eval_integer(lhs, &error)),
+				LLVM_INT(eval_integer(rhs, &error)),
+				""
+			),
+			var->alloca
+		);
+
+		PANIC_ON_ERR(error);
 		return;
 	}
 
@@ -305,6 +314,11 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 
 	if (node->node_type == AST_NODE_IDENTIFIER) {
 		llvm_assign_identifier(var, node);
+		return;
+	}
+
+	if (node->node_type == AST_NODE_ADD_CONSTS) {
+		llvm_make_add(var, node);
 		return;
 	}
 

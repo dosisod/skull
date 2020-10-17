@@ -209,6 +209,7 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 		) {
 			token = token->next->next;
 			push_ast_node(token, &last, AST_NODE_ADD_CONSTS, &node);
+			continue;
 		}
 
 		if (token->token_type == TOKEN_IDENTIFIER) {
