@@ -63,6 +63,7 @@ test "reassign_var.sk"
 test "if_empty_body.sk"
 test "reassign_str.sk"
 test "add_int_consts.sk"
+test "add_float_consts.sk"
 
 test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_err ".sk" "\".sk\" is not a valid name, exiting"

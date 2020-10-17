@@ -221,23 +221,44 @@ void llvm_make_add(Variable *var, const AstNode *node) {
 	const Token *lhs = node->token;
 	const Token *rhs = node->token->next->next;
 
-	if (lhs->token_type == rhs->token_type && lhs->token_type == TOKEN_INT_CONST) {
+	if (lhs->token_type == rhs->token_type) {
 		char32_t *error = NULL;
+		LLVMValueRef add;
 
-		LLVMBuildStore(
-			builder,
-			LLVMBuildAdd(
+		if (lhs->token_type == TOKEN_INT_CONST) {
+			add = LLVMBuildAdd(
 				builder,
 				LLVM_INT(eval_integer(lhs, &error)),
 				LLVM_INT(eval_integer(rhs, &error)),
 				""
-			),
+			);
+		}
+
+		else if (lhs->token_type == TOKEN_FLOAT_CONST) {
+			add = LLVMBuildFAdd(
+				builder,
+				LLVM_FLOAT(eval_float(lhs, &error)),
+				LLVM_FLOAT(eval_float(rhs, &error)),
+				""
+			);
+		}
+
+		else {
+			goto panic;
+		}
+
+		PANIC_ON_ERR(error);
+
+		LLVMBuildStore(
+			builder,
+			add,
 			var->alloca
 		);
 
-		PANIC_ON_ERR(error);
 		return;
 	}
+
+panic:;
 
 	PANIC(FMT_ERROR(
 		U"cannot add \"%\" and \"%\"",
