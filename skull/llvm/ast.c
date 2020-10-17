@@ -181,7 +181,7 @@ void llvm_make_if(AstNode *node) {
 
 		cond = LLVMBuildLoad2(
 			builder,
-			LLVMInt64Type(),
+			LLVMInt1Type(),
 			found_var->alloca,
 			""
 		);
