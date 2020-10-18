@@ -447,28 +447,6 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		return;
 	}
 
-	if (node->node_type == AST_NODE_ADD_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_add, U"cannot add \"%\" and \"%\"");
-		return;
-	}
-
-	if (node->node_type == AST_NODE_SUB_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_sub, U"cannot subtract \"%\" and \"%\"");
-		return;
-	}
-
-	if (node->node_type == AST_NODE_MULT_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_mult, U"cannot multiply \"%\" and \"%\"");
-		return;
-	}
-
-	if (node->node_type == AST_NODE_DIV_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_div, U"cannot divide \"%\" and \"%\"");
-		return;
-	}
-
-	char32_t *err = NULL;
-
 	char *const var_name = c32stombs(var->name);
 
 	if (!var->alloca) {
@@ -478,6 +456,32 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 			var_name
 		);
 	}
+
+	if (node->node_type == AST_NODE_ADD_CONSTS) {
+		llvm_make_math_oper(var, node, &llvm_make_add, U"cannot add \"%\" and \"%\"");
+		free(var_name);
+		return;
+	}
+
+	if (node->node_type == AST_NODE_SUB_CONSTS) {
+		llvm_make_math_oper(var, node, &llvm_make_sub, U"cannot subtract \"%\" and \"%\"");
+		free(var_name);
+		return;
+	}
+
+	if (node->node_type == AST_NODE_MULT_CONSTS) {
+		llvm_make_math_oper(var, node, &llvm_make_mult, U"cannot multiply \"%\" and \"%\"");
+		free(var_name);
+		return;
+	}
+
+	if (node->node_type == AST_NODE_DIV_CONSTS) {
+		llvm_make_math_oper(var, node, &llvm_make_div, U"cannot divide \"%\" and \"%\"");
+		free(var_name);
+		return;
+	}
+
+	char32_t *err = NULL;
 
 	if (var->type == &TYPE_INT && node->node_type == AST_NODE_INT_CONST) {
 		LLVMBuildStore(

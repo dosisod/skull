@@ -23,6 +23,25 @@
 
 extern LLVMBuilderRef builder;
 
+const Type *token_type_to_type(const Token *token) {
+	if (token->token_type == TOKEN_INT_CONST) {
+		return &TYPE_INT;
+	}
+	if (token->token_type == TOKEN_FLOAT_CONST) {
+		return &TYPE_FLOAT;
+	}
+	if (token->token_type == TOKEN_RUNE_CONST) {
+		return &TYPE_RUNE;
+	}
+	if (token->token_type == TOKEN_BOOL_CONST) {
+		return &TYPE_BOOL;
+	}
+	if (token->token_type == TOKEN_STR_CONST) {
+		return &TYPE_STR;
+	}
+	return NULL;
+}
+
 /*
 Make and add a variable from `node` to `scope`.
 */
@@ -67,6 +86,13 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 			}
 			free(lookup);
 			type = new_var->type;
+		}
+		else if (node->next->node_type == AST_NODE_ADD_CONSTS ||
+			node->next->node_type == AST_NODE_SUB_CONSTS ||
+			node->next->node_type == AST_NODE_MULT_CONSTS ||
+			node->next->node_type == AST_NODE_DIV_CONSTS
+		) {
+			type = token_type_to_type(node->next->token);
 		}
 		else {
 			free(name);
