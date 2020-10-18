@@ -1,14 +1,6 @@
 # skull/eval/variable.c
 
 ```c
-char *fmt_var(const Variable *const var)
-```
-
-> Return string representation of the variable `var`.
-> \
-> The result of this function must be freed.
-
-```c
 void variable_read(void *const dest, const Variable *const var)
 ```
 

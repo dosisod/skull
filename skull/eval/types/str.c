@@ -7,16 +7,6 @@
 #include "skull/eval/types/str.h"
 
 /*
-Returns the string representation of string `var`
-*/
-char *fmt_str_type(const Variable *const var) {
-	SkullStr str = NULL;
-	variable_read(&str, var);
-
-	return c32stombs(str);
-}
-
-/*
 Return Skull string converted from `token`
 */
 SkullStr eval_str(const Token *const token, char32_t **error) {

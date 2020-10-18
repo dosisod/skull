@@ -20,5 +20,3 @@ char32_t *variable_write(Variable *const, const void *const);
 void variable_read(void *const, const Variable *const);
 
 void free_variable(Variable *);
-
-char *fmt_var(const Variable *const);

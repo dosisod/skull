@@ -9,19 +9,6 @@
 #include "skull/eval/types/bool.h"
 
 /*
-Returns the string representation of boolean `var`
-*/
-char *fmt_bool_type(const Variable *const var) {
-	bool data = false;
-	variable_read(&data, var);
-
-	char *const ret = strdup(data ? "true" : "false");
-	DIE_IF_MALLOC_FAILS(ret);
-
-	return ret;
-}
-
-/*
 Return bool converted from `token`
 */
 bool eval_bool(const Token *const token) {

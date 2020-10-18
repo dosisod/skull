@@ -1,11 +1,6 @@
 #include <string.h>
 
-#include "skull/eval/types/bool.h"
 #include "skull/eval/types/defs.h"
-#include "skull/eval/types/float.h"
-#include "skull/eval/types/int.h"
-#include "skull/eval/types/rune.h"
-#include "skull/eval/types/str.h"
 
 #include "skull/eval/types/types.h"
 
@@ -27,32 +22,27 @@ const Type __attribute__((pure)) *find_type(const char *const name) {
 
 const Type TYPE_BOOL = {
 	.name = "bool",
-	.bytes = sizeof(_Bool),
-	.to_string = &fmt_bool_type
+	.bytes = sizeof(_Bool)
 };
 
 const Type TYPE_INT = {
 	.name = "int",
-	.bytes = sizeof(SkullInt),
-	.to_string = &fmt_int_type
+	.bytes = sizeof(SkullInt)
 };
 
 const Type TYPE_FLOAT = {
 	.name = "float",
-	.bytes = sizeof(SkullFloat),
-	.to_string = &fmt_float_type
+	.bytes = sizeof(SkullFloat)
 };
 
 const Type TYPE_RUNE = {
 	.name = "rune",
-	.bytes = sizeof(SkullRune),
-	.to_string = &fmt_rune_type
+	.bytes = sizeof(SkullRune)
 };
 
 const Type TYPE_STR = {
 	.name = "str",
-	.bytes = sizeof(SkullStr),
-	.to_string = &fmt_str_type
+	.bytes = sizeof(SkullStr)
 };
 
 const Type **TYPES_AVAILABLE = (const Type *[]){

@@ -94,48 +94,6 @@ TEST(free_null_variable_is_ok, {
 	free_variable(NULL);
 })
 
-TEST(fmt_var_int, {
-	TEST_FMT_VAR(&TYPE_INT, SkullInt, 1234, "1234");
-})
-
-TEST(fmt_var_float, {
-	const SkullFloat PI = 3.1415;
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, PI, "3.1415");
-})
-
-TEST(fmt_var_float_zero, {
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 0.0, "0.0");
-})
-
-TEST(fmt_var_float_small, {
-	const SkullFloat SMALL = 0.0000001;
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, SMALL, "1e-07");
-})
-
-TEST(fmt_var_float_trailing_zero, {
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1234, "1234.0");
-})
-
-TEST(fmt_var_float_infinity, {
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1.0 / 0.0, "Infinity");
-})
-
-TEST(fmt_var_float_neg_infinity, {
-	TEST_FMT_VAR(&TYPE_FLOAT, SkullFloat, 1.0 / -0.0, "-Infinity");
-})
-
-TEST(fmt_var_bool, {
-	TEST_FMT_VAR(&TYPE_BOOL, bool, false, "false");
-})
-
-TEST(fmt_var_rune, {
-	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, 'a', "a");
-})
-
-TEST(fmt_var_wide_rune_preserved, {
-	TEST_FMT_VAR(&TYPE_RUNE, SkullRune, U'存', "存");
-})
-
 TEST_SELF(variable,
 	test_create_variable,
 	test_create_variable_with_invalid_type_fails,
@@ -144,15 +102,5 @@ TEST_SELF(variable,
 	test_variable_read,
 	test_make_variable_with_invalid_name_fails,
 	test_free_variable,
-	test_free_null_variable_is_ok,
-	test_fmt_var_int,
-	test_fmt_var_float,
-	test_fmt_var_float_zero,
-	test_fmt_var_float_small,
-	test_fmt_var_float_trailing_zero,
-	test_fmt_var_float_infinity,
-	test_fmt_var_float_neg_infinity,
-	test_fmt_var_bool,
-	test_fmt_var_rune,
-	test_fmt_var_wide_rune_preserved
+	test_free_null_variable_is_ok
 )

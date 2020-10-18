@@ -12,18 +12,6 @@
 #include "skull/eval/variable.h"
 
 /*
-Return string representation of the variable `var`.
-
-The result of this function must be freed.
-*/
-char *fmt_var(const Variable *const var) {
-	if (!var->type || !var->type->to_string) {
-		return NULL;
-	}
-	return var->type->to_string(var);
-}
-
-/*
 Read variable memory of `var` into `dest`.
 */
 void variable_read(void *const dest, const Variable *const var) {

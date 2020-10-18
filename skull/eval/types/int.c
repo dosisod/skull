@@ -9,17 +9,6 @@
 #include "skull/eval/types/int.h"
 
 /*
-Returns the string representation of int `var`
-*/
-char *fmt_int_type(const Variable *const var) {
-	SkullInt data = 0;
-	variable_read(&data, var);
-
-	SPRINTF_FMT("%li");
-	return tmp;
-}
-
-/*
 Returns an Skull integer parsed from `token`.
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.

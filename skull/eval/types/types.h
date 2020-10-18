@@ -2,13 +2,9 @@
 
 #include <stddef.h>
 
-typedef struct Variable Variable;
-
 typedef struct Type {
 	const char *name;
 	size_t bytes;
-
-	char *(*to_string)(const Variable *);
 } Type;
 
 const Type TYPE_BOOL;

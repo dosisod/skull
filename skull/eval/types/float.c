@@ -10,44 +10,6 @@
 #include "skull/eval/types/float.h"
 
 /*
-Returns the string representation of float `var`
-*/
-char *fmt_float_type(const Variable *const var) {
-	SkullFloat data = 0.0;
-	variable_read(&data, var);
-
-	if (isinf(data)) {
-		char *const ret = strdup(
-			(data < 0.0) ?
-			"-Infinity" :
-			"Infinity"
-		);
-
-		DIE_IF_MALLOC_FAILS(ret);
-		return ret;
-	}
-
-	SPRINTF_FMT("%.16lg");
-
-	const char *const period = strrchr(tmp, '.');
-	if (!period && !strrchr(tmp, 'e')) {
-		const size_t len = strlen(tmp);
-		char *const fixed = malloc(len + 3);
-		DIE_IF_MALLOC_FAILS(fixed);
-
-		memcpy(fixed, tmp, len);
-		fixed[len] = '.';
-		fixed[len + 1] = '0';
-		fixed[len + 2] = '\0';
-
-		free(tmp);
-		tmp = fixed;
-	}
-
-	return tmp;
-}
-
-/*
 Returns a Skull float parsed from `token`.
 
 `error` is `NULL` if no error occurs, else `error` points to error msg.
