@@ -214,216 +214,166 @@ void llvm_make_if(AstNode *node) {
 	);
 }
 
+typedef LLVMValueRef (*MathOper)(Variable *, const Token *, const Token *);
+
 /*
-Build LLVM for adding values from `node` to `var`.
+Build LLVM for assigning math operation `oper` from `node` to `var`.
 */
-void llvm_make_add(Variable *var, const AstNode *node) {
+void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper oper, const char32_t *panic) {
 	const Token *lhs = node->token;
 	const Token *rhs = node->token->next->next;
 
+	LLVMValueRef result = NULL;
+
 	if (lhs->token_type == rhs->token_type) {
-		char32_t *error = NULL;
-		LLVMValueRef add;
-
-		if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
-			add = LLVMBuildAdd(
-				builder,
-				LLVM_INT(eval_integer(lhs, &error)),
-				LLVM_INT(eval_integer(rhs, &error)),
-				""
-			);
-		}
-
-		else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
-			add = LLVMBuildFAdd(
-				builder,
-				LLVM_FLOAT(eval_float(lhs, &error)),
-				LLVM_FLOAT(eval_float(rhs, &error)),
-				""
-			);
-		}
-
-		else {
-			goto panic;
-		}
-
-		PANIC_ON_ERR(error);
-
-		LLVMBuildStore(
-			builder,
-			add,
-			var->alloca
-		);
-
-		return;
+		result = oper(var, lhs, rhs);
 	}
 
-panic:;
+	if (!result) {
+		PANIC(FMT_ERROR(
+			panic,
+			{ .tok = lhs },
+			{ .tok = rhs }
+		));
+	}
 
-	PANIC(FMT_ERROR(
-		U"cannot add \"%\" and \"%\"",
-		{ .tok = lhs },
-		{ .tok = rhs }
-	));
+	LLVMBuildStore(
+		builder,
+		result,
+		var->alloca
+	);
 }
 
 /*
-Build LLVM for subtracting values from `node` to `var`.
+Build LLVM for assining addition of `lhs` and `rhs` to `var`.
 */
-void llvm_make_sub(Variable *var, const AstNode *node) {
-	const Token *lhs = node->token;
-	const Token *rhs = node->token->next->next;
+LLVMValueRef llvm_make_add(Variable *var, const Token *lhs, const Token *rhs) {
+	char32_t *error = NULL;
+	LLVMValueRef add;
 
-	if (lhs->token_type == rhs->token_type) {
-		char32_t *error = NULL;
-		LLVMValueRef sub;
-
-		if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
-			sub = LLVMBuildSub(
-				builder,
-				LLVM_INT(eval_integer(lhs, &error)),
-				LLVM_INT(eval_integer(rhs, &error)),
-				""
-			);
-		}
-
-		else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
-			sub = LLVMBuildFSub(
-				builder,
-				LLVM_FLOAT(eval_float(lhs, &error)),
-				LLVM_FLOAT(eval_float(rhs, &error)),
-				""
-			);
-		}
-
-		else {
-			goto panic;
-		}
-
-		PANIC_ON_ERR(error);
-
-		LLVMBuildStore(
+	if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
+		add = LLVMBuildAdd(
 			builder,
-			sub,
-			var->alloca
+			LLVM_INT(eval_integer(lhs, &error)),
+			LLVM_INT(eval_integer(rhs, &error)),
+			""
 		);
-
-		return;
 	}
 
-panic:;
+	else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+		add = LLVMBuildFAdd(
+			builder,
+			LLVM_FLOAT(eval_float(lhs, &error)),
+			LLVM_FLOAT(eval_float(rhs, &error)),
+			""
+		);
+	}
 
-	PANIC(FMT_ERROR(
-		U"cannot subtract \"%\" and \"%\"",
-		{ .tok = lhs },
-		{ .tok = rhs }
-	));
+	else {
+		return NULL;
+	}
+
+	PANIC_ON_ERR(error);
+	return add;
 }
 
 /*
-Build LLVM for multiplying values from `node` to `var`.
+Build LLVM for assining subtraction of `lhs` and `rhs` to `var`.
 */
-void llvm_make_mult(Variable *var, const AstNode *node) {
-	const Token *lhs = node->token;
-	const Token *rhs = node->token->next->next;
+LLVMValueRef llvm_make_sub(Variable *var, const Token *lhs, const Token *rhs) {
+	char32_t *error = NULL;
+	LLVMValueRef sub;
 
-	if (lhs->token_type == rhs->token_type) {
-		char32_t *error = NULL;
-		LLVMValueRef mult;
-
-		if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
-			mult = LLVMBuildMul(
-				builder,
-				LLVM_INT(eval_integer(lhs, &error)),
-				LLVM_INT(eval_integer(rhs, &error)),
-				""
-			);
-		}
-
-		else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
-			mult = LLVMBuildFMul(
-				builder,
-				LLVM_FLOAT(eval_float(lhs, &error)),
-				LLVM_FLOAT(eval_float(rhs, &error)),
-				""
-			);
-		}
-
-		else {
-			goto panic;
-		}
-
-		PANIC_ON_ERR(error);
-
-		LLVMBuildStore(
+	if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
+		sub = LLVMBuildSub(
 			builder,
-			mult,
-			var->alloca
+			LLVM_INT(eval_integer(lhs, &error)),
+			LLVM_INT(eval_integer(rhs, &error)),
+			""
 		);
-
-		return;
 	}
 
-panic:;
+	else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+		sub = LLVMBuildFSub(
+			builder,
+			LLVM_FLOAT(eval_float(lhs, &error)),
+			LLVM_FLOAT(eval_float(rhs, &error)),
+			""
+		);
+	}
 
-	PANIC(FMT_ERROR(
-		U"cannot multiply \"%\" and \"%\"",
-		{ .tok = lhs },
-		{ .tok = rhs }
-	));
+	else {
+		return NULL;
+	}
+
+	PANIC_ON_ERR(error);
+	return sub;
 }
 
 /*
-Build LLVM for dividing values from `node` to `var`.
+Build LLVM for assining multiplication of `lhs` and `rhs` to `var`.
 */
-void llvm_make_div(Variable *var, const AstNode *node) {
-	const Token *lhs = node->token;
-	const Token *rhs = node->token->next->next;
+LLVMValueRef llvm_make_mult(Variable *var, const Token *lhs, const Token *rhs) {
+	char32_t *error = NULL;
+	LLVMValueRef mult;
 
-	if (lhs->token_type == rhs->token_type) {
-		char32_t *error = NULL;
-		LLVMValueRef div;
-
-		if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
-			div = LLVMBuildSDiv(
-				builder,
-				LLVM_INT(eval_integer(lhs, &error)),
-				LLVM_INT(eval_integer(rhs, &error)),
-				""
-			);
-		}
-
-		else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
-			div = LLVMBuildFDiv(
-				builder,
-				LLVM_FLOAT(eval_float(lhs, &error)),
-				LLVM_FLOAT(eval_float(rhs, &error)),
-				""
-			);
-		}
-
-		else {
-			goto panic;
-		}
-
-		PANIC_ON_ERR(error);
-
-		LLVMBuildStore(
+	if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
+		mult = LLVMBuildMul(
 			builder,
-			div,
-			var->alloca
+			LLVM_INT(eval_integer(lhs, &error)),
+			LLVM_INT(eval_integer(rhs, &error)),
+			""
 		);
-
-		return;
 	}
 
-panic:;
+	else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+		mult = LLVMBuildFMul(
+			builder,
+			LLVM_FLOAT(eval_float(lhs, &error)),
+			LLVM_FLOAT(eval_float(rhs, &error)),
+			""
+		);
+	}
 
-	PANIC(FMT_ERROR(
-		U"cannot divide \"%\" and \"%\"",
-		{ .tok = lhs },
-		{ .tok = rhs }
-	));
+	else {
+		return NULL;
+	}
+
+	PANIC_ON_ERR(error);
+	return mult;
+}
+
+/*
+Build LLVM for assining division of `lhs` and `rhs` to `var`.
+*/
+LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
+	char32_t *error = NULL;
+	LLVMValueRef div;
+
+	if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
+		div = LLVMBuildSDiv(
+			builder,
+			LLVM_INT(eval_integer(lhs, &error)),
+			LLVM_INT(eval_integer(rhs, &error)),
+			""
+		);
+	}
+
+	else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+		div = LLVMBuildFDiv(
+			builder,
+			LLVM_FLOAT(eval_float(lhs, &error)),
+			LLVM_FLOAT(eval_float(rhs, &error)),
+			""
+		);
+	}
+
+	else {
+		return NULL;
+	}
+
+	PANIC_ON_ERR(error);
+	return div;
 }
 
 /*
@@ -498,22 +448,22 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	}
 
 	if (node->node_type == AST_NODE_ADD_CONSTS) {
-		llvm_make_add(var, node);
+		llvm_make_math_oper(var, node, &llvm_make_add, U"cannot add \"%\" and \"%\"");
 		return;
 	}
 
 	if (node->node_type == AST_NODE_SUB_CONSTS) {
-		llvm_make_sub(var, node);
+		llvm_make_math_oper(var, node, &llvm_make_sub, U"cannot subtract \"%\" and \"%\"");
 		return;
 	}
 
 	if (node->node_type == AST_NODE_MULT_CONSTS) {
-		llvm_make_mult(var, node);
+		llvm_make_math_oper(var, node, &llvm_make_mult, U"cannot multiply \"%\" and \"%\"");
 		return;
 	}
 
 	if (node->node_type == AST_NODE_DIV_CONSTS) {
-		llvm_make_div(var, node);
+		llvm_make_math_oper(var, node, &llvm_make_div, U"cannot divide \"%\" and \"%\"");
 		return;
 	}
 

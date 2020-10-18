@@ -11,9 +11,11 @@ void node_to_llvm_ir(AstNode *);
 void llvm_make_return(AstNode *);
 void llvm_make_var_def(AstNode **);
 void llvm_make_if(AstNode *);
-void llvm_make_add(Variable *, const AstNode *);
-void llvm_make_sub(Variable *, const AstNode *);
-void llvm_make_mult(Variable *, const AstNode *);
-void llvm_make_div(Variable *, const AstNode *);
+
+LLVMValueRef llvm_make_add(Variable *, const Token *, const Token *);
+LLVMValueRef llvm_make_sub(Variable *, const Token *, const Token *);
+LLVMValueRef llvm_make_mult(Variable *, const Token *, const Token *);
+LLVMValueRef llvm_make_div(Variable *, const Token *, const Token *);
+
 void llvm_make_function(AstNode *);
 void llvm_make_assign(AstNode **);
