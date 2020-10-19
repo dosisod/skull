@@ -21,6 +21,8 @@ and in Skull:
 ```python
 # hello.sk
 
+external hello
+
 hello[]
 
 return 0
@@ -31,6 +33,7 @@ Now, to compile these files together:
 ```
 $ skull hello.sk -- hello.c
 $ ./hello
+hello from hello.c!
 ```
 
 Everything after `--` is passed as arguments to `cc`, in this case, `hello.c`.
@@ -41,6 +44,7 @@ Skull can also compile `.o` and `.so` files, but you will need to compile them y
 $ cc -c hello.c
 $ skull hello.sk -- hello.o
 $ ./hello
+hello from hello.c!
 ```
 
 For the time being, Skull can only run C functions prototypes like: `void f(void)`

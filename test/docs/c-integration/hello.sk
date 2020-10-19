@@ -1,3 +1,5 @@
+external hello
+
 hello[]
 
 return 0

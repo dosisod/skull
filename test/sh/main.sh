@@ -71,6 +71,7 @@ test "mult_int_consts.sk"
 test "mult_float_consts.sk"
 test "div_int_consts.sk"
 test "div_float_consts.sk"
+test "multiple_externals.sk"
 
 test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_err ".sk" "\".sk\" is not a valid name, exiting"
@@ -102,6 +103,7 @@ test_err "error/sub_mismatched_consts.sk" "Compilation error: cannot subtract \"
 test_err "error/mult_mismatched_consts.sk" "Compilation error: cannot multiply \"1\" and \"\"fail\"\""
 test_err "error/div_mismatched_consts.sk" "Compilation error: cannot divide \"1\" and \"\"fail\"\""
 test_err "error/assign_mismatch_var_type.sk" "Compilation error: type mismatch: expected type \"bool\""
+test_err "error/missing_external.sk" "Compilation error: external function \"x\" missing external declaration"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

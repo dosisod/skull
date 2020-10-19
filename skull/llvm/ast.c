@@ -38,6 +38,10 @@ static LLVMModuleRef module;
 
 extern LLVMBuilderRef builder;
 
+#define EXTERNAL_FUNCTIONS_MAX 256
+unsigned external_functions = 0;
+char *external_function[EXTERNAL_FUNCTIONS_MAX] = {0};
+
 void llvm_assign_identifier(Variable *const var, const AstNode *const node);
 
 /*
@@ -61,6 +65,12 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_)
 	node_to_llvm_ir(node);
 	free_ast_tree(node);
 	free(str);
+
+	char **current_function = external_function;
+	while (*current_function) {
+		free(*current_function);
+		current_function++;
+	}
 }
 
 /*
@@ -80,6 +90,10 @@ void node_to_llvm_ir(AstNode *node) {
 
 		else if (node->node_type == AST_NODE_IF) {
 			llvm_make_if(node);
+		}
+
+		else if (node->node_type == AST_NODE_EXTERNAL) {
+			declare_external_function(node);
 		}
 
 		else if (
@@ -376,6 +390,18 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
 }
 
 /*
+Store function name of externaly declared function in `node`.
+*/
+void declare_external_function(AstNode *node) {
+	char32_t *const tmp = token_str(node->token->next);
+	char *const func_name = c32stombs(tmp);
+	free(tmp);
+
+	external_function[external_functions] = func_name;
+	external_functions++;
+}
+
+/*
 Builds a function declaration from `node`.
 */
 void llvm_make_function(AstNode *node) {
@@ -390,6 +416,19 @@ void llvm_make_function(AstNode *node) {
 
 	char32_t *const tmp = token_str(node->token);
 	char *const func_name = c32stombs(tmp);
+
+	char **current_function = external_function;
+	while (*current_function) {
+		if (strcmp(*current_function, func_name) == 0) {
+			break;
+		}
+		current_function++;
+	}
+
+	if (!*current_function) {
+		PANIC(FMT_ERROR(U"external function \"%\" missing external declaration", { .real = tmp }));
+	}
+
 	free(tmp);
 
 	LLVMValueRef function = LLVMAddFunction(
