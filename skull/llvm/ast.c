@@ -38,7 +38,6 @@ static LLVMModuleRef module;
 
 extern LLVMBuilderRef builder;
 
-LLVMTypeRef type_to_llvm(const Type *const);
 void llvm_assign_identifier(Variable *const var, const AstNode *const node);
 
 /*
@@ -452,7 +451,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	if (!var->alloca) {
 		var->alloca = LLVMBuildAlloca(
 			builder,
-			type_to_llvm(var->type),
+			var->type->llvm_type(),
 			var_name
 		);
 	}
@@ -518,15 +517,6 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		PANIC_ON_ERR(err);
 	}
 	else if (var->type == &TYPE_STR && node->node_type == AST_NODE_STR_CONST) {
-		if (var->mem) {
-			SkullStr current = NULL;
-			variable_read(&current, var);
-
-			if (current) {
-				free(current);
-			}
-		}
-
 		SkullStr str = eval_str(node->token, &err);
 
 		char *const mbs = c32stombs(str);
@@ -581,17 +571,15 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 		PANIC(FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type }));
 	}
 
-	LLVMTypeRef type = type_to_llvm(var->type);
-
 	var->alloca = LLVMBuildAlloca(
 		builder,
-		type,
+		var->type->llvm_type(),
 		c32stombs(var->name)
 	);
 
 	LLVMValueRef load = LLVMBuildLoad2(
 		builder,
-		type,
+		var->type->llvm_type(),
 		var_found->alloca,
 		""
 	);
@@ -601,27 +589,4 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 		load,
 		var->alloca
 	);
-}
-
-/*
-Returns the LLVM type equivalent of `type`.
-*/
-LLVMTypeRef type_to_llvm(const Type *const type) {
-	if (type == &TYPE_INT) {
-		return LLVMInt64Type();
-	}
-	if (type == &TYPE_FLOAT) {
-		return LLVMDoubleType();
-	}
-	if (type == &TYPE_BOOL) {
-		return LLVMInt1Type();
-	}
-	if (type == &TYPE_RUNE) {
-		return LLVMInt32Type();
-	}
-	if (type == &TYPE_STR) {
-		return LLVMPointerType(LLVMInt8Type(), 0);
-	}
-
-	return NULL;
 }

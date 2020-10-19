@@ -1,12 +1,6 @@
 # skull/eval/variable.c
 
 ```c
-void variable_read(void *const dest, const Variable *const var)
-```
-
-> Read variable memory of `var` into `dest`.
-
-```c
 Variable *make_variable(const Type *const type, const char32_t *const name, bool is_const)
 ```
 
@@ -15,16 +9,8 @@ Variable *make_variable(const Type *const type, const char32_t *const name, bool
 > Returns `NULL` if var cannot be created, else pointer to created var.
 
 ```c
-char32_t *variable_write(Variable *const var, const void *const data)
-```
-
-> Write `data` to `var`.
-> \
-> If `var` is constant, return error msg, else `NULL`.
-
-```c
 void free_variable(Variable *var)
 ```
 
-> Free variable `var` and its internal memory.
+> Free variable `var`.
 

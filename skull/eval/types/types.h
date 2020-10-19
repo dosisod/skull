@@ -2,10 +2,15 @@
 
 #include <stddef.h>
 
+#include <llvm-c/Core.h>
+
 typedef struct Type {
 	const char *name;
-	size_t bytes;
+
+	LLVMTypeRef (*llvm_type)(void);
 } Type;
+
+LLVMTypeRef gen_llvm_str_type(void);
 
 const Type TYPE_BOOL;
 const Type TYPE_INT;

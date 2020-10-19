@@ -22,28 +22,32 @@ const Type __attribute__((pure)) *find_type(const char *const name) {
 
 const Type TYPE_BOOL = {
 	.name = "bool",
-	.bytes = sizeof(_Bool)
+	.llvm_type = &LLVMInt1Type
 };
 
 const Type TYPE_INT = {
 	.name = "int",
-	.bytes = sizeof(SkullInt)
+	.llvm_type = &LLVMInt64Type
 };
 
 const Type TYPE_FLOAT = {
 	.name = "float",
-	.bytes = sizeof(SkullFloat)
+	.llvm_type = &LLVMDoubleType
 };
 
 const Type TYPE_RUNE = {
 	.name = "rune",
-	.bytes = sizeof(SkullRune)
+	.llvm_type = &LLVMInt32Type
 };
 
 const Type TYPE_STR = {
 	.name = "str",
-	.bytes = sizeof(SkullStr)
+	.llvm_type = &gen_llvm_str_type
 };
+
+LLVMTypeRef gen_llvm_str_type(void) {
+	return LLVMPointerType(LLVMInt8Type(), 0);
+}
 
 const Type **TYPES_AVAILABLE = (const Type *[]){
 	&TYPE_BOOL,

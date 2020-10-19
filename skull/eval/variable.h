@@ -2,6 +2,8 @@
 
 #include <uchar.h>
 
+#include <llvm-c/Core.h>
+
 #include "skull/eval/types/types.h"
 
 typedef struct Variable {
@@ -9,14 +11,9 @@ typedef struct Variable {
 	char32_t *name;
 	_Bool is_const;
 
-	unsigned char *mem;
-
-	void *alloca; // only used to store LLVMValueRef's
+	LLVMValueRef alloca;
 } Variable;
 
 Variable *make_variable(const Type *const, const char32_t *const, _Bool);
-
-char32_t *variable_write(Variable *const, const void *const);
-void variable_read(void *const, const Variable *const);
 
 void free_variable(Variable *);

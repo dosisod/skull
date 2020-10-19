@@ -24,7 +24,7 @@ $(ODIR)/%.o: %.c
 
 test: setup | $(OBJS) $(OBJS_TEST)
 	@echo "\033[92mLink\033[0m test"
-	@$(CC) $(OBJS) $(OBJS_TEST) -o build/test/test $(CFLAGS)
+	@$(CC) $(OBJS) $(OBJS_TEST) -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
 docs:
 	@echo "\033[92mBuild\033[0m docs"
