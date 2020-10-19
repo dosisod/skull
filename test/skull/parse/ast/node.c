@@ -73,8 +73,8 @@ TEST(make_ast_tree_var_assign, {
 	TEST_AST_TREE(U"x =", AST_NODE_VAR_ASSIGN, 0, 3);
 })
 
-TEST(make_ast_tree_import, {
-	TEST_AST_TREE(U"import x from \"y\"", AST_NODE_IMPORT, 0, 17);
+TEST(make_ast_tree_external, {
+	TEST_AST_TREE(U"external x", AST_NODE_EXTERNAL, 0, 10);
 })
 
 TEST(make_ast_tree_return, {
@@ -181,7 +181,7 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_auto_mutable_variable_def,
 	test_make_ast_tree_with_nothing,
 	test_make_ast_tree_var_assign,
-	test_make_ast_tree_import,
+	test_make_ast_tree_external,
 	test_make_ast_tree_return,
 	test_make_ast_tree_return_var,
 	test_make_ast_tree_if,

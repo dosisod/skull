@@ -98,14 +98,6 @@ TEST(token_if_kw, {
 	TEST_CLASSIFY_TOKEN(U"if", TOKEN_KW_IF);
 })
 
-TEST(token_import_kw, {
-	TEST_CLASSIFY_TOKEN(U"import", TOKEN_KW_IMPORT);
-})
-
-TEST(token_from_kw, {
-	TEST_CLASSIFY_TOKEN(U"from", TOKEN_KW_FROM);
-})
-
 TEST(token_equal_oper, {
 	TEST_CLASSIFY_TOKEN(U"=", TOKEN_OPER_EQUAL);
 })
@@ -241,8 +233,6 @@ TEST_SELF(classifier,
 	test_token_mut_kw,
 	test_token_return_kw,
 	test_token_if_kw,
-	test_token_import_kw,
-	test_token_from_kw,
 	test_token_equal_oper,
 	test_token_plus_oper,
 	test_token_minus_oper,

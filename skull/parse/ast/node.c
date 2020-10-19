@@ -165,16 +165,12 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_KW_IMPORT &&
+		if (token->token_type == TOKEN_KW_EXTERNAL &&
 			token->next &&
-			token->next->token_type == TOKEN_IDENTIFIER &&
-			token->next->next &&
-			token->next->next->token_type == TOKEN_KW_FROM &&
-			token->next->next->next &&
-			token->next->next->next->token_type == TOKEN_STR_CONST
+			token->next->token_type == TOKEN_IDENTIFIER
 		) {
-			token = token->next->next->next;
-			push_ast_node(token, &last, AST_NODE_IMPORT, &node);
+			token = token->next;
+			push_ast_node(token, &last, AST_NODE_EXTERNAL, &node);
 			continue;
 		}
 
