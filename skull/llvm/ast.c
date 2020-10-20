@@ -610,11 +610,13 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 		PANIC(FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type }));
 	}
 
-	var->alloca = LLVMBuildAlloca(
-		builder,
-		var->type->llvm_type(),
-		c32stombs(var->name)
-	);
+	if (!var->alloca) {
+		var->alloca = LLVMBuildAlloca(
+			builder,
+			var->type->llvm_type(),
+			c32stombs(var->name)
+		);
+	}
 
 	LLVMValueRef load = LLVMBuildLoad2(
 		builder,
