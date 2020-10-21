@@ -180,12 +180,12 @@ __attribute__((pure)) size_t token_len(const Token *const token) {
 Free all tokens from `head` and beyond.
 */
 void free_tokens(Token *head) {
-	Token *tmp;
+	Token *current;
 
 	while (head) {
-		tmp = head;
+		current = head;
 		head = head->next;
-		tmp->next = NULL;
-		free(tmp);
+		current->next = NULL;
+		free(current);
 	}
 }

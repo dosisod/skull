@@ -101,9 +101,9 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 		var = make_variable(type, name, is_const);
 	}
 	else {
-		char32_t *const tmp_name = token_str(token->next);
-		char *const type_name = c32stombs(tmp_name);
-		free(tmp_name);
+		char32_t *const wide_type_name = token_str(token->next);
+		char *const type_name = c32stombs(wide_type_name);
+		free(wide_type_name);
 
 		var = make_variable(find_type(type_name), name, is_const);
 		free(type_name);

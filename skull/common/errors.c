@@ -65,16 +65,16 @@ The result of this function must be freed.
 char32_t *fmt_error(const char32_t *const fmt, ErrorMsg msgs[]) {
 	const size_t fmt_len = c32slen(fmt);
 
-	ErrorMsg *tmp = msgs;
-	fmt_error_stringify(tmp);
+	ErrorMsg *msg = msgs;
+	fmt_error_stringify(msg);
 
 	size_t num_of_percents = 0;
-	while (tmp->real) {
+	while (msg->real) {
 		num_of_percents++;
-		tmp++;
-		fmt_error_stringify(tmp);
+		msg++;
+		fmt_error_stringify(msg);
 	}
-	tmp = msgs;
+	msg = msgs;
 
 	if (!num_of_percents) {
 		return c32sdup(fmt);
@@ -129,9 +129,9 @@ char32_t *fmt_error(const char32_t *const fmt, ErrorMsg msgs[]) {
 	}
 	offset[0] = '\0';
 
-	while (tmp->real) {
-		free(tmp->real);
-		tmp++;
+	while (msg->real) {
+		free(msg->real);
+		msg++;
 	}
 
 	free(chunks);

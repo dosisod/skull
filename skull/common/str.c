@@ -288,7 +288,7 @@ char32_t c32sunescape(const char32_t *const str, char32_t **err) {
 		}
 	}
 
-	const char32_t tmp[5] = { '\\', escape, opt1, opt2, '\0' };
-	*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = tmp });
+	const char32_t bad_escape[5] = { '\\', escape, opt1, opt2, '\0' };
+	*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = bad_escape });
 	return '\0';
 }

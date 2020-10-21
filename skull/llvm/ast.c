@@ -393,9 +393,9 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
 Store function name of externaly declared function in `node`.
 */
 void declare_external_function(AstNode *node) {
-	char32_t *const tmp = token_str(node->token->next);
-	char *const func_name = c32stombs(tmp);
-	free(tmp);
+	char32_t *const wide_func_name = token_str(node->token->next);
+	char *const func_name = c32stombs(wide_func_name);
+	free(wide_func_name);
 
 	external_function[external_functions] = func_name;
 	external_functions++;
@@ -414,8 +414,8 @@ void llvm_make_function(AstNode *node) {
 		false
 	);
 
-	char32_t *const tmp = token_str(node->token);
-	char *const func_name = c32stombs(tmp);
+	char32_t *const wide_func_name = token_str(node->token);
+	char *const func_name = c32stombs(wide_func_name);
 
 	char **current_function = external_function;
 	while (*current_function) {
@@ -426,10 +426,10 @@ void llvm_make_function(AstNode *node) {
 	}
 
 	if (!*current_function) {
-		PANIC(FMT_ERROR(U"external function \"%\" missing external declaration", { .real = tmp }));
+		PANIC(FMT_ERROR(U"external function \"%\" missing external declaration", { .real = wide_func_name }));
 	}
 
-	free(tmp);
+	free(wide_func_name);
 
 	LLVMValueRef function = LLVMAddFunction(
 		module,

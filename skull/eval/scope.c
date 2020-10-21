@@ -31,12 +31,12 @@ Variable *scope_find_name(const Scope *scope, const char32_t *name) {
 		return NULL;
 	}
 
-	size_t tmp = 0;
-	while (tmp < scope->vars_used) {
-		if (c32scmp(scope->vars[tmp]->name, name)) {
-			return scope->vars[tmp];
+	size_t var_at = 0;
+	while (var_at < scope->vars_used) {
+		if (c32scmp(scope->vars[var_at]->name, name)) {
+			return scope->vars[var_at];
 		}
-		tmp++;
+		var_at++;
 	}
 	return NULL;
 }
@@ -56,11 +56,10 @@ Scope *make_scope(void) {
 Frees a `scope` and all the variables inside of it.
 */
 void free_scope(Scope *scope) {
-	size_t tmp = 0;
-
-	while (tmp < scope->vars_used) {
-		free_variable(scope->vars[tmp]);
-		tmp++;
+	size_t var_at = 0;
+	while (var_at < scope->vars_used) {
+		free_variable(scope->vars[var_at]);
+		var_at++;
 	}
 
 	free(scope);

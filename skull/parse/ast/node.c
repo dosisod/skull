@@ -301,13 +301,13 @@ void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode
 	(*node)->token = *last;
 	(*node)->token_end = token;
 
-	AstNode *const tmp = make_ast_node();
+	AstNode *const new_node = make_ast_node();
 
-	tmp->last = *node;
+	new_node->last = *node;
 	*last = token->next;
 
-	(*node)->next = tmp;
-	(*node) = tmp;
+	(*node)->next = new_node;
+	(*node) = new_node;
 }
 
 /*
@@ -335,7 +335,7 @@ void free_ast_tree(AstNode *node) {
 Internal AST freeing function, dont call directly.
 */
 void free_ast_tree_(AstNode *node) {
-	AstNode *tmp = NULL;
+	AstNode *current = NULL;
 
 	while (node) {
 		if (node->attr) {
@@ -346,9 +346,9 @@ void free_ast_tree_(AstNode *node) {
 			free_ast_tree_(node->child);
 		}
 
-		tmp = node;
+		current = node;
 		node = node->next;
-		tmp->next = NULL;
-		free(tmp);
+		current->next = NULL;
+		free(current);
 	}
 }

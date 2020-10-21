@@ -10,30 +10,30 @@
 Return Skull string converted from `token`
 */
 SkullStr eval_str(const Token *const token, char32_t **error) {
-	char32_t *str;
-	str = malloc((token_len(token) - 1) * sizeof *str);
-	DIE_IF_MALLOC_FAILS(str);
+	char32_t *copy;
+	copy = malloc((token_len(token) - 1) * sizeof *copy);
+	DIE_IF_MALLOC_FAILS(copy);
 
-	const char32_t *tmp = token->begin + 1;
+	const char32_t *str = token->begin + 1;
 	size_t wrote = 0;
-	while (*tmp && tmp < token->end - 1) {
-		const char32_t try_escape = c32sunescape(tmp, error);
+	while (*str && str < token->end - 1) {
+		const char32_t try_escape = c32sunescape(str, error);
 		if (*error) {
-			free(str);
+			free(copy);
 			return NULL;
 		}
 		if (try_escape) {
-			str[wrote] = try_escape;
-			tmp++;
+			copy[wrote] = try_escape;
+			str++;
 		}
 		else {
-			str[wrote] = *tmp;
+			copy[wrote] = *str;
 		}
 
-		tmp++;
+		str++;
 		wrote++;
 	}
-	str[wrote] = '\0';
+	copy[wrote] = '\0';
 
-	return str;
+	return copy;
 }

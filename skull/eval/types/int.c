@@ -1,9 +1,9 @@
 #include <errno.h>
 #include <limits.h>
+#include <stdlib.h>
 
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
-#include "skull/eval/types/sprint_fmt.h"
 #include "skull/parse/classify.h"
 
 #include "skull/eval/types/int.h"
@@ -30,11 +30,11 @@ SkullInt eval_integer(const Token *const token, char32_t **error) {
 		base = 16;
 	}
 
-	char *const tmp = c32stombs(begin);
+	char *const num_str = c32stombs(begin);
 
 	errno = 0;
-	SkullInt ret = strtoll(tmp, NULL, base);
-	free(tmp);
+	SkullInt ret = strtoll(num_str, NULL, base);
+	free(num_str);
 
 	if ((ret == LLONG_MAX || ret == LLONG_MIN) && errno == ERANGE) {
 		*error = FMT_ERROR(ERR_OVERFLOW, { .tok = token });
