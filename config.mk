@@ -1,4 +1,4 @@
-SKULL_VERSION := 0.2.1
+SKULL_VERSION := 0.3.0
 
 BIN := /usr/local/bin/
 MANPATH := $(shell manpath | cut -d : -f1)/man1/
