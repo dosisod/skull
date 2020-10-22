@@ -21,8 +21,6 @@
 	free(panic_str); \
 	exit(1)
 
-extern LLVMBuilderRef builder;
-
 const Type *token_type_to_type(const Token *token) {
 	if (token->token_type == TOKEN_INT_CONST) {
 		return &TYPE_INT;

@@ -35,8 +35,7 @@
 static Scope *scope;
 static LLVMValueRef func;
 static LLVMModuleRef module;
-
-extern LLVMBuilderRef builder;
+static LLVMBuilderRef builder;
 
 #define EXTERNAL_FUNCTIONS_MAX 256
 unsigned external_functions = 0;
@@ -47,7 +46,7 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node);
 /*
 Convert skull code from `str_` into LLVM IR (using `func_` and `module_`).
 */
-void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_) {
+void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_, LLVMBuilderRef _builder) {
 	char32_t *const str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
@@ -61,6 +60,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_)
 	scope = make_scope();
 	func = func_;
 	module = module_;
+	builder = _builder;
 
 	node_to_llvm_ir(node);
 	free_ast_tree(node);
