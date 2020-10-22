@@ -165,11 +165,7 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_KW_EXTERNAL &&
-			token->next &&
-			token->next->token_type == TOKEN_IDENTIFIER
-		) {
-			token = token->next;
+		if (token->token_type == TOKEN_KW_EXTERNAL) {
 			push_ast_node(token, &last, AST_NODE_EXTERNAL, &node);
 			continue;
 		}

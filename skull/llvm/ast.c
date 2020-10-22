@@ -93,7 +93,7 @@ void node_to_llvm_ir(AstNode *node) {
 		}
 
 		else if (node->node_type == AST_NODE_EXTERNAL) {
-			declare_external_function(node);
+			declare_external_function(&node);
 		}
 
 		else if (node->node_type == AST_NODE_FUNCTION) {
@@ -388,13 +388,24 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
 /*
 Store function name of externaly declared function in `node`.
 */
-void declare_external_function(AstNode *node) {
-	char32_t *const wide_func_name = token_str(node->token->next);
+void declare_external_function(AstNode **node) {
+	if (!(*node)->next) {
+		PANIC(U"missing function declaration after \"external\"");
+	}
+
+	char32_t *const wide_func_name = token_str((*node)->next->token);
+
+	if ((*node)->next->node_type != AST_NODE_FUNCTION) {
+		PANIC(FMT_ERROR(U"invalid function declaration \"%\" after \"external\"", { .real = wide_func_name }));
+	}
+
 	char *const func_name = c32stombs(wide_func_name);
 	free(wide_func_name);
 
 	external_function[external_functions] = func_name;
 	external_functions++;
+
+	*node = (*node)->next;
 }
 
 /*

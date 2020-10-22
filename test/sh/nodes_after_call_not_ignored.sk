@@ -1,4 +1,4 @@
-external x
+external x()
 
 x()
 

@@ -74,7 +74,7 @@ TEST(make_ast_tree_var_assign, {
 })
 
 TEST(make_ast_tree_external, {
-	TEST_AST_TREE(U"external x", AST_NODE_EXTERNAL, 0, 10);
+	TEST_AST_TREE(U"external", AST_NODE_EXTERNAL, 0, 8);
 })
 
 TEST(make_ast_tree_function, {

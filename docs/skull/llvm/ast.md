@@ -61,7 +61,7 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs)
 > Build LLVM for assining division of `lhs` and `rhs` to `var`.
 
 ```c
-void declare_external_function(AstNode *node)
+void declare_external_function(AstNode **node)
 ```
 
 > Store function name of externaly declared function in `node`.

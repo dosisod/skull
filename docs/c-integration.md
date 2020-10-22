@@ -21,7 +21,7 @@ and in Skull:
 ```python
 # hello.sk
 
-external hello
+external hello()
 
 hello()
 
