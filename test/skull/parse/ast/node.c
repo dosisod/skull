@@ -77,6 +77,10 @@ TEST(make_ast_tree_external, {
 	TEST_AST_TREE(U"external x", AST_NODE_EXTERNAL, 0, 10);
 })
 
+TEST(make_ast_tree_function, {
+	TEST_AST_TREE(U"x()", AST_NODE_FUNCTION, 0, 3);
+})
+
 TEST(make_ast_tree_return, {
 	TEST_AST_TREE(U"return 0", AST_NODE_RETURN, 0, 8);
 })
@@ -182,6 +186,7 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_with_nothing,
 	test_make_ast_tree_var_assign,
 	test_make_ast_tree_external,
+	test_make_ast_tree_function,
 	test_make_ast_tree_return,
 	test_make_ast_tree_return_var,
 	test_make_ast_tree_if,
