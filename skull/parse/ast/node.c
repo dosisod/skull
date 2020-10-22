@@ -273,6 +273,14 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 			push_ast_node(token, &last, AST_NODE_TYPE_CONST, &node);
 			continue;
 		}
+		if (token->token_type == TOKEN_PAREN_OPEN) {
+			push_ast_node(token, &last, AST_NODE_PAREN_OPEN, &node);
+			continue;
+		}
+		if (token->token_type == TOKEN_PAREN_CLOSE) {
+			push_ast_node(token, &last, AST_NODE_PAREN_CLOSE, &node);
+			continue;
+		}
 
 		free(head);
 		*error = FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token });

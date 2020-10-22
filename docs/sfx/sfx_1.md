@@ -7,11 +7,13 @@ The below guidelines are not enforced, but are strongly recommended.
 Skull programs should use 2 space indentation:
 
 ```python
-main[] int -> [
-  print["hello world!"]
+if true {
+  if false {
+    return 0
+  }
 
-  return 0
-]
+  return 1
+}
 ```
 
 No matter what you chose, your use of indentation should remain constant.
@@ -25,11 +27,11 @@ Files must be stored in UTF-8 format.
 Function and variable names should be in `snake_case`:
 
 ```python
-function_name[] int -> [
-  variable_name: int = 0
+function_name := () -> int {
+  variable_name := 0
 
   return variable_name
-]
+}
 ```
 
 Classes should be in `PascalCase`:

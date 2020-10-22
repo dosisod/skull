@@ -92,7 +92,7 @@ TEST(whitespace_inside_single_quotes_respected, {
 })
 
 TEST(brackets_always_make_their_own_token, {
-	const char32_t *code = U"left[]right";
+	const char32_t *code = U"left{}right";
 	Token *t = tokenize(code);
 
 	ASSERT_EQUAL(t->begin, code);

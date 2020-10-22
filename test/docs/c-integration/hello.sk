@@ -1,5 +1,5 @@
 external hello
 
-hello[]
+hello()
 
 return 0

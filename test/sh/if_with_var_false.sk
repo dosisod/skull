@@ -1,7 +1,7 @@
 x := false
 
-if x [
+if x {
 	return 1
-]
+}
 
 return 0

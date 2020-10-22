@@ -99,9 +99,9 @@ void node_to_llvm_ir(AstNode *node) {
 		else if (
 			node->node_type == AST_NODE_IDENTIFIER &&
 			node->token->next &&
-			*node->token->next->begin == '['
+			node->token->next->token_type == TOKEN_PAREN_OPEN
 		) {
-			llvm_make_function(node);
+			llvm_make_function(&node);
 		}
 
 		else if (node->node_type == AST_NODE_VAR_ASSIGN) {
@@ -404,7 +404,7 @@ void declare_external_function(AstNode *node) {
 /*
 Builds a function declaration from `node`.
 */
-void llvm_make_function(AstNode *node) {
+void llvm_make_function(AstNode **node) {
 	LLVMTypeRef args[] = { LLVMVoidType() };
 
 	LLVMTypeRef type = LLVMFunctionType(
@@ -414,7 +414,7 @@ void llvm_make_function(AstNode *node) {
 		false
 	);
 
-	char32_t *const wide_func_name = token_str(node->token);
+	char32_t *const wide_func_name = token_str((*node)->token);
 	char *const func_name = c32stombs(wide_func_name);
 
 	char **current_function = external_function;
@@ -449,6 +449,8 @@ void llvm_make_function(AstNode *node) {
 		0,
 		""
 	);
+
+	(*node) = (*node)->next->next;
 }
 
 /*

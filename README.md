@@ -11,13 +11,13 @@ import io.print
 
 # this is a comment!
 
-main := [] -> int [
-  print["hello world!"]
+main := () -> int {
+  print("hello world!")
 
   return 0
-]
+}
 
-main[]
+main()
 ```
 
 ## Setup

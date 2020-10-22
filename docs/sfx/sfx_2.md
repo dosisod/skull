@@ -37,7 +37,7 @@ Skull has no concept of "noneness". You cannot have a variable that is "undefine
 
 Functions without a return type (`void`) cannot be assigned to a variable.
 
-### No Implicit Casts
+### No Implicit Casts/Conversions
 
 In other programming languages, implicit conversions may unintentially introduce errors:
 
@@ -52,7 +52,7 @@ Here, `123.456` is implicitly converted from `float` to `int`.
 In Skull, you must explicitly cast to `int`:
 
 ```python
-x: int = int[123.456]
+x: int = int(123.456)
 ```
 
 In most languages, there exists a concept of "truthy" and "falsy":
@@ -71,14 +71,15 @@ The value of `arr` is an object, and therefor is "truthy". In Skull, you must ex
 ```python
 # pseudo code
 
-x: Array[int]
+x: Array(int)
 
-if [bool[x.length]] [
+if bool(x.length) {
   # true
-]
-elif [x.length == 0] [
+}
+
+elif x.length == 0 {
   # also true
-]
+}
 ```
 
 ## Built-in Types

@@ -79,11 +79,19 @@ TEST(token_newline, {
 })
 
 TEST(bracket_token_open, {
-	TEST_CLASSIFY_TOKEN(U"[", TOKEN_BRACKET_OPEN);
+	TEST_CLASSIFY_TOKEN(U"{", TOKEN_BRACKET_OPEN);
 })
 
 TEST(bracket_token_close, {
-	TEST_CLASSIFY_TOKEN(U"]", TOKEN_BRACKET_CLOSE);
+	TEST_CLASSIFY_TOKEN(U"}", TOKEN_BRACKET_CLOSE);
+})
+
+TEST(paren_token_open, {
+	TEST_CLASSIFY_TOKEN(U"(", TOKEN_PAREN_OPEN);
+})
+
+TEST(paren_token_close, {
+	TEST_CLASSIFY_TOKEN(U")", TOKEN_PAREN_CLOSE);
 })
 
 TEST(token_mut_kw, {
@@ -210,7 +218,7 @@ TEST(identifier_cannot_be_keyword, {
 })
 
 TEST(classify_tokens, {
-	Token *t = tokenize(U"[ ]");
+	Token *t = tokenize(U"{ }");
 	classify_tokens(t);
 
 	ASSERT_EQUAL(t->token_type, TOKEN_BRACKET_OPEN);
@@ -230,6 +238,8 @@ TEST_SELF(classifier,
 	test_token_newline,
 	test_bracket_token_open,
 	test_bracket_token_close,
+	test_paren_token_open,
+	test_paren_token_close,
 	test_token_mut_kw,
 	test_token_return_kw,
 	test_token_if_kw,

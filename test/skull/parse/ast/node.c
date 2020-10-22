@@ -86,7 +86,7 @@ TEST(make_ast_tree_return_var, {
 })
 
 TEST(make_ast_tree_if, {
-	const char32_t *code = U"if true [ return 1 ]";
+	const char32_t *code = U"if true { return 1 }";
 	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(code, &error);
 
@@ -104,7 +104,7 @@ TEST(make_ast_tree_if, {
 })
 
 TEST(make_ast_tree_if_with_var, {
-	const char32_t *code = U"if x [ return 1 ]";
+	const char32_t *code = U"if x { return 1 }";
 	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(code, &error);
 
@@ -155,7 +155,7 @@ TEST(make_ast_tree_comment, {
 
 TEST(make_ast_tree_recursive_check_fails, {
 	char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"[", &error);
+	AstNode *node = make_ast_tree(U"{", &error);
 
 	ASSERT_TRUTHY(c32scmp(ERR_EOF_NO_BRACKET, error));
 	ASSERT_FALSEY(node);

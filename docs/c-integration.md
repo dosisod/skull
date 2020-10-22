@@ -23,7 +23,7 @@ and in Skull:
 
 external hello
 
-hello[]
+hello()
 
 return 0
 ```
