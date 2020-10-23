@@ -75,6 +75,42 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
+bool is_ast_function(Token **_token, Token **last, AstNode **node) {
+	Token *token = *_token;
+
+	if (token->token_type == TOKEN_IDENTIFIER &&
+		token->next &&
+		token->next->token_type == TOKEN_PAREN_OPEN &&
+		token->next->next &&
+		token->next->next->token_type == TOKEN_PAREN_CLOSE
+	) {
+		*_token = token->next->next;
+		push_ast_node(*_token, last, AST_NODE_FUNCTION, node);
+		return true;
+	}
+
+	return false;
+}
+
+bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
+	Token *token = *_token;
+
+	if (token->token_type == TOKEN_KW_EXTERNAL &&
+		token->next &&
+		token->next->token_type == TOKEN_IDENTIFIER &&
+		token->next->next &&
+		token->next->next->token_type == TOKEN_PAREN_OPEN &&
+		token->next->next->next &&
+		token->next->next->next->token_type == TOKEN_PAREN_CLOSE
+	) {
+		*_token = token->next->next->next;
+		push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
+		return true;
+	}
+
+	return false;
+}
+
 __attribute__((pure)) bool is_const_literal(Token *token) {
 	return (
 		token->token_type == TOKEN_INT_CONST ||
@@ -165,11 +201,6 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_KW_EXTERNAL) {
-			push_ast_node(token, &last, AST_NODE_EXTERNAL, &node);
-			continue;
-		}
-
 		if (token->token_type == TOKEN_KW_RETURN &&
 			token->next && (
 			token->next->token_type == TOKEN_IDENTIFIER ||
@@ -237,14 +268,11 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_IDENTIFIER &&
-			token->next &&
-			token->next->token_type == TOKEN_PAREN_OPEN &&
-			token->next->next &&
-			token->next->next->token_type == TOKEN_PAREN_CLOSE
-		) {
-			token = token->next->next;
-			push_ast_node(token, &last, AST_NODE_FUNCTION, &node);
+		if (is_ast_function(&token, &last, &node)) {
+			continue;
+		}
+
+		if (is_ast_function_proto(&token, &last, &node)) {
 			continue;
 		}
 

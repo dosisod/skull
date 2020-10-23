@@ -8,7 +8,7 @@
 void str_to_llvm_ir(char *const, LLVMValueRef, LLVMModuleRef, LLVMBuilderRef);
 void node_to_llvm_ir(AstNode *);
 
-void declare_external_function(AstNode **);
+void declare_external_function(AstNode *);
 void llvm_make_return(AstNode *);
 void llvm_make_var_def(AstNode **);
 void llvm_make_if(AstNode *);
