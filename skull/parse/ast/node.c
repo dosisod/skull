@@ -95,20 +95,35 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (token->token_type == TOKEN_KW_EXTERNAL &&
+	if (!(token->token_type == TOKEN_KW_EXTERNAL &&
 		token->next &&
 		token->next->token_type == TOKEN_IDENTIFIER &&
 		token->next->next &&
 		token->next->next->token_type == TOKEN_PAREN_OPEN &&
-		token->next->next->next &&
-		token->next->next->next->token_type == TOKEN_PAREN_CLOSE
+		token->next->next->next)
 	) {
-		*_token = token->next->next->next;
-		push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
-		return true;
+		return false;
 	}
 
-	return false;
+	if (token->next->next->next->token_type == TOKEN_PAREN_CLOSE) {
+		*_token = token->next->next->next;
+	}
+
+	else if (token->next->next->next->token_type == TOKEN_NEW_IDENTIFIER &&
+		token->next->next->next->next &&
+		token->next->next->next->next->token_type == TOKEN_TYPE &&
+		token->next->next->next->next->next &&
+		token->next->next->next->next->next->token_type == TOKEN_PAREN_CLOSE
+	) {
+		*_token = token->next->next->next->next->next;
+	}
+
+	else {
+		return false;
+	}
+
+	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
+	return true;
 }
 
 __attribute__((pure)) bool is_const_literal(Token *token) {
