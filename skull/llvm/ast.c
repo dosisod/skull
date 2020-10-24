@@ -409,10 +409,23 @@ void declare_external_function(AstNode *node) {
 	f->name = func_name;
 	f->next = NULL;
 
+	LLVMTypeRef *params = NULL;
+	unsigned num_params = 0;
+
+	if (node->token->next->next->next->token_type != TOKEN_PAREN_CLOSE) {
+		char32_t *wide_type_name = token_str(node->token->next->next->next->next);
+		char *type_name = c32stombs(wide_type_name);
+		free(wide_type_name);
+
+		LLVMTypeRef param_type = find_type(type_name)->llvm_type();
+		params = &param_type;
+		num_params = 1;
+	}
+
 	LLVMTypeRef type = LLVMFunctionType(
 		LLVMVoidType(),
-		NULL,
-		0,
+		params,
+		num_params,
 		false
 	);
 	f->type = type;

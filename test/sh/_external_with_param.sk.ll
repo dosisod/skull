@@ -5,4 +5,4 @@ define i64 @main() {
 entry:
 }
 
-declare void @x()
+declare void @x(i64)
