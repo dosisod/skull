@@ -41,6 +41,8 @@ typedef struct ExternalFunction ExternalFunction;
 
 typedef struct ExternalFunction {
 	char *name;
+	LLVMValueRef function;
+	LLVMTypeRef type;
 
 	ExternalFunction *next;
 } ExternalFunction;
@@ -407,6 +409,22 @@ void declare_external_function(AstNode *node) {
 	f->name = func_name;
 	f->next = NULL;
 
+	LLVMTypeRef type = LLVMFunctionType(
+		LLVMVoidType(),
+		NULL,
+		0,
+		false
+	);
+	f->type = type;
+
+	LLVMValueRef function = LLVMAddFunction(
+		module,
+		func_name,
+		type
+	);
+	LLVMSetLinkage(function, LLVMExternalLinkage);
+	f->function = function;
+
 	ExternalFunction *head = external_functions;
 	while (head) {
 		if (!head->next) {
@@ -427,15 +445,6 @@ void declare_external_function(AstNode *node) {
 Builds a function declaration from `node`.
 */
 void llvm_make_function(AstNode *node) {
-	LLVMTypeRef args[] = { LLVMVoidType() };
-
-	LLVMTypeRef type = LLVMFunctionType(
-		LLVMVoidType(),
-		args,
-		0,
-		false
-	);
-
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
@@ -446,27 +455,17 @@ void llvm_make_function(AstNode *node) {
 		}
 		current_function = current_function->next;
 	}
+	free(func_name);
 
 	if (!current_function) {
 		PANIC(FMT_ERROR(U"external function \"%\" missing external declaration", { .real = wide_func_name }));
 	}
-
 	free(wide_func_name);
-
-	LLVMValueRef function = LLVMAddFunction(
-		module,
-		func_name,
-		type
-	);
-
-	free(func_name);
-
-	LLVMSetLinkage(function, LLVMExternalLinkage);
 
 	LLVMBuildCall2(
 		builder,
-		type,
-		function,
+		current_function->type,
+		current_function->function,
 		NULL,
 		0,
 		""
