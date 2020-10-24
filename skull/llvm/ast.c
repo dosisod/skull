@@ -37,9 +37,15 @@ static LLVMValueRef func;
 static LLVMModuleRef module;
 static LLVMBuilderRef builder;
 
-#define EXTERNAL_FUNCTIONS_MAX 256
-unsigned external_functions = 0;
-char *external_function[EXTERNAL_FUNCTIONS_MAX] = {0};
+typedef struct ExternalFunction ExternalFunction;
+
+typedef struct ExternalFunction {
+	char *name;
+
+	ExternalFunction *next;
+} ExternalFunction;
+
+ExternalFunction *external_functions = NULL;
 
 void llvm_assign_identifier(Variable *const var, const AstNode *const node);
 
@@ -66,10 +72,11 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_,
 	free_ast_tree(node);
 	free(str);
 
-	char **current_function = external_function;
-	while (*current_function) {
-		free(*current_function);
-		current_function++;
+	ExternalFunction *f = external_functions;
+	while (f && f->next) {
+		free(f->name);
+
+		f = f->next;
 	}
 }
 
@@ -393,8 +400,27 @@ void declare_external_function(AstNode *node) {
 	char *const func_name = c32stombs(wide_func_name);
 	free(wide_func_name);
 
-	external_function[external_functions] = func_name;
-	external_functions++;
+	ExternalFunction *f;
+	f = malloc(sizeof *f);
+	DIE_IF_MALLOC_FAILS(f);
+
+	f->name = func_name;
+	f->next = NULL;
+
+	ExternalFunction *head = external_functions;
+	while (head) {
+		if (!head->next) {
+			break;
+		}
+		head = head->next;
+	}
+
+	if (head) {
+		head->next = f;
+	}
+	else {
+		external_functions = f;
+	}
 }
 
 /*
@@ -413,15 +439,15 @@ void llvm_make_function(AstNode *node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
-	char **current_function = external_function;
-	while (*current_function) {
-		if (strcmp(*current_function, func_name) == 0) {
+	ExternalFunction *current_function = external_functions;
+	while (current_function) {
+		if (strcmp(current_function->name, func_name) == 0) {
 			break;
 		}
-		current_function++;
+		current_function = current_function->next;
 	}
 
-	if (!*current_function) {
+	if (!current_function) {
 		PANIC(FMT_ERROR(U"external function \"%\" missing external declaration", { .real = wide_func_name }));
 	}
 
