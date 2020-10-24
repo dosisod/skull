@@ -35,6 +35,14 @@ char32_t *token_str(const Token *token)
 > The result of this function must be freed.
 
 ```c
+char *token_mbs_str(const Token *token)
+```
+
+> Make a heap allocated copy of the data inside `token` as a multi-byte string.
+> \
+> The result of this function must be freed.
+
+```c
 bool token_cmp(const char32_t *const str, const Token *const token)
 ```
 

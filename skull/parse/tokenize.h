@@ -25,3 +25,4 @@ size_t token_len(const Token *);
 _Bool token_cmp(const char32_t *const, const Token *const);
 
 char32_t *token_str(const Token *);
+char *token_mbs_str(const Token *);

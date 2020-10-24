@@ -165,6 +165,19 @@ char32_t *token_str(const Token *token) {
 }
 
 /*
+Make a heap allocated copy of the data inside `token` as a multi-byte string.
+
+The result of this function must be freed.
+*/
+char *token_mbs_str(const Token *token) {
+	char32_t *const tmp = token_str(token);
+	char *const ret = c32stombs(tmp);
+
+	free(tmp);
+	return ret;
+}
+
+/*
 Returns true if `str` is equal to the value of `token`.
 */
 bool token_cmp(const char32_t *const str, const Token *const token) {

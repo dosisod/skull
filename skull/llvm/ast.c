@@ -398,9 +398,7 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
 Store function name of externaly declared function in `node`.
 */
 void declare_external_function(AstNode *node) {
-	char32_t *const wide_func_name = token_str(node->token->next);
-	char *const func_name = c32stombs(wide_func_name);
-	free(wide_func_name);
+	char *const func_name = token_mbs_str(node->token->next);
 
 	ExternalFunction *f;
 	f = malloc(sizeof *f);
@@ -413,9 +411,7 @@ void declare_external_function(AstNode *node) {
 	unsigned num_params = 0;
 
 	if (node->token->next->next->next->token_type != TOKEN_PAREN_CLOSE) {
-		char32_t *wide_type_name = token_str(node->token->next->next->next->next);
-		char *type_name = c32stombs(wide_type_name);
-		free(wide_type_name);
+		char *type_name = token_mbs_str(node->token->next->next->next->next);
 
 		LLVMTypeRef param_type = find_type(type_name)->llvm_type();
 		params = &param_type;
