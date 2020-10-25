@@ -398,7 +398,8 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
 Store function name of externaly declared function in `node`.
 */
 void declare_external_function(AstNode *node) {
-	char *const func_name = token_mbs_str(node->token->next);
+	char32_t *const wide_func_name = token_str(node->token->next);
+	char *const func_name = c32stombs(wide_func_name);
 
 	ExternalFunction *f;
 	f = malloc(sizeof *f);
@@ -436,11 +437,16 @@ void declare_external_function(AstNode *node) {
 
 	ExternalFunction *head = external_functions;
 	while (head) {
+		if (strcmp(func_name, head->name) == 0) {
+			PANIC(FMT_ERROR(U"cannot redeclare external function \"%\"", { .real = wide_func_name }));
+		}
+
 		if (!head->next) {
 			break;
 		}
 		head = head->next;
 	}
+	free(wide_func_name);
 
 	if (head) {
 		head->next = f;

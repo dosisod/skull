@@ -105,6 +105,7 @@ test_err "error/mult_mismatched_consts.sk" "Compilation error: cannot multiply \
 test_err "error/div_mismatched_consts.sk" "Compilation error: cannot divide \"1\" and \"\"fail\"\""
 test_err "error/assign_mismatch_var_type.sk" "Compilation error: type mismatch: expected type \"bool\""
 test_err "error/missing_external.sk" "Compilation error: external function \"x\" missing external declaration"
+test_err "error/redeclare_external.sk" "Compilation error: cannot redeclare external function \"x\""
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
