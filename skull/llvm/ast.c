@@ -139,7 +139,7 @@ void llvm_make_return(AstNode *node) {
 		free(var_name);
 
 		if (found_var->type != &TYPE_INT) {
-			PANIC(FMT_ERROR(ERR_NON_INT_RETURN, { .var = found_var }));
+			PANIC(FMT_ERROR(U"returning non-int variable \"%\" from main", { .var = found_var }));
 		}
 
 		LLVMBuildRet(
@@ -499,7 +499,7 @@ void llvm_make_assign(AstNode **node) {
 	}
 
 	if (found_var->is_const) {
-		PANIC(FMT_ERROR(ERR_CANNOT_ASSIGN_CONST, { .real = var_name }));
+		PANIC(FMT_ERROR(U"cannot reassign const variable \"%\"", { .real = var_name }));
 	}
 	free(var_name);
 

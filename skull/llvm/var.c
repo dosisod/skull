@@ -94,7 +94,7 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 		}
 		else {
 			free(name);
-			PANIC(FMT_ERROR(ERR_INVALID_INPUT, { .tok = node->next->token }));
+			PANIC(FMT_ERROR(U"invalid input: \"%\"", { .tok = node->next->token }));
 		}
 		var = make_variable(type, name, is_const);
 	}
@@ -111,5 +111,5 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 	}
 	free_variable(var);
 
-	PANIC(FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .real = name }));
+	PANIC(FMT_ERROR(U"variable \"%\" already defined", { .real = name }));
 }

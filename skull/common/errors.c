@@ -10,44 +10,15 @@ const char32_t *ERR_UNEXPECTED_TOKEN = ERR_UNEXPECTED_TOKEN_(U"%");
 
 const char32_t *ERR_EOF_NO_BRACKET = U"Reached EOF, expected closing bracket";
 
-const char32_t *ERR_INVALID_INPUT = ERR_INVALID_INPUT_(U"%");
-
-const char32_t *ERR_TYPE_MISMATCH = ERR_TYPE_MISMATCH_(U"%");
+const char32_t *ERR_TYPE_MISMATCH = U"type mismatch: expected type \"%\"";
 
 const char32_t *ERR_BAD_ESCAPE = ERR_BAD_ESCAPE_(U"%");
 
-const char32_t *ERR_UNEXPECTED_PARAM = ERR_UNEXPECTED_PARAM_(U"%");
-
-const char32_t *ERR_INVALID_PARAMS = ERR_INVALID_PARAMS_(U"%");
-
-const char32_t *ERR_VAR_ALREADY_DEFINED = ERR_VAR_ALREADY_DEFINED_(U"%");
-
-const char32_t *ERR_VAR_NOT_FOUND = ERR_VAR_NOT_FOUND_(U"%");
-
-const char32_t *ERR_CANNOT_ASSIGN_CONST = ERR_CANNOT_ASSIGN_CONST_(U"%");
+const char32_t *ERR_VAR_NOT_FOUND = U"variable \"%\" not found";
 
 const char32_t *ERR_OVERFLOW = ERR_OVERFLOW_(U"%");
 
-const char32_t *ERR_MISSING_ASSIGNMENT = ERR_MISSING_ASSIGNMENT_(U"%");
-
-const char32_t *ERR_NON_INT_RETURN = ERR_NON_INT_RETURN_(U"%");
-
-const char32_t *ERR_CANNOT_ADD = ERR_CANNOT_("add", U"%", U"%");
-const char32_t *ERR_ADD_UNAVAILABLE = ERR_UNAVAILABLE_("addition", U"%");
-
-const char32_t *ERR_CANNOT_SUB = ERR_CANNOT_("subtract", U"%", U"%");
-const char32_t *ERR_SUB_UNAVAILABLE = ERR_UNAVAILABLE_("subtraction", U"%");
-
-const char32_t *ERR_CANNOT_MULT = ERR_CANNOT_("multiply", U"%", U"%");
-const char32_t *ERR_MULT_UNAVAILABLE = ERR_UNAVAILABLE_("multiplication", U"%");
-
-const char32_t *ERR_CANNOT_DIV = ERR_CANNOT_("divide", U"%", U"%");
-const char32_t *ERR_DIV_UNAVAILABLE = ERR_UNAVAILABLE_("division", U"%");
-
-const char32_t *ERR_ASSIGN_FUNC = ERR_ASSIGN_FUNC_(U"%");
-
-#undef ERR_CANNOT
-#undef ERR_UNAVAILABLE
+const char32_t *ERR_MISSING_ASSIGNMENT = U"missing value in assignment to variable \"%\"";
 
 typedef struct {
 	const char32_t *percent;
