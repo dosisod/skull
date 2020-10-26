@@ -43,6 +43,7 @@ typedef struct ExternalFunction {
 	char *name;
 	LLVMValueRef function;
 	LLVMTypeRef type;
+	unsigned num_params;
 
 	ExternalFunction *next;
 } ExternalFunction;
@@ -409,20 +410,20 @@ void declare_external_function(AstNode *node) {
 	f->next = NULL;
 
 	LLVMTypeRef *params = NULL;
-	unsigned num_params = 0;
+	f->num_params = 0;
 
 	if (node->token->next->next->next->token_type != TOKEN_PAREN_CLOSE) {
 		char *type_name = token_mbs_str(node->token->next->next->next->next);
 
 		LLVMTypeRef param_type = find_type(type_name)->llvm_type();
 		params = &param_type;
-		num_params = 1;
+		f->num_params = 1;
 	}
 
 	LLVMTypeRef type = LLVMFunctionType(
 		LLVMVoidType(),
 		params,
-		num_params,
+		f->num_params,
 		false
 	);
 	f->type = type;
@@ -482,7 +483,7 @@ void llvm_make_function(AstNode *node) {
 		current_function->type,
 		current_function->function,
 		NULL,
-		0,
+		current_function->num_params,
 		""
 	);
 }
