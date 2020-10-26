@@ -8,6 +8,8 @@
 
 #include "skull/parse/ast/node.h"
 
+bool is_const_literal(Token *);
+
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
@@ -78,18 +80,29 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (token->token_type == TOKEN_IDENTIFIER &&
+	if (!(token->token_type == TOKEN_IDENTIFIER &&
 		token->next &&
 		token->next->token_type == TOKEN_PAREN_OPEN &&
-		token->next->next &&
-		token->next->next->token_type == TOKEN_PAREN_CLOSE
+		token->next->next)
 	) {
-		*_token = token->next->next;
-		push_ast_node(*_token, last, AST_NODE_FUNCTION, node);
-		return true;
+		return false;
 	}
 
-	return false;
+	if (token->next->next->token_type == TOKEN_PAREN_CLOSE) {
+		*_token = token->next->next;
+	}
+	else if (is_const_literal(token->next->next) &&
+		token->next->next->next &&
+		token->next->next->next->token_type == TOKEN_PAREN_CLOSE
+	) {
+		*_token = token->next->next->next;
+	}
+	else {
+		return false;
+	}
+
+	push_ast_node(*_token, last, AST_NODE_FUNCTION, node);
+	return true;
 }
 
 bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {

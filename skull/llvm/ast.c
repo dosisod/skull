@@ -478,11 +478,22 @@ void llvm_make_function(AstNode *node) {
 	}
 	free(wide_func_name);
 
+	LLVMValueRef params = NULL;
+
+	if (current_function->num_params == 1 &&
+		node->token->next->next->token_type == TOKEN_INT_CONST
+	) {
+		char32_t *error = NULL;
+		params = LLVM_INT(eval_integer(node->token->next->next, &error));
+
+		PANIC_ON_ERR(error);
+	}
+
 	LLVMBuildCall2(
 		builder,
 		current_function->type,
 		current_function->function,
-		NULL,
+		&params,
 		current_function->num_params,
 		""
 	);
