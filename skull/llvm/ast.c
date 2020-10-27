@@ -10,15 +10,10 @@
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/flow.h"
 #include "skull/llvm/func.h"
+#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/ast.h"
-
-#define PANIC(str) \
-	char *const panic_str = c32stombs(str); \
-	printf("Compilation error: %s\n", panic_str); \
-	free(panic_str); \
-	exit(1)
 
 LLVMModuleRef module;
 LLVMValueRef func;

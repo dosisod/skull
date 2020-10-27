@@ -1,27 +1,13 @@
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "skull/common/errors.h"
-#include "skull/common/str.h"
 #include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
+#include "skull/llvm/aliases.h"
+#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
-#include "skull/llvm/aliases.h"
-
 #include "skull/llvm/math.h"
-
-#define PANIC(str) \
-	char *const panic_str = c32stombs(str); \
-	printf("Compilation error: %s\n", panic_str); \
-	free(panic_str); \
-	exit(1)
-
-#define PANIC_ON_ERR(str) \
-	if (str) { \
-		PANIC(str); \
-	}
 
 extern LLVMBuilderRef builder;
 

@@ -1,6 +1,4 @@
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 #include <llvm-c/Core.h>
 
@@ -11,20 +9,10 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/variable.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/flow.h"
-
-#define PANIC(str) \
-	char *const panic_str = c32stombs(str); \
-	printf("Compilation error: %s\n", panic_str); \
-	free(panic_str); \
-	exit(1)
-
-#define PANIC_ON_ERR(str) \
-	if (str) { \
-		PANIC(str); \
-	}
 
 extern Scope *scope;
 extern LLVMValueRef func;

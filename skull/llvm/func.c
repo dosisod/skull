@@ -1,7 +1,5 @@
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "skull/common/errors.h"
@@ -10,20 +8,10 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/types/types.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/func.h"
-
-#define PANIC(str) \
-	char *const panic_str = c32stombs(str); \
-	printf("Compilation error: %s\n", panic_str); \
-	free(panic_str); \
-	exit(1)
-
-#define PANIC_ON_ERR(str) \
-	if (str) { \
-		PANIC(str); \
-	}
 
 extern LLVMBuilderRef builder;
 extern LLVMModuleRef module;

@@ -1,6 +1,4 @@
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include <llvm-c/Core.h>
@@ -9,17 +7,11 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/defs.h"
+#include "skull/llvm/aliases.h"
+#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
-#include "skull/llvm/aliases.h"
-
 #include "skull/llvm/var.h"
-
-#define PANIC(str) \
-	char *const panic_str = c32stombs(str); \
-	printf("Compilation error: %s\n", panic_str); \
-	free(panic_str); \
-	exit(1)
 
 const Type *token_type_to_type(const Token *token) {
 	if (token->token_type == TOKEN_INT_CONST) {
