@@ -143,28 +143,28 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		char *const mbs = c32stombs(str);
 		const unsigned len = (unsigned)strlen(mbs);
 
+		LLVMValueRef str_arr = LLVMBuildAlloca(
+			builder,
+			LLVMArrayType(
+				LLVMInt8Type(),
+				len + 1
+			),
+			""
+		);
+
 		LLVMBuildStore(
 			builder,
 			LLVMConstString(mbs, len, false),
-			LLVMBuildAlloca(
-				builder,
-				LLVMArrayType(
-					LLVMInt8Type(),
-					len + 1
-				),
-				""
-			)
+			str_arr
 		);
 		free(mbs);
-
-		LLVMTypeRef str_ptr = LLVMPointerType(LLVMInt8Type(), 0);
 
 		LLVMBuildStore(
 			builder,
 			LLVMBuildBitCast(
 				builder,
-				var->alloca,
-				str_ptr,
+				str_arr,
+				LLVMPointerType(LLVMInt8Type(), 0),
 				""
 			),
 			var->alloca
