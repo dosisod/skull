@@ -7,9 +7,9 @@
 #include "skull/common/color.h"
 #include "skull/common/errors.h"
 #include "skull/common/io.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/llvm/ast.h"
-#include "skull/llvm/panic.h"
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<version unknown>"

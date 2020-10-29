@@ -5,10 +5,10 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/defs.h"
 #include "skull/llvm/aliases.h"
-#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/var.h"

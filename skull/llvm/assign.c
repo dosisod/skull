@@ -4,6 +4,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/common/errors.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/scope.h"
 #include "skull/eval/types/bool.h"
@@ -14,7 +15,6 @@
 #include "skull/eval/types/str.h"
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/math.h"
-#include "skull/llvm/panic.h"
 #include "skull/llvm/var.h"
 
 #include "skull/llvm/assign.h"

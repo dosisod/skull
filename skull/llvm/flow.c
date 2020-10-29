@@ -3,13 +3,13 @@
 #include <llvm-c/Core.h>
 
 #include "skull/common/errors.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/scope.h"
 #include "skull/eval/types/bool.h"
 #include "skull/eval/types/int.h"
 #include "skull/eval/variable.h"
 #include "skull/llvm/aliases.h"
-#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/flow.h"

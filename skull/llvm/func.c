@@ -4,11 +4,11 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/int.h"
 #include "skull/eval/types/types.h"
 #include "skull/llvm/aliases.h"
-#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/func.h"

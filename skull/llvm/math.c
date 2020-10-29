@@ -1,10 +1,10 @@
 #include <stdbool.h>
 
 #include "skull/common/errors.h"
+#include "skull/common/panic.h"
 #include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
 #include "skull/llvm/aliases.h"
-#include "skull/llvm/panic.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/math.h"
