@@ -6,8 +6,6 @@
 #include "parse/classify.h"
 #include "parse/tokenize.h"
 
-#include "eval/eval_float.h"
-#include "eval/eval_integer.h"
 #include "eval/scope.h"
 #include "eval/types/types.h"
 #include "eval/variable.h"
@@ -43,8 +41,6 @@ int main(void) {
 	error_test_self(&passed);
 
 	scope_test_self(&passed);
-	eval_float_test_self(&passed);
-	eval_integer_test_self(&passed);
 	variable_test_self(&passed);
 
 	str_test_self(&passed);
