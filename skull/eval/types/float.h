@@ -3,4 +3,4 @@
 #include "skull/eval/types/defs.h"
 #include "skull/parse/tokenize.h"
 
-SkullFloat eval_float(const Token *const, char32_t **);
+SkullFloat eval_float(const Token *const);

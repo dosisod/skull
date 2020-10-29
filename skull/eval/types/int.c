@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "skull/common/errors.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/parse/classify.h"
 
@@ -10,10 +11,8 @@
 
 /*
 Returns an Skull integer parsed from `token`.
-
-`error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-SkullInt eval_integer(const Token *const token, char32_t **error) {
+SkullInt eval_integer(const Token *const token) {
 	const char32_t *begin = token->begin;
 	int base = 10;
 
@@ -37,7 +36,7 @@ SkullInt eval_integer(const Token *const token, char32_t **error) {
 	free(num_str);
 
 	if ((ret == LLONG_MAX || ret == LLONG_MIN) && errno == ERANGE) {
-		*error = FMT_ERROR(ERR_OVERFLOW, { .tok = token });
+		PANIC(FMT_ERROR(ERR_OVERFLOW, { .tok = token }));
 	}
 
 	return ret;

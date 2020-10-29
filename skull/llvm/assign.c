@@ -101,25 +101,19 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		return;
 	}
 
-	char32_t *err = NULL;
-
 	if (var->type == &TYPE_INT && node->node_type == AST_NODE_INT_CONST) {
 		LLVMBuildStore(
 			builder,
-			LLVM_INT(eval_integer(node->token, &err)),
+			LLVM_INT(eval_integer(node->token)),
 			var->alloca
 		);
-
-		PANIC_ON_ERR(err);
 	}
 	else if (var->type == &TYPE_FLOAT && node->node_type == AST_NODE_FLOAT_CONST) {
 		LLVMBuildStore(
 			builder,
-			LLVM_FLOAT(eval_float(node->token, &err)),
+			LLVM_FLOAT(eval_float(node->token)),
 			var->alloca
 		);
-
-		PANIC_ON_ERR(err);
 	}
 	else if (var->type == &TYPE_BOOL && node->node_type == AST_NODE_BOOL_CONST) {
 		LLVMBuildStore(
@@ -131,14 +125,12 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	else if (var->type == &TYPE_RUNE && node->node_type == AST_NODE_RUNE_CONST) {
 		LLVMBuildStore(
 			builder,
-			LLVM_RUNE(eval_rune(node->token, &err)),
+			LLVM_RUNE(eval_rune(node->token)),
 			var->alloca
 		);
-
-		PANIC_ON_ERR(err);
 	}
 	else if (var->type == &TYPE_STR && node->node_type == AST_NODE_STR_CONST) {
-		SkullStr str = eval_str(node->token, &err);
+		SkullStr str = eval_str(node->token);
 
 		char *const mbs = c32stombs(str);
 		const unsigned len = (unsigned)strlen(mbs);

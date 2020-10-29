@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "skull/common/errors.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/parse/classify.h"
 
@@ -11,10 +12,8 @@
 
 /*
 Returns a Skull float parsed from `token`.
-
-`error` is `NULL` if no error occurs, else `error` points to error msg.
 */
-SkullFloat eval_float(const Token *const token, char32_t **error) {
+SkullFloat eval_float(const Token *const token) {
 	char *const float_str = c32stombs(token->begin);
 
 	if (strcmp("Infinity", float_str) == 0) {
@@ -31,7 +30,7 @@ SkullFloat eval_float(const Token *const token, char32_t **error) {
 	free(float_str);
 
 	if (isinf(ret) && errno == ERANGE) {
-		*error = FMT_ERROR(ERR_OVERFLOW, { .tok = token });
+		PANIC(FMT_ERROR(ERR_OVERFLOW, { .tok = token }));
 	}
 
 	return ret;

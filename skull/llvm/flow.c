@@ -52,14 +52,10 @@ void llvm_make_return(AstNode *node) {
 		);
 	}
 	else {
-		char32_t *error = NULL;
-
 		LLVMBuildRet(
 			builder,
-			LLVM_INT(eval_integer(node->token->next, &error))
+			LLVM_INT(eval_integer(node->token->next))
 		);
-
-		PANIC_ON_ERR(error);
 	}
 }
 

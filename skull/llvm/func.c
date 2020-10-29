@@ -109,10 +109,7 @@ void llvm_make_function(AstNode *node) {
 		current_function->param_types == &TYPE_INT &&
 		node->token->next->next->token_type == TOKEN_INT_CONST
 	) {
-		char32_t *error = NULL;
-		params = LLVM_INT(eval_integer(node->token->next->next, &error));
-
-		PANIC_ON_ERR(error);
+		params = LLVM_INT(eval_integer(node->token->next->next));
 	}
 
 	LLVMBuildCall2(

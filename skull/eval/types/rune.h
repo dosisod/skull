@@ -3,4 +3,4 @@
 #include "skull/eval/types/defs.h"
 #include "skull/parse/tokenize.h"
 
-SkullRune eval_rune(const Token *const, char32_t **);
+SkullRune eval_rune(const Token *const);
