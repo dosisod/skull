@@ -81,6 +81,7 @@ test "div_float_consts.sk"
 test "multiple_externals.sk"
 test "external_with_param.sk"
 test "function_single_param.sk"
+test "escape_sequences.sk"
 
 test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_err ".sk" "\".sk\" is not a valid name, exiting"

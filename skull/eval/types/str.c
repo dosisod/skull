@@ -19,13 +19,12 @@ SkullStr eval_str(const Token *const token) {
 	size_t wrote = 0;
 	while (*str && str < token->end - 1) {
 		char32_t *error = NULL;
-		const char32_t try_escape = c32sunescape(str, &error);
+		const char32_t try_escape = c32sunescape(&str, &error);
 
 		PANIC_ON_ERR(error);
 
 		if (try_escape) {
 			copy[wrote] = try_escape;
-			str++;
 		}
 		else {
 			copy[wrote] = *str;
