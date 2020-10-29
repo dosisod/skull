@@ -58,17 +58,6 @@ TEST(make_ast_tree_auto_mutable_variable_def, {
 	TEST_AST_TREE(U"mut x :=", AST_NODE_VAR_DEF, 0, 8);
 })
 
-TEST(make_ast_tree_with_nothing, {
-	char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"", &error);
-
-	ASSERT_TRUTHY(c32scmp(ERR_UNEXPECTED_TOKEN_(U""), error));
-	ASSERT_FALSEY(node);
-
-	free(error);
-	free_ast_tree(node);
-})
-
 TEST(make_ast_tree_var_assign, {
 	TEST_AST_TREE(U"x =", AST_NODE_VAR_ASSIGN, 0, 3);
 })
@@ -157,17 +146,6 @@ TEST(make_ast_tree_comment, {
 	TEST_AST_TREE(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
 })
 
-TEST(make_ast_tree_recursive_check_fails, {
-	char32_t *error = NULL;
-	AstNode *node = make_ast_tree(U"{", &error);
-
-	ASSERT_TRUTHY(c32scmp(ERR_EOF_NO_BRACKET, error));
-	ASSERT_FALSEY(node);
-
-	free_ast_tree(node);
-	free(error);
-})
-
 TEST(free_ast_tree, {
 	char32_t *error = NULL;
 	AstNode *node = make_ast_tree(U"hello world", &error);
@@ -183,7 +161,6 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_mutable_variable_def,
 	test_make_ast_tree_auto_variable_def,
 	test_make_ast_tree_auto_mutable_variable_def,
-	test_make_ast_tree_with_nothing,
 	test_make_ast_tree_var_assign,
 	test_make_ast_tree_external,
 	test_make_ast_tree_function,
@@ -199,6 +176,5 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_str_const,
 	test_make_ast_tree_type_const,
 	test_make_ast_tree_comment,
-	test_make_ast_tree_recursive_check_fails,
 	test_free_ast_tree
 )

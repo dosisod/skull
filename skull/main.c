@@ -5,9 +5,11 @@
 #include <string.h>
 
 #include "skull/common/color.h"
+#include "skull/common/errors.h"
 #include "skull/common/io.h"
 #include "skull/common/str.h"
 #include "skull/llvm/ast.h"
+#include "skull/llvm/panic.h"
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<version unknown>"
@@ -78,6 +80,9 @@ int main(int argc, char *argv[]) {
 	);
 
 	char *const file_contents = read_file(f);
+	if (!file_contents) {
+		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .str = U"" }));
+	}
 
 	str_to_llvm_ir(
 		file_contents,
