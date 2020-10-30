@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/common/malloc.h"
 #include "skull/common/errors.h"
+#include "skull/common/malloc.h"
+#include "skull/common/panic.h"
 
 #include "skull/common/str.h"
 
@@ -257,7 +258,7 @@ Returns the unescaped version of an escaped character starting at `str`, or NULL
 
 If an error occurs, `err` will be set to the corresponding error msg.
 */
-char32_t c32sunescape(const char32_t **str_, char32_t **err) {
+char32_t c32sunescape(const char32_t **str_) {
 	const char32_t *str = *str_;
 
 	if (*str != '\\') {
@@ -295,6 +296,5 @@ char32_t c32sunescape(const char32_t **str_, char32_t **err) {
 	}
 
 	const char32_t bad_escape[5] = { '\\', escape, opt1, opt2, '\0' };
-	*err = FMT_ERROR(ERR_BAD_ESCAPE, { .str = bad_escape });
-	return '\0';
+	PANIC(FMT_ERROR(ERR_BAD_ESCAPE, { .str = bad_escape }));
 }

@@ -118,6 +118,11 @@ test_err "error/assign_mismatch_var_type.sk" "Compilation error: type mismatch: 
 test_err "error/missing_external.sk" "Compilation error: external function \"x\" missing external declaration"
 test_err "error/redeclare_external.sk" "Compilation error: cannot redeclare external function \"x\""
 test_err "error/no_content.sk" "Compilation error: unexpected token: \"\""
+test_err "error/escape_missing_control.sk" "Compilation error: bad string escape: \"\'\""
+test_err "error/escape_hex_missing_both.sk" "Compilation error: bad string escape: \"\x'\""
+test_err "error/escape_hex_missing_second.sk" "Compilation error: unexpected token: \"'\x4'\""
+test_err "error/escape_hex_first_bad.sk" "Compilation error: unexpected token: \"'\xz'\""
+test_err "error/escape_hex_second_bad.sk" "Compilation error: bad string escape: \"\x1z\""
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

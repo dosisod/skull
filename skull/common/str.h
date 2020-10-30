@@ -20,4 +20,4 @@ _Bool c32isdigit(char32_t);
 _Bool c32isxdigit(char32_t);
 _Bool c32isalnum(char32_t);
 
-char32_t c32sunescape(const char32_t **, char32_t **);
+char32_t c32sunescape(const char32_t **);
