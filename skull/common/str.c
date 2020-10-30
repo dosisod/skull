@@ -267,7 +267,7 @@ char32_t c32sunescape(const char32_t **str_) {
 
 	(*str_)++;
 
-	const char32_t escape = str[1];
+	char32_t escape = str[1];
 	char32_t opt1 = '\0';
 	char32_t opt2 = '\0';
 
@@ -293,6 +293,17 @@ char32_t c32sunescape(const char32_t **str_) {
 			char hex[3] = { (char)opt1, (char)opt2, '\0' };
 			return (char32_t)strtol(hex, NULL, 16);
 		}
+
+		if (opt1 == '\'' || opt1 == '\"') {
+			opt1 = '\0';
+		}
+		else if (opt2 == '\'' || opt2 == '\"') {
+			opt2 = '\0';
+		}
+	}
+
+	if (escape == '\'' || escape == '\"') {
+		escape = '\0';
 	}
 
 	const char32_t bad_escape[5] = { '\\', escape, opt1, opt2, '\0' };
