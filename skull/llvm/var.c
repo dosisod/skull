@@ -72,7 +72,7 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 
 			if (!new_var) {
 				free(name);
-				PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { ._real = lookup }));
+				PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = lookup }));
 			}
 			free(lookup);
 			type = new_var->type;
@@ -103,5 +103,5 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 	}
 	free_variable(var);
 
-	PANIC(FMT_ERROR("variable \"%s\" already defined\n", { ._real = name }));
+	PANIC(FMT_ERROR("variable \"%s\" already defined\n", { .str = name }));
 }

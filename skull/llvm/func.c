@@ -64,7 +64,7 @@ void declare_external_function(AstNode *node) {
 	ExternalFunction *head = external_functions;
 	while (head) {
 		if (strcmp(func_name, head->name) == 0) {
-			PANIC(FMT_ERROR("cannot redeclare external function \"%s\"\n", { ._real = wide_func_name }));
+			PANIC(FMT_ERROR("cannot redeclare external function \"%s\"\n", { .str = wide_func_name }));
 		}
 
 		if (!head->next) {
@@ -99,7 +99,7 @@ void llvm_make_function(AstNode *node) {
 	free(func_name);
 
 	if (!current_function) {
-		PANIC(FMT_ERROR("external function \"%s\" missing external declaration\n", { ._real = wide_func_name }));
+		PANIC(FMT_ERROR("external function \"%s\" missing external declaration\n", { .str = wide_func_name }));
 	}
 	free(wide_func_name);
 

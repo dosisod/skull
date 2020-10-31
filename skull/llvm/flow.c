@@ -34,7 +34,7 @@ void llvm_make_return(AstNode *node) {
 		const Variable *const found_var = scope_find_name(scope, var_name);
 
 		if (!found_var) {
-			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { ._real = var_name }));
+			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = var_name }));
 		}
 		free(var_name);
 
@@ -74,7 +74,7 @@ void llvm_make_if(AstNode *node) {
 		const Variable *const found_var = scope_find_name(scope, var_name);
 
 		if (!found_var) {
-			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { ._real = var_name }));
+			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = var_name }));
 		}
 		free(var_name);
 

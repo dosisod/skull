@@ -25,7 +25,6 @@ typedef struct {
 
 	// copy of string that will be used in final error msg
 	char *real;
-	char32_t *_real;
 } ErrorMsg;
 
 void fmt_error(const char *fmt, ErrorMsg []);

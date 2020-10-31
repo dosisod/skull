@@ -7,12 +7,6 @@
 
 #include "skull/common/errors.h"
 
-typedef struct {
-	const char *percent;
-	size_t len;
-	size_t diff;
-} ErrorChunk;
-
 /*
 Prints formatted an error message.
 
@@ -65,8 +59,5 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 	}
 	else if (msg->str) {
 		msg->real = c32stombs(msg->str);
-	}
-	else if (msg->_real) {
-		msg->real = c32stombs(msg->_real);
 	}
 }

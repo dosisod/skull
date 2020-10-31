@@ -41,11 +41,11 @@ void llvm_make_assign(AstNode **node) {
 	Variable *const found_var = scope_find_name(scope, var_name);
 
 	if (!found_var) {
-		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { ._real = var_name }));
+		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = var_name }));
 	}
 
 	if (found_var->is_const) {
-		PANIC(FMT_ERROR("cannot reassign const variable \"%s\"\n", { ._real = var_name }));
+		PANIC(FMT_ERROR("cannot reassign const variable \"%s\"\n", { .str = var_name }));
 	}
 	free(var_name);
 
@@ -177,7 +177,7 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 	const Variable *const var_found = scope_find_name(scope, lookup);
 
 	if (!var_found) {
-		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { ._real = lookup }));
+		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = lookup }));
 	}
 	free(lookup);
 	if (var_found->type != var->type) {
