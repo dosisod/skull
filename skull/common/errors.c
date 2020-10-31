@@ -26,6 +26,13 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 
 	printf("Compilation error: ");
 
+	#ifdef __clang__
+	# pragma clang diagnostic push
+	# pragma clang diagnostic ignored "-Wformat-nonliteral"
+	#else
+	# pragma GCC diagnostic push
+	# pragma GCC diagnostic ignored "-Wformat-nonliteral"
+	#endif
 	if (num_of_percents == 0) {
 		printf("%s\n", fmt);
 	}
@@ -35,6 +42,11 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 	else if (num_of_percents == 2) {
 		printf(fmt, msgs[0].real, msgs[1].real);
 	}
+	#ifdef __clang__
+	# pragma clang diagnostic pop
+	#else
+	# pragma GCC diagnostic pop
+	#endif
 
 	while (msg->real) {
 		free(msg->real);
