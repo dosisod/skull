@@ -5,13 +5,12 @@
 #include "skull/parse/tokenize.h"
 
 #define ERR_UNEXPECTED_TOKEN ("unexpected token: \"%s\"\n")
-#define ERR_EOF_NO_BRACKET ("Reached EOF, expected closing bracket\n")
-#define ERR_TYPE_MISMATCH ("type mismatch: expected type \"%s\"")
+#define ERR_EOF_NO_BRACKET ("Reached EOF, expected closing bracket")
+#define ERR_TYPE_MISMATCH ("type mismatch: expected type \"%s\"\n")
 #define ERR_BAD_ESCAPE ("bad string escape: \"%s\"\n")
 #define ERR_VAR_NOT_FOUND ("variable \"%s\" not found\n")
 #define ERR_OVERFLOW ("overflow occurred while parsing \"%s\"\n")
 #define ERR_MISSING_ASSIGNMENT ("missing value in assignment to variable \"%s\"\n")
-#define ERR_TYPE_MISMATCH ("type mismatch: expected type \"%s\"")
 
 typedef struct Variable Variable;
 typedef struct Type Type;

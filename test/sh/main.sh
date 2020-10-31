@@ -27,11 +27,22 @@ test() {
 	rm -f ./test/sh/.$1.ll
 }
 
-test_err() {
+test_option() {
 	echo -n "$1 "
 
 	[ "$(./build/skull/_skull ./test/sh/$1)" != "$2" ]
 	pass_or_fail $?
+}
+
+test_error() {
+	echo -n "error/$1 "
+
+	./build/skull/_skull ./test/sh/error/$1 > ./test/sh/error/.$1.out
+
+	[ "$(sha ./test/sh/error/.$1.out)" != "$(sha ./test/sh/error/_$1.out)" ]
+	pass_or_fail $?
+
+	rm -f ./test/sh/error/.$1.out
 }
 
 echo
@@ -83,50 +94,50 @@ test "external_with_param.sk"
 test "function_single_param.sk"
 test "escape_sequences.sk"
 
-test_err "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
-test_err ".sk" "\".sk\" is not a valid name, exiting"
-test_err "not_a_file.sk" "\"./test/sh/not_a_file.sk\" was not found, exiting"
-test_err "option1\ option2" "too many arguments passed, exiting"
+test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
+test_option ".sk" "\".sk\" is not a valid name, exiting"
+test_option "not_a_file.sk" "\"./test/sh/not_a_file.sk\" was not found, exiting"
+test_option "option1\ option2" "too many arguments passed, exiting"
 
-test_err "error/var_already_defined.sk" "Compilation error: variable \"x\" already defined"
-test_err "error/return_int_overflow.sk" "Compilation error: overflow occurred while parsing \"0xffffffffffffffff\""
-test_err "error/declare_int_overflow.sk" "Compilation error: overflow occurred while parsing \"99999999999999999999999999999999\""
-test_err "error/declare_int_underflow.sk" "Compilation error: overflow occurred while parsing \"-99999999999999999999999999999999\""
-test_err "error/declare_float_overflow.sk" "Compilation error: overflow occurred while parsing \"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0\""
-test_err "error/illegal_utf8.sk" "illegal UTF8 sequence at character offset 0"
-test_err "error/assign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
-test_err "error/auto_assign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
-test_err "error/assign_unknown_var.sk" "Compilation error: variable \"y\" not found"
-test_err "error/return_non_existent_var.sk" "Compilation error: variable \"x\" not found"
-test_err "error/return_non_int.sk" "Compilation error: returning non-int variable \"x\" from main"
-test_err "error/mismatched_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
-test_err "error/stray_close_bracket.sk" "Compilation error: unexpected token: \"}\""
-test_err "error/extra_close_bracket.sk" "Compilation error: unexpected token: \"}\""
-test_err "error/no_closing_bracket.sk" "Compilation error: Reached EOF, expected closing bracket"
-test_err "error/invalid_return_if.sk" "Compilation error: unexpected token: \"x\""
-test_err "error/if_with_nonexisting_var.sk" "Compilation error: variable \"x\" not found"
-test_err "error/only_identifier_fails.sk" "Compilation error: unexpected token: \"x\""
-test_err "error/reassign_non_existet_var.sk" "Compilation error: variable \"x\" not found"
-test_err "error/reassign_const_var.sk" "Compilation error: cannot reassign const variable \"x\""
-test_err "error/reassign_missing_rhs.sk" "Compilation error: missing value in assignment to variable \"x\""
-test_err "error/unexpected_str_fails.sk" "Compilation error: unexpected token: \"\"this will fail\"\""
-test_err "error/add_mismatched_consts.sk" "Compilation error: cannot add \"1\" and \"\"fail\"\""
-test_err "error/sub_mismatched_consts.sk" "Compilation error: cannot subtract \"1\" and \"\"fail\"\""
-test_err "error/mult_mismatched_consts.sk" "Compilation error: cannot multiply \"1\" and \"\"fail\"\""
-test_err "error/div_mismatched_consts.sk" "Compilation error: cannot divide \"1\" and \"\"fail\"\""
-test_err "error/assign_mismatch_var_type.sk" "Compilation error: type mismatch: expected type \"bool\""
-test_err "error/missing_external.sk" "Compilation error: external function \"x\" missing external declaration"
-test_err "error/redeclare_external.sk" "Compilation error: cannot redeclare external function \"x\""
-test_err "error/no_content.sk" "Compilation error: unexpected token: \"\""
-test_err "error/escape_missing_control.sk" "Compilation error: bad string escape: \"\\\""
-test_err "error/escape_hex_missing_both.sk" "Compilation error: bad string escape: \"\x\""
-test_err "error/escape_hex_missing_second.sk" "Compilation error: bad string escape: \"\x4\""
-test_err "error/escape_hex_first_bad.sk" "Compilation error: bad string escape: \"\xz\""
-test_err "error/escape_hex_second_bad.sk" "Compilation error: bad string escape: \"\x1z\""
+test_error "var_already_defined.sk"
+test_error "return_int_overflow.sk"
+test_error "declare_int_overflow.sk"
+test_error "declare_int_underflow.sk"
+test_error "declare_float_overflow.sk"
+test_error "illegal_utf8.sk"
+test_error "assign_missing_rhs.sk"
+test_error "auto_assign_missing_rhs.sk"
+test_error "assign_unknown_var.sk"
+test_error "return_non_existent_var.sk"
+test_error "return_non_int.sk"
+test_error "mismatched_bracket.sk"
+test_error "stray_close_bracket.sk"
+test_error "extra_close_bracket.sk"
+test_error "no_closing_bracket.sk"
+test_error "invalid_return_if.sk"
+test_error "if_with_nonexisting_var.sk"
+test_error "only_identifier_fails.sk"
+test_error "reassign_non_existet_var.sk"
+test_error "reassign_const_var.sk"
+test_error "reassign_missing_rhs.sk"
+test_error "unexpected_str_fails.sk"
+test_error "add_mismatched_consts.sk"
+test_error "sub_mismatched_consts.sk"
+test_error "mult_mismatched_consts.sk"
+test_error "div_mismatched_consts.sk"
+test_error "assign_mismatch_var_type.sk"
+test_error "missing_external.sk"
+test_error "redeclare_external.sk"
+test_error "no_content.sk"
+test_error "escape_missing_control.sk"
+test_error "escape_hex_missing_both.sk"
+test_error "escape_hex_missing_second.sk"
+test_error "escape_hex_first_bad.sk"
+test_error "escape_hex_second_bad.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
-test_err "error/read_protected.sk" "cannot open \"./test/sh/error/read_protected.sk\", permission denied"
+test_error "read_protected.sk"
 rm test/sh/error/read_protected.sk
 
 echo
