@@ -36,7 +36,7 @@ SkullInt eval_integer(const Token *const token) {
 	free(num_str);
 
 	if ((ret == LLONG_MAX || ret == LLONG_MIN) && errno == ERANGE) {
-		PANIC(FMT_ERROR(ERR_OVERFLOW, { .tok = token }));
+		PANIC(ERR_OVERFLOW, { .tok = token });
 	}
 
 	return ret;

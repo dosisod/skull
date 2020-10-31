@@ -43,7 +43,7 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 	}
 
 	if (!node->next) {
-		PANIC(FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .tok = token }));
+		PANIC(ERR_MISSING_ASSIGNMENT, { .tok = token });
 	}
 
 	char32_t *const name = token_str(token);
@@ -72,7 +72,7 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 
 			if (!new_var) {
 				free(name);
-				PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = lookup }));
+				PANIC(ERR_VAR_NOT_FOUND, { .str = lookup });
 			}
 			free(lookup);
 			type = new_var->type;
@@ -86,7 +86,7 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 		}
 		else {
 			free(name);
-			PANIC(FMT_ERROR("invalid input: \"%s\"\n", { .tok = node->next->token }));
+			PANIC("invalid input: \"%s\"\n", { .tok = node->next->token });
 		}
 		var = make_variable(type, name, is_const);
 	}
@@ -103,5 +103,5 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 	}
 	free_variable(var);
 
-	PANIC(FMT_ERROR("variable \"%s\" already defined\n", { .str = name }));
+	PANIC("variable \"%s\" already defined\n", { .str = name });
 }

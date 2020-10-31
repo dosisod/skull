@@ -79,7 +79,7 @@ void node_to_llvm_ir(AstNode *node) {
 		}
 
 		else {
-			PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
+			PANIC(ERR_UNEXPECTED_TOKEN, { .tok = node->token });
 		}
 
 		node = node->next;

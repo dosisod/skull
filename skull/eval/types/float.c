@@ -30,7 +30,7 @@ SkullFloat eval_float(const Token *const token) {
 	free(float_str);
 
 	if (isinf(ret) && errno == ERANGE) {
-		PANIC(FMT_ERROR(ERR_OVERFLOW, { .tok = token }));
+		PANIC(ERR_OVERFLOW, { .tok = token });
 	}
 
 	return ret;

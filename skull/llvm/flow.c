@@ -26,7 +26,7 @@ Builds an return statement from `node`.
 */
 void llvm_make_return(AstNode *node) {
 	if (node->node_type != AST_NODE_RETURN) {
-		PANIC(FMT_ERROR("Return expected\n", {0}));
+		PANIC("Return expected\n", {0});
 	}
 
 	if (node->token->next->token_type == TOKEN_IDENTIFIER) {
@@ -34,12 +34,12 @@ void llvm_make_return(AstNode *node) {
 		const Variable *const found_var = scope_find_name(scope, var_name);
 
 		if (!found_var) {
-			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = var_name }));
+			PANIC(ERR_VAR_NOT_FOUND, { .str = var_name });
 		}
 		free(var_name);
 
 		if (found_var->type != &TYPE_INT) {
-			PANIC(FMT_ERROR("returning non-int variable \"%s\" from main\n", { .var = found_var }));
+			PANIC("returning non-int variable \"%s\" from main\n", { .var = found_var });
 		}
 
 		LLVMBuildRet(
@@ -74,12 +74,12 @@ void llvm_make_if(AstNode *node) {
 		const Variable *const found_var = scope_find_name(scope, var_name);
 
 		if (!found_var) {
-			PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = var_name }));
+			PANIC(ERR_VAR_NOT_FOUND, { .str = var_name });
 		}
 		free(var_name);
 
 		if (found_var->type != &TYPE_BOOL) {
-			PANIC(FMT_ERROR("Expected \"%s\" to be of type bool\n", { .var = found_var }));
+			PANIC("Expected \"%s\" to be of type bool\n", { .var = found_var });
 		}
 
 		cond = LLVMBuildLoad2(

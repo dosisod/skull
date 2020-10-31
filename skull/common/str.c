@@ -307,5 +307,5 @@ char32_t c32sunescape(const char32_t **str_) {
 	}
 
 	const char32_t bad_escape[5] = { '\\', escape, opt1, opt2, '\0' };
-	PANIC(FMT_ERROR(ERR_BAD_ESCAPE, { .str = bad_escape }));
+	PANIC(ERR_BAD_ESCAPE, { .str = bad_escape });
 }

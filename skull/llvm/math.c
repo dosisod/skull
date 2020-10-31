@@ -150,11 +150,11 @@ void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper oper, cons
 	}
 
 	if (!result) {
-		PANIC(FMT_ERROR(
+		PANIC(
 			panic,
 			{ .tok = lhs },
 			{ .tok = rhs }
-		));
+		);
 	}
 
 	LLVMBuildStore(

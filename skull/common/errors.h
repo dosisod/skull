@@ -29,10 +29,4 @@ typedef struct {
 
 void fmt_error(const char *fmt, ErrorMsg []);
 
-#define FMT_ERROR(fmt, ...) \
-	fmt_error(fmt, (ErrorMsg[]){ \
-		__VA_ARGS__, \
-		{0} \
-	})
-
 void fmt_error_stringify(ErrorMsg *const);

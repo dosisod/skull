@@ -41,11 +41,11 @@ void llvm_make_assign(AstNode **node) {
 	Variable *const found_var = scope_find_name(scope, var_name);
 
 	if (!found_var) {
-		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = var_name }));
+		PANIC(ERR_VAR_NOT_FOUND, { .str = var_name });
 	}
 
 	if (found_var->is_const) {
-		PANIC(FMT_ERROR("cannot reassign const variable \"%s\"\n", { .str = var_name }));
+		PANIC("cannot reassign const variable \"%s\"\n", { .str = var_name });
 	}
 	free(var_name);
 
@@ -59,7 +59,7 @@ Internal function to build LLVM assignment from `node` to `var.
 */
 void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	if (!node) {
-		PANIC(FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .var = var }));
+		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
 
 	if (node->node_type == AST_NODE_IDENTIFIER) {
@@ -163,7 +163,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		);
 	}
 	else {
-		PANIC(FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type }));
+		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 
 	free(var_name);
@@ -177,11 +177,11 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 	const Variable *const var_found = scope_find_name(scope, lookup);
 
 	if (!var_found) {
-		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .str = lookup }));
+		PANIC(ERR_VAR_NOT_FOUND, { .str = lookup });
 	}
 	free(lookup);
 	if (var_found->type != var->type) {
-		PANIC(FMT_ERROR(ERR_TYPE_MISMATCH, { .type = var->type }));
+		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 
 	if (!var->alloca) {

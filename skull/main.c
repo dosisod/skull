@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 
 	char *const file_contents = read_file(f);
 	if (!file_contents) {
-		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .str = U"" }));
+		PANIC(ERR_UNEXPECTED_TOKEN, { .str = U"" });
 	}
 
 	str_to_llvm_ir(

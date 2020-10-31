@@ -3,11 +3,15 @@
 
 #include "skull/common/str.h"
 
-#define PANIC(str) \
-	(str); \
+#define PANIC(fmt, ...) \
+	fmt_error(fmt, (ErrorMsg[]){ \
+		__VA_ARGS__, \
+		{0} \
+	}); \
 	exit(1)
 
-#define PANIC_ON_ERR(str) \
+
+#define PANIC_ON_ERR(fmt, ...) \
 	if (str) { \
-		PANIC(str); \
+		PANIC(str, __VA_ARGS__); \
 	}

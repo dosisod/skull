@@ -190,7 +190,7 @@ AstNode *make_ast_tree_(Token *token, char **error, unsigned indent_lvl) {
 			// TODO(x): return the last token that was reached so we dont have to do this
 			while (token->token_type != TOKEN_BRACKET_CLOSE) {
 				if (!token->next) {
-					PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
+					PANIC(ERR_UNEXPECTED_TOKEN, { .tok = node->token });
 				}
 				token = token->next;
 			}
@@ -201,7 +201,7 @@ AstNode *make_ast_tree_(Token *token, char **error, unsigned indent_lvl) {
 		if (token->token_type == TOKEN_BRACKET_CLOSE) {
 			if (indent_lvl == 0 && !allow_top_lvl_bracket) {
 				free(head);
-				PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token }));
+				PANIC(ERR_UNEXPECTED_TOKEN, { .tok = token });
 			}
 
 			break;
@@ -338,12 +338,12 @@ AstNode *make_ast_tree_(Token *token, char **error, unsigned indent_lvl) {
 		}
 
 		free(head);
-		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token }));
+		PANIC(ERR_UNEXPECTED_TOKEN, { .tok = token });
 	}
 
 	if (!token && indent_lvl != 0) {
 		free(head);
-		PANIC(FMT_ERROR(ERR_EOF_NO_BRACKET, {0}));
+		PANIC(ERR_EOF_NO_BRACKET, {0});
 	}
 
 	if (node->last) {
