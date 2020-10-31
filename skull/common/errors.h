@@ -4,22 +4,14 @@
 
 #include "skull/parse/tokenize.h"
 
-const char32_t *ERR_UNEXPECTED_TOKEN;
-#define ERR_UNEXPECTED_TOKEN_(tok) U"unexpected token: \"" tok U"\""
-
-const char32_t *ERR_EOF_NO_BRACKET;
-
-const char32_t *ERR_TYPE_MISMATCH;
-
-const char32_t *ERR_BAD_ESCAPE;
-#define ERR_BAD_ESCAPE_(tok) U"bad string escape: \"" tok U"\""
-
-const char32_t *ERR_VAR_NOT_FOUND;
-
-const char32_t *ERR_OVERFLOW;
-#define ERR_OVERFLOW_(str) U"overflow occurred while parsing \"" str U"\""
-
-const char32_t *ERR_MISSING_ASSIGNMENT;
+#define ERR_UNEXPECTED_TOKEN ("unexpected token: \"%s\"\n")
+#define ERR_EOF_NO_BRACKET ("Reached EOF, expected closing bracket\n")
+#define ERR_TYPE_MISMATCH ("type mismatch: expected type \"%s\"")
+#define ERR_BAD_ESCAPE ("bad string escape: \"%s\"\n")
+#define ERR_VAR_NOT_FOUND ("variable \"%s\" not found\n")
+#define ERR_OVERFLOW ("overflow occurred while parsing \"%s\"\n")
+#define ERR_MISSING_ASSIGNMENT ("missing value in assignment to variable \"%s\"\n")
+#define ERR_TYPE_MISMATCH ("type mismatch: expected type \"%s\"")
 
 typedef struct Variable Variable;
 typedef struct Type Type;
@@ -32,10 +24,12 @@ typedef struct {
 	const Type *type;
 
 	// copy of string that will be used in final error msg
-	char32_t *real;
+	char *real;
+	char32_t *_real;
 } ErrorMsg;
 
-char32_t *fmt_error(const char32_t *fmt, ErrorMsg []);
+void fmt_error(const char *fmt, ErrorMsg []);
+
 #define FMT_ERROR(fmt, ...) \
 	fmt_error(fmt, (ErrorMsg[]){ \
 		__VA_ARGS__, \

@@ -27,12 +27,8 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_,
 	char32_t *const str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
-	char32_t *error = NULL;
+	char *error = NULL;
 	AstNode *const node = make_ast_tree(str, &error);
-
-	if (!node) {
-		PANIC(error);
-	}
 
 	scope = make_scope();
 	func = func_;

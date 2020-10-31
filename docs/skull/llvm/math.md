@@ -25,7 +25,7 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs)
 > Build LLVM for assining division of `lhs` and `rhs` to `var`.
 
 ```c
-void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper oper, const char32_t *panic)
+void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper oper, const char *panic)
 ```
 
 > Build LLVM for assigning math operation `oper` from `node` to `var`.

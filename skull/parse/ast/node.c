@@ -1,8 +1,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/parse/classify.h"
 
@@ -13,7 +15,7 @@ bool is_const_literal(Token *);
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-AstNode *make_ast_tree(const char32_t *const code, char32_t **error) {
+AstNode *make_ast_tree(const char32_t *const code, char **error) {
 	Token *const token = tokenize(code);
 	classify_tokens(token);
 
@@ -152,7 +154,7 @@ __attribute__((pure)) bool is_const_literal(Token *token) {
 /*
 Internal AST tree generator.
 */
-AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
+AstNode *make_ast_tree_(Token *token, char **error, unsigned indent_lvl) {
 	Token *last = token;
 
 	AstNode *node = make_ast_node();
@@ -188,8 +190,7 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 			// TODO(x): return the last token that was reached so we dont have to do this
 			while (token->token_type != TOKEN_BRACKET_CLOSE) {
 				if (!token->next) {
-					*error = FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token });
-					return NULL;
+					PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = node->token }));
 				}
 				token = token->next;
 			}
@@ -200,8 +201,7 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 		if (token->token_type == TOKEN_BRACKET_CLOSE) {
 			if (indent_lvl == 0 && !allow_top_lvl_bracket) {
 				free(head);
-				*error = FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token });
-				return NULL;
+				PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token }));
 			}
 
 			break;
@@ -338,14 +338,12 @@ AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl) {
 		}
 
 		free(head);
-		*error = FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token });
-		return NULL;
+		PANIC(FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = token }));
 	}
 
 	if (!token && indent_lvl != 0) {
 		free(head);
-		*error = c32sdup(ERR_EOF_NO_BRACKET);
-		return NULL;
+		PANIC(FMT_ERROR(ERR_EOF_NO_BRACKET, {0}));
 	}
 
 	if (node->last) {

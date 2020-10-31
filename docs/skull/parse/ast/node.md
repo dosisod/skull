@@ -1,13 +1,13 @@
 # skull/parse/ast/node.c
 
 ```c
-AstNode *make_ast_tree(const char32_t *const code, char32_t **error)
+AstNode *make_ast_tree(const char32_t *const code, char **error)
 ```
 
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-AstNode *make_ast_tree_(Token *token, char32_t **error, unsigned indent_lvl)
+AstNode *make_ast_tree_(Token *token, char **error, unsigned indent_lvl)
 ```
 
 > Internal AST tree generator.

@@ -139,7 +139,7 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
 /*
 Build LLVM for assigning math operation `oper` from `node` to `var`.
 */
-void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper oper, const char32_t *panic) {
+void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper oper, const char *panic) {
 	const Token *lhs = node->token;
 	const Token *rhs = node->token->next->next;
 

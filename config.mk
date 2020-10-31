@@ -15,6 +15,7 @@ CFLAGS += -std=c18 \
 	-Wextra \
 	-pedantic \
 	-Werror \
+	-Wno-format-nonliteral \
 	-Werror=vla \
 	-Waggregate-return \
 	-Wbad-function-cast \

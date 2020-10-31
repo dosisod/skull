@@ -41,11 +41,11 @@ void llvm_make_assign(AstNode **node) {
 	Variable *const found_var = scope_find_name(scope, var_name);
 
 	if (!found_var) {
-		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = var_name }));
+		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { ._real = var_name }));
 	}
 
 	if (found_var->is_const) {
-		PANIC(FMT_ERROR(U"cannot reassign const variable \"%\"", { .real = var_name }));
+		PANIC(FMT_ERROR("cannot reassign const variable \"%s\"\n", { ._real = var_name }));
 	}
 	free(var_name);
 
@@ -78,25 +78,25 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	}
 
 	if (node->node_type == AST_NODE_ADD_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_add, U"cannot add \"%\" and \"%\"");
+		llvm_make_math_oper(var, node, &llvm_make_add, "cannot add \"%s\" and \"%s\"\n");
 		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_SUB_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_sub, U"cannot subtract \"%\" and \"%\"");
+		llvm_make_math_oper(var, node, &llvm_make_sub, "cannot subtract \"%s\" and \"%s\"\n");
 		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_MULT_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_mult, U"cannot multiply \"%\" and \"%\"");
+		llvm_make_math_oper(var, node, &llvm_make_mult, "cannot multiply \"%s\" and \"%s\"\n");
 		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_DIV_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_div, U"cannot divide \"%\" and \"%\"");
+		llvm_make_math_oper(var, node, &llvm_make_div, "cannot divide \"%s\" and \"%s\"\n");
 		free(var_name);
 		return;
 	}
@@ -177,7 +177,7 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 	const Variable *const var_found = scope_find_name(scope, lookup);
 
 	if (!var_found) {
-		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { .real = lookup }));
+		PANIC(FMT_ERROR(ERR_VAR_NOT_FOUND, { ._real = lookup }));
 	}
 	free(lookup);
 	if (var_found->type != var->type) {

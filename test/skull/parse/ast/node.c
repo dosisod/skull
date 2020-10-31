@@ -80,7 +80,7 @@ TEST(make_ast_tree_return_var, {
 
 TEST(make_ast_tree_if, {
 	const char32_t *code = U"if true { return 1 }";
-	char32_t *error = NULL;
+	char *error = NULL;
 	AstNode *node = make_ast_tree(code, &error);
 
 	ASSERT_FALSEY(error);
@@ -98,7 +98,7 @@ TEST(make_ast_tree_if, {
 
 TEST(make_ast_tree_if_with_var, {
 	const char32_t *code = U"if x { return 1 }";
-	char32_t *error = NULL;
+	char *error = NULL;
 	AstNode *node = make_ast_tree(code, &error);
 
 	ASSERT_FALSEY(error);
@@ -147,7 +147,7 @@ TEST(make_ast_tree_comment, {
 })
 
 TEST(free_ast_tree, {
-	char32_t *error = NULL;
+	char *error = NULL;
 	AstNode *node = make_ast_tree(U"hello world", &error);
 
 	free_ast_tree(node);
