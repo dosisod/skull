@@ -15,19 +15,16 @@ extern LLVMBuilderRef builder;
 Build LLVM for assining addition of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_add(Variable *var, const Token *lhs, const Token *rhs) {
-	LLVMValueRef add;
-
 	if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
-		add = LLVMBuildAdd(
+		return LLVMBuildAdd(
 			builder,
 			LLVM_INT(eval_integer(lhs)),
 			LLVM_INT(eval_integer(rhs)),
 			""
 		);
 	}
-
-	else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
-		add = LLVMBuildFAdd(
+	if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+		return LLVMBuildFAdd(
 			builder,
 			LLVM_FLOAT(eval_float(lhs)),
 			LLVM_FLOAT(eval_float(rhs)),
@@ -35,30 +32,23 @@ LLVMValueRef llvm_make_add(Variable *var, const Token *lhs, const Token *rhs) {
 		);
 	}
 
-	else {
-		return NULL;
-	}
-
-	return add;
+	return NULL;
 }
 
 /*
 Build LLVM for assining subtraction of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_sub(Variable *var, const Token *lhs, const Token *rhs) {
-	LLVMValueRef sub;
-
 	if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
-		sub = LLVMBuildSub(
+		return LLVMBuildSub(
 			builder,
 			LLVM_INT(eval_integer(lhs)),
 			LLVM_INT(eval_integer(rhs)),
 			""
 		);
 	}
-
-	else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
-		sub = LLVMBuildFSub(
+	if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+		return LLVMBuildFSub(
 			builder,
 			LLVM_FLOAT(eval_float(lhs)),
 			LLVM_FLOAT(eval_float(rhs)),
@@ -66,30 +56,23 @@ LLVMValueRef llvm_make_sub(Variable *var, const Token *lhs, const Token *rhs) {
 		);
 	}
 
-	else {
-		return NULL;
-	}
-
-	return sub;
+	return NULL;
 }
 
 /*
 Build LLVM for assining multiplication of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_mult(Variable *var, const Token *lhs, const Token *rhs) {
-	LLVMValueRef mult;
-
 	if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
-		mult = LLVMBuildMul(
+		return LLVMBuildMul(
 			builder,
 			LLVM_INT(eval_integer(lhs)),
 			LLVM_INT(eval_integer(rhs)),
 			""
 		);
 	}
-
-	else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
-		mult = LLVMBuildFMul(
+	if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+		return LLVMBuildFMul(
 			builder,
 			LLVM_FLOAT(eval_float(lhs)),
 			LLVM_FLOAT(eval_float(rhs)),
@@ -97,30 +80,23 @@ LLVMValueRef llvm_make_mult(Variable *var, const Token *lhs, const Token *rhs) {
 		);
 	}
 
-	else {
-		return NULL;
-	}
-
-	return mult;
+	return NULL;
 }
 
 /*
 Build LLVM for assining division of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
-	LLVMValueRef div;
-
 	if (lhs->token_type == TOKEN_INT_CONST && var->type == &TYPE_INT) {
-		div = LLVMBuildSDiv(
+		return LLVMBuildSDiv(
 			builder,
 			LLVM_INT(eval_integer(lhs)),
 			LLVM_INT(eval_integer(rhs)),
 			""
 		);
 	}
-
-	else if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
-		div = LLVMBuildFDiv(
+	if (lhs->token_type == TOKEN_FLOAT_CONST && var->type == &TYPE_FLOAT) {
+		return LLVMBuildFDiv(
 			builder,
 			LLVM_FLOAT(eval_float(lhs)),
 			LLVM_FLOAT(eval_float(rhs)),
@@ -128,11 +104,7 @@ LLVMValueRef llvm_make_div(Variable *var, const Token *lhs, const Token *rhs) {
 		);
 	}
 
-	else {
-		return NULL;
-	}
-
-	return div;
+	return NULL;
 }
 
 
