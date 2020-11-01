@@ -8,6 +8,13 @@
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/defs.h"
+
+#include "skull/eval/types/bool.h"
+#include "skull/eval/types/defs.h"
+#include "skull/eval/types/float.h"
+#include "skull/eval/types/int.h"
+#include "skull/eval/types/rune.h"
+
 #include "skull/llvm/aliases.h"
 #include "skull/parse/classify.h"
 
@@ -104,4 +111,24 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 	free_variable(var);
 
 	PANIC("variable \"%s\" already defined\n", { .str = name });
+}
+
+/*
+Make an `LLVMValueRef` for a given `var` from `token`.
+*/
+LLVMValueRef llvm_parse_var(const Variable *const var, const Token *const token) {
+	if (var->type == &TYPE_INT && token->token_type == TOKEN_INT_CONST) {
+		return LLVM_INT(eval_integer(token));
+	}
+	if (var->type == &TYPE_FLOAT && token->token_type == TOKEN_FLOAT_CONST) {
+		return LLVM_FLOAT(eval_float(token));
+	}
+	if (var->type == &TYPE_BOOL && token->token_type == TOKEN_BOOL_CONST) {
+		return LLVM_BOOL(eval_bool(token));
+	}
+	if (var->type == &TYPE_RUNE && token->token_type == TOKEN_RUNE_CONST) {
+		return LLVM_RUNE(eval_rune(token));
+	}
+
+	PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 }

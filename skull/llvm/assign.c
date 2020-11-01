@@ -16,6 +16,7 @@
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/math.h"
 #include "skull/llvm/var.h"
+#include "skull/parse/classify.h"
 
 #include "skull/llvm/assign.h"
 
@@ -101,35 +102,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		return;
 	}
 
-	if (var->type == &TYPE_INT && node->node_type == AST_NODE_INT_CONST) {
-		LLVMBuildStore(
-			builder,
-			LLVM_INT(eval_integer(node->token)),
-			var->alloca
-		);
-	}
-	else if (var->type == &TYPE_FLOAT && node->node_type == AST_NODE_FLOAT_CONST) {
-		LLVMBuildStore(
-			builder,
-			LLVM_FLOAT(eval_float(node->token)),
-			var->alloca
-		);
-	}
-	else if (var->type == &TYPE_BOOL && node->node_type == AST_NODE_BOOL_CONST) {
-		LLVMBuildStore(
-			builder,
-			LLVM_BOOL(eval_bool(node->token)),
-			var->alloca
-		);
-	}
-	else if (var->type == &TYPE_RUNE && node->node_type == AST_NODE_RUNE_CONST) {
-		LLVMBuildStore(
-			builder,
-			LLVM_RUNE(eval_rune(node->token)),
-			var->alloca
-		);
-	}
-	else if (var->type == &TYPE_STR && node->node_type == AST_NODE_STR_CONST) {
+	if (var->type == &TYPE_STR && node->token->token_type == TOKEN_STR_CONST) {
 		SkullStr str = eval_str(node->token);
 
 		char *const mbs = c32stombs(str);
@@ -163,7 +136,11 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		);
 	}
 	else {
-		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
+		LLVMBuildStore(
+			builder,
+			llvm_parse_var(var, node->token),
+			var->alloca
+		);
 	}
 
 	free(var_name);

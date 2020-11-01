@@ -5,11 +5,11 @@
 #include "skull/eval/variable.h"
 #include "skull/parse/ast/node.h"
 
-typedef LLVMValueRef (*MathOper)(Variable *, const Token *, const Token *);
+typedef LLVMValueRef (MathOper)(Variable *, LLVMValueRef, LLVMValueRef);
 
-void llvm_make_math_oper(Variable *, const AstNode *, MathOper, const char *);
+void llvm_make_math_oper(Variable *, const AstNode *, MathOper *, const char *);
 
-LLVMValueRef llvm_make_add(Variable *, const Token *, const Token *);
-LLVMValueRef llvm_make_sub(Variable *, const Token *, const Token *);
-LLVMValueRef llvm_make_mult(Variable *, const Token *, const Token *);
-LLVMValueRef llvm_make_div(Variable *, const Token *, const Token *);
+MathOper llvm_make_add;
+MathOper llvm_make_sub;
+MathOper llvm_make_mult;
+MathOper llvm_make_div;
