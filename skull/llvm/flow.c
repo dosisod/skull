@@ -25,10 +25,6 @@ void node_to_llvm_ir(AstNode *);
 Builds an return statement from `node`.
 */
 void llvm_make_return(AstNode *node) {
-	if (node->node_type != AST_NODE_RETURN) {
-		PANIC("Return expected\n", {0});
-	}
-
 	if (node->token->next->token_type == TOKEN_IDENTIFIER) {
 		char32_t *const var_name = token_str(node->token->next);
 		const Variable *const found_var = scope_find_name(scope, var_name);

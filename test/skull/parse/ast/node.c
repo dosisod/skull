@@ -1,6 +1,5 @@
 #include <stdbool.h>
 
-#include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/parse/ast/node.h"
 #include "skull/parse/classify.h"
@@ -79,11 +78,9 @@ TEST(make_ast_tree_return_var, {
 })
 
 TEST(make_ast_tree_if, {
-	const char32_t *code = U"if true { return 1 }";
-	char *error = NULL;
-	AstNode *node = make_ast_tree(code, &error);
+	const char32_t *const code = U"if true { return 1 }";
+	AstNode *node = make_ast_tree(code);
 
-	ASSERT_FALSEY(error);
 	ASSERT_EQUAL(node->node_type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
 	ASSERT_EQUAL(node->token_end->end, code + 7);
@@ -97,11 +94,9 @@ TEST(make_ast_tree_if, {
 })
 
 TEST(make_ast_tree_if_with_var, {
-	const char32_t *code = U"if x { return 1 }";
-	char *error = NULL;
-	AstNode *node = make_ast_tree(code, &error);
+	const char32_t *const code = U"if x { return 1 }";
+	AstNode *node = make_ast_tree(code);
 
-	ASSERT_FALSEY(error);
 	ASSERT_EQUAL(node->node_type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
 	ASSERT_EQUAL(node->token_end->end, code + 4);
@@ -147,8 +142,7 @@ TEST(make_ast_tree_comment, {
 })
 
 TEST(free_ast_tree, {
-	char *error = NULL;
-	AstNode *node = make_ast_tree(U"hello world", &error);
+	AstNode *node = make_ast_tree(U"hello world");
 
 	free_ast_tree(node);
 })
