@@ -120,7 +120,10 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	if (token->next->next->next->token_type == TOKEN_PAREN_CLOSE) {
+	if (token->next->next->next->token_type == TOKEN_PAREN_CLOSE &&
+		token->next->next->next->next &&
+		token->next->next->next->next->token_type == TOKEN_NEWLINE
+	) {
 		*_token = token->next->next->next;
 	}
 
@@ -128,7 +131,9 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		token->next->next->next->next &&
 		token->next->next->next->next->token_type == TOKEN_TYPE &&
 		token->next->next->next->next->next &&
-		token->next->next->next->next->next->token_type == TOKEN_PAREN_CLOSE
+		token->next->next->next->next->next->token_type == TOKEN_PAREN_CLOSE &&
+		token->next->next->next->next->next->next &&
+		token->next->next->next->next->next->next->token_type == TOKEN_NEWLINE
 	) {
 		*_token = token->next->next->next->next->next;
 	}

@@ -62,7 +62,7 @@ TEST(make_ast_tree_var_assign, {
 })
 
 TEST(make_ast_tree_external, {
-	TEST_AST_TREE(U"external x()", AST_NODE_FUNCTION_PROTO, 0, 12);
+	TEST_AST_TREE(U"external x()\n", AST_NODE_FUNCTION_PROTO, 0, 12);
 })
 
 TEST(make_ast_tree_function, {
