@@ -44,6 +44,7 @@ Make and add a variable from `node` to `scope`.
 */
 void node_make_var(const AstNode *const node, Scope *const scope) {
 	const Token *token = node->token;
+
 	const bool is_const = ATTR(AstNodeVarDef, node, is_const);
 	if (!is_const) {
 		token = token->next;
@@ -57,21 +58,10 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 	Variable *var = NULL;
 
 	if (ATTR(AstNodeVarDef, node, is_implicit)) {
-		const Type *type = NULL;
-		if (node->next->node_type == AST_NODE_INT_CONST) {
-			type = &TYPE_INT;
-		}
-		else if (node->next->node_type == AST_NODE_FLOAT_CONST) {
-			type = &TYPE_FLOAT;
-		}
-		else if (node->next->node_type == AST_NODE_BOOL_CONST) {
-			type = &TYPE_BOOL;
-		}
-		else if (node->next->node_type == AST_NODE_STR_CONST) {
-			type = &TYPE_STR;
-		}
-		else if (node->next->node_type == AST_NODE_RUNE_CONST) {
-			type = &TYPE_RUNE;
+		const Type *type = token_type_to_type(node->next->token);
+
+		if (type) {
+			// fallthrough
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER) {
 			char32_t *const lookup = token_str(node->next->token);
@@ -83,13 +73,6 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 			}
 			free(lookup);
 			type = new_var->type;
-		}
-		else if (node->next->node_type == AST_NODE_ADD_CONSTS ||
-			node->next->node_type == AST_NODE_SUB_CONSTS ||
-			node->next->node_type == AST_NODE_MULT_CONSTS ||
-			node->next->node_type == AST_NODE_DIV_CONSTS
-		) {
-			type = token_type_to_type(node->next->token);
 		}
 		else {
 			free(name);
@@ -117,18 +100,29 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 Make an `LLVMValueRef` for a given `var` from `token`.
 */
 LLVMValueRef llvm_parse_var(const Variable *const var, const Token *const token) {
-	if (var->type == &TYPE_INT && token->token_type == TOKEN_INT_CONST) {
-		return LLVM_INT(eval_integer(token));
-	}
-	if (var->type == &TYPE_FLOAT && token->token_type == TOKEN_FLOAT_CONST) {
-		return LLVM_FLOAT(eval_float(token));
-	}
-	if (var->type == &TYPE_BOOL && token->token_type == TOKEN_BOOL_CONST) {
-		return LLVM_BOOL(eval_bool(token));
-	}
-	if (var->type == &TYPE_RUNE && token->token_type == TOKEN_RUNE_CONST) {
-		return LLVM_RUNE(eval_rune(token));
+	if (var->type == token_type_to_type(token)) {
+		return llvm_parse_token(token);
 	}
 
 	PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
+}
+
+/*
+Make an `LLVMValueRef` from `token`.
+*/
+LLVMValueRef llvm_parse_token(const Token *const token) {
+	if (token->token_type == TOKEN_INT_CONST) {
+		return LLVM_INT(eval_integer(token));
+	}
+	if (token->token_type == TOKEN_FLOAT_CONST) {
+		return LLVM_FLOAT(eval_float(token));
+	}
+	if (token->token_type == TOKEN_BOOL_CONST) {
+		return LLVM_BOOL(eval_bool(token));
+	}
+	if (token->token_type == TOKEN_RUNE_CONST) {
+		return LLVM_RUNE(eval_rune(token));
+	}
+
+	return NULL;
 }
