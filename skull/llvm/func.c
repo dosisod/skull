@@ -6,9 +6,9 @@
 #include "skull/common/malloc.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
-#include "skull/eval/types/int.h"
 #include "skull/eval/types/types.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/var.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/func.h"
@@ -105,11 +105,14 @@ void llvm_make_function(AstNode *node) {
 
 	LLVMValueRef params = NULL;
 
-	if (current_function->num_params == 1 &&
-		current_function->param_types == &TYPE_INT &&
-		node->token->next->next->token_type == TOKEN_INT_CONST
-	) {
-		params = LLVM_INT(eval_integer(node->token->next->next));
+	if (current_function->num_params == 1) {
+		if (current_function->param_types != token_type_to_type(node->token->next->next)) {
+			PANIC(ERR_FUNC_TYPE_MISMATCH, {
+				.real = strdup(current_function->param_types->name)
+			});
+		}
+
+		params = llvm_parse_token(node->token->next->next);
 	}
 
 	LLVMBuildCall2(

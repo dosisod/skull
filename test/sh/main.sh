@@ -135,6 +135,7 @@ test_error "escape_hex_missing_both.sk"
 test_error "escape_hex_missing_second.sk"
 test_error "escape_hex_first_bad.sk"
 test_error "escape_hex_second_bad.sk"
+test_error "function_bad_param_type.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

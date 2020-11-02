@@ -7,6 +7,7 @@
 #define ERR_UNEXPECTED_TOKEN ("unexpected token: \"%s\"\n")
 #define ERR_EOF_NO_BRACKET ("Reached EOF, expected closing bracket")
 #define ERR_TYPE_MISMATCH ("type mismatch: expected type \"%s\"\n")
+#define ERR_FUNC_TYPE_MISMATCH ("type mismatch: expected param of type \"%s\"\n")
 #define ERR_BAD_ESCAPE ("bad string escape: \"%s\"\n")
 #define ERR_VAR_NOT_FOUND ("variable \"%s\" not found\n")
 #define ERR_OVERFLOW ("overflow occurred while parsing \"%s\"\n")
