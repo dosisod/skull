@@ -1,5 +1,5 @@
 #include <stdio.h>
 
-void hello(void) {
-	puts("hello from hello.c!");
+void hello(const char *name) {
+	printf("hello, %s!\n", name);
 }

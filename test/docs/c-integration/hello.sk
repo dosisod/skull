@@ -1,5 +1,5 @@
-external hello()
+external hello(name: str)
 
-hello()
+hello("world")
 
 return 0

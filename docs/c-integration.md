@@ -11,8 +11,8 @@ Let us look at a simple example of how to call C functions from inside Skull:
 
 #include <stdio.h>
 
-void hello(void) {
-	puts("hello from hello.c!");
+void hello(const char *name) {
+	printf("hello, %s!\n", name);
 }
 ```
 
@@ -21,9 +21,9 @@ and in Skull:
 ```python
 # hello.sk
 
-external hello()
+external hello(name: str)
 
-hello()
+hello("world")
 
 return 0
 ```
@@ -31,12 +31,14 @@ return 0
 Now, to compile these files together:
 
 ```
-$ skull hello.sk -- hello.c
+$ skull hello.sk -- hello.c -no-pie
 $ ./hello
-hello from hello.c!
+hello, world!
 ```
 
-Everything after `--` is passed as arguments to `cc`, in this case, `hello.c`.
+Everything after `--` is passed as arguments to `cc`, in this case, `hello.c` and `-no-pie`.
+
+The `-no-pie` option is required we are compiling code with string literals.
 
 Skull can also compile `.o` and `.so` files, but you will need to compile them yourself:
 
@@ -44,22 +46,16 @@ Skull can also compile `.o` and `.so` files, but you will need to compile them y
 $ cc -c hello.c
 $ skull hello.sk -- hello.o
 $ ./hello
-hello from hello.c!
+hello, world!
 ```
 
-For the time being, Skull can only run C functions prototypes like: `void f(void)`
-
-In the future, Skull will be able to run C functions that can pass/return primative types (`int`, `float`, `rune`, etc).
-
-Skull does not check the types of your function calls, or whether they exist:
+Skull does not check the types of your C function calls, or whether they even exist:
 
 ```
-$ skull hello.sk
+$ skull hello.sk -- -no-pie
 ./.hello.sk.o: In function `main':
 main_module:(.text+0x2): undefined reference to `hello'
 collect2: error: ld returned 1 exit status
 ```
 
-Here, the linker is throwing an error, as we forgot to include `hello.c` to our compilation.
-
-This integration process may change over time, namely to improve type safety, and cause less headaches.
+Here, the linker is throwing an error as we forgot to include `hello.c` to our compilation.
