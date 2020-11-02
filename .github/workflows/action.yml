@@ -48,14 +48,6 @@ jobs:
     - name: Run Skull unit tests
       run: ./test/sh/main.sh
 
-  test-installable:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
-
-    - name: Install Skull
-      run: sudo CC=gcc-8 make options install -e
-
   tests-with-skull-installed:
     runs-on: ubuntu-latest
     steps:
@@ -72,7 +64,7 @@ jobs:
     - name: Run C integration test
       run: |
         cd test/docs/c-integration
-        skull hello.sk -- hello.c
+        skull hello.sk -- hello.c -no-pie
         ./hello
 
   test-valgrind-and-precommit:
