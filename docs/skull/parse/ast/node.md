@@ -36,3 +36,9 @@ void free_ast_tree_(AstNode *node)
 
 > Internal AST freeing function, dont call directly.
 
+```c
+bool ast_token_cmp(Token *token, ...)
+```
+
+> Check each token's type starting at `token`, checking against the corresponding token type specified in `...`
+

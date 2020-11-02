@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,8 +10,6 @@
 #include "skull/parse/classify.h"
 
 #include "skull/parse/ast/node.h"
-
-bool is_const_literal(Token *);
 
 /*
 Makes an AST (abstract syntax tree) from a given string.
@@ -43,19 +42,18 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 		}
 	}
 
-	if (token->token_type == TOKEN_NEW_IDENTIFIER &&
-		token->next &&
-		token->next->token_type == TOKEN_TYPE &&
-		token->next->next &&
-		token->next->next->token_type == TOKEN_OPER_EQUAL
+	if (AST_TOKEN_CMP(token,
+		TOKEN_NEW_IDENTIFIER,
+		TOKEN_TYPE,
+		TOKEN_OPER_EQUAL)
 	) {
 		is_implicit = false;
 		*_token = token->next->next;
 	}
 
-	else if (token->token_type == TOKEN_IDENTIFIER &&
-		token->next &&
-		token->next->token_type == TOKEN_OPER_AUTO_EQUAL
+	else if (AST_TOKEN_CMP(token,
+		TOKEN_IDENTIFIER,
+		TOKEN_OPER_AUTO_EQUAL)
 	) {
 		*_token = token->next;
 	}
@@ -82,22 +80,23 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (!(token->token_type == TOKEN_IDENTIFIER &&
-		token->next &&
-		token->next->token_type == TOKEN_PAREN_OPEN &&
-		token->next->next)
+	if (!AST_TOKEN_CMP(token,
+		TOKEN_IDENTIFIER,
+		TOKEN_PAREN_OPEN)
 	) {
 		return false;
 	}
 
-	if (token->next->next->token_type == TOKEN_PAREN_CLOSE) {
-		*_token = token->next->next;
+	token = token->next->next;
+
+	if (token->token_type == TOKEN_PAREN_CLOSE) {
+		*_token = token;
 	}
-	else if (is_const_literal(token->next->next) &&
-		token->next->next->next &&
-		token->next->next->next->token_type == TOKEN_PAREN_CLOSE
+	else if (is_const_literal(token) &&
+		token->next &&
+		token->next->token_type == TOKEN_PAREN_CLOSE
 	) {
-		*_token = token->next->next->next;
+		*_token = token->next;
 	}
 	else {
 		return false;
@@ -110,32 +109,30 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (!(token->token_type == TOKEN_KW_EXTERNAL &&
-		token->next &&
-		token->next->token_type == TOKEN_IDENTIFIER &&
-		token->next->next &&
-		token->next->next->token_type == TOKEN_PAREN_OPEN &&
-		token->next->next->next)
+	if (!AST_TOKEN_CMP(token,
+		TOKEN_KW_EXTERNAL,
+		TOKEN_IDENTIFIER,
+		TOKEN_PAREN_OPEN)
 	) {
 		return false;
 	}
 
-	if (token->next->next->next->token_type == TOKEN_PAREN_CLOSE &&
-		token->next->next->next->next &&
-		token->next->next->next->next->token_type == TOKEN_NEWLINE
+	token = token->next->next->next;
+
+	if (AST_TOKEN_CMP(token,
+		TOKEN_PAREN_CLOSE,
+		TOKEN_NEWLINE)
 	) {
-		*_token = token->next->next->next;
+		*_token = token;
 	}
 
-	else if (token->next->next->next->token_type == TOKEN_NEW_IDENTIFIER &&
-		token->next->next->next->next &&
-		token->next->next->next->next->token_type == TOKEN_TYPE &&
-		token->next->next->next->next->next &&
-		token->next->next->next->next->next->token_type == TOKEN_PAREN_CLOSE &&
-		token->next->next->next->next->next->next &&
-		token->next->next->next->next->next->next->token_type == TOKEN_NEWLINE
+	else if (AST_TOKEN_CMP(token,
+		TOKEN_NEW_IDENTIFIER,
+		TOKEN_TYPE,
+		TOKEN_PAREN_CLOSE,
+		TOKEN_NEWLINE)
 	) {
-		*_token = token->next->next->next->next->next;
+		*_token = token->next->next;
 	}
 
 	else {
@@ -225,9 +222,9 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_IDENTIFIER &&
-			token->next &&
-			token->next->token_type == TOKEN_OPER_EQUAL
+		if (AST_TOKEN_CMP(token,
+			TOKEN_IDENTIFIER,
+			TOKEN_OPER_EQUAL)
 		) {
 			token = token->next;
 			push_ast_node(token, &last, AST_NODE_VAR_ASSIGN, &node);
@@ -370,7 +367,7 @@ void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode
 	AstNode *const new_node = make_ast_node();
 
 	new_node->last = *node;
-	*last = token->next;
+	*last = token->next; // NOLINT
 
 	(*node)->next = new_node;
 	(*node) = new_node;
@@ -417,4 +414,27 @@ void free_ast_tree_(AstNode *node) {
 		current->next = NULL;
 		free(current);
 	}
+}
+
+/*
+Check each token's type starting at `token`, checking against the corresponding token type specified in `...`
+*/
+bool ast_token_cmp(Token *token, ...) {
+	va_list vargs;
+	va_start(vargs, token);
+
+	unsigned current_type = va_arg(vargs, unsigned); // NOLINT
+
+	while (current_type != TOKEN_END) {
+		if (token == NULL || token->token_type != current_type) {
+			return false;
+		}
+
+		current_type = va_arg(vargs, unsigned); // NOLINT
+
+		token = token->next;
+	}
+
+	va_end(vargs);
+	return true;
 }

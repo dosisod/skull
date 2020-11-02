@@ -69,3 +69,9 @@ AstNode *make_ast_tree(const char32_t *const);
 AstNode *make_ast_tree_(Token *, unsigned);
 void free_ast_tree(AstNode *);
 void free_ast_tree_(AstNode *);
+
+_Bool is_const_literal(Token *);
+
+#define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
+
+_Bool ast_token_cmp(Token *, ...);
