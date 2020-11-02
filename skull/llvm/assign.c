@@ -7,12 +7,7 @@
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/scope.h"
-#include "skull/eval/types/bool.h"
 #include "skull/eval/types/defs.h"
-#include "skull/eval/types/float.h"
-#include "skull/eval/types/int.h"
-#include "skull/eval/types/rune.h"
-#include "skull/eval/types/str.h"
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/math.h"
 #include "skull/llvm/var.h"
@@ -102,46 +97,11 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		return;
 	}
 
-	if (var->type == &TYPE_STR && node->token->token_type == TOKEN_STR_CONST) {
-		SkullStr str = eval_str(node->token);
-
-		char *const mbs = c32stombs(str);
-		const unsigned len = (unsigned)strlen(mbs);
-
-		LLVMValueRef str_arr = LLVMBuildAlloca(
-			builder,
-			LLVMArrayType(
-				LLVMInt8Type(),
-				len + 1
-			),
-			""
-		);
-
-		LLVMBuildStore(
-			builder,
-			LLVMConstString(mbs, len, false),
-			str_arr
-		);
-		free(mbs);
-
-		LLVMBuildStore(
-			builder,
-			LLVMBuildBitCast(
-				builder,
-				str_arr,
-				LLVMPointerType(LLVMInt8Type(), 0),
-				""
-			),
-			var->alloca
-		);
-	}
-	else {
-		LLVMBuildStore(
-			builder,
-			llvm_parse_var(var, node->token),
-			var->alloca
-		);
-	}
+	LLVMBuildStore(
+		builder,
+		llvm_parse_var(var, node->token),
+		var->alloca
+	);
 
 	free(var_name);
 }

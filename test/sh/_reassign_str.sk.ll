@@ -1,15 +1,12 @@
 ; ModuleID = './test/sh/reassign_str.sk'
 source_filename = "./test/sh/reassign_str.sk"
 
+@0 = private unnamed_addr constant [4 x i8] c"abc\00", align 1
+@1 = private unnamed_addr constant [5 x i8] c"defg\00", align 1
+
 define i64 @main() {
 entry:
   %x = alloca i8*
-  %0 = alloca [4 x i8]
-  store [4 x i8] c"abc\00", [4 x i8]* %0
-  %1 = bitcast [4 x i8]* %0 to i8*
-  store i8* %1, i8** %x
-  %2 = alloca [5 x i8]
-  store [5 x i8] c"defg\00", [5 x i8]* %2
-  %3 = bitcast [5 x i8]* %2 to i8*
-  store i8* %3, i8** %x
+  store i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i8** %x
+  store i8* getelementptr inbounds ([5 x i8], [5 x i8]* @1, i32 0, i32 0), i8** %x
 }

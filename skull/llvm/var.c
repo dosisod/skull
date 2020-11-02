@@ -14,11 +14,14 @@
 #include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
 #include "skull/eval/types/rune.h"
+#include "skull/eval/types/str.h"
 
 #include "skull/llvm/aliases.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/var.h"
+
+extern LLVMBuilderRef builder;
 
 const Type *token_type_to_type(const Token *token) {
 	if (token->token_type == TOKEN_INT_CONST) {
@@ -122,6 +125,22 @@ LLVMValueRef llvm_parse_token(const Token *const token) {
 	}
 	if (token->token_type == TOKEN_RUNE_CONST) {
 		return LLVM_RUNE(eval_rune(token));
+	}
+	if (token->token_type == TOKEN_STR_CONST) {
+		SkullStr str = eval_str(token);
+		char *const mbs = c32stombs(str);
+
+		LLVMValueRef ret = LLVMBuildBitCast(
+			builder,
+			LLVMBuildGlobalString(builder, mbs, ""),
+			LLVMPointerType(LLVMInt8Type(), 0),
+			""
+		);
+
+		free(mbs);
+		free(str);
+
+		return ret;
 	}
 
 	return NULL;
