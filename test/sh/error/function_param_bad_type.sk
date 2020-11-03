@@ -1,0 +1,5 @@
+external f(x: int)
+
+x := false
+
+f(x)

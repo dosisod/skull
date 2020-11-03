@@ -92,7 +92,8 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 	if (token->token_type == TOKEN_PAREN_CLOSE) {
 		*_token = token;
 	}
-	else if (is_const_literal(token) &&
+	else if ((is_const_literal(token) ||
+		token->token_type == TOKEN_IDENTIFIER) &&
 		token->next &&
 		token->next->token_type == TOKEN_PAREN_CLOSE
 	) {

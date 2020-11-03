@@ -93,6 +93,7 @@ test "div_float_consts.sk"
 test "multiple_externals.sk"
 test "external_with_param.sk"
 test "function_single_param.sk"
+test "function_var_param.sk"
 test "escape_sequences.sk"
 
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
@@ -137,6 +138,8 @@ test_error "escape_hex_missing_second.sk"
 test_error "escape_hex_first_bad.sk"
 test_error "escape_hex_second_bad.sk"
 test_error "function_bad_param_type.sk"
+test_error "function_param_unknown_var.sk"
+test_error "function_param_bad_type.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

@@ -15,6 +15,7 @@
 
 extern LLVMBuilderRef builder;
 extern LLVMModuleRef module;
+extern Scope *scope;
 
 ExternalFunction *external_functions = NULL;
 
@@ -106,13 +107,36 @@ void llvm_make_function(AstNode *node) {
 	LLVMValueRef params = NULL;
 
 	if (current_function->num_params == 1) {
-		if (current_function->param_types != token_type_to_type(node->token->next->next)) {
+		if (node->token->next->next->token_type == TOKEN_IDENTIFIER) {
+			char32_t *const lookup = token_str(node->token->next->next);
+			const Variable *const var_found = scope_find_name(scope, lookup);
+
+			if (!var_found) {
+				PANIC(ERR_VAR_NOT_FOUND, { .str = lookup });
+			}
+			if (var_found->type != current_function->param_types) {
+				PANIC(ERR_TYPE_MISMATCH, {
+					.real = strdup(current_function->param_types->name)
+				});
+			}
+
+			LLVMValueRef tmp_store = LLVMBuildLoad2(
+				builder,
+				var_found->type->llvm_type(),
+				var_found->alloca,
+				""
+			);
+
+			params = tmp_store;
+		}
+		else if (current_function->param_types != token_type_to_type(node->token->next->next)) {
 			PANIC(ERR_FUNC_TYPE_MISMATCH, {
 				.real = strdup(current_function->param_types->name)
 			});
 		}
-
-		params = llvm_parse_token(node->token->next->next);
+		else {
+			params = llvm_parse_token(node->token->next->next);
+		}
 	}
 
 	LLVMBuildCall2(
