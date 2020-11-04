@@ -16,8 +16,7 @@
 #include "skull/common/local.h"
 
 noreturn void segfault_handler() {
-	// add newline when segfault occurs so you can see what file cause it
-	putchar('\n');
+	printf("\n\nsegfault occurred in function `%s`, exiting\n\n", FUNC);
 
 	exit(1);
 }

@@ -4,12 +4,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef _Bool (*Test)(const char **, const char **);
+typedef _Bool (*Test)(const char **);
+
+const char *FUNC;
 
 #define TEST(name, code) \
-_Bool test_##name (const char **func, const char **msg) { \
+_Bool test_##name (const char **msg) { \
 	*msg = NULL; \
-	*func = __func__; \
+	FUNC = __func__; \
 	code; \
 	return 1; \
 }
