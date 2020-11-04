@@ -33,12 +33,7 @@ void llvm_make_var_def(AstNode **node) {
 Build a LLVM `load` operation from `node`.
 */
 void llvm_make_assign(AstNode **node) {
-	char32_t *const var_name = token_str((*node)->token);
-	Variable *const found_var = scope_find_name(scope, var_name);
-
-	if (!found_var) {
-		PANIC(ERR_VAR_NOT_FOUND, { .str = var_name });
-	}
+	SCOPE_FIND_VAR(found_var, (*node)->token, var_name);
 
 	if (found_var->is_const) {
 		PANIC("cannot reassign const variable \"%s\"\n", { .str = var_name });
@@ -110,13 +105,13 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 Build LLVM to assign an existing identifier `node` to `var`.
 */
 void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
-	char32_t *const lookup = token_str(node->token);
-	const Variable *const var_found = scope_find_name(scope, lookup);
+	SCOPE_FIND_VAR(var_found, node->token, lookup);
 
 	if (!var_found) {
 		PANIC(ERR_VAR_NOT_FOUND, { .str = lookup });
 	}
 	free(lookup);
+
 	if (var_found->type != var->type) {
 		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 	}

@@ -11,6 +11,7 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/variable.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/var.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/flow.h"
@@ -26,12 +27,7 @@ Builds an return statement from `node`.
 */
 void llvm_make_return(AstNode *node) {
 	if (node->token->next->token_type == TOKEN_IDENTIFIER) {
-		char32_t *const var_name = token_str(node->token->next);
-		const Variable *const found_var = scope_find_name(scope, var_name);
-
-		if (!found_var) {
-			PANIC(ERR_VAR_NOT_FOUND, { .str = var_name });
-		}
+		SCOPE_FIND_VAR(found_var, node->token->next, var_name);
 		free(var_name);
 
 		if (found_var->type != &TYPE_INT) {
@@ -66,13 +62,7 @@ void llvm_make_if(AstNode *node) {
 		cond = LLVM_BOOL(eval_bool(node->token->next));
 	}
 	else {
-		char32_t *const var_name = token_str(node->token->next);
-		const Variable *const found_var = scope_find_name(scope, var_name);
-
-		if (!found_var) {
-			PANIC(ERR_VAR_NOT_FOUND, { .str = var_name });
-		}
-		free(var_name);
+		SCOPE_FIND_VAR(found_var, node->token->next, var_name);
 
 		if (found_var->type != &TYPE_BOOL) {
 			PANIC("Expected \"%s\" to be of type bool\n", { .var = found_var });

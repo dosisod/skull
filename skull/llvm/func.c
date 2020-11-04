@@ -108,12 +108,9 @@ void llvm_make_function(AstNode *node) {
 
 	if (current_function->num_params == 1) {
 		if (node->token->next->next->token_type == TOKEN_IDENTIFIER) {
-			char32_t *const lookup = token_str(node->token->next->next);
-			const Variable *const var_found = scope_find_name(scope, lookup);
+			SCOPE_FIND_VAR(var_found, node->token->next->next, lookup);
+			free(lookup);
 
-			if (!var_found) {
-				PANIC(ERR_VAR_NOT_FOUND, { .str = lookup });
-			}
 			if (var_found->type != current_function->param_types) {
 				PANIC(ERR_TYPE_MISMATCH, {
 					.real = strdup(current_function->param_types->name)

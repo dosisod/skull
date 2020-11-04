@@ -67,13 +67,8 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 			// fallthrough
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER) {
-			char32_t *const lookup = token_str(node->next->token);
-			Variable *const new_var = scope_find_name(scope, lookup);
+			SCOPE_FIND_VAR(new_var, node->next->token, lookup);
 
-			if (!new_var) {
-				free(name);
-				PANIC(ERR_VAR_NOT_FOUND, { .str = lookup });
-			}
 			free(lookup);
 			type = new_var->type;
 		}
