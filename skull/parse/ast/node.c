@@ -77,6 +77,32 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
+bool is_const_oper(Token **_token, Token **last, AstNode **node) {
+	Token *token = *_token;
+
+	if (!(is_const_literal(token) &&
+		token->next &&
+		token->next->next &&
+		is_const_literal(token->next->next)
+	)) {
+		return false;
+	}
+
+	NodeType node_type = AST_NODE_UNKNOWN;
+
+switch (token->next->token_type) {
+	case TOKEN_OPER_PLUS: node_type = AST_NODE_ADD_CONSTS; break;
+	case TOKEN_OPER_MINUS: node_type = AST_NODE_SUB_CONSTS; break;
+	case TOKEN_OPER_MULT: node_type = AST_NODE_MULT_CONSTS; break;
+	case TOKEN_OPER_DIV: node_type = AST_NODE_DIV_CONSTS; break;
+	default: return false;
+}
+
+	*_token = token->next->next;
+	push_ast_node(*_token, last, node_type, node);
+	return true;
+}
+
 bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
@@ -255,47 +281,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 			continue;
 		}
 
-		if (is_const_literal(token) &&
-			token->next &&
-			token->next->token_type == TOKEN_OPER_PLUS &&
-			token->next->next &&
-			is_const_literal(token->next->next)
-		) {
-			token = token->next->next;
-			push_ast_node(token, &last, AST_NODE_ADD_CONSTS, &node);
-			continue;
-		}
-
-		if (is_const_literal(token) &&
-			token->next &&
-			token->next->token_type == TOKEN_OPER_MINUS &&
-			token->next->next &&
-			is_const_literal(token->next->next)
-		) {
-			token = token->next->next;
-			push_ast_node(token, &last, AST_NODE_SUB_CONSTS, &node);
-			continue;
-		}
-
-		if (is_const_literal(token) &&
-			token->next &&
-			token->next->token_type == TOKEN_OPER_MULT &&
-			token->next->next &&
-			is_const_literal(token->next->next)
-		) {
-			token = token->next->next;
-			push_ast_node(token, &last, AST_NODE_MULT_CONSTS, &node);
-			continue;
-		}
-
-		if (is_const_literal(token) &&
-			token->next &&
-			token->next->token_type == TOKEN_OPER_DIV &&
-			token->next->next &&
-			is_const_literal(token->next->next)
-		) {
-			token = token->next->next;
-			push_ast_node(token, &last, AST_NODE_DIV_CONSTS, &node);
+		if (is_const_oper(&token, &last, &node)) {
 			continue;
 		}
 
