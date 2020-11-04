@@ -18,7 +18,7 @@ typedef struct ExternalFunction {
 	ExternalFunction *next;
 } ExternalFunction;
 
-ExternalFunction *external_functions;
+ExternalFunction *EXTERNAL_FUNCTIONS;
 
 void declare_external_function(AstNode *);
 void llvm_make_var_def(AstNode **);

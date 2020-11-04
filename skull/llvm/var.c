@@ -21,7 +21,8 @@
 
 #include "skull/llvm/var.h"
 
-extern LLVMBuilderRef builder;
+extern LLVMBuilderRef BUILDER;
+extern Scope *SCOPE;
 
 const Type *token_type_to_type(const Token *token) {
 	if (token->token_type == TOKEN_INT_CONST) {
@@ -43,9 +44,9 @@ const Type *token_type_to_type(const Token *token) {
 }
 
 /*
-Make and add a variable from `node` to `scope`.
+Make and add a variable from `node` to global scope.
 */
-void node_make_var(const AstNode *const node, Scope *const scope) {
+void node_make_var(const AstNode *const node) {
 	const Token *token = node->token;
 
 	const bool is_const = ATTR(AstNodeVarDef, node, is_const);
@@ -85,7 +86,7 @@ void node_make_var(const AstNode *const node, Scope *const scope) {
 		free(type_name);
 	}
 
-	if (scope_add_var(scope, var)) {
+	if (scope_add_var(SCOPE, var)) {
 		free(name);
 		return;
 	}
@@ -126,8 +127,8 @@ LLVMValueRef llvm_parse_token(const Token *const token) {
 		char *const mbs = c32stombs(str);
 
 		LLVMValueRef ret = LLVMBuildBitCast(
-			builder,
-			LLVMBuildGlobalString(builder, mbs, ""),
+			BUILDER,
+			LLVMBuildGlobalString(BUILDER, mbs, ""),
 			LLVMPointerType(LLVMInt8Type(), 0),
 			""
 		);

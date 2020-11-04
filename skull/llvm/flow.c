@@ -16,9 +16,9 @@
 
 #include "skull/llvm/flow.h"
 
-extern Scope *scope;
-extern LLVMValueRef func;
-extern LLVMBuilderRef builder;
+extern Scope *SCOPE;
+extern LLVMValueRef FUNC;
+extern LLVMBuilderRef BUILDER;
 
 void node_to_llvm_ir(AstNode *);
 
@@ -35,9 +35,9 @@ void llvm_make_return(AstNode *node) {
 		}
 
 		LLVMBuildRet(
-			builder,
+			BUILDER,
 			LLVMBuildLoad2(
-				builder,
+				BUILDER,
 				LLVMInt64Type(),
 				found_var->alloca,
 				""
@@ -46,7 +46,7 @@ void llvm_make_return(AstNode *node) {
 	}
 	else {
 		LLVMBuildRet(
-			builder,
+			BUILDER,
 			LLVM_INT(eval_integer(node->token->next))
 		);
 	}
@@ -69,25 +69,25 @@ void llvm_make_if(AstNode *node) {
 		}
 
 		cond = LLVMBuildLoad2(
-			builder,
+			BUILDER,
 			LLVMInt1Type(),
 			found_var->alloca,
 			""
 		);
 	}
 
-	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(func, "if_true");
-	LLVMBasicBlockRef end = LLVMAppendBasicBlock(func, "end");
+	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(FUNC, "if_true");
+	LLVMBasicBlockRef end = LLVMAppendBasicBlock(FUNC, "end");
 
 	LLVMBuildCondBr(
-		builder,
+		BUILDER,
 		cond,
 		if_true,
 		end
 	);
 
 	LLVMPositionBuilderAtEnd(
-		builder,
+		BUILDER,
 		if_true
 	);
 
@@ -95,10 +95,10 @@ void llvm_make_if(AstNode *node) {
 		node_to_llvm_ir(node->child);
 	}
 
-	LLVMBuildBr(builder, end);
+	LLVMBuildBr(BUILDER, end);
 
 	LLVMPositionBuilderAtEnd(
-		builder,
+		BUILDER,
 		end
 	);
 }

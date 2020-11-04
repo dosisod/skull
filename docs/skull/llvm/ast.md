@@ -1,10 +1,10 @@
 # skull/llvm/ast.c
 
 ```c
-void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_, LLVMBuilderRef _builder)
+void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, LLVMBuilderRef builder)
 ```
 
-> Convert skull code from `str_` into LLVM IR (using `func_` and `module_`).
+> Convert skull code from `str_` into LLVM IR (using `func` and `module`).
 
 ```c
 void node_to_llvm_ir(AstNode *node)

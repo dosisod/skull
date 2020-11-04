@@ -15,30 +15,30 @@
 
 #include "skull/llvm/ast.h"
 
-LLVMModuleRef module;
-LLVMValueRef func;
-Scope *scope;
-LLVMBuilderRef builder;
+LLVMModuleRef MODULE;
+LLVMValueRef FUNC;
+Scope *SCOPE;
+LLVMBuilderRef BUILDER;
 
 /*
-Convert skull code from `str_` into LLVM IR (using `func_` and `module_`).
+Convert skull code from `str_` into LLVM IR (using `func` and `module`).
 */
-void str_to_llvm_ir(char *const str_, LLVMValueRef func_, LLVMModuleRef module_, LLVMBuilderRef _builder) {
+void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, LLVMBuilderRef builder) {
 	char32_t *const str = mbstoc32s(str_);
 	DIE_IF_MALLOC_FAILS(str);
 
 	AstNode *const node = make_ast_tree(str);
 
-	scope = make_scope();
-	func = func_;
-	module = module_;
-	builder = _builder;
+	SCOPE = make_scope();
+	FUNC = func;
+	MODULE = module;
+	BUILDER = builder;
 
 	node_to_llvm_ir(node);
 	free_ast_tree(node);
 	free(str);
 
-	ExternalFunction *f = external_functions;
+	ExternalFunction *f = EXTERNAL_FUNCTIONS;
 	while (f && f->next) {
 		free(f->name);
 

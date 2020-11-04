@@ -13,11 +13,11 @@
 
 #include "skull/llvm/func.h"
 
-extern LLVMBuilderRef builder;
-extern LLVMModuleRef module;
-extern Scope *scope;
+extern LLVMBuilderRef BUILDER;
+extern LLVMModuleRef MODULE;
+extern Scope *SCOPE;
 
-ExternalFunction *external_functions = NULL;
+ExternalFunction *EXTERNAL_FUNCTIONS = NULL;
 
 /*
 Store function name of externaly declared function in `node`.
@@ -55,14 +55,14 @@ void declare_external_function(AstNode *node) {
 	f->type = type;
 
 	LLVMValueRef function = LLVMAddFunction(
-		module,
+		MODULE,
 		func_name,
 		type
 	);
 	LLVMSetLinkage(function, LLVMExternalLinkage);
 	f->function = function;
 
-	ExternalFunction *head = external_functions;
+	ExternalFunction *head = EXTERNAL_FUNCTIONS;
 	while (head) {
 		if (strcmp(func_name, head->name) == 0) {
 			PANIC("cannot redeclare external function \"%s\"\n", { .str = wide_func_name });
@@ -79,7 +79,7 @@ void declare_external_function(AstNode *node) {
 		head->next = f;
 	}
 	else {
-		external_functions = f;
+		EXTERNAL_FUNCTIONS = f;
 	}
 }
 
@@ -90,7 +90,7 @@ void llvm_make_function(AstNode *node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
-	ExternalFunction *current_function = external_functions;
+	ExternalFunction *current_function = EXTERNAL_FUNCTIONS;
 	while (current_function) {
 		if (strcmp(current_function->name, func_name) == 0) {
 			break;
@@ -118,7 +118,7 @@ void llvm_make_function(AstNode *node) {
 			}
 
 			LLVMValueRef tmp_store = LLVMBuildLoad2(
-				builder,
+				BUILDER,
 				var_found->type->llvm_type(),
 				var_found->alloca,
 				""
@@ -137,7 +137,7 @@ void llvm_make_function(AstNode *node) {
 	}
 
 	LLVMBuildCall2(
-		builder,
+		BUILDER,
 		current_function->type,
 		current_function->function,
 		&params,

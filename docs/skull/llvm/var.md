@@ -1,10 +1,10 @@
 # skull/llvm/var.c
 
 ```c
-void node_make_var(const AstNode *const node, Scope *const scope)
+void node_make_var(const AstNode *const node)
 ```
 
-> Make and add a variable from `node` to `scope`.
+> Make and add a variable from `node` to global scope.
 
 ```c
 LLVMValueRef llvm_parse_var(const Variable *const var, const Token *const token)

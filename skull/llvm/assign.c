@@ -15,16 +15,16 @@
 
 #include "skull/llvm/assign.h"
 
-Scope *scope;
-LLVMBuilderRef builder;
+extern Scope *SCOPE;
+extern LLVMBuilderRef BUILDER;
 
 /*
 Builds a variable from `node`.
 */
 void llvm_make_var_def(AstNode **node) {
-	node_make_var(*node, scope);
+	node_make_var(*node);
 
-	llvm_make_assign_(scope->vars[scope->vars_used - 1], (*node)->next);
+	llvm_make_assign_(SCOPE->vars[SCOPE->vars_used - 1], (*node)->next);
 
 	*node = (*node)->next;
 }
@@ -62,7 +62,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 
 	if (!var->alloca) {
 		var->alloca = LLVMBuildAlloca(
-			builder,
+			BUILDER,
 			var->type->llvm_type(),
 			var_name
 		);
@@ -93,7 +93,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	}
 
 	LLVMBuildStore(
-		builder,
+		BUILDER,
 		llvm_parse_var(var, node->token),
 		var->alloca
 	);
@@ -118,21 +118,21 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 
 	if (!var->alloca) {
 		var->alloca = LLVMBuildAlloca(
-			builder,
+			BUILDER,
 			var->type->llvm_type(),
 			c32stombs(var->name)
 		);
 	}
 
 	LLVMValueRef load = LLVMBuildLoad2(
-		builder,
+		BUILDER,
 		var->type->llvm_type(),
 		var_found->alloca,
 		""
 	);
 
 	LLVMBuildStore(
-		builder,
+		BUILDER,
 		load,
 		var->alloca
 	);

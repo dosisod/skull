@@ -10,17 +10,17 @@
 
 #include "skull/llvm/math.h"
 
-extern LLVMBuilderRef builder;
+extern LLVMBuilderRef BUILDER;
 
 /*
 Build LLVM for assining addition of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_add(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (var->type == &TYPE_INT) {
-		return LLVMBuildAdd(builder, lhs, rhs, "");
+		return LLVMBuildAdd(BUILDER, lhs, rhs, "");
 	}
 	if (var->type == &TYPE_FLOAT) {
-		return LLVMBuildFAdd(builder, lhs, rhs, "");
+		return LLVMBuildFAdd(BUILDER, lhs, rhs, "");
 	}
 
 	return NULL;
@@ -31,10 +31,10 @@ Build LLVM for assining subtraction of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_sub(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (var->type == &TYPE_INT) {
-		return LLVMBuildSub(builder, lhs, rhs, "");
+		return LLVMBuildSub(BUILDER, lhs, rhs, "");
 	}
 	if (var->type == &TYPE_FLOAT) {
-		return LLVMBuildFSub(builder, lhs, rhs, "");
+		return LLVMBuildFSub(BUILDER, lhs, rhs, "");
 	}
 
 	return NULL;
@@ -45,10 +45,10 @@ Build LLVM for assining multiplication of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_mult(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (var->type == &TYPE_INT) {
-		return LLVMBuildMul(builder, lhs, rhs, "");
+		return LLVMBuildMul(BUILDER, lhs, rhs, "");
 	}
 	if (var->type == &TYPE_FLOAT) {
-		return LLVMBuildFMul(builder, lhs, rhs, "");
+		return LLVMBuildFMul(BUILDER, lhs, rhs, "");
 	}
 
 	return NULL;
@@ -59,10 +59,10 @@ Build LLVM for assining division of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_div(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (var->type == &TYPE_INT) {
-		return LLVMBuildSDiv(builder, lhs, rhs, "");
+		return LLVMBuildSDiv(BUILDER, lhs, rhs, "");
 	}
 	if (var->type == &TYPE_FLOAT) {
-		return LLVMBuildFDiv(builder, lhs, rhs, "");
+		return LLVMBuildFDiv(BUILDER, lhs, rhs, "");
 	}
 
 	return NULL;
@@ -94,7 +94,7 @@ void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper *oper, con
 	}
 
 	LLVMBuildStore(
-		builder,
+		BUILDER,
 		result,
 		var->alloca
 	);
