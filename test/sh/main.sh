@@ -96,6 +96,7 @@ test "function_single_param.sk"
 test "function_var_param.sk"
 test "escape_sequences.sk"
 test "oper_rhs_with_var.sk"
+test "oper_lhs_with_var.sk"
 
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"
@@ -143,6 +144,8 @@ test_error "function_param_unknown_var.sk"
 test_error "function_param_bad_type.sk"
 test_error "oper_rhs_var_not_found.sk"
 test_error "oper_rhs_var_bad_type.sk"
+test_error "oper_lhs_var_not_found.sk"
+test_error "oper_lhs_var_bad_type.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

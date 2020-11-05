@@ -69,25 +69,25 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	}
 
 	if (node->node_type == AST_NODE_ADD_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_add, "cannot add \"%s\" and \"%s\"\n");
+		llvm_make_math_oper(var, node, &llvm_make_add);
 		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_SUB_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_sub, "cannot subtract \"%s\" and \"%s\"\n");
+		llvm_make_math_oper(var, node, &llvm_make_sub);
 		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_MULT_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_mult, "cannot multiply \"%s\" and \"%s\"\n");
+		llvm_make_math_oper(var, node, &llvm_make_mult);
 		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_DIV_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_div, "cannot divide \"%s\" and \"%s\"\n");
+		llvm_make_math_oper(var, node, &llvm_make_div);
 		free(var_name);
 		return;
 	}

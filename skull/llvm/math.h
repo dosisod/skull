@@ -7,7 +7,7 @@
 
 typedef LLVMValueRef (MathOper)(Variable *, LLVMValueRef, LLVMValueRef);
 
-void llvm_make_math_oper(Variable *, const AstNode *, MathOper *, const char *);
+void llvm_make_math_oper(Variable *, const AstNode *, MathOper *);
 
 MathOper llvm_make_add;
 MathOper llvm_make_sub;

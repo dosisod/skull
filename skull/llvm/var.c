@@ -67,7 +67,13 @@ void node_make_var(const AstNode *const node) {
 		if (type) {
 			// fallthrough
 		}
-		else if (node->next->node_type == AST_NODE_IDENTIFIER) {
+		else if (node->next->node_type == AST_NODE_IDENTIFIER || (
+			(node->next->node_type == AST_NODE_ADD_CONSTS ||
+			node->next->node_type == AST_NODE_SUB_CONSTS ||
+			node->next->node_type == AST_NODE_MULT_CONSTS ||
+			node->next->node_type == AST_NODE_DIV_CONSTS) &&
+			node->next->token->token_type == TOKEN_IDENTIFIER)
+		) {
 			SCOPE_FIND_VAR(new_var, node->next->token, lookup);
 
 			free(lookup);

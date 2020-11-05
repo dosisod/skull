@@ -1,1 +1,1 @@
-Compilation error: cannot divide "1" and ""fail""
+Compilation error: type mismatch: expected type "int"

@@ -69,51 +69,42 @@ LLVMValueRef llvm_make_div(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs) {
 	return NULL;
 }
 
+LLVMValueRef llvm_token_to_val(const Variable *, const Token *);
+
 /*
 Build LLVM for assigning math operation `oper` from `node` to `var`.
 */
-void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper *oper, const char *panic) {
-	const Token *lhs = node->token;
-	const Token *rhs = node->token->next->next;
-
-	LLVMValueRef lhs_val = llvm_parse_var(var, lhs);
-	LLVMValueRef rhs_val = NULL;
-
-	if (lhs->token_type == rhs->token_type) {
-		rhs_val = llvm_parse_var(var, rhs);
-	}
-
-	else if (rhs->token_type == TOKEN_IDENTIFIER) {
-		SCOPE_FIND_VAR(var_found, rhs, lookup);
-		free(lookup);
-
-		if (var->type != var_found->type) {
-			PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
-		}
-
-		rhs_val = LLVMBuildLoad2(
-			BUILDER,
-			var->type->llvm_type(),
-			var_found->alloca,
-			""
-		);
-	}
-
-	else {
-		PANIC(
-			panic,
-			{ .tok = lhs },
-			{ .tok = rhs }
-		);
-	}
-
+void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper *oper) {
 	LLVMBuildStore(
 		BUILDER,
 		oper(
 			var,
-			lhs_val,
-			rhs_val
+			llvm_token_to_val(var, node->token),
+			llvm_token_to_val(var, node->token->next->next)
 		),
 		var->alloca
+	);
+}
+
+/*
+Return LLVM equivalent of `token`, checking for compatibility with `var`.
+*/
+LLVMValueRef llvm_token_to_val(const Variable *var, const Token *token) {
+	if (token->token_type != TOKEN_IDENTIFIER) {
+		return llvm_parse_var(var, token);
+	}
+
+	SCOPE_FIND_VAR(var_found, token, lookup);
+	free(lookup);
+
+	if (var->type != var_found->type) {
+		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
+	}
+
+	return LLVMBuildLoad2(
+		BUILDER,
+		var->type->llvm_type(),
+		var_found->alloca,
+		""
 	);
 }

@@ -80,7 +80,10 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (!(is_const_literal(token) &&
+	if (!((
+			is_const_literal(token) ||
+			token->token_type == TOKEN_IDENTIFIER
+		) &&
 		token->next &&
 		token->next->next && (
 			is_const_literal(token->next->next) ||
