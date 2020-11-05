@@ -106,10 +106,6 @@ Build LLVM to assign an existing identifier `node` to `var`.
 */
 void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 	SCOPE_FIND_VAR(var_found, node->token, lookup);
-
-	if (!var_found) {
-		PANIC(ERR_VAR_NOT_FOUND, { .str = lookup });
-	}
 	free(lookup);
 
 	if (var_found->type != var->type) {
@@ -124,16 +120,14 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 		);
 	}
 
-	LLVMValueRef load = LLVMBuildLoad2(
-		BUILDER,
-		var->type->llvm_type(),
-		var_found->alloca,
-		""
-	);
-
 	LLVMBuildStore(
 		BUILDER,
-		load,
+		LLVMBuildLoad2(
+			BUILDER,
+			var->type->llvm_type(),
+			var_found->alloca,
+			""
+		),
 		var->alloca
 	);
 }

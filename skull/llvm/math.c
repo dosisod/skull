@@ -11,6 +11,7 @@
 #include "skull/llvm/math.h"
 
 extern LLVMBuilderRef BUILDER;
+extern Scope *SCOPE;
 
 /*
 Build LLVM for assining addition of `lhs` and `rhs` to `var`.
@@ -75,17 +76,30 @@ void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper *oper, con
 	const Token *lhs = node->token;
 	const Token *rhs = node->token->next->next;
 
-	LLVMValueRef result = NULL;
+	LLVMValueRef lhs_val = llvm_parse_var(var, lhs);
+	LLVMValueRef rhs_val = NULL;
 
 	if (lhs->token_type == rhs->token_type) {
-		result = oper(
-			var,
-			llvm_parse_var(var, lhs),
-			llvm_parse_var(var, rhs)
+		rhs_val = llvm_parse_var(var, rhs);
+	}
+
+	else if (rhs->token_type == TOKEN_IDENTIFIER) {
+		SCOPE_FIND_VAR(var_found, rhs, lookup);
+		free(lookup);
+
+		if (var->type != var_found->type) {
+			PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
+		}
+
+		rhs_val = LLVMBuildLoad2(
+			BUILDER,
+			var->type->llvm_type(),
+			var_found->alloca,
+			""
 		);
 	}
 
-	if (!result) {
+	else {
 		PANIC(
 			panic,
 			{ .tok = lhs },
@@ -95,7 +109,11 @@ void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper *oper, con
 
 	LLVMBuildStore(
 		BUILDER,
-		result,
+		oper(
+			var,
+			lhs_val,
+			rhs_val
+		),
 		var->alloca
 	);
 }

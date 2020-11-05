@@ -82,8 +82,10 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 
 	if (!(is_const_literal(token) &&
 		token->next &&
-		token->next->next &&
-		is_const_literal(token->next->next)
+		token->next->next && (
+			is_const_literal(token->next->next) ||
+			token->next->next->token_type == TOKEN_IDENTIFIER
+		)
 	)) {
 		return false;
 	}
