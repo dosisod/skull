@@ -36,18 +36,33 @@ void declare_external_function(AstNode *node) {
 	LLVMTypeRef *params = NULL;
 	f->num_params = 0;
 
-	if (node->token->next->next->next->token_type != TOKEN_PAREN_CLOSE) {
-		char *type_name = token_mbs_str(node->token->next->next->next->next);
+	LLVMTypeRef ret_type = LLVMVoidType();
+
+	const Token *token = node->token->next->next->next;
+
+	if (token->token_type != TOKEN_PAREN_CLOSE) {
+		char *type_name = token_mbs_str(token->next);
 
 		f->num_params = 1;
 		f->param_types = find_type(type_name);
+		free(type_name);
 
 		LLVMTypeRef llvm_param_type = f->param_types->llvm_type();
 		params = &llvm_param_type;
 	}
 
+	while (token->token_type != TOKEN_PAREN_CLOSE) {
+		token = token->next;
+	}
+
+	if (token->next->token_type == TOKEN_TYPE) {
+		char *type_name = token_mbs_str(token->next);
+		ret_type = find_type(type_name)->llvm_type();
+		free(type_name);
+	}
+
 	LLVMTypeRef type = LLVMFunctionType(
-		LLVMVoidType(),
+		ret_type,
 		params,
 		f->num_params,
 		false

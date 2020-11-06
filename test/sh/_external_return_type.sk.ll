@@ -5,6 +5,6 @@ define i64 @main() {
 entry:
 }
 
-declare void @x()
+declare i64 @x()
 
-declare void @y(i64)
+declare i64 @y(i64)
