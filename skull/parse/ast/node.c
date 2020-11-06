@@ -167,6 +167,24 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		*_token = token->next->next;
 	}
 
+	else if (AST_TOKEN_CMP(token,
+		TOKEN_PAREN_CLOSE,
+		TOKEN_TYPE,
+		TOKEN_NEWLINE)
+	) {
+		*_token = token->next;
+	}
+
+	else if (AST_TOKEN_CMP(token,
+		TOKEN_NEW_IDENTIFIER,
+		TOKEN_TYPE,
+		TOKEN_PAREN_CLOSE,
+		TOKEN_TYPE,
+		TOKEN_NEWLINE)
+	) {
+		*_token = token->next->next->next;
+	}
+
 	else {
 		return false;
 	}
