@@ -66,16 +66,15 @@ void node_make_var(const AstNode *const node) {
 			// fallthrough
 		}
 		else if (node->next->node_type == AST_NODE_FUNCTION) {
+			char *func_name = token_mbs_str(node->next->token);
+
 			ExternalFunction *function = EXTERNAL_FUNCTIONS;
 			while (function) {
-				if (!function->next) {
+				if (strcmp(func_name, function->name) == 0) {
+					type = function->return_type;
 					break;
 				}
 				function = function->next;
-			}
-
-			if (function) {
-				type = function->return_type;
 			}
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER || (
