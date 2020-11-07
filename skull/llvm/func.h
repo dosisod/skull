@@ -15,10 +15,13 @@ typedef struct ExternalFunction {
 	unsigned num_params;
 	const Type *param_types;
 
+	const Type *return_type;
+
 	ExternalFunction *next;
 } ExternalFunction;
 
 ExternalFunction *EXTERNAL_FUNCTIONS;
 
 void declare_external_function(AstNode *);
-void llvm_make_var_def(AstNode **);
+
+LLVMValueRef llvm_make_function(const AstNode *const);

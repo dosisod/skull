@@ -9,6 +9,7 @@
 #include "skull/eval/scope.h"
 #include "skull/eval/types/defs.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/func.h"
 #include "skull/llvm/math.h"
 #include "skull/llvm/var.h"
 #include "skull/parse/classify.h"
@@ -67,28 +68,34 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 			var_name
 		);
 	}
+	free(var_name);
 
 	if (node->node_type == AST_NODE_ADD_CONSTS) {
 		llvm_make_math_oper(var, node, &llvm_make_add);
-		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_SUB_CONSTS) {
 		llvm_make_math_oper(var, node, &llvm_make_sub);
-		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_MULT_CONSTS) {
 		llvm_make_math_oper(var, node, &llvm_make_mult);
-		free(var_name);
 		return;
 	}
 
 	if (node->node_type == AST_NODE_DIV_CONSTS) {
 		llvm_make_math_oper(var, node, &llvm_make_div);
-		free(var_name);
+		return;
+	}
+
+	if (node->node_type == AST_NODE_FUNCTION) {
+		LLVMBuildStore(
+			BUILDER,
+			llvm_make_function(node),
+			var->alloca
+		);
 		return;
 	}
 
@@ -97,8 +104,6 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		llvm_parse_var(var, node->token),
 		var->alloca
 	);
-
-	free(var_name);
 }
 
 /*

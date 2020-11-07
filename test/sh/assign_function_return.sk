@@ -1,0 +1,5 @@
+external func() int
+
+x := func()
+
+return x

@@ -36,7 +36,8 @@ void declare_external_function(AstNode *node) {
 	LLVMTypeRef *params = NULL;
 	f->num_params = 0;
 
-	LLVMTypeRef ret_type = LLVMVoidType();
+	LLVMTypeRef llvm_return_type = LLVMVoidType();
+	f->return_type = NULL;
 
 	const Token *token = node->token->next->next->next;
 
@@ -57,12 +58,14 @@ void declare_external_function(AstNode *node) {
 
 	if (token->next->token_type == TOKEN_TYPE) {
 		char *type_name = token_mbs_str(token->next);
-		ret_type = find_type(type_name)->llvm_type();
+		f->return_type = find_type(type_name);
+		llvm_return_type = f->return_type->llvm_type();
+
 		free(type_name);
 	}
 
 	LLVMTypeRef type = LLVMFunctionType(
-		ret_type,
+		llvm_return_type,
 		params,
 		f->num_params,
 		false
@@ -101,7 +104,7 @@ void declare_external_function(AstNode *node) {
 /*
 Builds a function declaration from `node`.
 */
-void llvm_make_function(AstNode *node) {
+LLVMValueRef llvm_make_function(const AstNode *const node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
@@ -151,7 +154,7 @@ void llvm_make_function(AstNode *node) {
 		}
 	}
 
-	LLVMBuildCall2(
+	return LLVMBuildCall2(
 		BUILDER,
 		current_function->type,
 		current_function->function,

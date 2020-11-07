@@ -7,16 +7,14 @@
 #include "skull/common/malloc.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
-#include "skull/eval/types/defs.h"
-
 #include "skull/eval/types/bool.h"
 #include "skull/eval/types/defs.h"
 #include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
 #include "skull/eval/types/rune.h"
 #include "skull/eval/types/str.h"
-
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/func.h"
 #include "skull/parse/classify.h"
 
 #include "skull/llvm/var.h"
@@ -66,6 +64,19 @@ void node_make_var(const AstNode *const node) {
 
 		if (type) {
 			// fallthrough
+		}
+		else if (node->next->node_type == AST_NODE_FUNCTION) {
+			ExternalFunction *function = EXTERNAL_FUNCTIONS;
+			while (function) {
+				if (!function->next) {
+					break;
+				}
+				function = function->next;
+			}
+
+			if (function) {
+				type = function->return_type;
+			}
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER || (
 			(node->next->node_type == AST_NODE_ADD_CONSTS ||

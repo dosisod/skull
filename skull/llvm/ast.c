@@ -9,6 +9,7 @@
 #include "skull/common/str.h"
 #include "skull/eval/scope.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/assign.h"
 #include "skull/llvm/flow.h"
 #include "skull/llvm/func.h"
 #include "skull/parse/classify.h"
