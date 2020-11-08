@@ -1,4 +1,4 @@
-# skull/parse/tokenize.c
+# skull/parse/tokenize
 
 ```c
 Token *tokenize(const char32_t *code)

@@ -1,4 +1,4 @@
-# skull/llvm/math.c
+# skull/llvm/math
 
 ```c
 LLVMValueRef llvm_make_add(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs)

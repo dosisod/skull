@@ -1,4 +1,4 @@
-# skull/eval/types/int.c
+# skull/eval/types/int
 
 ```c
 SkullInt eval_integer(const Token *const token)

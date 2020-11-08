@@ -1,4 +1,4 @@
-# skull/eval/variable.c
+# skull/eval/variable
 
 ```c
 Variable *make_variable(const Type *const type, const char32_t *const name, bool is_const)

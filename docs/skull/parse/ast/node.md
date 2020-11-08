@@ -1,4 +1,4 @@
-# skull/parse/ast/node.c
+# skull/parse/ast/node
 
 ```c
 AstNode *make_ast_tree(const char32_t *const code)

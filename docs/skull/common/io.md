@@ -1,4 +1,4 @@
-# skull/common/io.c
+# skull/common/io
 
 ```c
 char *read_file(FILE *const fd)

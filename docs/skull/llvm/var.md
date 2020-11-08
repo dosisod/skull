@@ -1,4 +1,4 @@
-# skull/llvm/var.c
+# skull/llvm/var
 
 ```c
 void node_make_var(const AstNode *const node)

@@ -1,4 +1,4 @@
-# skull/eval/types/rune.c
+# skull/eval/types/rune
 
 ```c
 SkullRune eval_rune(const Token *const token)

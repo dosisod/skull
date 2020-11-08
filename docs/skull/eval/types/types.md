@@ -1,4 +1,4 @@
-# skull/eval/types/types.c
+# skull/eval/types/types
 
 ```c
 const Type __attribute__((pure)) *find_type(const char *const name)

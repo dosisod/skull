@@ -1,4 +1,4 @@
-# skull/parse/classify.c
+# skull/parse/classify
 
 ```c
 void classify_token(Token *const token)

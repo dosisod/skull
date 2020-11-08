@@ -1,4 +1,4 @@
-# skull/eval/types/bool.c
+# skull/eval/types/bool
 
 ```c
 bool eval_bool(const Token *const token)

@@ -1,4 +1,4 @@
-# skull/eval/types/float.c
+# skull/eval/types/float
 
 ```c
 SkullFloat eval_float(const Token *const token)

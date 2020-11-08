@@ -1,4 +1,4 @@
-# skull/llvm/ast.c
+# skull/llvm/ast
 
 ```c
 void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, LLVMBuilderRef builder)

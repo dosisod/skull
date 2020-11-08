@@ -1,4 +1,4 @@
-# skull/eval/scope.c
+# skull/eval/scope
 
 ```c
 bool scope_add_var(Scope *const scope, Variable *var)

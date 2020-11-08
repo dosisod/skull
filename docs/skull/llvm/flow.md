@@ -1,4 +1,4 @@
-# skull/llvm/flow.c
+# skull/llvm/flow
 
 ```c
 void llvm_make_return(AstNode *node)

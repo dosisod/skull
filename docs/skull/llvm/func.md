@@ -1,4 +1,4 @@
-# skull/llvm/func.c
+# skull/llvm/func
 
 ```c
 void declare_external_function(AstNode *node)

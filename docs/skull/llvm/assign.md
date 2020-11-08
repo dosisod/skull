@@ -1,4 +1,4 @@
-# skull/llvm/assign.c
+# skull/llvm/assign
 
 ```c
 void llvm_make_var_def(AstNode **node)

@@ -1,4 +1,4 @@
-# skull/common/errors.c
+# skull/common/errors
 
 ```c
 void fmt_error(const char *const fmt, ErrorMsg msgs[])
