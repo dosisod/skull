@@ -1,6 +1,26 @@
 # skull/eval/variable
 
 ```c
+typedef struct Variable {
+	const Type *type;
+	char32_t *name;
+	_Bool is_const;
+
+	LLVMValueRef alloca;
+}
+```
+
+> `Variable` acts as a more strict abstraction on top of LLVM.
+> \
+> `type` is the Skull type of the variable.
+> \
+> `name` is the name of the variable.
+> \
+> `is_const` stores whether the variable is const or not.
+> \
+> `alloca` stores the actual LLVM allocated variable.
+
+```c
 Variable *make_variable(const Type *const type, const char32_t *const name, bool is_const)
 ```
 

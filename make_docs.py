@@ -12,8 +12,18 @@ def display_markdown(code: str) -> str:
         if "NOLINT" in doc:
             continue
 
-        function_proto = code[end:].split("\n")[1][:-2]
-        ret += f"```c\n{function_proto}\n```\n\n"
+        value = ""
+
+        lines = code[end:].split("\n")
+        if lines[1].startswith("typedef struct"):
+            struct_end = code[end:].index("}")
+
+            value = code[(end + 1):(end + struct_end + 1)]
+
+        else:
+            value = lines[1][:-2]
+
+        ret += f"```c\n{value}\n```\n\n"
 
         for line in doc.split("\n"):
             if not line:

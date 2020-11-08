@@ -1,6 +1,26 @@
 # skull/parse/tokenize
 
 ```c
+typedef struct Token {
+	const char32_t *begin;
+	const char32_t *end;
+	unsigned token_type;
+
+	Token *next;
+}
+```
+
+> Stores the smallest meaningful chunk of parsed code.
+> \
+> `begin` points to the first character in the token.
+> \
+> `end` points to the last character in the token.
+> \
+> `token_type` stores the type of token.
+> \
+> `next` stores the next parsed token.
+
+```c
 Token *tokenize(const char32_t *code)
 ```
 

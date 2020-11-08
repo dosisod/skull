@@ -1,6 +1,22 @@
 # skull/common/errors
 
 ```c
+typedef struct {
+	const char32_t *str;
+	const Token *tok;
+	const Variable *var;
+	const Type *type;
+
+	// copy of string that will be used in final error msg
+	char *real;
+}
+```
+
+> `ErrorMsg` stores a reference to a given object, generating an error msg based on which one is set.
+> \
+> See `fmt_error_stringify` for uses of these fields.
+
+```c
 void fmt_error(const char *const fmt, ErrorMsg msgs[])
 ```
 

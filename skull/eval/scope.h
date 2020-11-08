@@ -4,6 +4,13 @@
 
 #define SCOPE_MAX_VARS 256
 
+/*
+`Scope` stores all of the variables declared in a specific scope.
+
+`vars_used` stores how many variables are in a given scope.
+
+`vars` is an array of all of the variables in a scope.
+*/
 typedef struct {
 	size_t vars_used;
 	Variable *vars[SCOPE_MAX_VARS];

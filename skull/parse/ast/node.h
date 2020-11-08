@@ -39,6 +39,19 @@ typedef enum {
 
 typedef struct AstNode AstNode;
 
+/*
+An `AstNode` abstractly stores data about parsed code.
+
+Each `AstNode` must have a `node_type`, which represents what tokens a node might contain.
+
+An `AstNode` points to the starting `token`, and the ending token, `token_end`.
+
+Adjacent `AstNode`s are accessed via `next` and `last`.
+
+`child` and `parent` are used to access the child and parent node of a given node.
+
+Certain `node_type`s may chose to store arbitrary data in `attr` to save time re-parsing.
+*/
 typedef struct AstNode {
 	NodeType node_type;
 
@@ -55,6 +68,9 @@ typedef struct AstNode {
 	void *attr;
 } AstNode;
 
+/*
+Used to store special data about `AST_NODE_VAR_DEF` nodes.
+*/
 typedef struct {
 	// these probably should be turned into bitflags
 	_Bool is_implicit;

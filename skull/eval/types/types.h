@@ -4,6 +4,13 @@
 
 #include <llvm-c/Core.h>
 
+/*
+`Type` is an abstraction on top of the existing LLVM type system.
+
+`name` is the name of the type.
+
+`llvm_type` is a pointer to a function that returns the desired LLVM type.
+*/
 typedef struct Type {
 	const char *name;
 

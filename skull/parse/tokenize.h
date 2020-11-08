@@ -4,6 +4,17 @@
 
 typedef struct Token Token;
 
+/*
+Stores the smallest meaningful chunk of parsed code.
+
+`begin` points to the first character in the token.
+
+`end` points to the last character in the token.
+
+`token_type` stores the type of token.
+
+`next` stores the next parsed token.
+*/
 typedef struct Token {
 	const char32_t *begin;
 	const char32_t *end;

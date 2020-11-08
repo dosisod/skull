@@ -18,8 +18,12 @@
 typedef struct Variable Variable;
 typedef struct Type Type;
 
+/*
+`ErrorMsg` stores a reference to a given object, generating an error msg based on which one is set.
+
+See `fmt_error_stringify` for uses of these fields.
+*/
 typedef struct {
-	// dont store heap allocated strings in "str", do so in "real"
 	const char32_t *str;
 	const Token *tok;
 	const Variable *var;
