@@ -131,12 +131,7 @@ LLVMValueRef llvm_make_function(const AstNode *const node) {
 				});
 			}
 
-			params = LLVMBuildLoad2(
-				BUILDER,
-				var_found->type->llvm_type(),
-				var_found->alloca,
-				""
-			);
+			params = llvm_var_get_value(var_found);
 		}
 		else if (current_function->param_types == token_type_to_type(node->token->next->next)) {
 			params = llvm_parse_token(node->token->next->next);

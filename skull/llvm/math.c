@@ -97,10 +97,5 @@ LLVMValueRef llvm_token_to_val(const Variable *var, const Token *token) {
 		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 
-	return LLVMBuildLoad2(
-		BUILDER,
-		var->type->llvm_type(),
-		var_found->alloca,
-		""
-	);
+	return llvm_var_get_value(var_found);
 }

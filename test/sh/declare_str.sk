@@ -1,1 +1,1 @@
-x := "abcdef"
+mut x := "abcdef"

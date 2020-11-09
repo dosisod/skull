@@ -36,12 +36,7 @@ void llvm_make_return(AstNode *node) {
 
 		LLVMBuildRet(
 			BUILDER,
-			LLVMBuildLoad2(
-				BUILDER,
-				LLVMInt64Type(),
-				found_var->alloca,
-				""
-			)
+			llvm_var_get_value(found_var)
 		);
 	}
 	else {
@@ -68,12 +63,7 @@ void llvm_make_if(AstNode *node) {
 			PANIC("Expected \"%s\" to be of type bool\n", { .var = found_var });
 		}
 
-		cond = LLVMBuildLoad2(
-			BUILDER,
-			LLVMInt1Type(),
-			found_var->alloca,
-			""
-		);
+		cond = llvm_var_get_value(found_var);
 	}
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(FUNC, "if_true");

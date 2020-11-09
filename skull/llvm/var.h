@@ -13,9 +13,11 @@
 		PANIC(ERR_VAR_NOT_FOUND, { .str = (var_name) }); \
 	}
 
-void node_make_var(const AstNode *const);
-
 const Type *token_type_to_type(const Token *);
+
+LLVMValueRef llvm_var_get_value(const Variable *const);
+
+void node_make_var(const AstNode *const);
 
 LLVMValueRef llvm_parse_var(const Variable *const, const Token *const);
 LLVMValueRef llvm_parse_token(const Token *const);

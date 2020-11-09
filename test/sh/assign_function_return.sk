@@ -1,5 +1,5 @@
 external func() int
 
-x := func()
+mut x := func()
 
 return x

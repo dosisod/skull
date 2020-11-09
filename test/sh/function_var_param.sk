@@ -1,5 +1,5 @@
 external f(x: int)
 
-num := 1234
+mut num := 1234
 
 f(num)

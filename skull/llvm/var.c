@@ -41,6 +41,19 @@ const Type *token_type_to_type(const Token *token) {
 	return NULL;
 }
 
+LLVMValueRef llvm_var_get_value(const Variable *const var) {
+	if (var->is_const) {
+		return var->alloca;
+	}
+
+	return LLVMBuildLoad2(
+		BUILDER,
+		LLVMGetAllocatedType(var->alloca),
+		var->alloca,
+		""
+	);
+}
+
 /*
 Make and add a variable from `node` to global scope.
 */

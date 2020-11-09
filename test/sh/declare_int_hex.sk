@@ -1,1 +1,1 @@
-x := 0xFF
+mut x := 0xFF

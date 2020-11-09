@@ -1,4 +1,4 @@
-x := 0
-z := x
+mut x := 0
+mut z := x
 
 return z

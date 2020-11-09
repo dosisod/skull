@@ -99,6 +99,7 @@ test "function_var_param.sk"
 test "escape_sequences.sk"
 test "oper_rhs_with_var.sk"
 test "oper_lhs_with_var.sk"
+test "const_inline.sk"
 
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"

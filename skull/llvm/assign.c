@@ -56,7 +56,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 
 	char *const var_name = c32stombs(var->name);
 
-	if (!var->alloca) {
+	if (!var->alloca && !var->is_const) {
 		var->alloca = LLVMBuildAlloca(
 			BUILDER,
 			var->type->llvm_type(),
@@ -89,11 +89,16 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		value = llvm_parse_var(var, node->token);
 	}
 
-	LLVMBuildStore(
-		BUILDER,
-		value,
-		var->alloca
-	);
+	if (var->is_const) {
+		var->alloca = value;
+	}
+	else {
+		LLVMBuildStore(
+			BUILDER,
+			value,
+			var->alloca
+		);
+	}
 }
 
 /*
@@ -107,10 +112,5 @@ LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const no
 		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 
-	return LLVMBuildLoad2(
-		BUILDER,
-		LLVMGetAllocatedType(var_found->alloca),
-		var_found->alloca,
-		""
-	);
+	return llvm_var_get_value(var_found);
 }

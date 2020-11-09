@@ -1,4 +1,4 @@
-x := false
+mut x := false
 
 if x {
 	return 1
