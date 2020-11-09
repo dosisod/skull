@@ -72,17 +72,13 @@ LLVMValueRef llvm_make_div(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs) {
 LLVMValueRef llvm_token_to_val(const Variable *, const Token *);
 
 /*
-Build LLVM for assigning math operation `oper` from `node` to `var`.
+Return LLVM for assigning math operation `oper` from `node` to `var`.
 */
-void llvm_make_math_oper(Variable *var, const AstNode *node, MathOper *oper) {
-	LLVMBuildStore(
-		BUILDER,
-		oper(
-			var,
-			llvm_token_to_val(var, node->token),
-			llvm_token_to_val(var, node->token->next->next)
-		),
-		var->alloca
+LLVMValueRef llvm_make_math_oper(Variable *var, const AstNode *node, MathOper *oper) {
+	return oper(
+		var,
+		llvm_token_to_val(var, node->token),
+		llvm_token_to_val(var, node->token->next->next)
 	);
 }
 

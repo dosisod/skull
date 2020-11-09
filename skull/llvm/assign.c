@@ -54,11 +54,6 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
 
-	if (node->node_type == AST_NODE_IDENTIFIER) {
-		llvm_assign_identifier(var, node);
-		return;
-	}
-
 	char *const var_name = c32stombs(var->name);
 
 	if (!var->alloca) {
@@ -70,46 +65,41 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	}
 	free(var_name);
 
-	if (node->node_type == AST_NODE_ADD_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_add);
-		return;
-	}
+	LLVMValueRef value = NULL;
 
-	if (node->node_type == AST_NODE_SUB_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_sub);
-		return;
+	if (node->node_type == AST_NODE_IDENTIFIER) {
+		value = llvm_assign_identifier(var, node);
 	}
-
-	if (node->node_type == AST_NODE_MULT_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_mult);
-		return;
+	else if (node->node_type == AST_NODE_ADD_CONSTS) {
+		value = llvm_make_math_oper(var, node, &llvm_make_add);
 	}
-
-	if (node->node_type == AST_NODE_DIV_CONSTS) {
-		llvm_make_math_oper(var, node, &llvm_make_div);
-		return;
+	else if (node->node_type == AST_NODE_SUB_CONSTS) {
+		value = llvm_make_math_oper(var, node, &llvm_make_sub);
 	}
-
-	if (node->node_type == AST_NODE_FUNCTION) {
-		LLVMBuildStore(
-			BUILDER,
-			llvm_make_function(node),
-			var->alloca
-		);
-		return;
+	else if (node->node_type == AST_NODE_MULT_CONSTS) {
+		value = llvm_make_math_oper(var, node, &llvm_make_mult);
+	}
+	else if (node->node_type == AST_NODE_DIV_CONSTS) {
+		value = llvm_make_math_oper(var, node, &llvm_make_div);
+	}
+	else if (node->node_type == AST_NODE_FUNCTION) {
+		value = llvm_make_function(node);
+	}
+	else {
+		value = llvm_parse_var(var, node->token);
 	}
 
 	LLVMBuildStore(
 		BUILDER,
-		llvm_parse_var(var, node->token),
+		value,
 		var->alloca
 	);
 }
 
 /*
-Build LLVM to assign an existing identifier `node` to `var`.
+Return LLVM for to load an existing identifier `node` to `var`.
 */
-void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
+LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 	SCOPE_FIND_VAR(var_found, node->token, lookup);
 	free(lookup);
 
@@ -117,22 +107,10 @@ void llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 
-	if (!var->alloca) {
-		var->alloca = LLVMBuildAlloca(
-			BUILDER,
-			var->type->llvm_type(),
-			c32stombs(var->name)
-		);
-	}
-
-	LLVMBuildStore(
+	return LLVMBuildLoad2(
 		BUILDER,
-		LLVMBuildLoad2(
-			BUILDER,
-			var->type->llvm_type(),
-			var_found->alloca,
-			""
-		),
-		var->alloca
+		LLVMGetAllocatedType(var_found->alloca),
+		var_found->alloca,
+		""
 	);
 }

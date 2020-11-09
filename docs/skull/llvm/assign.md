@@ -19,8 +19,8 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node)
 > Internal function to build LLVM assignment from `node` to `var.
 
 ```c
-void llvm_assign_identifier(Variable *const var, const AstNode *const node)
+LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const node)
 ```
 
-> Build LLVM to assign an existing identifier `node` to `var`.
+> Return LLVM for to load an existing identifier `node` to `var`.
 
