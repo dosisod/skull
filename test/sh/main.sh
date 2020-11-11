@@ -16,15 +16,15 @@ pass_or_fail() {
 }
 
 test() {
-	echo -n "$1 "
+	echo -n "$1 $2 "
 
-	rm -f ./test/sh/.$1.ll
-	./build/skull/_skull ./test/sh/$1
+	rm -f ./test/sh/$1/.$2.ll
+	./build/skull/_skull ./test/sh/$1/$2
 
-	[ "$(sha ./test/sh/.$1.ll)" != "$(sha ./test/sh/_$1.ll)" ]
+	[ "$(sha ./test/sh/$1/.$2.ll)" != "$(sha ./test/sh/$1/_$2.ll)" ]
 	pass_or_fail $?
 
-	rm -f ./test/sh/.$1.ll
+	rm -f ./test/sh/$1/.$2.ll
 }
 
 test_option() {
@@ -49,57 +49,62 @@ echo
 echo "Running Skull unit tests"
 echo
 
-test "return_0.sk"
-test "declare_int.sk"
-test "declare_int_negative.sk"
-test "declare_int_hex.sk"
-test "declare_int_octal.sk"
-test "declare_int_binary.sk"
-test "declare_float.sk"
-test "declare_float_zero.sk"
-test "declare_float_negative.sk"
-test "declare_float_infinity.sk"
-test "declare_float_negative_infinity.sk"
-test "declare_bool.sk"
-test "declare_str.sk"
-test "declare_rune.sk"
-test "declare_rune_escaped.sk"
-test "declare_many.sk"
-test "if_true.sk"
-test "if_false.sk"
-test "declare_mut.sk"
-test "declare_mut_explicit.sk"
-test "return_var.sk"
-test "ignore_comments.sk"
-test "no_eol_works.sk"
-test "assign_variable_auto.sk"
-test "assign_function_return.sk"
-test "simple_function_call.sk"
-test "function_call_str.sk"
-test "nodes_after_call_not_ignored.sk"
-test "set_var_in_if.sk"
-test "if_with_var_true.sk"
-test "if_with_var_false.sk"
-test "reassign_var.sk"
-test "if_empty_body.sk"
-test "reassign_str.sk"
-test "add_int_consts.sk"
-test "add_float_consts.sk"
-test "sub_int_consts.sk"
-test "sub_float_consts.sk"
-test "mult_int_consts.sk"
-test "mult_float_consts.sk"
-test "div_int_consts.sk"
-test "div_float_consts.sk"
-test "multiple_externals.sk"
-test "external_with_param.sk"
-test "external_return_type.sk"
-test "function_single_param.sk"
-test "function_var_param.sk"
-test "escape_sequences.sk"
-test "oper_rhs_with_var.sk"
-test "oper_lhs_with_var.sk"
-test "const_inline.sk"
+test "declare" "bool.sk"
+test "declare" "float_infinity.sk"
+test "declare" "float_negative_infinity.sk"
+test "declare" "float_negative.sk"
+test "declare" "float.sk"
+test "declare" "float_zero.sk"
+test "declare" "int_binary.sk"
+test "declare" "int_hex.sk"
+test "declare" "int_negative.sk"
+test "declare" "int_octal.sk"
+test "declare" "int.sk"
+test "declare" "many.sk"
+test "declare" "mut_explicit.sk"
+test "declare" "mut.sk"
+test "declare" "rune_escaped.sk"
+test "declare" "rune.sk"
+test "declare" "str.sk"
+test "declare" "escape_sequences.sk"
+test "declare" "variable_auto.sk"
+test "declare" "reassign_keep_var.sk"
+test "declare" "reassign_str.sk"
+test "declare" "reassign_var.sk"
+
+test "oper" "add_float_consts.sk"
+test "oper" "add_int_consts.sk"
+test "oper" "mult_float_consts.sk"
+test "oper" "mult_int_consts.sk"
+test "oper" "sub_float_consts.sk"
+test "oper" "sub_int_consts.sk"
+test "oper" "div_float_consts.sk"
+test "oper" "div_int_consts.sk"
+test "oper" "lhs_with_var.sk"
+test "oper" "rhs_with_var.sk"
+
+test "function" "assign_return_value.sk"
+test "function" "call_str.sk"
+test "function" "single_param.sk"
+test "function" "var_param.sk"
+test "function" "external_return_type.sk"
+test "function" "external_with_param.sk"
+test "function" "multiple_externals.sk"
+test "function" "nodes_after_call_not_ignored.sk"
+test "function" "simple.sk"
+
+test "flow" "if_empty_body.sk"
+test "flow" "if_false.sk"
+test "flow" "if_true.sk"
+test "flow" "if_with_var_false.sk"
+test "flow" "if_with_var_true.sk"
+test "flow" "set_var_in_if.sk"
+test "flow" "return_0.sk"
+test "flow" "return_var.sk"
+
+test "misc" "const_inline.sk"
+test "misc" "ignore_comments.sk"
+test "misc" "no_eol_works.sk"
 
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"
