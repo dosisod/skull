@@ -60,6 +60,10 @@ Build LLVM for assining division of `lhs` and `rhs` to `var`.
 */
 LLVMValueRef llvm_make_div(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (var->type == &TYPE_INT) {
+		if (LLVMConstIntGetSExtValue(rhs) == 0) {
+			PANIC("division by zero", {0});
+		}
+
 		return LLVMBuildSDiv(BUILDER, lhs, rhs, "");
 	}
 	if (var->type == &TYPE_FLOAT) {
