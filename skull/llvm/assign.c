@@ -111,6 +111,9 @@ LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const no
 	if (var_found->type != var->type) {
 		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
+	if (var == var_found) {
+		PANIC("redundant assignment of variable \"%s\" to itself\n", { .var = var });
+	}
 
 	return llvm_var_get_value(var_found);
 }

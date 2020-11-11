@@ -68,7 +68,6 @@ test "declare" "rune.sk"
 test "declare" "str.sk"
 test "declare" "escape_sequences.sk"
 test "declare" "variable_auto.sk"
-test "declare" "reassign_keep_var.sk"
 test "declare" "reassign_str.sk"
 test "declare" "reassign_var.sk"
 
@@ -154,6 +153,7 @@ test_error "oper_rhs_var_not_found.sk"
 test_error "oper_rhs_var_bad_type.sk"
 test_error "oper_lhs_var_not_found.sk"
 test_error "oper_lhs_var_bad_type.sk"
+test_error "redundant_assign.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
