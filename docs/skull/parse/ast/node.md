@@ -82,3 +82,12 @@ typedef struct {
 
 > Used to store special data about `AST_NODE_VAR_DEF` nodes.
 
+```c
+typedef struct {
+	const Type *param_types;
+	const Type *return_type;
+}
+```
+
+> Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
+

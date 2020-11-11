@@ -1,5 +1,6 @@
 #pragma once
 
+#include "skull/eval/types/types.h"
 #include "skull/parse/tokenize.h"
 
 #define ATTR(from, node, prop) ((from *)(node)->attr)->prop
@@ -76,6 +77,14 @@ typedef struct {
 	_Bool is_implicit;
 	_Bool is_const;
 } AstNodeVarDef;
+
+/*
+Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
+*/
+typedef struct {
+	const Type *param_types;
+	const Type *return_type;
+} AstNodeFunctionProto;
 
 AstNode *make_ast_node(void);
 

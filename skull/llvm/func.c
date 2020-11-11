@@ -27,58 +27,41 @@ void declare_external_function(AstNode *node) {
 	char *const func_name = c32stombs(wide_func_name);
 
 	ExternalFunction *f;
-	f = malloc(sizeof *f);
+	f = calloc(1, sizeof *f);
 	DIE_IF_MALLOC_FAILS(f);
 
 	f->name = func_name;
-	f->next = NULL;
 
+	f->param_types = ATTR(AstNodeFunctionProto, node, param_types);
 	LLVMTypeRef *params = NULL;
-	f->num_params = 0;
 
-	LLVMTypeRef llvm_return_type = LLVMVoidType();
-	f->return_type = NULL;
-
-	const Token *token = node->token->next->next->next;
-
-	if (token->token_type != TOKEN_PAREN_CLOSE) {
-		char *type_name = token_mbs_str(token->next);
-
+	if (f->param_types) {
 		f->num_params = 1;
-		f->param_types = find_type(type_name);
-		free(type_name);
 
 		LLVMTypeRef llvm_param_type = f->param_types->llvm_type();
 		params = &llvm_param_type;
 	}
 
-	while (token->token_type != TOKEN_PAREN_CLOSE) {
-		token = token->next;
-	}
+	f->return_type = ATTR(AstNodeFunctionProto, node, return_type);
+	LLVMTypeRef llvm_return_type = LLVMVoidType();
 
-	if (token->next->token_type == TOKEN_TYPE) {
-		char *type_name = token_mbs_str(token->next);
-		f->return_type = find_type(type_name);
+	if (f->return_type) {
 		llvm_return_type = f->return_type->llvm_type();
-
-		free(type_name);
 	}
 
-	LLVMTypeRef type = LLVMFunctionType(
+	f->type = LLVMFunctionType(
 		llvm_return_type,
 		params,
 		f->num_params,
 		false
 	);
-	f->type = type;
 
-	LLVMValueRef function = LLVMAddFunction(
+	f->function = LLVMAddFunction(
 		MODULE,
 		func_name,
-		type
+		f->type
 	);
-	LLVMSetLinkage(function, LLVMExternalLinkage);
-	f->function = function;
+	LLVMSetLinkage(f->function, LLVMExternalLinkage);
 
 	ExternalFunction *head = EXTERNAL_FUNCTIONS;
 	while (head) {

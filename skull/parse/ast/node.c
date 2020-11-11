@@ -7,6 +7,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
+#include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
 
 #include "skull/parse/ast/node.h"
@@ -151,6 +152,9 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 	token = token->next->next->next;
 
+	const Type *param_types = NULL;
+	const Type *return_type = NULL;
+
 	if (AST_TOKEN_CMP(token,
 		TOKEN_PAREN_CLOSE,
 		TOKEN_NEWLINE)
@@ -164,6 +168,9 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		TOKEN_PAREN_CLOSE,
 		TOKEN_NEWLINE)
 	) {
+		char *type_name = token_mbs_str(token->next);
+		param_types = find_type(type_name);
+		free(type_name);
 		*_token = token->next->next;
 	}
 
@@ -172,6 +179,9 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		TOKEN_TYPE,
 		TOKEN_NEWLINE)
 	) {
+		char *type_name = token_mbs_str(token->next);
+		return_type = find_type(type_name);
+		free(type_name);
 		*_token = token->next;
 	}
 
@@ -182,12 +192,31 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		TOKEN_TYPE,
 		TOKEN_NEWLINE)
 	) {
+		char *param_type_name = token_mbs_str(token->next);
+		char *ret_type_name = token_mbs_str(token->next->next->next);
+
+		param_types = find_type(param_type_name);
+		return_type = find_type(ret_type_name);
+
+		free(param_type_name);
+		free(ret_type_name);
 		*_token = token->next->next->next;
 	}
 
 	else {
 		return false;
 	}
+
+	AstNodeFunctionProto *attr;
+	attr = malloc(sizeof *attr);
+	DIE_IF_MALLOC_FAILS(attr);
+
+	*attr = (AstNodeFunctionProto){
+		.param_types = param_types,
+		.return_type = return_type
+	};
+
+	(*node)->attr = attr;
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
 	return true;
