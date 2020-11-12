@@ -86,6 +86,9 @@ void llvm_make_if(AstNode *node) {
 	SCOPE = make_scope();
 	SCOPE->sub_scope = scope_copy;
 
+	if (!node->child) {
+		PANIC("if statement must be followed by code block", {0});
+	}
 	if (node->child->token) {
 		node_to_llvm_ir(node->child);
 	}
