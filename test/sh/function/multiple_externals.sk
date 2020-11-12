@@ -1,2 +1,4 @@
 external a()
 external b()
+
+a()

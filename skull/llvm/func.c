@@ -68,6 +68,10 @@ void declare_external_function(AstNode *node) {
 		if (strcmp(func_name, head->name) == 0) {
 			PANIC("cannot redeclare external function \"%s\"\n", { .str = wide_func_name });
 		}
+
+		if (!head->next) {
+			break;
+		}
 		head = head->next;
 	}
 	free(wide_func_name);
