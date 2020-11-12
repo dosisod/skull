@@ -1,9 +1,11 @@
 # skull/eval/scope
 
 ```c
-typedef struct {
+typedef struct Scope {
 	size_t vars_used;
 	Variable *vars[SCOPE_MAX_VARS];
+
+	Scope *sub_scope;
 }
 ```
 
@@ -12,6 +14,8 @@ typedef struct {
 > `vars_used` stores how many variables are in a given scope.
 > \
 > `vars` is an array of all of the variables in a scope.
+> \
+> `sub_scope` stores a nested scope with more variables in it.
 
 ```c
 bool scope_add_var(Scope *const scope, Variable *var)

@@ -81,9 +81,18 @@ void llvm_make_if(AstNode *node) {
 		if_true
 	);
 
+	Scope *scope_copy = SCOPE;
+
+	SCOPE = make_scope();
+	SCOPE->sub_scope = scope_copy;
+
 	if (node->child->token) {
 		node_to_llvm_ir(node->child);
 	}
+
+	free(SCOPE);
+	SCOPE = scope_copy;
+	SCOPE->sub_scope = NULL;
 
 	LLVMBuildBr(BUILDER, end);
 

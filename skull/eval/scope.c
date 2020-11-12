@@ -38,7 +38,8 @@ Variable *scope_find_name(const Scope *scope, const char32_t *name) {
 		}
 		var_at++;
 	}
-	return NULL;
+
+	return scope_find_name(scope->sub_scope, name);
 }
 
 /*
