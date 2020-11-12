@@ -41,3 +41,8 @@ install: clean | skull
 	@install skull/skull $(BIN)
 	@install build/skull/_skull $(BIN)
 	@make clean
+
+install-dev:
+	@echo "\033[92mInstall\033[0m skull headers"
+	@mkdir -p $(HEADER)/skull
+	@cp skull/Skull.h $(HEADER)/skull/Skull.h

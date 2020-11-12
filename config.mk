@@ -1,6 +1,7 @@
 SKULL_VERSION := 0.3.0
 
 BIN := /usr/local/bin/
+HEADER := /usr/include
 MANPATH := $(shell manpath | cut -d : -f1)/man1/
 
 CC := $(shell readlink -f `which cc`)

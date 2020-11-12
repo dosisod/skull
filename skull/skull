@@ -23,5 +23,5 @@ base=$(dirname $1)/.$(basename $1)
 llc-9 $base.ll -filetype=obj || exit 1
 rm $base.ll
 
-cc $base.o -o "${1%.*}" "${@:$(($sep + 1))}"
+cc $base.o -o "${1%.*}" "${@:$(($sep + 1))}" -I/usr/include/skull
 rm $base.o

@@ -59,3 +59,42 @@ collect2: error: ld returned 1 exit status
 ```
 
 Here, the linker is throwing an error as we forgot to include `hello.c` to our compilation.
+
+## Using Skull types in your code
+
+`int` in Skull is different then `int` in C. It is recommended to use the Skull typdefs for the best possible compatibility.
+
+To install Skull headers, run `make install-dev`.
+
+Usage in C:
+
+```c
+// add_one.c
+#include <Skull.h>
+
+SkullInt add_one(SkullInt a) {
+	return a + 1;
+}
+```
+
+Usage in Skull:
+
+```python
+# add_one.sk
+external add_one(a: int) int
+
+x := add_one(2)
+
+return x
+```
+
+Compiling:
+
+```
+$ skull add_one.sk -- add_one.c
+$ ./add_one
+$ echo $?
+3
+```
+
+The `Skull.h` header is already included when compiling C code via `skull`.
