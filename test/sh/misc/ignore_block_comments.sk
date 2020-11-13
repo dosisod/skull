@@ -1,0 +1,5 @@
+mut is_this_kept := true
+#{
+mut and_this := false
+#}
+mut what_about_this := true

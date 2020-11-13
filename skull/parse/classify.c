@@ -45,6 +45,7 @@ void classify_token(Token *const token) {
 
 	TOKEN_SET_IF(str[0] == '#' && (
 		str[1] == ' ' ||
+		str[1] == '{' ||
 		!str[1]
 	), TOKEN_COMMENT)
 

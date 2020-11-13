@@ -27,15 +27,28 @@ Token *tokenize(const char32_t *code) {
 
 	char32_t quote = false;
 	bool comment = false;
+	bool block_comment = false;
 
 	while (*code) {
 		if (comment) {
-			if (*code == '\n') {
+			if (!block_comment && *code == '\n') {
 				comment = false;
 			}
+			else if (block_comment && *code == '#' && code[1] == '}') {
+				comment = false;
+				block_comment = false;
+				code++;
+			}
 		}
-		else if (!comment && code[0] == '#' && code[1] == ' ') {
+		else if (
+			!comment && code[0] == '#' && (
+				code[1] == ' ' ||
+				code[1] == '{'
+		)) {
 			comment = true;
+			if (code[1] == '{') {
+				block_comment = true;
+			}
 
 			if (!current->begin) {
 				current->begin = code;
