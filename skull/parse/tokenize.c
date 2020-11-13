@@ -1,6 +1,8 @@
 #include <stdbool.h>
 
+#include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 
 #include "skull/parse/tokenize.h"
@@ -107,6 +109,10 @@ Token *tokenize(const char32_t *code) {
 			}
 		}
 		code++;
+	}
+
+	if (block_comment) {
+		PANIC("expected closing \"#}\" for block comment", {0});
 	}
 
 	//close dangling token if there was no whitespace at EOF
