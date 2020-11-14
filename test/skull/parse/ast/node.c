@@ -110,31 +110,31 @@ TEST(make_ast_tree_if_with_var, {
 })
 
 TEST(make_ast_tree_int_const, {
-	TEST_AST_TREE(U"1234", AST_NODE_INT_CONST, 0, 4);
+	TEST_AST_TREE(U"1234", AST_NODE_CONST, 0, 4);
 })
 
 TEST(make_ast_tree_float_const, {
-	TEST_AST_TREE(U"3.1415", AST_NODE_FLOAT_CONST, 0, 6);
+	TEST_AST_TREE(U"3.1415", AST_NODE_CONST, 0, 6);
 })
 
 TEST(make_ast_tree_bool_const_true, {
-	TEST_AST_TREE(U"true", AST_NODE_BOOL_CONST, 0, 4);
+	TEST_AST_TREE(U"true", AST_NODE_CONST, 0, 4);
 })
 
 TEST(make_ast_tree_bool_const_false, {
-	TEST_AST_TREE(U"false", AST_NODE_BOOL_CONST, 0, 5);
+	TEST_AST_TREE(U"false", AST_NODE_CONST, 0, 5);
 })
 
 TEST(make_ast_tree_rune_const, {
-	TEST_AST_TREE(U"'x'", AST_NODE_RUNE_CONST, 0, 3);
+	TEST_AST_TREE(U"'x'", AST_NODE_CONST, 0, 3);
 })
 
 TEST(make_ast_tree_str_const, {
-	TEST_AST_TREE(U"\"abc\"", AST_NODE_STR_CONST, 0, 5);
+	TEST_AST_TREE(U"\"abc\"", AST_NODE_CONST, 0, 5);
 })
 
 TEST(make_ast_tree_type_const, {
-	TEST_AST_TREE(U"int", AST_NODE_TYPE_CONST, 0, 3);
+	TEST_AST_TREE(U"int", AST_NODE_CONST, 0, 3);
 })
 
 TEST(make_ast_tree_comment, {

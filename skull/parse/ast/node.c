@@ -97,10 +97,10 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 	NodeType node_type = AST_NODE_UNKNOWN;
 
 switch (token->next->token_type) {
-	case TOKEN_OPER_PLUS: node_type = AST_NODE_ADD_CONSTS; break;
-	case TOKEN_OPER_MINUS: node_type = AST_NODE_SUB_CONSTS; break;
-	case TOKEN_OPER_MULT: node_type = AST_NODE_MULT_CONSTS; break;
-	case TOKEN_OPER_DIV: node_type = AST_NODE_DIV_CONSTS; break;
+	case TOKEN_OPER_PLUS: node_type = AST_NODE_ADD; break;
+	case TOKEN_OPER_MINUS: node_type = AST_NODE_SUB; break;
+	case TOKEN_OPER_MULT: node_type = AST_NODE_MULT; break;
+	case TOKEN_OPER_DIV: node_type = AST_NODE_DIV; break;
 	default: return false;
 }
 
@@ -353,28 +353,14 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 			push_ast_node(token, &last, AST_NODE_COMMENT, &node);
 			continue;
 		}
-		if (token->token_type == TOKEN_INT_CONST) {
-			push_ast_node(token, &last, AST_NODE_INT_CONST, &node);
-			continue;
-		}
-		if (token->token_type == TOKEN_FLOAT_CONST) {
-			push_ast_node(token, &last, AST_NODE_FLOAT_CONST, &node);
-			continue;
-		}
-		if (token->token_type == TOKEN_BOOL_CONST) {
-			push_ast_node(token, &last, AST_NODE_BOOL_CONST, &node);
-			continue;
-		}
-		if (token->token_type == TOKEN_RUNE_CONST) {
-			push_ast_node(token, &last, AST_NODE_RUNE_CONST, &node);
-			continue;
-		}
-		if (token->token_type == TOKEN_STR_CONST) {
-			push_ast_node(token, &last, AST_NODE_STR_CONST, &node);
-			continue;
-		}
-		if (token->token_type == TOKEN_TYPE) {
-			push_ast_node(token, &last, AST_NODE_TYPE_CONST, &node);
+		if (token->token_type == TOKEN_INT_CONST ||
+			token->token_type == TOKEN_FLOAT_CONST ||
+			token->token_type == TOKEN_BOOL_CONST ||
+			token->token_type == TOKEN_RUNE_CONST ||
+			token->token_type == TOKEN_STR_CONST ||
+			token->token_type == TOKEN_TYPE
+		) {
+			push_ast_node(token, &last, AST_NODE_CONST, &node);
 			continue;
 		}
 

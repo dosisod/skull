@@ -70,16 +70,16 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	if (node->node_type == AST_NODE_IDENTIFIER) {
 		value = llvm_assign_identifier(var, node);
 	}
-	else if (node->node_type == AST_NODE_ADD_CONSTS) {
+	else if (node->node_type == AST_NODE_ADD) {
 		value = llvm_make_math_oper(var, node, &llvm_make_add);
 	}
-	else if (node->node_type == AST_NODE_SUB_CONSTS) {
+	else if (node->node_type == AST_NODE_SUB) {
 		value = llvm_make_math_oper(var, node, &llvm_make_sub);
 	}
-	else if (node->node_type == AST_NODE_MULT_CONSTS) {
+	else if (node->node_type == AST_NODE_MULT) {
 		value = llvm_make_math_oper(var, node, &llvm_make_mult);
 	}
-	else if (node->node_type == AST_NODE_DIV_CONSTS) {
+	else if (node->node_type == AST_NODE_DIV) {
 		value = llvm_make_math_oper(var, node, &llvm_make_div);
 	}
 	else if (node->node_type == AST_NODE_FUNCTION) {

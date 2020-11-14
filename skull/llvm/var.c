@@ -91,10 +91,10 @@ void node_make_var(const AstNode *const node) {
 			}
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER || (
-			(node->next->node_type == AST_NODE_ADD_CONSTS ||
-			node->next->node_type == AST_NODE_SUB_CONSTS ||
-			node->next->node_type == AST_NODE_MULT_CONSTS ||
-			node->next->node_type == AST_NODE_DIV_CONSTS) &&
+			(node->next->node_type == AST_NODE_ADD ||
+			node->next->node_type == AST_NODE_SUB ||
+			node->next->node_type == AST_NODE_MULT ||
+			node->next->node_type == AST_NODE_DIV) &&
 			node->next->token->token_type == TOKEN_IDENTIFIER)
 		) {
 			SCOPE_FIND_VAR(new_var, node->next->token, lookup);
