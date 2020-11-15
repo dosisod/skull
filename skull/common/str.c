@@ -274,6 +274,9 @@ char32_t c32sunescape(const char32_t **str_) {
 	if (escape == '\\') {
 		return '\\';
 	}
+	if (escape == 'e') {
+		return '\033';
+	}
 	if (escape == 't') {
 		return '\t';
 	}
