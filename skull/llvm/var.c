@@ -85,6 +85,10 @@ void node_make_var(const AstNode *const node) {
 			while (function) {
 				if (strcmp(func_name, function->name) == 0) {
 					type = function->return_type;
+
+					if (!type) {
+						PANIC("function returning type void cannot be assigned to variable \"%s\"\n", { .str = name });
+					}
 					break;
 				}
 				function = function->next;
