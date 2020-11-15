@@ -255,8 +255,6 @@ const char __attribute__((pure)) *strrstr(const char *const str, const char *con
 
 /*
 Returns the unescaped version of an escaped character starting at `str`, or NULL character.
-
-If an error occurs, `err` will be set to the corresponding error msg.
 */
 char32_t c32sunescape(const char32_t **str_) {
 	const char32_t *str = *str_;
@@ -273,6 +271,9 @@ char32_t c32sunescape(const char32_t **str_) {
 
 	if (escape == '\\') {
 		return '\\';
+	}
+	if (escape == '0') {
+		return '\0';
 	}
 	if (escape == 'e') {
 		return '\033';

@@ -17,12 +17,10 @@ SkullStr eval_str(const Token *const token) {
 	const char32_t *str = token->begin + 1;
 	size_t wrote = 0;
 	while (*str && str < token->end - 1) {
-		const char32_t try_escape = c32sunescape(&str);
+		const char32_t *original = str;
+		copy[wrote] = c32sunescape(&str);
 
-		if (try_escape) {
-			copy[wrote] = try_escape;
-		}
-		else {
+		if (str == original) {
 			copy[wrote] = *str;
 		}
 

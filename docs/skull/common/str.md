@@ -99,6 +99,4 @@ char32_t c32sunescape(const char32_t **str_)
 ```
 
 > Returns the unescaped version of an escaped character starting at `str`, or NULL character.
-> \
-> If an error occurs, `err` will be set to the corresponding error msg.
 

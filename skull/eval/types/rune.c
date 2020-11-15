@@ -11,10 +11,11 @@ Return rune type converted from `token`
 */
 SkullRune eval_rune(const Token *const token) {
 	const char32_t *start = token->begin + 1;
+	const char32_t *copy = start;
 
 	SkullRune ret = c32sunescape(&start);
 
-	if (!ret) {
+	if (start == copy) {
 		ret = *start;
 	}
 
