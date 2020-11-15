@@ -85,7 +85,11 @@ typedef struct {
 ```c
 typedef struct {
 	const Type *param_types;
+	const char32_t *param_names;
+
 	const Type *return_type;
+
+	_Bool is_external;
 }
 ```
 

@@ -15,15 +15,27 @@
 
 extern LLVMBuilderRef BUILDER;
 extern LLVMModuleRef MODULE;
+extern LLVMValueRef FUNC;
 extern Scope *SCOPE;
 
 ExternalFunction *EXTERNAL_FUNCTIONS = NULL;
+
+void node_to_llvm_ir(AstNode *);
 
 /*
 Store function name of externaly declared function in `node`.
 */
 void declare_external_function(AstNode *node) {
-	char32_t *const wide_func_name = token_str(node->token->next);
+	char32_t *wide_func_name = NULL;
+	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
+
+	if (is_external) {
+		wide_func_name = token_str(node->token->next);
+	}
+	else {
+		wide_func_name = token_str(node->token);
+	}
+
 	char *const func_name = c32stombs(wide_func_name);
 
 	ExternalFunction *f;
@@ -33,6 +45,7 @@ void declare_external_function(AstNode *node) {
 	f->name = func_name;
 
 	f->param_types = ATTR(AstNodeFunctionProto, node, param_types);
+	f->param_names = ATTR(AstNodeFunctionProto, node, param_names);
 	LLVMTypeRef *params = NULL;
 
 	if (f->param_types) {
@@ -82,6 +95,10 @@ void declare_external_function(AstNode *node) {
 	else {
 		EXTERNAL_FUNCTIONS = f;
 	}
+
+	if (!is_external) {
+		define_function(node);
+	}
 }
 
 /*
@@ -101,7 +118,7 @@ LLVMValueRef llvm_make_function(const AstNode *const node) {
 	free(func_name);
 
 	if (!current_function) {
-		PANIC("external function \"%s\" missing external declaration\n", { .str = wide_func_name });
+		PANIC(ERR_MISSING_EXTERNAL, { .str = wide_func_name });
 	}
 	free(wide_func_name);
 
@@ -137,5 +154,72 @@ LLVMValueRef llvm_make_function(const AstNode *const node) {
 		&params,
 		current_function->num_params,
 		""
+	);
+}
+
+/*
+Create a native LLVM function.
+*/
+void define_function(const AstNode *const node) {
+	char32_t *const wide_func_name = token_str(node->token);
+	char *const func_name = c32stombs(wide_func_name);
+
+	ExternalFunction *current_function = EXTERNAL_FUNCTIONS;
+	while (current_function) {
+		if (strcmp(current_function->name, func_name) == 0) {
+			break;
+		}
+		current_function = current_function->next;
+	}
+	free(func_name);
+
+	if (!current_function) {
+		PANIC(ERR_MISSING_EXTERNAL, { .str = wide_func_name });
+	}
+
+	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(FUNC);
+
+	LLVMBasicBlockRef entry = LLVMAppendBasicBlock(
+		current_function->function,
+		"entry"
+	);
+
+	LLVMPositionBuilderAtEnd(
+		BUILDER,
+		entry
+	);
+
+	Scope *scope_copy = SCOPE;
+
+	SCOPE = make_scope();
+	SCOPE->sub_scope = scope_copy;
+
+	if (current_function->param_types) {
+		Variable *param_var = make_variable(
+			current_function->param_types,
+			current_function->param_names,
+			true
+		);
+
+		if (!scope_add_var(SCOPE, param_var)) {
+			PANIC("variable \"%s\" shadows existing variable\n", { .var = param_var });
+		}
+
+		param_var->alloca = LLVMGetFirstParam(current_function->function);
+	}
+
+	node_to_llvm_ir(node->child);
+
+	free(SCOPE);
+	SCOPE = scope_copy;
+	SCOPE->sub_scope = NULL;
+
+	if (!current_function->return_type) {
+		LLVMBuildRetVoid(BUILDER);
+	}
+
+	LLVMPositionBuilderAtEnd(
+		BUILDER,
+		current_block
 	);
 }

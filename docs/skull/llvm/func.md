@@ -8,6 +8,7 @@ typedef struct ExternalFunction {
 
 	unsigned num_params;
 	const Type *param_types;
+	const char32_t *param_names;
 
 	const Type *return_type;
 
@@ -42,4 +43,10 @@ LLVMValueRef llvm_make_function(const AstNode *const node)
 ```
 
 > Builds a function declaration from `node`.
+
+```c
+void define_function(const AstNode *const node)
+```
+
+> Create a native LLVM function.
 

@@ -31,6 +31,7 @@ typedef struct ExternalFunction {
 
 	unsigned num_params;
 	const Type *param_types;
+	const char32_t *param_names;
 
 	const Type *return_type;
 
@@ -42,3 +43,5 @@ ExternalFunction *EXTERNAL_FUNCTIONS;
 void declare_external_function(AstNode *);
 
 LLVMValueRef llvm_make_function(const AstNode *const);
+
+void define_function(const AstNode *const);

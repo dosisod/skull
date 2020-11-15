@@ -14,8 +14,6 @@ typedef enum {
 
 	AST_NODE_VAR_ASSIGN,
 
-	AST_NODE_EXTERNAL,
-
 	AST_NODE_FUNCTION,
 	AST_NODE_FUNCTION_PROTO,
 
@@ -78,7 +76,11 @@ Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
 */
 typedef struct {
 	const Type *param_types;
+	const char32_t *param_names;
+
 	const Type *return_type;
+
+	_Bool is_external;
 } AstNodeFunctionProto;
 
 AstNode *make_ast_node(void);

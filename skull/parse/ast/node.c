@@ -142,70 +142,60 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
+	bool is_external = false;
+	if (token->token_type == TOKEN_KW_EXTERNAL) {
+		is_external = true;
+		token = token->next;
+	}
+
 	if (!AST_TOKEN_CMP(token,
-		TOKEN_KW_EXTERNAL,
 		TOKEN_IDENTIFIER,
 		TOKEN_PAREN_OPEN)
 	) {
 		return false;
 	}
 
-	token = token->next->next->next;
+	token = token->next->next;
 
 	const Type *param_types = NULL;
+	const char32_t *param_names = NULL;
+
 	const Type *return_type = NULL;
 
-	if (AST_TOKEN_CMP(token,
-		TOKEN_PAREN_CLOSE,
-		TOKEN_NEWLINE)
-	) {
-		*_token = token;
-	}
+	const unsigned token_type = is_external ? TOKEN_NEWLINE : TOKEN_BRACKET_OPEN;
 
-	else if (AST_TOKEN_CMP(token,
+	if (AST_TOKEN_CMP(token,
 		TOKEN_NEW_IDENTIFIER,
-		TOKEN_TYPE,
-		TOKEN_PAREN_CLOSE,
-		TOKEN_NEWLINE)
+		TOKEN_TYPE)
 	) {
+		param_names = token_str(token);
+
 		char *type_name = token_mbs_str(token->next);
 		param_types = find_type(type_name);
 		free(type_name);
-		*_token = token->next->next;
+
+		token = token->next->next;
 	}
 
-	else if (AST_TOKEN_CMP(token,
+	if (AST_TOKEN_CMP(token,
 		TOKEN_PAREN_CLOSE,
 		TOKEN_TYPE,
-		TOKEN_NEWLINE)
+		token_type)
 	) {
 		char *type_name = token_mbs_str(token->next);
 		return_type = find_type(type_name);
 		free(type_name);
-		*_token = token->next;
+		token = token->next;
 	}
 
-	else if (AST_TOKEN_CMP(token,
-		TOKEN_NEW_IDENTIFIER,
-		TOKEN_TYPE,
+	else if (!AST_TOKEN_CMP(token,
 		TOKEN_PAREN_CLOSE,
-		TOKEN_TYPE,
-		TOKEN_NEWLINE)
+		token_type)
 	) {
-		char *param_type_name = token_mbs_str(token->next);
-		char *ret_type_name = token_mbs_str(token->next->next->next);
-
-		param_types = find_type(param_type_name);
-		return_type = find_type(ret_type_name);
-
-		free(param_type_name);
-		free(ret_type_name);
-		*_token = token->next->next->next;
-	}
-
-	else {
 		return false;
 	}
+
+	*_token = token;
 
 	AstNodeFunctionProto *attr;
 	attr = malloc(sizeof *attr);
@@ -213,7 +203,9 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 	*attr = (AstNodeFunctionProto){
 		.param_types = param_types,
-		.return_type = return_type
+		.param_names = param_names,
+		.return_type = return_type,
+		.is_external = is_external
 	};
 
 	(*node)->attr = attr;
@@ -337,11 +329,11 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 			continue;
 		}
 
-		if (is_ast_function(&token, &last, &node)) {
+		if (is_ast_function_proto(&token, &last, &node)) {
 			continue;
 		}
 
-		if (is_ast_function_proto(&token, &last, &node)) {
+		if (is_ast_function(&token, &last, &node)) {
 			continue;
 		}
 

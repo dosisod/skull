@@ -14,6 +14,7 @@
 #define ERR_MISSING_ASSIGNMENT ("missing value in assignment to variable \"%s\"\n")
 #define ERR_FILE_EMPTY ("file is empty")
 #define ERR_MISSING_OPEN_BRAK ("missing opening bracket")
+#define ERR_MISSING_EXTERNAL ("external function \"%s\" missing external declaration\n")
 
 typedef struct Variable Variable;
 typedef struct Type Type;

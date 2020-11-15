@@ -27,17 +27,11 @@ Files must be stored in UTF-8 format.
 Function and variable names should be in `snake_case`:
 
 ```python
-function_name := () -> int {
+function_name() int {
   variable_name := 0
 
   return variable_name
 }
-```
-
-Classes should be in `PascalCase`:
-
-```
-TBD.
 ```
 
 # File Size?
