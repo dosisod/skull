@@ -49,13 +49,16 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 
 /*
 Internal LLVM IR parser.
+
+Return true if there was a `AST_NODE_RETURN` node was parsed, else false.
 */
-void node_to_llvm_ir(AstNode *node) {
+bool node_to_llvm_ir(AstNode *node) {
 	while (node) {
 		if (node->node_type == AST_NODE_COMMENT) {}
 
 		else if (node->node_type == AST_NODE_RETURN) {
 			llvm_make_return(node);
+			return true;
 		}
 
 		else if (node->node_type == AST_NODE_VAR_DEF) {
@@ -84,4 +87,5 @@ void node_to_llvm_ir(AstNode *node) {
 
 		node = node->next;
 	}
+	return false;
 }

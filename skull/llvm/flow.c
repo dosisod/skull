@@ -20,7 +20,7 @@ extern Scope *SCOPE;
 extern LLVMValueRef FUNC;
 extern LLVMBuilderRef BUILDER;
 
-void node_to_llvm_ir(AstNode *);
+bool node_to_llvm_ir(AstNode *);
 
 /*
 Builds an return statement from `node`.
@@ -89,15 +89,21 @@ void llvm_make_if(AstNode *node) {
 	if (!node->child) {
 		PANIC("if statement must be followed by code block", {0});
 	}
+
 	if (node->child->token) {
-		node_to_llvm_ir(node->child);
+		const bool returned = node_to_llvm_ir(node->child);
+
+		if (!returned) {
+			LLVMBuildBr(BUILDER, end);
+		}
+	}
+	else {
+		LLVMBuildBr(BUILDER, end);
 	}
 
 	free(SCOPE);
 	SCOPE = scope_copy;
 	SCOPE->sub_scope = NULL;
-
-	LLVMBuildBr(BUILDER, end);
 
 	LLVMPositionBuilderAtEnd(
 		BUILDER,

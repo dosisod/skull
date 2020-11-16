@@ -20,7 +20,7 @@ extern Scope *SCOPE;
 
 ExternalFunction *EXTERNAL_FUNCTIONS = NULL;
 
-void node_to_llvm_ir(AstNode *);
+bool node_to_llvm_ir(AstNode *);
 
 /*
 Store function name of externaly declared function in `node`.

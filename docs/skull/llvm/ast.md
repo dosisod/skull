@@ -7,8 +7,10 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 > Convert skull code from `str_` into LLVM IR (using `func` and `module`).
 
 ```c
-void node_to_llvm_ir(AstNode *node)
+bool node_to_llvm_ir(AstNode *node)
 ```
 
 > Internal LLVM IR parser.
+> \
+> Return true if there was a `AST_NODE_RETURN` node was parsed, else false.
 

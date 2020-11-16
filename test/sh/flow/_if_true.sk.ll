@@ -7,8 +7,7 @@ entry:
 
 if_true:                                          ; preds = %entry
   ret i64 0
-  br label %end
 
-end:                                              ; preds = %if_true, %entry
+end:                                              ; preds = %entry
   ret i64 1
 }
