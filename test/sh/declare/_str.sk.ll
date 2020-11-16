@@ -7,4 +7,5 @@ define i64 @main() {
 entry:
   %x = alloca i8*
   store i8* getelementptr inbounds ([7 x i8], [7 x i8]* @0, i32 0, i32 0), i8** %x
+  ret i64 0
 }

@@ -7,4 +7,5 @@ entry:
   store i1 true, i1* %is_this_kept
   %what_about_this = alloca i1
   store i1 true, i1* %what_about_this
+  ret i64 0
 }

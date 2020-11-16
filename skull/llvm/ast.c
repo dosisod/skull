@@ -35,7 +35,10 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	MODULE = module;
 	BUILDER = builder;
 
-	node_to_llvm_ir(node);
+	if (!node_to_llvm_ir(node)) {
+		LLVMBuildRet(BUILDER, LLVM_INT(0));
+	}
+
 	free_ast_tree(node);
 	free(str);
 

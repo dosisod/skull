@@ -5,4 +5,5 @@ define i64 @main() {
 entry:
   %x = alloca i1
   store i1 true, i1* %x
+  ret i64 0
 }

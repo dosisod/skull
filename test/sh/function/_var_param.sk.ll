@@ -7,6 +7,7 @@ entry:
   store i64 1234, i64* %num
   %0 = load i64, i64* %num
   call void @f(i64 %0)
+  ret i64 0
 }
 
 declare void @f(i64)

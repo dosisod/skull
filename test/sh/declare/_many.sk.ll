@@ -7,4 +7,5 @@ entry:
   store i64 0, i64* %x
   %y = alloca i64
   store i64 0, i64* %y
+  ret i64 0
 }
