@@ -208,7 +208,11 @@ void define_function(const AstNode *const node) {
 		param_var->alloca = LLVMGetFirstParam(current_function->function);
 	}
 
-	node_to_llvm_ir(node->child);
+	if (!node_to_llvm_ir(node->child) && current_function->return_type) {
+		PANIC("expected return value in function \"%s\"\n",
+			{ .real = current_function->name }
+		);
+	}
 
 	free(SCOPE);
 	SCOPE = scope_copy;
