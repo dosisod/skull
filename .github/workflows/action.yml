@@ -64,8 +64,7 @@ jobs:
     - name: Run C integration test
       run: |
         cd test/docs/c-integration
-        skull hello.sk -- hello.c -no-pie
-        ./hello
+        make
 
   test-valgrind-and-precommit:
     runs-on: ubuntu-latest
