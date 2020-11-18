@@ -6,8 +6,13 @@
 #include "skull/eval/variable.h"
 #include "skull/parse/ast/node.h"
 
+/*
+Find the variable `var` stored in `token`.
+
+Variable name is stored in `var_name`, and must be freed.
+*/
 #define SCOPE_FIND_VAR(var, token, var_name) \
-	char32_t *const (var_name)= token_str((token)); \
+	char32_t *const (var_name) = token_str((token)); \
 	Variable *const (var) = scope_find_name(SCOPE, (var_name)); \
 	if (!(var)) { \
 		PANIC(ERR_VAR_NOT_FOUND, { .str = (var_name) }); \

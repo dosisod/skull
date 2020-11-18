@@ -3,6 +3,9 @@
 #include "skull/eval/types/types.h"
 #include "skull/parse/tokenize.h"
 
+/*
+Get the attribute/property `prop` from `node`, assuming it is of type `from`.
+*/
 #define ATTR(from, node, prop) ((from *)(node)->attr)->prop
 
 typedef enum {
@@ -94,6 +97,9 @@ void free_ast_tree_(AstNode *);
 
 _Bool is_const_literal(Token *);
 
+/*
+Compare a variable number of token types stored in `...` agains each successive token in `token`.
+*/
 #define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
 
 _Bool ast_token_cmp(Token *, ...);

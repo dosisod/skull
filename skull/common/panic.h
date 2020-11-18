@@ -3,6 +3,9 @@
 
 #include "skull/common/str.h"
 
+/*
+Panic (exit with error msg), using `fmt` as the message, and `...` as the `ErrorMsg` parameters.
+*/
 #define PANIC(fmt, ...) \
 	fmt_error(fmt, (ErrorMsg[]){ \
 		__VA_ARGS__, \
@@ -10,8 +13,3 @@
 	}); \
 	exit(1)
 
-
-#define PANIC_ON_ERR(fmt, ...) \
-	if (str) { \
-		PANIC(str, __VA_ARGS__); \
-	}

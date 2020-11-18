@@ -43,6 +43,12 @@ bool ast_token_cmp(Token *token, ...)
 > Check each token's type starting at `token`, checking against the corresponding token type specified in `...`
 
 ```c
+#define ATTR(from, node, prop) ((from *)(node)->attr)->prop
+```
+
+> Get the attribute/property `prop` from `node`, assuming it is of type `from`.
+
+```c
 typedef struct AstNode {
 	NodeType node_type;
 
@@ -94,4 +100,10 @@ typedef struct {
 ```
 
 > Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
+
+```c
+#define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
+```
+
+> Compare a variable number of token types stored in `...` agains each successive token in `token`.
 

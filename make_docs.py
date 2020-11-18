@@ -20,6 +20,11 @@ def display_markdown(code: str) -> str:
 
             value = code[(end + 1):(end + struct_end + 1)]
 
+        elif lines[1].startswith("#define"):
+            struct_end = code[end:].index("\n\n")
+
+            value = code[(end + 1):(end + struct_end)]
+
         else:
             value = lines[1][:-2]
 
