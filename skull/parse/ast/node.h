@@ -24,6 +24,7 @@ typedef enum {
 	AST_NODE_SUB,
 	AST_NODE_MULT,
 	AST_NODE_DIV,
+	AST_NODE_IS,
 
 	AST_NODE_RETURN,
 

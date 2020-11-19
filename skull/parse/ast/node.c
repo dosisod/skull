@@ -101,6 +101,7 @@ switch (token->next->token_type) {
 	case TOKEN_OPER_MINUS: node_type = AST_NODE_SUB; break;
 	case TOKEN_OPER_MULT: node_type = AST_NODE_MULT; break;
 	case TOKEN_OPER_DIV: node_type = AST_NODE_DIV; break;
+	case TOKEN_OPER_IS: node_type = AST_NODE_IS; break;
 	default: return false;
 }
 
