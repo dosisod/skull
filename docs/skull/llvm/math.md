@@ -1,38 +1,38 @@
 # skull/llvm/math
 
 ```c
-LLVMValueRef llvm_make_add(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs)
+LLVMValueRef llvm_make_add(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining addition of `lhs` and `rhs` to `var`.
+> Build LLVM for assining addition of `lhs` and `rhs`.
 
 ```c
-LLVMValueRef llvm_make_sub(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs)
+LLVMValueRef llvm_make_sub(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining subtraction of `lhs` and `rhs` to `var`.
+> Build LLVM for assining subtraction of `lhs` and `rhs`.
 
 ```c
-LLVMValueRef llvm_make_mult(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs)
+LLVMValueRef llvm_make_mult(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining multiplication of `lhs` and `rhs` to `var`.
+> Build LLVM for assining multiplication of `lhs` and `rhs`.
 
 ```c
-LLVMValueRef llvm_make_div(Variable *var, LLVMValueRef lhs, LLVMValueRef rhs)
+LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining division of `lhs` and `rhs` to `var`.
+> Build LLVM for assining division of `lhs` and `rhs`.
 
 ```c
-LLVMValueRef llvm_make_math_oper(Variable *var, const AstNode *node, MathOper *oper)
+LLVMValueRef llvm_make_math_oper(const Type *type, const AstNode *node, MathOper *oper)
 ```
 
-> Return LLVM for assigning math operation `oper` from `node` to `var`.
+> Return LLVM for assigning math operation `oper` from `node`.
 
 ```c
-LLVMValueRef llvm_token_to_val(const Variable *var, const Token *token)
+LLVMValueRef llvm_token_to_val(const Type *type, const Token *token)
 ```
 
-> Return LLVM equivalent of `token`, checking for compatibility with `var`.
+> Return LLVM equivalent of `token`, checking for compatibility with `type`.
 

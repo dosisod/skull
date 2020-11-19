@@ -24,5 +24,5 @@ LLVMValueRef llvm_var_get_value(const Variable *const);
 
 void node_make_var(const AstNode *const);
 
-LLVMValueRef llvm_parse_var(const Variable *const, const Token *const);
+LLVMValueRef llvm_parse_var(const Type *const, const Token *const);
 LLVMValueRef llvm_parse_token(const Token *const);
