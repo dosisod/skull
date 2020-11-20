@@ -10,6 +10,7 @@
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/llvm/ast.h"
+#include "skull/setup_main.h"
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<version unknown>"
@@ -52,7 +53,36 @@ int setup_main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	LLVMModuleRef main_module = LLVMModuleCreateWithName(argv[1]);
+	char *const file_contents = read_file(f);
+	if (!file_contents) {
+		PANIC(ERR_FILE_EMPTY, {0});
+	}
+
+	LLVMModuleRef main_module = generate_llvm(argv[1], file_contents);
+	free(file_contents);
+
+	char *llvm_filename = create_llvm_filename(argv[1]);
+
+	char *err = NULL;
+	LLVMBool status = LLVMPrintModuleToFile(
+		main_module,
+		llvm_filename,
+		&err
+	);
+	free(llvm_filename);
+
+	if (err || status) {
+		printf("error occurred: %s\n", err);
+		LLVMDisposeMessage(err);
+		return 1;
+	}
+
+	LLVMDisposeMessage(err);
+	return 0;
+}
+
+LLVMModuleRef generate_llvm(const char *module_name, char *file_contents) {
+	LLVMModuleRef main_module = LLVMModuleCreateWithName(module_name);
 
 	LLVMTypeRef main_func_type = LLVMFunctionType(
 		LLVMInt64Type(),
@@ -79,11 +109,6 @@ int setup_main(int argc, char *argv[]) {
 		entry
 	);
 
-	char *const file_contents = read_file(f);
-	if (!file_contents) {
-		PANIC(ERR_FILE_EMPTY, {0});
-	}
-
 	str_to_llvm_ir(
 		file_contents,
 		main_func,
@@ -91,39 +116,26 @@ int setup_main(int argc, char *argv[]) {
 		builder
 	);
 
-	free(file_contents);
+	return main_module;
+}
 
-	const size_t len = strlen(argv[1]);
-	char *const ll_filename = malloc(len + 5);
+char *create_llvm_filename(const char *filename) {
+	const size_t len = strlen(filename);
+	char *const llvm_filename = malloc(len + 5);
 
-	const char *const slash_pos = strrchr(argv[1], '/');
+	const char *const slash_pos = strrchr(filename, '/');
 	if (!slash_pos) {
-		ll_filename[0] = '.';
-		memcpy(ll_filename + 1, argv[1], len);
+		llvm_filename[0] = '.';
+		memcpy(llvm_filename + 1, filename, len);
 	}
 	else {
-		const long offset = slash_pos - argv[1];
+		const long offset = slash_pos - filename;
 
-		memcpy(ll_filename, argv[1], len);
-		ll_filename[offset + 1] = '.';
-		memcpy(ll_filename + offset + 2, slash_pos + 1, len - (size_t)offset);
+		memcpy(llvm_filename, filename, len);
+		llvm_filename[offset + 1] = '.';
+		memcpy(llvm_filename + offset + 2, slash_pos + 1, len - (size_t)offset);
 	}
-	memcpy(ll_filename + len + 1, ".ll", 4);
+	memcpy(llvm_filename + len + 1, ".ll", 4);
 
-	char *err = NULL;
-	LLVMBool status = LLVMPrintModuleToFile(
-		main_module,
-		ll_filename,
-		&err
-	);
-	free(ll_filename);
-
-	if (err || status) {
-		printf("error occurred: %s\n", err);
-		LLVMDisposeMessage(err);
-		return 1;
-	}
-
-	LLVMDisposeMessage(err);
-	return 0;
+	return llvm_filename;
 }
