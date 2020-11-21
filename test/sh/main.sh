@@ -113,7 +113,7 @@ test "misc" "no_eol_works.sk"
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"
 test_option "not_a_file.sk" "\"./test/sh/not_a_file.sk\" was not found, exiting"
-test_option "option1\ option2" "too many arguments passed, exiting"
+test_option "option1\ option2" "expected exactly one parameter"
 
 test_error "var_already_defined.sk"
 test_error "return_int_overflow.sk"

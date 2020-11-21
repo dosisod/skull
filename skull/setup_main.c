@@ -19,13 +19,8 @@
 #define DIE(x) puts(x); return 1
 
 int setup_main(int argc, char *argv[]) {
-	if (argc == 1) {
-		puts("usage: skull [-v | file [ -- args ]]");
-		return 0;
-	}
-
-	if (argc > 2) {
-		DIE("too many arguments passed, exiting");
+	if (1 == argc || argc > 2) {
+		DIE("expected exactly one parameter");
 	}
 
 	if (strcmp("-v", argv[1]) == 0) {

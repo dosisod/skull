@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+usage() {
+	echo "usage: skull [ -v | file [ -o output ] [ -- args ]]"
+	exit 0
+}
+
+[ -z "$1" ] && usage
+
+# find -- seperator (if it exists)
 sep=$(( $# + 1 ))
 
 for (( i=1; i<=$#; i++ ))
@@ -13,15 +21,30 @@ else
 	pre="${@:1:$(($sep - 1))}"
 fi
 
-$(dirname $0)/_skull $pre || exit 1
+# shift params if the first argument is not an option
+case "$1" in
+	-*) ;;
+	*)
+		filename=$1
+		shift
+		;;
+esac
 
-# exit if passed param is not a .sk file
-[[ "$1" =~ ^.*\.sk$ ]] || exit 0
+while getopts ":vh" o; do
+	case "$o" in
+		v) filename="-v" ;;
+		h) usage; exit 0 ;;
+	esac
+done
 
-base=$(dirname $1)/.$(basename $1)
+$(dirname $0)/_skull $filename || exit 1
+
+[[ "$filename" =~ ^.*\.sk$ ]] || exit 0
+
+base=$(dirname $filename)/.$(basename $filename)
 
 llc-9 $base.ll -filetype=obj || exit 1
 rm $base.ll
 
-cc $base.o -o "${1%.*}" "${@:$(($sep + 1))}" -I/usr/include/skull
+cc $base.o -o "${1%.*}" "${@:$(($sep))}" -I/usr/include/skull
 rm $base.o
