@@ -105,6 +105,17 @@ switch (token->next->token_type) {
 	default: return false;
 }
 
+	AstNodeOper *attr;
+	attr = malloc(sizeof *attr);
+	DIE_IF_MALLOC_FAILS(attr);
+
+	*attr = (AstNodeOper){
+		.lhs = token,
+		.rhs = token->next->next
+	};
+
+	(*node)->attr = attr;
+
 	*_token = token->next->next;
 	push_ast_node(*_token, last, node_type, node);
 	return true;
@@ -121,6 +132,7 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 	}
 
 	token = token->next->next;
+	Token *param = NULL;
 
 	if (token->token_type == TOKEN_PAREN_CLOSE) {
 		*_token = token;
@@ -130,11 +142,22 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 		token->next &&
 		token->next->token_type == TOKEN_PAREN_CLOSE
 	) {
+		param = token;
 		*_token = token->next;
 	}
 	else {
 		return false;
 	}
+
+	AstNodeFunction *attr;
+	attr = malloc(sizeof *attr);
+	DIE_IF_MALLOC_FAILS(attr);
+
+	*attr = (AstNodeFunction){
+		.param = param
+	};
+
+	(*node)->attr = attr;
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION, node);
 	return true;

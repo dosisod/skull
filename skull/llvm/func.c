@@ -125,8 +125,10 @@ LLVMValueRef llvm_make_function(const AstNode *const node) {
 	LLVMValueRef params = NULL;
 
 	if (current_function->num_params == 1) {
-		if (node->token->next->next->token_type == TOKEN_IDENTIFIER) {
-			SCOPE_FIND_VAR(var_found, node->token->next->next, lookup);
+		Token *param = ATTR(AstNodeFunction, node, param);
+
+		if (param->token_type == TOKEN_IDENTIFIER) {
+			SCOPE_FIND_VAR(var_found, param, lookup);
 			free(lookup);
 
 			if (var_found->type != current_function->param_types) {
@@ -137,8 +139,8 @@ LLVMValueRef llvm_make_function(const AstNode *const node) {
 
 			params = llvm_var_get_value(var_found);
 		}
-		else if (current_function->param_types == token_type_to_type(node->token->next->next)) {
-			params = llvm_parse_token(node->token->next->next);
+		else if (current_function->param_types == token_type_to_type(param)) {
+			params = llvm_parse_token(param);
 		}
 		else {
 			PANIC(ERR_FUNC_TYPE_MISMATCH, {

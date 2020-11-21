@@ -102,6 +102,23 @@ typedef struct {
 > Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
 
 ```c
+typedef struct {
+	Token *param;
+}
+```
+
+> Store special data for `AST_NODE_FUNCTION` nodes.
+
+```c
+typedef struct {
+	Token *lhs;
+	Token *rhs;
+}
+```
+
+> Store special data about operator related nodes (`AST_NODE_ADD`, etc).
+
+```c
 #define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
 ```
 

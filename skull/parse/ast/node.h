@@ -87,6 +87,21 @@ typedef struct {
 	_Bool is_external;
 } AstNodeFunctionProto;
 
+/*
+Store special data for `AST_NODE_FUNCTION` nodes.
+*/
+typedef struct {
+	Token *param;
+} AstNodeFunction;
+
+/*
+Store special data about operator related nodes (`AST_NODE_ADD`, etc).
+*/
+typedef struct {
+	Token *lhs;
+	Token *rhs;
+} AstNodeOper;
+
 AstNode *make_ast_node(void);
 
 void push_ast_node(Token *const, Token **, NodeType, AstNode **);

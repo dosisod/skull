@@ -81,8 +81,8 @@ Return LLVM for assigning math operation `oper` from `node`.
 LLVMValueRef llvm_make_math_oper(const Type *type, const AstNode *node, MathOper *oper) {
 	return oper(
 		type,
-		llvm_token_to_val(type, node->token),
-		llvm_token_to_val(type, node->token->next->next)
+		llvm_token_to_val(type, ATTR(AstNodeOper, node, lhs)),
+		llvm_token_to_val(type, ATTR(AstNodeOper, node, rhs))
 	);
 }
 
