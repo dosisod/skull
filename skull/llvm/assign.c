@@ -63,7 +63,6 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 			var_name
 		);
 	}
-	free(var_name);
 
 	LLVMValueRef value = NULL;
 
@@ -88,6 +87,12 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	else {
 		value = llvm_parse_var(var->type, node->token);
 	}
+
+	if (!value) {
+		PANIC("unable to assign value to variable \"%s\"\n", { .real = var_name });
+	}
+
+	free(var_name);
 
 	if (var->is_const) {
 		var->alloca = value;
