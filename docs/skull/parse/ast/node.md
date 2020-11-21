@@ -49,6 +49,19 @@ bool ast_token_cmp(Token *token, ...)
 > Get the attribute/property `prop` from `node`, assuming it is of type `from`.
 
 ```c
+#define MAKE_ATTR(from, node, ...) \
+	from *attr; \
+	attr = malloc(sizeof *attr); \
+	DIE_IF_MALLOC_FAILS(attr); \
+	*attr = (from){ \
+		__VA_ARGS__ \
+	}; \
+	(node)->attr = attr
+```
+
+> Create a new attribute struct of type `from`, assign to `node`, with data passed from `...`.
+
+```c
 typedef struct AstNode {
 	NodeType node_type;
 

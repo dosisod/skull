@@ -8,6 +8,18 @@ Get the attribute/property `prop` from `node`, assuming it is of type `from`.
 */
 #define ATTR(from, node, prop) ((from *)(node)->attr)->prop
 
+/*
+Create a new attribute struct of type `from`, assign to `node`, with data passed from `...`.
+*/
+#define MAKE_ATTR(from, node, ...) \
+	from *attr; \
+	attr = malloc(sizeof *attr); \
+	DIE_IF_MALLOC_FAILS(attr); \
+	*attr = (from){ \
+		__VA_ARGS__ \
+	}; \
+	(node)->attr = attr
+
 typedef enum {
 	AST_NODE_UNKNOWN,
 

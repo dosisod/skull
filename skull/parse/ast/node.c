@@ -63,16 +63,10 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	AstNodeVarDef *attr;
-	attr = malloc(sizeof *attr);
-	DIE_IF_MALLOC_FAILS(attr);
-
-	*attr = (AstNodeVarDef){
+	MAKE_ATTR(AstNodeVarDef, *node,
 		.is_const = is_const,
 		.is_implicit = is_implicit
-	};
-
-	(*node)->attr = attr;
+	);
 
 	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
 	return true;
@@ -105,16 +99,10 @@ switch (token->next->token_type) {
 	default: return false;
 }
 
-	AstNodeOper *attr;
-	attr = malloc(sizeof *attr);
-	DIE_IF_MALLOC_FAILS(attr);
-
-	*attr = (AstNodeOper){
+	MAKE_ATTR(AstNodeOper, *node,
 		.lhs = token,
 		.rhs = token->next->next
-	};
-
-	(*node)->attr = attr;
+	);
 
 	*_token = token->next->next;
 	push_ast_node(*_token, last, node_type, node);
@@ -149,15 +137,9 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	AstNodeFunction *attr;
-	attr = malloc(sizeof *attr);
-	DIE_IF_MALLOC_FAILS(attr);
-
-	*attr = (AstNodeFunction){
+	MAKE_ATTR(AstNodeFunction, *node,
 		.param = param
-	};
-
-	(*node)->attr = attr;
+	);
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION, node);
 	return true;
@@ -221,18 +203,12 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 	*_token = token;
 
-	AstNodeFunctionProto *attr;
-	attr = malloc(sizeof *attr);
-	DIE_IF_MALLOC_FAILS(attr);
-
-	*attr = (AstNodeFunctionProto){
+	MAKE_ATTR(AstNodeFunctionProto, *node,
 		.param_types = param_types,
 		.param_names = param_names,
 		.return_type = return_type,
 		.is_external = is_external
-	};
-
-	(*node)->attr = attr;
+	);
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
 	return true;
