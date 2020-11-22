@@ -30,10 +30,14 @@ case "$1" in
 		;;
 esac
 
-while getopts ":vh" o; do
+while getopts ":vhcSE" o; do
 	case "$o" in
 		v) filename="-v" ;;
 		h) usage; exit 0 ;;
+		c) COMPILE=true ;;
+		S) ASM=true ;;
+		E) PREPRO=true ;;
+		*) echo "Unknown option \"$1\"" ; exit 1 ;;
 	esac
 done
 
@@ -43,8 +47,28 @@ $(dirname $0)/_skull $filename || exit 1
 
 base=$(dirname $filename)/.$(basename $filename)
 
-llc-9 $base.ll -filetype=obj || exit 1
+# mimic -S option in cc (output assembly)
+file_type=obj
+[ -z "$ASM" ] || file_type=asm
+
+llc-9 $base.ll -filetype=$file_type || exit 1
+
+if [ ! -z "$ASM" ]; then
+	rm $base.ll
+	exit 1
+fi
+
+# mimic -E option in cc (print preproccessor output to screen, in this case, LLVM IR)
+if [ ! -z "$PREPRO" ]; then
+	cat $base.ll
+	rm $base.*
+	exit 1
+fi
+
 rm $base.ll
 
-cc $base.o -o "${1%.*}" "${@:$(($sep))}" -I/usr/include/skull
+# mimic -c option in cc (compile, but dont link)
+[ -z "$COMPILE" ] || exit 0
+
+cc $base.o -o "${filename%.*}" "${@:$(($sep))}" -I/usr/include/skull
 rm $base.o
