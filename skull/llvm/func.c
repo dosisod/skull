@@ -210,8 +210,15 @@ void define_function(const AstNode *const node) {
 		param_var->alloca = LLVMGetFirstParam(current_function->function);
 	}
 
-	if (!node_to_llvm_ir(node->child) && current_function->return_type) {
+	bool returned = node_to_llvm_ir(node->child);
+
+	if (!returned && current_function->return_type) {
 		PANIC("expected return value in function \"%s\"\n",
+			{ .real = current_function->name }
+		);
+	}
+	if (returned && !current_function->return_type) {
+		PANIC("unexpected return from void function \"%s\"\n",
 			{ .real = current_function->name }
 		);
 	}
