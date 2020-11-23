@@ -109,6 +109,7 @@ test "misc" "const_inline.sk"
 test "misc" "ignore_comments.sk"
 test "misc" "ignore_block_comments.sk"
 test "misc" "no_eol_works.sk"
+test "misc" "locale.sk"
 
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"

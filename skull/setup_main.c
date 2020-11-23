@@ -7,6 +7,7 @@
 #include "skull/common/color.h"
 #include "skull/common/errors.h"
 #include "skull/common/io.h"
+#include "skull/common/local.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/llvm/ast.h"
@@ -19,6 +20,8 @@
 #define DIE(x) puts(x); return 1
 
 int setup_main(int argc, char *argv[]) {
+	SETUP_LOCALE();
+
 	if (1 == argc || argc > 2) {
 		DIE("expected exactly one parameter");
 	}
