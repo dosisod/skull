@@ -8,6 +8,7 @@
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/scope.h"
 #include "skull/llvm/var.h"
 #include "skull/parse/classify.h"
 
@@ -191,10 +192,7 @@ void define_function(const AstNode *const node) {
 		entry
 	);
 
-	Scope *scope_copy = SCOPE;
-
-	SCOPE = make_scope();
-	SCOPE->sub_scope = scope_copy;
+	MAKE_SUB_SCOPE;
 
 	if (current_function->param_types) {
 		Variable *param_var = make_variable(
@@ -223,9 +221,7 @@ void define_function(const AstNode *const node) {
 		);
 	}
 
-	free(SCOPE);
-	SCOPE = scope_copy;
-	SCOPE->sub_scope = NULL;
+	RESTORE_SUB_SCOPE;
 
 	if (!current_function->return_type) {
 		LLVMBuildRetVoid(BUILDER);

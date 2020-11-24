@@ -11,6 +11,7 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/variable.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/scope.h"
 #include "skull/llvm/var.h"
 #include "skull/parse/classify.h"
 
@@ -66,6 +67,10 @@ void llvm_make_if(AstNode *node) {
 		cond = llvm_var_get_value(found_var);
 	}
 
+	if (!node->child) {
+		PANIC("if statement must be followed by code block", {0});
+	}
+
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(FUNC, "if_true");
 	LLVMBasicBlockRef end = LLVMAppendBasicBlock(FUNC, "end");
 
@@ -81,14 +86,7 @@ void llvm_make_if(AstNode *node) {
 		if_true
 	);
 
-	Scope *scope_copy = SCOPE;
-
-	SCOPE = make_scope();
-	SCOPE->sub_scope = scope_copy;
-
-	if (!node->child) {
-		PANIC("if statement must be followed by code block", {0});
-	}
+	MAKE_SUB_SCOPE;
 
 	if (node->child->token) {
 		const bool returned = node_to_llvm_ir(node->child);
@@ -101,9 +99,7 @@ void llvm_make_if(AstNode *node) {
 		LLVMBuildBr(BUILDER, end);
 	}
 
-	free(SCOPE);
-	SCOPE = scope_copy;
-	SCOPE->sub_scope = NULL;
+	RESTORE_SUB_SCOPE;
 
 	LLVMPositionBuilderAtEnd(
 		BUILDER,
