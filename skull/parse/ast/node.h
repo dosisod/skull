@@ -41,6 +41,7 @@ typedef enum {
 	AST_NODE_RETURN,
 
 	AST_NODE_IF,
+	AST_NODE_ELSE,
 
 	AST_NODE_CONST,
 

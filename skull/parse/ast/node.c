@@ -319,9 +319,11 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 		) {
 			token = token->next;
 			push_ast_node(token, &last, AST_NODE_IF, &node);
-			if (token->token_type == TOKEN_BRACKET_CLOSE) {
-				allow_top_lvl_bracket = true;
-			}
+			continue;
+		}
+
+		if (token->token_type == TOKEN_KW_ELSE) {
+			push_ast_node(token, &last, AST_NODE_ELSE, &node);
 			continue;
 		}
 
