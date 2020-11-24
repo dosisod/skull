@@ -6,6 +6,13 @@ sha() {
 	echo $(sha512sum $1 | awk '{print $1}')
 }
 
+cmp() {
+	sha_control=$(sha $1)
+	sha_test=$(sha $2)
+	[ "$sha_test" != "$sha_control" ] || [ -z "$sha_test" ]
+	pass_or_fail $?
+}
+
 pass_or_fail() {
 	if [ "$1" == "0" ]; then
 		/bin/echo -e "\033[91mFAIL\033[0m"
@@ -21,8 +28,7 @@ test() {
 	rm -f ./test/sh/$1/.$2.ll
 	./build/skull/_skull ./test/sh/$1/$2
 
-	[ "$(sha ./test/sh/$1/.$2.ll)" != "$(sha ./test/sh/$1/_$2.ll)" ]
-	pass_or_fail $?
+	cmp ./test/sh/$1/_$2.ll ./test/sh/$1/.$2.ll
 
 	rm -f ./test/sh/$1/.$2.ll
 }
@@ -35,12 +41,11 @@ test_option() {
 }
 
 test_error() {
-	echo -n "error/$1 "
+	echo -n "error $1 "
 
 	./build/skull/_skull ./test/sh/error/$1 > ./test/sh/error/.$1.out
 
-	[ "$(sha ./test/sh/error/.$1.out)" != "$(sha ./test/sh/error/_$1.out)" ]
-	pass_or_fail $?
+	cmp ./test/sh/error/.$1.out ./test/sh/error/_$1.out
 
 	rm -f ./test/sh/error/.$1.out
 }
