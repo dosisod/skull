@@ -69,7 +69,7 @@ bool node_to_llvm_ir(AstNode *node) {
 		}
 
 		else if (node->node_type == AST_NODE_IF) {
-			llvm_make_if(node);
+			llvm_make_if(&node);
 		}
 
 		else if (node->node_type == AST_NODE_FUNCTION_PROTO) {
