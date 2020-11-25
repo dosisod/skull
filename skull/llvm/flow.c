@@ -48,26 +48,70 @@ void llvm_make_return(AstNode *node) {
 	}
 }
 
+LLVMValueRef llvm_make_if_cond(AstNode *);
 void llvm_make_if_wrapper(AstNode *, LLVMBasicBlockRef);
+
+/*
+Builds LLVM for a while loop from `node`.
+*/
+void llvm_make_while(AstNode *node) {
+	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(FUNC, "while_cond");
+	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(FUNC, "while_loop");
+	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(FUNC, "while_end");
+
+	LLVMBuildBr(
+		BUILDER,
+		while_cond
+	);
+
+	LLVMPositionBuilderAtEnd(
+		BUILDER,
+		while_cond
+	);
+
+	LLVMValueRef cond = llvm_make_if_cond(node);
+
+	LLVMBuildCondBr(
+		BUILDER,
+		cond,
+		while_loop,
+		while_end
+	);
+
+	LLVMPositionBuilderAtEnd(
+		BUILDER,
+		while_loop
+	);
+
+	MAKE_SUB_SCOPE;
+
+	if (!node->child) {
+		PANIC("while statement must be followed by code block", {0});
+	}
+	if (node->child->token) {
+		const bool returned = node_to_llvm_ir(node->child);
+
+		if (!returned) {
+			LLVMBuildBr(BUILDER, while_cond);
+		}
+	}
+	else {
+		LLVMBuildBr(BUILDER, while_cond);
+	}
+
+	RESTORE_SUB_SCOPE;
+
+	LLVMPositionBuilderAtEnd(
+		BUILDER,
+		while_end
+	);
+}
 
 /*
 Builds an if block from `node`.
 */
 void llvm_make_if(AstNode **node) {
-	LLVMValueRef cond;
-
-	if ((*node)->token->next->token_type == TOKEN_BOOL_CONST) {
-		cond = LLVM_BOOL(eval_bool((*node)->token->next));
-	}
-	else {
-		SCOPE_FIND_VAR(found_var, (*node)->token->next, var_name);
-
-		if (found_var->type != &TYPE_BOOL) {
-			PANIC("Expected \"%s\" to be of type bool\n", { .var = found_var });
-		}
-
-		cond = llvm_var_get_value(found_var);
-	}
+	LLVMValueRef cond = llvm_make_if_cond(*node);
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(FUNC, "if_true");
 	LLVMBasicBlockRef if_false = NULL;
@@ -108,6 +152,19 @@ void llvm_make_if(AstNode **node) {
 		BUILDER,
 		end
 	);
+}
+
+LLVMValueRef llvm_make_if_cond(AstNode *node) {
+	if (node->token->next->token_type == TOKEN_BOOL_CONST) {
+		return LLVM_BOOL(eval_bool(node->token->next));
+	}
+	SCOPE_FIND_VAR(found_var, node->token->next, var_name);
+
+	if (found_var->type != &TYPE_BOOL) {
+		PANIC("Expected \"%s\" to be of type bool\n", { .var = found_var });
+	}
+
+	return llvm_var_get_value(found_var);
 }
 
 void llvm_make_if_wrapper(AstNode *node, LLVMBasicBlockRef block) {

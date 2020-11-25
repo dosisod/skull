@@ -322,6 +322,16 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 			continue;
 		}
 
+		if (token->token_type == TOKEN_KW_WHILE &&
+			token->next && (
+			token->next->token_type == TOKEN_IDENTIFIER ||
+			token->next->token_type == TOKEN_BOOL_CONST)
+		) {
+			token = token->next;
+			push_ast_node(token, &last, AST_NODE_WHILE, &node);
+			continue;
+		}
+
 		if (token->token_type == TOKEN_KW_ELSE) {
 			push_ast_node(token, &last, AST_NODE_ELSE, &node);
 			continue;

@@ -72,6 +72,10 @@ bool node_to_llvm_ir(AstNode *node) {
 			llvm_make_if(&node);
 		}
 
+		else if (node->node_type == AST_NODE_WHILE) {
+			llvm_make_while(node);
+		}
+
 		else if (node->node_type == AST_NODE_FUNCTION_PROTO) {
 			declare_external_function(node);
 		}
