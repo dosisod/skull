@@ -48,8 +48,8 @@ void llvm_make_return(AstNode *node) {
 	}
 }
 
-LLVMValueRef llvm_make_if_cond(AstNode *);
-void llvm_make_if_wrapper(AstNode *, LLVMBasicBlockRef);
+LLVMValueRef llvm_make_cond(AstNode *);
+void llvm_make_code_block(const char32_t *, AstNode *, LLVMBasicBlockRef);
 
 /*
 Builds LLVM for a while loop from `node`.
@@ -69,11 +69,9 @@ void llvm_make_while(AstNode *node) {
 		while_cond
 	);
 
-	LLVMValueRef cond = llvm_make_if_cond(node);
-
 	LLVMBuildCondBr(
 		BUILDER,
-		cond,
+		llvm_make_cond(node),
 		while_loop,
 		while_end
 	);
@@ -83,23 +81,7 @@ void llvm_make_while(AstNode *node) {
 		while_loop
 	);
 
-	MAKE_SUB_SCOPE;
-
-	if (!node->child) {
-		PANIC("while statement must be followed by code block", {0});
-	}
-	if (node->child->token) {
-		const bool returned = node_to_llvm_ir(node->child);
-
-		if (!returned) {
-			LLVMBuildBr(BUILDER, while_cond);
-		}
-	}
-	else {
-		LLVMBuildBr(BUILDER, while_cond);
-	}
-
-	RESTORE_SUB_SCOPE;
+	llvm_make_code_block(U"while", node, while_cond);
 
 	LLVMPositionBuilderAtEnd(
 		BUILDER,
@@ -111,8 +93,6 @@ void llvm_make_while(AstNode *node) {
 Builds an if block from `node`.
 */
 void llvm_make_if(AstNode **node) {
-	LLVMValueRef cond = llvm_make_if_cond(*node);
-
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(FUNC, "if_true");
 	LLVMBasicBlockRef if_false = NULL;
 
@@ -126,7 +106,7 @@ void llvm_make_if(AstNode **node) {
 
 	LLVMBuildCondBr(
 		BUILDER,
-		cond,
+		llvm_make_cond(*node),
 		if_true,
 		else_follows ? if_false : end
 	);
@@ -136,7 +116,7 @@ void llvm_make_if(AstNode **node) {
 		if_true
 	);
 
-	llvm_make_if_wrapper(*node, end);
+	llvm_make_code_block(U"if", *node, end);
 
 	if (else_follows) {
 		LLVMPositionBuilderAtEnd(
@@ -145,7 +125,7 @@ void llvm_make_if(AstNode **node) {
 		);
 
 		*node = (*node)->next;
-		llvm_make_if_wrapper(*node, end);
+		llvm_make_code_block(U"if", *node, end);
 	}
 
 	LLVMPositionBuilderAtEnd(
@@ -154,7 +134,10 @@ void llvm_make_if(AstNode **node) {
 	);
 }
 
-LLVMValueRef llvm_make_if_cond(AstNode *node) {
+/*
+Try and parse a condition (something returning a bool) from `node`.
+*/
+LLVMValueRef llvm_make_cond(AstNode *node) {
 	if (node->token->next->token_type == TOKEN_BOOL_CONST) {
 		return LLVM_BOOL(eval_bool(node->token->next));
 	}
@@ -167,11 +150,16 @@ LLVMValueRef llvm_make_if_cond(AstNode *node) {
 	return llvm_var_get_value(found_var);
 }
 
-void llvm_make_if_wrapper(AstNode *node, LLVMBasicBlockRef block) {
+/*
+Parse `node` while in a new scope. Branch to `block` when done.
+
+`name` is the type of block: if, else, while, etc.
+*/
+void llvm_make_code_block(const char32_t *name, AstNode *node, LLVMBasicBlockRef block) {
 	MAKE_SUB_SCOPE;
 
 	if (!node->child) {
-		PANIC("if statement must be followed by code block", {0});
+		PANIC(ERR_MISSING_BLOCK, { .str = name });
 	}
 	if (node->child->token) {
 		const bool returned = node_to_llvm_ir(node->child);

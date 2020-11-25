@@ -15,6 +15,7 @@
 #define ERR_FILE_EMPTY ("file is empty")
 #define ERR_MISSING_OPEN_BRAK ("missing opening bracket")
 #define ERR_MISSING_EXTERNAL ("external function \"%s\" missing external declaration\n")
+#define ERR_MISSING_BLOCK ("%s statement must be followed by code block\n")
 
 typedef struct Variable Variable;
 typedef struct Type Type;
