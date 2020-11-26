@@ -182,6 +182,9 @@ void define_function(const AstNode *const node) {
 
 	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(FUNC);
 
+	LLVMValueRef old_func = FUNC;
+	FUNC = current_function->function;
+
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlock(
 		current_function->function,
 		"entry"
@@ -231,4 +234,6 @@ void define_function(const AstNode *const node) {
 		BUILDER,
 		current_block
 	);
+
+	FUNC = old_func;
 }

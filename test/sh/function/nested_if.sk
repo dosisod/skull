@@ -1,0 +1,5 @@
+f() {
+	if true {
+		# do nothing
+	}
+}
