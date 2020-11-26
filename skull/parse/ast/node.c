@@ -166,7 +166,7 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	token = token->next->next;
 
 	const Type *param_types = NULL;
-	const char32_t *param_names = NULL;
+	char32_t *param_names = NULL;
 
 	const Type *return_type = NULL;
 
@@ -427,6 +427,10 @@ void free_ast_tree_(AstNode *node) {
 
 	while (node) {
 		if (node->attr) {
+			if (node->node_type == AST_NODE_FUNCTION_PROTO) {
+				free(ATTR(AstNodeFunctionProto, node, param_names));
+			}
+
 			free(node->attr);
 		}
 

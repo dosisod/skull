@@ -55,6 +55,7 @@ int setup_main(int argc, char *argv[]) {
 	if (!file_contents) {
 		PANIC(ERR_FILE_EMPTY, {0});
 	}
+	fclose(f);
 
 	LLVMModuleRef main_module = generate_llvm(argv[1], file_contents);
 	free(file_contents);
@@ -67,6 +68,9 @@ int setup_main(int argc, char *argv[]) {
 		llvm_filename,
 		&err
 	);
+
+	LLVMDisposeModule(main_module);
+	LLVMContextDispose(LLVMGetGlobalContext());
 	free(llvm_filename);
 
 	if (err || status) {
@@ -113,6 +117,8 @@ LLVMModuleRef generate_llvm(const char *module_name, char *file_contents) {
 		main_module,
 		builder
 	);
+
+	LLVMDisposeBuilder(builder);
 
 	return main_module;
 }

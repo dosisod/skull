@@ -179,6 +179,7 @@ void define_function(const AstNode *const node) {
 	if (!current_function) {
 		PANIC(ERR_MISSING_EXTERNAL, { .str = wide_func_name });
 	}
+	free(wide_func_name);
 
 	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(FUNC);
 

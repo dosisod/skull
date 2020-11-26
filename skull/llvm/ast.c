@@ -43,11 +43,15 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	free(str);
 
 	ExternalFunction *f = EXTERNAL_FUNCTIONS;
-	while (f && f->next) {
+	while (f) {
 		free(f->name);
 
+		ExternalFunction *copy = f;
 		f = f->next;
+		free(copy);
 	}
+
+	free(SCOPE);
 }
 
 /*

@@ -93,7 +93,7 @@ Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
 */
 typedef struct {
 	const Type *param_types;
-	const char32_t *param_names;
+	char32_t *param_names;
 
 	const Type *return_type;
 
