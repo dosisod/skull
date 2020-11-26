@@ -111,6 +111,7 @@ test "flow" "set_var_in_if.sk"
 test "flow" "return_0.sk"
 test "flow" "return_var.sk"
 test "flow" "while.sk"
+test "flow" "nested_if.sk"
 
 test "misc" "const_inline.sk"
 test "misc" "ignore_comments.sk"

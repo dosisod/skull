@@ -19,7 +19,9 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	Token *const token = tokenize(code);
 	classify_tokens(token);
 
-	AstNode *const ret = make_ast_tree_(token, 0);
+	Token *token_last = NULL;
+	AstNode *const ret = make_ast_tree_(token, 0, &token_last);
+
 	if (!ret) {
 		free_tokens(token);
 	}
@@ -227,7 +229,7 @@ __attribute__((pure)) bool is_const_literal(Token *token) {
 /*
 Internal AST tree generator.
 */
-AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
+AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 	Token *last = token;
 
 	AstNode *node = make_ast_node();
@@ -236,7 +238,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 
 	while (token) {
 		if (token->token_type == TOKEN_BRACKET_OPEN) {
-			AstNode *const child = make_ast_tree_(token->next, indent_lvl + 1);
+			AstNode *const child = make_ast_tree_(token->next, indent_lvl + 1, token_last);
 			if (!child) {
 				free(head);
 				return NULL;
@@ -260,14 +262,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 				token = child->token_end->next;
 			}
 
-			// TODO(x): return the last token that was reached so we dont have to do this
-			while (token->token_type != TOKEN_BRACKET_CLOSE) {
-				if (!token->next) {
-					PANIC(ERR_UNEXPECTED_TOKEN, { .tok = node->token });
-				}
-				token = token->next;
-			}
-			token = token->next;
+			token = (*token_last)->next;
 			continue;
 		}
 
@@ -277,6 +272,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl) {
 				PANIC(ERR_MISSING_OPEN_BRAK, {0});
 			}
 
+			*token_last = token;
 			break;
 		}
 
