@@ -60,6 +60,8 @@ Internal LLVM IR parser.
 Return true if there was a `AST_NODE_RETURN` node was parsed, else false.
 */
 bool node_to_llvm_ir(AstNode *node) {
+	bool returned = false;
+
 	while (node) {
 		const NodeType node_type = node->node_type;
 
@@ -74,9 +76,13 @@ bool node_to_llvm_ir(AstNode *node) {
 
 		if (node_type == AST_NODE_COMMENT) {}
 
+		else if (returned) {
+			PANIC("unreachable code after return", {0});
+		}
+
 		else if (node_type == AST_NODE_RETURN) {
 			llvm_make_return(node);
-			return true;
+			returned = true;
 		}
 
 		else if (node_type == AST_NODE_VAR_DEF) {
@@ -109,5 +115,5 @@ bool node_to_llvm_ir(AstNode *node) {
 
 		node = node->next;
 	}
-	return false;
+	return returned;
 }
