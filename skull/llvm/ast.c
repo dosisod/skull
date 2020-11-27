@@ -61,34 +61,45 @@ Return true if there was a `AST_NODE_RETURN` node was parsed, else false.
 */
 bool node_to_llvm_ir(AstNode *node) {
 	while (node) {
-		if (node->node_type == AST_NODE_COMMENT) {}
+		const NodeType node_type = node->node_type;
 
-		else if (node->node_type == AST_NODE_RETURN) {
+		if (node->child && !(
+			node_type == AST_NODE_IF ||
+			node_type == AST_NODE_WHILE ||
+			node_type == AST_NODE_WHILE ||
+			node_type == AST_NODE_FUNCTION_PROTO
+		)) {
+			PANIC("unexpected code block", {0});
+		}
+
+		if (node_type == AST_NODE_COMMENT) {}
+
+		else if (node_type == AST_NODE_RETURN) {
 			llvm_make_return(node);
 			return true;
 		}
 
-		else if (node->node_type == AST_NODE_VAR_DEF) {
+		else if (node_type == AST_NODE_VAR_DEF) {
 			llvm_make_var_def(&node);
 		}
 
-		else if (node->node_type == AST_NODE_IF) {
+		else if (node_type == AST_NODE_IF) {
 			llvm_make_if(&node);
 		}
 
-		else if (node->node_type == AST_NODE_WHILE) {
+		else if (node_type == AST_NODE_WHILE) {
 			llvm_make_while(node);
 		}
 
-		else if (node->node_type == AST_NODE_FUNCTION_PROTO) {
+		else if (node_type == AST_NODE_FUNCTION_PROTO) {
 			declare_external_function(node);
 		}
 
-		else if (node->node_type == AST_NODE_FUNCTION) {
+		else if (node_type == AST_NODE_FUNCTION) {
 			llvm_make_function(node);
 		}
 
-		else if (node->node_type == AST_NODE_VAR_ASSIGN) {
+		else if (node_type == AST_NODE_VAR_ASSIGN) {
 			llvm_make_assign(&node);
 		}
 

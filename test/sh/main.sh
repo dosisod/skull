@@ -178,6 +178,7 @@ test_error "oper_lhs_var_not_found.sk"
 test_error "oper_lhs_var_bad_type.sk"
 test_error "redundant_assign.sk"
 test_error "closing_block_comment_missing.sk"
+test_error "unexpected_code_block.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
