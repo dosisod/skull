@@ -17,7 +17,7 @@
 #include "skull/llvm/ast.h"
 
 LLVMModuleRef MODULE;
-LLVMValueRef FUNC;
+LLVMValueRef CURRENT_FUNC;
 Scope *SCOPE;
 LLVMBuilderRef BUILDER;
 
@@ -31,7 +31,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	AstNode *const node = make_ast_tree(str);
 
 	SCOPE = make_scope();
-	FUNC = func;
+	CURRENT_FUNC = func;
 	MODULE = module;
 	BUILDER = builder;
 
@@ -42,11 +42,11 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	free_ast_tree(node);
 	free(str);
 
-	ExternalFunction *f = EXTERNAL_FUNCTIONS;
+	FunctionDeclaration *f = FUNCTION_DECLARATIONS;
 	while (f) {
 		free(f->name);
 
-		ExternalFunction *copy = f;
+		FunctionDeclaration *copy = f;
 		f = f->next;
 		free(copy);
 	}
@@ -98,11 +98,11 @@ bool node_to_llvm_ir(AstNode *node) {
 		}
 
 		else if (node_type == AST_NODE_FUNCTION_PROTO) {
-			declare_external_function(node);
+			declare_function(node);
 		}
 
 		else if (node_type == AST_NODE_FUNCTION) {
-			llvm_make_function(node);
+			llvm_make_function_call(node);
 		}
 
 		else if (node_type == AST_NODE_VAR_ASSIGN) {

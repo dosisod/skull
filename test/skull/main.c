@@ -16,7 +16,7 @@
 #include "skull/common/local.h"
 
 noreturn void segfault_handler() {
-	printf("\n\nsegfault occurred in function `%s`, exiting\n\n", FUNC);
+	printf("\n\nsegfault occurred in function `%s`, exiting\n\n", FUNC_NAME);
 
 	exit(1);
 }

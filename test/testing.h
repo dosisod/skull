@@ -6,12 +6,12 @@
 
 typedef _Bool (*Test)(const char **);
 
-const char *FUNC;
+const char *FUNC_NAME;
 
 #define TEST(name, code) \
 _Bool test_##name (const char **msg) { \
 	*msg = NULL; \
-	FUNC = __func__; \
+	FUNC_NAME = __func__; \
 	code; \
 	return 1; \
 }

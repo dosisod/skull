@@ -18,7 +18,7 @@
 #include "skull/llvm/flow.h"
 
 extern Scope *SCOPE;
-extern LLVMValueRef FUNC;
+extern LLVMValueRef CURRENT_FUNC;
 extern LLVMBuilderRef BUILDER;
 
 bool node_to_llvm_ir(AstNode *);
@@ -55,9 +55,9 @@ void llvm_make_code_block(const char32_t *, AstNode *, LLVMBasicBlockRef);
 Builds LLVM for a while loop from `node`.
 */
 void llvm_make_while(AstNode *node) {
-	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(FUNC, "while_cond");
-	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(FUNC, "while_loop");
-	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(FUNC, "while_end");
+	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(CURRENT_FUNC, "while_cond");
+	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(CURRENT_FUNC, "while_loop");
+	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(CURRENT_FUNC, "while_end");
 
 	LLVMBuildBr(
 		BUILDER,
@@ -93,16 +93,16 @@ void llvm_make_while(AstNode *node) {
 Builds an if block from `node`.
 */
 void llvm_make_if(AstNode **node) {
-	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(FUNC, "if_true");
+	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(CURRENT_FUNC, "if_true");
 	LLVMBasicBlockRef if_false = NULL;
 
 	bool else_follows = (*node)->next && ((*node)->next->node_type == AST_NODE_ELSE);
 
 	if (else_follows) {
-		if_false = LLVMAppendBasicBlock(FUNC, "if_false");
+		if_false = LLVMAppendBasicBlock(CURRENT_FUNC, "if_false");
 	}
 
-	LLVMBasicBlockRef end = LLVMAppendBasicBlock(FUNC, "end");
+	LLVMBasicBlockRef end = LLVMAppendBasicBlock(CURRENT_FUNC, "end");
 
 	LLVMBuildCondBr(
 		BUILDER,

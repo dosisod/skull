@@ -1,1 +1,1 @@
-Compilation error: cannot redeclare external function "x"
+Compilation error: cannot redeclare function "x"

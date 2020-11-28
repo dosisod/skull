@@ -82,7 +82,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		value = llvm_make_math_oper(var->type, node, &llvm_make_div);
 	}
 	else if (node->node_type == AST_NODE_FUNCTION) {
-		value = llvm_make_function(node);
+		value = llvm_make_function_call(node);
 	}
 	else {
 		value = llvm_parse_var(var->type, node->token);

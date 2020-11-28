@@ -1,7 +1,7 @@
 # skull/llvm/func
 
 ```c
-typedef struct ExternalFunction {
+typedef struct FunctionDeclaration {
 	char *name;
 	LLVMValueRef function;
 	LLVMTypeRef type;
@@ -12,11 +12,11 @@ typedef struct ExternalFunction {
 
 	const Type *return_type;
 
-	ExternalFunction *next;
+	FunctionDeclaration *next;
 }
 ```
 
-> Stores an external function declaration.
+> Stores a function declaration.
 > \
 > `name` is the name of the declared function.
 > \
@@ -30,19 +30,19 @@ typedef struct ExternalFunction {
 > \
 > `return_type` is the Skull type that the function returns.
 > \
-> `next` stores the next external function declaration.
+> `next` stores the next function declaration.
 
 ```c
-void declare_external_function(AstNode *node)
+void declare_function(AstNode *node)
 ```
 
-> Store function name of externaly declared function in `node`.
+> Parse declaration (and potential definition) of function in `node`.
 
 ```c
-LLVMValueRef llvm_make_function(const AstNode *const node)
+LLVMValueRef llvm_make_function_call(const AstNode *const node)
 ```
 
-> Builds a function declaration from `node`.
+> Builds a function call from `node`.
 
 ```c
 void define_function(const AstNode *const node)

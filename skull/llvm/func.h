@@ -5,10 +5,10 @@
 #include "skull/eval/types/types.h"
 #include "skull/parse/ast/node.h"
 
-typedef struct ExternalFunction ExternalFunction;
+typedef struct FunctionDeclaration FunctionDeclaration;
 
 /*
-Stores an external function declaration.
+Stores a function declaration.
 
 `name` is the name of the declared function.
 
@@ -22,9 +22,9 @@ Stores an external function declaration.
 
 `return_type` is the Skull type that the function returns.
 
-`next` stores the next external function declaration.
+`next` stores the next function declaration.
 */
-typedef struct ExternalFunction {
+typedef struct FunctionDeclaration {
 	char *name;
 	LLVMValueRef function;
 	LLVMTypeRef type;
@@ -35,13 +35,13 @@ typedef struct ExternalFunction {
 
 	const Type *return_type;
 
-	ExternalFunction *next;
-} ExternalFunction;
+	FunctionDeclaration *next;
+} FunctionDeclaration;
 
-ExternalFunction *EXTERNAL_FUNCTIONS;
+FunctionDeclaration *FUNCTION_DECLARATIONS;
 
-void declare_external_function(AstNode *);
+void declare_function(AstNode *);
 
-LLVMValueRef llvm_make_function(const AstNode *const);
+LLVMValueRef llvm_make_function_call(const AstNode *const);
 
 void define_function(const AstNode *const);

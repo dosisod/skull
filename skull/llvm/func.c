@@ -16,17 +16,17 @@
 
 extern LLVMBuilderRef BUILDER;
 extern LLVMModuleRef MODULE;
-extern LLVMValueRef FUNC;
+extern LLVMValueRef CURRENT_FUNC;
 extern Scope *SCOPE;
 
-ExternalFunction *EXTERNAL_FUNCTIONS = NULL;
+FunctionDeclaration *FUNCTION_DECLARATIONS = NULL;
 
 bool node_to_llvm_ir(AstNode *);
 
 /*
-Store function name of externaly declared function in `node`.
+Parse declaration (and potential definition) of function in `node`.
 */
-void declare_external_function(AstNode *node) {
+void declare_function(AstNode *node) {
 	char32_t *wide_func_name = NULL;
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
 
@@ -39,7 +39,7 @@ void declare_external_function(AstNode *node) {
 
 	char *const func_name = c32stombs(wide_func_name);
 
-	ExternalFunction *f;
+	FunctionDeclaration *f;
 	f = calloc(1, sizeof *f);
 	DIE_IF_MALLOC_FAILS(f);
 
@@ -77,10 +77,10 @@ void declare_external_function(AstNode *node) {
 	);
 	LLVMSetLinkage(f->function, LLVMExternalLinkage);
 
-	ExternalFunction *head = EXTERNAL_FUNCTIONS;
+	FunctionDeclaration *head = FUNCTION_DECLARATIONS;
 	while (head) {
 		if (strcmp(func_name, head->name) == 0) {
-			PANIC("cannot redeclare external function \"%s\"\n", { .str = wide_func_name });
+			PANIC("cannot redeclare function \"%s\"\n", { .str = wide_func_name });
 		}
 
 		if (!head->next) {
@@ -94,7 +94,7 @@ void declare_external_function(AstNode *node) {
 		head->next = f;
 	}
 	else {
-		EXTERNAL_FUNCTIONS = f;
+		FUNCTION_DECLARATIONS = f;
 	}
 
 	if (!is_external) {
@@ -103,13 +103,13 @@ void declare_external_function(AstNode *node) {
 }
 
 /*
-Builds a function declaration from `node`.
+Builds a function call from `node`.
 */
-LLVMValueRef llvm_make_function(const AstNode *const node) {
+LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
-	ExternalFunction *current_function = EXTERNAL_FUNCTIONS;
+	FunctionDeclaration *current_function = FUNCTION_DECLARATIONS;
 	while (current_function) {
 		if (strcmp(current_function->name, func_name) == 0) {
 			break;
@@ -119,7 +119,7 @@ LLVMValueRef llvm_make_function(const AstNode *const node) {
 	free(func_name);
 
 	if (!current_function) {
-		PANIC(ERR_MISSING_EXTERNAL, { .str = wide_func_name });
+		PANIC(ERR_MISSING_DECLARATION, { .str = wide_func_name });
 	}
 	free(wide_func_name);
 
@@ -167,7 +167,7 @@ void define_function(const AstNode *const node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
-	ExternalFunction *current_function = EXTERNAL_FUNCTIONS;
+	FunctionDeclaration *current_function = FUNCTION_DECLARATIONS;
 	while (current_function) {
 		if (strcmp(current_function->name, func_name) == 0) {
 			break;
@@ -177,14 +177,14 @@ void define_function(const AstNode *const node) {
 	free(func_name);
 
 	if (!current_function) {
-		PANIC(ERR_MISSING_EXTERNAL, { .str = wide_func_name });
+		PANIC(ERR_MISSING_DECLARATION, { .str = wide_func_name });
 	}
 	free(wide_func_name);
 
-	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(FUNC);
+	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(CURRENT_FUNC);
 
-	LLVMValueRef old_func = FUNC;
-	FUNC = current_function->function;
+	LLVMValueRef old_func = CURRENT_FUNC;
+	CURRENT_FUNC = current_function->function;
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlock(
 		current_function->function,
@@ -236,5 +236,5 @@ void define_function(const AstNode *const node) {
 		current_block
 	);
 
-	FUNC = old_func;
+	CURRENT_FUNC = old_func;
 }

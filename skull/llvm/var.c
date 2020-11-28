@@ -81,7 +81,7 @@ void node_make_var(const AstNode *const node) {
 		else if (node->next->node_type == AST_NODE_FUNCTION) {
 			char *func_name = token_mbs_str(node->next->token);
 
-			ExternalFunction *function = EXTERNAL_FUNCTIONS;
+			FunctionDeclaration *function = FUNCTION_DECLARATIONS;
 			while (function) {
 				if (strcmp(func_name, function->name) == 0) {
 					type = function->return_type;

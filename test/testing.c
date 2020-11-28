@@ -11,7 +11,7 @@
 static Fail *fails_head = NULL;
 static Fail *fails_last = NULL;
 
-const char *FUNC = NULL;
+const char *FUNC_NAME = NULL;
 
 void run_single_test(Test test, bool *pass) {
 	const char *msg = NULL;
@@ -36,7 +36,7 @@ void run_single_test(Test test, bool *pass) {
 			fails_last = fail;
 		}
 		fails_last->msg = msg;
-		fails_last->name = FUNC;
+		fails_last->name = FUNC_NAME;
 	}
 	else {
 		printf(COLOR_BOLD COLOR_GREEN_FG "." COLOR_RESET);
