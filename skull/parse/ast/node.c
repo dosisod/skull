@@ -156,6 +156,12 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		token = token->next;
 	}
 
+	bool is_export = false;
+	if (!is_external && token->token_type == TOKEN_KW_EXPORT) {
+		is_export = true;
+		token = token->next;
+	}
+
 	if (!AST_TOKEN_CMP(token,
 		TOKEN_IDENTIFIER,
 		TOKEN_PAREN_OPEN)
@@ -209,7 +215,8 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		.param_types = param_types,
 		.param_names = param_names,
 		.return_type = return_type,
-		.is_external = is_external
+		.is_external = is_external,
+		.is_export = is_export
 	);
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);

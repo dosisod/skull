@@ -98,6 +98,7 @@ typedef struct {
 	const Type *return_type;
 
 	_Bool is_external;
+	_Bool is_export;
 } AstNodeFunctionProto;
 
 /*

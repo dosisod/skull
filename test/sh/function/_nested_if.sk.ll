@@ -6,7 +6,7 @@ entry:
   ret i64 0
 }
 
-define void @f() {
+define private void @f() {
 entry:
   br i1 true, label %if_true, label %end
 

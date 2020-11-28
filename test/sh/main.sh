@@ -101,6 +101,7 @@ test "function" "declare_func.sk"
 test "function" "func_with_scope.sk"
 test "function" "multi_var_func.sk"
 test "function" "nested_if.sk"
+test "function" "exported.sk"
 
 test "flow" "if_empty_body.sk"
 test "flow" "if_false.sk"

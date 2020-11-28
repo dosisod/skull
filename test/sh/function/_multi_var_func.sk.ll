@@ -7,7 +7,7 @@ entry:
   ret i64 0
 }
 
-define i64 @f(i64) {
+define private i64 @f(i64) {
 entry:
   ret i64 %0
 }

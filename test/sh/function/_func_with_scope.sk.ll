@@ -6,7 +6,7 @@ entry:
   ret i64 0
 }
 
-define void @f() {
+define private void @f() {
 entry:
   ret void
 }

@@ -29,8 +29,9 @@ Parse declaration (and potential definition) of function in `node`.
 void declare_function(AstNode *node) {
 	char32_t *wide_func_name = NULL;
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
+	const bool is_export = ATTR(AstNodeFunctionProto, node, is_export);
 
-	if (is_external) {
+	if (is_external || is_export) {
 		wide_func_name = token_str(node->token->next);
 	}
 	else {
@@ -75,7 +76,13 @@ void declare_function(AstNode *node) {
 		func_name,
 		f->type
 	);
-	LLVMSetLinkage(f->function, LLVMExternalLinkage);
+
+	LLVMSetLinkage(
+		f->function,
+		(is_export || is_external) ?
+			LLVMExternalLinkage :
+			LLVMPrivateLinkage
+	);
 
 	FunctionDeclaration *head = FUNCTION_DECLARATIONS;
 	while (head) {
@@ -164,7 +171,14 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 Create a native LLVM function.
 */
 void define_function(const AstNode *const node) {
-	char32_t *const wide_func_name = token_str(node->token);
+	char32_t *wide_func_name;
+
+	if (ATTR(AstNodeFunctionProto, node, is_export)) {
+		wide_func_name = token_str(node->token->next);
+	}
+	else {
+		wide_func_name = token_str(node->token);
+	}
 	char *const func_name = c32stombs(wide_func_name);
 
 	FunctionDeclaration *current_function = FUNCTION_DECLARATIONS;
