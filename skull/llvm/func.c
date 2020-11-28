@@ -191,10 +191,7 @@ void define_function(const AstNode *const node) {
 		"entry"
 	);
 
-	LLVMPositionBuilderAtEnd(
-		BUILDER,
-		entry
-	);
+	LLVMPositionBuilderAtEnd(BUILDER, entry);
 
 	MAKE_SUB_SCOPE;
 
@@ -231,10 +228,7 @@ void define_function(const AstNode *const node) {
 		LLVMBuildRetVoid(BUILDER);
 	}
 
-	LLVMPositionBuilderAtEnd(
-		BUILDER,
-		current_block
-	);
+	LLVMPositionBuilderAtEnd(BUILDER, current_block);
 
 	CURRENT_FUNC = old_func;
 }

@@ -35,16 +35,10 @@ void llvm_make_return(AstNode *node) {
 			PANIC("returning non-int variable \"%s\" from main\n", { .var = found_var });
 		}
 
-		LLVMBuildRet(
-			BUILDER,
-			llvm_var_get_value(found_var)
-		);
+		LLVMBuildRet(BUILDER, llvm_var_get_value(found_var));
 	}
 	else {
-		LLVMBuildRet(
-			BUILDER,
-			LLVM_INT(eval_integer(node->token->next))
-		);
+		LLVMBuildRet(BUILDER, LLVM_INT(eval_integer(node->token->next)));
 	}
 }
 
@@ -59,15 +53,9 @@ void llvm_make_while(AstNode *node) {
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(CURRENT_FUNC, "while_loop");
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(CURRENT_FUNC, "while_end");
 
-	LLVMBuildBr(
-		BUILDER,
-		while_cond
-	);
+	LLVMBuildBr(BUILDER, while_cond);
 
-	LLVMPositionBuilderAtEnd(
-		BUILDER,
-		while_cond
-	);
+	LLVMPositionBuilderAtEnd(BUILDER, while_cond);
 
 	LLVMBuildCondBr(
 		BUILDER,
@@ -76,17 +64,11 @@ void llvm_make_while(AstNode *node) {
 		while_end
 	);
 
-	LLVMPositionBuilderAtEnd(
-		BUILDER,
-		while_loop
-	);
+	LLVMPositionBuilderAtEnd(BUILDER, while_loop);
 
 	llvm_make_code_block(U"while", node, while_cond);
 
-	LLVMPositionBuilderAtEnd(
-		BUILDER,
-		while_end
-	);
+	LLVMPositionBuilderAtEnd(BUILDER, while_end);
 }
 
 /*
@@ -111,27 +93,18 @@ void llvm_make_if(AstNode **node) {
 		else_follows ? if_false : end
 	);
 
-	LLVMPositionBuilderAtEnd(
-		BUILDER,
-		if_true
-	);
+	LLVMPositionBuilderAtEnd(BUILDER, if_true);
 
 	llvm_make_code_block(U"if", *node, end);
 
 	if (else_follows) {
-		LLVMPositionBuilderAtEnd(
-			BUILDER,
-			if_false
-		);
+		LLVMPositionBuilderAtEnd(BUILDER, if_false);
 
 		*node = (*node)->next;
 		llvm_make_code_block(U"if", *node, end);
 	}
 
-	LLVMPositionBuilderAtEnd(
-		BUILDER,
-		end
-	);
+	LLVMPositionBuilderAtEnd(BUILDER, end);
 }
 
 /*
