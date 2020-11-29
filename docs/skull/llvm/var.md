@@ -20,10 +20,10 @@ LLVMValueRef llvm_parse_token(const Token *const token)
 
 ```c
 #define SCOPE_FIND_VAR(var, token, var_name) \
-	char32_t *const (var_name) = token_str((token)); \
+	char *const (var_name) = token_mbs_str((token)); \
 	Variable *const (var) = scope_find_name(SCOPE, (var_name)); \
 	if (!(var)) { \
-		PANIC(ERR_VAR_NOT_FOUND, { .str = (var_name) }); \
+		PANIC(ERR_VAR_NOT_FOUND, { .real = (var_name) }); \
 	}
 ```
 

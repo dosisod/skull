@@ -37,7 +37,7 @@ void llvm_make_assign(AstNode **node) {
 	SCOPE_FIND_VAR(found_var, (*node)->token, var_name);
 
 	if (found_var->is_const) {
-		PANIC("cannot reassign const variable \"%s\"\n", { .str = var_name });
+		PANIC("cannot reassign const variable \"%s\"\n", { .real = var_name });
 	}
 	free(var_name);
 
@@ -54,13 +54,11 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
 
-	char *const var_name = c32stombs(var->name);
-
 	if (!var->alloca && !var->is_const) {
 		var->alloca = LLVMBuildAlloca(
 			BUILDER,
 			var->type->llvm_type(),
-			var_name
+			var->name
 		);
 	}
 
@@ -89,10 +87,8 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	}
 
 	if (!value) {
-		PANIC("unable to assign value to variable \"%s\"\n", { .real = var_name });
+		PANIC("unable to assign value to variable \"%s\"\n", { .real = var->name });
 	}
-
-	free(var_name);
 
 	if (var->is_const) {
 		var->alloca = value;

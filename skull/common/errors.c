@@ -64,7 +64,7 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 		msg->real = token_mbs_str(msg->tok);
 	}
 	else if (msg->var) {
-		msg->real = c32stombs(msg->var->name);
+		msg->real = strdup(msg->var->name);
 	}
 	else if (msg->type) {
 		msg->real = strdup(msg->type->name);

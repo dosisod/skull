@@ -26,7 +26,7 @@ bool scope_add_var(Scope *const scope, Variable *var)
 > Returns `true` if `var` was added, else `false`
 
 ```c
-Variable *scope_find_name(const Scope *scope, const char32_t *name)
+Variable *scope_find_name(const Scope *scope, const char *name)
 ```
 
 > Returns pointer to variable with matching `name` if found, else `NULL`

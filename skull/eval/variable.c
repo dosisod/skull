@@ -25,15 +25,7 @@ Variable *make_variable(const Type *const type, const char32_t *const name, bool
 	var = malloc(sizeof *var);
 	DIE_IF_MALLOC_FAILS(var);
 
-	const size_t len = c32slen(name);
-	char32_t *name_copy;
-	name_copy = malloc((len + 1) * sizeof *name_copy);
-	DIE_IF_MALLOC_FAILS(name_copy);
-
-	c32sncpy(name_copy, name, len + 1);
-	name_copy[len] = '\0';
-
-	var->name = name_copy;
+	var->name = c32stombs(name);
 	var->type = type;
 	var->is_const = is_const;
 	var->alloca = NULL;

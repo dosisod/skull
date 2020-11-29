@@ -3,7 +3,7 @@
 ```c
 typedef struct Variable {
 	const Type *type;
-	char32_t *name;
+	char *name;
 	_Bool is_const;
 
 	LLVMValueRef alloca;

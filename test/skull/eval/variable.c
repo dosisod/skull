@@ -14,7 +14,7 @@ TEST(create_variable, {
 	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
 	ASSERT_EQUAL(strcmp(var->type->name, *&TYPE_INT.name), 0);
-	ASSERT_TRUTHY(c32scmp(var->name, U"x"));
+	ASSERT_EQUAL(strcmp(var->name, "x"), 0);
 	ASSERT_TRUTHY(var->is_const);
 	ASSERT_FALSEY(var->alloca);
 

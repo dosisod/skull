@@ -19,8 +19,8 @@ TEST(scope_find_name, {
 
 	scope_add_var(scope, var);
 
-	ASSERT_EQUAL(scope_find_name(scope, U"x"), var);
-	ASSERT_FALSEY(scope_find_name(scope, U"y"));
+	ASSERT_EQUAL(scope_find_name(scope, "x"), var);
+	ASSERT_FALSEY(scope_find_name(scope, "y"));
 
 	free_scope(scope);
 })
@@ -62,7 +62,7 @@ TEST(free_scope, {
 })
 
 TEST(scope_find_name_when_null, {
-	ASSERT_FALSEY(scope_find_name(NULL, U"anything"));
+	ASSERT_FALSEY(scope_find_name(NULL, "anything"));
 })
 
 TEST_SELF(scope,
