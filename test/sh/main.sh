@@ -181,6 +181,7 @@ test_error "redundant_assign.sk"
 test_error "closing_block_comment_missing.sk"
 test_error "unexpected_code_block.sk"
 test_error "unreachable_return.sk"
+test_error "invalid_identifier.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

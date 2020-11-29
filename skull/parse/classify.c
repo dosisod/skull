@@ -199,6 +199,8 @@ bool is_constant_float_str(const char32_t *str) {
 	return true;
 }
 
+#undef EXHAUST_STR
+
 /*
 Returns true if `str` is a valid bool (`true` or `false`).
 */
@@ -250,13 +252,16 @@ bool is_valid_identifier_str(const char32_t *str) {
 	}
 	str++;
 
-	EXHAUST_STR(!c32isalnum(*str) || *str != '_');
-
-	if (*str == ':') {
+	while (*str) {
+		if (*str == ':') {
+			str++;
+			break;
+		}
+		if (!(c32isalnum(*str) ^ (*str == '_'))) {
+			return false;
+		}
 		str++;
 	}
 
 	return !*str;
 }
-
-#undef EXHAUST_STR

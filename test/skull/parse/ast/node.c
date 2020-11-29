@@ -142,9 +142,7 @@ TEST(make_ast_tree_comment, {
 })
 
 TEST(free_ast_tree, {
-	AstNode *node = make_ast_tree(U"hello world");
-
-	free_ast_tree(node);
+	free_ast_tree(make_ast_tree(U"# whatever"));
 })
 
 TEST_SELF(ast_node,
