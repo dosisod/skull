@@ -39,12 +39,12 @@ while getopts ":vhcSEo:" o; do
 	esac
 done
 
-base=$(dirname $filename)/.$(basename $filename)
-[ -z "$OUT_FILE" ] && OUT_FILE=$base.o
-
 $(dirname $0)/_skull $filename || exit 1
 
 [[ "$filename" =~ ^.*\.sk$ ]] || exit 0
+
+base=$(dirname $filename)/.$(basename $filename)
+[ -z "$OUT_FILE" ] && OUT_FILE=$base.o
 
 # mimic -E option in cc (print preproccessor output to screen, in this case, LLVM IR)
 if [ ! -z "$PREPRO" ]; then

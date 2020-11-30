@@ -1,4 +1,4 @@
-SKULL_VERSION := 0.3.0
+SKULL_VERSION := $(shell git describe --tags --abbrev=0)
 
 BIN := /usr/local/bin/
 HEADER := /usr/include
