@@ -93,6 +93,10 @@ void node_make_var(const AstNode *const node) {
 				}
 				function = function->next;
 			}
+
+			if (!function) {
+				PANIC(ERR_MISSING_DECLARATION, { .real = func_name });
+			}
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER || (
 			(node->next->node_type == AST_NODE_ADD ||
