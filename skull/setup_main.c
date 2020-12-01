@@ -13,10 +13,6 @@
 #include "skull/llvm/ast.h"
 #include "skull/setup_main.h"
 
-#ifndef SKULL_VERSION
-#define SKULL_VERSION "<version unknown>"
-#endif
-
 #define DIE(x) puts(x); return 1
 
 int setup_main(int argc, char *argv[]) {
@@ -24,11 +20,6 @@ int setup_main(int argc, char *argv[]) {
 
 	if (1 == argc || argc > 2) {
 		DIE("expected exactly one parameter");
-	}
-
-	if (strcmp("-v", argv[1]) == 0) {
-		puts(COLOR_GREEN_FG "Skull " COLOR_RESET SKULL_VERSION);
-		return 0;
 	}
 
 	if (!strrstr(argv[1], ".sk")) {

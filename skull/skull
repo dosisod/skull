@@ -29,7 +29,10 @@ esac
 
 while getopts ":vhcSEo:" o; do
 	case "$o" in
-		v) filename="-v" ;;
+		v)
+			/bin/echo -e "\033[92mSkull $(git describe --tags --abbrev=0)"
+			exit 0
+			;;
 		h) usage; exit 0 ;;
 		c) COMPILE=true ;;
 		S) ASM=true ;;

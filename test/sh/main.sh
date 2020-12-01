@@ -13,13 +13,17 @@ cmp() {
 	pass_or_fail $?
 }
 
+fail() {
+	/bin/echo -e "\033[91mFAIL\033[0m"
+	pass=false
+}
+
+pass() {
+	/bin/echo -e "\033[92mPASS\033[0m"
+}
+
 pass_or_fail() {
-	if [ "$1" == "0" ]; then
-		/bin/echo -e "\033[91mFAIL\033[0m"
-		pass=false
-	else
-		/bin/echo -e "\033[92mPASS\033[0m"
-	fi
+	[ "$1" == "0" ] && fail || pass
 }
 
 test() {
@@ -190,5 +194,4 @@ test_error "read_protected.sk"
 rm test/sh/error/read_protected.sk
 
 echo
-
 $pass || (echo "1 or more tests failed" && exit 1)

@@ -1,5 +1,3 @@
-SKULL_VERSION := $(shell git describe --tags --abbrev=0)
-
 BIN := /usr/local/bin/
 HEADER := /usr/include
 MANPATH := $(shell manpath | cut -d : -f1)/man1/
@@ -39,7 +37,6 @@ CFLAGS += -std=c18 \
 	-Wfloat-equal \
 	-Wwrite-strings \
 	-Wdouble-promotion \
-	-DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
 	-I.
 
 LLVM_CFLAGS = $(shell llvm-config-9 --cflags)

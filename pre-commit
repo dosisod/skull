@@ -6,6 +6,8 @@ stop() {
 make clean all || stop
 
 ./build/test/test || stop
+
+cp ./skull/skull ./build/skull/skull
 ./test/sh/main.sh || stop
 
 valgrind --leak-check=full ./build/test/test || stop
