@@ -57,30 +57,6 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
 
-	const bool is_global = CURRENT_FUNC == MAIN_FUNC;
-
-	if (!var->alloca && !var->is_global && is_global) {
-		var->alloca = LLVMAddGlobal(
-			MODULE,
-			var->type->llvm_type(),
-			var->name
-		);
-
-		LLVMSetLinkage(var->alloca, LLVMPrivateLinkage);
-
-		LLVMSetInitializer(
-			var->alloca,
-			LLVMConstNull(var->type->llvm_type())
-		);
-	}
-	else if (!var->alloca && !var->is_const) {
-		var->alloca = LLVMBuildAlloca(
-			BUILDER,
-			var->type->llvm_type(),
-			var->name
-		);
-	}
-
 	LLVMValueRef value = NULL;
 
 	if (node->node_type == AST_NODE_IDENTIFIER) {
@@ -109,16 +85,68 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		PANIC("unable to assign value to variable \"%s\"\n", { .real = var->name });
 	}
 
-	if (var->is_const && !var->is_global) {
+	const bool is_first_assign = !var->alloca;
+	const bool is_global = is_first_assign ? (CURRENT_FUNC == MAIN_FUNC) : var->is_global;
+	const bool is_const_literal = LLVMIsConstant(value);
+
+	if (is_first_assign && var->is_const && is_global && is_const_literal) {}
+	else if (is_first_assign && !var->is_const && is_global && is_const_literal) { goto make_global; }
+	else if (is_first_assign && var->is_const && is_global && !is_const_literal) { goto make_global; }
+	else if (is_first_assign && !var->is_const && is_global && !is_const_literal) {
+		make_global:
+		var->alloca = LLVMAddGlobal(
+			MODULE,
+			var->type->llvm_type(),
+			var->name
+		);
+
+		LLVMSetLinkage(var->alloca, LLVMPrivateLinkage);
+
+		LLVMSetInitializer(
+			var->alloca,
+			LLVMConstNull(var->type->llvm_type())
+		);
+	}
+	else if (is_first_assign && var->is_const && !is_global && is_const_literal) {}
+	else if (is_first_assign && !var->is_const && !is_global && is_const_literal) {
+		var->alloca = LLVMBuildAlloca(
+			BUILDER,
+			var->type->llvm_type(),
+			var->name
+		);
+	}
+	else if (is_first_assign && var->is_const && !is_global && !is_const_literal) {}
+	else if (is_first_assign && !var->is_const && !is_global && !is_const_literal) {
+		var->alloca = LLVMBuildAlloca(
+			BUILDER,
+			var->type->llvm_type(),
+			var->name
+		);
+	}
+
+	if (var->is_const && is_global && is_const_literal) {
 		var->alloca = value;
 	}
-	else {
+	else if (!var->is_const && is_global && is_const_literal) { goto store_val; }
+	else if (var->is_const && is_global && !is_const_literal) { goto store_val; }
+	else if (!var->is_const && is_global && !is_const_literal) { goto store_val; }
+	else if (var->is_const && !is_global && is_const_literal) {
+		var->alloca = value;
+	}
+	else if (!var->is_const && !is_global && is_const_literal) { goto store_val; }
+	else if (var->is_const && !is_global && !is_const_literal) {
+		var->alloca = value;
+	}
+	else if (!var->is_const && !is_global && !is_const_literal) {
+		store_val:
 		LLVMBuildStore(
 			BUILDER,
 			value,
 			var->alloca
 		);
 	}
+
+	var->is_global = is_global;
 }
 
 /*
