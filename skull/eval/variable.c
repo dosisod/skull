@@ -28,6 +28,7 @@ Variable *make_variable(const Type *const type, const char32_t *const name, bool
 	var->name = c32stombs(name);
 	var->type = type;
 	var->is_const = is_const;
+	var->is_global = false;
 	var->alloca = NULL;
 
 	return var;

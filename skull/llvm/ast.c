@@ -18,8 +18,9 @@
 
 LLVMModuleRef MODULE;
 LLVMValueRef CURRENT_FUNC;
-Scope *SCOPE;
+LLVMValueRef MAIN_FUNC;
 LLVMBuilderRef BUILDER;
+Scope *SCOPE;
 
 /*
 Convert skull code from `str_` into LLVM IR (using `func` and `module`).
@@ -32,6 +33,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 
 	SCOPE = make_scope();
 	CURRENT_FUNC = func;
+	MAIN_FUNC = func;
 	MODULE = module;
 	BUILDER = builder;
 

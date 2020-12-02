@@ -1,9 +1,10 @@
 ; ModuleID = './test/sh/oper/sub_int_consts.sk'
 source_filename = "./test/sh/oper/sub_int_consts.sk"
 
+@x = private global i64 0
+
 define i64 @main() {
 entry:
-  %x = alloca i64
-  store i64 -1, i64* %x
+  store i64 -1, i64* @x
   ret i64 0
 }

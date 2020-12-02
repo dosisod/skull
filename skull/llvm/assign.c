@@ -16,8 +16,11 @@
 
 #include "skull/llvm/assign.h"
 
-extern Scope *SCOPE;
+extern LLVMModuleRef MODULE;
+extern LLVMValueRef CURRENT_FUNC;
+extern LLVMValueRef MAIN_FUNC;
 extern LLVMBuilderRef BUILDER;
+extern Scope *SCOPE;
 
 /*
 Builds a variable from `node`.
@@ -54,7 +57,23 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
 
-	if (!var->alloca && !var->is_const) {
+	const bool is_global = CURRENT_FUNC == MAIN_FUNC;
+
+	if (!var->alloca && !var->is_global && is_global) {
+		var->alloca = LLVMAddGlobal(
+			MODULE,
+			var->type->llvm_type(),
+			var->name
+		);
+
+		LLVMSetLinkage(var->alloca, LLVMPrivateLinkage);
+
+		LLVMSetInitializer(
+			var->alloca,
+			LLVMConstNull(var->type->llvm_type())
+		);
+	}
+	else if (!var->alloca && !var->is_const) {
 		var->alloca = LLVMBuildAlloca(
 			BUILDER,
 			var->type->llvm_type(),
@@ -90,7 +109,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		PANIC("unable to assign value to variable \"%s\"\n", { .real = var->name });
 	}
 
-	if (var->is_const) {
+	if (var->is_const && !var->is_global) {
 		var->alloca = value;
 	}
 	else {

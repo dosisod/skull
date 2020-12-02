@@ -42,13 +42,13 @@ const Type *token_type_to_type(const Token *token) {
 }
 
 LLVMValueRef llvm_var_get_value(const Variable *const var) {
-	if (var->is_const) {
+	if (var->is_const && !var->is_global) {
 		return var->alloca;
 	}
 
 	return LLVMBuildLoad2(
 		BUILDER,
-		LLVMGetAllocatedType(var->alloca),
+		var->type->llvm_type(),
 		var->alloca,
 		""
 	);
