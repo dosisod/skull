@@ -34,6 +34,7 @@ Token *tokenize(const char32_t *code) {
 	while (*code) {
 		if (comment) {
 			if (!block_comment && *code == '\n') {
+				code--;
 				comment = false;
 			}
 			else if (block_comment && *code == '#' && code[1] == '}') {
