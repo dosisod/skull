@@ -42,7 +42,7 @@ const Type *token_type_to_type(const Token *token) {
 }
 
 LLVMValueRef llvm_var_get_value(const Variable *const var) {
-	if (var->is_const && !var->is_global) {
+	if (var->is_const && !(var->is_global && !var->is_const_lit)) {
 		return var->alloca;
 	}
 

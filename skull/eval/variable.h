@@ -15,6 +15,8 @@
 
 `is_const` stores whether the variable is const or not.
 
+`is_const_lit` stores whether the variable is const literal.
+
 `is_global` stores whether the variable was declared at the top level of a module.
 
 `alloca` stores the actual LLVM allocated variable.
@@ -23,6 +25,7 @@ typedef struct Variable {
 	const Type *type;
 	char *name;
 	_Bool is_const;
+	_Bool is_const_lit;
 	_Bool is_global;
 
 	LLVMValueRef alloca;

@@ -116,6 +116,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		}
 
 		var->is_global = is_global;
+		var->is_const_lit = is_const_literal;
 	}
 
 	if (var->is_const && !(is_global && !is_const_literal)) {
