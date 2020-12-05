@@ -45,7 +45,9 @@ $(dirname $0)/_skull $filename || exit 1
 [[ "$filename" =~ ^.*\.sk$ ]] || exit 0
 
 base=$(dirname $filename)/.$(basename $filename)
-[ -z "$OUT_FILE" ] && OUT_FILE=$base.o
+[ -z "$OUT_FILE" ] && [ -z "$ASM" ] &&
+	OUT_FILE=$base.o ||
+	OUT_FILE=$base.s
 
 # mimic -E option in cc (print preproccessor output to screen, in this case, LLVM IR)
 [ ! -z "$PREPRO" ] &&
