@@ -212,6 +212,7 @@ test_skull "preproc.sh" "./test/sh/skull/dummy.sk -E"
 test_skull "asm.sh" "./test/sh/skull/dummy.sk -S"
 test_skull "compile_obj.sh" "./test/sh/skull/dummy.sk -c"
 test_skull "compile.sh" "./test/sh/skull/dummy.sk"
+test_skull "compile_with_args.sh" "./test/sh/skull/dummy.sk -- -o ./test/sh/skull/alt_name"
 test_skull "output_asm.sh" "./test/sh/skull/dummy.sk -S -o test/sh/skull/alt_name"
 test_skull "output_obj.sh" "./test/sh/skull/dummy.sk -c -o test/sh/skull/alt_name"
 
