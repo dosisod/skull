@@ -27,18 +27,20 @@ bool node_to_llvm_ir(AstNode *);
 Parse declaration (and potential definition) of function in `node`.
 */
 void declare_function(AstNode *node) {
-	char32_t *wide_func_name = NULL;
+	char *func_name = NULL;
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
 	const bool is_export = ATTR(AstNodeFunctionProto, node, is_export);
 
 	if (is_external || is_export) {
-		wide_func_name = token_str(node->token->next);
+		func_name = token_mbs_str(node->token->next);
 	}
 	else {
-		wide_func_name = token_str(node->token);
+		func_name = token_mbs_str(node->token);
 	}
 
-	char *const func_name = c32stombs(wide_func_name);
+	if (strcmp(func_name, "main") == 0) {
+		PANIC("declaration of reserved function \"main\"", {0});
+	}
 
 	FunctionDeclaration *f;
 	f = calloc(1, sizeof *f);
@@ -87,7 +89,7 @@ void declare_function(AstNode *node) {
 	FunctionDeclaration *head = FUNCTION_DECLARATIONS;
 	while (head) {
 		if (strcmp(func_name, head->name) == 0) {
-			PANIC("cannot redeclare function \"%s\"\n", { .str = wide_func_name });
+			PANIC("cannot redeclare function \"%s\"\n", { .real = func_name });
 		}
 
 		if (!head->next) {
@@ -95,7 +97,6 @@ void declare_function(AstNode *node) {
 		}
 		head = head->next;
 	}
-	free(wide_func_name);
 
 	if (head) {
 		head->next = f;
