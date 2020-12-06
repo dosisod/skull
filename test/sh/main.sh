@@ -207,7 +207,7 @@ rm test/sh/error/read_protected.sk
 test_skull "version.sh" "-v"
 test_skull "help.sh" "-h"
 test_skull "help.sh"
-test_skull "bad_option.sh" "-bad"
+test_skull "bad_option.sh" "-z"
 test_skull "preproc.sh" "./test/sh/skull/dummy.sk -E"
 test_skull "asm.sh" "./test/sh/skull/dummy.sk -S"
 test_skull "compile_obj.sh" "./test/sh/skull/dummy.sk -c"
