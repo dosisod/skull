@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 usage() {
 	echo "usage: skull [ -v | file [ -o output ] [ -- args ]]"
@@ -31,7 +31,10 @@ done
 
 $(dirname $0)/_skull $filename || exit 1
 
-[[ "$filename" =~ ^.*\.sk$ ]] || exit 0
+case "$filename" in
+	*".sk") ;;
+	*) exit 0 ;;
+esac
 
 base=$(dirname $filename)/.$(basename $filename)
 [ -z "$OUT_FILE" ] && {

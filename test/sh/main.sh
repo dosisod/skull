@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 pass=true
 
@@ -23,7 +23,7 @@ pass() {
 }
 
 pass_or_fail() {
-	[ "$1" == "0" ] && fail || pass
+	[ "$1" = "0" ] && fail || pass
 }
 
 test() {
