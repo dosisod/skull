@@ -19,6 +19,7 @@
 
 extern Scope *SCOPE;
 extern LLVMValueRef CURRENT_FUNC;
+extern LLVMValueRef MAIN_FUNC;
 extern LLVMBuilderRef BUILDER;
 
 bool node_to_llvm_ir(AstNode *);
@@ -31,7 +32,7 @@ void llvm_make_return(AstNode *node) {
 		SCOPE_FIND_VAR(found_var, node->token->next, var_name);
 		free(var_name);
 
-		if (found_var->type != &TYPE_INT) {
+		if (CURRENT_FUNC == MAIN_FUNC && found_var->type != &TYPE_INT) {
 			PANIC("returning non-int variable \"%s\" from main\n", { .var = found_var });
 		}
 

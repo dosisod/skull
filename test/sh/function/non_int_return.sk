@@ -1,0 +1,4 @@
+func() float {
+	ret := 3.14
+	return ret
+}
