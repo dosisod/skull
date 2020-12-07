@@ -1,4 +1,8 @@
 func() float {
-	ret := 3.14
+	mut ret := 3.14
 	return ret
+}
+
+func2() float {
+	return 3.14
 }

@@ -28,8 +28,9 @@ bool node_to_llvm_ir(AstNode *);
 Builds an return statement from `node`.
 */
 void llvm_make_return(AstNode *node) {
-	if (node->token->next->token_type == TOKEN_IDENTIFIER) {
-		SCOPE_FIND_VAR(found_var, node->token->next, var_name);
+	const Token *const token_val = node->token->next;
+	if (token_val->token_type == TOKEN_IDENTIFIER) {
+		SCOPE_FIND_VAR(found_var, token_val, var_name);
 		free(var_name);
 
 		if (CURRENT_FUNC == MAIN_FUNC && found_var->type != &TYPE_INT) {
@@ -37,10 +38,14 @@ void llvm_make_return(AstNode *node) {
 		}
 
 		LLVMBuildRet(BUILDER, llvm_var_get_value(found_var));
+		return;
 	}
-	else {
-		LLVMBuildRet(BUILDER, LLVM_INT(eval_integer(node->token->next)));
+
+	if (CURRENT_FUNC == MAIN_FUNC && token_val->token_type != TOKEN_INT_CONST) {
+		PANIC("returning non-int value \"%s\" from main\n", { .tok = token_val });
 	}
+
+	LLVMBuildRet(BUILDER, llvm_parse_token(token_val));
 }
 
 LLVMValueRef llvm_make_cond(AstNode *);
