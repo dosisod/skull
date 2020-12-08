@@ -16,7 +16,7 @@ esac
 while getopts ":vhcSEo:" o; do
 	case "$o" in
 		v)
-			/bin/echo -e "\033[92mSkull\033[0m $(git describe --tags --abbrev=0)"
+			/bin/echo -e "\033[92mSkull\033[0m v0.4.0"
 			exit 0
 			;;
 		h) usage; exit 0 ;;
