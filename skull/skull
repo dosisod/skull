@@ -1,7 +1,10 @@
 #!/bin/sh
 
 usage() {
-	echo "usage: skull [ -v | file [ -o output ] [ -- args ]]"
+	echo "skull -v
+skull file [ -S | -E | -c ]
+           [ -o output ]
+           [ -- args]"
 	exit 0
 }
 

@@ -1,4 +1,4 @@
 case "$@" in
-	"usage: skull"*) ;;
+	skull*) ;;
 	*) exit 1;
 esac

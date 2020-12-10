@@ -1,9 +1,47 @@
-.TH SKULL 1 "October 2020" "Linux" "User Manuals"
+.TH SKULL 1 "December 2020" "Linux" "User Manuals"
 .SH NAME
-skull \- A strict, static, strongly typed programming language.
+.B skull\fR \- A strict, static, and strongly typed programming language.
+
 .SH SYNOPSIS
-.B skull\fR [\fB-v\fR | \fIfile\fR [ -- \fIargs\fR ]]
+\fBskull\fR \-v
+
+\fBskull\fR \fIfile\fR [ \-S | \-E | \-c ]
+           [ \-o \fIoutput\fR ]
+           [ \-\- \fIargs\fR ]
+
 .SH DESCRIPTION
-When the \fB-v\fR option is passed, print the current version. Otherwise, try and compile \fIfile\fR, which must end in ".sk". If compilation succeeds, a new binary file (with the ".sk" extension removed) will be put into the same directory as \fIfile\fR. If any \fIargs\fR are passed after \fB\-\-\fR, they will forwarded to \fBcc\fR during the final compilation of \fIfile\fR. This allows the user more fine-grained control of how their C code is compiled with \fBSkull\fR code.
+\fBskull\fR is a strict, static, and strongly typed programming language.
+It strives to be as maintainable, readable, and powerful as possible.
+It allows for compilation to native binaries, assembler, and LLVM IR out of the box.
+
+If no arguments are passed, \fBskull\fR will compile \fIfile\fR into an executable
+named \fIfile\fR, with the ".sk" extention dropped.
+.SH OPTIONS
+.TP
+.B \-v
+Print version and exit.
+
+.TP
+.B \-S
+Output assembly representation of \fIfile\fR.
+Newly created file is called ".\fIfile\fR.o" and put in the same directory as \fIfile\fR.
+
+.TP
+.B \-E
+Output LLVM IR representation of \fIfile\fR to stdout.
+
+.TP
+.B \-c
+Output an object file compiled from \fIfile\fR.
+Newly created file is called ".\fIfile\fR.o" and put in the same directory as \fIfile\fR.
+
+.TP
+.BI \-o " output"
+Change filename of newly created file.
+
+.TP
+.BI \-\- " args"
+Forward \fIargs\fR to CC during the final compilation of \fIfile\fR.
+
 .SH AUTHOR
 dosisod <https://github.com/dosisod>
