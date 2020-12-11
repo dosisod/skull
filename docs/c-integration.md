@@ -62,7 +62,7 @@ Here, the linker is throwing an error as we forgot to include `hello.c` to our c
 
 ## Using Skull types in your code
 
-`int` in Skull is different then `int` in C. It is recommended to use the Skull typdefs for the best possible compatibility.
+As an example, `int` in Skull is different then `int` in C. It is recommended to use the Skull typdefs for the best possible compatibility.
 
 To install Skull headers, run `make install-dev`.
 
@@ -98,3 +98,35 @@ $ echo $?
 ```
 
 The `Skull.h` header is already included when compiling C code via `skull`.
+
+## Using Skull in your C code
+
+This is an example of how to compile Skull code into a C program:
+
+```c
+// hello2.c
+
+extern int _skull_main(void);
+
+int main(void) {
+	return _skull_main();
+}
+```
+
+```
+# hello2.sk
+
+external puts(s: str) int
+
+puts("hello, world 2!")
+```
+
+To compile, run the following:
+
+```
+$ skull hello2.sk -m _skull_main -- hello2.c -no-pie -o hello2
+```
+
+Here we compile `hello2.sk`, rename `main` to `_skull_main`, and call it from `main` in out C program.
+
+You MUST call the main funciton of the Skull program in C, as main may need to initialize variables.

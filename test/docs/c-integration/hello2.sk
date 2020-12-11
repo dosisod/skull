@@ -1,0 +1,3 @@
+external puts(s: str) int
+
+puts("hello, world 2!")

@@ -68,5 +68,6 @@ $ make test && ./build/test/test
 ## Todo
 
 - [x] Runnable Skull files
-- [ ] Skull to/from C bindings
+- [x] C to Skull bindings
+- [x] Skull to C bindings
 - [ ] Rich Skull std library
