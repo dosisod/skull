@@ -16,7 +16,7 @@ case "$1" in
 	*) filename=$1; shift ;;
 esac
 
-while getopts ":vhcSEo:" o; do
+while getopts ":vhcSEo:m:" o; do
 	case "$o" in
 		v)
 			/bin/echo -e "\033[92mSkull\033[0m v0.4.0"
@@ -27,13 +27,14 @@ while getopts ":vhcSEo:" o; do
 		S) ASM=true ;;
 		E) PREPRO=true ;;
 		o) OUT_FILE=$OPTARG ;;
+		m) MAIN_FUNC=$OPTARG ;;
 		*) echo "Unknown option \"-$OPTARG\"" ; exit 1 ;;
 	esac
 done
 
 shift $(expr $OPTIND - 1)
 
-$(dirname $0)/_skull $filename || exit 1
+$(dirname $0)/_skull "$filename" "$MAIN_FUNC" || exit 1
 
 case "$filename" in
 	*".sk") ;;

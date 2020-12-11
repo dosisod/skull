@@ -18,9 +18,13 @@
 int setup_main(int argc, char *argv[]) {
 	SETUP_LOCALE();
 
-	if (1 == argc || argc > 2) {
-		DIE("expected exactly one parameter");
+	if (1 == argc || argc > 3) {
+		DIE("unexpected number of parameters");
 	}
+
+	const char *main_func_name = (argc == 3 && *argv[2]) ?
+		argv[2] :
+		"main";
 
 	if (!strrstr(argv[1], ".sk")) {
 		DIE("missing required \".sk\" extension, exiting");
@@ -48,7 +52,7 @@ int setup_main(int argc, char *argv[]) {
 	}
 	fclose(f);
 
-	LLVMModuleRef main_module = generate_llvm(argv[1], file_contents);
+	LLVMModuleRef main_module = generate_llvm(argv[1], main_func_name, file_contents);
 	free(file_contents);
 
 	char *llvm_filename = create_llvm_filename(argv[1]);
@@ -74,7 +78,7 @@ int setup_main(int argc, char *argv[]) {
 	return 0;
 }
 
-LLVMModuleRef generate_llvm(const char *module_name, char *file_contents) {
+LLVMModuleRef generate_llvm(const char *module_name, const char *main_func_name, char *file_contents) {
 	LLVMModuleRef main_module = LLVMModuleCreateWithName(module_name);
 
 	LLVMTypeRef main_func_type = LLVMFunctionType(
@@ -86,7 +90,7 @@ LLVMModuleRef generate_llvm(const char *module_name, char *file_contents) {
 
 	LLVMValueRef main_func = LLVMAddFunction(
 		main_module,
-		"main",
+		main_func_name,
 		main_func_type
 	);
 

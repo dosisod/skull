@@ -140,7 +140,7 @@ test "misc" "comment_then_code.sk"
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"
 test_option "not_a_file.sk" "\"./test/sh/not_a_file.sk\" was not found, exiting"
-test_option "option1\ option2" "expected exactly one parameter"
+test_option "option1\ option2\ option3" "unexpected number of parameters"
 
 test_error "var_already_defined.sk"
 test_error "return_int_overflow.sk"
@@ -218,6 +218,7 @@ test_skull "compile.sh" "./test/sh/skull/dummy.sk"
 test_skull "compile_with_args.sh" "./test/sh/skull/dummy.sk -- -o ./test/sh/skull/alt_name"
 test_skull "output_asm.sh" "./test/sh/skull/dummy.sk -S -o test/sh/skull/alt_name"
 test_skull "output_obj.sh" "./test/sh/skull/dummy.sk -c -o test/sh/skull/alt_name"
+test_skull "rename_main.sh" "./test/sh/skull/dummy.sk -m alt_main -E"
 
 echo
 $pass || (echo "1 or more tests failed" && exit 1)
