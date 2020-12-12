@@ -67,16 +67,22 @@ bool node_to_llvm_ir(AstNode *node) {
 	while (node) {
 		const NodeType node_type = node->node_type;
 
-		if (node->child && !(
-			node_type == AST_NODE_IF ||
-			node_type == AST_NODE_WHILE ||
+		if (node_type == AST_NODE_IF) {
+			llvm_make_if(&node);
+		}
+
+		else if (node_type == AST_NODE_ELSE) {
+			PANIC("else statement missing preceding if statement", {0});
+		}
+
+		else if (node->child && !(
 			node_type == AST_NODE_WHILE ||
 			node_type == AST_NODE_FUNCTION_PROTO
 		)) {
 			PANIC("unexpected code block", {0});
 		}
 
-		if (node_type == AST_NODE_COMMENT) {}
+		else if (node_type == AST_NODE_COMMENT) {}
 
 		else if (returned) {
 			PANIC("unreachable code after return", {0});
@@ -89,10 +95,6 @@ bool node_to_llvm_ir(AstNode *node) {
 
 		else if (node_type == AST_NODE_VAR_DEF) {
 			llvm_make_var_def(&node);
-		}
-
-		else if (node_type == AST_NODE_IF) {
-			llvm_make_if(&node);
 		}
 
 		else if (node_type == AST_NODE_WHILE) {
