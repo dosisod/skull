@@ -83,14 +83,23 @@ Builds an if block from `node`.
 void llvm_make_if(AstNode **node) {
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(CURRENT_FUNC, "if_true");
 	LLVMBasicBlockRef if_false = NULL;
+	LLVMBasicBlockRef end = LLVMAppendBasicBlock(CURRENT_FUNC, "end");
 
-	bool else_follows = (*node)->next && ((*node)->next->node_type == AST_NODE_ELSE);
+	AstNode *skip_whitespace = (*node)->next;
+	while (skip_whitespace) {
+		if (skip_whitespace->node_type == AST_NODE_COMMENT) {
+			skip_whitespace = skip_whitespace->next;
+			continue;
+		}
+		break;
+	}
+
+	const bool else_follows = skip_whitespace && (skip_whitespace->node_type == AST_NODE_ELSE);
 
 	if (else_follows) {
 		if_false = LLVMAppendBasicBlock(CURRENT_FUNC, "if_false");
+		LLVMMoveBasicBlockBefore(if_false, end);
 	}
-
-	LLVMBasicBlockRef end = LLVMAppendBasicBlock(CURRENT_FUNC, "end");
 
 	LLVMBuildCondBr(
 		BUILDER,
@@ -100,13 +109,12 @@ void llvm_make_if(AstNode **node) {
 	);
 
 	LLVMPositionBuilderAtEnd(BUILDER, if_true);
-
 	llvm_make_code_block(U"if", *node, end);
 
 	if (else_follows) {
-		LLVMPositionBuilderAtEnd(BUILDER, if_false);
+		*node = skip_whitespace;
 
-		*node = (*node)->next;
+		LLVMPositionBuilderAtEnd(BUILDER, if_false);
 		llvm_make_code_block(U"if", *node, end);
 	}
 
