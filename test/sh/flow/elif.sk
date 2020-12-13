@@ -1,0 +1,9 @@
+if false {
+	# do nothing
+}
+elif true {
+	# do nothing
+}
+else {
+	# do nothing
+}

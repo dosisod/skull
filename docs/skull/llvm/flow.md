@@ -19,6 +19,12 @@ void llvm_make_if(AstNode **node)
 > Builds an if block from `node`.
 
 ```c
+void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end)
+```
+
+> Internal function for building an `if` node.
+
+```c
 LLVMValueRef llvm_make_cond(AstNode *node)
 ```
 

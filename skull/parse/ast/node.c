@@ -325,6 +325,21 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 			continue;
 		}
 
+		if (token->token_type == TOKEN_KW_ELIF &&
+			token->next && (
+			token->next->token_type == TOKEN_IDENTIFIER ||
+			token->next->token_type == TOKEN_BOOL_CONST)
+		) {
+			token = token->next;
+			push_ast_node(token, &last, AST_NODE_ELIF, &node);
+			continue;
+		}
+
+		if (token->token_type == TOKEN_KW_ELSE) {
+			push_ast_node(token, &last, AST_NODE_ELSE, &node);
+			continue;
+		}
+
 		if (token->token_type == TOKEN_KW_WHILE &&
 			token->next && (
 			token->next->token_type == TOKEN_IDENTIFIER ||
@@ -332,11 +347,6 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 		) {
 			token = token->next;
 			push_ast_node(token, &last, AST_NODE_WHILE, &node);
-			continue;
-		}
-
-		if (token->token_type == TOKEN_KW_ELSE) {
-			push_ast_node(token, &last, AST_NODE_ELSE, &node);
 			continue;
 		}
 

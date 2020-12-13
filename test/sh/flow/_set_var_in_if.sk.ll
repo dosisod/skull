@@ -11,6 +11,6 @@ if_true:                                          ; preds = %entry
   store i64 1, i64* @x
   br label %end
 
-end:                                              ; preds = %if_true, %entry
+end:                                              ; preds = %entry, %if_true
   ret i64 0
 }

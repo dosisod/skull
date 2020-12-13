@@ -77,14 +77,23 @@ void llvm_make_while(AstNode *node) {
 	LLVMPositionBuilderAtEnd(BUILDER, while_end);
 }
 
+void llvm_make_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
+
 /*
 Builds an if block from `node`.
 */
 void llvm_make_if(AstNode **node) {
-	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(CURRENT_FUNC, "if_true");
-	LLVMBasicBlockRef if_false = NULL;
-	LLVMBasicBlockRef end = LLVMAppendBasicBlock(CURRENT_FUNC, "end");
+	llvm_make_if_(
+		node,
+		LLVMGetInsertBlock(BUILDER),
+		LLVMAppendBasicBlock(CURRENT_FUNC, "end")
+	);
+}
 
+/*
+Internal function for building an `if` node.
+*/
+void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end) {
 	AstNode *skip_whitespace = (*node)->next;
 	while (skip_whitespace) {
 		if (skip_whitespace->node_type == AST_NODE_COMMENT) {
@@ -94,28 +103,48 @@ void llvm_make_if(AstNode **node) {
 		break;
 	}
 
-	const bool else_follows = skip_whitespace && (skip_whitespace->node_type == AST_NODE_ELSE);
-
-	if (else_follows) {
-		if_false = LLVMAppendBasicBlock(CURRENT_FUNC, "if_false");
-		LLVMMoveBasicBlockBefore(if_false, end);
-	}
-
-	LLVMBuildCondBr(
-		BUILDER,
-		llvm_make_cond(*node),
-		if_true,
-		else_follows ? if_false : end
-	);
+	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(CURRENT_FUNC, "if_true");
+	LLVMBasicBlockRef if_false = NULL;
+	LLVMMoveBasicBlockBefore(if_true, end);
 
 	LLVMPositionBuilderAtEnd(BUILDER, if_true);
 	llvm_make_code_block(U"if", *node, end);
 
-	if (else_follows) {
-		*node = skip_whitespace;
+	LLVMPositionBuilderAtEnd(BUILDER, entry);
 
+	if (skip_whitespace && (
+		skip_whitespace->node_type == AST_NODE_ELIF ||
+		skip_whitespace->node_type == AST_NODE_ELSE)
+	) {
+		if_false = LLVMAppendBasicBlock(CURRENT_FUNC, "if_false");
+		LLVMMoveBasicBlockAfter(end, if_false);
+
+		LLVMBuildCondBr(
+			BUILDER,
+			llvm_make_cond(*node),
+			if_true,
+			if_false
+		);
+
+		*node = skip_whitespace;
+	}
+
+	// if there is an elif block following the current if block
+	if (skip_whitespace && (skip_whitespace->node_type == AST_NODE_ELIF)) {
+		llvm_make_if_(node, if_false, end);
+	}
+	// if there is an else block following the current if block
+	else if (skip_whitespace && (skip_whitespace->node_type == AST_NODE_ELSE)) {
 		LLVMPositionBuilderAtEnd(BUILDER, if_false);
-		llvm_make_code_block(U"if", *node, end);
+		llvm_make_code_block(U"else", *node, end);
+	}
+	else {
+		LLVMBuildCondBr(
+			BUILDER,
+			llvm_make_cond(*node),
+			if_true,
+			end
+		);
 	}
 
 	LLVMPositionBuilderAtEnd(BUILDER, end);

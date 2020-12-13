@@ -13,6 +13,6 @@ entry:
 if_true:                                          ; preds = %entry
   br label %end
 
-end:                                              ; preds = %if_true, %entry
+end:                                              ; preds = %entry, %if_true
   ret void
 }

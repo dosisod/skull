@@ -35,6 +35,7 @@ void classify_token(Token *const token) {
 	TOKEN_TRY_STR(U"mut", TOKEN_KW_MUT)
 	TOKEN_TRY_STR(U"return", TOKEN_KW_RETURN)
 	TOKEN_TRY_STR(U"if", TOKEN_KW_IF)
+	TOKEN_TRY_STR(U"elif", TOKEN_KW_ELIF)
 	TOKEN_TRY_STR(U"else", TOKEN_KW_ELSE)
 	TOKEN_TRY_STR(U"while", TOKEN_KW_WHILE)
 	TOKEN_TRY_STR(U"external", TOKEN_KW_EXTERNAL)
