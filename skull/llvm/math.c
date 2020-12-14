@@ -18,7 +18,7 @@ Build LLVM for assining addition of `lhs` and `rhs`.
 */
 LLVMValueRef llvm_make_add(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
-		return LLVMBuildAdd(BUILDER, lhs, rhs, "");
+		return LLVMBuildNSWAdd(BUILDER, lhs, rhs, "");
 	}
 	if (type == &TYPE_FLOAT) {
 		return LLVMBuildFAdd(BUILDER, lhs, rhs, "");
@@ -32,7 +32,7 @@ Build LLVM for assining subtraction of `lhs` and `rhs`.
 */
 LLVMValueRef llvm_make_sub(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
-		return LLVMBuildSub(BUILDER, lhs, rhs, "");
+		return LLVMBuildNSWSub(BUILDER, lhs, rhs, "");
 	}
 	if (type == &TYPE_FLOAT) {
 		return LLVMBuildFSub(BUILDER, lhs, rhs, "");
@@ -46,7 +46,7 @@ Build LLVM for assining multiplication of `lhs` and `rhs`.
 */
 LLVMValueRef llvm_make_mult(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
-		return LLVMBuildMul(BUILDER, lhs, rhs, "");
+		return LLVMBuildNSWMul(BUILDER, lhs, rhs, "");
 	}
 	if (type == &TYPE_FLOAT) {
 		return LLVMBuildFMul(BUILDER, lhs, rhs, "");
@@ -64,7 +64,7 @@ LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 			PANIC("division by zero", {0});
 		}
 
-		return LLVMBuildSDiv(BUILDER, lhs, rhs, "");
+		return LLVMBuildExactSDiv(BUILDER, lhs, rhs, "");
 	}
 	if (type == &TYPE_FLOAT) {
 		return LLVMBuildFDiv(BUILDER, lhs, rhs, "");
