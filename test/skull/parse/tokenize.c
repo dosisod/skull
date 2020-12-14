@@ -205,6 +205,20 @@ TEST(make_token, {
 	free_tokens(token);
 })
 
+TEST(tokenize_with_lines_and_columns, {
+	const char32_t *code = U"token1\ntoken2";
+	Token *t = tokenize(code);
+
+	ASSERT_EQUAL(t->line, 1);
+	ASSERT_EQUAL(t->column, 1);
+	ASSERT_EQUAL(t->next->line, 1);
+	ASSERT_EQUAL(t->next->column, 7);
+	ASSERT_EQUAL(t->next->next->line, 2);
+	ASSERT_EQUAL(t->next->next->column, 1);
+
+	free_tokens(t);
+})
+
 TEST_SELF(tokenizer,
 	test_is_whitespace,
 	test_is_quote,
@@ -222,5 +236,6 @@ TEST_SELF(tokenizer,
 	test_token_str,
 	test_tokenize_comment,
 	test_tokenize_trailing_comment,
-	test_make_token
+	test_make_token,
+	test_tokenize_with_lines_and_columns
 )

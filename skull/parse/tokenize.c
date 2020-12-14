@@ -12,6 +12,8 @@
 	current->end = code; \
 	Token *next_token = make_token(); \
 	next_token->begin = code; \
+	next_token->line = line_num; \
+	next_token->column = column; \
 	next_token->end = code + 1; \
 	current->next = next_token; \
 	current = next_token
@@ -27,11 +29,15 @@ Token *tokenize(const char32_t *code) {
 	Token *current = head;
 	Token *last = current;
 
+	unsigned line_num = 1;
+	unsigned column = 0;
 	char32_t quote = false;
 	bool comment = false;
 	bool block_comment = false;
 
 	while (*code) {
+		column++;
+
 		if (comment) {
 			if (!block_comment && *code == '\n') {
 				code--;
@@ -55,6 +61,8 @@ Token *tokenize(const char32_t *code) {
 
 			if (!current->begin) {
 				current->begin = code;
+				current->line = line_num;
+				current->column = column;
 			}
 			else {
 				PINCH_TOKEN;
@@ -70,6 +78,8 @@ Token *tokenize(const char32_t *code) {
 
 			if (!current->begin) {
 				current->begin = code;
+				current->line = line_num;
+				current->column = column;
 			}
 		}
 		else if (
@@ -81,6 +91,8 @@ Token *tokenize(const char32_t *code) {
 		) {
 			if (!current->begin) {
 				current->begin = code;
+				current->line = line_num;
+				current->column = column;
 				current->end = code + 1;
 			}
 			else {
@@ -96,6 +108,8 @@ Token *tokenize(const char32_t *code) {
 		else if (!current->begin) {
 			if (!is_whitespace(*code)) {
 				current->begin = code;
+				current->line = line_num;
+				current->column = column;
 			}
 		}
 		else if (!current->end) {
@@ -109,6 +123,12 @@ Token *tokenize(const char32_t *code) {
 				current = next_token;
 			}
 		}
+
+		if (*code == '\n') {
+			line_num++;
+			column = 0;
+		}
+
 		code++;
 	}
 

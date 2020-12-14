@@ -13,12 +13,19 @@ Stores the smallest meaningful chunk of parsed code.
 
 `token_type` stores the type of token.
 
+`line` stores the line that the token starts at.
+
+`column` stores the column that the token start of the token is in.
+
 `next` stores the next parsed token.
 */
 typedef struct Token {
 	const char32_t *begin;
 	const char32_t *end;
+
 	unsigned token_type;
+	unsigned line;
+	unsigned column;
 
 	Token *next;
 } Token;
