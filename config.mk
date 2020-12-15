@@ -3,6 +3,7 @@ HEADER := /usr/include
 MANPATH := $(shell manpath | cut -d : -f1)/man1/
 
 CC := $(shell readlink -f `which cc`)
+CXX := g++
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
@@ -40,7 +41,16 @@ CFLAGS += -std=c18 \
 	-I.
 
 LLVM_CFLAGS = $(shell llvm-config-9 --cflags)
-LLVM_LDFLAGS = $(shell llvm-config-9 --libs)
+
+RELEASE ?= 0
+ifeq ($(RELEASE), 1)
+	LLVM_LDFLAGS = $(shell llvm-config-9 --libfiles --link-static) \
+		$(shell $(CXX) -print-file-name=libstdc++.a) \
+		-lm -lpthread -lncurses
+else
+	LLVM_LDFLAGS = $(shell llvm-config-9 --libs)
+endif
+
 
 #dont add gnu specific flags if compiling in clang
 ifeq ($(findstring clang,$(CC)),)
