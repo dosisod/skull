@@ -40,7 +40,7 @@ void llvm_make_assign(AstNode **node) {
 	SCOPE_FIND_VAR(found_var, (*node)->token, var_name);
 
 	if (found_var->is_const) {
-		PANIC("cannot reassign const variable \"%s\"\n", { .real = var_name });
+		PANIC(ERR_REASSIGN_CONST, { .real = var_name });
 	}
 	free(var_name);
 
@@ -82,7 +82,7 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 	}
 
 	if (!value) {
-		PANIC("unable to assign value to variable \"%s\"\n", { .real = var->name });
+		PANIC(ERR_UNASSIGNABLE, { .real = var->name });
 	}
 
 	const bool is_first_assign = !var->alloca;
@@ -142,7 +142,7 @@ LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const no
 		PANIC(ERR_TYPE_MISMATCH, { .type = var->type });
 	}
 	if (var == var_found) {
-		PANIC("redundant assignment of variable \"%s\" to itself\n", { .var = var });
+		PANIC(ERR_REDUNDANT_REASSIGN, { .var = var });
 	}
 
 	return llvm_var_get_value(var_found);

@@ -34,7 +34,7 @@ void llvm_make_return(AstNode *node) {
 		free(var_name);
 
 		if (CURRENT_FUNC == MAIN_FUNC && found_var->type != &TYPE_INT) {
-			PANIC("returning non-int variable \"%s\" from main\n", { .var = found_var });
+			PANIC(ERR_NON_INT_VAR_MAIN, { .var = found_var });
 		}
 
 		LLVMBuildRet(BUILDER, llvm_var_get_value(found_var));
@@ -42,7 +42,7 @@ void llvm_make_return(AstNode *node) {
 	}
 
 	if (CURRENT_FUNC == MAIN_FUNC && token_val->token_type != TOKEN_INT_CONST) {
-		PANIC("returning non-int value \"%s\" from main\n", { .tok = token_val });
+		PANIC(ERR_NON_INT_VAL_MAIN, { .tok = token_val });
 	}
 
 	LLVMBuildRet(BUILDER, llvm_parse_token(token_val));
@@ -160,7 +160,7 @@ LLVMValueRef llvm_make_cond(AstNode *node) {
 	SCOPE_FIND_VAR(found_var, node->token->next, var_name);
 
 	if (found_var->type != &TYPE_BOOL) {
-		PANIC("Expected \"%s\" to be of type bool\n", { .var = found_var });
+		PANIC(ERR_NON_BOOL_COND, { .var = found_var });
 	}
 
 	return llvm_var_get_value(found_var);

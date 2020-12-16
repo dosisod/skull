@@ -87,7 +87,7 @@ void node_make_var(const AstNode *const node) {
 					type = function->return_type;
 
 					if (!type) {
-						PANIC("function returning type void cannot be assigned to variable \"%s\"\n", { .str = name });
+						PANIC(ERR_NO_VOID_ASSIGN, { .str = name });
 					}
 					break;
 				}
@@ -112,7 +112,7 @@ void node_make_var(const AstNode *const node) {
 		}
 		else {
 			free(name);
-			PANIC("invalid input: \"%s\"\n", { .tok = node->next->token });
+			PANIC(ERR_INVALID_INPUT, { .tok = node->next->token });
 		}
 		var = make_variable(type, name, is_const);
 	}
@@ -129,7 +129,7 @@ void node_make_var(const AstNode *const node) {
 	}
 	free_variable(var);
 
-	PANIC("variable \"%s\" already defined\n", { .str = name });
+	PANIC(ERR_VAR_ALREADY_DEFINED, { .str = name });
 }
 
 /*

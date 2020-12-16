@@ -133,7 +133,7 @@ Token *tokenize(const char32_t *code) {
 	}
 
 	if (block_comment) {
-		PANIC("expected closing \"#}\" for block comment", {0});
+		PANIC(ERR_NO_CLOSING_COMMENT, {0});
 	}
 
 	//close dangling token if there was no whitespace at EOF

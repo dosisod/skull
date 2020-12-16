@@ -61,7 +61,7 @@ Build LLVM for assining division of `lhs` and `rhs`.
 LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
 		if (LLVMConstIntGetSExtValue(rhs) == 0) {
-			PANIC("division by zero", {0});
+			PANIC(ERR_DIV_BY_ZERO, {0});
 		}
 
 		return LLVMBuildExactSDiv(BUILDER, lhs, rhs, "");

@@ -72,20 +72,20 @@ bool node_to_llvm_ir(AstNode *node) {
 		}
 
 		else if (node_type == AST_NODE_ELSE) {
-			PANIC("else statement missing preceding if statement", {0});
+			PANIC(ERR_ELSE_MISSING_IF, {0});
 		}
 
 		else if (node->child && !(
 			node_type == AST_NODE_WHILE ||
 			node_type == AST_NODE_FUNCTION_PROTO
 		)) {
-			PANIC("unexpected code block", {0});
+			PANIC(ERR_UNEXPECTED_CODE_BLOCK, {0});
 		}
 
 		else if (node_type == AST_NODE_COMMENT) {}
 
 		else if (returned) {
-			PANIC("unreachable code after return", {0});
+			PANIC(ERR_UNREACHALE_RETURN, {0});
 		}
 
 		else if (node_type == AST_NODE_RETURN) {

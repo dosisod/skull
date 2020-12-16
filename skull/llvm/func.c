@@ -39,7 +39,7 @@ void declare_function(AstNode *node) {
 	}
 
 	if (strcmp(func_name, "main") == 0) {
-		PANIC("declaration of reserved function \"main\"", {0});
+		PANIC(ERR_MAIN_RESERVED, {0});
 	}
 
 	FunctionDeclaration *f;
@@ -89,7 +89,7 @@ void declare_function(AstNode *node) {
 	FunctionDeclaration *head = FUNCTION_DECLARATIONS;
 	while (head) {
 		if (strcmp(func_name, head->name) == 0) {
-			PANIC("cannot redeclare function \"%s\"\n", { .real = func_name });
+			PANIC(ERR_NO_REDEFINE_FUNC, { .real = func_name });
 		}
 
 		if (!head->next) {
@@ -157,7 +157,7 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 		}
 	}
 	else if (param) {
-		PANIC("passing parameter to function that takes zero parameters", {0});
+		PANIC(ERR_ZERO_PARAM_FUNC, {0});
 	}
 
 	return LLVMBuildCall2(
@@ -220,7 +220,7 @@ void define_function(const AstNode *const node) {
 		);
 
 		if (!scope_add_var(SCOPE, param_var)) {
-			PANIC("variable \"%s\" shadows existing variable\n", { .var = param_var });
+			PANIC(ERR_SHADOW_VAR, { .var = param_var });
 		}
 
 		param_var->alloca = LLVMGetFirstParam(current_function->function);
@@ -229,14 +229,14 @@ void define_function(const AstNode *const node) {
 	bool returned = node_to_llvm_ir(node->child);
 
 	if (!returned && current_function->return_type) {
-		PANIC("expected return value in function \"%s\"\n",
-			{ .real = current_function->name }
-		);
+		PANIC(ERR_EXPECTED_RETURN, {
+			.real = current_function->name
+		});
 	}
 	if (returned && !current_function->return_type) {
-		PANIC("unexpected return from void function \"%s\"\n",
-			{ .real = current_function->name }
-		);
+		PANIC(ERR_NO_VOID_RETURN, {
+			.real = current_function->name
+		});
 	}
 
 	RESTORE_SUB_SCOPE;
