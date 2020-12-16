@@ -132,10 +132,9 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 	free(wide_func_name);
 
 	LLVMValueRef params = NULL;
+	Token *param = ATTR(AstNodeFunction, node, param);
 
 	if (current_function->num_params == 1) {
-		Token *param = ATTR(AstNodeFunction, node, param);
-
 		if (param->token_type == TOKEN_IDENTIFIER) {
 			SCOPE_FIND_VAR(var_found, param, lookup);
 			free(lookup);
@@ -156,6 +155,9 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 				.real = strdup(current_function->param_types->name)
 			});
 		}
+	}
+	else if (param) {
+		PANIC("passing parameter to function that takes zero parameters", {0});
 	}
 
 	return LLVMBuildCall2(

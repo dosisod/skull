@@ -204,6 +204,7 @@ test_error "unreachable_return.sk"
 test_error "invalid_identifier.sk"
 test_error "main_reserved.sk"
 test_error "non_int_return.sk"
+test_error "passing_param_to_paramless_func.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
