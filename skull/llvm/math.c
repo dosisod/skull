@@ -98,7 +98,10 @@ LLVMValueRef llvm_token_to_val(const Type *type, const Token *token) {
 	free(lookup);
 
 	if (type != var_found->type) {
-		PANIC(ERR_TYPE_MISMATCH, { .type = type });
+		PANIC(ERR_TYPE_MISMATCH, {
+			.tok = token,
+			.type = type
+		});
 	}
 
 	return llvm_var_get_value(var_found);

@@ -1,1 +1,1 @@
-Compilation error: overflow occurred while parsing "0xffffffffffffffff"
+Compilation error: line 1 column 8: overflow occurred while parsing "0xffffffffffffffff"

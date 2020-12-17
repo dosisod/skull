@@ -1,1 +1,1 @@
-Compilation error: type mismatch: expected type "float"
+Compilation error: line 3 column 12: type mismatch: expected type "float"

@@ -1,1 +1,1 @@
-Compilation error: unable to assign value to variable "x"
+Compilation error: line 1 column 10: unable to assign value to variable "x"

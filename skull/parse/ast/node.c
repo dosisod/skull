@@ -276,7 +276,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 		if (token->token_type == TOKEN_BRACKET_CLOSE) {
 			if (indent_lvl == 0 && !allow_top_lvl_bracket) {
 				free(head);
-				PANIC(ERR_MISSING_OPEN_BRAK, {0});
+				PANIC(ERR_MISSING_OPEN_BRAK, { .tok = token });
 			}
 
 			*token_last = token;

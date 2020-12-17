@@ -133,7 +133,8 @@ Token *tokenize(const char32_t *code) {
 	}
 
 	if (block_comment) {
-		PANIC(ERR_NO_CLOSING_COMMENT, {0});
+		current->end = code;
+		PANIC(ERR_NO_CLOSING_COMMENT, { .tok = current });
 	}
 
 	//close dangling token if there was no whitespace at EOF

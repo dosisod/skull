@@ -87,7 +87,10 @@ void node_make_var(const AstNode *const node) {
 					type = function->return_type;
 
 					if (!type) {
-						PANIC(ERR_NO_VOID_ASSIGN, { .str = name });
+						PANIC(ERR_NO_VOID_ASSIGN, {
+							.tok = node->next->token,
+							.str = name
+						});
 					}
 					break;
 				}
@@ -95,7 +98,10 @@ void node_make_var(const AstNode *const node) {
 			}
 
 			if (!function) {
-				PANIC(ERR_MISSING_DECLARATION, { .real = func_name });
+				PANIC(ERR_MISSING_DECLARATION, {
+					.tok = node->next->token,
+					.real = func_name
+				});
 			}
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER || (
@@ -129,7 +135,10 @@ void node_make_var(const AstNode *const node) {
 	}
 	free_variable(var);
 
-	PANIC(ERR_VAR_ALREADY_DEFINED, { .str = name });
+	PANIC(ERR_VAR_ALREADY_DEFINED, {
+		.tok = token,
+		.str = name
+	});
 }
 
 /*
@@ -140,7 +149,10 @@ LLVMValueRef llvm_parse_var(const Type *const type, const Token *const token) {
 		return llvm_parse_token(token);
 	}
 
-	PANIC(ERR_TYPE_MISMATCH, { .type = type });
+	PANIC(ERR_TYPE_MISMATCH, {
+		.tok = token,
+		.type = type
+	});
 }
 
 /*

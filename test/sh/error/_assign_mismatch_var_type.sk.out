@@ -1,1 +1,1 @@
-Compilation error: type mismatch: expected type "bool"
+Compilation error: line 3 column 11: type mismatch: expected type "bool"

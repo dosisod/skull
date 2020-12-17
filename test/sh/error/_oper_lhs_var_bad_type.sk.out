@@ -1,1 +1,1 @@
-Compilation error: type mismatch: expected type "int"
+Compilation error: line 3 column 10: type mismatch: expected type "int"

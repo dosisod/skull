@@ -1,1 +1,1 @@
-Compilation error: returning non-int variable "x" from main
+Compilation error: line 3 column 8: returning non-int variable "x" from main

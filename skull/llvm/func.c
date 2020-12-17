@@ -27,16 +27,18 @@ bool node_to_llvm_ir(AstNode *);
 Parse declaration (and potential definition) of function in `node`.
 */
 void declare_function(AstNode *node) {
-	char *func_name = NULL;
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
 	const bool is_export = ATTR(AstNodeFunctionProto, node, is_export);
 
+	Token *func_name_token = NULL;
+
 	if (is_external || is_export) {
-		func_name = token_mbs_str(node->token->next);
+		func_name_token = node->token->next;
 	}
 	else {
-		func_name = token_mbs_str(node->token);
+		func_name_token = node->token;
 	}
+	char *func_name = token_mbs_str(func_name_token);
 
 	if (strcmp(func_name, "main") == 0) {
 		PANIC(ERR_MAIN_RESERVED, {0});
@@ -89,7 +91,10 @@ void declare_function(AstNode *node) {
 	FunctionDeclaration *head = FUNCTION_DECLARATIONS;
 	while (head) {
 		if (strcmp(func_name, head->name) == 0) {
-			PANIC(ERR_NO_REDEFINE_FUNC, { .real = func_name });
+			PANIC(ERR_NO_REDEFINE_FUNC, {
+				.tok = func_name_token,
+				.real = func_name
+			});
 		}
 
 		if (!head->next) {
@@ -127,7 +132,10 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 	free(func_name);
 
 	if (!current_function) {
-		PANIC(ERR_MISSING_DECLARATION, { .str = wide_func_name });
+		PANIC(ERR_MISSING_DECLARATION, {
+			.tok = node->token,
+			.str = wide_func_name
+		});
 	}
 	free(wide_func_name);
 
@@ -141,6 +149,7 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 
 			if (var_found->type != current_function->param_types) {
 				PANIC(ERR_TYPE_MISMATCH, {
+					.tok = param,
 					.real = strdup(current_function->param_types->name)
 				});
 			}
@@ -152,12 +161,13 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 		}
 		else {
 			PANIC(ERR_FUNC_TYPE_MISMATCH, {
+				.tok = param,
 				.real = strdup(current_function->param_types->name)
 			});
 		}
 	}
 	else if (param) {
-		PANIC(ERR_ZERO_PARAM_FUNC, {0});
+		PANIC(ERR_ZERO_PARAM_FUNC, { .tok = param });
 	}
 
 	return LLVMBuildCall2(
@@ -174,14 +184,16 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 Create a native LLVM function.
 */
 void define_function(const AstNode *const node) {
-	char32_t *wide_func_name;
+	Token *func_name_token = NULL;
 
 	if (ATTR(AstNodeFunctionProto, node, is_export)) {
-		wide_func_name = token_str(node->token->next);
+		func_name_token = node->token->next;
 	}
 	else {
-		wide_func_name = token_str(node->token);
+		func_name_token = node->token;
 	}
+
+	char32_t *wide_func_name = token_str(func_name_token);
 	char *const func_name = c32stombs(wide_func_name);
 
 	FunctionDeclaration *current_function = FUNCTION_DECLARATIONS;
@@ -194,7 +206,10 @@ void define_function(const AstNode *const node) {
 	free(func_name);
 
 	if (!current_function) {
-		PANIC(ERR_MISSING_DECLARATION, { .str = wide_func_name });
+		PANIC(ERR_MISSING_DECLARATION, {
+			.tok = func_name_token,
+			.str = wide_func_name
+		});
 	}
 	free(wide_func_name);
 

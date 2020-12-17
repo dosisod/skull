@@ -26,6 +26,10 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 
 	printf("Compilation error: ");
 
+	if (msg[0].tok) {
+		printf("line %u column %u: ", msg[0].tok->line, msg[0].tok->column);
+	}
+
 	#ifdef __clang__
 	# pragma clang diagnostic push
 	# pragma clang diagnostic ignored "-Wformat-nonliteral"
@@ -60,10 +64,7 @@ Convert error msg `msg` for use in `fmt_error`.
 Depending on whether `msg` is a token, a variable, or a string, the resulting feild `real` will be created differently.
 */
 void fmt_error_stringify(ErrorMsg *const msg) {
-	if (msg->tok) {
-		msg->real = token_mbs_str(msg->tok);
-	}
-	else if (msg->var) {
+	if (msg->var) {
 		msg->real = strdup(msg->var->name);
 	}
 	else if (msg->type) {
@@ -71,5 +72,8 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 	}
 	else if (msg->str) {
 		msg->real = c32stombs(msg->str);
+	}
+	else if (msg->tok && !msg->real) {
+		msg->real = token_mbs_str(msg->tok);
 	}
 }

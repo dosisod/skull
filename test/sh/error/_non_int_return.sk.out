@@ -1,1 +1,1 @@
-Compilation error: returning non-int value "1.0" from main
+Compilation error: line 1 column 8: returning non-int value "1.0" from main

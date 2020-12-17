@@ -34,7 +34,10 @@ void llvm_make_return(AstNode *node) {
 		free(var_name);
 
 		if (CURRENT_FUNC == MAIN_FUNC && found_var->type != &TYPE_INT) {
-			PANIC(ERR_NON_INT_VAR_MAIN, { .var = found_var });
+			PANIC(ERR_NON_INT_VAR_MAIN, {
+				.tok = node->token->next,
+				.var = found_var
+			});
 		}
 
 		LLVMBuildRet(BUILDER, llvm_var_get_value(found_var));
@@ -160,7 +163,10 @@ LLVMValueRef llvm_make_cond(AstNode *node) {
 	SCOPE_FIND_VAR(found_var, node->token->next, var_name);
 
 	if (found_var->type != &TYPE_BOOL) {
-		PANIC(ERR_NON_BOOL_COND, { .var = found_var });
+		PANIC(ERR_NON_BOOL_COND, {
+			.tok = node->token->next,
+			.var = found_var
+		});
 	}
 
 	return llvm_var_get_value(found_var);
@@ -175,7 +181,10 @@ void llvm_make_code_block(const char32_t *name, AstNode *node, LLVMBasicBlockRef
 	MAKE_SUB_SCOPE;
 
 	if (!node->child) {
-		PANIC(ERR_MISSING_BLOCK, { .str = name });
+		PANIC(ERR_MISSING_BLOCK, {
+			.tok = node->token,
+			.str = name
+		});
 	}
 	if (node->child->token) {
 		const bool returned = node_to_llvm_ir(node->child);
