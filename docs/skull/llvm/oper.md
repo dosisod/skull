@@ -1,4 +1,4 @@
-# skull/llvm/math
+# skull/llvm/oper
 
 ```c
 LLVMValueRef llvm_make_add(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
@@ -25,10 +25,10 @@ LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Build LLVM for assining division of `lhs` and `rhs`.
 
 ```c
-LLVMValueRef llvm_make_math_oper(const Type *type, const AstNode *node, MathOper *oper)
+LLVMValueRef llvm_make_oper(const Type *type, const AstNode *node, Operation *oper)
 ```
 
-> Return LLVM for assigning math operation `oper` from `node`.
+> Return LLVM for assigning operation `oper` from `node`.
 
 ```c
 LLVMValueRef llvm_token_to_val(const Type *type, const Token *token)

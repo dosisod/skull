@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdnoreturn.h>
 
-#include "parse/ast/node.h"
+#include "parse/ast_node.h"
 #include "parse/classify.h"
 #include "parse/tokenize.h"
 

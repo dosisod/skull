@@ -144,7 +144,7 @@ void node_make_var(const AstNode *const node) {
 /*
 Make an `LLVMValueRef` from `token`, checking for compatibility with `type`.
 */
-LLVMValueRef llvm_parse_var(const Type *const type, const Token *const token) {
+LLVMValueRef llvm_parse_token_typed(const Type *const type, const Token *const token) {
 	if (type == token_type_to_type(token)) {
 		return llvm_parse_token(token);
 	}

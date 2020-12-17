@@ -7,7 +7,7 @@ void node_make_var(const AstNode *const node)
 > Make and add a variable from `node` to global scope.
 
 ```c
-LLVMValueRef llvm_parse_var(const Type *const type, const Token *const token)
+LLVMValueRef llvm_parse_token_typed(const Type *const type, const Token *const token)
 ```
 
 > Make an `LLVMValueRef` from `token`, checking for compatibility with `type`.

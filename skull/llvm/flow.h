@@ -1,6 +1,6 @@
 #pragma once
 
-#include "skull/parse/ast/node.h"
+#include "skull/parse/ast_node.h"
 
 void llvm_make_return(AstNode *);
 void llvm_make_while(AstNode *);

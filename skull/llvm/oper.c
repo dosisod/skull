@@ -8,7 +8,7 @@
 #include "skull/llvm/var.h"
 #include "skull/parse/classify.h"
 
-#include "skull/llvm/math.h"
+#include "skull/llvm/oper.h"
 
 extern LLVMBuilderRef BUILDER;
 extern Scope *SCOPE;
@@ -76,9 +76,9 @@ LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 LLVMValueRef llvm_token_to_val(const Type *, const Token *);
 
 /*
-Return LLVM for assigning math operation `oper` from `node`.
+Return LLVM for assigning operation `oper` from `node`.
 */
-LLVMValueRef llvm_make_math_oper(const Type *type, const AstNode *node, MathOper *oper) {
+LLVMValueRef llvm_make_oper(const Type *type, const AstNode *node, Operation *oper) {
 	return oper(
 		type,
 		llvm_token_to_val(type, ATTR(AstNodeOper, node, lhs)),
@@ -91,7 +91,7 @@ Return LLVM equivalent of `token`, checking for compatibility with `type`.
 */
 LLVMValueRef llvm_token_to_val(const Type *type, const Token *token) {
 	if (token->token_type != TOKEN_IDENTIFIER) {
-		return llvm_parse_var(type, token);
+		return llvm_parse_token_typed(type, token);
 	}
 
 	SCOPE_FIND_VAR(var_found, token, lookup);

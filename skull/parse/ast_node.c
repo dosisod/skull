@@ -10,7 +10,7 @@
 #include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
 
-#include "skull/parse/ast/node.h"
+#include "skull/parse/ast_node.h"
 
 /*
 Makes an AST (abstract syntax tree) from a given string.

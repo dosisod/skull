@@ -4,7 +4,7 @@
 
 #include "skull/eval/scope.h"
 #include "skull/eval/variable.h"
-#include "skull/parse/ast/node.h"
+#include "skull/parse/ast_node.h"
 
 /*
 Find the variable `var` stored in `token`.
@@ -24,5 +24,5 @@ LLVMValueRef llvm_var_get_value(const Variable *const);
 
 void node_make_var(const AstNode *const);
 
-LLVMValueRef llvm_parse_var(const Type *const, const Token *const);
+LLVMValueRef llvm_parse_token_typed(const Type *const, const Token *const);
 LLVMValueRef llvm_parse_token(const Token *const);

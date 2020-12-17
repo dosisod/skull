@@ -3,7 +3,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/eval/types/types.h"
-#include "skull/parse/ast/node.h"
+#include "skull/parse/ast_node.h"
 
 typedef struct FunctionDeclaration FunctionDeclaration;
 

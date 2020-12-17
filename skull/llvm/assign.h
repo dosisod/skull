@@ -3,7 +3,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/eval/variable.h"
-#include "skull/parse/ast/node.h"
+#include "skull/parse/ast_node.h"
 
 void llvm_make_var_def(AstNode **);
 void llvm_make_assign(AstNode **);

@@ -1,10 +1,10 @@
 #include <stdbool.h>
 
 #include "skull/common/str.h"
-#include "skull/parse/ast/node.h"
+#include "skull/parse/ast_node.h"
 #include "skull/parse/classify.h"
 
-#include "test/skull/parse/ast/node.h"
+#include "test/skull/parse/ast_node.h"
 #include "test/testing.h"
 
 TEST(make_ast_node, {

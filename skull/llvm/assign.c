@@ -10,7 +10,7 @@
 #include "skull/eval/types/defs.h"
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/func.h"
-#include "skull/llvm/math.h"
+#include "skull/llvm/oper.h"
 #include "skull/llvm/var.h"
 #include "skull/parse/classify.h"
 
@@ -66,22 +66,22 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		value = llvm_assign_identifier(var, node);
 	}
 	else if (node->node_type == AST_NODE_ADD) {
-		value = llvm_make_math_oper(var->type, node, &llvm_make_add);
+		value = llvm_make_oper(var->type, node, &llvm_make_add);
 	}
 	else if (node->node_type == AST_NODE_SUB) {
-		value = llvm_make_math_oper(var->type, node, &llvm_make_sub);
+		value = llvm_make_oper(var->type, node, &llvm_make_sub);
 	}
 	else if (node->node_type == AST_NODE_MULT) {
-		value = llvm_make_math_oper(var->type, node, &llvm_make_mult);
+		value = llvm_make_oper(var->type, node, &llvm_make_mult);
 	}
 	else if (node->node_type == AST_NODE_DIV) {
-		value = llvm_make_math_oper(var->type, node, &llvm_make_div);
+		value = llvm_make_oper(var->type, node, &llvm_make_div);
 	}
 	else if (node->node_type == AST_NODE_FUNCTION) {
 		value = llvm_make_function_call(node);
 	}
 	else {
-		value = llvm_parse_var(var->type, node->token);
+		value = llvm_parse_token_typed(var->type, node->token);
 	}
 
 	if (!value) {
