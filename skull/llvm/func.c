@@ -17,6 +17,7 @@
 extern LLVMBuilderRef BUILDER;
 extern LLVMModuleRef MODULE;
 extern LLVMValueRef CURRENT_FUNC;
+extern LLVMValueRef MAIN_FUNC;
 extern Scope *SCOPE;
 
 FunctionDeclaration *FUNCTION_DECLARATIONS = NULL;
@@ -39,6 +40,13 @@ void declare_function(AstNode *node) {
 		func_name_token = node->token;
 	}
 	char *func_name = token_mbs_str(func_name_token);
+
+	if (is_export && CURRENT_FUNC != MAIN_FUNC) {
+		PANIC(ERR_NO_EXPORT_NESTED, {
+			.tok = node->token,
+			.real = func_name
+		});
+	}
 
 	if (strcmp(func_name, "main") == 0) {
 		PANIC(ERR_MAIN_RESERVED, {0});
