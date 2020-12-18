@@ -5,7 +5,6 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
-#include "skull/common/panic.h"
 
 #include "skull/common/str.h"
 
@@ -256,7 +255,7 @@ const char __attribute__((pure)) *strrstr(const char *const str, const char *con
 /*
 Returns the unescaped version of an escaped character starting at `str`, or NULL character.
 */
-char32_t c32sunescape(const char32_t **str_) {
+char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 	const char32_t *str = *str_;
 
 	if (*str != '\\') {
@@ -310,6 +309,12 @@ char32_t c32sunescape(const char32_t **str_) {
 		escape = '\0';
 	}
 
-	const char32_t bad_escape[5] = { '\\', escape, opt1, opt2, '\0' };
-	PANIC(ERR_BAD_ESCAPE, { .str = bad_escape });
+	static char32_t bad_escape[5] = {0};
+	bad_escape[0] = '\\';
+	bad_escape[1] = escape;
+	bad_escape[2] = opt1;
+	bad_escape[3] = opt2;
+	*error = bad_escape;
+
+	return '\0';
 }

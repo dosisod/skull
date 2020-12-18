@@ -1,5 +1,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
@@ -18,7 +19,13 @@ SkullStr eval_str(const Token *const token) {
 	size_t wrote = 0;
 	while (*str && str < token->end - 1) {
 		const char32_t *original = str;
-		copy[wrote] = c32sunescape(&str);
+		const char32_t *error = NULL;
+		copy[wrote] = c32sunescape(&str, &error);
+
+		if (error) {
+			PANIC(ERR_BAD_ESCAPE, { .tok = token, .str = error });
+		}
+
 
 		if (str == original) {
 			copy[wrote] = *str;
