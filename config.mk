@@ -40,15 +40,17 @@ CFLAGS += -std=c18 \
 	-Wdouble-promotion \
 	-I.
 
-LLVM_CFLAGS = $(shell llvm-config-9 --cflags)
+LLVM_CONFIG = $(shell command -v llvm-config-9 || command -v llvm-config)
+
+LLVM_CFLAGS = $(shell $(LLVM_CONFIG) --cflags)
 
 RELEASE ?= 0
 ifeq ($(RELEASE), 1)
-	LLVM_LDFLAGS = $(shell llvm-config-9 --libfiles --link-static) \
+	LLVM_LDFLAGS = $(shell $(LLVM_CONFIG) --libfiles --link-static) \
 		$(shell $(CXX) -print-file-name=libstdc++.a) \
 		-lm -lpthread -lncurses
 else
-	LLVM_LDFLAGS = $(shell llvm-config-9 --libs)
+	LLVM_LDFLAGS = $(shell $(LLVM_CONFIG) --libs)
 endif
 
 
