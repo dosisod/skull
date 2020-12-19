@@ -91,6 +91,15 @@ typedef struct {
 > Store special data about operator related nodes (`AST_NODE_ADD`, etc).
 
 ```c
+typedef struct {
+	Token *rhs;
+	unsigned oper;
+}
+```
+
+> Store data about a conditional expression.
+
+```c
 #define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
 ```
 

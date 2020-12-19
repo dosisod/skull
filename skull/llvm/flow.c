@@ -157,16 +157,31 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 Try and parse a condition (something returning a bool) from `node`.
 */
 LLVMValueRef llvm_make_cond(AstNode *node) {
-	if (node->token->next->token_type == TOKEN_BOOL_CONST) {
-		return LLVM_BOOL(eval_bool(node->token->next));
+	Token *rhs = ATTR(AstNodeBoolExpr, node, rhs);
+	const unsigned oper = ATTR(AstNodeBoolExpr, node, oper);
+
+	if (rhs->token_type == TOKEN_BOOL_CONST) {
+		if (oper == TOKEN_OPER_NOT) {
+			return LLVM_BOOL(!eval_bool(rhs));
+		}
+
+		return LLVM_BOOL(eval_bool(rhs));
 	}
-	SCOPE_FIND_VAR(found_var, node->token->next, var_name);
+	SCOPE_FIND_VAR(found_var, rhs, var_name);
 
 	if (found_var->type != &TYPE_BOOL) {
 		PANIC(ERR_NON_BOOL_COND, {
-			.tok = node->token->next,
+			.tok = rhs,
 			.var = found_var
 		});
+	}
+
+	if (oper == TOKEN_OPER_NOT) {
+		return LLVMBuildNot(
+			BUILDER,
+			llvm_var_get_value(found_var),
+			""
+		);
 	}
 
 	return llvm_var_get_value(found_var);

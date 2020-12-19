@@ -97,7 +97,6 @@ switch (token->next->token_type) {
 	case TOKEN_OPER_MINUS: node_type = AST_NODE_SUB; break;
 	case TOKEN_OPER_MULT: node_type = AST_NODE_MULT; break;
 	case TOKEN_OPER_DIV: node_type = AST_NODE_DIV; break;
-	case TOKEN_OPER_IS: node_type = AST_NODE_IS; break;
 	default: return false;
 }
 
@@ -223,6 +222,42 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
+bool is_conditional(unsigned token_type, Token **_token, Token **last, AstNode **node, NodeType node_type) {
+	Token *token = *_token;
+
+	if (token->token_type != token_type || !token->next) {
+		return false;
+	}
+	token = token->next;
+
+	unsigned oper = 0;
+	if (token->token_type == TOKEN_OPER_NOT) {
+		oper = TOKEN_OPER_NOT;
+		token = token->next;
+
+		if (!token) {
+			return false;
+		}
+	}
+
+	if ((token->token_type == TOKEN_IDENTIFIER ||
+		token->token_type == TOKEN_BOOL_CONST) &&
+		token->next
+	) {
+		MAKE_ATTR(AstNodeBoolExpr, *node,
+			.oper = oper,
+			.rhs = token
+		);
+
+		*_token = token;
+		push_ast_node(*_token, last, node_type, node);
+
+		return true;
+	}
+
+	return false;
+}
+
 __attribute__((pure)) bool is_const_literal(Token *token) {
 	return (
 		token->token_type == TOKEN_INT_CONST ||
@@ -315,23 +350,11 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_KW_IF &&
-			token->next && (
-			token->next->token_type == TOKEN_IDENTIFIER ||
-			token->next->token_type == TOKEN_BOOL_CONST)
-		) {
-			token = token->next;
-			push_ast_node(token, &last, AST_NODE_IF, &node);
+		if (is_conditional(TOKEN_KW_IF, &token, &last, &node, AST_NODE_IF)) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_KW_ELIF &&
-			token->next && (
-			token->next->token_type == TOKEN_IDENTIFIER ||
-			token->next->token_type == TOKEN_BOOL_CONST)
-		) {
-			token = token->next;
-			push_ast_node(token, &last, AST_NODE_ELIF, &node);
+		if (is_conditional(TOKEN_KW_ELIF, &token, &last, &node, AST_NODE_ELIF)) {
 			continue;
 		}
 
@@ -340,13 +363,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_KW_WHILE &&
-			token->next && (
-			token->next->token_type == TOKEN_IDENTIFIER ||
-			token->next->token_type == TOKEN_BOOL_CONST)
-		) {
-			token = token->next;
-			push_ast_node(token, &last, AST_NODE_WHILE, &node);
+		if (is_conditional(TOKEN_KW_WHILE, &token, &last, &node, AST_NODE_WHILE)) {
 			continue;
 		}
 

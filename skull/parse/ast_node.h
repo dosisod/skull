@@ -36,7 +36,6 @@ typedef enum {
 	AST_NODE_SUB,
 	AST_NODE_MULT,
 	AST_NODE_DIV,
-	AST_NODE_IS,
 
 	AST_NODE_RETURN,
 	AST_NODE_IF,
@@ -116,6 +115,14 @@ typedef struct {
 	Token *lhs;
 	Token *rhs;
 } AstNodeOper;
+
+/*
+Store data about a conditional expression.
+*/
+typedef struct {
+	Token *rhs;
+	unsigned oper;
+} AstNodeBoolExpr;
 
 AstNode *make_ast_node(void);
 
