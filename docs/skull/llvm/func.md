@@ -45,7 +45,7 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node)
 > Builds a function call from `node`.
 
 ```c
-void define_function(const AstNode *const node)
+void define_function(const AstNode *const node, FunctionDeclaration *func)
 ```
 
 > Create a native LLVM function.

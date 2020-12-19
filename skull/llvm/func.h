@@ -44,4 +44,4 @@ void declare_function(AstNode *);
 
 LLVMValueRef llvm_make_function_call(const AstNode *const);
 
-void define_function(const AstNode *const);
+void define_function(const AstNode *const, FunctionDeclaration *);

@@ -119,7 +119,7 @@ void declare_function(AstNode *node) {
 	}
 
 	if (!is_external) {
-		define_function(node);
+		define_function(node, f);
 	}
 }
 
@@ -191,43 +191,14 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 /*
 Create a native LLVM function.
 */
-void define_function(const AstNode *const node) {
-	Token *func_name_token = NULL;
-
-	if (ATTR(AstNodeFunctionProto, node, is_export)) {
-		func_name_token = node->token->next;
-	}
-	else {
-		func_name_token = node->token;
-	}
-
-	char32_t *wide_func_name = token_str(func_name_token);
-	char *const func_name = c32stombs(wide_func_name);
-
-	FunctionDeclaration *current_function = FUNCTION_DECLARATIONS;
-	while (current_function) {
-		if (strcmp(current_function->name, func_name) == 0) {
-			break;
-		}
-		current_function = current_function->next;
-	}
-	free(func_name);
-
-	if (!current_function) {
-		PANIC(ERR_MISSING_DECLARATION, {
-			.tok = func_name_token,
-			.str = wide_func_name
-		});
-	}
-	free(wide_func_name);
-
+void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(CURRENT_FUNC);
 
 	LLVMValueRef old_func = CURRENT_FUNC;
-	CURRENT_FUNC = current_function->function;
+	CURRENT_FUNC = func->function;
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlock(
-		current_function->function,
+		func->function,
 		"entry"
 	);
 
@@ -235,10 +206,10 @@ void define_function(const AstNode *const node) {
 
 	MAKE_SUB_SCOPE;
 
-	if (current_function->param_types) {
+	if (func->param_types) {
 		Variable *param_var = make_variable(
-			current_function->param_types,
-			current_function->param_names,
+			func->param_types,
+			func->param_names,
 			true
 		);
 
@@ -246,25 +217,25 @@ void define_function(const AstNode *const node) {
 			PANIC(ERR_SHADOW_VAR, { .var = param_var });
 		}
 
-		param_var->alloca = LLVMGetFirstParam(current_function->function);
+		param_var->alloca = LLVMGetFirstParam(func->function);
 	}
 
 	bool returned = node_to_llvm_ir(node->child);
 
-	if (!returned && current_function->return_type) {
+	if (!returned && func->return_type) {
 		PANIC(ERR_EXPECTED_RETURN, {
-			.real = current_function->name
+			.real = func->name
 		});
 	}
-	if (returned && !current_function->return_type) {
+	if (returned && !func->return_type) {
 		PANIC(ERR_NO_VOID_RETURN, {
-			.real = current_function->name
+			.real = func->name
 		});
 	}
 
 	RESTORE_SUB_SCOPE;
 
-	if (!current_function->return_type) {
+	if (!func->return_type) {
 		LLVMBuildRetVoid(BUILDER);
 	}
 
