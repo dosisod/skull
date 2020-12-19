@@ -81,7 +81,9 @@ jobs:
         make options clean test -e
 
     - name: Install Valgrind
-      run: sudo apt install valgrind
+      run: |
+        sudo apt update
+        sudo apt install valgrind
 
     - name: Run Valgrind on tests
       run: valgrind --leak-check=full ./build/test/test
