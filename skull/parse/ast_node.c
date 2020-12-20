@@ -407,12 +407,12 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 		PANIC(ERR_EOF_NO_BRACKET, {0});
 	}
 
-	if (node->last) {
+	if (node->last && head != node) {
 		node->last->next = NULL;
 		node->last = NULL;
 		free(node);
 	}
-	return head; // NOLINT
+	return head;
 }
 
 /*
@@ -426,7 +426,7 @@ void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode
 	AstNode *const new_node = make_ast_node();
 
 	new_node->last = *node;
-	*last = token->next; // NOLINT
+	*last = token->next;
 
 	(*node)->next = new_node;
 	(*node) = new_node;
