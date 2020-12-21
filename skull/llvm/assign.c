@@ -22,13 +22,20 @@ extern LLVMValueRef MAIN_FUNC;
 extern LLVMBuilderRef BUILDER;
 extern Scope *SCOPE;
 
+void llvm_assign_value_to_var(Variable *const, LLVMValueRef);
+
 /*
 Builds a variable from `node`.
 */
 void llvm_make_var_def(AstNode **node) {
 	node_make_var(*node);
 
-	llvm_make_assign_(SCOPE->vars[SCOPE->vars_used - 1], (*node)->next);
+	Variable *var = SCOPE->vars[SCOPE->vars_used - 1];
+
+	llvm_assign_value_to_var(
+		var,
+		llvm_get_value_for_var(var, (*node)->next)
+	);
 
 	*node = (*node)->next;
 }
@@ -36,7 +43,7 @@ void llvm_make_var_def(AstNode **node) {
 /*
 Build a LLVM `load` operation from `node`.
 */
-void llvm_make_assign(AstNode **node) {
+void llvm_make_var_assign(AstNode **node) {
 	SCOPE_FIND_VAR(found_var, (*node)->token, var_name);
 
 	if (found_var->is_const) {
@@ -47,15 +54,18 @@ void llvm_make_assign(AstNode **node) {
 	}
 	free(var_name);
 
-	llvm_make_assign_(found_var, (*node)->next);
+	llvm_assign_value_to_var(
+		found_var,
+		llvm_get_value_for_var(found_var, (*node)->next)
+	);
 
 	*node = (*node)->next;
 }
 
 /*
-Internal function to build LLVM assignment from `node` to `var.
+Based on `var` and `node`, try to make an LLVM value that is assignable to `var.
 */
-void llvm_make_assign_(Variable *const var, const AstNode *const node) {
+LLVMValueRef llvm_get_value_for_var(Variable *const var, const AstNode *const node) {
 	if (!node) {
 		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
@@ -91,6 +101,10 @@ void llvm_make_assign_(Variable *const var, const AstNode *const node) {
 		});
 	}
 
+	return value;
+}
+
+void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 	const bool is_first_assign = !var->alloca;
 	const bool is_const_literal = LLVMIsConstant(value);
 

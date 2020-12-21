@@ -25,12 +25,14 @@ Variable *make_variable(const Type *const type, const char32_t *const name, bool
 	var = malloc(sizeof *var);
 	DIE_IF_MALLOC_FAILS(var);
 
-	var->name = c32stombs(name);
-	var->type = type;
-	var->is_const = is_const;
-	var->is_const_lit = false;
-	var->is_global = false;
-	var->alloca = NULL;
+	*var = (Variable){
+		.name = c32stombs(name),
+		.type = type,
+		.is_const = is_const,
+		.is_const_lit = false,
+		.is_global = false,
+		.alloca = NULL
+	};
 
 	return var;
 }

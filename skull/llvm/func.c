@@ -43,8 +43,7 @@ void declare_function(AstNode *node) {
 
 	if (is_export && CURRENT_FUNC != MAIN_FUNC) {
 		PANIC(ERR_NO_EXPORT_NESTED, {
-			.tok = node->token,
-			.real = func_name
+			.tok = func_name_token
 		});
 	}
 

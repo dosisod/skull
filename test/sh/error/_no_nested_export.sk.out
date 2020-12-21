@@ -1,1 +1,1 @@
-Compilation error: line 2 column 2: cannot export nested function "outer"
+Compilation error: line 2 column 9: cannot export nested function "outer"

@@ -29,11 +29,13 @@ Builds an return statement from `node`.
 */
 void llvm_make_return(AstNode *node) {
 	const Token *const token_val = node->token->next;
+	const bool is_main = CURRENT_FUNC == MAIN_FUNC;
+
 	if (token_val->token_type == TOKEN_IDENTIFIER) {
 		SCOPE_FIND_VAR(found_var, token_val, var_name);
 		free(var_name);
 
-		if (CURRENT_FUNC == MAIN_FUNC && found_var->type != &TYPE_INT) {
+		if (is_main && found_var->type != &TYPE_INT) {
 			PANIC(ERR_NON_INT_VAR_MAIN, {
 				.tok = node->token->next,
 				.var = found_var
@@ -44,7 +46,7 @@ void llvm_make_return(AstNode *node) {
 		return;
 	}
 
-	if (CURRENT_FUNC == MAIN_FUNC && token_val->token_type != TOKEN_INT_CONST) {
+	if (is_main && token_val->token_type != TOKEN_INT_CONST) {
 		PANIC(ERR_NON_INT_VAL_MAIN, { .tok = token_val });
 	}
 
@@ -97,10 +99,11 @@ void llvm_make_if(AstNode **node) {
 Internal function for building an `if` node.
 */
 void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end) {
-	AstNode *skip_whitespace = (*node)->next;
-	while (skip_whitespace) {
-		if (skip_whitespace->node_type == AST_NODE_COMMENT) {
-			skip_whitespace = skip_whitespace->next;
+	AstNode *next_non_comment = (*node)->next;
+
+	while (next_non_comment) {
+		if (next_non_comment->node_type == AST_NODE_COMMENT) {
+			next_non_comment = next_non_comment->next;
 			continue;
 		}
 		break;
@@ -115,9 +118,9 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 
 	LLVMPositionBuilderAtEnd(BUILDER, entry);
 
-	if (skip_whitespace && (
-		skip_whitespace->node_type == AST_NODE_ELIF ||
-		skip_whitespace->node_type == AST_NODE_ELSE)
+	if (next_non_comment && (
+		next_non_comment->node_type == AST_NODE_ELIF ||
+		next_non_comment->node_type == AST_NODE_ELSE)
 	) {
 		if_false = LLVMAppendBasicBlock(CURRENT_FUNC, "if_false");
 		LLVMMoveBasicBlockAfter(end, if_false);
@@ -129,15 +132,15 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 			if_false
 		);
 
-		*node = skip_whitespace;
+		*node = next_non_comment;
 	}
 
 	// if there is an elif block following the current if block
-	if (skip_whitespace && (skip_whitespace->node_type == AST_NODE_ELIF)) {
+	if (next_non_comment && (next_non_comment->node_type == AST_NODE_ELIF)) {
 		llvm_make_if_(node, if_false, end);
 	}
 	// if there is an else block following the current if block
-	else if (skip_whitespace && (skip_whitespace->node_type == AST_NODE_ELSE)) {
+	else if (next_non_comment && (next_non_comment->node_type == AST_NODE_ELSE)) {
 		LLVMPositionBuilderAtEnd(BUILDER, if_false);
 		llvm_make_code_block(U"else", *node, end);
 	}

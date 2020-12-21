@@ -262,30 +262,22 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 		return '\0';
 	}
 
-	(*str_)++;
-
 	char32_t escape = str[1];
 	char32_t opt1 = '\0';
 	char32_t opt2 = '\0';
 
-	if (escape == '\\') {
-		return '\\';
-	}
-	if (escape == '0') {
-		return '\0';
-	}
-	if (escape == 'e') {
-		return '\033';
-	}
-	if (escape == 't') {
-		return '\t';
-	}
-	if (escape == 'r') {
-		return '\r';
-	}
-	if (escape == 'n') {
-		return '\n';
-	}
+	(*str_)++;
+
+switch (escape) {
+	case '\\': return '\\';
+	case '0': return '\0';
+	case 'e': return '\033';
+	case 't': return '\t';
+	case 'r': return '\r';
+	case 'n': return '\n';
+	default: break;
+}
+
 	if (escape == 'x' && str[2]) {
 		*str_ += 2;
 
@@ -293,8 +285,7 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 		opt2 = str[3];
 
 		if (c32isxdigit(str[2]) && c32isxdigit(str[3])) {
-			char hex[3] = { (char)opt1, (char)opt2, '\0' };
-			return (char32_t)strtol(hex, NULL, 16);
+			return ((opt1 - 0x30) << 4) + (opt2 - 0x30);
 		}
 
 		if (opt1 == '\'' || opt1 == '\"') {

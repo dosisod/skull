@@ -7,16 +7,16 @@ void llvm_make_var_def(AstNode **node)
 > Builds a variable from `node`.
 
 ```c
-void llvm_make_assign(AstNode **node)
+void llvm_make_var_assign(AstNode **node)
 ```
 
 > Build a LLVM `load` operation from `node`.
 
 ```c
-void llvm_make_assign_(Variable *const var, const AstNode *const node)
+LLVMValueRef llvm_get_value_for_var(Variable *const var, const AstNode *const node)
 ```
 
-> Internal function to build LLVM assignment from `node` to `var.
+> Based on `var` and `node`, try to make an LLVM value that is assignable to `var.
 
 ```c
 LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const node)
