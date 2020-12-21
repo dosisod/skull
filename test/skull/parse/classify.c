@@ -19,10 +19,10 @@ TEST(is_type_str, {
 	free(buf_next);
 })
 
-TEST(is_keyword_str, {
-	ASSERT_TRUTHY(is_keyword_str(U"return"));
-	ASSERT_TRUTHY(is_keyword_str(U"mut"));
-	ASSERT_FALSEY(is_keyword_str(U"not_a_keyword"));
+TEST(is_reserved_str, {
+	ASSERT_TRUTHY(is_reserved_str(U"return"));
+	ASSERT_TRUTHY(is_reserved_str(U"mut"));
+	ASSERT_FALSEY(is_reserved_str(U"not_reserved"));
 })
 
 TEST(is_constant_integer, {
@@ -213,7 +213,7 @@ TEST(identifier_cannot_be_type, {
 	TEST_CLASSIFY_TOKEN_WITH_LEN(U"int: int = 0", TOKEN_UNKNOWN, 0, 4);
 })
 
-TEST(identifier_cannot_be_keyword, {
+TEST(identifier_cannot_be_reserved, {
 	TEST_CLASSIFY_TOKEN_WITH_LEN(U"mut: int = 0", TOKEN_UNKNOWN, 0, 4);
 })
 
@@ -229,7 +229,7 @@ TEST(classify_tokens, {
 
 TEST_SELF(classifier,
 	test_is_type_str,
-	test_is_keyword_str,
+	test_is_reserved_str,
 	test_is_constant_integer,
 	test_is_constant_float,
 	test_is_constant_bool,
@@ -265,6 +265,6 @@ TEST_SELF(classifier,
 	test_is_valid_identifier_token,
 	test_new_identifier_clip_trailing_colon,
 	test_identifier_cannot_be_type,
-	test_identifier_cannot_be_keyword,
+	test_identifier_cannot_be_reserved,
 	test_classify_tokens
 )

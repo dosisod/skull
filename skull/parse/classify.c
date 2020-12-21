@@ -66,17 +66,16 @@ void classify_token(Token *const token) {
 
 		if (token->end[-1] == ':') {
 			token->token_type = TOKEN_NEW_IDENTIFIER;
-			token->end--;
 
-			char32_t *const new_str = token_str(token);
+			const size_t len = token_len(token);
+			str[len - 1] = '\0';
 
-			if (is_type_str(new_str) ||
-				is_keyword_str(new_str))
-			{
+			if (is_type_str(str) || is_reserved_str(str)) {
 				token->token_type = TOKEN_UNKNOWN;
-				token->end++;
 			}
-			free(new_str);
+			else {
+				token->end--;
+			}
 		}
 	}
 	free(str);
@@ -89,11 +88,9 @@ void classify_token(Token *const token) {
 Classify all tokens pointed to from `token`.
 */
 void classify_tokens(Token *head) {
-	Token *current = head;
-
-	while (current) {
-		classify_token(current);
-		current = current->next;
+	while (head) {
+		classify_token(head);
+		head = head->next;
 	}
 }
 
@@ -110,13 +107,12 @@ bool is_type_str(const char32_t *const name) {
 }
 
 /*
-Returns true if a `str` is a keyword.
+Returns true if a `str` is a reserved.
 */
-bool is_keyword_str(const char32_t *const str) {
-	return (
-		c32scmp(U"return", str) ||
-		c32scmp(U"mut", str)
-	);
+bool is_reserved_str(const char32_t *const str) {
+	return c32scmp(U"return", str) ||
+		c32scmp(U"mut", str) ||
+		c32scmp(U"not", str);
 }
 
 #define EXHAUST_STR(cond) \

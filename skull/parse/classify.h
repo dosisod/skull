@@ -48,7 +48,7 @@ typedef enum {
 } TokenType;
 
 _Bool is_type_str(const char32_t *const);
-_Bool is_keyword_str(const char32_t *const);
+_Bool is_reserved_str(const char32_t *const);
 _Bool is_constant_integer_str(const char32_t *const);
 _Bool is_constant_float_str(const char32_t *const);
 _Bool is_constant_bool_str(const char32_t *const);

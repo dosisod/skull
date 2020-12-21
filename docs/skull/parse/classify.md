@@ -19,10 +19,10 @@ bool is_type_str(const char32_t *const name)
 > Returns true if `name` is a type string.
 
 ```c
-bool is_keyword_str(const char32_t *const str)
+bool is_reserved_str(const char32_t *const str)
 ```
 
-> Returns true if a `str` is a keyword.
+> Returns true if a `str` is a reserved.
 
 ```c
 bool is_constant_integer_str(const char32_t *str)
