@@ -1,7 +1,7 @@
 #pragma once
 
 #include "skull/eval/types/types.h"
-#include "skull/parse/tokenize.h"
+#include "skull/parse/token.h"
 
 /*
 Get the attribute/property `prop` from `node`, assuming it is of type `from`.

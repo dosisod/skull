@@ -5,7 +5,7 @@
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 
-#include "skull/parse/tokenize.h"
+#include "skull/parse/token.h"
 
 //pinch end of current token, setup next token
 #define PINCH_TOKEN \

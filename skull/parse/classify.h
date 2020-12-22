@@ -2,7 +2,7 @@
 
 #include <uchar.h>
 
-#include "skull/parse/tokenize.h"
+#include "skull/parse/token.h"
 
 _Bool is_type_str(const char32_t *const);
 _Bool is_reserved_str(const char32_t *const);

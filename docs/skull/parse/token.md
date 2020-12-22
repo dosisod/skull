@@ -1,31 +1,4 @@
-# skull/parse/tokenize
-
-```c
-typedef struct Token {
-	const char32_t *begin;
-	const char32_t *end;
-
-	TokenType token_type;
-	unsigned line;
-	unsigned column;
-
-	Token *next;
-}
-```
-
-> Stores the smallest meaningful chunk of parsed code.
-> \
-> `begin` points to the first character in the token.
-> \
-> `end` points to the last character in the token.
-> \
-> `token_type` stores the type of token.
-> \
-> `line` stores the line that the token starts at.
-> \
-> `column` stores the column that the token start of the token is in.
-> \
-> `next` stores the next parsed token.
+# skull/parse/token
 
 ```c
 Token *tokenize(const char32_t *code)
@@ -86,4 +59,31 @@ void free_tokens(Token *head)
 ```
 
 > Free all tokens from `head` and beyond.
+
+```c
+typedef struct Token {
+	const char32_t *begin;
+	const char32_t *end;
+
+	TokenType token_type;
+	unsigned line;
+	unsigned column;
+
+	Token *next;
+}
+```
+
+> Stores the smallest meaningful chunk of parsed code.
+> \
+> `begin` points to the first character in the token.
+> \
+> `end` points to the last character in the token.
+> \
+> `token_type` stores the type of token.
+> \
+> `line` stores the line that the token starts at.
+> \
+> `column` stores the column that the token start of the token is in.
+> \
+> `next` stores the next parsed token.
 

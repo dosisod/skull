@@ -4,7 +4,7 @@
 
 #include "parse/ast_node.h"
 #include "parse/classify.h"
-#include "parse/tokenize.h"
+#include "parse/token.h"
 
 #include "eval/scope.h"
 #include "eval/types/types.h"

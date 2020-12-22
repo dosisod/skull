@@ -2,7 +2,7 @@
 
 #include <uchar.h>
 
-#include "skull/parse/tokenize.h"
+#include "skull/parse/token.h"
 
 #define ERR_UNEXPECTED_TOKEN "unexpected token: \"%s\"\n"
 #define ERR_EOF_NO_BRACKET "Reached EOF, expected closing bracket"
