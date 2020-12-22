@@ -4,7 +4,6 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
-#include "skull/parse/classify.h"
 
 #include "skull/eval/types/bool.h"
 

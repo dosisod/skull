@@ -93,7 +93,7 @@ typedef struct {
 ```c
 typedef struct {
 	Token *rhs;
-	unsigned oper;
+	TokenType oper;
 }
 ```
 

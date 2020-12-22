@@ -121,7 +121,7 @@ Store data about a conditional expression.
 */
 typedef struct {
 	Token *rhs;
-	unsigned oper;
+	TokenType oper;
 } AstNodeBoolExpr;
 
 AstNode *make_ast_node(void);

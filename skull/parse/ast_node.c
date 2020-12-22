@@ -175,7 +175,7 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 	const Type *return_type = NULL;
 
-	const unsigned token_type = is_external ? TOKEN_NEWLINE : TOKEN_BRACKET_OPEN;
+	const TokenType token_type = is_external ? TOKEN_NEWLINE : TOKEN_BRACKET_OPEN;
 
 	if (AST_TOKEN_CMP(token,
 		TOKEN_NEW_IDENTIFIER,
@@ -222,7 +222,7 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
-bool is_conditional(unsigned token_type, Token **_token, Token **last, AstNode **node, NodeType node_type) {
+bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode **node, NodeType node_type) {
 	Token *token = *_token;
 
 	if (token->token_type != token_type || !token->next) {
@@ -230,7 +230,7 @@ bool is_conditional(unsigned token_type, Token **_token, Token **last, AstNode *
 	}
 	token = token->next;
 
-	unsigned oper = 0;
+	TokenType oper = TOKEN_UNKNOWN;
 	if (token->token_type == TOKEN_OPER_NOT) {
 		oper = TOKEN_OPER_NOT;
 		token = token->next;
@@ -486,14 +486,14 @@ bool ast_token_cmp(Token *token, ...) {
 	va_list vargs;
 	va_start(vargs, token);
 
-	unsigned current_type = va_arg(vargs, unsigned); // NOLINT
+	TokenType current_type = va_arg(vargs, TokenType); // NOLINT
 
 	while (current_type != TOKEN_END) {
 		if (token == NULL || token->token_type != current_type) {
 			return false;
 		}
 
-		current_type = va_arg(vargs, unsigned); // NOLINT
+		current_type = va_arg(vargs, TokenType); // NOLINT
 
 		token = token->next;
 	}

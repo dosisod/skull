@@ -30,7 +30,6 @@ CFLAGS += -std=c18 \
 	-Wredundant-decls \
 	-Wshadow \
 	-Wswitch-default \
-	-Wswitch-enum \
 	-Wundef \
 	-Wunused \
 	-Wunused-macros \

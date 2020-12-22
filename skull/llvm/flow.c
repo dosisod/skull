@@ -13,7 +13,6 @@
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/scope.h"
 #include "skull/llvm/var.h"
-#include "skull/parse/classify.h"
 
 #include "skull/llvm/flow.h"
 
@@ -161,7 +160,7 @@ Try and parse a condition (something returning a bool) from `node`.
 */
 LLVMValueRef llvm_make_cond(AstNode *node) {
 	Token *rhs = ATTR(AstNodeBoolExpr, node, rhs);
-	const unsigned oper = ATTR(AstNodeBoolExpr, node, oper);
+	const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
 
 	if (rhs->token_type == TOKEN_BOOL_CONST) {
 		if (oper == TOKEN_OPER_NOT) {

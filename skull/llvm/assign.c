@@ -12,7 +12,6 @@
 #include "skull/llvm/func.h"
 #include "skull/llvm/oper.h"
 #include "skull/llvm/var.h"
-#include "skull/parse/classify.h"
 
 #include "skull/llvm/assign.h"
 

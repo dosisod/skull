@@ -4,6 +4,49 @@
 
 typedef struct Token Token;
 
+typedef enum {
+	// default token type
+	TOKEN_UNKNOWN,
+
+	TOKEN_IDENTIFIER,
+	TOKEN_NEW_IDENTIFIER, // must suffix new var names with ":"
+
+	TOKEN_KW_MUT,
+	TOKEN_KW_RETURN,
+	TOKEN_KW_IF,
+	TOKEN_KW_ELIF,
+	TOKEN_KW_ELSE,
+	TOKEN_KW_WHILE,
+	TOKEN_KW_EXTERNAL,
+	TOKEN_KW_EXPORT,
+
+	TOKEN_NEWLINE,
+	TOKEN_BRACKET_OPEN,
+	TOKEN_BRACKET_CLOSE,
+	TOKEN_PAREN_OPEN,
+	TOKEN_PAREN_CLOSE,
+
+	TOKEN_TYPE,
+
+	TOKEN_OPER_EQUAL,
+	TOKEN_OPER_PLUS,
+	TOKEN_OPER_MINUS,
+	TOKEN_OPER_MULT,
+	TOKEN_OPER_DIV,
+	TOKEN_OPER_AUTO_EQUAL, // ":="
+	TOKEN_OPER_NOT,
+
+	TOKEN_INT_CONST,
+	TOKEN_FLOAT_CONST,
+	TOKEN_BOOL_CONST,
+	TOKEN_RUNE_CONST,
+	TOKEN_STR_CONST,
+
+	TOKEN_COMMENT,
+
+	TOKEN_END
+} TokenType;
+
 /*
 Stores the smallest meaningful chunk of parsed code.
 
@@ -23,7 +66,7 @@ typedef struct Token {
 	const char32_t *begin;
 	const char32_t *end;
 
-	unsigned token_type;
+	TokenType token_type;
 	unsigned line;
 	unsigned column;
 

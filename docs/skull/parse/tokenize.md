@@ -5,7 +5,7 @@ typedef struct Token {
 	const char32_t *begin;
 	const char32_t *end;
 
-	unsigned token_type;
+	TokenType token_type;
 	unsigned line;
 	unsigned column;
 

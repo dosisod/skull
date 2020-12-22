@@ -5,7 +5,6 @@
 #include "skull/common/errors.h"
 #include "skull/eval/types/defs.h"
 #include "skull/eval/variable.h"
-#include "skull/parse/classify.h"
 
 #include "test/skull/eval/variable.h"
 #include "test/testing.h"
