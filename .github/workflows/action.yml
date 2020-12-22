@@ -88,6 +88,9 @@ jobs:
     - name: Run Valgrind on tests
       run: valgrind --leak-check=full ./build/test/test
 
+    - name: Install clang-tidy
+      run: sudo apt install clang-tidy-9
+
     - name: Run pre-commit file
       run: |
         sudo ln -sf $(which gcc-8) $(which cc)
