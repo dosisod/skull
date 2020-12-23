@@ -22,6 +22,7 @@ extern Scope *SCOPE;
 FunctionDeclaration *FUNCTION_DECLARATIONS = NULL;
 
 bool node_to_llvm_ir(AstNode *);
+FunctionDeclaration *llvm_create_new_function(AstNode *, char *, bool);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
@@ -50,50 +51,6 @@ void declare_function(AstNode *node) {
 		PANIC(ERR_MAIN_RESERVED, {0});
 	}
 
-	FunctionDeclaration *f;
-	f = calloc(1, sizeof *f);
-	DIE_IF_MALLOC_FAILS(f);
-
-	f->name = func_name;
-
-	f->param_types = ATTR(AstNodeFunctionProto, node, param_types);
-	f->param_names = ATTR(AstNodeFunctionProto, node, param_names);
-	LLVMTypeRef *params = NULL;
-
-	if (f->param_types) {
-		f->num_params = 1;
-
-		LLVMTypeRef llvm_param_type = f->param_types->llvm_type();
-		params = &llvm_param_type;
-	}
-
-	f->return_type = ATTR(AstNodeFunctionProto, node, return_type);
-	LLVMTypeRef llvm_return_type = LLVMVoidType();
-
-	if (f->return_type) {
-		llvm_return_type = f->return_type->llvm_type();
-	}
-
-	f->type = LLVMFunctionType(
-		llvm_return_type,
-		params,
-		f->num_params,
-		false
-	);
-
-	f->function = LLVMAddFunction(
-		MODULE,
-		func_name,
-		f->type
-	);
-
-	LLVMSetLinkage(
-		f->function,
-		(is_export || is_external) ?
-			LLVMExternalLinkage :
-			LLVMPrivateLinkage
-	);
-
 	FunctionDeclaration *head = FUNCTION_DECLARATIONS;
 	while (head) {
 		if (strcmp(func_name, head->name) == 0) {
@@ -109,16 +66,70 @@ void declare_function(AstNode *node) {
 		head = head->next;
 	}
 
+	FunctionDeclaration *func = llvm_create_new_function(
+		node,
+		func_name,
+		is_export || is_external
+	);
+
 	if (head) {
-		head->next = f;
+		head->next = func;
 	}
 	else {
-		FUNCTION_DECLARATIONS = f;
+		FUNCTION_DECLARATIONS = func;
 	}
 
 	if (!is_external) {
-		define_function(node, f);
+		define_function(node, func);
 	}
+}
+
+FunctionDeclaration *llvm_create_new_function(AstNode *node, char *name, bool is_private) {
+	FunctionDeclaration *func;
+	func = calloc(1, sizeof *func);
+	DIE_IF_MALLOC_FAILS(func);
+
+	func->name = name;
+
+	func->param_types = ATTR(AstNodeFunctionProto, node, param_types);
+	func->param_names = ATTR(AstNodeFunctionProto, node, param_names);
+	LLVMTypeRef *params = NULL;
+
+	if (func->param_types) {
+		func->num_params = 1;
+
+		LLVMTypeRef llvm_param_type = func->param_types->llvm_type();
+		params = &llvm_param_type;
+	}
+
+	func->return_type = ATTR(AstNodeFunctionProto, node, return_type);
+	LLVMTypeRef llvm_return_type = LLVMVoidType();
+
+	if (func->return_type) {
+		llvm_return_type = func->return_type->llvm_type();
+	}
+
+	func->type = LLVMFunctionType(
+		llvm_return_type,
+		params,
+		func->num_params,
+		false
+	);
+
+	func->function = LLVMAddFunction(
+		MODULE,
+		name,
+		func->type
+	);
+
+	LLVMSetLinkage(
+		func->function,
+		is_private ?
+			LLVMExternalLinkage :
+			LLVMPrivateLinkage
+	);
+
+	return func;
 }
 
 /*
@@ -220,6 +231,8 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 
 	bool returned = node_to_llvm_ir(node->child);
 
+	RESTORE_SUB_SCOPE;
+
 	if (!returned && func->return_type) {
 		PANIC(ERR_EXPECTED_RETURN, {
 			.real = func->name
@@ -230,8 +243,6 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 			.real = func->name
 		});
 	}
-
-	RESTORE_SUB_SCOPE;
 
 	if (!func->return_type) {
 		LLVMBuildRetVoid(BUILDER);

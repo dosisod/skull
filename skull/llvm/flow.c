@@ -195,14 +195,15 @@ Parse `node` while in a new scope. Branch to `block` when done.
 `name` is the type of block: if, else, while, etc.
 */
 void llvm_make_code_block(const char32_t *name, AstNode *node, LLVMBasicBlockRef block) {
-	MAKE_SUB_SCOPE;
-
 	if (!node->child) {
 		PANIC(ERR_MISSING_BLOCK, {
 			.tok = node->token,
 			.str = name
 		});
 	}
+
+	MAKE_SUB_SCOPE;
+
 	if (node->child->token) {
 		const bool returned = node_to_llvm_ir(node->child);
 
