@@ -159,7 +159,7 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 Try and parse a condition (something returning a bool) from `node`.
 */
 LLVMValueRef llvm_make_cond(const AstNode *const node) {
-	Token *rhs = ATTR(AstNodeBoolExpr, node, rhs);
+	const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
 	const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
 
 	if (rhs->token_type == TOKEN_BOOL_CONST) {

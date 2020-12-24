@@ -27,7 +27,7 @@ Token *make_token(void)
 > Allocate and return a token with set defaults.
 
 ```c
-char32_t *token_str(const Token *token)
+char32_t *token_str(const Token *const token)
 ```
 
 > Make a heap allocated copy of the data inside `token`.
@@ -35,7 +35,7 @@ char32_t *token_str(const Token *token)
 > The result of this function must be freed.
 
 ```c
-char *token_mbs_str(const Token *token)
+char *token_mbs_str(const Token *const token)
 ```
 
 > Make a heap allocated copy of the data inside `token` as a multi-byte string.

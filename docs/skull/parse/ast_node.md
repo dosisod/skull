@@ -75,7 +75,7 @@ typedef struct {
 
 ```c
 typedef struct {
-	Token *param;
+	const Token *param;
 }
 ```
 
@@ -83,8 +83,8 @@ typedef struct {
 
 ```c
 typedef struct {
-	Token *lhs;
-	Token *rhs;
+	const Token *lhs;
+	const Token *rhs;
 }
 ```
 
@@ -92,7 +92,7 @@ typedef struct {
 
 ```c
 typedef struct {
-	Token *rhs;
+	const Token *rhs;
 	TokenType oper;
 }
 ```

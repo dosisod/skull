@@ -72,7 +72,7 @@ LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 	return NULL;
 }
 
-LLVMValueRef llvm_token_to_val(const Type *, const Token *);
+LLVMValueRef llvm_token_to_val(const Type *, const Token *const);
 
 /*
 Return LLVM for assigning operation `oper` from `node`.
@@ -88,7 +88,7 @@ LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operati
 /*
 Return LLVM equivalent of `token`, checking for compatibility with `type`.
 */
-LLVMValueRef llvm_token_to_val(const Type *type, const Token *token) {
+LLVMValueRef llvm_token_to_val(const Type *type, const Token *const token) {
 	if (token->token_type != TOKEN_IDENTIFIER) {
 		return llvm_parse_token_typed(type, token);
 	}

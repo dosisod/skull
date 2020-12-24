@@ -105,22 +105,22 @@ typedef struct {
 Store special data for `AST_NODE_FUNCTION` nodes.
 */
 typedef struct {
-	Token *param;
+	const Token *param;
 } AstNodeFunction;
 
 /*
 Store special data about operator related nodes (`AST_NODE_ADD`, etc).
 */
 typedef struct {
-	Token *lhs;
-	Token *rhs;
+	const Token *lhs;
+	const Token *rhs;
 } AstNodeOper;
 
 /*
 Store data about a conditional expression.
 */
 typedef struct {
-	Token *rhs;
+	const Token *rhs;
 	TokenType oper;
 } AstNodeBoolExpr;
 

@@ -31,7 +31,7 @@ void declare_function(const AstNode *const node) {
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
 	const bool is_export = ATTR(AstNodeFunctionProto, node, is_export);
 
-	Token *func_name_token = NULL;
+	const Token *func_name_token = NULL;
 
 	if (is_external || is_export) {
 		func_name_token = node->token->next;
@@ -157,7 +157,7 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 	free(wide_func_name);
 
 	LLVMValueRef params = NULL;
-	Token *param = ATTR(AstNodeFunction, node, param);
+	const Token *const param = ATTR(AstNodeFunction, node, param);
 
 	if (current_function->num_params == 1) {
 		if (param->token_type == TOKEN_IDENTIFIER) {

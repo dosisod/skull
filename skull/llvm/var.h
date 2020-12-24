@@ -18,7 +18,7 @@ Variable name is stored in `var_name`, and must be freed.
 		PANIC(ERR_VAR_NOT_FOUND, { .real = (var_name) }); \
 	}
 
-const Type *token_type_to_type(const Token *);
+const Type *token_type_to_type(const Token *const);
 
 LLVMValueRef llvm_var_get_value(const Variable *const);
 

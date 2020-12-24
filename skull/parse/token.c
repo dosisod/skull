@@ -193,7 +193,7 @@ Make a heap allocated copy of the data inside `token`.
 
 The result of this function must be freed.
 */
-char32_t *token_str(const Token *token) {
+char32_t *token_str(const Token *const token) {
 	const size_t len = token_len(token);
 	char32_t *str;
 	str = malloc((len + 1) * sizeof *str);
@@ -210,7 +210,7 @@ Make a heap allocated copy of the data inside `token` as a multi-byte string.
 
 The result of this function must be freed.
 */
-char *token_mbs_str(const Token *token) {
+char *token_mbs_str(const Token *const token) {
 	char32_t *const tmp = token_str(token);
 	char *const ret = c32stombs(tmp);
 

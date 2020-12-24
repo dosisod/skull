@@ -21,7 +21,7 @@
 extern LLVMBuilderRef BUILDER;
 extern Scope *SCOPE;
 
-const Type *token_type_to_type(const Token *token) {
+const Type *token_type_to_type(const Token *const token) {
 	if (token->token_type == TOKEN_INT_CONST) {
 		return &TYPE_INT;
 	}

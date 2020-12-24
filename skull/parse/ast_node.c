@@ -121,7 +121,7 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 	}
 
 	token = token->next->next;
-	Token *param = NULL;
+	const Token *param = NULL;
 
 	if (token->token_type == TOKEN_PAREN_CLOSE) {
 		*_token = token;
