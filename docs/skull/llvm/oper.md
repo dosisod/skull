@@ -25,7 +25,7 @@ LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Build LLVM for assining division of `lhs` and `rhs`.
 
 ```c
-LLVMValueRef llvm_make_oper(const Type *type, const AstNode *node, Operation *oper)
+LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operation *oper)
 ```
 
 > Return LLVM for assigning operation `oper` from `node`.

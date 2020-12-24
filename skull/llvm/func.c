@@ -22,12 +22,12 @@ extern Scope *SCOPE;
 FunctionDeclaration *FUNCTION_DECLARATIONS = NULL;
 
 bool node_to_llvm_ir(AstNode *);
-FunctionDeclaration *llvm_create_new_function(AstNode *, char *, bool);
+FunctionDeclaration *llvm_create_new_function(const AstNode *const, char *, bool);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
 */
-void declare_function(AstNode *node) {
+void declare_function(const AstNode *const node) {
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
 	const bool is_export = ATTR(AstNodeFunctionProto, node, is_export);
 
@@ -84,7 +84,7 @@ void declare_function(AstNode *node) {
 	}
 }
 
-FunctionDeclaration *llvm_create_new_function(AstNode *node, char *name, bool is_private) {
+FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *name, bool is_private) {
 	FunctionDeclaration *func;
 	func = calloc(1, sizeof *func);
 	DIE_IF_MALLOC_FAILS(func);

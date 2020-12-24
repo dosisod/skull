@@ -1,13 +1,13 @@
 # skull/llvm/flow
 
 ```c
-void llvm_make_return(AstNode *node)
+void llvm_make_return(const AstNode *const node)
 ```
 
 > Builds an return statement from `node`.
 
 ```c
-void llvm_make_while(AstNode *node)
+void llvm_make_while(const AstNode *const node)
 ```
 
 > Builds LLVM for a while loop from `node`.
@@ -25,13 +25,13 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 > Internal function for building an `if` node.
 
 ```c
-LLVMValueRef llvm_make_cond(AstNode *node)
+LLVMValueRef llvm_make_cond(const AstNode *const node)
 ```
 
 > Try and parse a condition (something returning a bool) from `node`.
 
 ```c
-void llvm_make_code_block(const char32_t *name, AstNode *node, LLVMBasicBlockRef block)
+void llvm_make_code_block(const char32_t *name, const AstNode *const node, LLVMBasicBlockRef block)
 ```
 
 > Parse `node` while in a new scope. Branch to `block` when done.

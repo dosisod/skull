@@ -33,7 +33,7 @@ typedef struct FunctionDeclaration {
 > `next` stores the next function declaration.
 
 ```c
-void declare_function(AstNode *node)
+void declare_function(const AstNode *const node)
 ```
 
 > Parse declaration (and potential definition) of function in `node`.

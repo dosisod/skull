@@ -40,7 +40,7 @@ typedef struct FunctionDeclaration {
 
 FunctionDeclaration *FUNCTION_DECLARATIONS;
 
-void declare_function(AstNode *);
+void declare_function(const AstNode *const);
 
 LLVMValueRef llvm_make_function_call(const AstNode *const);
 

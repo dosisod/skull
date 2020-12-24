@@ -26,7 +26,7 @@ bool node_to_llvm_ir(AstNode *);
 /*
 Builds an return statement from `node`.
 */
-void llvm_make_return(AstNode *node) {
+void llvm_make_return(const AstNode *const node) {
 	const Token *const token_val = node->token->next;
 	const bool is_main = CURRENT_FUNC == MAIN_FUNC;
 
@@ -52,13 +52,13 @@ void llvm_make_return(AstNode *node) {
 	LLVMBuildRet(BUILDER, llvm_parse_token(token_val));
 }
 
-LLVMValueRef llvm_make_cond(AstNode *);
-void llvm_make_code_block(const char32_t *, AstNode *, LLVMBasicBlockRef);
+LLVMValueRef llvm_make_cond(const AstNode *const);
+void llvm_make_code_block(const char32_t *, const AstNode *const, LLVMBasicBlockRef);
 
 /*
 Builds LLVM for a while loop from `node`.
 */
-void llvm_make_while(AstNode *node) {
+void llvm_make_while(const AstNode *const node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(CURRENT_FUNC, "while_cond");
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(CURRENT_FUNC, "while_loop");
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(CURRENT_FUNC, "while_end");
@@ -158,7 +158,7 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 /*
 Try and parse a condition (something returning a bool) from `node`.
 */
-LLVMValueRef llvm_make_cond(AstNode *node) {
+LLVMValueRef llvm_make_cond(const AstNode *const node) {
 	Token *rhs = ATTR(AstNodeBoolExpr, node, rhs);
 	const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
 
@@ -194,7 +194,7 @@ Parse `node` while in a new scope. Branch to `block` when done.
 
 `name` is the type of block: if, else, while, etc.
 */
-void llvm_make_code_block(const char32_t *name, AstNode *node, LLVMBasicBlockRef block) {
+void llvm_make_code_block(const char32_t *name, const AstNode *const node, LLVMBasicBlockRef block) {
 	if (!node->child) {
 		PANIC(ERR_MISSING_BLOCK, {
 			.tok = node->token,
