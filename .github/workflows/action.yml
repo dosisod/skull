@@ -9,11 +9,11 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install clang-tidy
-      run: sudo apt install clang-tidy-9
+      run: sudo apt install clang-tidy-10
 
-    - name: Run clang-tidy-9
+    - name: Run clang-tidy-10
       run: |
-        clang-tidy-9 --version
+        clang-tidy-10 --version
         ./.github/workflows/clang_tidy.sh
 
   test-gcc:
@@ -89,7 +89,7 @@ jobs:
       run: valgrind --leak-check=full ./build/test/test
 
     - name: Install clang-tidy
-      run: sudo apt install clang-tidy-9
+      run: sudo apt install clang-tidy-10
 
     - name: Run pre-commit file
       run: |

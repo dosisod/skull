@@ -39,7 +39,7 @@ CFLAGS += -std=c18 \
 	-Wdouble-promotion \
 	-I.
 
-LLVM_CONFIG = $(shell command -v llvm-config-9 || command -v llvm-config)
+LLVM_CONFIG = $(shell command -v llvm-config-10 || command -v llvm-config)
 
 LLVM_CFLAGS = $(shell $(LLVM_CONFIG) --cflags)
 

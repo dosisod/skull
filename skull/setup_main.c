@@ -125,16 +125,16 @@ char *create_llvm_filename(const char *filename) {
 	const char *const slash_pos = strrchr(filename, '/');
 	if (!slash_pos) {
 		llvm_filename[0] = '.';
-		memcpy(llvm_filename + 1, filename, len);
+		strncpy(llvm_filename + 1, filename, len);
 	}
 	else {
 		const long offset = slash_pos - filename;
 
-		memcpy(llvm_filename, filename, len);
+		strncpy(llvm_filename, filename, len);
 		llvm_filename[offset + 1] = '.';
-		memcpy(llvm_filename + offset + 2, slash_pos + 1, len - (size_t)offset);
+		strncpy(llvm_filename + offset + 2, slash_pos + 1, len - (size_t)offset);
 	}
-	memcpy(llvm_filename + len + 1, ".ll", 4);
+	strncpy(llvm_filename + len + 1, ".ll", 4);
 
 	return llvm_filename;
 }

@@ -58,7 +58,7 @@ base=$(dirname $filename)/.$(basename $filename)
 file_type=obj
 [ -z "$ASM" ] || file_type=asm
 
-LLC=$(command -v llc-9 || command -v llc)
+LLC=$(command -v llc-10 || command -v llc)
 $LLC $base.ll -filetype=$file_type -o $OUT_FILE || exit 1
 
 rm $base.ll

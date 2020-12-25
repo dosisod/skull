@@ -25,7 +25,7 @@ return 0
 Before you build, you will need to install LLVM dev dependencies:
 
 ```
-$ sudo apt install llvm-9-dev
+$ sudo apt install llvm-10-dev
 ```
 
 ## Building and Running
@@ -42,7 +42,7 @@ $ skull
 Install dependencies:
 
 ```
-$ sudo apt install clang-tidy-9
+$ sudo apt install clang-tidy-10
 ```
 
 Tests are best ran via a `pre-commit`:
