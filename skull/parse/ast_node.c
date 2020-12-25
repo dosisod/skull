@@ -490,6 +490,7 @@ bool ast_token_cmp(Token *token, ...) {
 
 	while (current_type != TOKEN_END) {
 		if (token == NULL || token->token_type != current_type) {
+			va_end(vargs);
 			return false;
 		}
 
