@@ -37,6 +37,7 @@
 #define ERR_REDUNDANT_REASSIGN "redundant assignment of variable \"%s\" to itself\n"
 #define ERR_DIV_BY_ZERO "division by zero"
 #define ERR_NO_EXPORT_NESTED "cannot export nested function \"%s\"\n"
+#define ERR_NOT_COMPARIBLE "cannot compare value near \"%s\"\n"
 
 typedef struct Variable Variable;
 typedef struct Type Type;

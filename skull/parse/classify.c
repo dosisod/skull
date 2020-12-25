@@ -46,6 +46,7 @@ void classify_token(Token *const token) {
 	TOKEN_TRY_STR(U"/", TOKEN_OPER_DIV)
 	TOKEN_TRY_STR(U":=", TOKEN_OPER_AUTO_EQUAL)
 	TOKEN_TRY_STR(U"not", TOKEN_OPER_NOT)
+	TOKEN_TRY_STR(U"is", TOKEN_OPER_IS)
 
 	TOKEN_SET_IF(str[0] == '#' && (
 		str[1] == ' ' ||
@@ -111,7 +112,8 @@ Returns true if a `str` is a reserved.
 bool is_reserved_str(const char32_t *const str) {
 	return c32scmp(U"return", str) ||
 		c32scmp(U"mut", str) ||
-		c32scmp(U"not", str);
+		c32scmp(U"not", str) ||
+		c32scmp(U"is", str);
 }
 
 #define EXHAUST_STR(cond) \

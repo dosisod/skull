@@ -72,8 +72,6 @@ LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 	return NULL;
 }
 
-LLVMValueRef llvm_token_to_val(const Type *, const Token *const);
-
 /*
 Return LLVM for assigning operation `oper` from `node`.
 */

@@ -31,6 +31,12 @@ LLVMValueRef llvm_make_cond(const AstNode *const node)
 > Try and parse a condition (something returning a bool) from `node`.
 
 ```c
+LLVMValueRef llvm_get_bool_from_token(const Token *token)
+```
+
+> Returns an LLVM value parsed from `token`.
+
+```c
 void llvm_make_code_block(const char32_t *name, const AstNode *const node, LLVMBasicBlockRef block)
 ```
 

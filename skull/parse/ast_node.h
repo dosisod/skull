@@ -120,8 +120,9 @@ typedef struct {
 Store data about a conditional expression.
 */
 typedef struct {
-	const Token *rhs;
+	const Token *lhs;
 	TokenType oper;
+	const Token *rhs;
 } AstNodeBoolExpr;
 
 AstNode *make_ast_node(void);
