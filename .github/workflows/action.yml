@@ -21,6 +21,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install LLVM 10
+      run: sudo apt install llvm-10-dev
+
     - name: Build
       run: |
         export CC=gcc-8
@@ -38,6 +41,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install LLVM 10
+      run: sudo apt install llvm-10-dev
 
     - name: Build
       run: |
@@ -57,6 +63,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install LLVM 10
+      run: sudo apt install llvm-10-dev
+
     - name: Build
       run: sudo CC=gcc-8 make options install -e
 
@@ -74,6 +83,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install LLVM 10
+      run: sudo apt install llvm-10-dev
 
     - name: Build tests
       run: |
