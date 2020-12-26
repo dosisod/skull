@@ -11,6 +11,7 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/variable.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/oper.h"
 #include "skull/llvm/scope.h"
 #include "skull/llvm/var.h"
 
@@ -155,35 +156,81 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 	LLVMPositionBuilderAtEnd(BUILDER, end);
 }
 
+LLVMValueRef llvm_get_bool_from_token(const Token *);
+
 /*
 Try and parse a condition (something returning a bool) from `node`.
 */
 LLVMValueRef llvm_make_cond(const AstNode *const node) {
-	const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
+	const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
 	const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
-
-	if (rhs->token_type == TOKEN_BOOL_CONST) {
-		if (oper == TOKEN_OPER_NOT) {
-			return LLVM_BOOL(!eval_bool(rhs));
-		}
-
-		return LLVM_BOOL(eval_bool(rhs));
-	}
-	SCOPE_FIND_VAR(found_var, rhs, var_name);
-
-	if (found_var->type != &TYPE_BOOL) {
-		PANIC(ERR_NON_BOOL_COND, {
-			.tok = rhs,
-			.var = found_var
-		});
-	}
+	const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
 
 	if (oper == TOKEN_OPER_NOT) {
 		return LLVMBuildNot(
 			BUILDER,
-			llvm_var_get_value(found_var),
+			llvm_get_bool_from_token(rhs),
 			""
 		);
+	}
+	if (oper == TOKEN_OPER_IS) {
+		const Type *type = NULL;
+		LLVMValueRef lhs_val = NULL;
+
+		if (lhs->token_type == TOKEN_IDENTIFIER) {
+			SCOPE_FIND_VAR(var_found, lhs, lookup);
+			free(lookup);
+
+			type = var_found->type;
+			lhs_val = llvm_var_get_value(var_found);
+		}
+		else {
+			type = token_type_to_type(lhs);
+			lhs_val = llvm_parse_token(lhs);
+		}
+
+		LLVMValueRef rhs_val = llvm_token_to_val(type, rhs);
+
+		if (type == &TYPE_INT || type == &TYPE_RUNE) {
+			return LLVMBuildICmp(
+				BUILDER,
+				LLVMIntEQ,
+				lhs_val,
+				rhs_val,
+				""
+			);
+		}
+		if (type == &TYPE_FLOAT) {
+			return LLVMBuildFCmp(
+				BUILDER,
+				LLVMRealOEQ,
+				lhs_val,
+				rhs_val,
+				""
+			);
+		}
+
+		PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
+	}
+
+	return llvm_get_bool_from_token(rhs);
+}
+
+/*
+Returns an LLVM value parsed from `token`.
+*/
+LLVMValueRef llvm_get_bool_from_token(const Token *token) {
+	if (token->token_type == TOKEN_BOOL_CONST) {
+		return LLVM_BOOL(eval_bool(token));
+	}
+
+	SCOPE_FIND_VAR(found_var, token, var_name);
+
+	if (found_var->type != &TYPE_BOOL) {
+		PANIC(ERR_NON_BOOL_COND, {
+			.tok = token,
+			.var = found_var
+		});
 	}
 
 	return llvm_var_get_value(found_var);

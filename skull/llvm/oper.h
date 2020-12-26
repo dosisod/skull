@@ -7,6 +7,7 @@
 typedef LLVMValueRef (Operation)(const Type *, LLVMValueRef, LLVMValueRef);
 
 LLVMValueRef llvm_make_oper(const Type *, const AstNode *const, Operation *);
+LLVMValueRef llvm_token_to_val(const Type *, const Token *const);
 
 Operation llvm_make_add;
 Operation llvm_make_sub;

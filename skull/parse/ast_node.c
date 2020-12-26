@@ -222,6 +222,8 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
+#define IS_BOOL_LIKE(tok) ((tok)->token_type == TOKEN_IDENTIFIER || (tok)->token_type == TOKEN_BOOL_CONST)
+
 bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode **node, NodeType node_type) {
 	Token *token = *_token;
 
@@ -230,32 +232,50 @@ bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode 
 	}
 	token = token->next;
 
+	Token *lhs = NULL;
 	TokenType oper = TOKEN_UNKNOWN;
-	if (token->token_type == TOKEN_OPER_NOT) {
+	Token *rhs = token;
+
+	if (token->token_type == TOKEN_OPER_NOT && IS_BOOL_LIKE(token->next)) {
 		oper = TOKEN_OPER_NOT;
+		rhs = token->next;
 		token = token->next;
 
 		if (!token) {
 			return false;
 		}
 	}
-
-	if ((token->token_type == TOKEN_IDENTIFIER ||
-		token->token_type == TOKEN_BOOL_CONST) &&
-		token->next
+	else if (
+		(is_const_literal(token) ||
+		token->token_type == TOKEN_IDENTIFIER) &&
+		token->next &&
+		token->next->token_type == TOKEN_OPER_IS &&
+		(is_const_literal(token->next->next) ||
+		token->next->next->token_type == TOKEN_IDENTIFIER)
 	) {
-		MAKE_ATTR(AstNodeBoolExpr, *node,
-			.oper = oper,
-			.rhs = token
-		);
+		lhs = token;
+		oper = TOKEN_OPER_IS;
+		rhs = token->next->next;
+		token = token->next->next;
 
-		*_token = token;
-		push_ast_node(*_token, last, node_type, node);
-
-		return true;
+		if (!token) {
+			return false;
+		}
+	}
+	else if (!IS_BOOL_LIKE(token)) {
+		return false;
 	}
 
-	return false;
+	MAKE_ATTR(AstNodeBoolExpr, *node,
+		.lhs = lhs,
+		.oper = oper,
+		.rhs = rhs
+	);
+
+	*_token = token;
+	push_ast_node(*_token, last, node_type, node);
+
+	return true;
 }
 
 __attribute__((pure)) bool is_const_literal(Token *token) {

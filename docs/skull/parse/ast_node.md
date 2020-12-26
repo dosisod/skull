@@ -92,8 +92,9 @@ typedef struct {
 
 ```c
 typedef struct {
-	const Token *rhs;
+	const Token *lhs;
 	TokenType oper;
+	const Token *rhs;
 }
 ```
 
