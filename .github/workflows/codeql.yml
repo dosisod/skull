@@ -2,7 +2,7 @@ name: "CodeQL"
 
 on:
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: '0 0 * * *'
 
 jobs:
   analyse:
@@ -20,6 +20,9 @@ jobs:
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
+
+    - name: Install LLVM 10
+      run: sudo apt install llvm-10-dev
 
     - name: Build
       run: |
