@@ -8,7 +8,7 @@
 
 const Type *token_type_to_type(const Token *const);
 
-LLVMValueRef llvm_var_get_value(const Variable *const);
+LLVMValueRef llvm_token_get_value(const Token *const, Variable **);
 
 void node_make_var(const AstNode *const);
 

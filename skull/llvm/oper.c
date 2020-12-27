@@ -88,18 +88,22 @@ LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operati
 Return LLVM equivalent of `token`, checking for compatibility with `type`.
 */
 LLVMValueRef llvm_token_to_val(const Type *type, const Token *const token) {
-	if (token->token_type != TOKEN_IDENTIFIER) {
-		return llvm_parse_token_typed(type, token);
+	Variable *var_found = NULL;
+	LLVMValueRef value = llvm_token_get_value(token, &var_found);
+
+	if (var_found && var_found->type == type) {
+		return value;
+	}
+	if (!var_found) {
+		const Type *detected_type = token_type_to_type(token);
+
+		if (detected_type == type) {
+			return value;
+		}
 	}
 
-	Variable *var_found = scope_find_var(token);
-
-	if (type != var_found->type) {
-		PANIC(ERR_TYPE_MISMATCH, {
-			.tok = token,
-			.type = type
-		});
-	}
-
-	return llvm_var_get_value(var_found);
+	PANIC(ERR_TYPE_MISMATCH, {
+		.tok = token,
+		.type = type
+	});
 }

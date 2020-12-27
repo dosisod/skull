@@ -159,22 +159,12 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 	const Token *const param = ATTR(AstNodeFunction, node, param);
 
 	if (current_function->num_params == 1) {
-		if (param->token_type == TOKEN_IDENTIFIER) {
-			Variable *var_found = scope_find_var(param);
+		Variable *var_found = NULL;
+		params = llvm_token_get_value(param, &var_found);
 
-			if (var_found->type != current_function->param_types) {
-				PANIC(ERR_TYPE_MISMATCH, {
-					.tok = param,
-					.real = strdup(current_function->param_types->name)
-				});
-			}
-
-			params = llvm_var_get_value(var_found);
-		}
-		else if (current_function->param_types == token_type_to_type(param)) {
-			params = llvm_parse_token(param);
-		}
-		else {
+		if ((var_found && var_found->type != current_function->param_types) ||
+			(!var_found && token_type_to_type(param) != current_function->param_types)
+		) {
 			PANIC(ERR_FUNC_TYPE_MISMATCH, {
 				.tok = param,
 				.real = strdup(current_function->param_types->name)

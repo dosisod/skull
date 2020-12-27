@@ -31,25 +31,19 @@ void llvm_make_return(const AstNode *const node) {
 	const Token *const token_val = node->token->next;
 	const bool is_main = CURRENT_FUNC == MAIN_FUNC;
 
-	if (token_val->token_type == TOKEN_IDENTIFIER) {
-		Variable *found_var = scope_find_var(token_val);
+	Variable *found_var = NULL;
+	LLVMValueRef value = llvm_token_get_value(token_val, &found_var);
 
-		if (is_main && found_var->type != &TYPE_INT) {
-			PANIC(ERR_NON_INT_VAR_MAIN, {
-				.tok = node->token->next,
-				.var = found_var
-			});
+	if (is_main) {
+		if (found_var && found_var->type != &TYPE_INT) {
+			PANIC(ERR_NON_INT_VAR_MAIN, { .tok = token_val });
 		}
-
-		LLVMBuildRet(BUILDER, llvm_var_get_value(found_var));
-		return;
+		if (!found_var && token_val->token_type != TOKEN_INT_CONST) {
+			PANIC(ERR_NON_INT_VAL_MAIN, { .tok = token_val });
+		}
 	}
 
-	if (is_main && token_val->token_type != TOKEN_INT_CONST) {
-		PANIC(ERR_NON_INT_VAL_MAIN, { .tok = token_val });
-	}
-
-	LLVMBuildRet(BUILDER, llvm_parse_token(token_val));
+	LLVMBuildRet(BUILDER, value);
 }
 
 LLVMValueRef llvm_make_cond(const AstNode *const);
@@ -173,18 +167,16 @@ LLVMValueRef llvm_make_cond(const AstNode *const node) {
 		);
 	}
 	if (oper == TOKEN_OPER_IS) {
+		Variable *var_found = NULL;
+		LLVMValueRef lhs_val = llvm_token_get_value(lhs, &var_found);
+
 		const Type *type = NULL;
-		LLVMValueRef lhs_val = NULL;
 
-		if (lhs->token_type == TOKEN_IDENTIFIER) {
-			Variable *var_found = scope_find_var(lhs);
-
+		if (var_found) {
 			type = var_found->type;
-			lhs_val = llvm_var_get_value(var_found);
 		}
 		else {
 			type = token_type_to_type(lhs);
-			lhs_val = llvm_parse_token(lhs);
 		}
 
 		LLVMValueRef rhs_val = llvm_token_to_val(type, rhs);
@@ -218,20 +210,19 @@ LLVMValueRef llvm_make_cond(const AstNode *const node) {
 Returns an LLVM value parsed from `token`.
 */
 LLVMValueRef llvm_get_bool_from_token(const Token *token) {
-	if (token->token_type == TOKEN_BOOL_CONST) {
-		return LLVM_BOOL(eval_bool(token));
-	}
+	Variable *found_var = NULL;
+	LLVMValueRef value = llvm_token_get_value(token, &found_var);
 
-	Variable *found_var = scope_find_var(token);
-
-	if (found_var->type != &TYPE_BOOL) {
+	if ((found_var && found_var->type != &TYPE_BOOL) ||
+		(!found_var && token->token_type != TOKEN_BOOL_CONST)
+	) {
 		PANIC(ERR_NON_BOOL_COND, {
 			.tok = token,
 			.var = found_var
 		});
 	}
 
-	return llvm_var_get_value(found_var);
+	return value;
 }
 
 /*

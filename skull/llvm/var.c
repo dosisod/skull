@@ -41,17 +41,27 @@ const Type *token_type_to_type(const Token *const token) {
 	return NULL;
 }
 
-LLVMValueRef llvm_var_get_value(const Variable *const var) {
-	if (var->is_const && !(var->is_global && !var->is_const_lit)) {
-		return var->alloca;
+LLVMValueRef llvm_token_get_value(const Token *const token, Variable **variable) {
+	if (token->token_type == TOKEN_IDENTIFIER) {
+		Variable *var_found = scope_find_var(token);
+
+		if (variable) {
+			*variable = var_found;
+		}
+
+		if (var_found->is_const && !(var_found->is_global && !var_found->is_const_lit)) {
+			return var_found->alloca;
+		}
+
+		return LLVMBuildLoad2(
+			BUILDER,
+			var_found->type->llvm_type(),
+			var_found->alloca,
+			""
+		);
 	}
 
-	return LLVMBuildLoad2(
-		BUILDER,
-		var->type->llvm_type(),
-		var->alloca,
-		""
-	);
+	return llvm_parse_token(token);
 }
 
 /*

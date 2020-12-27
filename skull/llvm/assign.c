@@ -153,7 +153,8 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 Return LLVM for to load an existing identifier `node` to `var`.
 */
 LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const node) {
-	Variable *var_found = scope_find_var(node->token);
+	Variable *var_found = NULL;
+	LLVMValueRef value = llvm_token_get_value(node->token, &var_found);
 
 	if (var_found->type != var->type) {
 		PANIC(ERR_TYPE_MISMATCH, {
@@ -168,5 +169,5 @@ LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const no
 		});
 	}
 
-	return llvm_var_get_value(var_found);
+	return value;
 }
