@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 #include "../skull/common/color.h"
 #include "skull/common/malloc.h"
@@ -21,8 +20,7 @@ void run_single_test(Test test, bool *pass) {
 		*pass = false;
 
 		Fail *fail;
-		fail = malloc(sizeof *fail);
-		DIE_IF_MALLOC_FAILS(fail);
+		fail = Malloc(sizeof *fail);
 
 		fail->next = NULL;
 

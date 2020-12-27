@@ -1,14 +1,7 @@
 #pragma once
 
-#include <stdio.h>
 #include <stdlib.h>
 
-/*
-Exit if malloc fails to allocate memory.
-*/
-#define DIE_IF_MALLOC_FAILS(ptr) \
-	if (!(ptr)) { \
-		puts("\nfailed to allocate sufficient memory, exiting"); \
-		exit(1); \
-	}
-
+void *Malloc(size_t);
+void *Calloc(size_t, size_t);
+void *Realloc(void *, size_t);

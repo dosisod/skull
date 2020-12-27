@@ -11,8 +11,7 @@ Return Skull string converted from `token`
 */
 SkullStr eval_str(const Token *const token) {
 	char32_t *copy;
-	copy = malloc((token_len(token) - 1) * sizeof *copy);
-	DIE_IF_MALLOC_FAILS(copy);
+	copy = Malloc((token_len(token) - 1) * sizeof *copy);
 
 	const char32_t *str = token->begin + 1;
 	size_t wrote = 0;
@@ -24,7 +23,6 @@ SkullStr eval_str(const Token *const token) {
 		if (error) {
 			PANIC(ERR_BAD_ESCAPE, { .tok = token, .str = error });
 		}
-
 
 		if (str == original) {
 			copy[wrote] = *str;

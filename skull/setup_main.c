@@ -8,6 +8,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/io.h"
 #include "skull/common/local.h"
+#include "skull/common/malloc.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/llvm/ast.h"
@@ -120,7 +121,7 @@ LLVMModuleRef generate_llvm(const char *module_name, const char *main_func_name,
 
 char *create_llvm_filename(const char *filename) {
 	const size_t len = strlen(filename);
-	char *const llvm_filename = malloc(len + 5);
+	char *const llvm_filename = Malloc(len + 5);
 
 	const char *const slash_pos = strrchr(filename, '/');
 	if (!slash_pos) {

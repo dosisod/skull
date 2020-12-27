@@ -182,8 +182,7 @@ Allocate and return a token with set defaults.
 */
 Token *make_token(void) {
 	Token *token;
-	token = calloc(1, sizeof *token);
-	DIE_IF_MALLOC_FAILS(token);
+	token = Calloc(1, sizeof *token);
 
 	return token;
 }
@@ -196,8 +195,7 @@ The result of this function must be freed.
 char32_t *token_str(const Token *const token) {
 	const size_t len = token_len(token);
 	char32_t *str;
-	str = malloc((len + 1) * sizeof *str);
-	DIE_IF_MALLOC_FAILS(str);
+	str = Malloc((len + 1) * sizeof *str);
 
 	c32sncpy(str, token->begin, len + 1);
 	str[len] = '\0';

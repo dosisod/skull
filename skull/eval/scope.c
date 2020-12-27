@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "skull/common/malloc.h"
@@ -48,8 +47,7 @@ Returns a new variable scope.
 */
 Scope *make_scope(void) {
 	Scope *scope;
-	scope = calloc(1, sizeof *scope);
-	DIE_IF_MALLOC_FAILS(scope);
+	scope = Calloc(1, sizeof *scope);
 
 	return scope;
 }

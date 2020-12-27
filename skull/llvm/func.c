@@ -86,8 +86,7 @@ void declare_function(const AstNode *const node) {
 
 FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *name, bool is_private) {
 	FunctionDeclaration *func;
-	func = calloc(1, sizeof *func);
-	DIE_IF_MALLOC_FAILS(func);
+	func = Calloc(1, sizeof *func);
 
 	func->name = name;
 

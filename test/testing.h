@@ -2,7 +2,6 @@
 
 #include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 typedef _Bool (*Test)(const char **);
 

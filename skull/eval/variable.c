@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "skull/common/errors.h"
@@ -22,8 +21,7 @@ Variable *make_variable(const Type *const type, const char32_t *const name, bool
 	}
 
 	Variable *var;
-	var = malloc(sizeof *var);
-	DIE_IF_MALLOC_FAILS(var);
+	var = Malloc(sizeof *var);
 
 	*var = (Variable){
 		.name = c32stombs(name),

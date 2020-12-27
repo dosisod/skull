@@ -1,6 +1,5 @@
 #include <errno.h>
 #include <limits.h>
-#include <stdlib.h>
 
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"

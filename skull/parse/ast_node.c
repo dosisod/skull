@@ -1,6 +1,5 @@
 #include <stdarg.h>
 #include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "skull/common/errors.h"
@@ -457,8 +456,7 @@ Makes an AstNode with default values
 */
 AstNode *make_ast_node(void) {
 	AstNode *node;
-	node = calloc(1, sizeof *node);
-	DIE_IF_MALLOC_FAILS(node);
+	node = Calloc(1, sizeof *node);
 
 	return node;
 }

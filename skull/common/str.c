@@ -1,6 +1,6 @@
 #include <errno.h>
 #include <stdbool.h>
-#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "skull/common/errors.h"
@@ -17,8 +17,7 @@ char32_t *c32sdup(const char32_t *const str) {
 	const size_t len = c32slen(str);
 
 	char32_t *ret;
-	ret = malloc((len + 1) * sizeof *ret);
-	DIE_IF_MALLOC_FAILS(ret);
+	ret = Malloc((len + 1) * sizeof *ret);
 
 	c32sncpy(ret, str, len + 1);
 	ret[len] = '\0';
@@ -36,8 +35,7 @@ char32_t *c32scat(const char32_t *const s1, const char32_t *const s2) {
 	const size_t len_s2 = c32slen(s2);
 
 	char32_t *ret;
-	ret = malloc((len_s1 + len_s2 + 1) * sizeof *ret);
-	DIE_IF_MALLOC_FAILS(ret);
+	ret = Malloc((len_s1 + len_s2 + 1) * sizeof *ret);
 
 	c32sncpy(ret, s1, len_s1);
 	c32sncpy(ret + len_s1, s2, len_s2 + 1);
@@ -74,8 +72,7 @@ char *c32stombs(const char32_t *str) {
 	}
 
 	//allocate the max that str could expand to
-	char *ret = malloc((c32slen(str) + 1) * MB_CUR_MAX);
-	DIE_IF_MALLOC_FAILS(ret);
+	char *ret = Malloc((c32slen(str) + 1) * MB_CUR_MAX);
 
 	size_t offset = 0;
 	static mbstate_t mbs;
@@ -91,8 +88,7 @@ char *c32stombs(const char32_t *str) {
 	}
 
 	//shrink string to only what we need
-	ret = realloc(ret, offset + 1);
-	DIE_IF_MALLOC_FAILS(ret);
+	ret = Realloc(ret, offset + 1);
 	ret[offset] = '\0';
 
 	return ret;
@@ -124,8 +120,7 @@ The result of this function must be freed.
 char32_t *mbstoc32s(const char *str) {
 	//allocate the max that str could expand to
 	char32_t *ret;
-	ret = malloc((strlen(str) + 1) * sizeof *ret);
-	DIE_IF_MALLOC_FAILS(ret);
+	ret = Malloc((strlen(str) + 1) * sizeof *ret);
 
 	size_t offset = 0;
 
@@ -149,8 +144,7 @@ char32_t *mbstoc32s(const char *str) {
 	}
 
 	//shrink string to only what we need
-	ret = realloc(ret, (offset + 1) * sizeof *ret);
-	DIE_IF_MALLOC_FAILS(ret);
+	ret = Realloc(ret, (offset + 1) * sizeof *ret);
 	ret[offset] = '\0';
 
 	return ret;
