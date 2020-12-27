@@ -32,8 +32,7 @@ void llvm_make_return(const AstNode *const node) {
 	const bool is_main = CURRENT_FUNC == MAIN_FUNC;
 
 	if (token_val->token_type == TOKEN_IDENTIFIER) {
-		SCOPE_FIND_VAR(found_var, token_val, var_name);
-		free(var_name);
+		Variable *found_var = scope_find_var(token_val);
 
 		if (is_main && found_var->type != &TYPE_INT) {
 			PANIC(ERR_NON_INT_VAR_MAIN, {
@@ -178,8 +177,7 @@ LLVMValueRef llvm_make_cond(const AstNode *const node) {
 		LLVMValueRef lhs_val = NULL;
 
 		if (lhs->token_type == TOKEN_IDENTIFIER) {
-			SCOPE_FIND_VAR(var_found, lhs, lookup);
-			free(lookup);
+			Variable *var_found = scope_find_var(lhs);
 
 			type = var_found->type;
 			lhs_val = llvm_var_get_value(var_found);
@@ -224,7 +222,7 @@ LLVMValueRef llvm_get_bool_from_token(const Token *token) {
 		return LLVM_BOOL(eval_bool(token));
 	}
 
-	SCOPE_FIND_VAR(found_var, token, var_name);
+	Variable *found_var = scope_find_var(token);
 
 	if (found_var->type != &TYPE_BOOL) {
 		PANIC(ERR_NON_BOOL_COND, {

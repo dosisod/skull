@@ -1,3 +1,8 @@
+#pragma once
+
+#include "skull/eval/variable.h"
+#include "skull/parse/token.h"
+
 /*
 Make new scope and set the current scope to be a sub-scope of the new one.
 */
@@ -14,3 +19,4 @@ Free the new scope, set the current scope to the old sub-scope.
 	SCOPE = scope_copy; \
 	SCOPE->sub_scope = NULL
 
+Variable *scope_find_var(const Token *const);

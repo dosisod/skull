@@ -11,6 +11,7 @@
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/func.h"
 #include "skull/llvm/oper.h"
+#include "skull/llvm/scope.h"
 #include "skull/llvm/var.h"
 
 #include "skull/llvm/assign.h"
@@ -43,15 +44,13 @@ void llvm_make_var_def(AstNode **node) {
 Build a LLVM `load` operation from `node`.
 */
 void llvm_make_var_assign(AstNode **node) {
-	SCOPE_FIND_VAR(found_var, (*node)->token, var_name);
+	Variable *found_var = scope_find_var((*node)->token);
 
 	if (found_var->is_const) {
 		PANIC(ERR_REASSIGN_CONST, {
-			.tok = (*node)->token,
-			.real = var_name
+			.tok = (*node)->token
 		});
 	}
-	free(var_name);
 
 	llvm_assign_value_to_var(
 		found_var,
@@ -154,8 +153,7 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 Return LLVM for to load an existing identifier `node` to `var`.
 */
 LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const node) {
-	SCOPE_FIND_VAR(var_found, node->token, lookup);
-	free(lookup);
+	Variable *var_found = scope_find_var(node->token);
 
 	if (var_found->type != var->type) {
 		PANIC(ERR_TYPE_MISMATCH, {

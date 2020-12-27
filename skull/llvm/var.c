@@ -15,6 +15,7 @@
 #include "skull/eval/types/str.h"
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/func.h"
+#include "skull/llvm/scope.h"
 
 #include "skull/llvm/var.h"
 
@@ -110,10 +111,7 @@ void node_make_var(const AstNode *const node) {
 			node->next->node_type == AST_NODE_DIV) &&
 			node->next->token->token_type == TOKEN_IDENTIFIER)
 		) {
-			SCOPE_FIND_VAR(new_var, node->next->token, lookup);
-
-			free(lookup);
-			type = new_var->type;
+			type = scope_find_var(node->next->token)->type;
 		}
 		else {
 			free(name);

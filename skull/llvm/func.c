@@ -160,8 +160,7 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 
 	if (current_function->num_params == 1) {
 		if (param->token_type == TOKEN_IDENTIFIER) {
-			SCOPE_FIND_VAR(var_found, param, lookup);
-			free(lookup);
+			Variable *var_found = scope_find_var(param);
 
 			if (var_found->type != current_function->param_types) {
 				PANIC(ERR_TYPE_MISMATCH, {

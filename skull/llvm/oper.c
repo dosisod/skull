@@ -5,6 +5,7 @@
 #include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/scope.h"
 #include "skull/llvm/var.h"
 
 #include "skull/llvm/oper.h"
@@ -91,8 +92,7 @@ LLVMValueRef llvm_token_to_val(const Type *type, const Token *const token) {
 		return llvm_parse_token_typed(type, token);
 	}
 
-	SCOPE_FIND_VAR(var_found, token, lookup);
-	free(lookup);
+	Variable *var_found = scope_find_var(token);
 
 	if (type != var_found->type) {
 		PANIC(ERR_TYPE_MISMATCH, {

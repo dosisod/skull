@@ -18,3 +18,9 @@
 
 > Free the new scope, set the current scope to the old sub-scope.
 
+```c
+Variable *scope_find_var(const Token *const token)
+```
+
+> Try and find a variable stored in `token`.
+
