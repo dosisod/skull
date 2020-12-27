@@ -11,7 +11,7 @@
 
 ```c
 #define RESTORE_SUB_SCOPE \
-	free(SCOPE); \
+	free_scope(SCOPE); \
 	SCOPE = scope_copy; \
 	SCOPE->sub_scope = NULL
 ```

@@ -49,7 +49,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 		free(copy);
 	}
 
-	free(SCOPE);
+	free_scope(SCOPE);
 }
 
 /*

@@ -12,7 +12,7 @@
 Returns a Skull float parsed from `token`.
 */
 SkullFloat eval_float(const Token *const token) {
-	char *const float_str = c32stombs(token->begin);
+	char *const float_str = token_mbs_str(token);
 
 	if (strcmp("Infinity", float_str) == 0) {
 		free(float_str);

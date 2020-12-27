@@ -177,7 +177,7 @@ LLVMValueRef llvm_parse_token(const Token *const token) {
 		LLVMValueRef ret = LLVMBuildBitCast(
 			BUILDER,
 			LLVMBuildGlobalString(BUILDER, mbs, ""),
-			LLVMPointerType(LLVMInt8Type(), 0),
+			TYPE_STR.llvm_type(),
 			""
 		);
 
