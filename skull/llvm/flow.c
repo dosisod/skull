@@ -179,28 +179,17 @@ LLVMValueRef llvm_make_cond(const AstNode *const node) {
 			type = token_type_to_type(lhs);
 		}
 
-		LLVMValueRef rhs_val = llvm_token_to_val(type, rhs);
+		LLVMValueRef result = llvm_make_is(
+			type,
+			lhs_val,
+			llvm_token_to_val(type, rhs)
+		);
 
-		if (type == &TYPE_INT || type == &TYPE_RUNE) {
-			return LLVMBuildICmp(
-				BUILDER,
-				LLVMIntEQ,
-				lhs_val,
-				rhs_val,
-				""
-			);
-		}
-		if (type == &TYPE_FLOAT) {
-			return LLVMBuildFCmp(
-				BUILDER,
-				LLVMRealOEQ,
-				lhs_val,
-				rhs_val,
-				""
-			);
+		if (!result) {
+			PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
 		}
 
-		PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
+		return result;
 	}
 
 	return llvm_get_bool_from_token(rhs);

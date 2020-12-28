@@ -25,6 +25,12 @@ LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Build LLVM for assining division of `lhs` and `rhs`.
 
 ```c
+LLVMValueRef llvm_make_is(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
+```
+
+> Build LLVM for assining result of is operator for `lhs` and `rhs`.
+
+```c
 LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operation *oper)
 ```
 

@@ -74,6 +74,32 @@ LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 }
 
 /*
+Build LLVM for assining result of is operator for `lhs` and `rhs`.
+*/
+LLVMValueRef llvm_make_is(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	if (type == &TYPE_INT || type == &TYPE_RUNE) {
+		return LLVMBuildICmp(
+			BUILDER,
+			LLVMIntEQ,
+			lhs,
+			rhs,
+			""
+		);
+	}
+	if (type == &TYPE_FLOAT) {
+		return LLVMBuildFCmp(
+			BUILDER,
+			LLVMRealOEQ,
+			lhs,
+			rhs,
+			""
+		);
+	}
+
+	return NULL;
+}
+
+/*
 Return LLVM for assigning operation `oper` from `node`.
 */
 LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operation *oper) {
