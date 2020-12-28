@@ -212,7 +212,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 			PANIC(ERR_SHADOW_VAR, { .var = param_var });
 		}
 
-		param_var->alloca = LLVMGetFirstParam(func->function);
+		param_var->llvm_value = LLVMGetFirstParam(func->function);
 	}
 
 	bool returned = node_to_llvm_ir(node->child);

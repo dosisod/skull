@@ -29,7 +29,7 @@ Variable *make_variable(const Type *const type, const char32_t *const name, bool
 		.is_const = is_const,
 		.is_const_lit = false,
 		.is_global = false,
-		.alloca = NULL
+		.llvm_value = NULL
 	};
 
 	return var;

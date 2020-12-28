@@ -50,13 +50,13 @@ LLVMValueRef llvm_token_get_value(const Token *const token, Variable **variable)
 		}
 
 		if (var_found->is_const && !(var_found->is_global && !var_found->is_const_lit)) {
-			return var_found->alloca;
+			return var_found->llvm_value;
 		}
 
 		return LLVMBuildLoad2(
 			BUILDER,
 			var_found->type->llvm_type(),
-			var_found->alloca,
+			var_found->llvm_value,
 			""
 		);
 	}

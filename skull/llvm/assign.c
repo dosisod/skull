@@ -103,7 +103,7 @@ LLVMValueRef llvm_get_value_for_var(Variable *const var, const AstNode *const no
 }
 
 void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
-	const bool is_first_assign = !var->alloca;
+	const bool is_first_assign = !var->llvm_value;
 	const bool is_const_literal = LLVMIsConstant(value);
 
 	const bool is_global = is_first_assign ?
@@ -112,21 +112,21 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 
 	if (is_first_assign) {
 		if (is_global && (!var->is_const || !is_const_literal)) {
-			var->alloca = LLVMAddGlobal(
+			var->llvm_value = LLVMAddGlobal(
 				MODULE,
 				var->type->llvm_type(),
 				var->name
 			);
 
-			LLVMSetLinkage(var->alloca, LLVMPrivateLinkage);
+			LLVMSetLinkage(var->llvm_value, LLVMPrivateLinkage);
 
 			LLVMSetInitializer(
-				var->alloca,
+				var->llvm_value,
 				LLVMConstNull(var->type->llvm_type())
 			);
 		}
 		else if (!is_global && !var->is_const) {
-			var->alloca = LLVMBuildAlloca(
+			var->llvm_value = LLVMBuildAlloca(
 				BUILDER,
 				var->type->llvm_type(),
 				var->name
@@ -138,13 +138,13 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 	}
 
 	if (var->is_const && !(is_global && !is_const_literal)) {
-		var->alloca = value;
+		var->llvm_value = value;
 	}
 	else {
 		LLVMBuildStore(
 			BUILDER,
 			value,
-			var->alloca
+			var->llvm_value
 		);
 	}
 }
