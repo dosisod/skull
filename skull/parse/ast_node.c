@@ -76,15 +76,11 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (!((
-			is_const_literal(token) ||
-			token->token_type == TOKEN_IDENTIFIER
-		) &&
+	if (!(
+		is_value(token) &&
 		token->next &&
-		token->next->next && (
-			is_const_literal(token->next->next) ||
-			token->next->next->token_type == TOKEN_IDENTIFIER
-		)
+		token->next->next &&
+		is_value(token->next->next)
 	)) {
 		return false;
 	}
@@ -125,8 +121,7 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 	if (token->token_type == TOKEN_PAREN_CLOSE) {
 		*_token = token;
 	}
-	else if ((is_const_literal(token) ||
-		token->token_type == TOKEN_IDENTIFIER) &&
+	else if (is_value(token) &&
 		token->next &&
 		token->next->token_type == TOKEN_PAREN_CLOSE
 	) {
@@ -245,12 +240,11 @@ bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode 
 		}
 	}
 	else if (
-		(is_const_literal(token) ||
-		token->token_type == TOKEN_IDENTIFIER) &&
+		is_value(token) &&
 		token->next &&
 		token->next->token_type == TOKEN_OPER_IS &&
-		(is_const_literal(token->next->next) ||
-		token->next->next->token_type == TOKEN_IDENTIFIER)
+		token->next->next &&
+		is_value(token->next->next)
 	) {
 		lhs = token;
 		oper = TOKEN_OPER_IS;
@@ -275,16 +269,6 @@ bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode 
 	push_ast_node(*_token, last, node_type, node);
 
 	return true;
-}
-
-__attribute__((pure)) bool is_const_literal(Token *token) {
-	return (
-		token->token_type == TOKEN_INT_CONST ||
-		token->token_type == TOKEN_FLOAT_CONST ||
-		token->token_type == TOKEN_BOOL_CONST ||
-		token->token_type == TOKEN_RUNE_CONST ||
-		token->token_type == TOKEN_STR_CONST
-	);
 }
 
 /*
@@ -360,9 +344,8 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 		}
 
 		if (token->token_type == TOKEN_KW_RETURN &&
-			token->next && (
-			token->next->token_type == TOKEN_IDENTIFIER ||
-			is_const_literal(token->next))
+			token->next &&
+			is_value(token->next)
 		) {
 			token = token->next;
 			push_ast_node(token, &last, AST_NODE_RETURN, &node);
@@ -406,13 +389,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 			push_ast_node(token, &last, AST_NODE_COMMENT, &node);
 			continue;
 		}
-		if (token->token_type == TOKEN_INT_CONST ||
-			token->token_type == TOKEN_FLOAT_CONST ||
-			token->token_type == TOKEN_BOOL_CONST ||
-			token->token_type == TOKEN_RUNE_CONST ||
-			token->token_type == TOKEN_STR_CONST ||
-			token->token_type == TOKEN_TYPE
-		) {
+		if (is_value(token) || token->token_type == TOKEN_TYPE) {
 			push_ast_node(token, &last, AST_NODE_CONST, &node);
 			continue;
 		}
@@ -519,4 +496,16 @@ bool ast_token_cmp(Token *token, ...) {
 
 	va_end(vargs);
 	return true;
+}
+
+/*
+Return whether `token` represents a constant literal, or an identifier.
+*/
+__attribute__((pure)) bool is_value(const Token *const token) {
+	return token->token_type == TOKEN_IDENTIFIER ||
+		token->token_type == TOKEN_INT_CONST ||
+		token->token_type == TOKEN_FLOAT_CONST ||
+		token->token_type == TOKEN_BOOL_CONST ||
+		token->token_type == TOKEN_RUNE_CONST ||
+		token->token_type == TOKEN_STR_CONST;
 }

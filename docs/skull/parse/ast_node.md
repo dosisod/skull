@@ -147,3 +147,9 @@ bool ast_token_cmp(Token *token, ...)
 
 > Check each token's type starting at `token`, checking against the corresponding token type specified in `...`
 
+```c
+__attribute__((pure)) bool is_value(const Token *const token)
+```
+
+> Return whether `token` represents a constant literal, or an identifier.
+

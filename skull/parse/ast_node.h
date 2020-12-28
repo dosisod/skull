@@ -133,7 +133,7 @@ AstNode *make_ast_tree_(Token *, unsigned, Token **);
 void free_ast_tree(AstNode *);
 void free_ast_tree_(AstNode *);
 
-_Bool is_const_literal(Token *);
+_Bool is_value(const Token *const);
 
 /*
 Compare a variable number of token types stored in `...` agains each successive token in `token`.
