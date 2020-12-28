@@ -55,8 +55,7 @@ void declare_function(const AstNode *const node) {
 	while (head) {
 		if (strcmp(func_name, head->name) == 0) {
 			PANIC(ERR_NO_REDEFINE_FUNC, {
-				.tok = func_name_token,
-				.real = func_name
+				.tok = func_name_token
 			});
 		}
 
@@ -149,8 +148,7 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 
 	if (!current_function) {
 		PANIC(ERR_MISSING_DECLARATION, {
-			.tok = node->token,
-			.str = wide_func_name
+			.tok = node->token
 		});
 	}
 	free(wide_func_name);

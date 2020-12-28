@@ -108,10 +108,7 @@ void node_make_var(const AstNode *const node) {
 			}
 
 			if (!function) {
-				PANIC(ERR_MISSING_DECLARATION, {
-					.tok = node->next->token,
-					.real = func_name
-				});
+				PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
 			}
 		}
 		else if (node->next->node_type == AST_NODE_IDENTIFIER || (
@@ -142,10 +139,7 @@ void node_make_var(const AstNode *const node) {
 	}
 	free_variable(var);
 
-	PANIC(ERR_VAR_ALREADY_DEFINED, {
-		.tok = token,
-		.str = name
-	});
+	PANIC(ERR_VAR_ALREADY_DEFINED, { .tok = token });
 }
 
 /*

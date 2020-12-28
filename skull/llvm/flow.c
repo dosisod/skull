@@ -216,10 +216,7 @@ LLVMValueRef llvm_get_bool_from_token(const Token *token) {
 	if ((found_var && found_var->type != &TYPE_BOOL) ||
 		(!found_var && token->token_type != TOKEN_BOOL_CONST)
 	) {
-		PANIC(ERR_NON_BOOL_COND, {
-			.tok = token,
-			.var = found_var
-		});
+		PANIC(ERR_NON_BOOL_COND, { .tok = token });
 	}
 
 	return value;
