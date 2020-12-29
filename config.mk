@@ -16,7 +16,6 @@ CFLAGS += -std=c18 \
 	-pedantic \
 	-Werror \
 	-Werror=vla \
-	-Waggregate-return \
 	-Wbad-function-cast \
 	-Wbuiltin-macro-redefined \
 	-Wcast-align \

@@ -22,26 +22,7 @@
 extern LLVMBuilderRef BUILDER;
 extern Scope *SCOPE;
 
-const Type *token_type_to_type(const Token *const token) {
-	if (token->token_type == TOKEN_INT_CONST) {
-		return &TYPE_INT;
-	}
-	if (token->token_type == TOKEN_FLOAT_CONST) {
-		return &TYPE_FLOAT;
-	}
-	if (token->token_type == TOKEN_RUNE_CONST) {
-		return &TYPE_RUNE;
-	}
-	if (token->token_type == TOKEN_BOOL_CONST) {
-		return &TYPE_BOOL;
-	}
-	if (token->token_type == TOKEN_STR_CONST) {
-		return &TYPE_STR;
-	}
-	return NULL;
-}
-
-LLVMValueRef llvm_token_get_value(const Token *const token, Variable **variable) {
+Expr llvm_token_get_value(const Token *const token, Variable **variable) {
 	if (token->token_type == TOKEN_IDENTIFIER) {
 		Variable *var_found = scope_find_var(token);
 
@@ -50,15 +31,21 @@ LLVMValueRef llvm_token_get_value(const Token *const token, Variable **variable)
 		}
 
 		if (var_found->is_const && !(var_found->is_global && !var_found->is_const_lit)) {
-			return var_found->llvm_value;
+			return (Expr){
+				.llvm_value = var_found->llvm_value,
+				.type = var_found->type
+			};
 		}
 
-		return LLVMBuildLoad2(
-			BUILDER,
-			var_found->type->llvm_type(),
-			var_found->llvm_value,
-			""
-		);
+		return (Expr) {
+			.llvm_value = LLVMBuildLoad2(
+				BUILDER,
+				var_found->type->llvm_type(),
+				var_found->llvm_value,
+				""
+			),
+			.type = var_found->type
+		};
 	}
 
 	return llvm_parse_token(token);
@@ -83,10 +70,24 @@ void node_make_var(const AstNode *const node) {
 	Variable *var = NULL;
 
 	if (ATTR(AstNodeVarDef, node, is_implicit)) {
-		const Type *type = token_type_to_type(node->next->token);
+		const TokenType token_type = node->next->token->token_type;
+		const NodeType node_type = node->next->node_type;
+		const Type *type = NULL;
 
-		if (type) {
-			// fallthrough
+		if (token_type == TOKEN_INT_CONST) {
+			type = &TYPE_INT;
+		}
+		else if (token_type == TOKEN_FLOAT_CONST) {
+			type = &TYPE_FLOAT;
+		}
+		else if (token_type == TOKEN_RUNE_CONST) {
+			type = &TYPE_RUNE;
+		}
+		else if (token_type == TOKEN_BOOL_CONST) {
+			type = &TYPE_BOOL;
+		}
+		else if (token_type == TOKEN_STR_CONST) {
+			type = &TYPE_STR;
 		}
 		else if (node->next->node_type == AST_NODE_FUNCTION) {
 			char *func_name = token_mbs_str(node->next->token);
@@ -111,12 +112,12 @@ void node_make_var(const AstNode *const node) {
 				PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
 			}
 		}
-		else if (node->next->node_type == AST_NODE_IDENTIFIER || (
-			(node->next->node_type == AST_NODE_ADD ||
-			node->next->node_type == AST_NODE_SUB ||
-			node->next->node_type == AST_NODE_MULT ||
-			node->next->node_type == AST_NODE_DIV) &&
-			node->next->token->token_type == TOKEN_IDENTIFIER)
+		else if (node_type == AST_NODE_IDENTIFIER || (
+			(node_type == AST_NODE_ADD ||
+			node_type == AST_NODE_SUB ||
+			node_type == AST_NODE_MULT ||
+			node_type == AST_NODE_DIV) &&
+			token_type == TOKEN_IDENTIFIER)
 		) {
 			type = scope_find_var(node->next->token)->type;
 		}
@@ -143,34 +144,48 @@ void node_make_var(const AstNode *const node) {
 }
 
 /*
-Make an `LLVMValueRef` from `token`, checking for compatibility with `type`.
+Make an expression from `token`, checking for compatibility with `type`.
 */
-LLVMValueRef llvm_parse_token_typed(const Type *const type, const Token *const token) {
-	if (type == token_type_to_type(token)) {
-		return llvm_parse_token(token);
+Expr llvm_parse_token_typed(const Type *const type, const Token *const token) {
+	Expr expr = llvm_parse_token(token);
+
+	if (!expr.type) {
+		PANIC(ERR_TYPE_MISMATCH, {
+			.tok = token,
+			.type = type
+		});
 	}
 
-	PANIC(ERR_TYPE_MISMATCH, {
-		.tok = token,
-		.type = type
-	});
+	return expr;
 }
 
 /*
-Make an `LLVMValueRef` from `token`.
+Make an expression from `token`.
 */
-LLVMValueRef llvm_parse_token(const Token *const token) {
+Expr llvm_parse_token(const Token *const token) {
 	if (token->token_type == TOKEN_INT_CONST) {
-		return LLVM_INT(eval_integer(token));
+		return (Expr){
+			.llvm_value = LLVM_INT(eval_integer(token)),
+			.type = &TYPE_INT
+		};
 	}
 	if (token->token_type == TOKEN_FLOAT_CONST) {
-		return LLVM_FLOAT(eval_float(token));
+		return (Expr){
+			.llvm_value = LLVM_FLOAT(eval_float(token)),
+			.type = &TYPE_FLOAT
+		};
 	}
 	if (token->token_type == TOKEN_BOOL_CONST) {
-		return LLVM_BOOL(eval_bool(token));
+		return (Expr){
+			.llvm_value = LLVM_BOOL(eval_bool(token)),
+			.type = &TYPE_BOOL
+		};
 	}
 	if (token->token_type == TOKEN_RUNE_CONST) {
-		return LLVM_RUNE(eval_rune(token));
+		return (Expr){
+			.llvm_value = LLVM_RUNE(eval_rune(token)),
+			.type = &TYPE_RUNE
+		};
 	}
 	if (token->token_type == TOKEN_STR_CONST) {
 		SkullStr str = eval_str(token);
@@ -186,8 +201,11 @@ LLVMValueRef llvm_parse_token(const Token *const token) {
 		free(mbs);
 		free(str);
 
-		return ret;
+		return (Expr){
+			.llvm_value = ret,
+			.type = &TYPE_STR
+		};
 	}
 
-	return NULL;
+	return (Expr){0};
 }

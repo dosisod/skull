@@ -153,16 +153,13 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 	}
 	free(wide_func_name);
 
-	LLVMValueRef params = NULL;
+	Expr params = {0};
 	const Token *const param = ATTR(AstNodeFunction, node, param);
 
 	if (current_function->num_params == 1) {
-		Variable *var_found = NULL;
-		params = llvm_token_get_value(param, &var_found);
+		params = llvm_token_get_value(param, NULL);
 
-		if ((var_found && var_found->type != current_function->param_types) ||
-			(!var_found && token_type_to_type(param) != current_function->param_types)
-		) {
+		if (params.type != current_function->param_types) {
 			PANIC(ERR_FUNC_TYPE_MISMATCH, {
 				.tok = param,
 				.real = strdup(current_function->param_types->name)
@@ -177,7 +174,7 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 		BUILDER,
 		current_function->type,
 		current_function->function,
-		&params,
+		&params.llvm_value,
 		current_function->num_params,
 		""
 	);

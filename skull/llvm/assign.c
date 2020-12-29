@@ -89,7 +89,7 @@ LLVMValueRef llvm_get_value_for_var(Variable *const var, const AstNode *const no
 		value = llvm_make_function_call(node);
 	}
 	else {
-		value = llvm_parse_token_typed(var->type, node->token);
+		value = llvm_parse_token_typed(var->type, node->token).llvm_value;
 	}
 
 	if (!value) {
@@ -154,7 +154,7 @@ Return LLVM for to load an existing identifier `node` to `var`.
 */
 LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const node) {
 	Variable *var_found = NULL;
-	LLVMValueRef value = llvm_token_get_value(node->token, &var_found);
+	Expr expr = llvm_token_get_value(node->token, &var_found);
 
 	if (var_found->type != var->type) {
 		PANIC(ERR_TYPE_MISMATCH, {
@@ -169,5 +169,5 @@ LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const no
 		});
 	}
 
-	return value;
+	return expr.llvm_value;
 }
