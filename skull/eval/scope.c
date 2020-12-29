@@ -12,7 +12,7 @@ Add variable `var` to `scope`.
 
 Returns `true` if `var` was added, else `false`
 */
-bool scope_add_var(Scope *const scope, Variable *var) {
+bool scope_add_var(Scope *const scope, Variable *const var) {
 	if (scope_find_name(scope, var->name)) {
 		return false;
 	}
@@ -26,7 +26,7 @@ bool scope_add_var(Scope *const scope, Variable *var) {
 /*
 Returns pointer to variable with matching `name` if found, else `NULL`
 */
-Variable *scope_find_name(const Scope *scope, const char *name) {
+Variable *scope_find_name(const Scope *const scope, const char *name) {
 	if (!scope) {
 		return NULL;
 	}

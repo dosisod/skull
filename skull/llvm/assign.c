@@ -63,7 +63,7 @@ void llvm_make_var_assign(AstNode **node) {
 /*
 Based on `var` and `node`, try to make an LLVM value that is assignable to `var.
 */
-LLVMValueRef llvm_get_value_for_var(Variable *const var, const AstNode *const node) {
+LLVMValueRef llvm_get_value_for_var(const Variable *const var, const AstNode *const node) {
 	if (!node) {
 		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
@@ -152,7 +152,7 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 /*
 Return LLVM for to load an existing identifier `node` to `var`.
 */
-LLVMValueRef llvm_assign_identifier(Variable *const var, const AstNode *const node) {
+LLVMValueRef llvm_assign_identifier(const Variable *const var, const AstNode *const node) {
 	Variable *var_found = NULL;
 	Expr expr = llvm_token_get_value(node->token, &var_found);
 

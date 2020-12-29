@@ -24,7 +24,7 @@ extern Scope *SCOPE;
 
 Expr llvm_token_get_value(const Token *const token, Variable **variable) {
 	if (token->token_type == TOKEN_IDENTIFIER) {
-		Variable *var_found = scope_find_var(token);
+		Variable *const var_found = scope_find_var(token);
 
 		if (variable) {
 			*variable = var_found;

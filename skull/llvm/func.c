@@ -199,7 +199,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	MAKE_SUB_SCOPE;
 
 	if (func->param_types) {
-		Variable *param_var = make_variable(
+		Variable *const param_var = make_variable(
 			func->param_types,
 			func->param_names,
 			true
