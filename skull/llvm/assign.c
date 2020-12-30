@@ -86,7 +86,16 @@ LLVMValueRef llvm_get_value_for_var(const Variable *const var, const AstNode *co
 		value = llvm_make_oper(var->type, node, &llvm_make_div);
 	}
 	else if (node->node_type == AST_NODE_FUNCTION) {
-		value = llvm_make_function_call(node);
+		Expr expr = llvm_make_function_call(node);
+
+		if (expr.type != var->type) {
+			PANIC(ERR_TYPE_MISMATCH, {
+				.tok = node->token,
+				.type = var->type
+			});
+		}
+
+		value = expr.llvm_value;
 	}
 	else {
 		value = llvm_parse_token_typed(var->type, node->token).llvm_value;

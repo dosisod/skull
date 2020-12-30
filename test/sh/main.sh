@@ -212,6 +212,7 @@ test_error "non_int_return.sk"
 test_error "passing_param_to_paramless_func.sk"
 test_error "non_bool_cond.sk"
 test_error "no_nested_export.sk"
+test_error "func_assign_bad_type.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

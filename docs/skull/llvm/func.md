@@ -39,7 +39,7 @@ void declare_function(const AstNode *const node)
 > Parse declaration (and potential definition) of function in `node`.
 
 ```c
-LLVMValueRef llvm_make_function_call(const AstNode *const node)
+Expr llvm_make_function_call(const AstNode *const node)
 ```
 
 > Builds a function call from `node`.

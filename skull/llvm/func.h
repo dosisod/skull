@@ -3,6 +3,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/eval/types/types.h"
+#include "skull/llvm/var.h"
 #include "skull/parse/ast_node.h"
 
 typedef struct FunctionDeclaration FunctionDeclaration;
@@ -42,6 +43,6 @@ FunctionDeclaration *FUNCTION_DECLARATIONS;
 
 void declare_function(const AstNode *const);
 
-LLVMValueRef llvm_make_function_call(const AstNode *const);
+Expr llvm_make_function_call(const AstNode *const);
 
 void define_function(const AstNode *const, FunctionDeclaration *);

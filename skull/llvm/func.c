@@ -133,7 +133,7 @@ FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *n
 /*
 Builds a function call from `node`.
 */
-LLVMValueRef llvm_make_function_call(const AstNode *const node) {
+Expr llvm_make_function_call(const AstNode *const node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
@@ -170,14 +170,17 @@ LLVMValueRef llvm_make_function_call(const AstNode *const node) {
 		PANIC(ERR_ZERO_PARAM_FUNC, { .tok = param });
 	}
 
-	return LLVMBuildCall2(
-		BUILDER,
-		current_function->type,
-		current_function->function,
-		&params.llvm_value,
-		current_function->num_params,
-		""
-	);
+	return (Expr){
+		.llvm_value = LLVMBuildCall2(
+			BUILDER,
+			current_function->type,
+			current_function->function,
+			&params.llvm_value,
+			current_function->num_params,
+			""
+		),
+		.type = current_function->return_type
+	};
 }
 
 /*
