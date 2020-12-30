@@ -11,9 +11,9 @@ typedef struct {
 	const Type *type;
 } Expr;
 
-Expr llvm_token_get_value(const Token *const, Variable **);
+Expr token_to_expr(const Token *const, Variable **);
 
 void node_make_var(const AstNode *const);
 
-Expr llvm_parse_token_typed(const Type *const, const Token *const);
-Expr llvm_parse_token(const Token *const);
+Expr token_to_simple_expr_typed(const Type *const, const Token *const);
+Expr token_to_simple_expr(const Token *const);

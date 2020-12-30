@@ -37,7 +37,7 @@ LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operati
 > Return LLVM for assigning operation `oper` from `node`.
 
 ```c
-LLVMValueRef llvm_token_to_val(const Type *type, const Token *const token)
+LLVMValueRef token_to_llvm_value(const Type *type, const Token *const token)
 ```
 
 > Return LLVM equivalent of `token`, checking for compatibility with `type`.

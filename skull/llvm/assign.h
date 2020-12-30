@@ -7,5 +7,7 @@
 
 void llvm_make_var_def(AstNode **);
 void llvm_make_var_assign(AstNode **);
-LLVMValueRef llvm_get_value_for_var(const Variable *const, const AstNode *const);
+
+LLVMValueRef llvm_node_to_value(const Variable *const, const AstNode *const);
+
 LLVMValueRef llvm_assign_identifier(const Variable *const, const AstNode *const);

@@ -157,7 +157,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	const Token *const param = ATTR(AstNodeFunction, node, param);
 
 	if (current_function->num_params == 1) {
-		params = llvm_token_get_value(param, NULL);
+		params = token_to_expr(param, NULL);
 
 		if (params.type != current_function->param_types) {
 			PANIC(ERR_FUNC_TYPE_MISMATCH, {

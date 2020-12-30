@@ -105,16 +105,16 @@ Return LLVM for assigning operation `oper` from `node`.
 LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operation *oper) {
 	return oper(
 		type,
-		llvm_token_to_val(type, ATTR(AstNodeOper, node, lhs)),
-		llvm_token_to_val(type, ATTR(AstNodeOper, node, rhs))
+		token_to_llvm_value(type, ATTR(AstNodeOper, node, lhs)),
+		token_to_llvm_value(type, ATTR(AstNodeOper, node, rhs))
 	);
 }
 
 /*
 Return LLVM equivalent of `token`, checking for compatibility with `type`.
 */
-LLVMValueRef llvm_token_to_val(const Type *type, const Token *const token) {
-	Expr expr = llvm_token_get_value(token, NULL);
+LLVMValueRef token_to_llvm_value(const Type *type, const Token *const token) {
+	Expr expr = token_to_expr(token, NULL);
 
 	if (expr.type == type) {
 		return expr.llvm_value;

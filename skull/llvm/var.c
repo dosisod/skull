@@ -22,7 +22,7 @@
 extern LLVMBuilderRef BUILDER;
 extern Scope *SCOPE;
 
-Expr llvm_token_get_value(const Token *const token, Variable **variable) {
+Expr token_to_expr(const Token *const token, Variable **variable) {
 	if (token->token_type == TOKEN_IDENTIFIER) {
 		Variable *const var_found = scope_find_var(token);
 
@@ -48,7 +48,7 @@ Expr llvm_token_get_value(const Token *const token, Variable **variable) {
 		};
 	}
 
-	return llvm_parse_token(token);
+	return token_to_simple_expr(token);
 }
 
 /*
@@ -146,8 +146,8 @@ void node_make_var(const AstNode *const node) {
 /*
 Make an expression from `token`, checking for compatibility with `type`.
 */
-Expr llvm_parse_token_typed(const Type *const type, const Token *const token) {
-	Expr expr = llvm_parse_token(token);
+Expr token_to_simple_expr_typed(const Type *const type, const Token *const token) {
+	Expr expr = token_to_simple_expr(token);
 
 	if (!expr.type) {
 		PANIC(ERR_TYPE_MISMATCH, {
@@ -160,9 +160,9 @@ Expr llvm_parse_token_typed(const Type *const type, const Token *const token) {
 }
 
 /*
-Make an expression from `token`.
+Make a simple expression (const literal) from `token`.
 */
-Expr llvm_parse_token(const Token *const token) {
+Expr token_to_simple_expr(const Token *const token) {
 	if (token->token_type == TOKEN_INT_CONST) {
 		return (Expr){
 			.llvm_value = LLVM_INT(eval_integer(token)),
