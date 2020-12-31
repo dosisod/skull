@@ -172,7 +172,7 @@ LLVMValueRef llvm_make_cond(const AstNode *const node) {
 		LLVMValueRef result = llvm_make_is(
 			lhs_expr.type,
 			lhs_expr.llvm_value,
-			token_to_llvm_value(lhs_expr.type, rhs)
+			token_to_simple_expr_typed(lhs_expr.type, rhs).llvm_value
 		);
 
 		if (!result) {

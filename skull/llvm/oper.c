@@ -6,7 +6,6 @@
 #include "skull/eval/types/int.h"
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/scope.h"
-#include "skull/llvm/var.h"
 
 #include "skull/llvm/oper.h"
 
@@ -16,61 +15,84 @@ extern Scope *SCOPE;
 /*
 Build LLVM for assining addition of `lhs` and `rhs`.
 */
-LLVMValueRef llvm_make_add(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_add(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
-		return LLVMBuildNSWAdd(BUILDER, lhs, rhs, "");
+		return (Expr){
+			.llvm_value = LLVMBuildNSWAdd(BUILDER, lhs, rhs, ""),
+			.type = type
+		};
 	}
 	if (type == &TYPE_FLOAT) {
-		return LLVMBuildFAdd(BUILDER, lhs, rhs, "");
+		return (Expr){
+			.llvm_value = LLVMBuildFAdd(BUILDER, lhs, rhs, ""),
+			.type = type
+		};
 	}
 
-	return NULL;
+	return (Expr){0};
 }
 
 /*
 Build LLVM for assining subtraction of `lhs` and `rhs`.
 */
-LLVMValueRef llvm_make_sub(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_sub(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
-		return LLVMBuildNSWSub(BUILDER, lhs, rhs, "");
+		return (Expr){
+			.llvm_value = LLVMBuildNSWSub(BUILDER, lhs, rhs, ""),
+			.type = type
+		};
 	}
 	if (type == &TYPE_FLOAT) {
-		return LLVMBuildFSub(BUILDER, lhs, rhs, "");
+		return (Expr){
+			.llvm_value = LLVMBuildFSub(BUILDER, lhs, rhs, ""),
+			.type = type
+		};
 	}
 
-	return NULL;
+	return (Expr){0};
 }
 
 /*
 Build LLVM for assining multiplication of `lhs` and `rhs`.
 */
-LLVMValueRef llvm_make_mult(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_mult(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
-		return LLVMBuildNSWMul(BUILDER, lhs, rhs, "");
+		return (Expr){
+			.llvm_value = LLVMBuildNSWMul(BUILDER, lhs, rhs, ""),
+			.type = type
+		};
 	}
 	if (type == &TYPE_FLOAT) {
-		return LLVMBuildFMul(BUILDER, lhs, rhs, "");
+		return (Expr){
+			.llvm_value = LLVMBuildFMul(BUILDER, lhs, rhs, ""),
+			.type = type
+		};
 	}
 
-	return NULL;
+	return (Expr){0};
 }
-
 /*
 Build LLVM for assining division of `lhs` and `rhs`.
 */
-LLVMValueRef llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
 		if (LLVMConstIntGetSExtValue(rhs) == 0) {
 			PANIC(ERR_DIV_BY_ZERO, {0});
 		}
 
-		return LLVMBuildExactSDiv(BUILDER, lhs, rhs, "");
+		return (Expr){
+			.llvm_value = LLVMBuildExactSDiv(BUILDER, lhs, rhs, ""),
+			.type = type
+		};
 	}
 	if (type == &TYPE_FLOAT) {
-		return LLVMBuildFDiv(BUILDER, lhs, rhs, "");
+		return (Expr){
+			.llvm_value = LLVMBuildFDiv(BUILDER, lhs, rhs, ""),
+			.type = type
+		};
 	}
 
-	return NULL;
+	return (Expr){0};
 }
 
 /*
@@ -103,25 +125,35 @@ LLVMValueRef llvm_make_is(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) 
 Return LLVM for assigning operation `oper` from `node`.
 */
 LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operation *oper) {
-	return oper(
-		type,
-		token_to_llvm_value(type, ATTR(AstNodeOper, node, lhs)),
-		token_to_llvm_value(type, ATTR(AstNodeOper, node, rhs))
-	);
-}
+	const Token *rhs_token = ATTR(AstNodeOper, node, rhs);
+	const Token *lhs_token = ATTR(AstNodeOper, node, lhs);
 
-/*
-Return LLVM equivalent of `token`, checking for compatibility with `type`.
-*/
-LLVMValueRef token_to_llvm_value(const Type *type, const Token *const token) {
-	Expr expr = token_to_expr(token, NULL);
+	Expr lhs = token_to_expr(lhs_token, NULL);
+	Expr rhs = token_to_expr(rhs_token, NULL);
 
-	if (expr.type == type) {
-		return expr.llvm_value;
+	if (lhs.type != rhs.type) {
+		PANIC(ERR_TYPE_MISMATCH, {
+			.tok = rhs_token,
+			.type = lhs.type
+		});
 	}
 
-	PANIC(ERR_TYPE_MISMATCH, {
-		.tok = token,
-		.type = type
-	});
+	Expr result = oper(
+		lhs.type,
+		lhs.llvm_value,
+		rhs.llvm_value
+	);
+
+	if (!result.type && !result.llvm_value) {
+		return NULL;
+	}
+
+	if (result.type != type) {
+		PANIC(ERR_TYPE_MISMATCH, {
+			.tok = lhs_token,
+			.type = type
+		});
+	}
+
+	return result.llvm_value;
 }
