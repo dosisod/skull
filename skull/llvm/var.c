@@ -163,35 +163,30 @@ Expr token_to_simple_expr_typed(const Type *const type, const Token *const token
 Make a simple expression (const literal) from `token`.
 */
 Expr token_to_simple_expr(const Token *const token) {
+	LLVMValueRef llvm_value = NULL;
+	const Type *type = NULL;
+
 	if (token->token_type == TOKEN_INT_CONST) {
-		return (Expr){
-			.llvm_value = LLVM_INT(eval_integer(token)),
-			.type = &TYPE_INT
-		};
+		llvm_value = LLVM_INT(eval_integer(token));
+		type = &TYPE_INT;
 	}
-	if (token->token_type == TOKEN_FLOAT_CONST) {
-		return (Expr){
-			.llvm_value = LLVM_FLOAT(eval_float(token)),
-			.type = &TYPE_FLOAT
-		};
+	else if (token->token_type == TOKEN_FLOAT_CONST) {
+		llvm_value = LLVM_FLOAT(eval_float(token));
+		type = &TYPE_FLOAT;
 	}
-	if (token->token_type == TOKEN_BOOL_CONST) {
-		return (Expr){
-			.llvm_value = LLVM_BOOL(eval_bool(token)),
-			.type = &TYPE_BOOL
-		};
+	else if (token->token_type == TOKEN_BOOL_CONST) {
+		llvm_value = LLVM_BOOL(eval_bool(token));
+		type = &TYPE_BOOL;
 	}
-	if (token->token_type == TOKEN_RUNE_CONST) {
-		return (Expr){
-			.llvm_value = LLVM_RUNE(eval_rune(token)),
-			.type = &TYPE_RUNE
-		};
+	else if (token->token_type == TOKEN_RUNE_CONST) {
+		llvm_value = LLVM_RUNE(eval_rune(token));
+		type = &TYPE_RUNE;
 	}
-	if (token->token_type == TOKEN_STR_CONST) {
+	else if (token->token_type == TOKEN_STR_CONST) {
 		SkullStr str = eval_str(token);
 		char *const mbs = c32stombs(str);
 
-		LLVMValueRef ret = LLVMBuildBitCast(
+		llvm_value = LLVMBuildBitCast(
 			BUILDER,
 			LLVMBuildGlobalString(BUILDER, mbs, ""),
 			TYPE_STR.llvm_type(),
@@ -201,11 +196,11 @@ Expr token_to_simple_expr(const Token *const token) {
 		free(mbs);
 		free(str);
 
-		return (Expr){
-			.llvm_value = ret,
-			.type = &TYPE_STR
-		};
+		type = &TYPE_STR;
 	}
 
-	return (Expr){0};
+	return (Expr){
+		.llvm_value = llvm_value,
+		.type = type
+	};
 }
