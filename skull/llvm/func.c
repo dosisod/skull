@@ -24,6 +24,8 @@ FunctionDeclaration *FUNCTION_DECLARATIONS = NULL;
 bool node_to_llvm_ir(AstNode *);
 FunctionDeclaration *llvm_create_new_function(const AstNode *const, char *, bool);
 
+Expr node_to_expr(const Type *const type, const AstNode *const, const Variable *const);
+
 /*
 Parse declaration (and potential definition) of function in `node`.
 */
@@ -154,10 +156,14 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	free(wide_func_name);
 
 	Expr params = {0};
-	const Token *const param = ATTR(AstNodeFunction, node, param);
+	const Token *const param = node->child->token;
 
 	if (current_function->num_params == 1) {
-		params = token_to_expr(param, NULL);
+		params = node_to_expr(
+			current_function->param_types,
+			node->child,
+			NULL
+		);
 
 		if (params.type != current_function->param_types) {
 			PANIC(ERR_FUNC_TYPE_MISMATCH, {

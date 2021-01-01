@@ -1,0 +1,5 @@
+f(b: bool) {
+	# do nothing
+}
+
+f(1 + 2)

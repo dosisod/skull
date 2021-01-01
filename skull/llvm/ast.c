@@ -73,6 +73,7 @@ while (node) {
 
 	else if (node->child && !(
 		node_type == AST_NODE_WHILE ||
+		node_type == AST_NODE_FUNCTION ||
 		node_type == AST_NODE_FUNCTION_PROTO
 	)) {
 		PANIC(ERR_UNEXPECTED_CODE_BLOCK, {0});

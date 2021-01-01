@@ -19,7 +19,7 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	classify_tokens(token);
 
 	Token *token_last = NULL;
-	AstNode *const ret = make_ast_tree_(token, 0, &token_last);
+	AstNode *const ret = make_ast_tree_(token, 0, &token_last, TOKEN_BRACKET_CLOSE);
 
 	if (!ret) {
 		free_tokens(token);
@@ -274,7 +274,7 @@ bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode 
 /*
 Internal AST tree generator.
 */
-AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
+AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, TokenType bracket_or_paren) {
 	Token *last = token;
 
 	AstNode *node = make_ast_node();
@@ -282,8 +282,16 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 	bool allow_top_lvl_bracket = false;
 
 	while (token) {
-		if (token->token_type == TOKEN_BRACKET_OPEN) {
-			AstNode *const child = make_ast_tree_(token->next, indent_lvl + 1, token_last);
+		if (token->token_type == TOKEN_BRACKET_OPEN || token->token_type == TOKEN_PAREN_OPEN) {
+			AstNode *const child = make_ast_tree_(
+				token->next,
+				indent_lvl + 1,
+				token_last,
+				(token->token_type == TOKEN_BRACKET_OPEN) ?
+					TOKEN_BRACKET_CLOSE :
+					TOKEN_PAREN_CLOSE
+			);
+
 			if (!child) {
 				free(head);
 				return NULL;
@@ -311,7 +319,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 			continue;
 		}
 
-		if (token->token_type == TOKEN_BRACKET_CLOSE) {
+		if (token->token_type == bracket_or_paren) {
 			if (indent_lvl == 0 && !allow_top_lvl_bracket) {
 				free(head);
 				PANIC(ERR_MISSING_OPEN_BRAK, { .tok = token });
@@ -377,7 +385,10 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last) {
 			continue;
 		}
 
-		if (is_ast_function(&token, &last, &node)) {
+		if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
+			token = token->next;
+
+			push_ast_node(token, &last, AST_NODE_FUNCTION, &node);
 			continue;
 		}
 

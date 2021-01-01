@@ -66,7 +66,7 @@ TEST(make_ast_tree_external, {
 })
 
 TEST(make_ast_tree_function, {
-	TEST_AST_TREE(U"x()", AST_NODE_FUNCTION, 0, 3);
+	TEST_AST_TREE(U"x()", AST_NODE_FUNCTION, 0, 2);
 })
 
 TEST(make_ast_tree_return, {

@@ -117,6 +117,7 @@ test "function" "multi_var_func.sk"
 test "function" "nested_if.sk"
 test "function" "exported.sk"
 test "function" "non_int_return.sk"
+test "function" "expr_param.sk"
 
 test "flow" "if_empty_body.sk"
 test "flow" "if_false.sk"
@@ -214,6 +215,7 @@ test_error "non_bool_cond.sk"
 test_error "no_nested_export.sk"
 test_error "func_assign_bad_type.sk"
 test_error "expr_assign_bad_type.sk"
+test_error "bad_expr_func_param.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
