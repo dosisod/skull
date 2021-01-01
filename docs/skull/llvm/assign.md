@@ -13,14 +13,18 @@ void llvm_make_var_assign(AstNode **node)
 > Build a LLVM `load` operation from `node`.
 
 ```c
-LLVMValueRef llvm_node_to_value(const Variable *const var, const AstNode *const node)
+Expr node_to_expr(const Type *const type, const AstNode *const node, const Variable *const var)
 ```
 
-> Based on `var` and `node`, try to make an LLVM value that is assignable to `var.
+> Create an expression from `node` with type `type`.
+> \
+> Optionally pass `var` if expression is going to be assigned to a variable.
 
 ```c
-LLVMValueRef llvm_assign_identifier(const Variable *const var, const AstNode *const node)
+LLVMValueRef llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var)
 ```
 
-> Return LLVM for to load an existing identifier `node` to `var`.
+> Return LLVM for to load an existing identifier `node` with type `type`.
+> \
+> Optionally pass `var` if result is expected to be assigned to a variable.
 

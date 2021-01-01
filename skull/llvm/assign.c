@@ -12,7 +12,6 @@
 #include "skull/llvm/func.h"
 #include "skull/llvm/oper.h"
 #include "skull/llvm/scope.h"
-#include "skull/llvm/var.h"
 
 #include "skull/llvm/assign.h"
 
@@ -34,7 +33,7 @@ void llvm_make_var_def(AstNode **node) {
 
 	llvm_assign_value_to_var(
 		var,
-		llvm_node_to_value(var, (*node)->next)
+		node_to_expr(var->type, (*node)->next, var).llvm_value
 	);
 
 	*node = (*node)->next;
@@ -54,61 +53,73 @@ void llvm_make_var_assign(AstNode **node) {
 
 	llvm_assign_value_to_var(
 		found_var,
-		llvm_node_to_value(found_var, (*node)->next)
+		node_to_expr(found_var->type, (*node)->next, found_var).llvm_value
 	);
 
 	*node = (*node)->next;
 }
 
 /*
-Based on `var` and `node`, try to make an LLVM value that is assignable to `var.
+Create an expression from `node` with type `type`.
+
+Optionally pass `var` if expression is going to be assigned to a variable.
 */
-LLVMValueRef llvm_node_to_value(const Variable *const var, const AstNode *const node) {
+Expr node_to_expr(const Type *const type, const AstNode *const node, const Variable *const var) {
 	if (!node) {
 		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
 	}
 
-	LLVMValueRef value = NULL;
+	Expr expr;
 
 	if (node->node_type == AST_NODE_IDENTIFIER) {
-		value = llvm_assign_identifier(var, node);
+		expr = (Expr){
+			.llvm_value = llvm_assign_identifier(type, node, var),
+			.type = type
+		};
 	}
 	else if (node->node_type == AST_NODE_ADD) {
-		value = llvm_make_oper(var->type, node, &llvm_make_add);
+		expr = (Expr){
+			.llvm_value = llvm_make_oper(type, node, &llvm_make_add),
+			.type = type
+		};
 	}
 	else if (node->node_type == AST_NODE_SUB) {
-		value = llvm_make_oper(var->type, node, &llvm_make_sub);
+		expr = (Expr){
+			.llvm_value = llvm_make_oper(type, node, &llvm_make_sub),
+			.type = type
+		};
 	}
 	else if (node->node_type == AST_NODE_MULT) {
-		value = llvm_make_oper(var->type, node, &llvm_make_mult);
+		expr = (Expr){
+			.llvm_value = llvm_make_oper(type, node, &llvm_make_mult),
+			.type = type
+		};
 	}
 	else if (node->node_type == AST_NODE_DIV) {
-		value = llvm_make_oper(var->type, node, &llvm_make_div);
+		expr = (Expr){
+			.llvm_value = llvm_make_oper(type, node, &llvm_make_div),
+			.type = type
+		};
 	}
 	else if (node->node_type == AST_NODE_FUNCTION) {
-		Expr expr = llvm_make_function_call(node);
+		expr = llvm_make_function_call(node);
 
-		if (expr.type != var->type) {
+		if (expr.type != type) {
 			PANIC(ERR_TYPE_MISMATCH, {
 				.tok = node->token,
-				.type = var->type
+				.type = type
 			});
 		}
-
-		value = expr.llvm_value;
 	}
 	else {
-		value = token_to_simple_expr_typed(var->type, node->token).llvm_value;
+		expr = token_to_simple_expr_typed(type, node->token);
 	}
 
-	if (!value) {
-		PANIC(ERR_UNASSIGNABLE, {
-			.tok = node->token,
-			.real = var->name
-		});
+	if (!expr.llvm_value) {
+		PANIC(ERR_INVALID_EXPR, { .tok = node->token });
 	}
 
-	return value;
+	return expr;
 }
 
 void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
@@ -159,16 +170,18 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 }
 
 /*
-Return LLVM for to load an existing identifier `node` to `var`.
+Return LLVM for to load an existing identifier `node` with type `type`.
+
+Optionally pass `var` if result is expected to be assigned to a variable.
 */
-LLVMValueRef llvm_assign_identifier(const Variable *const var, const AstNode *const node) {
+LLVMValueRef llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var) {
 	Variable *var_found = NULL;
 	Expr expr = token_to_expr(node->token, &var_found);
 
-	if (var_found->type != var->type) {
+	if (var_found->type != type) {
 		PANIC(ERR_TYPE_MISMATCH, {
 			.tok = node->token,
-			.type = var->type
+			.type = type
 		});
 	}
 	if (var == var_found) {

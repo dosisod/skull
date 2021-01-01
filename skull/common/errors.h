@@ -33,7 +33,7 @@
 #define ERR_UNEXPECTED_CODE_BLOCK "unexpected code block"
 #define ERR_UNREACHALE_RETURN "unreachable code after return"
 #define ERR_REASSIGN_CONST "cannot reassign const variable \"%s\"\n"
-#define ERR_UNASSIGNABLE "unable to assign value to variable \"%s\"\n"
+#define ERR_INVALID_EXPR "invalid expression near \"%s\"\n"
 #define ERR_REDUNDANT_REASSIGN "redundant assignment of variable \"%s\" to itself\n"
 #define ERR_DIV_BY_ZERO "division by zero"
 #define ERR_NO_EXPORT_NESTED "cannot export nested function \"%s\"\n"
