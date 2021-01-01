@@ -520,3 +520,54 @@ __attribute__((pure)) bool is_value(const Token *const token) {
 		token->token_type == TOKEN_RUNE_CONST ||
 		token->token_type == TOKEN_STR_CONST;
 }
+
+void print_ast_tree_(const AstNode *, unsigned);
+
+/*
+Print AST tree to screen (for debugging).
+*/
+void print_ast_tree(const AstNode *node) {
+	print_ast_tree_(node, 0);
+}
+
+void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
+	while (node) {
+		char *indent = Malloc(indent_lvl + 1);
+		memset(indent, ' ', indent_lvl);
+		indent[indent_lvl] = '\0';
+
+		printf("%s<node at %p, node_type: %u>\n",
+			indent,
+			(void *)node,
+			node->node_type
+		);
+
+		const Token *token = node->token;
+		const Token *token_end = node->token_end->next;
+
+		while (token != token_end) {
+			char *str = token_mbs_str(token);
+
+			printf("%s   <token at %p, token_type: %u, column: %u, line: %u, data: `%s`>\n",
+				indent,
+				(void *)token,
+				token->token_type,
+				token->line,
+				token->column,
+				str
+			);
+
+			free(str);
+
+			token = token->next;
+		}
+
+		free(indent);
+
+		if (node->child) {
+			print_ast_tree_(node->child, indent_lvl + 2);
+		}
+
+		node = node->next;
+	}
+}

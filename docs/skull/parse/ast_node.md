@@ -153,3 +153,9 @@ __attribute__((pure)) bool is_value(const Token *const token)
 
 > Return whether `token` represents a constant literal, or an identifier.
 
+```c
+void print_ast_tree(const AstNode *node)
+```
+
+> Print AST tree to screen (for debugging).
+
