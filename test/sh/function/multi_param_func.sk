@@ -1,5 +1,7 @@
 # comma seperated params will be coming soon
 
-f(a: int b: int) {
-	# do nothing
+f(a: int b: int) int {
+	x := a + b
+
+	return x
 }

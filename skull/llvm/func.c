@@ -96,10 +96,13 @@ FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *n
 	LLVMTypeRef *params = NULL;
 
 	if (func->param_types) {
-		func->num_params = 1;
+		func->num_params = ATTR(AstNodeFunctionProto, node, num_params);
 
-		LLVMTypeRef llvm_param_type = func->param_types[0]->llvm_type();
-		params = &llvm_param_type;
+		params = Malloc(func->num_params * sizeof(LLVMValueRef));
+
+		for (unsigned i = 0 ; i < func->num_params ; i++) {
+			params[i] = func->param_types[0]->llvm_type();
+		}
 	}
 
 	func->return_type = ATTR(AstNodeFunctionProto, node, return_type);
@@ -208,17 +211,22 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	MAKE_SUB_SCOPE;
 
 	if (func->param_types) {
-		Variable *const param_var = make_variable(
-			func->param_types[0],
-			func->param_names[0],
-			true
-		);
+		LLVMValueRef next_param = LLVMGetFirstParam(func->function);
 
-		if (!scope_add_var(SCOPE, param_var)) {
-			PANIC(ERR_SHADOW_VAR, { .var = param_var });
+		for (unsigned i = 0 ; i < func->num_params ; i++) {
+			Variable *const param_var = make_variable(
+				func->param_types[i],
+				func->param_names[i],
+				true
+			);
+
+			if (!scope_add_var(SCOPE, param_var)) {
+				PANIC(ERR_SHADOW_VAR, { .var = param_var });
+			}
+
+			param_var->llvm_value = next_param;
+			next_param = LLVMGetNextParam(next_param);
 		}
-
-		param_var->llvm_value = LLVMGetFirstParam(func->function);
 	}
 
 	bool returned = node_to_llvm_ir(node->child);

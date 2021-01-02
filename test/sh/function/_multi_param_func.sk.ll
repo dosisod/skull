@@ -6,7 +6,8 @@ entry:
   ret i64 0
 }
 
-define private void @f(i64 %0) {
+define private i64 @f(i64 %0, i64 %1) {
 entry:
-  ret void
+  %2 = add nsw i64 %0, %1
+  ret i64 %2
 }
