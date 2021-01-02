@@ -87,6 +87,7 @@ Token *tokenize(const char32_t *code) {
 			*code == '}' ||
 			*code == '(' ||
 			*code == ')' ||
+			*code == ',' ||
 			*code == '\n'
 		) {
 			if (!current->begin) {

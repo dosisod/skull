@@ -189,6 +189,13 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 		token = token->next->next;
 		num_params++;
+
+		if (token->token_type == TOKEN_COMMA) {
+			token = token->next;
+		}
+		else {
+			break;
+		}
 	}
 
 	if (AST_TOKEN_CMP(token,

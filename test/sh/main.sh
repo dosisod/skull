@@ -217,6 +217,7 @@ test_error "no_nested_export.sk"
 test_error "func_assign_bad_type.sk"
 test_error "expr_assign_bad_type.sk"
 test_error "bad_expr_func_param.sk"
+test_error "multi_param_func_missing_comma.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
