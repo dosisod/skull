@@ -11,6 +11,8 @@
 
 #include "skull/parse/ast_node.h"
 
+#define MAX_PARAMS 256
+
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
@@ -164,24 +166,29 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 	token = token->next->next;
 
-	const Type *param_types = NULL;
-	char32_t *param_names = NULL;
+
+	// prevent realloc by pre-allocating MAX_PARAMS number of params.
+	// if you need more then that, you are insane.
+	const Type *param_types[MAX_PARAMS] = {0};
+	char32_t *param_names[MAX_PARAMS] = {0};
 
 	const Type *return_type = NULL;
 
 	const TokenType token_type = is_external ? TOKEN_NEWLINE : TOKEN_BRACKET_OPEN;
 
-	if (AST_TOKEN_CMP(token,
+	unsigned short num_params = 0;
+
+	while (AST_TOKEN_CMP(token,
 		TOKEN_NEW_IDENTIFIER,
 		TOKEN_TYPE)
 	) {
-		param_names = token_str(token);
-
+		param_names[num_params] = token_str(token);
 		char *type_name = token_mbs_str(token->next);
-		param_types = find_type(type_name);
+		param_types[num_params] = find_type(type_name);
 		free(type_name);
 
 		token = token->next->next;
+		num_params++;
 	}
 
 	if (AST_TOKEN_CMP(token,
@@ -204,12 +211,24 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 	*_token = token;
 
+	char32_t **tmp_names = NULL;
+	const Type **tmp_types = NULL;
+
+	if (num_params) {
+		tmp_names = Calloc(num_params, sizeof(char32_t *));
+		memcpy(tmp_names, param_names, num_params * sizeof(char32_t *));
+
+		tmp_types = Calloc(num_params, sizeof(Type *));
+		memcpy(tmp_types, param_types, num_params * sizeof(Type *));
+	}
+
 	MAKE_ATTR(AstNodeFunctionProto, *node,
-		.param_types = param_types,
-		.param_names = param_names,
+		.param_types = tmp_types,
+		.param_names = tmp_names,
 		.return_type = return_type,
 		.is_external = is_external,
-		.is_export = is_export
+		.is_export = is_export,
+		.num_params = num_params
 	);
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);

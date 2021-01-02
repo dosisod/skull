@@ -98,7 +98,7 @@ FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *n
 	if (func->param_types) {
 		func->num_params = 1;
 
-		LLVMTypeRef llvm_param_type = func->param_types->llvm_type();
+		LLVMTypeRef llvm_param_type = func->param_types[0]->llvm_type();
 		params = &llvm_param_type;
 	}
 
@@ -160,15 +160,15 @@ Expr llvm_make_function_call(const AstNode *const node) {
 
 	if (current_function->num_params == 1) {
 		params = node_to_expr(
-			current_function->param_types,
+			current_function->param_types[0],
 			node->child,
 			NULL
 		);
 
-		if (params.type != current_function->param_types) {
+		if (params.type != current_function->param_types[0]) {
 			PANIC(ERR_FUNC_TYPE_MISMATCH, {
 				.tok = param,
-				.real = strdup(current_function->param_types->name)
+				.real = strdup(current_function->param_types[0]->name)
 			});
 		}
 	}
@@ -209,8 +209,8 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 
 	if (func->param_types) {
 		Variable *const param_var = make_variable(
-			func->param_types,
-			func->param_names,
+			func->param_types[0],
+			func->param_names[0],
 			true
 		);
 

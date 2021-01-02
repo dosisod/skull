@@ -1,0 +1,5 @@
+# comma seperated params will be coming soon
+
+f(a: int b: int) {
+	# do nothing
+}

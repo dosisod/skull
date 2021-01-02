@@ -60,13 +60,15 @@ typedef struct {
 
 ```c
 typedef struct {
-	const Type *param_types;
-	char32_t *param_names;
+	const Type **param_types;
+	char32_t **param_names;
 
 	const Type *return_type;
 
 	_Bool is_external;
 	_Bool is_export;
+
+	unsigned short num_params;
 }
 ```
 
