@@ -1,4 +1,4 @@
-[ -f "./test/sh/skull/dummy" ] || exit 1
+[ -f "./test/sh/skull/dummy" ]
 
 case "$(file ./test/sh/skull/dummy)" in
 	*ELF*shared\ object*) ;;

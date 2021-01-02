@@ -59,7 +59,7 @@ test_skull() {
 
 	out=$(./build/skull/skull $2)
 
-	sh ./test/sh/skull/$1 "$out" "$?"
+	sh -e ./test/sh/skull/$1 "$out" "$?"
 	[ "$?" != "0" ]
 	pass_or_fail $?
 }
