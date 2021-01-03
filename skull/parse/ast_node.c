@@ -118,7 +118,6 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 	}
 
 	token = token->next->next;
-	const Token *param = NULL;
 
 	if (token->token_type == TOKEN_PAREN_CLOSE) {
 		*_token = token;
@@ -127,16 +126,11 @@ bool is_ast_function(Token **_token, Token **last, AstNode **node) {
 		token->next &&
 		token->next->token_type == TOKEN_PAREN_CLOSE
 	) {
-		param = token;
 		*_token = token->next;
 	}
 	else {
 		return false;
 	}
-
-	MAKE_ATTR(AstNodeFunction, *node,
-		.param = param
-	);
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION, node);
 	return true;
@@ -355,8 +349,9 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 			break;
 		}
 
-		if (token->token_type == TOKEN_NEWLINE || (
-			node->last && node->last->token_end == token)
+		if (token->token_type == TOKEN_NEWLINE ||
+			token->token_type == TOKEN_COMMA ||
+			(node->last && node->last->token_end == token)
 		) {
 			token = token->next;
 			continue;

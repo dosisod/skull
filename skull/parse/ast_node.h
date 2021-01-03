@@ -103,13 +103,6 @@ typedef struct {
 } AstNodeFunctionProto;
 
 /*
-Store special data for `AST_NODE_FUNCTION` nodes.
-*/
-typedef struct {
-	const Token *param;
-} AstNodeFunction;
-
-/*
 Store special data about operator related nodes (`AST_NODE_ADD`, etc).
 */
 typedef struct {

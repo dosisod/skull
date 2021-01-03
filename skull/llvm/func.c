@@ -164,8 +164,8 @@ Expr llvm_make_function_call(const AstNode *const node) {
 
 	const AstNode *param = node->child;
 
-	if (current_function->num_params >= 1) {
-		for (unsigned i = 0; i < current_function->num_params ; i++) {
+	if (num_params >= 1) {
+		for (unsigned i = 0; i < num_params ; i++) {
 			Expr expr = node_to_expr(
 				current_function->param_types[i],
 				param,
@@ -176,6 +176,14 @@ Expr llvm_make_function_call(const AstNode *const node) {
 				PANIC(ERR_FUNC_TYPE_MISMATCH, {
 					.tok = param->token,
 					.real = strdup(current_function->param_types[i]->name)
+				});
+			}
+
+			if (param->token_end->next->token_type != TOKEN_COMMA &&
+				i != (unsigned)(num_params - 1)
+			) {
+				PANIC(ERR_EXPECTED_COMMA, {
+					.tok = param->token_end->next
 				});
 			}
 
@@ -193,7 +201,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 			current_function->type,
 			current_function->function,
 			params,
-			current_function->num_params,
+			num_params,
 			""
 		),
 		.type = current_function->return_type

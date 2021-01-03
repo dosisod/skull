@@ -76,14 +76,6 @@ typedef struct {
 
 ```c
 typedef struct {
-	const Token *param;
-}
-```
-
-> Store special data for `AST_NODE_FUNCTION` nodes.
-
-```c
-typedef struct {
 	const Token *lhs;
 	const Token *rhs;
 }
