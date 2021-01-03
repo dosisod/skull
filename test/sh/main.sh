@@ -119,6 +119,7 @@ test "function" "exported.sk"
 test "function" "non_int_return.sk"
 test "function" "expr_param.sk"
 test "function" "multi_param_func.sk"
+test "function" "multi_param_func_different_types.sk"
 
 test "flow" "if_empty_body.sk"
 test "flow" "if_false.sk"

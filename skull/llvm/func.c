@@ -95,13 +95,14 @@ FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *n
 	func->param_names = ATTR(AstNodeFunctionProto, node, param_names);
 	LLVMTypeRef *params = NULL;
 
+	unsigned short num_params = ATTR(AstNodeFunctionProto, node, num_params);
+	func->num_params = num_params;
+
 	if (func->param_types) {
-		func->num_params = ATTR(AstNodeFunctionProto, node, num_params);
+		params = Malloc(num_params * sizeof(LLVMValueRef));
 
-		params = Malloc(func->num_params * sizeof(LLVMValueRef));
-
-		for (unsigned i = 0 ; i < func->num_params ; i++) {
-			params[i] = func->param_types[0]->llvm_type();
+		for (unsigned i = 0 ; i < num_params ; i++) {
+			params[i] = func->param_types[i]->llvm_type();
 		}
 	}
 
@@ -115,7 +116,7 @@ FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *n
 	func->type = LLVMFunctionType(
 		llvm_return_type,
 		params,
-		func->num_params,
+		num_params,
 		false
 	);
 
