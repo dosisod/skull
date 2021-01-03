@@ -158,25 +158,33 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	}
 	free(wide_func_name);
 
-	Expr params = {0};
-	const Token *const param = node->child->token;
+	unsigned short num_params = current_function->num_params;
 
-	if (current_function->num_params == 1) {
-		params = node_to_expr(
-			current_function->param_types[0],
-			node->child,
-			NULL
-		);
+	LLVMValueRef *params = Calloc(num_params, sizeof(LLVMValueRef));
 
-		if (params.type != current_function->param_types[0]) {
-			PANIC(ERR_FUNC_TYPE_MISMATCH, {
-				.tok = param,
-				.real = strdup(current_function->param_types[0]->name)
-			});
+	const AstNode *param = node->child;
+
+	if (current_function->num_params >= 1) {
+		for (unsigned i = 0; i < current_function->num_params ; i++) {
+			Expr expr = node_to_expr(
+				current_function->param_types[i],
+				param,
+				NULL
+			);
+
+			if (expr.type != current_function->param_types[i]) {
+				PANIC(ERR_FUNC_TYPE_MISMATCH, {
+					.tok = param->token,
+					.real = strdup(current_function->param_types[i]->name)
+				});
+			}
+
+			params[i] = expr.llvm_value;
+			param = param->next;
 		}
 	}
-	else if (param) {
-		PANIC(ERR_ZERO_PARAM_FUNC, { .tok = param });
+	else if (param->token) {
+		PANIC(ERR_ZERO_PARAM_FUNC, { .tok = param->token });
 	}
 
 	return (Expr){
@@ -184,7 +192,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 			BUILDER,
 			current_function->type,
 			current_function->function,
-			&params.llvm_value,
+			params,
 			current_function->num_params,
 			""
 		),

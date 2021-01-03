@@ -30,7 +30,7 @@ typedef struct FunctionDeclaration {
 	LLVMValueRef function;
 	LLVMTypeRef type;
 
-	unsigned num_params;
+	unsigned short num_params;
 	const Type **param_types;
 	char32_t **param_names;
 
