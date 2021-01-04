@@ -6,6 +6,8 @@
 #include "skull/llvm/var.h"
 #include "skull/parse/ast_node.h"
 
+void llvm_make_type_alias(AstNode **);
+
 void llvm_make_var_def(AstNode **);
 void llvm_make_var_assign(AstNode **);
 

@@ -23,6 +23,23 @@ extern Scope *SCOPE;
 
 void llvm_assign_value_to_var(Variable *const, LLVMValueRef);
 
+void llvm_make_type_alias(AstNode **node) {
+	char *type_name = token_mbs_str((*node)->token->next->next);
+
+	const bool added = add_alias(
+		(Type *)find_type(type_name),
+		token_mbs_str((*node)->token)
+	);
+
+	free(type_name);
+
+	if (!added) {
+		PANIC(ERR_ALIAS_ALREADY_DEFINED, {
+			.tok = (*node)->token
+		});
+	}
+}
+
 /*
 Builds a variable from `node`.
 */

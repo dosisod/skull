@@ -130,8 +130,14 @@ void node_make_var(const AstNode *const node) {
 	else {
 		char *const type_name = token_mbs_str(token->next);
 
-		var = make_variable(find_type(type_name), name, is_const);
+		const Type *type = find_type(type_name);
 		free(type_name);
+
+		if (!type) {
+			PANIC(ERR_TYPE_NOT_FOUND, { .tok = token->next });
+		}
+
+		var = make_variable(type, name, is_const);
 	}
 
 	if (scope_add_var(SCOPE, var)) {

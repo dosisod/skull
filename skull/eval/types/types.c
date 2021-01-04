@@ -1,5 +1,7 @@
+#include <stdbool.h>
 #include <string.h>
 
+#include "skull/common/malloc.h"
 #include "skull/eval/types/defs.h"
 
 #include "skull/eval/types/types.h"
@@ -8,39 +10,66 @@
 Returns pointer to type with name `name`.
 */
 const Type __attribute__((pure)) *find_type(const char *const name) {
-	const Type **head = TYPES_AVAILABLE;
+	const Type **type = TYPES_AVAILABLE;
 
-	while (*head) {
-		if (strcmp(name, (*head)->name) == 0) {
-			return *head;
+	while (*type) {
+		if (strcmp(name, (*type)->name) == 0) {
+			return *type;
 		}
-		head++;
+
+		for (unsigned i = 0 ; i < (*type)->num_aliases ; i++) {
+			if (strcmp(name, (*type)->aliases[i]) == 0) {
+				return *type;
+			}
+		}
+		type++;
 	}
 
 	return NULL;
 }
 
-const Type TYPE_BOOL = {
+/*
+Add named `alias` for `type`.
+
+Return `true` if alias was added, `false` if it already exists.
+*/
+bool add_alias(Type *const type, char *const alias) {
+	if (find_type(alias)) {
+		return false;
+	}
+
+	if (!type->num_aliases) {
+		type->aliases = Malloc(sizeof(char *));
+	}
+
+	type->aliases[type->num_aliases] = alias;
+
+	type->num_aliases++;
+
+	return true;
+}
+
+Type TYPE_BOOL = {
 	.name = "bool",
 	.llvm_type = &LLVMInt1Type
 };
 
-const Type TYPE_INT = {
+Type TYPE_INT = {
 	.name = "int",
 	.llvm_type = &LLVMInt64Type
 };
 
-const Type TYPE_FLOAT = {
+Type TYPE_FLOAT = {
 	.name = "float",
 	.llvm_type = &LLVMDoubleType
 };
 
-const Type TYPE_RUNE = {
+Type TYPE_RUNE = {
 	.name = "rune",
 	.llvm_type = &LLVMInt32Type
 };
 
-const Type TYPE_STR = {
+Type TYPE_STR = {
 	.name = "str",
 	.llvm_type = &gen_llvm_str_type
 };

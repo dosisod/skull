@@ -30,6 +30,20 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	return ret;
 }
 
+bool is_ast_type_alias(Token **token, Token **last, AstNode **node) {
+	if (AST_TOKEN_CMP(*token,
+		TOKEN_IDENTIFIER,
+		TOKEN_OPER_AUTO_EQUAL,
+		TOKEN_TYPE)
+	) {
+		*token = (*token)->next->next->next;
+		push_ast_node(*token, last, AST_NODE_TYPE_ALIAS, node);
+		return true;
+	}
+
+	return false;
+}
+
 bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	bool is_const = true;
 	bool is_implicit = true;
@@ -46,10 +60,12 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 		}
 	}
 
-	if (AST_TOKEN_CMP(token,
-		TOKEN_NEW_IDENTIFIER,
-		TOKEN_TYPE,
-		TOKEN_OPER_EQUAL)
+	if (token->token_type == TOKEN_NEW_IDENTIFIER &&
+		token->next &&
+		(token->next->token_type == TOKEN_TYPE ||
+		token->next->token_type == TOKEN_IDENTIFIER) &&
+		token->next->next &&
+		token->next->next->token_type == TOKEN_OPER_EQUAL
 	) {
 		is_implicit = false;
 		*_token = token->next->next;
@@ -358,6 +374,10 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 		}
 
 		last = token;
+
+		if (is_ast_type_alias(&token, &last, &node)) {
+			continue;
+		}
 
 		if (is_ast_var_def(&token, &last, &node)) {
 			continue;

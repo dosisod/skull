@@ -1,0 +1,3 @@
+int_alias := int
+
+mut x: int_alias = 1234

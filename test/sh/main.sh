@@ -146,6 +146,7 @@ test "misc" "ignore_block_comments.sk"
 test "misc" "no_eol_works.sk"
 test "misc" "locale.sk"
 test "misc" "comment_then_code.sk"
+test "misc" "type_alias.sk"
 
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"
@@ -219,6 +220,8 @@ test_error "func_assign_bad_type.sk"
 test_error "expr_assign_bad_type.sk"
 test_error "bad_expr_func_param.sk"
 test_error "multi_param_func_missing_comma.sk"
+test_error "bad_type_not_allowed.sk"
+test_error "no_same_name_aliases.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

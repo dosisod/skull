@@ -90,6 +90,10 @@ while (node) {
 		returned = true;
 	}
 
+	else if (node_type == AST_NODE_TYPE_ALIAS) {
+		llvm_make_type_alias(&node);
+	}
+
 	else if (node_type == AST_NODE_VAR_DEF) {
 		llvm_make_var_def(&node);
 	}
