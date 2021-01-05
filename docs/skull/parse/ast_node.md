@@ -60,10 +60,10 @@ typedef struct {
 
 ```c
 typedef struct {
-	const Type **param_types;
+	char **param_type_names;
 	char32_t **param_names;
 
-	const Type *return_type;
+	char *return_type_name;
 
 	_Bool is_external;
 	_Bool is_export;

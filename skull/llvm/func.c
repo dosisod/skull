@@ -91,22 +91,41 @@ FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *n
 
 	func->name = name;
 
-	func->param_types = ATTR(AstNodeFunctionProto, node, param_types);
+	char **param_type_names = ATTR(AstNodeFunctionProto, node, param_type_names);
 	func->param_names = ATTR(AstNodeFunctionProto, node, param_names);
 	LLVMTypeRef *params = NULL;
 
 	unsigned short num_params = ATTR(AstNodeFunctionProto, node, num_params);
 	func->num_params = num_params;
 
-	if (func->param_types) {
+	if (param_type_names) {
 		params = Malloc(num_params * sizeof(LLVMValueRef));
+		func->param_types = Calloc(num_params, sizeof(Type *));
 
 		for (unsigned i = 0 ; i < num_params ; i++) {
+			func->param_types[i] = find_type(param_type_names[i]);
+
+			if (!func->param_types[i]) {
+				PANIC(ERR_TYPE_NOT_FOUND, {
+					.real = param_type_names[i]
+				});
+			}
+
 			params[i] = func->param_types[i]->llvm_type();
 		}
 	}
 
-	func->return_type = ATTR(AstNodeFunctionProto, node, return_type);
+	char *return_type_name = ATTR(AstNodeFunctionProto, node, return_type_name);
+	if (return_type_name) {
+		func->return_type = find_type(return_type_name);
+	}
+
+	if (return_type_name && !func->return_type) {
+		PANIC(ERR_TYPE_NOT_FOUND, {
+			.real = return_type_name
+		});
+	}
+
 	LLVMTypeRef llvm_return_type = LLVMVoidType();
 
 	if (func->return_type) {

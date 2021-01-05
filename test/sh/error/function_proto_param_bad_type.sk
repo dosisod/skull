@@ -1,0 +1,3 @@
+f(x: does_not_exist) {
+	# do nothing
+}
