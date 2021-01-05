@@ -147,6 +147,7 @@ test "misc" "no_eol_works.sk"
 test "misc" "locale.sk"
 test "misc" "comment_then_code.sk"
 test "misc" "type_alias.sk"
+test "misc" "preserve_nested_scopes.sk"
 
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"

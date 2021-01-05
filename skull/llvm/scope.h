@@ -16,7 +16,6 @@ Free the new scope, set the current scope to the old sub-scope.
 */
 #define RESTORE_SUB_SCOPE \
 	free_scope(SCOPE); \
-	SCOPE = scope_copy; \
-	SCOPE->sub_scope = NULL
+	SCOPE = scope_copy;
 
 Variable *scope_find_var(const Token *const);

@@ -1,0 +1,9 @@
+x := 0
+
+if true {
+	if true {
+		# do nothing
+	}
+
+	z := x
+}
