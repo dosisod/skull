@@ -508,7 +508,20 @@ void free_ast_tree_(AstNode *node) {
 	while (node) {
 		if (node->attr) {
 			if (node->node_type == AST_NODE_FUNCTION_PROTO) {
-				free(ATTR(AstNodeFunctionProto, node, param_names));
+				free(ATTR(AstNodeFunctionProto, node, return_type_name));
+
+				char **param_type_names = ATTR(AstNodeFunctionProto, node, param_type_names);
+				char32_t **param_names = ATTR(AstNodeFunctionProto, node, param_names);
+
+				unsigned num_params = ATTR(AstNodeFunctionProto, node, num_params);
+
+				for (unsigned i = 0 ; i < num_params ; i++) {
+					free(param_type_names[i]);
+					free(param_names[i]);
+				}
+
+				free(param_type_names);
+				free(param_names);
 			}
 
 			free(node->attr);

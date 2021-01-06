@@ -138,6 +138,7 @@ FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *n
 		num_params,
 		false
 	);
+	free(params);
 
 	func->function = LLVMAddFunction(
 		MODULE,
@@ -180,7 +181,10 @@ Expr llvm_make_function_call(const AstNode *const node) {
 
 	unsigned short num_params = current_function->num_params;
 
-	LLVMValueRef *params = Calloc(num_params, sizeof(LLVMValueRef));
+	LLVMValueRef *params = NULL;
+	if (num_params) {
+		params = Calloc(num_params, sizeof(LLVMValueRef));
+	}
 
 	const AstNode *param = node->child;
 
@@ -215,7 +219,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 		PANIC(ERR_ZERO_PARAM_FUNC, { .tok = param->token });
 	}
 
-	return (Expr){
+	Expr ret = (Expr){
 		.llvm_value = LLVMBuildCall2(
 			BUILDER,
 			current_function->type,
@@ -226,6 +230,9 @@ Expr llvm_make_function_call(const AstNode *const node) {
 		),
 		.type = current_function->return_type
 	};
+
+	free(params);
+	return ret;
 }
 
 /*

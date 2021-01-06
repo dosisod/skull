@@ -43,6 +43,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	FunctionDeclaration *f = FUNCTION_DECLARATIONS;
 	while (f) {
 		free(f->name);
+		free(f->param_types);
 
 		FunctionDeclaration *copy = f;
 		f = f->next;

@@ -107,6 +107,7 @@ void node_make_var(const AstNode *const node) {
 				}
 				function = function->next;
 			}
+			free(func_name);
 
 			if (!function) {
 				PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
