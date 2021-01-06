@@ -264,6 +264,8 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 
 switch (escape) {
 	case '\\': return '\\';
+	case '\"': return '\"';
+	case '\'': return '\'';
 	case '0': return '\0';
 	case 'e': return '\033';
 	case 't': return '\t';
