@@ -11,6 +11,7 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/variable.h"
 #include "skull/llvm/aliases.h"
+#include "skull/llvm/assign.h"
 #include "skull/llvm/oper.h"
 #include "skull/llvm/scope.h"
 #include "skull/llvm/var.h"
@@ -27,23 +28,19 @@ bool node_to_llvm_ir(AstNode *);
 /*
 Builds an return statement from `node`.
 */
-void llvm_make_return(const AstNode *const node) {
-	const Token *const token_val = node->token->next;
+void llvm_make_return(AstNode **node) {
+	AstNode *const node_val = (*node)->next;
 	const bool is_main = CURRENT_FUNC == MAIN_FUNC;
 
-	Variable *found_var = NULL;
-	Expr expr = token_to_expr(token_val, &found_var);
+	Expr expr = node_to_expr(NULL, node_val, NULL);
 
-	if (is_main) {
-		if (found_var && expr.type != &TYPE_INT) {
-			PANIC(ERR_NON_INT_VAR_MAIN, { .tok = token_val });
-		}
-		if (!found_var && expr.type != &TYPE_INT) {
-			PANIC(ERR_NON_INT_VAL_MAIN, { .tok = token_val });
-		}
+	if (is_main && expr.type != &TYPE_INT) {
+		PANIC(ERR_NON_INT_MAIN, { .tok = node_val->token });
 	}
 
 	LLVMBuildRet(BUILDER, expr.llvm_value);
+
+	*node = node_val;
 }
 
 LLVMValueRef llvm_make_cond(const AstNode *const);

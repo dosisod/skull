@@ -87,7 +87,7 @@ while (node) {
 	}
 
 	else if (node_type == AST_NODE_RETURN) {
-		llvm_make_return(node);
+		llvm_make_return(&node);
 		returned = true;
 	}
 

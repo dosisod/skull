@@ -70,15 +70,10 @@ TEST(make_ast_tree_function, {
 })
 
 TEST(make_ast_tree_return, {
-	TEST_AST_TREE(U"return 0", AST_NODE_RETURN, 0, 8);
+	TEST_AST_TREE(U"return", AST_NODE_RETURN, 0, 6);
 })
-
-TEST(make_ast_tree_return_var, {
-	TEST_AST_TREE(U"return x", AST_NODE_RETURN, 0, 8);
-})
-
 TEST(make_ast_tree_if, {
-	const char32_t *const code = U"if true { return 1 }";
+	const char32_t *const code = U"if true { }";
 	AstNode *node = make_ast_tree(code);
 
 	ASSERT_EQUAL(node->node_type, AST_NODE_IF);
@@ -86,15 +81,13 @@ TEST(make_ast_tree_if, {
 	ASSERT_EQUAL(node->token_end->end, code + 7);
 	ASSERT_FALSEY(node->last);
 	ASSERT_TRUTHY(node->child);
-	ASSERT_EQUAL(node->child->token->begin, code + 10);
-	ASSERT_EQUAL(node->child->token_end->end, code + 18);
 	ASSERT_FALSEY(node->next);
 
 	free_ast_tree(node);
 })
 
 TEST(make_ast_tree_if_with_var, {
-	const char32_t *const code = U"if x { return 1 }";
+	const char32_t *const code = U"if x { }";
 	AstNode *node = make_ast_tree(code);
 
 	ASSERT_EQUAL(node->node_type, AST_NODE_IF);
@@ -102,8 +95,6 @@ TEST(make_ast_tree_if_with_var, {
 	ASSERT_EQUAL(node->token_end->end, code + 4);
 	ASSERT_FALSEY(node->last);
 	ASSERT_TRUTHY(node->child);
-	ASSERT_EQUAL(node->child->token->begin, code + 7);
-	ASSERT_EQUAL(node->child->token_end->end, code + 15);
 	ASSERT_FALSEY(node->next);
 
 	free_ast_tree(node);
@@ -157,7 +148,6 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_external,
 	test_make_ast_tree_function,
 	test_make_ast_tree_return,
-	test_make_ast_tree_return_var,
 	test_make_ast_tree_if,
 	test_make_ast_tree_if_with_var,
 	test_make_ast_tree_int_const,

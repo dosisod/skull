@@ -1,7 +1,7 @@
 # skull/llvm/flow
 
 ```c
-void llvm_make_return(const AstNode *const node)
+void llvm_make_return(AstNode **node)
 ```
 
 > Builds an return statement from `node`.

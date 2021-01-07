@@ -391,11 +391,7 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 			continue;
 		}
 
-		if (token->token_type == TOKEN_KW_RETURN &&
-			token->next &&
-			is_value(token->next)
-		) {
-			token = token->next;
+		if (token->token_type == TOKEN_KW_RETURN) {
 			push_ast_node(token, &last, AST_NODE_RETURN, &node);
 			continue;
 		}
