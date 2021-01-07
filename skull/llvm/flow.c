@@ -173,7 +173,7 @@ LLVMValueRef llvm_make_cond(const AstNode *const node) {
 			lhs_expr.type,
 			lhs_expr.llvm_value,
 			token_to_simple_expr_typed(lhs_expr.type, rhs).llvm_value
-		);
+		).llvm_value;
 
 		if (!result) {
 			PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });

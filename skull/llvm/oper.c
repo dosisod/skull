@@ -13,9 +13,9 @@ extern LLVMBuilderRef BUILDER;
 extern Scope *SCOPE;
 
 /*
-Build LLVM for assining addition of `lhs` and `rhs`.
+Return expression for addition of `lhs` and `rhs`.
 */
-Expr llvm_make_add(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_add(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
 		return (Expr){
 			.llvm_value = LLVMBuildNSWAdd(BUILDER, lhs, rhs, ""),
@@ -33,9 +33,9 @@ Expr llvm_make_add(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 }
 
 /*
-Build LLVM for assining subtraction of `lhs` and `rhs`.
+Return expression for subtraction of `lhs` and `rhs`.
 */
-Expr llvm_make_sub(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_sub(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
 		return (Expr){
 			.llvm_value = LLVMBuildNSWSub(BUILDER, lhs, rhs, ""),
@@ -53,9 +53,9 @@ Expr llvm_make_sub(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 }
 
 /*
-Build LLVM for assining multiplication of `lhs` and `rhs`.
+Return expression for multiplication of `lhs` and `rhs`.
 */
-Expr llvm_make_mult(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_mult(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
 		return (Expr){
 			.llvm_value = LLVMBuildNSWMul(BUILDER, lhs, rhs, ""),
@@ -72,9 +72,9 @@ Expr llvm_make_mult(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	return (Expr){0};
 }
 /*
-Build LLVM for assining division of `lhs` and `rhs`.
+Return expression for division of `lhs` and `rhs`.
 */
-Expr llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_div(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT) {
 		if (LLVMConstIntGetSExtValue(rhs) == 0) {
 			PANIC(ERR_DIV_BY_ZERO, {0});
@@ -96,35 +96,41 @@ Expr llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 }
 
 /*
-Build LLVM for assining result of is operator for `lhs` and `rhs`.
+Return expression for result of is operator for `lhs` and `rhs`.
 */
-LLVMValueRef llvm_make_is(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT || type == &TYPE_RUNE) {
-		return LLVMBuildICmp(
-			BUILDER,
-			LLVMIntEQ,
-			lhs,
-			rhs,
-			""
-		);
+		return (Expr){
+			.llvm_value = LLVMBuildICmp(
+				BUILDER,
+				LLVMIntEQ,
+				lhs,
+				rhs,
+				""
+			),
+			.type = &TYPE_BOOL
+		};
 	}
 	if (type == &TYPE_FLOAT) {
-		return LLVMBuildFCmp(
-			BUILDER,
-			LLVMRealOEQ,
-			lhs,
-			rhs,
-			""
-		);
+		return (Expr){
+			.llvm_value = LLVMBuildFCmp(
+				BUILDER,
+				LLVMRealOEQ,
+				lhs,
+				rhs,
+				""
+			),
+			.type = &TYPE_BOOL
+		};
 	}
 
-	return NULL;
+	return (Expr){0};
 }
 
 /*
-Return LLVM for assigning operation `oper` from `node`.
+Return expression for operation `oper` from `node`.
 */
-LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operation *oper) {
+Expr llvm_make_oper(const Type *const type, const AstNode *const node, Operation *oper) {
 	const Token *rhs_token = ATTR(AstNodeOper, node, rhs);
 	const Token *lhs_token = ATTR(AstNodeOper, node, lhs);
 
@@ -145,15 +151,15 @@ LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operati
 	);
 
 	if (!result.type && !result.llvm_value) {
-		return NULL;
+		return (Expr){0};
 	}
 
-	if (result.type != type) {
+	if (type && result.type != type) {
 		PANIC(ERR_TYPE_MISMATCH, {
 			.tok = lhs_token,
 			.type = type
 		});
 	}
 
-	return result.llvm_value;
+	return result;
 }

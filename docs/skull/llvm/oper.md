@@ -1,38 +1,38 @@
 # skull/llvm/oper
 
 ```c
-Expr llvm_make_add(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
+Expr llvm_make_add(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining addition of `lhs` and `rhs`.
+> Return expression for addition of `lhs` and `rhs`.
 
 ```c
-Expr llvm_make_sub(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
+Expr llvm_make_sub(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining subtraction of `lhs` and `rhs`.
+> Return expression for subtraction of `lhs` and `rhs`.
 
 ```c
-Expr llvm_make_mult(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
+Expr llvm_make_mult(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining multiplication of `lhs` and `rhs`.
+> Return expression for multiplication of `lhs` and `rhs`.
 
 ```c
-Expr llvm_make_div(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
+Expr llvm_make_div(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining division of `lhs` and `rhs`.
+> Return expression for division of `lhs` and `rhs`.
 
 ```c
-LLVMValueRef llvm_make_is(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
+Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Build LLVM for assining result of is operator for `lhs` and `rhs`.
+> Return expression for result of is operator for `lhs` and `rhs`.
 
 ```c
-LLVMValueRef llvm_make_oper(const Type *type, const AstNode *const node, Operation *oper)
+Expr llvm_make_oper(const Type *const type, const AstNode *const node, Operation *oper)
 ```
 
-> Return LLVM for assigning operation `oper` from `node`.
+> Return expression for operation `oper` from `node`.
 

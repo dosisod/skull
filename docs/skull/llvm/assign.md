@@ -21,10 +21,12 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 > Optionally pass `var` if expression is going to be assigned to a variable.
 
 ```c
-LLVMValueRef llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var)
+Expr llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var)
 ```
 
-> Return LLVM for to load an existing identifier `node` with type `type`.
+> Return expression for assigning existing identifier `node` with type `type`.
 > \
 > Optionally pass `var` if result is expected to be assigned to a variable.
+> \
+> If `type` is not set, the expression type will not be checked.
 

@@ -89,34 +89,19 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 	Expr expr;
 
 	if (node->node_type == AST_NODE_IDENTIFIER) {
-		expr = (Expr){
-			.llvm_value = llvm_assign_identifier(type, node, var),
-			.type = type
-		};
+		expr = llvm_assign_identifier(type, node, var);
 	}
 	else if (node->node_type == AST_NODE_ADD) {
-		expr = (Expr){
-			.llvm_value = llvm_make_oper(type, node, &llvm_make_add),
-			.type = type
-		};
+		expr = llvm_make_oper(type, node, &llvm_make_add);
 	}
 	else if (node->node_type == AST_NODE_SUB) {
-		expr = (Expr){
-			.llvm_value = llvm_make_oper(type, node, &llvm_make_sub),
-			.type = type
-		};
+		expr = llvm_make_oper(type, node, &llvm_make_sub);
 	}
 	else if (node->node_type == AST_NODE_MULT) {
-		expr = (Expr){
-			.llvm_value = llvm_make_oper(type, node, &llvm_make_mult),
-			.type = type
-		};
+		expr = llvm_make_oper(type, node, &llvm_make_mult);
 	}
 	else if (node->node_type == AST_NODE_DIV) {
-		expr = (Expr){
-			.llvm_value = llvm_make_oper(type, node, &llvm_make_div),
-			.type = type
-		};
+		expr = llvm_make_oper(type, node, &llvm_make_div);
 	}
 	else if (node->node_type == AST_NODE_FUNCTION) {
 		expr = llvm_make_function_call(node);
@@ -187,15 +172,17 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 }
 
 /*
-Return LLVM for to load an existing identifier `node` with type `type`.
+Return expression for assigning existing identifier `node` with type `type`.
 
 Optionally pass `var` if result is expected to be assigned to a variable.
+
+If `type` is not set, the expression type will not be checked.
 */
-LLVMValueRef llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var) {
+Expr llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var) {
 	Variable *var_found = NULL;
 	Expr expr = token_to_expr(node->token, &var_found);
 
-	if (var_found->type != type) {
+	if (type && var_found->type != type) {
 		PANIC(ERR_TYPE_MISMATCH, {
 			.tok = node->token,
 			.type = type
@@ -208,5 +195,5 @@ LLVMValueRef llvm_assign_identifier(const Type *const type, const AstNode *const
 		});
 	}
 
-	return expr.llvm_value;
+	return expr;
 }
