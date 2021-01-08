@@ -23,6 +23,9 @@ extern Scope *SCOPE;
 
 void llvm_assign_value_to_var(Variable *const, LLVMValueRef);
 
+/*
+Create a type alias from `node`.
+*/
 void llvm_make_type_alias(AstNode **node) {
 	char *type_name = token_mbs_str((*node)->token->next->next);
 
@@ -124,6 +127,9 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 	return expr;
 }
 
+/*
+Assign `value` to `var`.
+*/
 void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 	const bool is_first_assign = !var->llvm_value;
 	const bool is_const_literal = LLVMIsConstant(value);

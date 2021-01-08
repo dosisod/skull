@@ -22,6 +22,11 @@
 extern LLVMBuilderRef BUILDER;
 extern Scope *SCOPE;
 
+/*
+Convert `token` to an expression.
+
+If `variable` is and `token` is a variable, store the found variable there.
+*/
 Expr token_to_expr(const Token *const token, Variable **variable) {
 	if (token->token_type == TOKEN_IDENTIFIER) {
 		Variable *const var_found = scope_find_var(token);

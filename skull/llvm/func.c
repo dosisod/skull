@@ -85,6 +85,13 @@ void declare_function(const AstNode *const node) {
 	}
 }
 
+/*
+Create the actual LLVM function named `name` from `node`.
+
+If `is_private` is true the function will be private (statically linked).
+
+Else, the function will be globally available.
+*/
 FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *name, bool is_private) {
 	FunctionDeclaration *func;
 	func = Calloc(1, sizeof *func);

@@ -16,6 +16,9 @@
 
 #define DIE(x) puts(x); return 1
 
+/*
+Actual `main` function, can be called by external programs.
+*/
 int setup_main(int argc, char *argv[]) {
 	SETUP_LOCALE();
 
@@ -79,6 +82,9 @@ int setup_main(int argc, char *argv[]) {
 	return 0;
 }
 
+/*
+Create a module named `module_name` and a main function called `main_func_name` from `file_contents`.
+*/
 LLVMModuleRef generate_llvm(const char *module_name, const char *main_func_name, char *file_contents) {
 	LLVMModuleRef main_module = LLVMModuleCreateWithName(module_name);
 
@@ -119,6 +125,9 @@ LLVMModuleRef generate_llvm(const char *module_name, const char *main_func_name,
 	return main_module;
 }
 
+/*
+Modify filename to add `.ll` extention to it.
+*/
 char *create_llvm_filename(const char *filename) {
 	const size_t len = strlen(filename);
 	char *const llvm_filename = Malloc(len + 5);

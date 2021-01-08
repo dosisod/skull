@@ -39,6 +39,16 @@ void declare_function(const AstNode *const node)
 > Parse declaration (and potential definition) of function in `node`.
 
 ```c
+FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *name, bool is_private)
+```
+
+> Create the actual LLVM function named `name` from `node`.
+> \
+> If `is_private` is true the function will be private (statically linked).
+> \
+> Else, the function will be globally available.
+
+```c
 Expr llvm_make_function_call(const AstNode *const node)
 ```
 
