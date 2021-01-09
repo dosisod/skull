@@ -94,28 +94,21 @@ void node_make_var(const AstNode *const node) {
 		else if (token_type == TOKEN_STR_CONST) {
 			type = &TYPE_STR;
 		}
-		else if (node->next->node_type == AST_NODE_FUNCTION) {
+		else if (node_type == AST_NODE_FUNCTION) {
 			char *func_name = token_mbs_str(node->next->token);
-
-			FunctionDeclaration *function = FUNCTION_DECLARATIONS;
-			while (function) {
-				if (strcmp(func_name, function->name) == 0) {
-					type = function->return_type;
-
-					if (!type) {
-						PANIC(ERR_NO_VOID_ASSIGN, {
-							.tok = node->next->token,
-							.str = name
-						});
-					}
-					break;
-				}
-				function = function->next;
-			}
+			FunctionDeclaration *function = find_function(func_name);
 			free(func_name);
 
 			if (!function) {
 				PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
+			}
+
+			type = function->return_type;
+			if (!type) {
+				PANIC(ERR_NO_VOID_ASSIGN, {
+					.tok = node->next->token,
+					.str = name
+				});
 			}
 		}
 		else if (node_type == AST_NODE_IDENTIFIER || (

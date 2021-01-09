@@ -13,6 +13,8 @@
 
 #define MAX_PARAMS 256
 
+bool try_gen_expression(Token **, Token **, AstNode **);
+
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
@@ -44,6 +46,8 @@ bool is_ast_type_alias(Token **token, Token **last, AstNode **node) {
 	return false;
 }
 
+#define IS_TYPE_LIKE(token) ((token)->token_type == TOKEN_TYPE || (token)->token_type == TOKEN_IDENTIFIER)
+
 bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	bool is_const = true;
 	bool is_implicit = true;
@@ -62,8 +66,7 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 
 	if (token->token_type == TOKEN_NEW_IDENTIFIER &&
 		token->next &&
-		(token->next->token_type == TOKEN_TYPE ||
-		token->next->token_type == TOKEN_IDENTIFIER) &&
+		IS_TYPE_LIKE(token->next) &&
 		token->next->next &&
 		token->next->next->token_type == TOKEN_OPER_EQUAL
 	) {
@@ -123,46 +126,17 @@ switch (token->next->token_type) {
 	return true;
 }
 
-bool is_ast_function(Token **_token, Token **last, AstNode **node) {
-	Token *token = *_token;
-
-	if (!AST_TOKEN_CMP(token,
-		TOKEN_IDENTIFIER,
-		TOKEN_PAREN_OPEN)
-	) {
-		return false;
-	}
-
-	token = token->next->next;
-
-	if (token->token_type == TOKEN_PAREN_CLOSE) {
-		*_token = token;
-	}
-	else if (is_value(token) &&
-		token->next &&
-		token->next->token_type == TOKEN_PAREN_CLOSE
-	) {
-		*_token = token->next;
-	}
-	else {
-		return false;
-	}
-
-	push_ast_node(*_token, last, AST_NODE_FUNCTION, node);
-	return true;
-}
-
 bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
 	bool is_external = false;
+	bool is_export = false;
+
 	if (token->token_type == TOKEN_KW_EXTERNAL) {
 		is_external = true;
 		token = token->next;
 	}
-
-	bool is_export = false;
-	if (!is_external && token->token_type == TOKEN_KW_EXPORT) {
+	else if (token->token_type == TOKEN_KW_EXPORT) {
 		is_export = true;
 		token = token->next;
 	}
@@ -176,20 +150,17 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 	token = token->next->next;
 
-
 	// prevent realloc by pre-allocating MAX_PARAMS number of params.
 	// if you need more then that, you are insane.
 	char *param_type_names[MAX_PARAMS] = {0};
 	char32_t *param_names[MAX_PARAMS] = {0};
+	unsigned short num_params = 0;
 
 	const TokenType token_type = is_external ? TOKEN_NEWLINE : TOKEN_BRACKET_OPEN;
 
-	unsigned short num_params = 0;
-
 	while (token->token_type == TOKEN_NEW_IDENTIFIER &&
 		token->next &&
-		(token->next->token_type == TOKEN_IDENTIFIER ||
-		token->next->token_type == TOKEN_TYPE)
+		IS_TYPE_LIKE(token->next)
 	) {
 		param_names[num_params] = token_str(token);
 		param_type_names[num_params] = token_mbs_str(token->next);
@@ -197,20 +168,18 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		token = token->next->next;
 		num_params++;
 
-		if (token->token_type == TOKEN_COMMA) {
-			token = token->next;
-		}
-		else {
+		if (token->token_type != TOKEN_COMMA) {
 			break;
 		}
+
+		token = token->next;
 	}
 
 	char *return_type_name = NULL;
 
 	if (token->token_type == TOKEN_PAREN_CLOSE &&
 		token->next &&
-		(token->next->token_type == TOKEN_TYPE ||
-		token->next->token_type == TOKEN_IDENTIFIER) &&
+		IS_TYPE_LIKE(token->next) &&
 		token->next->next &&
 		token->next->next->token_type == token_type
 	) {
@@ -395,49 +364,27 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 			push_ast_node(token, &last, AST_NODE_RETURN, &node);
 			continue;
 		}
-
 		if (is_conditional(TOKEN_KW_IF, &token, &last, &node, AST_NODE_IF)) {
 			continue;
 		}
-
 		if (is_conditional(TOKEN_KW_ELIF, &token, &last, &node, AST_NODE_ELIF)) {
 			continue;
 		}
-
 		if (token->token_type == TOKEN_KW_ELSE) {
 			push_ast_node(token, &last, AST_NODE_ELSE, &node);
 			continue;
 		}
-
 		if (is_conditional(TOKEN_KW_WHILE, &token, &last, &node, AST_NODE_WHILE)) {
 			continue;
 		}
-
-		if (is_const_oper(&token, &last, &node)) {
-			continue;
-		}
-
 		if (is_ast_function_proto(&token, &last, &node)) {
-			continue;
-		}
-
-		if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
-			token = token->next;
-
-			push_ast_node(token, &last, AST_NODE_FUNCTION, &node);
-			continue;
-		}
-
-		if (token->token_type == TOKEN_IDENTIFIER) {
-			push_ast_node(token, &last, AST_NODE_IDENTIFIER, &node);
 			continue;
 		}
 		if (token->token_type == TOKEN_COMMENT) {
 			push_ast_node(token, &last, AST_NODE_COMMENT, &node);
 			continue;
 		}
-		if (is_value(token) || token->token_type == TOKEN_TYPE) {
-			push_ast_node(token, &last, AST_NODE_CONST, &node);
+		if (try_gen_expression(&token, &last, &node)) {
 			continue;
 		}
 
@@ -456,6 +403,38 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 		free(node);
 	}
 	return head;
+}
+
+/*
+Try and generate AST node for expression.
+
+Returns true if a node was added, false otherwise.
+*/
+bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
+	Token *token = *_token;
+
+	if (is_const_oper(_token, last, node)) {
+		// pass
+	}
+
+	else if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
+		*_token = token->next;
+
+		push_ast_node(token, last, AST_NODE_FUNCTION, node);
+	}
+	else if (token->token_type == TOKEN_IDENTIFIER) {
+		push_ast_node(token, last, AST_NODE_IDENTIFIER, node);
+	}
+
+	else if (is_value(token)) {
+		push_ast_node(token, last, AST_NODE_CONST, node);
+	}
+
+	else {
+		return false;
+	}
+
+	return true;
 }
 
 /*

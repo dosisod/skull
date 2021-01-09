@@ -33,14 +33,10 @@ void declare_function(const AstNode *const node) {
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
 	const bool is_export = ATTR(AstNodeFunctionProto, node, is_export);
 
-	const Token *func_name_token = NULL;
+	const Token *const func_name_token = (is_external || is_export) ?
+			node->token->next :
+			node->token;
 
-	if (is_external || is_export) {
-		func_name_token = node->token->next;
-	}
-	else {
-		func_name_token = node->token;
-	}
 	char *func_name = token_mbs_str(func_name_token);
 
 	if (is_export && CURRENT_FUNC != MAIN_FUNC) {
@@ -170,23 +166,17 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
-	FunctionDeclaration *current_function = FUNCTION_DECLARATIONS;
-	while (current_function) {
-		if (strcmp(current_function->name, func_name) == 0) {
-			break;
-		}
-		current_function = current_function->next;
-	}
-	free(func_name);
+	FunctionDeclaration *function = find_function(func_name);
 
-	if (!current_function) {
+	if (!function) {
 		PANIC(ERR_MISSING_DECLARATION, {
 			.tok = node->token
 		});
 	}
+	free(func_name);
 	free(wide_func_name);
 
-	unsigned short num_params = current_function->num_params;
+	unsigned short num_params = function->num_params;
 
 	LLVMValueRef *params = NULL;
 	if (num_params) {
@@ -198,15 +188,15 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	if (num_params >= 1) {
 		for (unsigned i = 0; i < num_params ; i++) {
 			Expr expr = node_to_expr(
-				current_function->param_types[i],
+				function->param_types[i],
 				param,
 				NULL
 			);
 
-			if (expr.type != current_function->param_types[i]) {
+			if (expr.type != function->param_types[i]) {
 				PANIC(ERR_FUNC_TYPE_MISMATCH, {
 					.tok = param->token,
-					.real = strdup(current_function->param_types[i]->name)
+					.real = strdup(function->param_types[i]->name)
 				});
 			}
 
@@ -229,13 +219,13 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	Expr ret = (Expr){
 		.llvm_value = LLVMBuildCall2(
 			BUILDER,
-			current_function->type,
-			current_function->function,
+			function->type,
+			function->function,
 			params,
 			num_params,
 			""
 		),
-		.type = current_function->return_type
+		.type = function->return_type
 	};
 
 	free(params);
@@ -301,4 +291,30 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	LLVMPositionBuilderAtEnd(BUILDER, current_block);
 
 	CURRENT_FUNC = old_func;
+}
+
+/*
+Find function named `name`.
+*/
+FunctionDeclaration *find_function(const char *name) {
+	FunctionDeclaration *function = FUNCTION_DECLARATIONS;
+	while (function) {
+		if (strcmp(name, function->name) == 0) {
+			return function;
+		}
+		function = function->next;
+	}
+
+	return NULL;
+}
+
+void free_function_declarations(FunctionDeclaration *func) {
+	while (func) {
+		free(func->name);
+		free(func->param_types);
+
+		FunctionDeclaration *copy = func;
+		func = func->next;
+		free(copy);
+	}
 }

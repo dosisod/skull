@@ -112,6 +112,14 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 > Internal AST tree generator.
 
 ```c
+bool try_gen_expression(Token **_token, Token **last, AstNode **node)
+```
+
+> Try and generate AST node for expression.
+> \
+> Returns true if a node was added, false otherwise.
+
+```c
 void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode **node)
 ```
 

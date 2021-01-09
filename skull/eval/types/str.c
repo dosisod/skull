@@ -31,7 +31,7 @@ SkullStr eval_str(const Token *const token) {
 		str++;
 		wrote++;
 	}
-	copy[wrote] = '\0';
 
+	copy[wrote] = '\0';
 	return copy;
 }

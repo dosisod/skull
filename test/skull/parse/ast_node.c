@@ -66,7 +66,7 @@ TEST(make_ast_tree_external, {
 })
 
 TEST(make_ast_tree_function, {
-	TEST_AST_TREE(U"x()", AST_NODE_FUNCTION, 0, 2);
+	TEST_AST_TREE(U"x()", AST_NODE_FUNCTION, 0, 1);
 })
 
 TEST(make_ast_tree_return, {
@@ -124,10 +124,6 @@ TEST(make_ast_tree_str_const, {
 	TEST_AST_TREE(U"\"abc\"", AST_NODE_CONST, 0, 5);
 })
 
-TEST(make_ast_tree_type_const, {
-	TEST_AST_TREE(U"int", AST_NODE_CONST, 0, 3);
-})
-
 TEST(make_ast_tree_comment, {
 	TEST_AST_TREE(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
 })
@@ -156,7 +152,6 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_bool_const_false,
 	test_make_ast_tree_rune_const,
 	test_make_ast_tree_str_const,
-	test_make_ast_tree_type_const,
 	test_make_ast_tree_comment,
 	test_free_ast_tree
 )

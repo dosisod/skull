@@ -46,3 +46,7 @@ void declare_function(const AstNode *const);
 Expr llvm_make_function_call(const AstNode *const);
 
 void define_function(const AstNode *const, FunctionDeclaration *);
+
+FunctionDeclaration *find_function(const char *);
+
+void free_function_declarations(FunctionDeclaration *);

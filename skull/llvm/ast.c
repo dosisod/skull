@@ -40,16 +40,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	free_ast_tree(node);
 	free(str);
 
-	FunctionDeclaration *f = FUNCTION_DECLARATIONS;
-	while (f) {
-		free(f->name);
-		free(f->param_types);
-
-		FunctionDeclaration *copy = f;
-		f = f->next;
-		free(copy);
-	}
-
+	free_function_declarations(FUNCTION_DECLARATIONS);
 	free_scope(SCOPE);
 }
 
