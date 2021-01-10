@@ -109,6 +109,13 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	);
 
 	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
+	*_token = (*_token)->next;
+
+	bool added = try_gen_expression(_token, last, node);
+	if (!added) {
+		PANIC(ERR_ASSIGN_MISSING_EXPR, { .tok = *_token });
+	}
+
 	return true;
 }
 

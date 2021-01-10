@@ -11,7 +11,6 @@
 #define ERR_BAD_ESCAPE "bad string escape: \"%s\"\n"
 #define ERR_VAR_NOT_FOUND "variable \"%s\" not found\n"
 #define ERR_OVERFLOW "overflow occurred while parsing \"%s\"\n"
-#define ERR_MISSING_ASSIGNMENT "missing value in assignment to variable \"%s\"\n"
 #define ERR_FILE_EMPTY "file is empty"
 #define ERR_MISSING_OPEN_BRAK "missing opening bracket\n"
 #define ERR_MISSING_DECLARATION "function \"%s\" missing declaration\n"

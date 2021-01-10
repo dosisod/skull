@@ -67,10 +67,6 @@ void node_make_var(const AstNode *const node) {
 		token = token->next;
 	}
 
-	if (!node->next) {
-		PANIC(ERR_MISSING_ASSIGNMENT, { .tok = token });
-	}
-
 	char32_t *const name = token_str(token);
 	Variable *var = NULL;
 

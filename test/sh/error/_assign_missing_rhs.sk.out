@@ -1,1 +1,1 @@
-Compilation error: line 1 column 1: missing value in assignment to variable "x"
+Compilation error: line 1 column 9: expected expression in assignment variable

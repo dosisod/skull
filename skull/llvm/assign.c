@@ -85,10 +85,6 @@ Create an expression from `node` with type `type`.
 Optionally pass `var` if expression is going to be assigned to a variable.
 */
 Expr node_to_expr(const Type *const type, const AstNode *const node, const Variable *const var) {
-	if (!node) {
-		PANIC(ERR_MISSING_ASSIGNMENT, { .var = var });
-	}
-
 	Expr expr;
 
 	if (node->node_type == AST_NODE_IDENTIFIER) {
