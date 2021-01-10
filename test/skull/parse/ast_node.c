@@ -42,23 +42,23 @@ TEST(make_ast_tree_identifier, {
 })
 
 TEST(make_ast_tree_variable_def, {
-	TEST_AST_TREE(U"x: int =", AST_NODE_VAR_DEF, 0, 8);
+	TEST_AST_TREE(U"x: int = 0", AST_NODE_VAR_DEF, 0, 8);
 })
 
 TEST(make_ast_tree_mutable_variable_def, {
-	TEST_AST_TREE(U"mut x: int =", AST_NODE_VAR_DEF, 0, 12);
+	TEST_AST_TREE(U"mut x: int = 0", AST_NODE_VAR_DEF, 0, 12);
 })
 
 TEST(make_ast_tree_auto_variable_def, {
-	TEST_AST_TREE(U"x :=", AST_NODE_VAR_DEF, 0, 4);
+	TEST_AST_TREE(U"x := 0", AST_NODE_VAR_DEF, 0, 4);
 })
 
 TEST(make_ast_tree_auto_mutable_variable_def, {
-	TEST_AST_TREE(U"mut x :=", AST_NODE_VAR_DEF, 0, 8);
+	TEST_AST_TREE(U"mut x := 0", AST_NODE_VAR_DEF, 0, 8);
 })
 
 TEST(make_ast_tree_var_assign, {
-	TEST_AST_TREE(U"x =", AST_NODE_VAR_ASSIGN, 0, 3);
+	TEST_AST_TREE(U"x = 0", AST_NODE_VAR_ASSIGN, 0, 3);
 })
 
 TEST(make_ast_tree_external, {
@@ -70,7 +70,7 @@ TEST(make_ast_tree_function, {
 })
 
 TEST(make_ast_tree_return, {
-	TEST_AST_TREE(U"return", AST_NODE_RETURN, 0, 6);
+	TEST_AST_TREE(U"return 0", AST_NODE_RETURN, 0, 6);
 })
 TEST(make_ast_tree_if, {
 	const char32_t *const code = U"if true { }";

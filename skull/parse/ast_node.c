@@ -32,6 +32,24 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	return ret;
 }
 
+bool is_ast_return(Token **_token, Token **last, AstNode **node) {
+	Token *token = *_token;
+
+	if (token->token_type != TOKEN_KW_RETURN) {
+		return false;
+	}
+
+	push_ast_node(token, last, AST_NODE_RETURN, node);
+
+	*_token = token->next;
+	bool added = try_gen_expression(_token, last, node);
+	if (!added) {
+		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *_token });
+	}
+
+	return true;
+}
+
 bool is_ast_type_alias(Token **token, Token **last, AstNode **node) {
 	if (AST_TOKEN_CMP(*token,
 		TOKEN_IDENTIFIER,
@@ -91,6 +109,29 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	);
 
 	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
+	return true;
+}
+
+bool is_ast_var_assign(Token **_token, Token **last, AstNode **node) {
+	Token *token = *_token;
+
+	if (!AST_TOKEN_CMP(token,
+		TOKEN_IDENTIFIER,
+		TOKEN_OPER_EQUAL)
+	) {
+		return false;
+	}
+
+	token = token->next;
+	push_ast_node(token, last, AST_NODE_VAR_ASSIGN, node);
+	token = token->next;
+	*_token = token;
+
+	bool added = try_gen_expression(_token, last, node);
+	if (!added) {
+		PANIC(ERR_ASSIGN_MISSING_EXPR, { .tok = *_token });
+	}
+
 	return true;
 }
 
@@ -350,18 +391,10 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 		if (is_ast_var_def(&token, &last, &node)) {
 			continue;
 		}
-
-		if (AST_TOKEN_CMP(token,
-			TOKEN_IDENTIFIER,
-			TOKEN_OPER_EQUAL)
-		) {
-			token = token->next;
-			push_ast_node(token, &last, AST_NODE_VAR_ASSIGN, &node);
+		if (is_ast_var_assign(&token, &last, &node)) {
 			continue;
 		}
-
-		if (token->token_type == TOKEN_KW_RETURN) {
-			push_ast_node(token, &last, AST_NODE_RETURN, &node);
+		if (is_ast_return(&token, &last, &node)) {
 			continue;
 		}
 		if (is_conditional(TOKEN_KW_IF, &token, &last, &node, AST_NODE_IF)) {

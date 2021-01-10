@@ -40,6 +40,8 @@
 #define ERR_EXPECTED_COMMA "expected comma\n"
 #define ERR_TYPE_NOT_FOUND "type \"%s\" could not be found\n"
 #define ERR_ALIAS_ALREADY_DEFINED "alias \"%s\" is already defined\n"
+#define ERR_ASSIGN_MISSING_EXPR "expected expression in assignment variable\n"
+#define ERR_RETURN_MISSING_EXPR "expected expression in return\n"
 
 typedef struct Variable Variable;
 typedef struct Type Type;

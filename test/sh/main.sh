@@ -225,6 +225,7 @@ test_error "bad_type_not_allowed.sk"
 test_error "no_same_name_aliases.sk"
 test_error "function_proto_param_bad_type.sk"
 test_error "function_proto_return_bad_type.sk"
+test_error "return_missing_expr.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
