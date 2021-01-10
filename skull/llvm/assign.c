@@ -105,7 +105,7 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 	else if (node->node_type == AST_NODE_FUNCTION) {
 		expr = llvm_make_function_call(node);
 
-		if (expr.type != type) {
+		if (type && expr.type != type) {
 			PANIC(ERR_TYPE_MISMATCH, {
 				.tok = node->token,
 				.type = type

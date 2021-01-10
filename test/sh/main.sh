@@ -140,6 +140,7 @@ test "flow" "is_cmp_int.sk"
 test "flow" "is_cmp_float.sk"
 test "flow" "is_cmp_rune.sk"
 test "flow" "return_expr.sk"
+test "flow" "return_func_value.sk"
 
 test "misc" "const_inline.sk"
 test "misc" "ignore_comments.sk"
