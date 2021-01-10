@@ -92,7 +92,7 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 	AstNode *next_non_comment = (*node)->next;
 
 	while (next_non_comment) {
-		if (next_non_comment->node_type == AST_NODE_COMMENT) {
+		if (next_non_comment->type == AST_NODE_COMMENT) {
 			next_non_comment = next_non_comment->next;
 			continue;
 		}
@@ -109,8 +109,8 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 	LLVMPositionBuilderAtEnd(BUILDER, entry);
 
 	if (next_non_comment && (
-		next_non_comment->node_type == AST_NODE_ELIF ||
-		next_non_comment->node_type == AST_NODE_ELSE)
+		next_non_comment->type == AST_NODE_ELIF ||
+		next_non_comment->type == AST_NODE_ELSE)
 	) {
 		if_false = LLVMAppendBasicBlock(CURRENT_FUNC, "if_false");
 		LLVMMoveBasicBlockAfter(end, if_false);
@@ -126,11 +126,11 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 	}
 
 	// if there is an elif block following the current if block
-	if (next_non_comment && (next_non_comment->node_type == AST_NODE_ELIF)) {
+	if (next_non_comment && (next_non_comment->type == AST_NODE_ELIF)) {
 		llvm_make_if_(node, if_false, end);
 	}
 	// if there is an else block following the current if block
-	else if (next_non_comment && (next_non_comment->node_type == AST_NODE_ELSE)) {
+	else if (next_non_comment && (next_non_comment->type == AST_NODE_ELSE)) {
 		LLVMPositionBuilderAtEnd(BUILDER, if_false);
 		llvm_make_code_block(U"else", *node, end);
 	}

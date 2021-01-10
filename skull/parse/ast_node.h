@@ -54,7 +54,7 @@ typedef struct AstNode AstNode;
 /*
 An `AstNode` abstractly stores data about parsed code.
 
-Each `AstNode` must have a `node_type`, which represents what tokens a node might contain.
+Each `AstNode` must have a `type`, which represents what tokens a node might contain.
 
 An `AstNode` points to the starting `token`, and the ending token, `token_end`.
 
@@ -65,7 +65,7 @@ Adjacent `AstNode`s are accessed via `next` and `last`.
 Certain `node_type`s may chose to store arbitrary data in `attr` to save time re-parsing.
 */
 typedef struct AstNode {
-	NodeType node_type;
+	NodeType type;
 
 	Token *token;
 	Token *token_end;

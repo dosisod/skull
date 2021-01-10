@@ -135,8 +135,8 @@ TEST(token_type, {
 	Token *t = tokenize(U"int not_a_type");
 	classify_tokens(t);
 
-	ASSERT_EQUAL(t->token_type, TOKEN_TYPE);
-	ASSERT_NOT_EQUAL(t->next->token_type, TOKEN_TYPE);
+	ASSERT_EQUAL(t->type, TOKEN_TYPE);
+	ASSERT_NOT_EQUAL(t->next->type, TOKEN_TYPE);
 
 	free_tokens(t);
 })
@@ -222,8 +222,8 @@ TEST(classify_tokens, {
 	Token *t = tokenize(U"{ }");
 	classify_tokens(t);
 
-	ASSERT_EQUAL(t->token_type, TOKEN_BRACKET_OPEN);
-	ASSERT_EQUAL(t->next->token_type, TOKEN_BRACKET_CLOSE);
+	ASSERT_EQUAL(t->type, TOKEN_BRACKET_OPEN);
+	ASSERT_EQUAL(t->next->type, TOKEN_BRACKET_CLOSE);
 
 	free_tokens(t);
 })

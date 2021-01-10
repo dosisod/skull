@@ -8,14 +8,14 @@
 
 #include "skull/parse/classify.h"
 
-#define TOKEN_TRY_STR(str, type) \
+#define TOKEN_TRY_STR(str, token_type) \
 	else if (token_cmp((str), token)) { \
-		token->token_type = (type); \
+		token->type = (token_type); \
 	}
 
-#define TOKEN_SET_IF(cond, type) \
+#define TOKEN_SET_IF(cond, token_type) \
 	else if ((cond)) { \
-		token->token_type = (type); \
+		token->type = (token_type); \
 	}
 
 /*
@@ -63,16 +63,16 @@ void classify_token(Token *const token) {
 	TOKEN_SET_IF(is_constant_str_str(str), TOKEN_STR_CONST)
 
 	else if (is_valid_identifier_str(str)) {
-		token->token_type = TOKEN_IDENTIFIER;
+		token->type = TOKEN_IDENTIFIER;
 
 		if (token->end[-1] == ':') {
-			token->token_type = TOKEN_NEW_IDENTIFIER;
+			token->type = TOKEN_NEW_IDENTIFIER;
 
 			const size_t len = token_len(token);
 			str[len - 1] = '\0';
 
 			if (is_type_str(str) || is_reserved_str(str)) {
-				token->token_type = TOKEN_UNKNOWN;
+				token->type = TOKEN_UNKNOWN;
 			}
 			else {
 				token->end--;

@@ -65,7 +65,7 @@ typedef struct Token {
 	const char32_t *begin;
 	const char32_t *end;
 
-	TokenType token_type;
+	TokenType type;
 	unsigned line;
 	unsigned column;
 
@@ -79,7 +79,7 @@ typedef struct Token {
 > \
 > `end` points to the last character in the token.
 > \
-> `token_type` stores the type of token.
+> `type` stores the type of token.
 > \
 > `line` stores the line that the token starts at.
 > \

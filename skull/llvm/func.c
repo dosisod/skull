@@ -200,7 +200,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 				});
 			}
 
-			if (param->token_end->next->token_type != TOKEN_COMMA &&
+			if (param->token_end->next->type != TOKEN_COMMA &&
 				i != (unsigned)(num_params - 1)
 			) {
 				PANIC(ERR_EXPECTED_COMMA, {

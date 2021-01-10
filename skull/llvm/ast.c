@@ -53,7 +53,7 @@ bool node_to_llvm_ir(AstNode *node) {
 	bool returned = false;
 
 while (node) {
-	const NodeType node_type = node->node_type;
+	const NodeType node_type = node->type;
 
 	if (node_type == AST_NODE_IF) {
 		llvm_make_if(&node);

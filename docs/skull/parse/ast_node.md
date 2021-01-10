@@ -20,7 +20,7 @@
 
 ```c
 typedef struct AstNode {
-	NodeType node_type;
+	NodeType type;
 
 	Token *token;
 	Token *token_end;
@@ -38,7 +38,7 @@ typedef struct AstNode {
 
 > An `AstNode` abstractly stores data about parsed code.
 > \
-> Each `AstNode` must have a `node_type`, which represents what tokens a node might contain.
+> Each `AstNode` must have a `type`, which represents what tokens a node might contain.
 > \
 > An `AstNode` points to the starting `token`, and the ending token, `token_end`.
 > \

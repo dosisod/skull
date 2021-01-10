@@ -200,7 +200,7 @@ TEST(make_token, {
 
 	ASSERT_FALSEY(token->begin);
 	ASSERT_FALSEY(token->end);
-	ASSERT_FALSEY(token->token_type);
+	ASSERT_FALSEY(token->type);
 	ASSERT_FALSEY(token->next);
 
 	free_tokens(token);

@@ -87,22 +87,22 @@ Optionally pass `var` if expression is going to be assigned to a variable.
 Expr node_to_expr(const Type *const type, const AstNode *const node, const Variable *const var) {
 	Expr expr;
 
-	if (node->node_type == AST_NODE_IDENTIFIER) {
+	if (node->type == AST_NODE_IDENTIFIER) {
 		expr = llvm_assign_identifier(type, node, var);
 	}
-	else if (node->node_type == AST_NODE_ADD) {
+	else if (node->type == AST_NODE_ADD) {
 		expr = llvm_make_oper(type, node, &llvm_make_add);
 	}
-	else if (node->node_type == AST_NODE_SUB) {
+	else if (node->type == AST_NODE_SUB) {
 		expr = llvm_make_oper(type, node, &llvm_make_sub);
 	}
-	else if (node->node_type == AST_NODE_MULT) {
+	else if (node->type == AST_NODE_MULT) {
 		expr = llvm_make_oper(type, node, &llvm_make_mult);
 	}
-	else if (node->node_type == AST_NODE_DIV) {
+	else if (node->type == AST_NODE_DIV) {
 		expr = llvm_make_oper(type, node, &llvm_make_div);
 	}
-	else if (node->node_type == AST_NODE_FUNCTION) {
+	else if (node->type == AST_NODE_FUNCTION) {
 		expr = llvm_make_function_call(node);
 
 		if (type && expr.type != type) {

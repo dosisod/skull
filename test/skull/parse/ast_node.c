@@ -10,7 +10,7 @@
 TEST(make_ast_node, {
 	AstNode *node = make_ast_node();
 
-	ASSERT_EQUAL(node->node_type, AST_NODE_UNKNOWN);
+	ASSERT_EQUAL(node->type, AST_NODE_UNKNOWN);
 	ASSERT_FALSEY(node->token);
 	ASSERT_FALSEY(node->token_end);
 	ASSERT_FALSEY(node->last);
@@ -76,7 +76,7 @@ TEST(make_ast_tree_if, {
 	const char32_t *const code = U"if true { }";
 	AstNode *node = make_ast_tree(code);
 
-	ASSERT_EQUAL(node->node_type, AST_NODE_IF);
+	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
 	ASSERT_EQUAL(node->token_end->end, code + 7);
 	ASSERT_FALSEY(node->last);
@@ -90,7 +90,7 @@ TEST(make_ast_tree_if_with_var, {
 	const char32_t *const code = U"if x { }";
 	AstNode *node = make_ast_tree(code);
 
-	ASSERT_EQUAL(node->node_type, AST_NODE_IF);
+	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
 	ASSERT_EQUAL(node->token_end->end, code + 4);
 	ASSERT_FALSEY(node->last);

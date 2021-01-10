@@ -28,7 +28,7 @@ Convert `token` to an expression.
 If `variable` is and `token` is a variable, store the found variable there.
 */
 Expr token_to_expr(const Token *const token, Variable **variable) {
-	if (token->token_type == TOKEN_IDENTIFIER) {
+	if (token->type == TOKEN_IDENTIFIER) {
 		Variable *const var_found = scope_find_var(token);
 
 		if (variable) {
@@ -71,8 +71,8 @@ void node_make_var(const AstNode *const node) {
 	Variable *var = NULL;
 
 	if (ATTR(AstNodeVarDef, node, is_implicit)) {
-		const TokenType token_type = node->next->token->token_type;
-		const NodeType node_type = node->next->node_type;
+		const TokenType token_type = node->next->token->type;
+		const NodeType node_type = node->next->type;
 		const Type *type = NULL;
 
 		if (token_type == TOKEN_INT_CONST) {
@@ -167,23 +167,23 @@ Expr token_to_simple_expr(const Token *const token) {
 	LLVMValueRef llvm_value = NULL;
 	const Type *type = NULL;
 
-	if (token->token_type == TOKEN_INT_CONST) {
+	if (token->type == TOKEN_INT_CONST) {
 		llvm_value = LLVM_INT(eval_integer(token));
 		type = &TYPE_INT;
 	}
-	else if (token->token_type == TOKEN_FLOAT_CONST) {
+	else if (token->type == TOKEN_FLOAT_CONST) {
 		llvm_value = LLVM_FLOAT(eval_float(token));
 		type = &TYPE_FLOAT;
 	}
-	else if (token->token_type == TOKEN_BOOL_CONST) {
+	else if (token->type == TOKEN_BOOL_CONST) {
 		llvm_value = LLVM_BOOL(eval_bool(token));
 		type = &TYPE_BOOL;
 	}
-	else if (token->token_type == TOKEN_RUNE_CONST) {
+	else if (token->type == TOKEN_RUNE_CONST) {
 		llvm_value = LLVM_RUNE(eval_rune(token));
 		type = &TYPE_RUNE;
 	}
-	else if (token->token_type == TOKEN_STR_CONST) {
+	else if (token->type == TOKEN_STR_CONST) {
 		SkullStr str = eval_str(token);
 		char *const mbs = c32stombs(str);
 
