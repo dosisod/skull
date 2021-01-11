@@ -189,7 +189,7 @@ LLVMValueRef llvm_get_bool_from_token(const Token *token) {
 	Expr expr = token_to_expr(token, NULL);
 
 	if (expr.type != &TYPE_BOOL) {
-		PANIC(ERR_NON_BOOL_COND, { .tok = token });
+		PANIC(ERR_NON_BOOL_EXPR, { .tok = token });
 	}
 
 	return expr.llvm_value;

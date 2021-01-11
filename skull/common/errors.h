@@ -20,7 +20,7 @@
 #define ERR_INVALID_INPUT "invalid input: \"%s\"\n"
 #define ERR_VAR_ALREADY_DEFINED "variable \"%s\" already defined\n"
 #define ERR_NON_INT_MAIN "returning non-int expression \"%s\" from main\n"
-#define ERR_NON_BOOL_COND "Expected \"%s\" to be of type bool\n"
+#define ERR_NON_BOOL_EXPR "expected boolean expression\n"
 #define ERR_MAIN_RESERVED "declaration of reserved function \"main\""
 #define ERR_NO_REDEFINE_FUNC "cannot redeclare function \"%s\"\n"
 #define ERR_ZERO_PARAM_FUNC "passing parameter to function that takes zero parameters\n"

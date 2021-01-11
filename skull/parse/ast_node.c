@@ -271,6 +271,8 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 #define IS_BOOL_LIKE(tok) ((tok)->type == TOKEN_IDENTIFIER || (tok)->type == TOKEN_BOOL_CONST)
 
+bool is_conditional_expr(Token **, Token **, AstNode **, NodeType);
+
 bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode **node, NodeType node_type) {
 	Token *token = *_token;
 
@@ -278,6 +280,17 @@ bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode 
 		return false;
 	}
 	token = token->next;
+	*_token = token;
+
+	if (!is_conditional_expr(_token, last, node, node_type)) {
+		PANIC(ERR_NON_BOOL_EXPR, { .tok = *_token });
+	}
+
+	return true;
+}
+
+bool is_conditional_expr(Token **_token, Token **last, AstNode **node, NodeType node_type) {
+	Token *token = *_token;
 
 	Token *lhs = NULL;
 	TokenType oper = TOKEN_UNKNOWN;

@@ -1,1 +1,1 @@
-Compilation error: line 3 column 4: Expected "x" to be of type bool
+Compilation error: line 3 column 4: expected boolean expression
