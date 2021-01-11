@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "skull/common/malloc.h"
+#include "skull/common/range.h"
 #include "skull/common/str.h"
 
 #include "skull/eval/scope.h"
@@ -31,12 +32,10 @@ Variable *scope_find_name(const Scope *const scope, const char *name) {
 		return NULL;
 	}
 
-	size_t var_at = 0;
-	while (var_at < scope->vars_used) {
+	for RANGE(var_at, scope->vars_used) {
 		if (strcmp(scope->vars[var_at]->name, name) == 0) {
 			return scope->vars[var_at];
 		}
-		var_at++;
 	}
 
 	return scope_find_name(scope->sub_scope, name);
@@ -56,10 +55,8 @@ Scope *make_scope(void) {
 Frees a `scope` and all the variables inside of it.
 */
 void free_scope(Scope *scope) {
-	size_t var_at = 0;
-	while (var_at < scope->vars_used) {
+	for RANGE(var_at, scope->vars_used) {
 		free_variable(scope->vars[var_at]);
-		var_at++;
 	}
 
 	free(scope);

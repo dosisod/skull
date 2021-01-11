@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "skull/common/malloc.h"
+#include "skull/common/range.h"
 #include "skull/eval/types/defs.h"
 
 #include "skull/eval/types/types.h"
@@ -17,7 +18,7 @@ const Type __attribute__((pure)) *find_type(const char *const name) {
 			return *type;
 		}
 
-		for (unsigned i = 0 ; i < (*type)->num_aliases ; i++) {
+		for RANGE(i, (*type)->num_aliases) {
 			if (strcmp(name, (*type)->aliases[i]) == 0) {
 				return *type;
 			}

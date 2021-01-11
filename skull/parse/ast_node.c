@@ -5,6 +5,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/panic.h"
+#include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
 #include "skull/parse/classify.h"
@@ -530,7 +531,7 @@ void free_ast_tree_(AstNode *node) {
 
 				unsigned num_params = ATTR(AstNodeFunctionProto, node, num_params);
 
-				for (unsigned i = 0 ; i < num_params ; i++) {
+				for RANGE(i, num_params) { // NOLINT
 					free(param_type_names[i]);
 					free(param_names[i]);
 				}

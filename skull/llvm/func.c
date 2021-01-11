@@ -5,6 +5,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/panic.h"
+#include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
 #include "skull/llvm/aliases.h"
@@ -105,7 +106,7 @@ FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *n
 		params = Malloc(num_params * sizeof(LLVMValueRef));
 		func->param_types = Calloc(num_params, sizeof(Type *));
 
-		for (unsigned i = 0 ; i < num_params ; i++) {
+		for RANGE(i, num_params) {
 			func->param_types[i] = find_type(param_type_names[i]);
 
 			if (!func->param_types[i]) {
@@ -186,7 +187,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	const AstNode *param = node->child;
 
 	if (num_params >= 1) {
-		for (unsigned i = 0; i < num_params ; i++) {
+		for RANGE(i, num_params) {
 			Expr expr = node_to_expr(
 				function->param_types[i],
 				param,
@@ -253,7 +254,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	if (func->param_types) {
 		LLVMValueRef next_param = LLVMGetFirstParam(func->function);
 
-		for (unsigned i = 0 ; i < func->num_params ; i++) {
+		for RANGE(i, func->num_params) {
 			Variable *const param_var = make_variable(
 				func->param_types[i],
 				func->param_names[i],
