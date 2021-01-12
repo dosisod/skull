@@ -182,7 +182,7 @@ If `type` is not set, the expression type will not be checked.
 */
 Expr llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var) {
 	Variable *var_found = NULL;
-	Expr expr = token_to_expr(node->token, &var_found);
+	const Expr expr = token_to_expr(node->token, &var_found);
 
 	if (type && var_found->type != type) {
 		PANIC(ERR_TYPE_MISMATCH, {

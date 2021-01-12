@@ -134,8 +134,8 @@ Expr llvm_make_oper(const Type *const type, const AstNode *const node, Operation
 	const Token *rhs_token = ATTR(AstNodeOper, node, rhs);
 	const Token *lhs_token = ATTR(AstNodeOper, node, lhs);
 
-	Expr lhs = token_to_expr(lhs_token, NULL);
-	Expr rhs = token_to_expr(rhs_token, NULL);
+	const Expr lhs = token_to_expr(lhs_token, NULL);
+	const Expr rhs = token_to_expr(rhs_token, NULL);
 
 	if (lhs.type != rhs.type) {
 		PANIC(ERR_TYPE_MISMATCH, {
@@ -144,7 +144,7 @@ Expr llvm_make_oper(const Type *const type, const AstNode *const node, Operation
 		});
 	}
 
-	Expr result = oper(
+	const Expr result = oper(
 		lhs.type,
 		lhs.llvm_value,
 		rhs.llvm_value

@@ -32,7 +32,7 @@ void llvm_make_return(AstNode **node) {
 	AstNode *const node_val = (*node)->next;
 	const bool is_main = CURRENT_FUNC == MAIN_FUNC;
 
-	Expr expr = node_to_expr(NULL, node_val, NULL);
+	const Expr expr = node_to_expr(NULL, node_val, NULL);
 
 	if (is_main && expr.type != &TYPE_INT) {
 		PANIC(ERR_NON_INT_MAIN, { .tok = node_val->token });
@@ -164,7 +164,7 @@ LLVMValueRef llvm_make_cond(const AstNode *const node) {
 		);
 	}
 	if (oper == TOKEN_OPER_IS) {
-		Expr lhs_expr = token_to_expr(lhs, NULL);
+		const Expr lhs_expr = token_to_expr(lhs, NULL);
 
 		LLVMValueRef result = llvm_make_is(
 			lhs_expr.type,
@@ -186,7 +186,7 @@ LLVMValueRef llvm_make_cond(const AstNode *const node) {
 Returns an LLVM value parsed from `token`.
 */
 LLVMValueRef llvm_get_bool_from_token(const Token *token) {
-	Expr expr = token_to_expr(token, NULL);
+	const Expr expr = token_to_expr(token, NULL);
 
 	if (expr.type != &TYPE_BOOL) {
 		PANIC(ERR_NON_BOOL_EXPR, { .tok = token });

@@ -148,7 +148,7 @@ void node_make_var(const AstNode *const node) {
 Make an expression from `token`, checking for compatibility with `type`.
 */
 Expr token_to_simple_expr_typed(const Type *const type, const Token *const token) {
-	Expr expr = token_to_simple_expr(token);
+	const Expr expr = token_to_simple_expr(token);
 
 	if (!expr.type) {
 		PANIC(ERR_TYPE_MISMATCH, {

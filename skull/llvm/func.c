@@ -188,7 +188,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 
 	if (num_params >= 1) {
 		for RANGE(i, num_params) {
-			Expr expr = node_to_expr(
+			const Expr expr = node_to_expr(
 				function->param_types[i],
 				param,
 				NULL
