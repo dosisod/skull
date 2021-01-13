@@ -84,7 +84,7 @@ void node_make_var(const AstNode *const node) {
 		else if (token_type == TOKEN_RUNE_CONST) {
 			type = &TYPE_RUNE;
 		}
-		else if (token_type == TOKEN_BOOL_CONST) {
+		else if (token_type == TOKEN_BOOL_CONST || node_type == AST_NODE_BOOL_EXPR) {
 			type = &TYPE_BOOL;
 		}
 		else if (token_type == TOKEN_STR_CONST) {

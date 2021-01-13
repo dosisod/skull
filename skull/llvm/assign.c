@@ -102,6 +102,45 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 	else if (node->type == AST_NODE_DIV) {
 		expr = llvm_make_oper(type, node, &llvm_make_div);
 	}
+	else if (node->type == AST_NODE_BOOL_EXPR) {
+		const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
+		const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
+		const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
+
+		LLVMValueRef value = NULL;
+
+		if (oper == TOKEN_OPER_NOT) {
+			const Expr rhs_expr = token_to_expr(rhs, NULL);
+
+			if (rhs_expr.type != &TYPE_BOOL) {
+				PANIC(ERR_NON_BOOL_EXPR, { .tok = rhs });
+			}
+
+			value = LLVMBuildNot(
+				BUILDER,
+				rhs_expr.llvm_value,
+				""
+			);
+		}
+		else if (oper == TOKEN_OPER_IS) {
+			const Expr lhs_expr = token_to_expr(lhs, NULL);
+
+			value = llvm_make_is(
+				lhs_expr.type,
+				lhs_expr.llvm_value,
+				token_to_simple_expr_typed(lhs_expr.type, rhs).llvm_value
+			).llvm_value;
+
+			if (!value) {
+				PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
+			}
+		}
+
+		expr = (Expr){
+			.llvm_value = value,
+			.type = &TYPE_BOOL
+		};
+	}
 	else if (node->type == AST_NODE_FUNCTION) {
 		expr = llvm_make_function_call(node);
 

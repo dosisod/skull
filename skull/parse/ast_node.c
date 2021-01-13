@@ -271,7 +271,7 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 #define IS_BOOL_LIKE(tok) ((tok)->type == TOKEN_IDENTIFIER || (tok)->type == TOKEN_BOOL_CONST)
 
-bool is_conditional_expr(Token **, Token **, AstNode **, NodeType);
+bool is_conditional_expr(Token **, Token **, AstNode **);
 
 bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode **node, NodeType node_type) {
 	Token *token = *_token;
@@ -279,22 +279,24 @@ bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode 
 	if (token->type != token_type || !token->next) {
 		return false;
 	}
+	push_ast_node(token, last, node_type, node);
+
 	token = token->next;
 	*_token = token;
 
-	if (!is_conditional_expr(_token, last, node, node_type)) {
-		PANIC(ERR_NON_BOOL_EXPR, { .tok = *_token });
+	if (!try_gen_expression(_token, last, node)) {
+		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *_token });
 	}
 
 	return true;
 }
 
-bool is_conditional_expr(Token **_token, Token **last, AstNode **node, NodeType node_type) {
+bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
 	Token *lhs = NULL;
 	TokenType oper = TOKEN_UNKNOWN;
-	Token *rhs = token;
+	Token *rhs = NULL;
 
 	if (token->type == TOKEN_OPER_NOT && IS_BOOL_LIKE(token->next)) {
 		oper = TOKEN_OPER_NOT;
@@ -321,7 +323,7 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node, NodeType 
 			return false;
 		}
 	}
-	else if (!IS_BOOL_LIKE(token)) {
+	else {
 		return false;
 	}
 
@@ -332,7 +334,7 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node, NodeType 
 	);
 
 	*_token = token;
-	push_ast_node(*_token, last, node_type, node);
+	push_ast_node(*_token, last, AST_NODE_BOOL_EXPR, node);
 
 	return true;
 }
@@ -467,23 +469,19 @@ Returns true if a node was added, false otherwise.
 bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (is_const_oper(_token, last, node)) {
+	if (is_const_oper(_token, last, node) || is_conditional_expr(_token, last, node)) {
 		// pass
 	}
-
 	else if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
 		*_token = token->next;
-
 		push_ast_node(token, last, AST_NODE_FUNCTION, node);
 	}
 	else if (token->type == TOKEN_IDENTIFIER) {
 		push_ast_node(token, last, AST_NODE_IDENTIFIER, node);
 	}
-
 	else if (is_value(token)) {
 		push_ast_node(token, last, AST_NODE_CONST, node);
 	}
-
 	else {
 		return false;
 	}

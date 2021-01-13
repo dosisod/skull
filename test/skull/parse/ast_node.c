@@ -78,10 +78,10 @@ TEST(make_ast_tree_if, {
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
-	ASSERT_EQUAL(node->token_end->end, code + 7);
+	ASSERT_EQUAL(node->token_end->end, code + 2);
 	ASSERT_FALSEY(node->last);
-	ASSERT_TRUTHY(node->child);
-	ASSERT_FALSEY(node->next);
+	ASSERT_TRUTHY(node->next);
+	ASSERT_TRUTHY(node->next->child);
 
 	free_ast_tree(node);
 })
@@ -92,10 +92,10 @@ TEST(make_ast_tree_if_with_var, {
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
-	ASSERT_EQUAL(node->token_end->end, code + 4);
+	ASSERT_EQUAL(node->token_end->end, code + 2);
 	ASSERT_FALSEY(node->last);
-	ASSERT_TRUTHY(node->child);
-	ASSERT_FALSEY(node->next);
+	ASSERT_TRUTHY(node->next);
+	ASSERT_TRUTHY(node->next->child);
 
 	free_ast_tree(node);
 })

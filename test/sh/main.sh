@@ -90,6 +90,8 @@ test "declare" "escape_sequences.sk"
 test "declare" "variable_auto.sk"
 test "declare" "reassign_str.sk"
 test "declare" "reassign_var.sk"
+test "declare" "bool_expr_is.sk"
+test "declare" "bool_expr_not.sk"
 
 test "oper" "add_float_consts.sk"
 test "oper" "add_int_consts.sk"

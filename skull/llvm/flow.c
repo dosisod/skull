@@ -49,7 +49,7 @@ void llvm_make_code_block(const char32_t *, const AstNode *const, LLVMBasicBlock
 /*
 Builds LLVM for a while loop from `node`.
 */
-void llvm_make_while(const AstNode *const node) {
+void llvm_make_while(AstNode **node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(CURRENT_FUNC, "while_cond");
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(CURRENT_FUNC, "while_loop");
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(CURRENT_FUNC, "while_end");
@@ -58,16 +58,18 @@ void llvm_make_while(const AstNode *const node) {
 
 	LLVMPositionBuilderAtEnd(BUILDER, while_cond);
 
+	*node = (*node)->next;
+
 	LLVMBuildCondBr(
 		BUILDER,
-		llvm_make_cond(node),
+		llvm_make_cond(*node),
 		while_loop,
 		while_end
 	);
 
 	LLVMPositionBuilderAtEnd(BUILDER, while_loop);
 
-	llvm_make_code_block(U"while", node, while_cond);
+	llvm_make_code_block(U"while", *node, while_cond);
 
 	LLVMPositionBuilderAtEnd(BUILDER, while_end);
 }
@@ -92,7 +94,9 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 	AstNode *next_non_comment = (*node)->next;
 
 	while (next_non_comment) {
-		if (next_non_comment->type == AST_NODE_COMMENT) {
+		if (next_non_comment->type != AST_NODE_ELIF &&
+			next_non_comment->type != AST_NODE_ELSE
+		) {
 			next_non_comment = next_non_comment->next;
 			continue;
 		}
@@ -104,6 +108,7 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 	LLVMMoveBasicBlockBefore(if_true, end);
 
 	LLVMPositionBuilderAtEnd(BUILDER, if_true);
+	*node = (*node)->next;
 	llvm_make_code_block(U"if", *node, end);
 
 	LLVMPositionBuilderAtEnd(BUILDER, entry);
@@ -134,6 +139,7 @@ void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef en
 		LLVMPositionBuilderAtEnd(BUILDER, if_false);
 		llvm_make_code_block(U"else", *node, end);
 	}
+	// just a single if statement
 	else {
 		LLVMBuildCondBr(
 			BUILDER,
@@ -152,34 +158,13 @@ LLVMValueRef llvm_get_bool_from_token(const Token *);
 Try and parse a condition (something returning a bool) from `node`.
 */
 LLVMValueRef llvm_make_cond(const AstNode *const node) {
-	const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
-	const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
-	const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
+	const Expr expr = node_to_expr(NULL, node, NULL);
 
-	if (oper == TOKEN_OPER_NOT) {
-		return LLVMBuildNot(
-			BUILDER,
-			llvm_get_bool_from_token(rhs),
-			""
-		);
-	}
-	if (oper == TOKEN_OPER_IS) {
-		const Expr lhs_expr = token_to_expr(lhs, NULL);
-
-		LLVMValueRef result = llvm_make_is(
-			lhs_expr.type,
-			lhs_expr.llvm_value,
-			token_to_simple_expr_typed(lhs_expr.type, rhs).llvm_value
-		).llvm_value;
-
-		if (!result) {
-			PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
-		}
-
-		return result;
+	if (expr.type != &TYPE_BOOL) {
+		PANIC(ERR_NON_BOOL_EXPR, { .tok = node->token });
 	}
 
-	return llvm_get_bool_from_token(rhs);
+	return expr.llvm_value;
 }
 
 /*
@@ -201,7 +186,7 @@ Parse `node` while in a new scope. Branch to `block` when done.
 `name` is the type of block: if, else, while, etc.
 */
 void llvm_make_code_block(const char32_t *name, const AstNode *const node, LLVMBasicBlockRef block) {
-	if (!node->child) {
+	if (!node->child) { // NOLINT
 		PANIC(ERR_MISSING_BLOCK, {
 			.tok = node->token,
 			.str = name

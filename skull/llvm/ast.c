@@ -91,7 +91,7 @@ while (node) {
 	}
 
 	else if (node_type == AST_NODE_WHILE) {
-		llvm_make_while(node);
+		llvm_make_while(&node);
 	}
 
 	else if (node_type == AST_NODE_FUNCTION_PROTO) {
