@@ -124,12 +124,20 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 		}
 		else if (oper == TOKEN_OPER_IS) {
 			const Expr lhs_expr = token_to_expr(lhs, NULL);
+			const Expr rhs_expr = token_to_expr(rhs, NULL);
 
 			value = llvm_make_is(
 				lhs_expr.type,
 				lhs_expr.llvm_value,
-				token_to_simple_expr_typed(lhs_expr.type, rhs).llvm_value
+				rhs_expr.llvm_value
 			).llvm_value;
+
+			if (lhs_expr.type != rhs_expr.type) {
+				PANIC(ERR_TYPE_MISMATCH, {
+					.tok = rhs,
+					.type = lhs_expr.type
+				});
+			}
 
 			if (!value) {
 				PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
