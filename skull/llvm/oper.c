@@ -127,6 +127,15 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	return (Expr){0};
 }
 
+LLVMValueRef llvm_make_and(LLVMValueRef lhs, LLVMValueRef rhs) {
+	return LLVMBuildAnd(
+		BUILDER,
+		lhs,
+		rhs,
+		""
+	);
+}
+
 /*
 Return expression for operation `oper` from `node`.
 */

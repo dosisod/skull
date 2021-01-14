@@ -15,3 +15,5 @@ Operation llvm_make_sub;
 Operation llvm_make_mult;
 Operation llvm_make_div;
 Operation llvm_make_is;
+
+LLVMValueRef llvm_make_and(LLVMValueRef, LLVMValueRef);
