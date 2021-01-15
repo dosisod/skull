@@ -33,6 +33,8 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	MODULE = module;
 	BUILDER = builder;
 
+	FUNCTION_DECLARATIONS = ht_create();
+
 	if (!node_to_llvm_ir(node)) {
 		LLVMBuildRet(BUILDER, LLVM_INT(0));
 	}
@@ -40,7 +42,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	free_ast_tree(node);
 	free(str);
 
-	free_function_declarations(FUNCTION_DECLARATIONS);
+	free_ht(FUNCTION_DECLARATIONS, (void(*)(void *))free_function_declaration);
 	free_scope(SCOPE);
 }
 

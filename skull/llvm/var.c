@@ -59,7 +59,7 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 /*
 Make and add a variable from `node` to global scope.
 */
-void node_make_var(const AstNode *const node) {
+Variable *node_make_var(const AstNode *const node) {
 	const Token *token = node->token;
 
 	const bool is_const = ATTR(AstNodeVarDef, node, is_const);
@@ -92,7 +92,7 @@ void node_make_var(const AstNode *const node) {
 		}
 		else if (node_type == AST_NODE_FUNCTION) {
 			char *func_name = token_mbs_str(node->next->token);
-			FunctionDeclaration *function = find_function(func_name);
+			FunctionDeclaration *function = ht_get(FUNCTION_DECLARATIONS, func_name);
 			free(func_name);
 
 			if (!function) {
@@ -137,7 +137,7 @@ void node_make_var(const AstNode *const node) {
 
 	if (scope_add_var(SCOPE, var)) {
 		free(name);
-		return;
+		return var;
 	}
 	free_variable(var);
 

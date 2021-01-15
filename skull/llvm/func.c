@@ -20,8 +20,6 @@ extern LLVMValueRef CURRENT_FUNC;
 extern LLVMValueRef MAIN_FUNC;
 extern Scope *SCOPE;
 
-FunctionDeclaration *FUNCTION_DECLARATIONS = NULL;
-
 bool node_to_llvm_ir(AstNode *);
 FunctionDeclaration *llvm_create_new_function(const AstNode *const, char *, bool);
 
@@ -50,18 +48,12 @@ void declare_function(const AstNode *const node) {
 		PANIC(ERR_MAIN_RESERVED, {0});
 	}
 
-	FunctionDeclaration *head = FUNCTION_DECLARATIONS;
-	while (head) {
-		if (strcmp(func_name, head->name) == 0) {
-			PANIC(ERR_NO_REDEFINE_FUNC, {
-				.tok = func_name_token
-			});
-		}
+	FunctionDeclaration *found_func = ht_get(FUNCTION_DECLARATIONS, func_name);
 
-		if (!head->next) {
-			break;
-		}
-		head = head->next;
+	if (found_func) {
+		PANIC(ERR_NO_REDEFINE_FUNC, {
+			.tok = func_name_token
+		});
 	}
 
 	FunctionDeclaration *func = llvm_create_new_function(
@@ -70,12 +62,7 @@ void declare_function(const AstNode *const node) {
 		is_export || is_external
 	);
 
-	if (head) {
-		head->next = func;
-	}
-	else {
-		FUNCTION_DECLARATIONS = func;
-	}
+	ht_add(FUNCTION_DECLARATIONS, func_name, func);
 
 	if (!is_external) {
 		define_function(node, func);
@@ -167,7 +154,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
-	FunctionDeclaration *function = find_function(func_name);
+	FunctionDeclaration *function = ht_get(FUNCTION_DECLARATIONS, func_name);
 
 	if (!function) {
 		PANIC(ERR_MISSING_DECLARATION, {
@@ -294,28 +281,8 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	CURRENT_FUNC = old_func;
 }
 
-/*
-Find function named `name`.
-*/
-FunctionDeclaration *find_function(const char *name) {
-	FunctionDeclaration *function = FUNCTION_DECLARATIONS;
-	while (function) {
-		if (strcmp(name, function->name) == 0) {
-			return function;
-		}
-		function = function->next;
-	}
-
-	return NULL;
-}
-
-void free_function_declarations(FunctionDeclaration *func) {
-	while (func) {
-		free(func->name);
-		free(func->param_types);
-
-		FunctionDeclaration *copy = func;
-		func = func->next;
-		free(copy);
-	}
+void free_function_declaration(FunctionDeclaration *func) {
+	free(func->name);
+	free(func->param_types);
+	free(func);
 }

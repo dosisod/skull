@@ -1,5 +1,7 @@
 #pragma once
 
+#include "skull/common/hashtable.h"
+
 #include "skull/eval/variable.h"
 
 #define SCOPE_MAX_VARS 256
@@ -16,8 +18,7 @@ typedef struct Scope Scope;
 `sub_scope` stores a nested scope with more variables in it.
 */
 typedef struct Scope {
-	size_t vars_used;
-	Variable *vars[SCOPE_MAX_VARS];
+	HashTable *vars;
 
 	Scope *sub_scope;
 } Scope;

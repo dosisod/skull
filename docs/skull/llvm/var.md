@@ -9,7 +9,7 @@ Expr token_to_expr(const Token *const token, Variable **variable)
 > If `variable` is and `token` is a variable, store the found variable there.
 
 ```c
-void node_make_var(const AstNode *const node)
+Variable *node_make_var(const AstNode *const node)
 ```
 
 > Make and add a variable from `node` to global scope.
