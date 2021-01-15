@@ -513,10 +513,7 @@ void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode
 Makes an AstNode with default values
 */
 AstNode *make_ast_node(void) {
-	AstNode *node;
-	node = Calloc(1, sizeof *node);
-
-	return node;
+	return Calloc(1, sizeof(AstNode));
 }
 
 /*

@@ -182,10 +182,7 @@ __attribute__((const)) bool is_quote(char32_t c) {
 Allocate and return a token with set defaults.
 */
 Token *make_token(void) {
-	Token *token;
-	token = Calloc(1, sizeof *token);
-
-	return token;
+	return Calloc(1, sizeof(Token));
 }
 
 /*

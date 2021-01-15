@@ -45,10 +45,7 @@ Variable *scope_find_name(const Scope *const scope, const char *name) {
 Returns a new variable scope.
 */
 Scope *make_scope(void) {
-	Scope *scope;
-	scope = Calloc(1, sizeof *scope);
-
-	return scope;
+	return Calloc(1, sizeof(Scope));
 }
 
 /*

@@ -1,7 +1,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
 
