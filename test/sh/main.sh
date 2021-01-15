@@ -95,6 +95,7 @@ test "declare" "bool_expr_not.sk"
 test "declare" "bool_expr_var_rhs.sk"
 test "declare" "bool_expr_and.sk"
 test "declare" "bool_expr_or.sk"
+test "declare" "bool_expr_xor.sk"
 
 test "oper" "add_float_consts.sk"
 test "oper" "add_int_consts.sk"
@@ -234,6 +235,7 @@ test_error "function_proto_return_bad_type.sk"
 test_error "return_missing_expr.sk"
 test_error "bool_expr_and_not_bool.sk"
 test_error "bool_expr_or_not_bool.sk"
+test_error "bool_expr_xor_not_bool.sk"
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk

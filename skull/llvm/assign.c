@@ -122,7 +122,11 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 				""
 			);
 		}
-		else if (oper == TOKEN_OPER_IS || oper == TOKEN_OPER_AND || oper == TOKEN_OPER_OR) {
+		else if (oper == TOKEN_OPER_IS ||
+			oper == TOKEN_OPER_AND ||
+			oper == TOKEN_OPER_OR ||
+			oper == TOKEN_OPER_XOR
+		) {
 			const Expr lhs_expr = token_to_expr(lhs, NULL);
 			const Expr rhs_expr = token_to_expr(rhs, NULL);
 
@@ -140,7 +144,7 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 					rhs_expr.llvm_value
 				).llvm_value;
 			}
-			else if (oper == TOKEN_OPER_AND) {
+			else {
 				if (lhs_expr.type != &TYPE_BOOL) {
 					PANIC(ERR_TYPE_MISMATCH, {
 						.tok = lhs,
@@ -148,20 +152,19 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 					});
 				}
 
-				value = llvm_make_and(
-					lhs_expr.llvm_value,
-					rhs_expr.llvm_value
-				);
-			}
-			else if (oper == TOKEN_OPER_OR) {
-				if (lhs_expr.type != &TYPE_BOOL) {
-					PANIC(ERR_TYPE_MISMATCH, {
-						.tok = lhs,
-						.type = &TYPE_BOOL
-					});
+				LLVMValueRef (*f)(LLVMValueRef, LLVMValueRef) = NULL;
+
+				if (oper == TOKEN_OPER_AND) {
+					f = llvm_make_and;
+				}
+				else if (oper == TOKEN_OPER_OR) {
+					f = llvm_make_or;
+				}
+				else if (oper == TOKEN_OPER_XOR) {
+					f = llvm_make_xor;
 				}
 
-				value = llvm_make_or(
+				value = f(
 					lhs_expr.llvm_value,
 					rhs_expr.llvm_value
 				);

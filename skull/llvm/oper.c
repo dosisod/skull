@@ -145,6 +145,15 @@ LLVMValueRef llvm_make_or(LLVMValueRef lhs, LLVMValueRef rhs) {
 	);
 }
 
+LLVMValueRef llvm_make_xor(LLVMValueRef lhs, LLVMValueRef rhs) {
+	return LLVMBuildXor(
+		BUILDER,
+		lhs,
+		rhs,
+		""
+	);
+}
+
 /*
 Return expression for operation `oper` from `node`.
 */
