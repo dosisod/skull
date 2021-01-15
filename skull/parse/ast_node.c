@@ -311,7 +311,8 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 		is_value(token) &&
 		token->next &&
 		(token->next->type == TOKEN_OPER_IS ||
-		token->next->type == TOKEN_OPER_AND) &&
+		token->next->type == TOKEN_OPER_AND ||
+		token->next->type == TOKEN_OPER_OR) &&
 		token->next->next &&
 		is_value(token->next->next)
 	) {

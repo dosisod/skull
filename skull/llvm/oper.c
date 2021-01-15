@@ -136,6 +136,15 @@ LLVMValueRef llvm_make_and(LLVMValueRef lhs, LLVMValueRef rhs) {
 	);
 }
 
+LLVMValueRef llvm_make_or(LLVMValueRef lhs, LLVMValueRef rhs) {
+	return LLVMBuildOr(
+		BUILDER,
+		lhs,
+		rhs,
+		""
+	);
+}
+
 /*
 Return expression for operation `oper` from `node`.
 */

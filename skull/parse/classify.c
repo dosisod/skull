@@ -49,6 +49,7 @@ void classify_token(Token *const token) {
 	TOKEN_TRY_STR(U"not", TOKEN_OPER_NOT)
 	TOKEN_TRY_STR(U"is", TOKEN_OPER_IS)
 	TOKEN_TRY_STR(U"and", TOKEN_OPER_AND)
+	TOKEN_TRY_STR(U"or", TOKEN_OPER_OR)
 
 	TOKEN_SET_IF(str[0] == '#' && (
 		str[1] == ' ' ||
