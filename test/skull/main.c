@@ -12,6 +12,7 @@
 #include "eval/variable.h"
 
 #include "common/errors.h"
+#include "common/hashtable.h"
 #include "common/str.h"
 
 #include "skull/common/local.h"
@@ -39,11 +40,11 @@ int main(void) {
 	types_test_self(&passed);
 
 	error_test_self(&passed);
+	hashtable_test_self(&passed);
+	str_test_self(&passed);
 
 	scope_test_self(&passed);
 	variable_test_self(&passed);
-
-	str_test_self(&passed);
 
 	if (!passed) {
 		puts("\n1 or more errors occurred.");

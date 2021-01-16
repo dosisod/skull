@@ -39,7 +39,7 @@ typedef struct FunctionDeclaration {
 	FunctionDeclaration *next;
 } FunctionDeclaration;
 
-FunctionDeclaration *FUNCTION_DECLARATIONS;
+HashTable *FUNCTION_DECLARATIONS;
 
 void declare_function(const AstNode *const);
 
@@ -49,4 +49,4 @@ void define_function(const AstNode *const, FunctionDeclaration *);
 
 FunctionDeclaration *find_function(const char *);
 
-void free_function_declarations(FunctionDeclaration *);
+void free_function_declaration(FunctionDeclaration *);

@@ -18,10 +18,7 @@ bool scope_add_var(Scope *const scope, Variable *const var) {
 		return false;
 	}
 
-	scope->vars[scope->vars_used] = var;
-	scope->vars_used++;
-
-	return true;
+	return ht_add(scope->vars, var->name, var);
 }
 
 /*
@@ -32,10 +29,10 @@ Variable *scope_find_name(const Scope *const scope, const char *name) {
 		return NULL;
 	}
 
-	for RANGE(var_at, scope->vars_used) {
-		if (strcmp(scope->vars[var_at]->name, name) == 0) {
-			return scope->vars[var_at];
-		}
+	Variable *var = ht_get(scope->vars, name);
+
+	if (var) {
+		return var;
 	}
 
 	return scope_find_name(scope->sub_scope, name);
@@ -45,16 +42,18 @@ Variable *scope_find_name(const Scope *const scope, const char *name) {
 Returns a new variable scope.
 */
 Scope *make_scope(void) {
-	return Calloc(1, sizeof(Scope));
+	Scope *scope;
+	scope = Calloc(1, sizeof *scope);
+	scope->vars = ht_create();
+
+	return scope;
 }
 
 /*
 Frees a `scope` and all the variables inside of it.
 */
 void free_scope(Scope *scope) {
-	for RANGE(var_at, scope->vars_used) {
-		free_variable(scope->vars[var_at]);
-	}
+	free_ht(scope->vars, (void(*)(void *))free_variable);
 
 	free(scope);
 }

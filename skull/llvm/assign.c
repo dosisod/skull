@@ -47,9 +47,7 @@ void llvm_make_type_alias(AstNode **node) {
 Builds a variable from `node`.
 */
 void llvm_make_var_def(AstNode **node) {
-	node_make_var(*node);
-
-	Variable *var = SCOPE->vars[SCOPE->vars_used - 1];
+	Variable *var = node_make_var(*node);
 
 	llvm_assign_value_to_var(
 		var,

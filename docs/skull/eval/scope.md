@@ -2,8 +2,7 @@
 
 ```c
 typedef struct Scope {
-	size_t vars_used;
-	Variable *vars[SCOPE_MAX_VARS];
+	HashTable *vars;
 
 	Scope *sub_scope;
 }
