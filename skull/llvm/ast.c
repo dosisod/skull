@@ -25,6 +25,7 @@ Convert skull code from `str_` into LLVM IR (using `func` and `module`).
 void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, LLVMBuilderRef builder) {
 	char32_t *const str = mbstoc32s(str_);
 
+	TYPE_ALIASES = ht_create();
 	AstNode *const node = make_ast_tree(str);
 
 	SCOPE = make_scope();
@@ -42,6 +43,7 @@ void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, L
 	free_ast_tree(node);
 	free(str);
 
+	free_ht(TYPE_ALIASES, NULL);
 	free_ht(FUNCTION_DECLARATIONS, (void(*)(void *))free_function_declaration);
 	free_scope(SCOPE);
 }

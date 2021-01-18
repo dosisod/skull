@@ -66,10 +66,15 @@ TEST(hashtable_cannot_add_key_twice, {
 	free_ht(ht, NULL);
 })
 
+TEST(hashtable_with_null, {
+	ht_get(NULL, "");
+})
+
 TEST_SELF(hashtable,
 	test_hashtable_create_and_free,
 	test_hashtable_add_and_get,
 	test_hashtable_add_to_existing_slot,
 	test_hashtable_cannot_add_null,
-	test_hashtable_cannot_add_key_twice
+	test_hashtable_cannot_add_key_twice,
+	test_hashtable_with_null
 )

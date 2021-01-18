@@ -11,6 +11,11 @@
 Returns pointer to type with name `name`.
 */
 const Type __attribute__((pure)) *find_type(const char *const name) {
+	const Type *alias = ht_get(TYPE_ALIASES, name);
+	if (alias) {
+		return alias;
+	}
+
 	const Type **type = TYPES_AVAILABLE;
 
 	while (*type) {
@@ -18,11 +23,6 @@ const Type __attribute__((pure)) *find_type(const char *const name) {
 			return *type;
 		}
 
-		for RANGE(i, (*type)->num_aliases) {
-			if (strcmp(name, (*type)->aliases[i]) == 0) {
-				return *type;
-			}
-		}
 		type++;
 	}
 
@@ -35,19 +35,7 @@ Add named `alias` for `type`.
 Return `true` if alias was added, `false` if it already exists.
 */
 bool add_alias(Type *const type, char *const alias) {
-	if (find_type(alias)) {
-		return false;
-	}
-
-	if (!type->num_aliases) {
-		type->aliases = Malloc(sizeof(char *));
-	}
-
-	type->aliases[type->num_aliases] = alias;
-
-	type->num_aliases++;
-
-	return true;
+	return ht_add(TYPE_ALIASES, alias, type);
 }
 
 Type TYPE_BOOL = {

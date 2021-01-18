@@ -55,6 +55,10 @@ bool ht_add(HashTable *ht, const char *key, void *ptr) {
 }
 
 void *ht_get(HashTable *ht, const char *key) {
+	if (!ht) {
+		return NULL;
+	}
+
 	unsigned index = ht_hash_key(key);
 	HashItem *item = &ht->slots[index];
 

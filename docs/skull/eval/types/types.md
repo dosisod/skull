@@ -5,9 +5,6 @@ typedef struct Type {
 	const char *name;
 
 	LLVMTypeRef (*llvm_type)(void);
-
-	char **aliases;
-	unsigned num_aliases;
 }
 ```
 
@@ -16,10 +13,6 @@ typedef struct Type {
 > `name` is the name of the type.
 > \
 > `llvm_type` is a pointer to a function that returns the desired LLVM type.
-> \
-> `aliases` are alternative names for the same type `name`.
-> \
-> `num_aliases` is the number of aliases for a given type.
 
 ```c
 const Type __attribute__((pure)) *find_type(const char *const name)
