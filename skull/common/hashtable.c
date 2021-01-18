@@ -11,7 +11,7 @@ HashTable *ht_create(void) {
 	return Calloc(1, sizeof(HashTable));
 }
 
-unsigned ht_hash_key(const char *key) {
+unsigned ht_hash_key(const char *const key) {
 	const size_t len = strlen(key);
 
 	unsigned long long hash = 0;
@@ -23,7 +23,7 @@ unsigned ht_hash_key(const char *key) {
 	return hash % MAX_SLOTS;
 }
 
-bool ht_add(HashTable *ht, const char *key, void *ptr) {
+bool ht_add(HashTable *const ht, const char *const key, void *const ptr) {
 	if (!ptr || ht_get(ht, key)) {
 		return false;
 	}
@@ -54,13 +54,12 @@ bool ht_add(HashTable *ht, const char *key, void *ptr) {
 	return true;
 }
 
-void *ht_get(HashTable *ht, const char *key) {
+void *ht_get(const HashTable *const ht, const char *const key) {
 	if (!ht) {
 		return NULL;
 	}
 
-	unsigned index = ht_hash_key(key);
-	HashItem *item = &ht->slots[index];
+	const HashItem *item = &ht->slots[ht_hash_key(key)];
 
 	while (item && item->key) {
 		if (strcmp(item->key, key) == 0) {

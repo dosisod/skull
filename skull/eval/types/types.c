@@ -11,7 +11,7 @@
 Returns pointer to type with name `name`.
 */
 const Type __attribute__((pure)) *find_type(const char *const name) {
-	const Type *alias = ht_get(TYPE_ALIASES, name);
+	const Type *const alias = ht_get(TYPE_ALIASES, name);
 	if (alias) {
 		return alias;
 	}

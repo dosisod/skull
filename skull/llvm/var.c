@@ -90,8 +90,8 @@ Variable *node_make_var(const AstNode *const node) {
 			type = &TYPE_STR;
 		}
 		else if (node_type == AST_NODE_FUNCTION) {
-			char *func_name = token_mbs_str(node->next->token);
-			FunctionDeclaration *function = ht_get(FUNCTION_DECLARATIONS, func_name);
+			char *const func_name = token_mbs_str(node->next->token);
+			const FunctionDeclaration *const function = ht_get(FUNCTION_DECLARATIONS, func_name);
 			free(func_name);
 
 			if (!function) {

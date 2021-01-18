@@ -14,10 +14,10 @@ typedef struct {
 
 HashTable *ht_create(void);
 
-unsigned ht_hash_key(const char *);
+unsigned ht_hash_key(const char *const);
 
-_Bool ht_add(HashTable *, const char *, void *);
+_Bool ht_add(HashTable *const, const char *const, void *const);
 
-void *ht_get(HashTable *, const char *);
+void *ht_get(const HashTable *const, const char *const);
 
 void free_ht(HashTable *, void (*)(void *));
