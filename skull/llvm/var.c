@@ -110,6 +110,7 @@ Variable *node_make_var(const AstNode *const node) {
 			(node_type == AST_NODE_ADD ||
 			node_type == AST_NODE_SUB ||
 			node_type == AST_NODE_MULT ||
+			node_type == AST_NODE_LESS_THAN ||
 			node_type == AST_NODE_DIV) &&
 			token_type == TOKEN_IDENTIFIER)
 		) {

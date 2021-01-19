@@ -127,6 +127,38 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	return (Expr){0};
 }
 
+/*
+Return expression for result of less than operator for `lhs` and `rhs`.
+*/
+Expr llvm_make_less_than(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	if (type == &TYPE_INT) {
+		return (Expr){
+			.llvm_value = LLVMBuildICmp(
+				BUILDER,
+				LLVMIntSLT,
+				lhs,
+				rhs,
+				""
+			),
+			.type = &TYPE_BOOL
+		};
+	}
+	if (type == &TYPE_FLOAT) {
+		return (Expr){
+			.llvm_value = LLVMBuildFCmp(
+				BUILDER,
+				LLVMRealOLT,
+				lhs,
+				rhs,
+				""
+			),
+			.type = &TYPE_BOOL
+		};
+	}
+
+	return (Expr){0};
+}
+
 LLVMValueRef llvm_make_and(LLVMValueRef lhs, LLVMValueRef rhs) {
 	return LLVMBuildAnd(
 		BUILDER,

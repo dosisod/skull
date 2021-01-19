@@ -31,6 +31,12 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for result of is operator for `lhs` and `rhs`.
 
 ```c
+Expr llvm_make_less_than(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
+```
+
+> Return expression for result of less than operator for `lhs` and `rhs`.
+
+```c
 Expr llvm_make_oper(const Type *const type, const AstNode *const node, Operation *oper)
 ```
 
