@@ -100,9 +100,6 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 	else if (node->type == AST_NODE_DIV) {
 		expr = llvm_make_oper(type, node, &llvm_make_div);
 	}
-	else if (node->type == AST_NODE_LESS_THAN) {
-		expr = llvm_make_oper(type, node, &llvm_make_less_than);
-	}
 	else if (node->type == AST_NODE_BOOL_EXPR) {
 		const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
 		const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
@@ -125,6 +122,7 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 		}
 		else if (oper == TOKEN_OPER_IS ||
 			oper == TOKEN_OPER_LESS_THAN ||
+			oper == TOKEN_OPER_GTR_THAN ||
 			oper == TOKEN_OPER_AND ||
 			oper == TOKEN_OPER_OR ||
 			oper == TOKEN_OPER_XOR
@@ -148,6 +146,13 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 			}
 			else if (oper == TOKEN_OPER_LESS_THAN) {
 				value = llvm_make_less_than(
+					lhs_expr.type,
+					lhs_expr.llvm_value,
+					rhs_expr.llvm_value
+				).llvm_value;
+			}
+			else if (oper == TOKEN_OPER_GTR_THAN) {
+				value = llvm_make_gtr_than(
 					lhs_expr.type,
 					lhs_expr.llvm_value,
 					rhs_expr.llvm_value
