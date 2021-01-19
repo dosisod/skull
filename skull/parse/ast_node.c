@@ -314,6 +314,7 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 		token->next->type == TOKEN_OPER_LESS_THAN ||
 		token->next->type == TOKEN_OPER_GTR_THAN ||
 		token->next->type == TOKEN_OPER_LESS_THAN_EQ ||
+		token->next->type == TOKEN_OPER_GTR_THAN_EQ ||
 		token->next->type == TOKEN_OPER_AND ||
 		token->next->type == TOKEN_OPER_XOR ||
 		token->next->type == TOKEN_OPER_OR) &&

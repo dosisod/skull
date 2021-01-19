@@ -18,6 +18,7 @@ Operation llvm_make_is;
 Operation llvm_make_less_than;
 Operation llvm_make_gtr_than;
 Operation llvm_make_less_than_eq;
+Operation llvm_make_gtr_than_eq;
 
 LLVMValueRef llvm_make_and(LLVMValueRef, LLVMValueRef);
 LLVMValueRef llvm_make_or(LLVMValueRef, LLVMValueRef);

@@ -223,6 +223,38 @@ Expr llvm_make_less_than_eq(const Type *const type, LLVMValueRef lhs, LLVMValueR
 	return (Expr){0};
 }
 
+/*
+Return expression for result of greater than or equal to operator for `lhs` and `rhs`.
+*/
+Expr llvm_make_gtr_than_eq(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	if (type == &TYPE_INT) {
+		return (Expr){
+			.llvm_value = LLVMBuildICmp(
+				BUILDER,
+				LLVMIntSGE,
+				lhs,
+				rhs,
+				""
+			),
+			.type = &TYPE_BOOL
+		};
+	}
+	if (type == &TYPE_FLOAT) {
+		return (Expr){
+			.llvm_value = LLVMBuildFCmp(
+				BUILDER,
+				LLVMRealOGE,
+				lhs,
+				rhs,
+				""
+			),
+			.type = &TYPE_BOOL
+		};
+	}
+
+	return (Expr){0};
+}
+
 LLVMValueRef llvm_make_and(LLVMValueRef lhs, LLVMValueRef rhs) {
 	return LLVMBuildAnd(
 		BUILDER,
