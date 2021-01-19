@@ -43,6 +43,12 @@ Expr llvm_make_gtr_than(const Type *const type, LLVMValueRef lhs, LLVMValueRef r
 > Return expression for result of greater than operator for `lhs` and `rhs`.
 
 ```c
+Expr llvm_make_less_than_eq(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
+```
+
+> Return expression for result of less than or equal to operator for `lhs` and `rhs`.
+
+```c
 Expr llvm_make_oper(const Type *const type, const AstNode *const node, Operation *oper)
 ```
 

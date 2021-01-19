@@ -123,6 +123,7 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 		else if (oper == TOKEN_OPER_IS ||
 			oper == TOKEN_OPER_LESS_THAN ||
 			oper == TOKEN_OPER_GTR_THAN ||
+			oper == TOKEN_OPER_LESS_THAN_EQ ||
 			oper == TOKEN_OPER_AND ||
 			oper == TOKEN_OPER_OR ||
 			oper == TOKEN_OPER_XOR
@@ -153,6 +154,13 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 			}
 			else if (oper == TOKEN_OPER_GTR_THAN) {
 				value = llvm_make_gtr_than(
+					lhs_expr.type,
+					lhs_expr.llvm_value,
+					rhs_expr.llvm_value
+				).llvm_value;
+			}
+			else if (oper == TOKEN_OPER_LESS_THAN_EQ) {
+				value = llvm_make_less_than_eq(
 					lhs_expr.type,
 					lhs_expr.llvm_value,
 					rhs_expr.llvm_value
