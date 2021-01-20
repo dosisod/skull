@@ -318,13 +318,22 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 		token->next->type == TOKEN_OPER_AND ||
 		token->next->type == TOKEN_OPER_XOR ||
 		token->next->type == TOKEN_OPER_OR) &&
-		token->next->next &&
-		is_value(token->next->next)
+		token->next->next
 	) {
 		lhs = token;
 		oper = token->next->type;
+
+		if (oper == TOKEN_OPER_IS && token->next->next->type == TOKEN_OPER_NOT) {
+			oper = TOKEN_OPER_IS_NOT;
+			token = token->next;
+		}
+
+		if (!is_value(token->next->next)) {
+			return false;
+		}
+
 		rhs = token->next->next;
-		token = token->next->next;
+		token = rhs;
 
 		if (!token) {
 			return false;

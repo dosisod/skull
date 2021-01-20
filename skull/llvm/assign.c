@@ -121,6 +121,7 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 			);
 		}
 		else if (oper == TOKEN_OPER_IS ||
+			oper == TOKEN_OPER_IS_NOT ||
 			oper == TOKEN_OPER_LESS_THAN ||
 			oper == TOKEN_OPER_GTR_THAN ||
 			oper == TOKEN_OPER_LESS_THAN_EQ ||
@@ -145,6 +146,17 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 					lhs_expr.llvm_value,
 					rhs_expr.llvm_value
 				).llvm_value;
+			}
+			else if (oper == TOKEN_OPER_IS_NOT) {
+				value = LLVMBuildNot(
+					BUILDER,
+					llvm_make_is(
+						lhs_expr.type,
+						lhs_expr.llvm_value,
+						rhs_expr.llvm_value
+					).llvm_value,
+					""
+				);
 			}
 			else if (oper == TOKEN_OPER_LESS_THAN) {
 				value = llvm_make_less_than(

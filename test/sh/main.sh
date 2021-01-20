@@ -100,6 +100,7 @@ test "declare" "bool_expr_less_than.sk"
 test "declare" "bool_expr_gtr_than.sk"
 test "declare" "bool_expr_less_than.sk"
 test "declare" "bool_expr_gtr_than.sk"
+test "declare" "bool_expr_is_not.sk"
 
 test "oper" "add_float_consts.sk"
 test "oper" "add_int_consts.sk"
