@@ -140,51 +140,25 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 				});
 			}
 
+			Operation *func = NULL;
+
 			if (oper == TOKEN_OPER_IS) {
-				value = llvm_make_is(
-					lhs_expr.type,
-					lhs_expr.llvm_value,
-					rhs_expr.llvm_value
-				).llvm_value;
+				func = llvm_make_is;
 			}
 			else if (oper == TOKEN_OPER_IS_NOT) {
-				value = LLVMBuildNot(
-					BUILDER,
-					llvm_make_is(
-						lhs_expr.type,
-						lhs_expr.llvm_value,
-						rhs_expr.llvm_value
-					).llvm_value,
-					""
-				);
+				func = llvm_make_is_not;
 			}
 			else if (oper == TOKEN_OPER_LESS_THAN) {
-				value = llvm_make_less_than(
-					lhs_expr.type,
-					lhs_expr.llvm_value,
-					rhs_expr.llvm_value
-				).llvm_value;
+				func = llvm_make_less_than;
 			}
 			else if (oper == TOKEN_OPER_GTR_THAN) {
-				value = llvm_make_gtr_than(
-					lhs_expr.type,
-					lhs_expr.llvm_value,
-					rhs_expr.llvm_value
-				).llvm_value;
+				func = llvm_make_gtr_than;
 			}
 			else if (oper == TOKEN_OPER_LESS_THAN_EQ) {
-				value = llvm_make_less_than_eq(
-					lhs_expr.type,
-					lhs_expr.llvm_value,
-					rhs_expr.llvm_value
-				).llvm_value;
+				func = llvm_make_less_than_eq;
 			}
 			else if (oper == TOKEN_OPER_GTR_THAN_EQ) {
-				value = llvm_make_gtr_than_eq(
-					lhs_expr.type,
-					lhs_expr.llvm_value,
-					rhs_expr.llvm_value
-				).llvm_value;
+				func = llvm_make_gtr_than_eq;
 			}
 			else {
 				if (lhs_expr.type != &TYPE_BOOL) {
@@ -194,23 +168,22 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 					});
 				}
 
-				LLVMValueRef (*f)(LLVMValueRef, LLVMValueRef) = NULL;
-
 				if (oper == TOKEN_OPER_AND) {
-					f = llvm_make_and;
+					func = llvm_make_and;
 				}
 				else if (oper == TOKEN_OPER_OR) {
-					f = llvm_make_or;
+					func = llvm_make_or;
 				}
 				else if (oper == TOKEN_OPER_XOR) {
-					f = llvm_make_xor;
+					func = llvm_make_xor;
 				}
-
-				value = f(
-					lhs_expr.llvm_value,
-					rhs_expr.llvm_value
-				);
 			}
+
+			value = func(
+				lhs_expr.type,
+				lhs_expr.llvm_value,
+				rhs_expr.llvm_value
+			).llvm_value;
 
 			if (!value) {
 				PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });

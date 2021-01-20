@@ -128,6 +128,21 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 }
 
 /*
+Return expression for result of is not operator for `lhs` and `rhs`.
+*/
+Expr llvm_make_is_not(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	Expr expr = llvm_make_is(type, lhs, rhs);
+
+	expr.llvm_value = LLVMBuildNot(
+		BUILDER,
+		expr.llvm_value,
+		""
+	);
+
+	return expr;
+}
+
+/*
 Return expression for result of less than operator for `lhs` and `rhs`.
 */
 Expr llvm_make_less_than(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
@@ -255,31 +270,40 @@ Expr llvm_make_gtr_than_eq(const Type *const type, LLVMValueRef lhs, LLVMValueRe
 	return (Expr){0};
 }
 
-LLVMValueRef llvm_make_and(LLVMValueRef lhs, LLVMValueRef rhs) {
-	return LLVMBuildAnd(
-		BUILDER,
-		lhs,
-		rhs,
-		""
-	);
+Expr llvm_make_and(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	return (Expr){
+		.llvm_value = LLVMBuildAnd(
+			BUILDER,
+			lhs,
+			rhs,
+			""
+		),
+		.type = type
+	};
 }
 
-LLVMValueRef llvm_make_or(LLVMValueRef lhs, LLVMValueRef rhs) {
-	return LLVMBuildOr(
-		BUILDER,
-		lhs,
-		rhs,
-		""
-	);
+Expr llvm_make_or(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	return (Expr){
+		.llvm_value = LLVMBuildOr(
+			BUILDER,
+			lhs,
+			rhs,
+			""
+		),
+		.type = type
+	};
 }
 
-LLVMValueRef llvm_make_xor(LLVMValueRef lhs, LLVMValueRef rhs) {
-	return LLVMBuildXor(
-		BUILDER,
-		lhs,
-		rhs,
-		""
-	);
+Expr llvm_make_xor(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	return (Expr){
+		.llvm_value = LLVMBuildXor(
+			BUILDER,
+			lhs,
+			rhs,
+			""
+		),
+		.type = type
+	};
 }
 
 /*

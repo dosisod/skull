@@ -15,11 +15,11 @@ Operation llvm_make_sub;
 Operation llvm_make_mult;
 Operation llvm_make_div;
 Operation llvm_make_is;
+Operation llvm_make_is_not;
 Operation llvm_make_less_than;
 Operation llvm_make_gtr_than;
 Operation llvm_make_less_than_eq;
 Operation llvm_make_gtr_than_eq;
-
-LLVMValueRef llvm_make_and(LLVMValueRef, LLVMValueRef);
-LLVMValueRef llvm_make_or(LLVMValueRef, LLVMValueRef);
-LLVMValueRef llvm_make_xor(LLVMValueRef, LLVMValueRef);
+Operation llvm_make_and;
+Operation llvm_make_or;
+Operation llvm_make_xor;
