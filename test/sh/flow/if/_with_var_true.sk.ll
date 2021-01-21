@@ -1,5 +1,5 @@
-; ModuleID = './test/sh/flow/if_with_var_true.sk'
-source_filename = "./test/sh/flow/if_with_var_true.sk"
+; ModuleID = './test/sh/flow/if/with_var_true.sk'
+source_filename = "./test/sh/flow/if/with_var_true.sk"
 
 @x = private global i1 false
 

@@ -1,9 +1,9 @@
-; ModuleID = './test/sh/flow/if_not_with_const.sk'
-source_filename = "./test/sh/flow/if_not_with_const.sk"
+; ModuleID = './test/sh/flow/if/empty_body.sk'
+source_filename = "./test/sh/flow/if/empty_body.sk"
 
 define i64 @main() {
 entry:
-  br i1 false, label %if_true, label %end
+  br i1 true, label %if_true, label %end
 
 if_true:                                          ; preds = %entry
   br label %end

@@ -1,9 +1,9 @@
-; ModuleID = './test/sh/flow/if_true.sk'
-source_filename = "./test/sh/flow/if_true.sk"
+; ModuleID = './test/sh/flow/if/false.sk'
+source_filename = "./test/sh/flow/if/false.sk"
 
 define i64 @main() {
 entry:
-  br i1 true, label %if_true, label %end
+  br i1 false, label %if_true, label %end
 
 if_true:                                          ; preds = %entry
   ret i64 0

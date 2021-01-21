@@ -1,5 +1,5 @@
-; ModuleID = './test/sh/flow/if_else_comment.sk'
-source_filename = "./test/sh/flow/if_else_comment.sk"
+; ModuleID = './test/sh/flow/if/else_comment.sk'
+source_filename = "./test/sh/flow/if/else_comment.sk"
 
 define i64 @main() {
 entry:
