@@ -77,7 +77,12 @@ Variable *node_make_var(const AstNode *const node) {
 		const NodeType node_type = node->next->type;
 		const Type *type = NULL;
 
-		if (token_type == TOKEN_INT_CONST) {
+		if (token_type == TOKEN_BOOL_CONST ||
+			node_type == AST_NODE_BOOL_EXPR
+		) {
+			type = &TYPE_BOOL;
+		}
+		else if (token_type == TOKEN_INT_CONST) {
 			type = &TYPE_INT;
 		}
 		else if (token_type == TOKEN_FLOAT_CONST) {
@@ -85,11 +90,6 @@ Variable *node_make_var(const AstNode *const node) {
 		}
 		else if (token_type == TOKEN_RUNE_CONST) {
 			type = &TYPE_RUNE;
-		}
-		else if (token_type == TOKEN_BOOL_CONST ||
-			node_type == AST_NODE_BOOL_EXPR
-		) {
-			type = &TYPE_BOOL;
 		}
 		else if (token_type == TOKEN_STR_CONST) {
 			type = &TYPE_STR;
