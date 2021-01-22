@@ -16,7 +16,8 @@
 	(node)->attr = attr
 ```
 
-> Create a new attribute struct of type `from`, assign to `node`, with data passed from `...`.
+> Create a new attribute struct of type `from`, assign to `node`, with data
+> passed from `...`.
 
 ```c
 typedef struct AstNode {
@@ -38,15 +39,18 @@ typedef struct AstNode {
 
 > An `AstNode` abstractly stores data about parsed code.
 > \
-> Each `AstNode` must have a `type`, which represents what tokens a node might contain.
+> Each `AstNode` must have a `type`, which represents what tokens a node might
+> contain.
 > \
 > An `AstNode` points to the starting `token`, and the ending token, `token_end`.
 > \
 > Adjacent `AstNode`s are accessed via `next` and `last`.
 > \
-> `child` and `parent` are used to access the child and parent node of a given node.
+> `child` and `parent` are used to access the child and parent node of a given
+> node.
 > \
-> Certain `node_type`s may chose to store arbitrary data in `attr` to save time re-parsing.
+> Certain `node_type`s may chose to store arbitrary data in `attr` to save time
+> re-parsing.
 
 ```c
 typedef struct {
@@ -97,7 +101,8 @@ typedef struct {
 #define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
 ```
 
-> Compare a variable number of token types stored in `...` agains each successive token in `token`.
+> Compare a variable number of token types stored in `...` agains each
+> successive token in `token`.
 
 ```c
 AstNode *make_ast_tree(const char32_t *const code)
@@ -147,7 +152,8 @@ void free_ast_tree_(AstNode *node)
 bool ast_token_cmp(Token *token, ...)
 ```
 
-> Check each token's type starting at `token`, checking against the corresponding token type specified in `...`
+> Check each token's type starting at `token`, checking against the
+> corresponding token type specified in `...`
 
 ```c
 __attribute__((pure)) bool is_value(const Token *const token)

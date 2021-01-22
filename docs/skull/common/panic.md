@@ -9,5 +9,6 @@
 	exit(1)
 ```
 
-> Panic (exit with error msg), using `fmt` as the message, and `...` as the `ErrorMsg` parameters.
+> Panic (exit with error msg), using `fmt` as the message, and `...` as the
+> `ErrorMsg` parameters.
 

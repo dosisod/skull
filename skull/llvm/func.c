@@ -21,9 +21,17 @@ extern LLVMValueRef MAIN_FUNC;
 extern Scope *SCOPE;
 
 bool node_to_llvm_ir(AstNode *);
-FunctionDeclaration *llvm_create_new_function(const AstNode *const, char *, bool);
+FunctionDeclaration *llvm_create_new_function(
+	const AstNode *const,
+	char *,
+	bool
+);
 
-Expr node_to_expr(const Type *const type, const AstNode *const, const Variable *const);
+Expr node_to_expr(
+	const Type *const type,
+	const AstNode *const,
+	const Variable *const
+);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
@@ -76,13 +84,21 @@ If `is_private` is true the function will be private (statically linked).
 
 Else, the function will be globally available.
 */
-FunctionDeclaration *llvm_create_new_function(const AstNode *const node, char *name, bool is_private) {
+FunctionDeclaration *llvm_create_new_function(
+	const AstNode *const node,
+	char *name,
+	bool is_private
+) {
 	FunctionDeclaration *func;
 	func = Calloc(1, sizeof *func);
 
 	func->name = name;
 
-	char **param_type_names = ATTR(AstNodeFunctionProto, node, param_type_names);
+	char **param_type_names = ATTR(
+		AstNodeFunctionProto,
+		node,
+		param_type_names
+	);
 	func->param_names = ATTR(AstNodeFunctionProto, node, param_names);
 	LLVMTypeRef *params = NULL;
 

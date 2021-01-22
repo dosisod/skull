@@ -133,7 +133,8 @@ bool is_reserved_str(const char32_t *const str) {
 	}
 
 /*
-Returns true if `str` is a valid hex/octal/binary/decimal representation of an integer.
+Returns true if `str` is a valid hex/octal/binary/decimal representation
+of an integer.
 
 Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 */

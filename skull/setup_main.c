@@ -56,7 +56,11 @@ int setup_main(int argc, char *argv[]) {
 	}
 	fclose(f);
 
-	LLVMModuleRef main_module = generate_llvm(argv[1], main_func_name, file_contents);
+	LLVMModuleRef main_module = generate_llvm(
+		argv[1],
+		main_func_name,
+		file_contents
+	);
 	free(file_contents);
 
 	char *llvm_filename = create_llvm_filename(argv[1]);
@@ -83,9 +87,14 @@ int setup_main(int argc, char *argv[]) {
 }
 
 /*
-Create a module named `module_name` and a main function called `main_func_name` from `file_contents`.
+Create a module named `module_name` and a main function called
+`main_func_name` from `file_contents`.
 */
-LLVMModuleRef generate_llvm(const char *module_name, const char *main_func_name, char *file_contents) {
+LLVMModuleRef generate_llvm(
+	const char *module_name,
+	const char *main_func_name,
+	char *file_contents
+) {
 	LLVMModuleRef main_module = LLVMModuleCreateWithName(module_name);
 
 	LLVMTypeRef main_func_type = LLVMFunctionType(
@@ -142,7 +151,10 @@ char *create_llvm_filename(const char *filename) {
 
 		strncpy(llvm_filename, filename, len);
 		llvm_filename[offset + 1] = '.';
-		strncpy(llvm_filename + offset + 2, slash_pos + 1, len - (size_t)offset);
+		strncpy(
+			llvm_filename + offset + 2,
+			slash_pos + 1, len - (size_t)offset
+		);
 	}
 	strncpy(llvm_filename + len + 1, ".ll", 4);
 

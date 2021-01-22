@@ -13,4 +13,6 @@ cp ./skull/skull ./build/skull/skull
 valgrind --leak-check=full ./build/test/test || stop
 echo
 
-sh ./.github/workflows/clang_tidy.sh || stop
+./.github/workflows/clang_tidy.sh || stop
+
+./.github/workflows/line_len.sh || stop

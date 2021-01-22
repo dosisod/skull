@@ -16,14 +16,16 @@
 #define ERR_MISSING_DECLARATION "function \"%s\" missing declaration\n"
 #define ERR_MISSING_BLOCK "%s statement must be followed by code block\n"
 #define ERR_NO_CLOSING_COMMENT "expected closing \"#}\" for block comment\n"
-#define ERR_NO_VOID_ASSIGN "function returning type void cannot be assigned to variable \"%s\"\n"
+#define ERR_NO_VOID_ASSIGN \
+	"function returning type void cannot be assigned to variable \"%s\"\n"
 #define ERR_INVALID_INPUT "invalid input: \"%s\"\n"
 #define ERR_VAR_ALREADY_DEFINED "variable \"%s\" already defined\n"
 #define ERR_NON_INT_MAIN "returning non-int expression \"%s\" from main\n"
 #define ERR_NON_BOOL_EXPR "expected boolean expression\n"
 #define ERR_MAIN_RESERVED "declaration of reserved function \"main\""
 #define ERR_NO_REDEFINE_FUNC "cannot redeclare function \"%s\"\n"
-#define ERR_ZERO_PARAM_FUNC "passing parameter to function that takes zero parameters\n"
+#define ERR_ZERO_PARAM_FUNC \
+	"passing parameter to function that takes zero parameters\n"
 #define ERR_SHADOW_VAR "variable \"%s\" shadows existing variable\n"
 #define ERR_EXPECTED_RETURN "expected return value in function \"%s\"\n"
 #define ERR_NO_VOID_RETURN "unexpected return from void function \"%s\"\n"
@@ -32,7 +34,8 @@
 #define ERR_UNREACHALE_RETURN "unreachable code after return"
 #define ERR_REASSIGN_CONST "cannot reassign const variable \"%s\"\n"
 #define ERR_INVALID_EXPR "invalid expression near \"%s\"\n"
-#define ERR_REDUNDANT_REASSIGN "redundant assignment of variable \"%s\" to itself\n"
+#define ERR_REDUNDANT_REASSIGN \
+	"redundant assignment of variable \"%s\" to itself\n"
 #define ERR_DIV_BY_ZERO "division by zero"
 #define ERR_NO_EXPORT_NESTED "cannot export nested function \"%s\"\n"
 #define ERR_NOT_COMPARIBLE "cannot compare value near \"%s\"\n"
@@ -46,7 +49,8 @@ typedef struct Variable Variable;
 typedef struct Type Type;
 
 /*
-`ErrorMsg` stores a reference to a given object, generating an error msg based on which one is set.
+`ErrorMsg` stores a reference to a given object, generating an error msg based
+on which one is set.
 
 See `fmt_error_stringify` for uses of these fields.
 */

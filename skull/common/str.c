@@ -170,7 +170,11 @@ __attribute__((pure)) bool c32scmp(const char32_t *a, const char32_t *b) {
 /*
 Compare at most `n` chars of two UTF-32 strings, `a` and `b`.
 */
-__attribute__((pure)) bool c32sncmp(const char32_t *a, const char32_t *b, size_t n) {
+__attribute__((pure)) bool c32sncmp(
+	const char32_t *a,
+	const char32_t *b,
+	size_t n
+) {
 	while (*a && *b && n > 0) {
 		if (*a != *b) {
 			return false;
@@ -187,7 +191,10 @@ Return pointer to first occurence of `c` in `str`.
 
 If it cannot be found, NULL is returned instead.
 */
-__attribute__((pure)) const char32_t *c32schr(const char32_t *str, char32_t c) {
+__attribute__((pure)) const char32_t *c32schr(
+	const char32_t *str,
+	char32_t c
+) {
 	while (*str) {
 		if (*str == c) {
 			return str;
@@ -231,7 +238,10 @@ Return last occurence of `sub` in string `str`.
 
 `NULL` is returned if no such string is found.
 */
-const char __attribute__((pure)) *strrstr(const char *const str, const char *const sub) {
+const char __attribute__((pure)) *strrstr(
+	const char *const str,
+	const char *const sub
+) {
 	const size_t str_len = strlen(str);
 	const size_t sub_len = strlen(sub);
 
@@ -247,7 +257,8 @@ const char __attribute__((pure)) *strrstr(const char *const str, const char *con
 }
 
 /*
-Returns the unescaped version of an escaped character starting at `str`, or NULL character.
+Returns the unescaped version of an escaped character starting at `str`, or
+NULL character.
 */
 char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 	const char32_t *str = *str_;

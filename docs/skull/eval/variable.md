@@ -22,7 +22,8 @@ typedef struct Variable {
 > \
 > `is_const_lit` stores whether the variable is const literal.
 > \
-> `is_global` stores whether the variable was declared at the top level of a module.
+> `is_global` stores whether the variable was declared at the top level of a
+> module.
 > \
 > `llvm_value` stores the actual LLVM alloca/constant/global.
 
@@ -30,7 +31,8 @@ typedef struct Variable {
 Variable *make_variable(const Type *const type, const char32_t *const name, bool is_const)
 ```
 
-> Make a variable called `name` with type `type`, and make it const if `is_const` is true.
+> Make a variable called `name` with type `type`, and make it const if
+> `is_const` is true.
 > \
 > Returns `NULL` if var cannot be created, else pointer to created var.
 

@@ -6,7 +6,8 @@ Expr llvm_make_math_oper(const Type *const type, LLVMValueRef lhs, LLVMValueRef 
 
 > Returns the result of a mathematical operation on `lhs` and `rhs`.
 > \
-> Depending on whether `type` is an int or float, combine `lhs` and `rhs` using `int_func` or `float_func`.
+> Depending on whether `type` is an int or float, combine `lhs` and `rhs`
+> using `int_func` or `float_func`.
 
 ```c
 Expr llvm_make_add(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
@@ -50,7 +51,8 @@ Expr llvm_make_relational_oper(const Type *type, LLVMValueRef lhs, LLVMValueRef 
 
 > Return result of relational comparison on `lhs` and `rhs`.
 > \
-> Depending on whether `type` is an int or float, compare `lhs` and `rhs` using `int_func` or `float_func`.
+> Depending on whether `type` is an int or float, compare `lhs` and `rhs` using
+> `int_func` or `float_func`.
 
 ```c
 Expr llvm_make_less_than(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
@@ -68,13 +70,15 @@ Expr llvm_make_gtr_than(const Type *const type, LLVMValueRef lhs, LLVMValueRef r
 Expr llvm_make_less_than_eq(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Return expression for result of less than or equal to operator for `lhs` and `rhs`.
+> Return expression for result of less than or equal to operator for `lhs` and
+> `rhs`.
 
 ```c
 Expr llvm_make_gtr_than_eq(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
-> Return expression for result of greater than or equal to operator for `lhs` and `rhs`.
+> Return expression for result of greater than or equal to operator for `lhs`
+> and `rhs`.
 
 ```c
 Expr llvm_make_logical_oper(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX func)

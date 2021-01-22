@@ -22,7 +22,12 @@ Scope *SCOPE;
 /*
 Convert skull code from `str_` into LLVM IR (using `func` and `module`).
 */
-void str_to_llvm_ir(char *const str_, LLVMValueRef func, LLVMModuleRef module, LLVMBuilderRef builder) {
+void str_to_llvm_ir(
+	char *const str_,
+	LLVMValueRef func,
+	LLVMModuleRef module,
+	LLVMBuilderRef builder
+) {
 	char32_t *const str = mbstoc32s(str_);
 
 	TYPE_ALIASES = ht_create();

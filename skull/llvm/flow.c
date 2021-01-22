@@ -44,15 +44,28 @@ void llvm_make_return(AstNode **node) {
 }
 
 LLVMValueRef llvm_make_cond(const AstNode *const);
-void llvm_make_code_block(const char32_t *, const AstNode *const, LLVMBasicBlockRef);
+void llvm_make_code_block(
+	const char32_t *,
+	const AstNode *const,
+	LLVMBasicBlockRef
+);
 
 /*
 Builds LLVM for a while loop from `node`.
 */
 void llvm_make_while(AstNode **node) {
-	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(CURRENT_FUNC, "while_cond");
-	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(CURRENT_FUNC, "while_loop");
-	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(CURRENT_FUNC, "while_end");
+	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(
+		CURRENT_FUNC,
+		"while_cond"
+	);
+	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(
+		CURRENT_FUNC,
+		"while_loop"
+	);
+	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(
+		CURRENT_FUNC,
+		"while_end"
+	);
 
 	LLVMBuildBr(BUILDER, while_cond);
 
@@ -90,7 +103,11 @@ void llvm_make_if(AstNode **node) {
 /*
 Internal function for building an `if` node.
 */
-void llvm_make_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end) {
+void llvm_make_if_(
+	AstNode **node,
+	LLVMBasicBlockRef entry,
+	LLVMBasicBlockRef end
+) {
 	AstNode *next_non_comment = (*node)->next;
 
 	while (next_non_comment) {
@@ -185,7 +202,11 @@ Parse `node` while in a new scope. Branch to `block` when done.
 
 `name` is the type of block: if, else, while, etc.
 */
-void llvm_make_code_block(const char32_t *name, const AstNode *const node, LLVMBasicBlockRef block) {
+void llvm_make_code_block(
+	const char32_t *name,
+	const AstNode *const node,
+	LLVMBasicBlockRef block
+) {
 	if (!node->child) { // NOLINT
 		PANIC(ERR_MISSING_BLOCK, {
 			.tok = node->token,

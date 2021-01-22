@@ -9,7 +9,8 @@ Get the attribute/property `prop` from `node`, assuming it is of type `from`.
 #define ATTR(from, node, prop) ((from *)(node)->attr)->prop
 
 /*
-Create a new attribute struct of type `from`, assign to `node`, with data passed from `...`.
+Create a new attribute struct of type `from`, assign to `node`, with data
+passed from `...`.
 */
 #define MAKE_ATTR(from, node, ...) \
 	from *attr; \
@@ -56,15 +57,18 @@ typedef struct AstNode AstNode;
 /*
 An `AstNode` abstractly stores data about parsed code.
 
-Each `AstNode` must have a `type`, which represents what tokens a node might contain.
+Each `AstNode` must have a `type`, which represents what tokens a node might
+contain.
 
 An `AstNode` points to the starting `token`, and the ending token, `token_end`.
 
 Adjacent `AstNode`s are accessed via `next` and `last`.
 
-`child` and `parent` are used to access the child and parent node of a given node.
+`child` and `parent` are used to access the child and parent node of a given
+node.
 
-Certain `node_type`s may chose to store arbitrary data in `attr` to save time re-parsing.
+Certain `node_type`s may chose to store arbitrary data in `attr` to save time
+re-parsing.
 */
 typedef struct AstNode {
 	NodeType type;
@@ -135,7 +139,8 @@ void free_ast_tree_(AstNode *);
 _Bool is_value(const Token *const);
 
 /*
-Compare a variable number of token types stored in `...` agains each successive token in `token`.
+Compare a variable number of token types stored in `...` agains each
+successive token in `token`.
 */
 #define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
 

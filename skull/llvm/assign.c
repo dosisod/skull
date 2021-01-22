@@ -82,7 +82,11 @@ Create an expression from `node` with type `type`.
 
 Optionally pass `var` if expression is going to be assigned to a variable.
 */
-Expr node_to_expr(const Type *const type, const AstNode *const node, const Variable *const var) {
+Expr node_to_expr(
+	const Type *const type,
+	const AstNode *const node,
+	const Variable *const var
+) {
 	Expr expr;
 
 	if (node->type == AST_NODE_IDENTIFIER) {
@@ -273,7 +277,11 @@ Optionally pass `var` if result is expected to be assigned to a variable.
 
 If `type` is not set, the expression type will not be checked.
 */
-Expr llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var) {
+Expr llvm_assign_identifier(
+	const Type *const type,
+	const AstNode *const node,
+	const Variable *const var
+) {
 	Variable *var_found = NULL;
 	const Expr expr = token_to_expr(node->token, &var_found);
 

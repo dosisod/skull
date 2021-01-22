@@ -11,11 +11,16 @@
 #include "skull/eval/variable.h"
 
 /*
-Make a variable called `name` with type `type`, and make it const if `is_const` is true.
+Make a variable called `name` with type `type`, and make it const if
+`is_const` is true.
 
 Returns `NULL` if var cannot be created, else pointer to created var.
 */
-Variable *make_variable(const Type *const type, const char32_t *const name, bool is_const) {
+Variable *make_variable(
+	const Type *const type,
+	const char32_t *const name,
+	bool is_const
+) {
 	if (!type || !is_valid_identifier_str(name)) {
 		return NULL;
 	}

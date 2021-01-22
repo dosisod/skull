@@ -34,7 +34,10 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 			*variable = var_found;
 		}
 
-		if (var_found->is_const && !(var_found->is_global && !var_found->is_const_lit)) {
+		if (var_found->is_const &&
+			!(var_found->is_global &&
+			!var_found->is_const_lit)
+		) {
 			return (Expr){
 				.llvm_value = var_found->llvm_value,
 				.type = var_found->type
@@ -83,7 +86,9 @@ Variable *node_make_var(const AstNode *const node) {
 		else if (token_type == TOKEN_RUNE_CONST) {
 			type = &TYPE_RUNE;
 		}
-		else if (token_type == TOKEN_BOOL_CONST || node_type == AST_NODE_BOOL_EXPR) {
+		else if (token_type == TOKEN_BOOL_CONST ||
+			node_type == AST_NODE_BOOL_EXPR
+		) {
 			type = &TYPE_BOOL;
 		}
 		else if (token_type == TOKEN_STR_CONST) {
@@ -91,7 +96,12 @@ Variable *node_make_var(const AstNode *const node) {
 		}
 		else if (node_type == AST_NODE_FUNCTION) {
 			char *const func_name = token_mbs_str(node->next->token);
-			const FunctionDeclaration *const function = ht_get(FUNCTION_DECLARATIONS, func_name);
+
+			const FunctionDeclaration *const function = ht_get(
+				FUNCTION_DECLARATIONS,
+				func_name
+			);
+
 			free(func_name);
 
 			if (!function) {
@@ -146,7 +156,10 @@ Variable *node_make_var(const AstNode *const node) {
 /*
 Make an expression from `token`, checking for compatibility with `type`.
 */
-Expr token_to_simple_expr_typed(const Type *const type, const Token *const token) {
+Expr token_to_simple_expr_typed(
+	const Type *const type,
+	const Token *const token
+) {
 	const Expr expr = token_to_simple_expr(token);
 
 	if (!expr.type) {

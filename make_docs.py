@@ -21,12 +21,15 @@ def display_markdown(code: str) -> str:
             value = code[(end + 1):(end + struct_end + 1)]
 
         elif lines[1].startswith("#define"):
-            struct_end = code[end:].index("\n\n")
+            define_end = code[end:].index("\n\n")
 
-            value = code[(end + 1):(end + struct_end)]
+            value = code[(end + 1):(end + define_end)]
 
         else:
-            value = lines[1][:-2]
+            func_start = code[end:].index("{")
+            value = code[
+                (end + 1):(end + func_start - 1)
+            ].replace('\n', '').replace('\t', ' ').replace("( ", "(")
 
         ret += f"```c\n{value}\n```\n\n"
 
@@ -42,7 +45,8 @@ def display_markdown(code: str) -> str:
 
 units = {}
 
-for source in [src for src in Path("./").rglob("*") if src.suffix in [".c", ".h"]]:
+sources = [src for src in Path("./").rglob("*") if src.suffix in [".c", ".h"]]
+for source in sources:
     filename = str(source)[:-2]
 
     if filename in units:

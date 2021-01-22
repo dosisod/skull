@@ -12,14 +12,26 @@
 extern LLVMBuilderRef BUILDER;
 extern Scope *SCOPE;
 
-typedef LLVMValueRef (LLVMBuildX)(LLVMBuilderRef, LLVMValueRef, LLVMValueRef, const char *);
+typedef LLVMValueRef (LLVMBuildX)(
+	LLVMBuilderRef,
+	LLVMValueRef,
+	LLVMValueRef,
+	const char *
+);
 
 /*
 Returns the result of a mathematical operation on `lhs` and `rhs`.
 
-Depending on whether `type` is an int or float, combine `lhs` and `rhs` using `int_func` or `float_func`.
+Depending on whether `type` is an int or float, combine `lhs` and `rhs`
+using `int_func` or `float_func`.
 */
-Expr llvm_make_math_oper(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX int_func, LLVMBuildX float_func) {
+Expr llvm_make_math_oper(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs,
+	LLVMBuildX int_func,
+	LLVMBuildX float_func
+) {
 	if (type == &TYPE_INT) {
 		return (Expr){
 			.llvm_value = int_func(BUILDER, lhs, rhs, ""),
@@ -39,34 +51,56 @@ Expr llvm_make_math_oper(const Type *const type, LLVMValueRef lhs, LLVMValueRef 
 /*
 Return expression for addition of `lhs` and `rhs`.
 */
-Expr llvm_make_add(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_add(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_math_oper(type, lhs, rhs, LLVMBuildNSWAdd, LLVMBuildFAdd);
 }
 
 /*
 Return expression for subtraction of `lhs` and `rhs`.
 */
-Expr llvm_make_sub(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_sub(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_math_oper(type, lhs, rhs, LLVMBuildNSWSub, LLVMBuildFSub);
 }
 
 /*
 Return expression for multiplication of `lhs` and `rhs`.
 */
-Expr llvm_make_mult(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_mult(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_math_oper(type, lhs, rhs, LLVMBuildNSWMul, LLVMBuildFMul);
 }
 /*
 Return expression for division of `lhs` and `rhs`.
 */
-Expr llvm_make_div(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_div(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	if (type == &TYPE_INT) {
 		if (LLVMConstIntGetSExtValue(rhs) == 0) {
 			PANIC(ERR_DIV_BY_ZERO, {0});
 		}
 	}
 
-	return llvm_make_math_oper(type, lhs, rhs, LLVMBuildExactSDiv, LLVMBuildFDiv);
+	return llvm_make_math_oper(
+		type,
+		lhs,
+		rhs,
+		LLVMBuildExactSDiv,
+		LLVMBuildFDiv
+	);
 }
 
 /*
@@ -104,7 +138,11 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 /*
 Return expression for result of is not operator for `lhs` and `rhs`.
 */
-Expr llvm_make_is_not(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_is_not(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	Expr expr = llvm_make_is(type, lhs, rhs);
 
 	expr.llvm_value = LLVMBuildNot(
@@ -119,9 +157,16 @@ Expr llvm_make_is_not(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs
 /*
 Return result of relational comparison on `lhs` and `rhs`.
 
-Depending on whether `type` is an int or float, compare `lhs` and `rhs` using `int_func` or `float_func`.
+Depending on whether `type` is an int or float, compare `lhs` and `rhs` using
+`int_func` or `float_func`.
 */
-Expr llvm_make_relational_oper(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMIntPredicate int_pred, LLVMRealPredicate float_pred) {
+Expr llvm_make_relational_oper(
+	const Type *type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs,
+	LLVMIntPredicate int_pred,
+	LLVMRealPredicate float_pred
+) {
 	if (type == &TYPE_INT) {
 		return (Expr){
 			.llvm_value = LLVMBuildICmp(
@@ -153,35 +198,58 @@ Expr llvm_make_relational_oper(const Type *type, LLVMValueRef lhs, LLVMValueRef 
 /*
 Return expression for result of less than operator for `lhs` and `rhs`.
 */
-Expr llvm_make_less_than(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_less_than(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_relational_oper(type, lhs, rhs, LLVMIntSLT, LLVMRealOLT);
 }
 
 /*
 Return expression for result of greater than operator for `lhs` and `rhs`.
 */
-Expr llvm_make_gtr_than(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_gtr_than(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_relational_oper(type, lhs, rhs, LLVMIntSGT, LLVMRealOGT);
 }
 
 /*
-Return expression for result of less than or equal to operator for `lhs` and `rhs`.
+Return expression for result of less than or equal to operator for `lhs` and
+`rhs`.
 */
-Expr llvm_make_less_than_eq(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_less_than_eq(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_relational_oper(type, lhs, rhs, LLVMIntSLE, LLVMRealOLE);
 }
 
 /*
-Return expression for result of greater than or equal to operator for `lhs` and `rhs`.
+Return expression for result of greater than or equal to operator for `lhs`
+and `rhs`.
 */
-Expr llvm_make_gtr_than_eq(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_gtr_than_eq(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_relational_oper(type, lhs, rhs, LLVMIntSGE, LLVMRealOGE);
 }
 
 /*
 Return result of logical operation `func` on `lhs` and `rhs`.
 */
-Expr llvm_make_logical_oper(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX func) {
+Expr llvm_make_logical_oper(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs,
+	LLVMBuildX func
+) {
 	return (Expr){
 		.llvm_value = func(
 			BUILDER,
@@ -196,7 +264,11 @@ Expr llvm_make_logical_oper(const Type *const type, LLVMValueRef lhs, LLVMValueR
 /*
 Return result of logical "and" operation of `lhs` and `rhs`.
 */
-Expr llvm_make_and(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_and(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_logical_oper(type, lhs, rhs, LLVMBuildAnd);
 }
 
@@ -210,14 +282,22 @@ Expr llvm_make_or(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 /*
 Return result of logical "xor" operation of `lhs` and `rhs`.
 */
-Expr llvm_make_xor(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr llvm_make_xor(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
 	return llvm_make_logical_oper(type, lhs, rhs, LLVMBuildXor);
 }
 
 /*
 Return expression for operation `oper` from `node`.
 */
-Expr llvm_make_oper(const Type *const type, const AstNode *const node, Operation *oper) {
+Expr llvm_make_oper(
+	const Type *const type,
+	const AstNode *const node,
+	Operation *oper
+) {
 	const Token *rhs_token = ATTR(AstNodeOper, node, rhs);
 	const Token *lhs_token = ATTR(AstNodeOper, node, lhs);
 

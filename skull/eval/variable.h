@@ -17,7 +17,8 @@
 
 `is_const_lit` stores whether the variable is const literal.
 
-`is_global` stores whether the variable was declared at the top level of a module.
+`is_global` stores whether the variable was declared at the top level of a
+module.
 
 `llvm_value` stores the actual LLVM alloca/constant/global.
 */

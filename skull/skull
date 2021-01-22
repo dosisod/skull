@@ -48,7 +48,7 @@ base=$(dirname $filename)/.$(basename $filename)
 		OUT_FILE=$base.s;
 }
 
-# mimic -E option in cc (print preproccessor output to screen, in this case, LLVM IR)
+# mimic -E option in cc (print LLVM IR output to screen)
 [ ! -z "$PREPRO" ] &&
 	cat $base.ll &&
 	rm $base.ll &&

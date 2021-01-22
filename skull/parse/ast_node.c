@@ -24,7 +24,12 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	classify_tokens(token);
 
 	Token *token_last = NULL;
-	AstNode *const ret = make_ast_tree_(token, 0, &token_last, TOKEN_BRACKET_CLOSE);
+	AstNode *const ret = make_ast_tree_(
+		token,
+		0,
+		&token_last,
+		TOKEN_BRACKET_CLOSE
+	);
 
 	if (!ret) {
 		free_tokens(token);
@@ -65,7 +70,8 @@ bool is_ast_type_alias(Token **token, Token **last, AstNode **node) {
 	return false;
 }
 
-#define IS_TYPE_LIKE(token) ((token)->type == TOKEN_TYPE || (token)->type == TOKEN_IDENTIFIER)
+#define IS_TYPE_LIKE(token) \
+	((token)->type == TOKEN_TYPE || (token)->type == TOKEN_IDENTIFIER)
 
 bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	bool is_const = true;
@@ -205,7 +211,9 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	char32_t *param_names[MAX_PARAMS] = {0};
 	unsigned short num_params = 0;
 
-	const TokenType token_type = is_external ? TOKEN_NEWLINE : TOKEN_BRACKET_OPEN;
+	const TokenType token_type = is_external ?
+		TOKEN_NEWLINE :
+		TOKEN_BRACKET_OPEN;
 
 	while (token->type == TOKEN_NEW_IDENTIFIER &&
 		token->next &&
@@ -269,11 +277,18 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
-#define IS_BOOL_LIKE(tok) ((tok)->type == TOKEN_IDENTIFIER || (tok)->type == TOKEN_BOOL_CONST)
+#define IS_BOOL_LIKE(tok) \
+	((tok)->type == TOKEN_IDENTIFIER || (tok)->type == TOKEN_BOOL_CONST)
 
 bool is_conditional_expr(Token **, Token **, AstNode **);
 
-bool is_conditional(TokenType token_type, Token **_token, Token **last, AstNode **node, NodeType node_type) {
+bool is_conditional(
+	TokenType token_type,
+	Token **_token,
+	Token **last,
+	AstNode **node,
+	NodeType node_type
+) {
 	Token *token = *_token;
 
 	if (token->type != token_type || !token->next) {
@@ -323,7 +338,9 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 		lhs = token;
 		oper = token->next->type;
 
-		if (oper == TOKEN_OPER_IS && token->next->next->type == TOKEN_OPER_NOT) {
+		if (oper == TOKEN_OPER_IS &&
+			token->next->next->type == TOKEN_OPER_NOT
+		) {
 			oper = TOKEN_OPER_IS_NOT;
 			token = token->next;
 		}
@@ -358,7 +375,12 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 /*
 Internal AST tree generator.
 */
-AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, TokenType bracket_or_paren) {
+AstNode *make_ast_tree_(
+	Token *token,
+	unsigned indent_lvl,
+	Token **token_last,
+	TokenType bracket_or_paren
+) {
 	Token *last = token;
 
 	AstNode *node = make_ast_node();
@@ -366,7 +388,9 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 	bool allow_top_lvl_bracket = false;
 
 	while (token) {
-		if (token->type == TOKEN_BRACKET_OPEN || token->type == TOKEN_PAREN_OPEN) {
+		if (token->type == TOKEN_BRACKET_OPEN ||
+			token->type == TOKEN_PAREN_OPEN
+		) {
 			AstNode *const child = make_ast_tree_(
 				token->next,
 				indent_lvl + 1,
@@ -439,14 +463,18 @@ AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, T
 		if (is_conditional(TOKEN_KW_IF, &token, &last, &node, AST_NODE_IF)) {
 			continue;
 		}
-		if (is_conditional(TOKEN_KW_ELIF, &token, &last, &node, AST_NODE_ELIF)) {
+		if (is_conditional(
+			TOKEN_KW_ELIF, &token, &last, &node, AST_NODE_ELIF
+		)) {
 			continue;
 		}
 		if (token->type == TOKEN_KW_ELSE) {
 			push_ast_node(token, &last, AST_NODE_ELSE, &node);
 			continue;
 		}
-		if (is_conditional(TOKEN_KW_WHILE, &token, &last, &node, AST_NODE_WHILE)) {
+		if (is_conditional(
+			TOKEN_KW_WHILE, &token, &last, &node, AST_NODE_WHILE
+		)) {
 			continue;
 		}
 		if (is_ast_function_proto(&token, &last, &node)) {
@@ -485,7 +513,9 @@ Returns true if a node was added, false otherwise.
 bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (is_const_oper(_token, last, node) || is_conditional_expr(_token, last, node)) {
+	if (is_const_oper(_token, last, node) ||
+		is_conditional_expr(_token, last, node)
+	) {
 		// pass
 	}
 	else if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
@@ -508,7 +538,12 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 /*
 Push a new AST node to `node` with type `node_type`
 */
-void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode **node) {
+void push_ast_node(
+	Token *const token,
+	Token **last,
+	NodeType node_type,
+	AstNode **node
+) {
 	(*node)->type = node_type;
 	(*node)->token = *last;
 	(*node)->token_end = token;
@@ -550,10 +585,22 @@ void free_ast_tree_(AstNode *node) {
 			if (node->type == AST_NODE_FUNCTION_PROTO) {
 				free(ATTR(AstNodeFunctionProto, node, return_type_name));
 
-				char **param_type_names = ATTR(AstNodeFunctionProto, node, param_type_names);
-				char32_t **param_names = ATTR(AstNodeFunctionProto, node, param_names);
+				char **param_type_names = ATTR(
+					AstNodeFunctionProto,
+					node,
+					param_type_names
+				);
+				char32_t **param_names = ATTR(
+					AstNodeFunctionProto,
+					node,
+					param_names
+				);
 
-				unsigned num_params = ATTR(AstNodeFunctionProto, node, num_params);
+				unsigned num_params = ATTR(
+					AstNodeFunctionProto,
+					node,
+					num_params
+				);
 
 				for RANGE(i, num_params) { // NOLINT
 					free(param_type_names[i]);
@@ -579,7 +626,8 @@ void free_ast_tree_(AstNode *node) {
 }
 
 /*
-Check each token's type starting at `token`, checking against the corresponding token type specified in `...`
+Check each token's type starting at `token`, checking against the
+corresponding token type specified in `...`
 */
 bool ast_token_cmp(Token *token, ...) {
 	va_list vargs;
@@ -641,7 +689,9 @@ void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 		while (token != token_end) {
 			char *str = token_mbs_str(token);
 
-			printf("%s   <token at %p, token_type: %u, column: %u, line: %u, data: `%s`>\n",
+			printf(
+				"%s   <token at %p, token_type: %u, "
+				"column: %u, line: %u, data: `%s`>\n",
 				indent,
 				(void *)token,
 				token->type,

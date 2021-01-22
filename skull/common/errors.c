@@ -11,7 +11,8 @@
 /*
 Prints formatted an error message.
 
-Every `%s` in the string is expanded according to the corresponding `ErrorMsg` in `msgs`.
+Every `%s` in the string is expanded according to the corresponding `ErrorMsg`
+in `msgs`.
 */
 void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 	ErrorMsg *msg = msgs;
@@ -62,7 +63,8 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 /*
 Convert error msg `msg` for use in `fmt_error`.
 
-Depending on whether `msg` is a token, a variable, or a string, the resulting feild `real` will be created differently.
+Depending on whether `msg` is a token, a variable, or a string, the resulting
+feild `real` will be created differently.
 */
 void fmt_error_stringify(ErrorMsg *const msg) {
 	if (msg->var) {

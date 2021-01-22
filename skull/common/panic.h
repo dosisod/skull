@@ -4,7 +4,8 @@
 #include "skull/common/str.h"
 
 /*
-Panic (exit with error msg), using `fmt` as the message, and `...` as the `ErrorMsg` parameters.
+Panic (exit with error msg), using `fmt` as the message, and `...` as the
+`ErrorMsg` parameters.
 */
 #define PANIC(fmt, ...) \
 	fmt_error(fmt, (ErrorMsg[]){ \
