@@ -102,8 +102,3 @@ jobs:
 
     - name: Install clang-tidy
       run: sudo apt install clang-tidy-10
-
-    - name: Run pre-commit file
-      run: |
-        sudo ln -sf $(which gcc-8) $(which cc)
-        ./pre-commit
