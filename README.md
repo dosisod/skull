@@ -55,8 +55,7 @@ $ git commit
 To use the `pre-commit`, run the following:
 
 ```
-$ cp pre-commit .git/hooks/pre-commit
-$ chmod +x .git/hooks/pre-commit
+$ ln -sf $(pwd)/pre-commit .git/hooks/pre-commit
 ```
 
 Tests may also be ran manually:
