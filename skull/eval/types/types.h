@@ -27,8 +27,9 @@ Type TYPE_FLOAT;
 Type TYPE_RUNE;
 Type TYPE_STR;
 
-const Type **TYPES_AVAILABLE;
+const Type **TYPES_BUILTIN;
 HashTable *TYPE_ALIASES;
 
 const Type *find_type(const char *const);
 _Bool add_alias(Type *const, char *const);
+char *mangle_types(const Type **, unsigned, char);

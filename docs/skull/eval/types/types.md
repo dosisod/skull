@@ -28,3 +28,11 @@ bool add_alias(Type *const type, char *const alias)
 > \
 > Return `true` if alias was added, `false` if it already exists.
 
+```c
+char *mangle_types(const Type **types, unsigned num_types, char ident)
+```
+
+> Return mangled type name which consists of `types`.
+> \
+> Use `ident` as an identifer for what the mandled type is.
+
