@@ -1,3 +1,5 @@
+#!/bin/sh
+
 pass=true
 
 sha() {
