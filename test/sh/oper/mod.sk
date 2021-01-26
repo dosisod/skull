@@ -1,0 +1,3 @@
+mut x := 9 mod 2
+mut y := -10 mod 3
+mut z := 12.0 mod 5.0

@@ -104,6 +104,9 @@ Expr node_to_expr(
 	else if (node->type == AST_NODE_DIV) {
 		expr = llvm_make_oper(type, node, &llvm_make_div);
 	}
+	else if (node->type == AST_NODE_MOD) {
+		expr = llvm_make_oper(type, node, &llvm_make_mod);
+	}
 	else if (node->type == AST_NODE_BOOL_EXPR) {
 		const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
 		const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);

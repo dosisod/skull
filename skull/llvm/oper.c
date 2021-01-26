@@ -80,6 +80,7 @@ Expr llvm_make_mult(
 ) {
 	return llvm_make_math_oper(type, lhs, rhs, LLVMBuildNSWMul, LLVMBuildFMul);
 }
+
 /*
 Return expression for division of `lhs` and `rhs`.
 */
@@ -100,6 +101,29 @@ Expr llvm_make_div(
 		rhs,
 		LLVMBuildExactSDiv,
 		LLVMBuildFDiv
+	);
+}
+
+/*
+Return expression for modulus of `lhs` and `rhs`.
+*/
+Expr llvm_make_mod(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
+	if (type == &TYPE_INT) {
+		if (LLVMConstIntGetSExtValue(rhs) == 0) {
+			PANIC(ERR_DIV_BY_ZERO, {0});
+		}
+	}
+
+	return llvm_make_math_oper(
+		type,
+		lhs,
+		rhs,
+		LLVMBuildSRem,
+		LLVMBuildFRem
 	);
 }
 

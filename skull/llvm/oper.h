@@ -14,6 +14,7 @@ Operation llvm_make_add;
 Operation llvm_make_sub;
 Operation llvm_make_mult;
 Operation llvm_make_div;
+Operation llvm_make_mod;
 Operation llvm_make_is;
 Operation llvm_make_is_not;
 Operation llvm_make_less_than;
