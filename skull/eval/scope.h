@@ -4,8 +4,6 @@
 
 #include "skull/eval/variable.h"
 
-#define SCOPE_MAX_VARS 256
-
 typedef struct Scope Scope;
 
 /*

@@ -15,11 +15,9 @@
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/func.h"
 #include "skull/llvm/scope.h"
+#include "skull/llvm/shared.h"
 
 #include "skull/llvm/var.h"
-
-extern LLVMBuilderRef BUILDER;
-extern Scope *SCOPE;
 
 /*
 Convert `token` to an expression.
@@ -46,7 +44,7 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 
 		return (Expr) {
 			.llvm_value = LLVMBuildLoad2(
-				BUILDER,
+				SKULL_STATE.builder,
 				var_found->type->llvm_type(),
 				var_found->llvm_value,
 				""
@@ -144,7 +142,7 @@ Variable *node_make_var(const AstNode *const node) {
 		var = make_variable(type, name, is_const);
 	}
 
-	if (scope_add_var(SCOPE, var)) {
+	if (scope_add_var(SKULL_STATE.scope, var)) {
 		free(name);
 		return var;
 	}
@@ -200,8 +198,8 @@ Expr token_to_simple_expr(const Token *const token) {
 		char *const mbs = c32stombs(str);
 
 		llvm_value = LLVMBuildBitCast(
-			BUILDER,
-			LLVMBuildGlobalString(BUILDER, mbs, ""),
+			SKULL_STATE.builder,
+			LLVMBuildGlobalString(SKULL_STATE.builder, mbs, ""),
 			TYPE_STR.llvm_type(),
 			""
 		);

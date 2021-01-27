@@ -10,15 +10,10 @@
 #include "skull/eval/types/types.h"
 #include "skull/llvm/aliases.h"
 #include "skull/llvm/scope.h"
+#include "skull/llvm/shared.h"
 #include "skull/llvm/var.h"
 
 #include "skull/llvm/func.h"
-
-extern LLVMBuilderRef BUILDER;
-extern LLVMModuleRef MODULE;
-extern LLVMValueRef CURRENT_FUNC;
-extern LLVMValueRef MAIN_FUNC;
-extern Scope *SCOPE;
 
 bool node_to_llvm_ir(AstNode *);
 FunctionDeclaration *llvm_create_new_function(
@@ -46,7 +41,7 @@ void declare_function(const AstNode *const node) {
 
 	char *func_name = token_mbs_str(func_name_token);
 
-	if (is_export && CURRENT_FUNC != MAIN_FUNC) {
+	if (is_export && SKULL_STATE.current_func != SKULL_STATE.main_func) {
 		PANIC(ERR_NO_EXPORT_NESTED, {
 			.tok = func_name_token
 		});
@@ -148,7 +143,7 @@ FunctionDeclaration *llvm_create_new_function(
 	free(params);
 
 	func->function = LLVMAddFunction(
-		MODULE,
+		SKULL_STATE.module,
 		name,
 		func->type
 	);
@@ -222,7 +217,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 
 	Expr ret = (Expr){
 		.llvm_value = LLVMBuildCall2(
-			BUILDER,
+			SKULL_STATE.builder,
 			function->type,
 			function->function,
 			params,
@@ -240,17 +235,19 @@ Expr llvm_make_function_call(const AstNode *const node) {
 Create a native LLVM function.
 */
 void define_function(const AstNode *const node, FunctionDeclaration *func) {
-	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(CURRENT_FUNC);
+	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
+		SKULL_STATE.current_func
+	);
 
-	LLVMValueRef old_func = CURRENT_FUNC;
-	CURRENT_FUNC = func->function;
+	LLVMValueRef old_func = SKULL_STATE.current_func;
+	SKULL_STATE.current_func = func->function;
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlock(
 		func->function,
 		"entry"
 	);
 
-	LLVMPositionBuilderAtEnd(BUILDER, entry);
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
 
 	MAKE_SUB_SCOPE;
 
@@ -264,7 +261,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 				true
 			);
 
-			if (!scope_add_var(SCOPE, param_var)) {
+			if (!scope_add_var(SKULL_STATE.scope, param_var)) {
 				PANIC(ERR_SHADOW_VAR, { .var = param_var });
 			}
 
@@ -289,12 +286,12 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	}
 
 	if (!func->return_type) {
-		LLVMBuildRetVoid(BUILDER);
+		LLVMBuildRetVoid(SKULL_STATE.builder);
 	}
 
-	LLVMPositionBuilderAtEnd(BUILDER, current_block);
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, current_block);
 
-	CURRENT_FUNC = old_func;
+	SKULL_STATE.current_func = old_func;
 }
 
 void free_function_declaration(FunctionDeclaration *func) {

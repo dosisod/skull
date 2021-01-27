@@ -12,14 +12,9 @@
 #include "skull/llvm/func.h"
 #include "skull/llvm/oper.h"
 #include "skull/llvm/scope.h"
+#include "skull/llvm/shared.h"
 
 #include "skull/llvm/assign.h"
-
-extern LLVMModuleRef MODULE;
-extern LLVMValueRef CURRENT_FUNC;
-extern LLVMValueRef MAIN_FUNC;
-extern LLVMBuilderRef BUILDER;
-extern Scope *SCOPE;
 
 void llvm_assign_value_to_var(Variable *const, LLVMValueRef);
 
@@ -122,7 +117,7 @@ Expr node_to_expr(
 			}
 
 			value = LLVMBuildNot(
-				BUILDER,
+				SKULL_STATE.builder,
 				rhs_expr.llvm_value,
 				""
 			);
@@ -231,13 +226,13 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 	const bool is_const_literal = LLVMIsConstant(value);
 
 	const bool is_global = is_first_assign ?
-		(CURRENT_FUNC == MAIN_FUNC) :
+		(SKULL_STATE.current_func == SKULL_STATE.main_func) :
 		var->is_global;
 
 	if (is_first_assign) {
 		if (is_global && (!var->is_const || !is_const_literal)) {
 			var->llvm_value = LLVMAddGlobal(
-				MODULE,
+				SKULL_STATE.module,
 				var->type->llvm_type(),
 				var->name
 			);
@@ -251,7 +246,7 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 		}
 		else if (!is_global && !var->is_const) {
 			var->llvm_value = LLVMBuildAlloca(
-				BUILDER,
+				SKULL_STATE.builder,
 				var->type->llvm_type(),
 				var->name
 			);
@@ -266,7 +261,7 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 	}
 	else {
 		LLVMBuildStore(
-			BUILDER,
+			SKULL_STATE.builder,
 			value,
 			var->llvm_value
 		);

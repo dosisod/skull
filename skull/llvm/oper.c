@@ -9,9 +9,6 @@
 
 #include "skull/llvm/oper.h"
 
-extern LLVMBuilderRef BUILDER;
-extern Scope *SCOPE;
-
 typedef LLVMValueRef (LLVMBuildX)(
 	LLVMBuilderRef,
 	LLVMValueRef,
@@ -34,13 +31,13 @@ Expr llvm_make_math_oper(
 ) {
 	if (type == &TYPE_INT) {
 		return (Expr){
-			.llvm_value = int_func(BUILDER, lhs, rhs, ""),
+			.llvm_value = int_func(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = type
 		};
 	}
 	if (type == &TYPE_FLOAT) {
 		return (Expr){
-			.llvm_value = float_func(BUILDER, lhs, rhs, ""),
+			.llvm_value = float_func(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = type
 		};
 	}
@@ -134,7 +131,7 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT || type == &TYPE_RUNE) {
 		return (Expr){
 			.llvm_value = LLVMBuildICmp(
-				BUILDER,
+				SKULL_STATE.builder,
 				LLVMIntEQ,
 				lhs,
 				rhs,
@@ -146,7 +143,7 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_FLOAT) {
 		return (Expr){
 			.llvm_value = LLVMBuildFCmp(
-				BUILDER,
+				SKULL_STATE.builder,
 				LLVMRealOEQ,
 				lhs,
 				rhs,
@@ -170,7 +167,7 @@ Expr llvm_make_is_not(
 	Expr expr = llvm_make_is(type, lhs, rhs);
 
 	expr.llvm_value = LLVMBuildNot(
-		BUILDER,
+		SKULL_STATE.builder,
 		expr.llvm_value,
 		""
 	);
@@ -194,7 +191,7 @@ Expr llvm_make_relational_oper(
 	if (type == &TYPE_INT) {
 		return (Expr){
 			.llvm_value = LLVMBuildICmp(
-				BUILDER,
+				SKULL_STATE.builder,
 				int_pred,
 				lhs,
 				rhs,
@@ -206,7 +203,7 @@ Expr llvm_make_relational_oper(
 	if (type == &TYPE_FLOAT) {
 		return (Expr){
 			.llvm_value = LLVMBuildFCmp(
-				BUILDER,
+				SKULL_STATE.builder,
 				float_pred,
 				lhs,
 				rhs,
@@ -276,7 +273,7 @@ Expr llvm_make_logical_oper(
 ) {
 	return (Expr){
 		.llvm_value = func(
-			BUILDER,
+			SKULL_STATE.builder,
 			lhs,
 			rhs,
 			""

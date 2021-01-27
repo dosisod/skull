@@ -10,14 +10,9 @@
 #include "skull/llvm/assign.h"
 #include "skull/llvm/flow.h"
 #include "skull/llvm/func.h"
+#include "skull/llvm/shared.h"
 
 #include "skull/llvm/ast.h"
-
-LLVMModuleRef MODULE;
-LLVMValueRef CURRENT_FUNC;
-LLVMValueRef MAIN_FUNC;
-LLVMBuilderRef BUILDER;
-Scope *SCOPE;
 
 /*
 Convert skull code from `str_` into LLVM IR (using `func` and `module`).
@@ -33,16 +28,19 @@ void str_to_llvm_ir(
 	TYPE_ALIASES = ht_create();
 	AstNode *const node = make_ast_tree(str);
 
-	SCOPE = make_scope();
-	CURRENT_FUNC = func;
-	MAIN_FUNC = func;
-	MODULE = module;
-	BUILDER = builder;
+	SKULL_STATE = (SkullState){
+		.builder = builder,
+		.ctx = LLVMGetGlobalContext(),
+		.module = module,
+		.current_func = func,
+		.main_func = func,
+		.scope = make_scope()
+	};
 
 	FUNCTION_DECLARATIONS = ht_create();
 
 	if (!node_to_llvm_ir(node)) {
-		LLVMBuildRet(BUILDER, LLVM_INT(0));
+		LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
 	}
 
 	free_ast_tree(node);
@@ -50,7 +48,7 @@ void str_to_llvm_ir(
 
 	free_ht(TYPE_ALIASES, NULL);
 	free_ht(FUNCTION_DECLARATIONS, (void(*)(void *))free_function_declaration);
-	free_scope(SCOPE);
+	free_scope(SKULL_STATE.scope);
 }
 
 /*

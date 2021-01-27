@@ -14,14 +14,10 @@
 #include "skull/llvm/assign.h"
 #include "skull/llvm/oper.h"
 #include "skull/llvm/scope.h"
+#include "skull/llvm/shared.h"
 #include "skull/llvm/var.h"
 
 #include "skull/llvm/flow.h"
-
-extern Scope *SCOPE;
-extern LLVMValueRef CURRENT_FUNC;
-extern LLVMValueRef MAIN_FUNC;
-extern LLVMBuilderRef BUILDER;
 
 bool node_to_llvm_ir(AstNode *);
 
@@ -30,7 +26,7 @@ Builds an return statement from `node`.
 */
 void llvm_make_return(AstNode **node) {
 	AstNode *const node_val = (*node)->next;
-	const bool is_main = CURRENT_FUNC == MAIN_FUNC;
+	const bool is_main = SKULL_STATE.current_func == SKULL_STATE.main_func;
 
 	const Expr expr = node_to_expr(NULL, node_val, NULL);
 
@@ -38,7 +34,7 @@ void llvm_make_return(AstNode **node) {
 		PANIC(ERR_NON_INT_MAIN, { .tok = node_val->token });
 	}
 
-	LLVMBuildRet(BUILDER, expr.llvm_value);
+	LLVMBuildRet(SKULL_STATE.builder, expr.llvm_value);
 
 	*node = node_val;
 }
@@ -55,36 +51,36 @@ Builds LLVM for a while loop from `node`.
 */
 void llvm_make_while(AstNode **node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(
-		CURRENT_FUNC,
+		SKULL_STATE.current_func,
 		"while_cond"
 	);
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(
-		CURRENT_FUNC,
+		SKULL_STATE.current_func,
 		"while_loop"
 	);
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(
-		CURRENT_FUNC,
+		SKULL_STATE.current_func,
 		"while_end"
 	);
 
-	LLVMBuildBr(BUILDER, while_cond);
+	LLVMBuildBr(SKULL_STATE.builder, while_cond);
 
-	LLVMPositionBuilderAtEnd(BUILDER, while_cond);
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_cond);
 
 	*node = (*node)->next;
 
 	LLVMBuildCondBr(
-		BUILDER,
+		SKULL_STATE.builder,
 		llvm_make_cond(*node),
 		while_loop,
 		while_end
 	);
 
-	LLVMPositionBuilderAtEnd(BUILDER, while_loop);
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_loop);
 
 	llvm_make_code_block(U"while", *node, while_cond);
 
-	LLVMPositionBuilderAtEnd(BUILDER, while_end);
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_end);
 }
 
 void llvm_make_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
@@ -95,8 +91,8 @@ Builds an if block from `node`.
 void llvm_make_if(AstNode **node) {
 	llvm_make_if_(
 		node,
-		LLVMGetInsertBlock(BUILDER),
-		LLVMAppendBasicBlock(CURRENT_FUNC, "end")
+		LLVMGetInsertBlock(SKULL_STATE.builder),
+		LLVMAppendBasicBlock(SKULL_STATE.current_func, "end")
 	);
 }
 
@@ -120,25 +116,28 @@ void llvm_make_if_(
 		break;
 	}
 
-	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(CURRENT_FUNC, "if_true");
+	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(
+		SKULL_STATE.current_func,
+		"if_true"
+	);
 	LLVMBasicBlockRef if_false = NULL;
 	LLVMMoveBasicBlockBefore(if_true, end);
 
-	LLVMPositionBuilderAtEnd(BUILDER, if_true);
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_true);
 	*node = (*node)->next;
 	llvm_make_code_block(U"if", *node, end);
 
-	LLVMPositionBuilderAtEnd(BUILDER, entry);
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
 
 	if (next_non_comment && (
 		next_non_comment->type == AST_NODE_ELIF ||
 		next_non_comment->type == AST_NODE_ELSE)
 	) {
-		if_false = LLVMAppendBasicBlock(CURRENT_FUNC, "if_false");
+		if_false = LLVMAppendBasicBlock(SKULL_STATE.current_func, "if_false");
 		LLVMMoveBasicBlockAfter(end, if_false);
 
 		LLVMBuildCondBr(
-			BUILDER,
+			SKULL_STATE.builder,
 			llvm_make_cond(*node),
 			if_true,
 			if_false
@@ -153,20 +152,20 @@ void llvm_make_if_(
 	}
 	// if there is an else block following the current if block
 	else if (next_non_comment && (next_non_comment->type == AST_NODE_ELSE)) {
-		LLVMPositionBuilderAtEnd(BUILDER, if_false);
+		LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_false);
 		llvm_make_code_block(U"else", *node, end);
 	}
 	// just a single if statement
 	else {
 		LLVMBuildCondBr(
-			BUILDER,
+			SKULL_STATE.builder,
 			llvm_make_cond(*node),
 			if_true,
 			end
 		);
 	}
 
-	LLVMPositionBuilderAtEnd(BUILDER, end);
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, end);
 }
 
 LLVMValueRef llvm_get_bool_from_token(const Token *);
@@ -220,11 +219,11 @@ void llvm_make_code_block(
 		const bool returned = node_to_llvm_ir(node->child);
 
 		if (!returned) {
-			LLVMBuildBr(BUILDER, block);
+			LLVMBuildBr(SKULL_STATE.builder, block);
 		}
 	}
 	else {
-		LLVMBuildBr(BUILDER, block);
+		LLVMBuildBr(SKULL_STATE.builder, block);
 	}
 
 	RESTORE_SUB_SCOPE;
