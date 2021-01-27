@@ -96,7 +96,7 @@ Variable *node_make_var(const AstNode *const node) {
 			char *const func_name = token_mbs_str(node->next->token);
 
 			const FunctionDeclaration *const function = ht_get(
-				FUNCTION_DECLARATIONS,
+				SKULL_STATE.function_decls,
 				func_name
 			);
 

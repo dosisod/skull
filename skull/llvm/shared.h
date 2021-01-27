@@ -2,6 +2,7 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/common/hashtable.h"
 #include "skull/eval/scope.h"
 
 /*
@@ -14,6 +15,8 @@ typedef struct {
 	LLVMValueRef current_func;
 	LLVMValueRef main_func;
 	Scope *scope;
+	HashTable *function_decls;
+	HashTable *type_aliases;
 } SkullState;
 
 SkullState SKULL_STATE;

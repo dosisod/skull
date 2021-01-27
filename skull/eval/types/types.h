@@ -28,7 +28,6 @@ Type TYPE_RUNE;
 Type TYPE_STR;
 
 const Type **TYPES_BUILTIN;
-HashTable *TYPE_ALIASES;
 
 const Type *find_type(const char *const);
 _Bool add_alias(Type *const, char *const);

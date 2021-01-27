@@ -51,7 +51,10 @@ void declare_function(const AstNode *const node) {
 		PANIC(ERR_MAIN_RESERVED, {0});
 	}
 
-	FunctionDeclaration *found_func = ht_get(FUNCTION_DECLARATIONS, func_name);
+	FunctionDeclaration *found_func = ht_get(
+		SKULL_STATE.function_decls,
+		func_name
+	);
 
 	if (found_func) {
 		PANIC(ERR_NO_REDEFINE_FUNC, {
@@ -65,7 +68,7 @@ void declare_function(const AstNode *const node) {
 		is_export || is_external
 	);
 
-	ht_add(FUNCTION_DECLARATIONS, func_name, func);
+	ht_add(SKULL_STATE.function_decls, func_name, func);
 
 	if (!is_external) {
 		define_function(node, func);
@@ -165,7 +168,7 @@ Expr llvm_make_function_call(const AstNode *const node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
-	FunctionDeclaration *function = ht_get(FUNCTION_DECLARATIONS, func_name);
+	FunctionDeclaration *function = ht_get(SKULL_STATE.function_decls, func_name);
 
 	if (!function) {
 		PANIC(ERR_MISSING_DECLARATION, {

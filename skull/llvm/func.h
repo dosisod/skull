@@ -39,8 +39,6 @@ typedef struct FunctionDeclaration {
 	FunctionDeclaration *next;
 } FunctionDeclaration;
 
-HashTable *FUNCTION_DECLARATIONS;
-
 void declare_function(const AstNode *const);
 
 Expr llvm_make_function_call(const AstNode *const);

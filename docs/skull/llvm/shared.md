@@ -8,6 +8,8 @@ typedef struct {
 	LLVMValueRef current_func;
 	LLVMValueRef main_func;
 	Scope *scope;
+	HashTable *function_decls;
+	HashTable *type_aliases;
 }
 ```
 

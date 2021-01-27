@@ -4,6 +4,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/eval/types/defs.h"
+#include "skull/llvm/shared.h"
 
 #include "skull/eval/types/types.h"
 
@@ -11,7 +12,7 @@
 Returns pointer to type with name `name`.
 */
 const Type __attribute__((pure)) *find_type(const char *const name) {
-	const Type *const alias = ht_get(TYPE_ALIASES, name);
+	const Type *const alias = ht_get(SKULL_STATE.type_aliases, name);
 	if (alias) {
 		return alias;
 	}
@@ -35,7 +36,7 @@ Add named `alias` for `type`.
 Return `true` if alias was added, `false` if it already exists.
 */
 bool add_alias(Type *const type, char *const alias) {
-	return ht_add(TYPE_ALIASES, alias, type);
+	return ht_add(SKULL_STATE.type_aliases, alias, type);
 }
 
 /*
