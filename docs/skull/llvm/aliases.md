@@ -3,7 +3,7 @@
 ```c
 #define LLVM_INT(num) \
 	LLVMConstInt( \
-		LLVMInt64Type(), \
+		LLVMInt64TypeInContext(SKULL_STATE.ctx), \
 		(unsigned long long)(num), \
 		true \
 	)
@@ -14,7 +14,7 @@
 ```c
 #define LLVM_BOOL(val) \
 	LLVMConstInt( \
-		LLVMInt1Type(), \
+		LLVMInt1TypeInContext(SKULL_STATE.ctx), \
 		val, \
 		true \
 	)
@@ -25,7 +25,7 @@
 ```c
 #define LLVM_RUNE(c) \
 	LLVMConstInt( \
-		LLVMInt32Type(), \
+		LLVMInt32TypeInContext(SKULL_STATE.ctx), \
 		c, \
 		true \
 	)
@@ -36,7 +36,7 @@
 ```c
 #define LLVM_FLOAT(num) \
 	LLVMConstReal( \
-		LLVMDoubleType(), \
+		LLVMDoubleTypeInContext(SKULL_STATE.ctx), \
 		num \
 	)
 ```

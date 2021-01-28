@@ -245,7 +245,8 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	LLVMValueRef old_func = SKULL_STATE.current_func;
 	SKULL_STATE.current_func = func->function;
 
-	LLVMBasicBlockRef entry = LLVMAppendBasicBlock(
+	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
+		SKULL_STATE.ctx,
 		func->function,
 		"entry"
 	);

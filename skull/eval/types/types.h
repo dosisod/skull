@@ -19,6 +19,10 @@ typedef struct Type {
 	LLVMTypeRef (*llvm_type)(void);
 } Type;
 
+LLVMTypeRef gen_llvm_bool_type(void);
+LLVMTypeRef gen_llvm_int_type(void);
+LLVMTypeRef gen_llvm_float_type(void);
+LLVMTypeRef gen_llvm_rune_type(void);
 LLVMTypeRef gen_llvm_str_type(void);
 
 Type TYPE_BOOL;

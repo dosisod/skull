@@ -75,7 +75,7 @@ int setup_main(int argc, char *argv[]) {
 	);
 
 	LLVMDisposeModule(main_module);
-	LLVMContextDispose(LLVMGetGlobalContext());
+	LLVMContextDispose(SKULL_STATE.ctx);
 	free(llvm_filename);
 
 	if (err || status) {
@@ -99,8 +99,10 @@ LLVMModuleRef generate_llvm(
 ) {
 	LLVMModuleRef main_module = LLVMModuleCreateWithName(module_name);
 
+	LLVMContextRef ctx = LLVMContextCreate();
+
 	LLVMTypeRef main_func_type = LLVMFunctionType(
-		LLVMInt64Type(),
+		LLVMInt64TypeInContext(ctx),
 		NULL,
 		0,
 		false
@@ -112,12 +114,13 @@ LLVMModuleRef generate_llvm(
 		main_func_type
 	);
 
-	LLVMBasicBlockRef entry = LLVMAppendBasicBlock(
+	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
+		ctx,
 		main_func,
 		"entry"
 	);
 
-	LLVMBuilderRef builder = LLVMCreateBuilder();
+	LLVMBuilderRef builder = LLVMCreateBuilderInContext(ctx);
 
 	LLVMPositionBuilderAtEnd(
 		builder,
@@ -126,7 +129,7 @@ LLVMModuleRef generate_llvm(
 
 	SKULL_STATE = (SkullState){
 		.builder = builder,
-		.ctx = LLVMGetGlobalContext(),
+		.ctx = ctx,
 		.module = main_module,
 		.current_func = main_func,
 		.main_func = main_func,

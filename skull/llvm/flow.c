@@ -50,15 +50,18 @@ void llvm_make_code_block(
 Builds LLVM for a while loop from `node`.
 */
 void llvm_make_while(AstNode **node) {
-	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlock(
+	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
+		SKULL_STATE.ctx,
 		SKULL_STATE.current_func,
 		"while_cond"
 	);
-	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlock(
+	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlockInContext(
+		SKULL_STATE.ctx,
 		SKULL_STATE.current_func,
 		"while_loop"
 	);
-	LLVMBasicBlockRef while_end = LLVMAppendBasicBlock(
+	LLVMBasicBlockRef while_end = LLVMAppendBasicBlockInContext(
+		SKULL_STATE.ctx,
 		SKULL_STATE.current_func,
 		"while_end"
 	);
@@ -92,7 +95,11 @@ void llvm_make_if(AstNode **node) {
 	llvm_make_if_(
 		node,
 		LLVMGetInsertBlock(SKULL_STATE.builder),
-		LLVMAppendBasicBlock(SKULL_STATE.current_func, "end")
+		LLVMAppendBasicBlockInContext(
+			SKULL_STATE.ctx,
+			SKULL_STATE.current_func,
+			"end"
+		)
 	);
 }
 
@@ -116,7 +123,8 @@ void llvm_make_if_(
 		break;
 	}
 
-	LLVMBasicBlockRef if_true = LLVMAppendBasicBlock(
+	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
+		SKULL_STATE.ctx,
 		SKULL_STATE.current_func,
 		"if_true"
 	);
@@ -133,7 +141,11 @@ void llvm_make_if_(
 		next_non_comment->type == AST_NODE_ELIF ||
 		next_non_comment->type == AST_NODE_ELSE)
 	) {
-		if_false = LLVMAppendBasicBlock(SKULL_STATE.current_func, "if_false");
+		if_false = LLVMAppendBasicBlockInContext(
+			SKULL_STATE.ctx,
+			SKULL_STATE.current_func,
+			"if_false"
+		);
 		LLVMMoveBasicBlockAfter(end, if_false);
 
 		LLVMBuildCondBr(

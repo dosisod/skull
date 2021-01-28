@@ -76,31 +76,50 @@ char *mangle_types(const Type **types, unsigned num_types, char ident) {
 
 Type TYPE_BOOL = {
 	.name = "bool",
-	.llvm_type = &LLVMInt1Type
+	.llvm_type = gen_llvm_bool_type
 };
 
 Type TYPE_INT = {
 	.name = "int",
-	.llvm_type = &LLVMInt64Type
+	.llvm_type = gen_llvm_int_type
 };
 
 Type TYPE_FLOAT = {
 	.name = "float",
-	.llvm_type = &LLVMDoubleType
+	.llvm_type = gen_llvm_float_type
 };
 
 Type TYPE_RUNE = {
 	.name = "rune",
-	.llvm_type = &LLVMInt32Type
+	.llvm_type = gen_llvm_rune_type
 };
 
 Type TYPE_STR = {
 	.name = "str",
-	.llvm_type = &gen_llvm_str_type
+	.llvm_type = gen_llvm_str_type
 };
 
+LLVMTypeRef gen_llvm_bool_type(void) {
+	return LLVMInt1TypeInContext(SKULL_STATE.ctx);
+}
+
+LLVMTypeRef gen_llvm_int_type(void) {
+	return LLVMInt64TypeInContext(SKULL_STATE.ctx);
+}
+
+LLVMTypeRef gen_llvm_float_type(void) {
+	return LLVMDoubleTypeInContext(SKULL_STATE.ctx);
+}
+
+LLVMTypeRef gen_llvm_rune_type(void) {
+	return LLVMInt32TypeInContext(SKULL_STATE.ctx);
+}
+
 LLVMTypeRef gen_llvm_str_type(void) {
-	return LLVMPointerType(LLVMInt8Type(), 0);
+	return LLVMPointerType(
+		LLVMInt8TypeInContext(SKULL_STATE.ctx),
+		0
+	);
 }
 
 const Type **TYPES_BUILTIN = (const Type *[]){
