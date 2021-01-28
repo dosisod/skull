@@ -12,6 +12,8 @@
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/llvm/ast.h"
+#include "skull/llvm/func.h"
+#include "skull/llvm/shared.h"
 #include "skull/setup_main.h"
 
 #define DIE(x) puts(x); return 1
@@ -122,12 +124,25 @@ LLVMModuleRef generate_llvm(
 		entry
 	);
 
-	str_to_llvm_ir(
-		file_contents,
-		main_func,
-		main_module,
-		builder
+	SKULL_STATE = (SkullState){
+		.builder = builder,
+		.ctx = LLVMGetGlobalContext(),
+		.module = main_module,
+		.current_func = main_func,
+		.main_func = main_func,
+		.scope = make_scope(),
+		.function_decls = ht_create(),
+		.type_aliases = ht_create()
+	};
+
+	str_to_llvm_ir(file_contents);
+
+	free_ht(SKULL_STATE.type_aliases, NULL);
+	free_ht(
+		SKULL_STATE.function_decls,
+		(void(*)(void *))free_function_declaration
 	);
+	free_scope(SKULL_STATE.scope);
 
 	LLVMDisposeBuilder(builder);
 

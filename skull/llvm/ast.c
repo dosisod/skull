@@ -17,26 +17,10 @@
 /*
 Convert skull code from `str_` into LLVM IR (using `func` and `module`).
 */
-void str_to_llvm_ir(
-	char *const str_,
-	LLVMValueRef func,
-	LLVMModuleRef module,
-	LLVMBuilderRef builder
-) {
+void str_to_llvm_ir(char *const str_) {
 	char32_t *const str = mbstoc32s(str_);
 
 	AstNode *const node = make_ast_tree(str);
-
-	SKULL_STATE = (SkullState){
-		.builder = builder,
-		.ctx = LLVMGetGlobalContext(),
-		.module = module,
-		.current_func = func,
-		.main_func = func,
-		.scope = make_scope(),
-		.function_decls = ht_create(),
-		.type_aliases = ht_create()
-	};
 
 	if (!node_to_llvm_ir(node)) {
 		LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
@@ -44,13 +28,6 @@ void str_to_llvm_ir(
 
 	free_ast_tree(node);
 	free(str);
-
-	free_ht(SKULL_STATE.type_aliases, NULL);
-	free_ht(
-		SKULL_STATE.function_decls,
-		(void(*)(void *))free_function_declaration
-	);
-	free_scope(SKULL_STATE.scope);
 }
 
 /*

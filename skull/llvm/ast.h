@@ -1,8 +1,6 @@
 #pragma once
 
-#include <llvm-c/Core.h>
-
 #include "skull/parse/ast_node.h"
 
-void str_to_llvm_ir(char *const, LLVMValueRef, LLVMModuleRef, LLVMBuilderRef);
+void str_to_llvm_ir(char *const);
 _Bool node_to_llvm_ir(AstNode *);
