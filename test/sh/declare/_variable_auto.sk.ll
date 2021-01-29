@@ -4,7 +4,7 @@ source_filename = "./test/sh/declare/variable_auto.sk"
 @x = private global i64 0
 @z = private global i64 0
 
-define i64 @main() {
+define i64 @.variable_auto() {
 entry:
   store i64 0, i64* @x
   %0 = load i64, i64* @x

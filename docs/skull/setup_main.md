@@ -14,6 +14,12 @@ LLVMModuleRef generate_llvm(const char *module_name, const char *main_func_name,
 > `main_func_name` from `file_contents`.
 
 ```c
+char *create_llvm_main_func(const char *filename)
+```
+
+> Convert/mangle `filename` into suitable name for "main" method for module.
+
+```c
 char *create_llvm_filename(const char *filename)
 ```
 

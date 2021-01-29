@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/return_func_value.sk'
 source_filename = "./test/sh/flow/return_func_value.sk"
 
-define i64 @main() {
+define i64 @.return_func_value() {
 entry:
   %0 = call i64 @f()
   ret i64 %0

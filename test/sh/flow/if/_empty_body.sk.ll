@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/if/empty_body.sk'
 source_filename = "./test/sh/flow/if/empty_body.sk"
 
-define i64 @main() {
+define i64 @.empty_body() {
 entry:
   br i1 true, label %if_true, label %end
 

@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/function/non_int_return.sk'
 source_filename = "./test/sh/function/non_int_return.sk"
 
-define i64 @main() {
+define i64 @.non_int_return() {
 entry:
   ret i64 0
 }

@@ -7,3 +7,4 @@ int setup_main(int, char *[]);
 LLVMModuleRef generate_llvm(const char *, const char *, char *);
 
 char *create_llvm_filename(const char *);
+char *create_llvm_main_func(const char *);

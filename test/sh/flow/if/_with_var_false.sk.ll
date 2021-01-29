@@ -3,7 +3,7 @@ source_filename = "./test/sh/flow/if/with_var_false.sk"
 
 @x = private global i1 false
 
-define i64 @main() {
+define i64 @.with_var_false() {
 entry:
   store i1 false, i1* @x
   %0 = load i1, i1* @x

@@ -3,7 +3,7 @@ source_filename = "./test/sh/declare/rune.sk"
 
 @x = private global i32 0
 
-define i64 @main() {
+define i64 @.rune() {
 entry:
   store i32 65, i32* @x
   ret i64 0

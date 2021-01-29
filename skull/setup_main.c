@@ -28,10 +28,6 @@ int setup_main(int argc, char *argv[]) {
 		DIE("unexpected number of parameters");
 	}
 
-	const char *main_func_name = (argc == 3 && *argv[2]) ?
-		argv[2] :
-		"main";
-
 	if (!strrstr(argv[1], ".sk")) {
 		DIE("missing required \".sk\" extension, exiting");
 	}
@@ -57,6 +53,8 @@ int setup_main(int argc, char *argv[]) {
 		PANIC(ERR_FILE_EMPTY, {0});
 	}
 	fclose(f);
+
+	const char *main_func_name = create_llvm_main_func(argv[1]);
 
 	LLVMModuleRef main_module = generate_llvm(
 		argv[1],
@@ -150,6 +148,26 @@ LLVMModuleRef generate_llvm(
 	LLVMDisposeBuilder(builder);
 
 	return main_module;
+}
+
+/*
+Convert/mangle `filename` into suitable name for "main" method for module.
+*/
+char *create_llvm_main_func(const char *filename) {
+	char *slash_pos = strrchr(filename, '/');
+
+	if (slash_pos) {
+		filename = slash_pos + 1;
+	}
+
+	const size_t len = strlen(filename) - 1;
+
+	char *ret = Malloc(len);
+	ret[0] = '.';
+	strncpy(ret + 1, filename, len - 1);
+	ret[len - 1] = '\0';
+
+	return ret;
 }
 
 /*

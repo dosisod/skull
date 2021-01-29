@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/function/declare_func.sk'
 source_filename = "./test/sh/function/declare_func.sk"
 
-define i64 @main() {
+define i64 @.declare_func() {
 entry:
   ret i64 0
 }

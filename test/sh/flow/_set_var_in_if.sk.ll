@@ -3,7 +3,7 @@ source_filename = "./test/sh/flow/set_var_in_if.sk"
 
 @x = private global i64 0
 
-define i64 @main() {
+define i64 @.set_var_in_if() {
 entry:
   br i1 true, label %if_true, label %end
 

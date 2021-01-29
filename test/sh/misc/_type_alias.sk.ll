@@ -3,7 +3,7 @@ source_filename = "./test/sh/misc/type_alias.sk"
 
 @x = private global i64 0
 
-define i64 @main() {
+define i64 @.type_alias() {
 entry:
   store i64 1234, i64* @x
   ret i64 0

@@ -5,7 +5,7 @@ source_filename = "./test/sh/declare/bool_expr/is.sk"
 @y = private global i1 false
 @z = private global i1 false
 
-define i64 @main() {
+define i64 @.is() {
 entry:
   store i1 true, i1* @x
   store i1 true, i1* @y

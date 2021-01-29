@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/elif.sk'
 source_filename = "./test/sh/flow/elif.sk"
 
-define i64 @main() {
+define i64 @.elif() {
 entry:
   br i1 false, label %if_true, label %if_false
 

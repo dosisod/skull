@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/else.sk'
 source_filename = "./test/sh/flow/else.sk"
 
-define i64 @main() {
+define i64 @.else() {
 entry:
   br i1 true, label %if_true, label %if_false
 

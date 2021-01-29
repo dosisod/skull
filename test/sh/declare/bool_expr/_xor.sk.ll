@@ -3,7 +3,7 @@ source_filename = "./test/sh/declare/bool_expr/xor.sk"
 
 @x = private global i1 false
 
-define i64 @main() {
+define i64 @.xor() {
 entry:
   store i1 true, i1* @x
   ret i64 0

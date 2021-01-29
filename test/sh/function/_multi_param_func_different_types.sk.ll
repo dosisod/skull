@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/function/multi_param_func_different_types.sk'
 source_filename = "./test/sh/function/multi_param_func_different_types.sk"
 
-define i64 @main() {
+define i64 @.multi_param_func_different_types() {
 entry:
   ret i64 0
 }

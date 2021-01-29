@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/nested_if.sk'
 source_filename = "./test/sh/flow/nested_if.sk"
 
-define i64 @main() {
+define i64 @.nested_if() {
 entry:
   br i1 true, label %if_true, label %end
 

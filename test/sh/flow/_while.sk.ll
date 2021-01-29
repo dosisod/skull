@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/while.sk'
 source_filename = "./test/sh/flow/while.sk"
 
-define i64 @main() {
+define i64 @.while() {
 entry:
   br label %while_cond
 

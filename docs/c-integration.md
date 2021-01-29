@@ -70,7 +70,7 @@ Usage in C:
 
 ```c
 // add_one.c
-#include <Skull.h>
+#include <skull/Skull.h>
 
 SkullInt add_one(SkullInt a) {
 	return a + 1;
@@ -97,7 +97,7 @@ $ echo $?
 3
 ```
 
-The `Skull.h` header is already included when compiling C code via `skull`.
+The Skull headers are already included when compiling C code via `skull`.
 
 ## Using Skull in your C code
 

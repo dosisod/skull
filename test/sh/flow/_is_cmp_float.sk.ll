@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/is_cmp_float.sk'
 source_filename = "./test/sh/flow/is_cmp_float.sk"
 
-define i64 @main() {
+define i64 @.is_cmp_float() {
 entry:
   br i1 true, label %if_true, label %end
 

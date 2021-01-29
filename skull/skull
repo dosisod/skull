@@ -68,5 +68,8 @@ rm $base.ll
 # mimic -c option in cc (compile, but dont link)
 [ -z "$COMPILE" ] || exit 0
 
-cc $OUT_FILE -o "${filename%.*}" "$@" -I/usr/include/skull
+MODULE_NAME=$(basename "${filename%.*}")
+SHIM="int main(void) { extern int x(void) __asm__(\".$MODULE_NAME\"); x(); }"
+
+echo "$SHIM" | cc $OUT_FILE -o "${filename%.*}" "$@" -I/usr/include/skull -x c -
 rm $OUT_FILE

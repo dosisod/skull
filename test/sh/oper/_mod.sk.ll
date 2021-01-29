@@ -5,7 +5,7 @@ source_filename = "./test/sh/oper/mod.sk"
 @y = private global i64 0
 @z = private global double 0.000000e+00
 
-define i64 @main() {
+define i64 @.mod() {
 entry:
   store i64 1, i64* @x
   store i64 -1, i64* @y

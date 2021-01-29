@@ -3,7 +3,7 @@ source_filename = "./test/sh/declare/int_binary.sk"
 
 @x = private global i64 0
 
-define i64 @main() {
+define i64 @.int_binary() {
 entry:
   store i64 21, i64* @x
   ret i64 0

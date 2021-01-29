@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/misc/preserve_nested_scopes.sk'
 source_filename = "./test/sh/misc/preserve_nested_scopes.sk"
 
-define i64 @main() {
+define i64 @.preserve_nested_scopes() {
 entry:
   br i1 true, label %if_true, label %end
 

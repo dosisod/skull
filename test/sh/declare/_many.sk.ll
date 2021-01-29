@@ -4,7 +4,7 @@ source_filename = "./test/sh/declare/many.sk"
 @x = private global i64 0
 @y = private global i64 0
 
-define i64 @main() {
+define i64 @.many() {
 entry:
   store i64 0, i64* @x
   store i64 0, i64* @y

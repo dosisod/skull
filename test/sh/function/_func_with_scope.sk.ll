@@ -3,7 +3,7 @@ source_filename = "./test/sh/function/func_with_scope.sk"
 
 @x = private global i64 0
 
-define i64 @main() {
+define i64 @.func_with_scope() {
 entry:
   store i64 0, i64* @x
   ret i64 0

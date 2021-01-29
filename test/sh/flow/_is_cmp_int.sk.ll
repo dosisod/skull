@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/is_cmp_int.sk'
 source_filename = "./test/sh/flow/is_cmp_int.sk"
 
-define i64 @main() {
+define i64 @.is_cmp_int() {
 entry:
   br i1 true, label %if_true, label %end
 

@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/flow/if/true.sk'
 source_filename = "./test/sh/flow/if/true.sk"
 
-define i64 @main() {
+define i64 @.true() {
 entry:
   br i1 true, label %if_true, label %end
 

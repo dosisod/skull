@@ -1,7 +1,7 @@
 ; ModuleID = './test/sh/function/nested_if.sk'
 source_filename = "./test/sh/function/nested_if.sk"
 
-define i64 @main() {
+define i64 @.nested_if() {
 entry:
   ret i64 0
 }
