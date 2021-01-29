@@ -92,7 +92,6 @@ rm test/sh/error/read_protected.sk
 test_option "missing_file_extension_fails" "missing required \".sk\" extension, exiting"
 test_option ".sk" "\".sk\" is not a valid name, exiting"
 test_option "not_a_file.sk" "\"./test/sh/not_a_file.sk\" was not found, exiting"
-test_option "option1\ option2\ option3" "unexpected number of parameters"
 
 test_skull "version.sh" "-v"
 test_skull "help.sh" "-h"

@@ -24,26 +24,40 @@ Actual `main` function, can be called by external programs.
 int setup_main(int argc, char *argv[]) {
 	SETUP_LOCALE();
 
-	if (1 == argc || argc > 3) {
+	if (argc < 2) {
 		DIE("unexpected number of parameters");
 	}
 
-	if (!strrstr(argv[1], ".sk")) {
+	for (int i = 0; i < argc - 1 ; i++) {
+		const int err = build_file(argv[i + 1]);
+		if (err) {
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+/*
+Build a .ll file from a .sk file `filename`.
+*/
+int build_file(char *filename) {
+	if (!strrstr(filename, ".sk")) {
 		DIE("missing required \".sk\" extension, exiting");
 	}
 
-	if (strrstr(argv[1], ".sk") == argv[1] || strrstr(argv[1], "/.sk")) {
+	if (strrstr(filename, ".sk") == filename || strrstr(filename, "/.sk")) {
 		DIE("\".sk\" is not a valid name, exiting");
 	}
 
 	errno = 0;
-	FILE *const f = fopen(argv[1], "re");
+	FILE *const f = fopen(filename, "re");
 	if (!f) {
 		if (errno == EACCES) {
-			printf("cannot open \"%s\", permission denied\n", argv[1]);
+			printf("cannot open \"%s\", permission denied\n", filename);
 		}
 		else if (errno == ENOENT) {
-			printf("\"%s\" was not found, exiting\n", argv[1]);
+			printf("\"%s\" was not found, exiting\n", filename);
 		}
 		return 1;
 	}
@@ -54,16 +68,16 @@ int setup_main(int argc, char *argv[]) {
 	}
 	fclose(f);
 
-	const char *main_func_name = create_llvm_main_func(argv[1]);
+	const char *main_func_name = create_llvm_main_func(filename);
 
 	LLVMModuleRef main_module = generate_llvm(
-		argv[1],
+		filename,
 		main_func_name,
 		file_contents
 	);
 	free(file_contents);
 
-	char *llvm_filename = create_llvm_filename(argv[1]);
+	char *llvm_filename = create_llvm_filename(filename);
 
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(

@@ -67,7 +67,7 @@ jobs:
       run: sudo apt install llvm-10-dev
 
     - name: Build
-      run: sudo CC=gcc-8 make options install -e
+      run: sudo CC=gcc-8 make options install install-dev -e
 
     - name: Run Skull
       run: |

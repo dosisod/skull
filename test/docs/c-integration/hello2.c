@@ -1,7 +1,9 @@
 // hello2.c
 
-extern int _skull_main(void);
+#include <skull/Skull.h>
 
 int main(void) {
-	return _skull_main();
+	SKULL_INIT_MODULE(hello2);
+
+	return 0;
 }

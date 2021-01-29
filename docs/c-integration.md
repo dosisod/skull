@@ -106,10 +106,10 @@ This is an example of how to compile Skull code into a C program:
 ```c
 // hello2.c
 
-extern int _skull_main(void);
-
 int main(void) {
-	return _skull_main();
+	SKULL_INIT_MODULE(hello2);
+
+	return 0;
 }
 ```
 
@@ -124,9 +124,10 @@ puts("hello, world 2!")
 To compile, run the following:
 
 ```
-$ skull hello2.sk -m _skull_main -- hello2.c -no-pie -o hello2
+$ skull hello2.sk -c
+$ cc .hello2.sk.o hello2.c -no-pie -o hello2
 ```
 
-Here we compile `hello2.sk`, rename `main` to `_skull_main`, and call it from `main` in out C program.
+Here we compile `hello2.sk`, and call hello2 from `main` in our C program.
 
-You MUST call the main funciton of the Skull program in C, as main may need to initialize variables.
+You MUST call `SKULL_INIT_MODULE` before calling any functions in that module.

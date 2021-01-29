@@ -8,3 +8,6 @@ typedef int64_t SkullInt;
 typedef double SkullFloat;
 typedef char32_t SkullRune;
 typedef char32_t * SkullStr;
+
+#define SKULL_INIT_MODULE(name) \
+	int name(void) __asm__("." #name); name();

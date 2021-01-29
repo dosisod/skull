@@ -3,6 +3,7 @@
 #include <llvm-c/Core.h>
 
 int setup_main(int, char *[]);
+int build_file(char *);
 
 LLVMModuleRef generate_llvm(const char *, const char *, char *);
 
