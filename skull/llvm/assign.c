@@ -123,7 +123,7 @@ Expr node_to_expr(
 			);
 		}
 		else if (oper == TOKEN_OPER_IS ||
-			oper == TOKEN_OPER_IS_NOT ||
+			oper == TOKEN_OPER_ISNT ||
 			oper == TOKEN_OPER_LESS_THAN ||
 			oper == TOKEN_OPER_GTR_THAN ||
 			oper == TOKEN_OPER_LESS_THAN_EQ ||
@@ -147,7 +147,7 @@ Expr node_to_expr(
 			if (oper == TOKEN_OPER_IS) {
 				func = llvm_make_is;
 			}
-			else if (oper == TOKEN_OPER_IS_NOT) {
+			else if (oper == TOKEN_OPER_ISNT) {
 				func = llvm_make_is_not;
 			}
 			else if (oper == TOKEN_OPER_LESS_THAN) {
