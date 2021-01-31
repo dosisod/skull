@@ -1,5 +1,0 @@
-inner() {
-	export outer() {
-		# this will fail
-	}
-}

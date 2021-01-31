@@ -1,0 +1,7 @@
+if false {
+	export func() {
+		# this will fail
+	}
+}
+
+func()

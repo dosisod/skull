@@ -41,8 +41,8 @@ void declare_function(const AstNode *const node) {
 
 	char *func_name = token_mbs_str(func_name_token);
 
-	if (is_export && SKULL_STATE.current_func != SKULL_STATE.main_func) {
-		PANIC(ERR_NO_EXPORT_NESTED, { .tok = func_name_token });
+	if ((is_export || is_external) && SKULL_STATE.scope->sub_scope) {
+		PANIC(ERR_NO_NESTED, { .tok = func_name_token });
 	}
 
 	if (is_export && strcmp(func_name, "main") == 0) {

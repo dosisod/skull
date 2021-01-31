@@ -37,7 +37,8 @@
 #define ERR_REDUNDANT_REASSIGN \
 	"redundant assignment of variable \"%s\" to itself\n"
 #define ERR_DIV_BY_ZERO "division by zero"
-#define ERR_NO_EXPORT_NESTED "cannot export nested function \"%s\"\n"
+#define ERR_NO_NESTED \
+	"cannot declare nested function \"%s\" as external or exported\n"
 #define ERR_NOT_COMPARIBLE "cannot compare value near \"%s\"\n"
 #define ERR_EXPECTED_COMMA "expected comma\n"
 #define ERR_TYPE_NOT_FOUND "type \"%s\" could not be found\n"
