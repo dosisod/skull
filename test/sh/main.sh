@@ -47,10 +47,10 @@ test_error() {
 
 	echo -n "$dir/$file "
 
-	./build/skull/_skull "./test/sh/error/$file" > "./test/sh/error/.$file.out"
+	./build/skull/_skull "./$dir/$file" > "./$dir/.$file.out"
 
-	cmp "./test/sh/error/.$file.out" "./test/sh/error/_$file.out"
-	rm -f "./test/sh/error/.$file.out"
+	cmp "./$dir/.$file.out" "./$dir/_$file.out"
+	rm -f "./$dir/.$file.out"
 }
 
 test_option() {
