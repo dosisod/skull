@@ -1,1 +1,3 @@
-main() {}
+export main() {
+	# do nothing
+}

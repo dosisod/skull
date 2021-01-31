@@ -1,1 +1,1 @@
-Compilation error: declaration of reserved function "main"
+Compilation error: line 1 column 8: cannot export function "main"

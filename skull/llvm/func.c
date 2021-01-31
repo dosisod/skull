@@ -42,13 +42,11 @@ void declare_function(const AstNode *const node) {
 	char *func_name = token_mbs_str(func_name_token);
 
 	if (is_export && SKULL_STATE.current_func != SKULL_STATE.main_func) {
-		PANIC(ERR_NO_EXPORT_NESTED, {
-			.tok = func_name_token
-		});
+		PANIC(ERR_NO_EXPORT_NESTED, { .tok = func_name_token });
 	}
 
-	if (strcmp(func_name, "main") == 0) {
-		PANIC(ERR_MAIN_RESERVED, {0});
+	if (is_export && strcmp(func_name, "main") == 0) {
+		PANIC(ERR_MAIN_RESERVED, { .tok = func_name_token });
 	}
 
 	FunctionDeclaration *found_func = ht_get(
