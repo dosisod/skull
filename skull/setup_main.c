@@ -68,26 +68,26 @@ int build_file(char *filename) {
 	}
 	fclose(f);
 
-	const char *main_func_name = create_llvm_main_func(filename);
+	char *main_func_name = create_llvm_main_func(filename);
 
-	LLVMModuleRef main_module = generate_llvm(
+	generate_llvm(
 		filename,
 		main_func_name,
 		file_contents
 	);
 	free(file_contents);
+	free(main_func_name);
 
 	char *llvm_filename = create_llvm_filename(filename);
 
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(
-		main_module,
+		SKULL_STATE.module,
 		llvm_filename,
 		&err
 	);
 
-	LLVMDisposeModule(main_module);
-	LLVMContextDispose(SKULL_STATE.ctx);
+	free_state(SKULL_STATE);
 	free(llvm_filename);
 
 	if (err || status) {
@@ -104,7 +104,7 @@ int build_file(char *filename) {
 Create a module named `module_name` and a main function called
 `main_func_name` from `file_contents`.
 */
-LLVMModuleRef generate_llvm(
+void generate_llvm(
 	const char *module_name,
 	const char *main_func_name,
 	char *file_contents
@@ -151,17 +151,6 @@ LLVMModuleRef generate_llvm(
 	};
 
 	str_to_llvm_ir(file_contents);
-
-	free_ht(SKULL_STATE.type_aliases, NULL);
-	free_ht(
-		SKULL_STATE.function_decls,
-		(void(*)(void *))free_function_declaration
-	);
-	free_scope(SKULL_STATE.scope);
-
-	LLVMDisposeBuilder(builder);
-
-	return main_module;
 }
 
 /*

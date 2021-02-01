@@ -20,3 +20,5 @@ typedef struct {
 } SkullState;
 
 SkullState SKULL_STATE;
+
+void free_state(SkullState);
