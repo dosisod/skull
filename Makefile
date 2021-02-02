@@ -15,7 +15,7 @@ setup:
 	@mkdir $(DIRS) -p
 
 skull: setup | $(OBJS) $(OBJS_LLVM)
-	@echo "\033[92mLink\033[0m skull"
+	@echo "\033[92mLink\033[0m Skull"
 	@$(CC) $(OBJS) $(OBJS_LLVM) -o build/skull/_skull $(CFLAGS) $(LLVM_LDFLAGS)
 
 $(ODIR)/%.o: %.c
@@ -37,12 +37,21 @@ clean:
 install: clean | skull
 	@mkdir -p $(MANPATH)
 	@install -m 644 docs/skull/skull.1 $(MANPATH)
-	@echo "\033[92mInstall\033[0m skull"
+	@echo "\033[92mInstall\033[0m Skull"
 	@install skull/skull $(BIN)
 	@install build/skull/_skull $(BIN)
 	@make clean
 
 install-dev:
-	@echo "\033[92mInstall\033[0m skull headers"
+	@echo "\033[92mInstall\033[0m Skull headers"
 	@mkdir -p $(HEADER)/skull
 	@cp skull/Skull.h $(HEADER)/skull/Skull.h
+
+uninstall:
+	@echo "\033[92mUninstall\033[0m Skull"
+	@rm -f $(BIN)skull
+	@rm -f $(BIN)_skull
+	@echo "\033[92mUninstall\033[0m Skull docs"
+	@rm -f $(MANPATH)skull.1
+	@echo "\033[92mUninstall\033[0m Skull headers"
+	@rm -rf $(HEADER)/skull
