@@ -3,17 +3,17 @@
 pass=true
 
 cmp() {
-	sha_control=$(cksum $1 | cut -d' ' -f1-2)
-	sha_test=$(cksum $2 | cut -d' ' -f1-2)
+	sha_control=$(cksum "$1" | cut -d' ' -f1-2)
+	sha_test=$(cksum "$2" | cut -d' ' -f1-2)
 	[ "$sha_test" != "$sha_control" ] || [ -z "$sha_test" ]
 	pass_or_fail $?
 }
 
 pass_or_fail() {
-	[ "$1" != "0" ] && printf "\033[92mPASS\033[0m\n" || (
-		printf "\033[91mFAIL\033[0m\n" &&
-		pass=false
-	)
+	[ "$1" != "0" ] && printf "\033[92mPASS\033[0m\n" || {
+		printf "\033[91mFAIL\033[0m\n";
+		pass=false;
+	}
 }
 
 test_normal() {
@@ -46,7 +46,7 @@ test_error() {
 test_option() {
 	printf "%s" "$1 "
 
-	[ "$(./build/skull/_skull ./test/sh/$1)" != "$2" ]
+	[ "$(./build/skull/_skull "./test/sh/$1")" != "$2" ]
 	pass_or_fail $?
 }
 
@@ -93,5 +93,5 @@ test_skull "compile_with_args.sh" "./test/sh/skull/dummy.sk -- -o ./test/sh/skul
 test_skull "output_asm.sh" "./test/sh/skull/dummy.sk -S -o test/sh/skull/alt_name"
 test_skull "output_obj.sh" "./test/sh/skull/dummy.sk -c -o test/sh/skull/alt_name"
 
-printf ""
+printf "\n"
 $pass || (printf "1 or more tests failed\n" && exit 1)
