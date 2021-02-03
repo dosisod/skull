@@ -2,36 +2,26 @@
 
 pass=true
 
-sha() {
-	echo $(sha512sum $1 | awk '{print $1}')
-}
-
 cmp() {
-	sha_control=$(sha $1)
-	sha_test=$(sha $2)
+	sha_control=$(cksum $1 | cut -d' ' -f1-2)
+	sha_test=$(cksum $2 | cut -d' ' -f1-2)
 	[ "$sha_test" != "$sha_control" ] || [ -z "$sha_test" ]
 	pass_or_fail $?
 }
 
-fail() {
-	/bin/echo -e "\033[91mFAIL\033[0m"
-	pass=false
-}
-
-pass() {
-	/bin/echo -e "\033[92mPASS\033[0m"
-}
-
 pass_or_fail() {
-	[ "$1" = "0" ] && fail || pass
+	[ "$1" != "0" ] && printf "\033[92mPASS\033[0m\n" || (
+		printf "\033[91mFAIL\033[0m\n" &&
+		pass=false
+	)
 }
 
 test_normal() {
-	dir=$(dirname "$1")
-	file=$(basename "$1")
+	dir=${1%/*}
+	file=${1##*/}
 	file="$(expr substr "${file%.*}" 2 99999)"
 
-	echo -n "$dir/$file "
+	printf "%s" "$dir/$file "
 
 	rm -f "./$dir/.$file.ll"
 	./build/skull/_skull "./$dir/$file"
@@ -41,11 +31,11 @@ test_normal() {
 }
 
 test_error() {
-	dir=$(dirname "$1")
-	file=$(basename "$1")
+	dir=${1%/*}
+	file=${1##*/}
 	file="$(expr substr "${file%.*}" 2 99999)"
 
-	echo -n "$dir/$file "
+	printf "%s" "$dir/$file "
 
 	./build/skull/_skull "./$dir/$file" > "./$dir/.$file.out"
 
@@ -54,14 +44,14 @@ test_error() {
 }
 
 test_option() {
-	echo -n "$1 "
+	printf "%s" "$1 "
 
 	[ "$(./build/skull/_skull ./test/sh/$1)" != "$2" ]
 	pass_or_fail $?
 }
 
 test_skull() {
-	echo -n "skull $1 "
+	printf "%s" "skull $1 "
 
 	out=$(./build/skull/skull $2)
 
@@ -70,9 +60,7 @@ test_skull() {
 	pass_or_fail $?
 }
 
-echo
-echo "Running Skull unit tests"
-echo
+printf "\nRunning Skull unit tests\n\n"
 
 for file in $(find test/sh/ -name "_*.ll") ; do
 	test_normal "$file"
@@ -84,7 +72,7 @@ done
 
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
-echo "cannot open \"./test/sh/error/read_protected.sk\", permission denied" > test/sh/error/_read_protected.sk.out
+printf "cannot open \"./test/sh/error/read_protected.sk\", permission denied\n" > test/sh/error/_read_protected.sk.out
 test_error "test/sh/error/_read_protected.sk.out"
 rm test/sh/error/_read_protected.sk.out
 rm test/sh/error/read_protected.sk
@@ -105,5 +93,5 @@ test_skull "compile_with_args.sh" "./test/sh/skull/dummy.sk -- -o ./test/sh/skul
 test_skull "output_asm.sh" "./test/sh/skull/dummy.sk -S -o test/sh/skull/alt_name"
 test_skull "output_obj.sh" "./test/sh/skull/dummy.sk -c -o test/sh/skull/alt_name"
 
-echo
-$pass || (echo "1 or more tests failed" && exit 1)
+printf ""
+$pass || (printf "1 or more tests failed\n" && exit 1)
