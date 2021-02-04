@@ -1,19 +1,18 @@
 #!/bin/sh
 
-pass=true
+passed=true
 
-cmp() {
-	sha_control=$(cksum "$1" | cut -d' ' -f1-2)
-	sha_test=$(cksum "$2" | cut -d' ' -f1-2)
-	[ "$sha_test" != "$sha_control" ] || [ -z "$sha_test" ]
-	pass_or_fail $?
+pass() {
+	printf "\033[92mPASS\033[0m\n"
 }
 
-pass_or_fail() {
-	[ "$1" != "0" ] && printf "\033[92mPASS\033[0m\n" || {
-		printf "\033[91mFAIL\033[0m\n";
-		pass=false;
-	}
+fail() {
+	printf "\033[91mFAIL\033[0m\n"
+	passed=false
+}
+
+compare() {
+	cmp "$1" "$2" && pass || fail
 }
 
 test_normal() {
@@ -26,7 +25,7 @@ test_normal() {
 	rm -f "./$dir/.$file.ll"
 	./build/skull/_skull "./$dir/$file"
 
-	cmp "./$dir/_$file.ll" "./$dir/.$file.ll"
+	compare "./$dir/_$file.ll" "./$dir/.$file.ll"
 	rm -f "./$dir/.$file.ll"
 }
 
@@ -39,15 +38,14 @@ test_error() {
 
 	./build/skull/_skull "./$dir/$file" > "./$dir/.$file.out"
 
-	cmp "./$dir/.$file.out" "./$dir/_$file.out"
+	compare "./$dir/.$file.out" "./$dir/_$file.out"
 	rm -f "./$dir/.$file.out"
 }
 
 test_option() {
 	printf "%s" "$1 "
 
-	[ "$(./build/skull/_skull "./test/sh/$1")" != "$2" ]
-	pass_or_fail $?
+	[ "$(./build/skull/_skull "./test/sh/$1")" = "$2" ] && pass || fail
 }
 
 test_skull() {
@@ -56,8 +54,7 @@ test_skull() {
 	out=$(./build/skull/skull $2)
 
 	sh -e "./test/sh/skull/$1" "$out" "$?"
-	[ "$?" != "0" ]
-	pass_or_fail $?
+	[ "$?" != "0" ] && fail || pass
 }
 
 printf "\nRunning Skull unit tests\n\n"
@@ -94,4 +91,4 @@ test_skull "output_asm.sh" "./test/sh/skull/dummy.sk -S -o test/sh/skull/alt_nam
 test_skull "output_obj.sh" "./test/sh/skull/dummy.sk -c -o test/sh/skull/alt_name"
 
 printf "\n"
-$pass || (printf "1 or more tests failed\n" && exit 1)
+$passed || (printf "1 or more tests failed\n" && exit 1)
