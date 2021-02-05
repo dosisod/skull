@@ -63,8 +63,7 @@ ifeq ($(findstring clang,$(CC)),)
 	-Wsuggest-attribute=pure \
 	-Wsync-nand \
 	-Wtrampolines \
-	-Wunsafe-loop-optimizations \
-	-Wchkp
+	-Wunsafe-loop-optimizations
 else
 	CFLAGS += -Wno-newline-eof
 endif
