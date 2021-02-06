@@ -25,9 +25,9 @@ module.
 typedef struct Variable {
 	const Type *type;
 	char *name;
-	_Bool is_const;
-	_Bool is_const_lit;
-	_Bool is_global;
+	_Bool is_const : 1;
+	_Bool is_const_lit : 1;
+	_Bool is_global : 1;
 
 	LLVMValueRef llvm_value;
 } Variable;

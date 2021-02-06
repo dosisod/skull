@@ -54,9 +54,8 @@ typedef struct AstNode {
 
 ```c
 typedef struct {
-	// these probably should be turned into bitflags
-	_Bool is_implicit;
-	_Bool is_const;
+	_Bool is_implicit : 1;
+	_Bool is_const : 1;
 }
 ```
 
@@ -69,10 +68,10 @@ typedef struct {
 
 	char *return_type_name;
 
-	_Bool is_external;
-	_Bool is_export;
-
 	unsigned short num_params;
+
+	_Bool is_external : 1;
+	_Bool is_export : 1;
 }
 ```
 
