@@ -1,3 +1,5 @@
+#include <ctype.h>
+
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
@@ -11,6 +13,10 @@ Return rune type converted from `token`
 SkullRune eval_rune(const Token *const token) {
 	const char32_t *start = token->begin + 1;
 	const char32_t *copy = start;
+
+	if (iscntrl(*start)) {
+		PANIC(ERR_NO_CONTROL_CHAR, { .tok = token });
+	}
 
 	const char32_t *error = NULL;
 	SkullRune ret = c32sunescape(&start, &error);
