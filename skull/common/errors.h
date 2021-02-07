@@ -46,6 +46,8 @@
 #define ERR_ASSIGN_MISSING_EXPR "expected expression in assignment variable\n"
 #define ERR_RETURN_MISSING_EXPR "expected expression in return\n"
 #define ERR_NO_CONTROL_CHAR "control character cannot be used in rune\n"
+#define ERR_NESTED_BLOCK_COMMENT \
+	"cannot put opening block comment in existing block comment"
 
 typedef struct Variable Variable;
 typedef struct Type Type;

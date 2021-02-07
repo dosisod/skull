@@ -43,6 +43,9 @@ Token *tokenize(const char32_t *code) {
 				code--;
 				comment = false;
 			}
+			else if (block_comment && *code == '#' && code[1] == '{') {
+				PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
+			}
 			else if (block_comment && *code == '#' && code[1] == '}') {
 				comment = false;
 				block_comment = false;
