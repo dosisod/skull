@@ -53,7 +53,7 @@ Token *tokenize(const char32_t *code) {
 			}
 		}
 		else if (
-			!comment && code[0] == '#' && (
+			!quote && !comment && code[0] == '#' && (
 				code[1] == ' ' ||
 				code[1] == '{'
 		)) {
