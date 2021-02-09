@@ -19,7 +19,7 @@ esac
 while getopts ":vhcSEo:m:" o; do
 	case "$o" in
 		v)
-			/bin/echo -e "\033[92mSkull\033[0m v0.5.0"
+			printf "\033[92mSkull\033[0m v0.5.0\n"
 			exit 0
 			;;
 		h) usage; exit 0 ;;
@@ -31,16 +31,16 @@ while getopts ":vhcSEo:m:" o; do
 	esac
 done
 
-shift $(expr $OPTIND - 1)
+shift "$(echo "$OPTIND - 1" | bc)"
 
-$(dirname $0)/_skull "$filename" || exit 1
+${0%/*}/_skull "$filename" || exit 1
 
 case "$filename" in
 	*".sk") ;;
 	*) exit 0 ;;
 esac
 
-base=$(dirname $filename)/.$(basename $filename)
+base=$(dirname "$filename")/.$(basename "$filename")
 [ -z "$OUT_FILE" ] && {
 	[ -z "$ASM" ] &&
 		OUT_FILE=$base.o ||
@@ -49,8 +49,8 @@ base=$(dirname $filename)/.$(basename $filename)
 
 # mimic -E option in cc (print LLVM IR output to screen)
 [ ! -z "$PREPRO" ] &&
-	cat $base.ll &&
-	rm $base.ll &&
+	cat "$base.ll" &&
+	rm "$base.ll" &&
 	exit 0
 
 # mimic -S option in cc (output assembly)
@@ -58,9 +58,9 @@ file_type=obj
 [ -z "$ASM" ] || file_type=asm
 
 LLC=$(command -v llc-10 || command -v llc)
-$LLC $base.ll -filetype=$file_type -o $OUT_FILE || exit 1
+$LLC "$base.ll" -filetype=$file_type -o "$OUT_FILE" || exit 1
 
-rm $base.ll
+rm "$base.ll"
 
 [ -z "$ASM" ] || exit 0
 
@@ -70,5 +70,9 @@ rm $base.ll
 MODULE_NAME=$(basename "${filename%.*}")
 SHIM="int main(void) { extern int x(void) __asm__(\".$MODULE_NAME\"); x(); }"
 
-echo "$SHIM" | cc $OUT_FILE -o "${filename%.*}" "$@" -I/usr/include/skull -x c -
-rm $OUT_FILE
+echo "$SHIM" | cc "$OUT_FILE" \
+	-o "${filename%.*}" "$@" \
+	-I/usr/include/skull \
+	-x c -
+
+rm "$OUT_FILE"
