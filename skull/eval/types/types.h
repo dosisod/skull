@@ -19,6 +19,16 @@ typedef struct Type {
 	LLVMTypeRef (*llvm_type)(void);
 } Type;
 
+/*
+Similar to `Type` except that `llvm_type` is stored directly, and is not
+a function.
+*/
+typedef struct TemplateType {
+	char *name;
+
+	LLVMTypeRef *llvm_type;
+} TemplateType;
+
 LLVMTypeRef gen_llvm_bool_type(void);
 LLVMTypeRef gen_llvm_int_type(void);
 LLVMTypeRef gen_llvm_float_type(void);

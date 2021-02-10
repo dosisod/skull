@@ -79,6 +79,15 @@ typedef struct {
 
 ```c
 typedef struct {
+	unsigned short num_values;
+	char *func_name;
+}
+```
+
+> Used to store special data about tuples.
+
+```c
+typedef struct {
 	const Token *lhs;
 	const Token *rhs;
 }
@@ -122,6 +131,16 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node)
 > Try and generate AST node for expression.
 > \
 > Returns true if a node was added, false otherwise.
+
+```c
+bool try_gen_tuple(Token **_token, Token **last, AstNode **node, char *const func_name /* NOLINT */)
+```
+
+> Try and generate AST node for a tuple.
+> \
+> Returns true if a node was added, false otherwise.
+> \
+> If the tuple is attached to a function, pass `func_name`, otherwise `NULL`.
 
 ```c
 void push_ast_node(Token *const token, Token **last, NodeType node_type, AstNode **node)

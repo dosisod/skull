@@ -27,6 +27,12 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 > Optionally pass `var` if expression is going to be assigned to a variable.
 
 ```c
+Expr llvm_make_bool_expr(const AstNode *const node)
+```
+
+> Build LLVM code to handle boolean expressions from `node`.
+
+```c
 void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value)
 ```
 

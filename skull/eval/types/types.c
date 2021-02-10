@@ -74,6 +74,23 @@ char *mangle_types(const Type **types, unsigned num_types, char ident) {
 	return name;
 }
 
+/*
+Return newly created template type with called `name` of type `llvm_type`.
+*/
+TemplateType *add_template_type(char *name, LLVMTypeRef *llvm_type) {
+	TemplateType *new_type;
+	new_type = Malloc(sizeof *new_type);
+
+	*new_type = (TemplateType){
+		.name = name,
+		.llvm_type = llvm_type
+	};
+
+	ht_add(SKULL_STATE.template_types, name, new_type);
+
+	return new_type;
+}
+
 Type TYPE_BOOL = {
 	.name = "bool",
 	.llvm_type = gen_llvm_bool_type

@@ -15,6 +15,7 @@
 #define MAX_PARAMS 256
 
 bool try_gen_expression(Token **, Token **, AstNode **);
+bool try_gen_tuple(Token **, Token **, AstNode **, char *const);
 
 /*
 Makes an AST (abstract syntax tree) from a given string.
@@ -513,6 +514,8 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	else if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
 		*_token = token->next;
 		push_ast_node(token, last, AST_NODE_FUNCTION, node);
+
+		try_gen_tuple(_token, last, node, token_mbs_str(token));
 	}
 	else if (token->type == TOKEN_IDENTIFIER) {
 		push_ast_node(token, last, AST_NODE_IDENTIFIER, node);
@@ -523,6 +526,61 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	else {
 		return false;
 	}
+
+	return true;
+}
+
+/*
+Try and generate AST node for a tuple.
+
+Returns true if a node was added, false otherwise.
+
+If the tuple is attached to a function, pass `func_name`, otherwise `NULL`.
+*/
+bool try_gen_tuple(
+	Token **_token,
+	Token **last,
+	AstNode **node,
+	char *const func_name /* NOLINT */
+) {
+	AstNode *child = make_ast_node();
+	(*node)->last->child = child;
+
+	*_token = (*_token)->next;
+
+	unsigned short num_values = 0;
+
+	while (true) {
+		*last = *_token;
+		const bool added = try_gen_expression(_token, last, &child);
+		if (added) {
+			num_values++;
+
+			// dont move to next token if function was parsed, as the token will
+			// already been moved to where it should be
+			if (child->last->type != AST_NODE_FUNCTION) {
+				*_token = (*_token)->next;
+			}
+		}
+
+		if ((*_token)->type == TOKEN_PAREN_CLOSE) {
+			*_token = (*_token)->next;
+			break;
+		}
+
+		if ((*_token)->type != TOKEN_COMMA) {
+			PANIC(ERR_EXPECTED_COMMA, {
+				.tok = *_token
+			});
+		}
+
+		*_token = (*_token)->next;
+	}
+
+	MAKE_ATTR(AstNodeTuple, (*node)->last,
+		.num_values = num_values,
+		.func_name = func_name
+	);
 
 	return true;
 }
@@ -602,6 +660,9 @@ void free_ast_tree_(AstNode *node) {
 				free(param_type_names);
 				free(param_names);
 			}
+			else if (node->type == AST_NODE_FUNCTION) {
+				free(ATTR(AstNodeTuple, node, func_name));
+			}
 
 			free(node->attr);
 		}
@@ -674,6 +735,11 @@ void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 			(void *)node,
 			node->type
 		);
+
+		if (!node->token) {
+			free(indent);
+			break;
+		}
 
 		const Token *token = node->token;
 		const Token *token_end = node->token_end->next;

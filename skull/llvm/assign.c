@@ -72,6 +72,8 @@ void llvm_make_var_assign(AstNode **node) {
 	*node = (*node)->next;
 }
 
+Expr llvm_make_bool_expr(const AstNode *const);
+
 /*
 Create an expression from `node` with type `type`.
 
@@ -103,99 +105,7 @@ Expr node_to_expr(
 		expr = llvm_make_oper(type, node, &llvm_make_mod);
 	}
 	else if (node->type == AST_NODE_BOOL_EXPR) {
-		const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
-		const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
-		const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
-
-		LLVMValueRef value = NULL;
-
-		if (oper == TOKEN_OPER_NOT) {
-			const Expr rhs_expr = token_to_expr(rhs, NULL);
-
-			if (rhs_expr.type != &TYPE_BOOL) {
-				PANIC(ERR_NON_BOOL_EXPR, { .tok = rhs });
-			}
-
-			value = LLVMBuildNot(
-				SKULL_STATE.builder,
-				rhs_expr.llvm_value,
-				""
-			);
-		}
-		else if (oper == TOKEN_OPER_IS ||
-			oper == TOKEN_OPER_ISNT ||
-			oper == TOKEN_OPER_LESS_THAN ||
-			oper == TOKEN_OPER_GTR_THAN ||
-			oper == TOKEN_OPER_LESS_THAN_EQ ||
-			oper == TOKEN_OPER_GTR_THAN_EQ ||
-			oper == TOKEN_OPER_AND ||
-			oper == TOKEN_OPER_OR ||
-			oper == TOKEN_OPER_XOR
-		) {
-			const Expr lhs_expr = token_to_expr(lhs, NULL);
-			const Expr rhs_expr = token_to_expr(rhs, NULL);
-
-			if (lhs_expr.type != rhs_expr.type) {
-				PANIC(ERR_TYPE_MISMATCH, {
-					.tok = rhs,
-					.type = lhs_expr.type
-				});
-			}
-
-			Operation *func = NULL;
-
-			if (oper == TOKEN_OPER_IS) {
-				func = llvm_make_is;
-			}
-			else if (oper == TOKEN_OPER_ISNT) {
-				func = llvm_make_is_not;
-			}
-			else if (oper == TOKEN_OPER_LESS_THAN) {
-				func = llvm_make_less_than;
-			}
-			else if (oper == TOKEN_OPER_GTR_THAN) {
-				func = llvm_make_gtr_than;
-			}
-			else if (oper == TOKEN_OPER_LESS_THAN_EQ) {
-				func = llvm_make_less_than_eq;
-			}
-			else if (oper == TOKEN_OPER_GTR_THAN_EQ) {
-				func = llvm_make_gtr_than_eq;
-			}
-			else {
-				if (lhs_expr.type != &TYPE_BOOL) {
-					PANIC(ERR_TYPE_MISMATCH, {
-						.tok = lhs,
-						.type = &TYPE_BOOL
-					});
-				}
-
-				if (oper == TOKEN_OPER_AND) {
-					func = llvm_make_and;
-				}
-				else if (oper == TOKEN_OPER_OR) {
-					func = llvm_make_or;
-				}
-				else if (oper == TOKEN_OPER_XOR) {
-					func = llvm_make_xor;
-				}
-			}
-
-			value = func(
-				lhs_expr.type,
-				lhs_expr.llvm_value,
-				rhs_expr.llvm_value
-			).llvm_value;
-
-			if (!value) {
-				PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
-			}
-		}
-
-		expr = (Expr){
-			.llvm_value = value,
-			.type = &TYPE_BOOL
-		};
+		expr = llvm_make_bool_expr(node);
 	}
 	else if (node->type == AST_NODE_FUNCTION) {
 		expr = llvm_make_function_call(node);
@@ -216,6 +126,105 @@ Expr node_to_expr(
 	}
 
 	return expr;
+}
+
+/*
+Build LLVM code to handle boolean expressions from `node`.
+*/
+Expr llvm_make_bool_expr(const AstNode *const node) {
+	const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
+	const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
+	const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
+
+	LLVMValueRef value = NULL;
+
+	if (oper == TOKEN_OPER_NOT) {
+		const Expr rhs_expr = token_to_expr(rhs, NULL);
+
+		if (rhs_expr.type != &TYPE_BOOL) {
+			PANIC(ERR_NON_BOOL_EXPR, { .tok = rhs });
+		}
+
+		value = LLVMBuildNot(
+			SKULL_STATE.builder,
+			rhs_expr.llvm_value,
+			""
+		);
+	}
+	else if (oper == TOKEN_OPER_IS ||
+		oper == TOKEN_OPER_ISNT ||
+		oper == TOKEN_OPER_LESS_THAN ||
+		oper == TOKEN_OPER_GTR_THAN ||
+		oper == TOKEN_OPER_LESS_THAN_EQ ||
+		oper == TOKEN_OPER_GTR_THAN_EQ ||
+		oper == TOKEN_OPER_AND ||
+		oper == TOKEN_OPER_OR ||
+		oper == TOKEN_OPER_XOR
+	) {
+		const Expr lhs_expr = token_to_expr(lhs, NULL);
+		const Expr rhs_expr = token_to_expr(rhs, NULL);
+
+		if (lhs_expr.type != rhs_expr.type) {
+			PANIC(ERR_TYPE_MISMATCH, {
+				.tok = rhs,
+				.type = lhs_expr.type
+			});
+		}
+
+		Operation *func = NULL;
+
+		if (oper == TOKEN_OPER_IS) {
+			func = llvm_make_is;
+		}
+		else if (oper == TOKEN_OPER_ISNT) {
+			func = llvm_make_is_not;
+		}
+		else if (oper == TOKEN_OPER_LESS_THAN) {
+			func = llvm_make_less_than;
+		}
+		else if (oper == TOKEN_OPER_GTR_THAN) {
+			func = llvm_make_gtr_than;
+		}
+		else if (oper == TOKEN_OPER_LESS_THAN_EQ) {
+			func = llvm_make_less_than_eq;
+		}
+		else if (oper == TOKEN_OPER_GTR_THAN_EQ) {
+			func = llvm_make_gtr_than_eq;
+		}
+		else {
+			if (lhs_expr.type != &TYPE_BOOL) {
+				PANIC(ERR_TYPE_MISMATCH, {
+					.tok = lhs,
+					.type = &TYPE_BOOL
+				});
+			}
+
+			if (oper == TOKEN_OPER_AND) {
+				func = llvm_make_and;
+			}
+			else if (oper == TOKEN_OPER_OR) {
+				func = llvm_make_or;
+			}
+			else if (oper == TOKEN_OPER_XOR) {
+				func = llvm_make_xor;
+			}
+		}
+
+		value = func(
+			lhs_expr.type,
+			lhs_expr.llvm_value,
+			rhs_expr.llvm_value
+		).llvm_value;
+
+		if (!value) {
+			PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
+		}
+	}
+
+	return (Expr){
+		.llvm_value = value,
+		.type = &TYPE_BOOL
+	};
 }
 
 /*

@@ -147,7 +147,8 @@ void generate_llvm(
 		.main_func = main_func,
 		.scope = make_scope(),
 		.function_decls = ht_create(),
-		.type_aliases = ht_create()
+		.type_aliases = ht_create(),
+		.template_types = ht_create()
 	};
 
 	str_to_llvm_ir(file_contents);

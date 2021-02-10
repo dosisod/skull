@@ -1,0 +1,5 @@
+f(x: int) {
+	# do nothing
+}
+
+f(1, 2, 3)

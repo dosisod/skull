@@ -1,0 +1,5 @@
+f(x: int) int {
+	return x
+}
+
+f(f(1))

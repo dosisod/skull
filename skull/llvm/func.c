@@ -178,6 +178,10 @@ Expr llvm_make_function_call(const AstNode *const node) {
 
 	unsigned short num_params = function->num_params;
 
+	if (num_params != ATTR(AstNodeTuple, node, num_values)) {
+		PANIC(ERR_INVALID_NUM_PARAMS, { .tok = node->token });
+	}
+
 	LLVMValueRef *params = NULL;
 	if (num_params) {
 		params = Calloc(num_params, sizeof(LLVMValueRef));
@@ -185,35 +189,26 @@ Expr llvm_make_function_call(const AstNode *const node) {
 
 	const AstNode *param = node->child;
 
-	if (num_params >= 1) {
-		for RANGE(i, num_params) {
-			const Expr expr = node_to_expr(
-				function->param_types[i],
-				param,
-				NULL
-			);
-
-			if (expr.type != function->param_types[i]) {
-				PANIC(ERR_FUNC_TYPE_MISMATCH, {
-					.tok = param->token,
-					.real = strdup(function->param_types[i]->name)
-				});
-			}
-
-			if (param->token_end->next->type != TOKEN_COMMA &&
-				i != (unsigned)(num_params - 1)
-			) {
-				PANIC(ERR_EXPECTED_COMMA, {
-					.tok = param->token_end->next
-				});
-			}
-
-			params[i] = expr.llvm_value;
-			param = param->next;
-		}
-	}
-	else if (param->token) {
+	if (num_params == 0 && param->token) {
 		PANIC(ERR_ZERO_PARAM_FUNC, { .tok = param->token });
+	}
+
+	for RANGE(i, num_params) {
+		const Expr expr = node_to_expr(
+			function->param_types[i],
+			param,
+			NULL
+		);
+
+		if (expr.type != function->param_types[i]) {
+			PANIC(ERR_FUNC_TYPE_MISMATCH, {
+				.tok = param->token,
+				.real = strdup(function->param_types[i]->name)
+			});
+		}
+
+		params[i] = expr.llvm_value;
+		param = param->next;
 	}
 
 	Expr ret = (Expr){

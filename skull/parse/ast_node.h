@@ -111,6 +111,14 @@ typedef struct {
 } AstNodeFunctionProto;
 
 /*
+Used to store special data about tuples.
+*/
+typedef struct {
+	unsigned short num_values;
+	char *func_name;
+} AstNodeTuple;
+
+/*
 Store special data about operator related nodes (`AST_NODE_ADD`, etc).
 */
 typedef struct {
