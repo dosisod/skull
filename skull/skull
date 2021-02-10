@@ -33,7 +33,7 @@ done
 
 shift "$(echo "$OPTIND - 1" | bc)"
 
-${0%/*}/_skull "$filename" || exit 1
+"${0%/*}/_skull" "$filename" || exit 1
 
 case "$filename" in
 	*".sk") ;;

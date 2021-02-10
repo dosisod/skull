@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# shellcheck disable=SC2015,SC2044
+
 passed=true
 
 pass() {
@@ -17,8 +19,8 @@ compare() {
 
 test_normal() {
 	dir=${1%/*}
-	file=${1##*/}
-	file="$(expr substr "${file%.*}" 2 99999)"
+	file=${1##*/_}
+	file=${file%.*}
 
 	printf "%s" "$dir/$file "
 
@@ -31,8 +33,8 @@ test_normal() {
 
 test_error() {
 	dir=${1%/*}
-	file=${1##*/}
-	file="$(expr substr "${file%.*}" 2 99999)"
+	file=${1##*/_}
+	file=${file%.*}
 
 	printf "%s" "$dir/$file "
 
@@ -51,9 +53,11 @@ test_option() {
 test_skull() {
 	printf "%s" "skull $1 "
 
+	# shellcheck disable=SC2086
 	out=$(./build/skull/skull $2)
 
 	sh -e "./test/sh/skull/$1" "$out" "$?"
+	# shellcheck disable=SC2181
 	[ "$?" != "0" ] && fail || pass
 }
 
