@@ -1,1 +1,1 @@
-Compilation error: variable "fail" not found
+./test/sh/error/func/param_unknown_var.sk: Compilation error: variable "fail" not found

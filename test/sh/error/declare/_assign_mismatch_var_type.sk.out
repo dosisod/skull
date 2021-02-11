@@ -1,1 +1,1 @@
-Compilation error: line 3 column 11: type mismatch: expected type "bool"
+./test/sh/error/declare/assign_mismatch_var_type.sk: Compilation error: line 3 column 11: type mismatch: expected type "bool"

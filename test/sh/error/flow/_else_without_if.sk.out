@@ -1,1 +1,1 @@
-Compilation error: else statement missing preceding if statement
+./test/sh/error/flow/else_without_if.sk: Compilation error: else statement missing preceding if statement

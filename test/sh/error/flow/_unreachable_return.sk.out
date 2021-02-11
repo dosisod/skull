@@ -1,1 +1,1 @@
-Compilation error: unreachable code after return
+./test/sh/error/flow/unreachable_return.sk: Compilation error: unreachable code after return

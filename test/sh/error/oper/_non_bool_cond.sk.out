@@ -1,1 +1,1 @@
-Compilation error: line 3 column 4: expected boolean expression
+./test/sh/error/oper/non_bool_cond.sk: Compilation error: line 3 column 4: expected boolean expression

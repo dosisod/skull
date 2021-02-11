@@ -1,1 +1,1 @@
-Compilation error: line 1 column 8: expected expression in return
+./test/sh/error/flow/return_missing_expr.sk: Compilation error: line 1 column 8: expected expression in return

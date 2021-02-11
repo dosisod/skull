@@ -1,1 +1,1 @@
-Compilation error: Reached EOF, expected closing bracket
+./test/sh/error/misc/mismatched_bracket.sk: Compilation error: Reached EOF, expected closing bracket

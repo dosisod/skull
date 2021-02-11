@@ -1,1 +1,1 @@
-Compilation error: line 3 column 9: type mismatch: expected type "int"
+./test/sh/error/oper/sub_mismatched_consts.sk: Compilation error: line 3 column 9: type mismatch: expected type "int"

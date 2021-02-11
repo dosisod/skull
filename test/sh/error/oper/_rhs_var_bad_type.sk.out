@@ -1,1 +1,1 @@
-Compilation error: line 3 column 12: type mismatch: expected type "float"
+./test/sh/error/oper/rhs_var_bad_type.sk: Compilation error: line 3 column 12: type mismatch: expected type "float"

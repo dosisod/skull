@@ -4,6 +4,7 @@
 typedef struct {
 	LLVMBuilderRef builder;
 	LLVMContextRef ctx;
+	const char *filename;
 	LLVMModuleRef module;
 	LLVMValueRef current_func;
 	LLVMValueRef main_func;

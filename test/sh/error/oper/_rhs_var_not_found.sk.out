@@ -1,1 +1,1 @@
-Compilation error: variable "fail" not found
+./test/sh/error/oper/rhs_var_not_found.sk: Compilation error: variable "fail" not found

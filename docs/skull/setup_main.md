@@ -13,10 +13,10 @@ int build_file(char *filename)
 > Build a .ll file from a .sk file `filename`.
 
 ```c
-void generate_llvm(const char *module_name, const char *main_func_name, char *file_contents)
+void generate_llvm(const char *filename, char *file_contents)
 ```
 
-> Create a module named `module_name` and a main function called
+> Create a module named `filename` and a main function called
 > `main_func_name` from `file_contents`.
 
 ```c

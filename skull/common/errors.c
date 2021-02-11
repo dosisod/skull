@@ -5,6 +5,7 @@
 
 #include "skull/common/str.h"
 #include "skull/eval/variable.h"
+#include "skull/llvm/shared.h"
 
 #include "skull/common/errors.h"
 
@@ -26,7 +27,7 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 	}
 	msg = msgs;
 
-	printf("Compilation error: ");
+	printf("%s: Compilation error: ", SKULL_STATE.filename);
 
 	if (msg[0].tok) {
 		printf("line %u column %u: ", msg[0].tok->line, msg[0].tok->column);

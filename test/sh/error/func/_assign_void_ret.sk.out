@@ -1,1 +1,1 @@
-Compilation error: line 5 column 6: function returning type void cannot be assigned to variable "x"
+./test/sh/error/func/assign_void_ret.sk: Compilation error: line 5 column 6: function returning type void cannot be assigned to variable "x"

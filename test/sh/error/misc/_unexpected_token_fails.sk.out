@@ -1,1 +1,1 @@
-Compilation error: line 1 column 1: unexpected token: "this_will_fail"
+./test/sh/error/misc/unexpected_token_fails.sk: Compilation error: line 1 column 1: unexpected token: "this_will_fail"

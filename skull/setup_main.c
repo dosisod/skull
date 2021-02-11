@@ -64,19 +64,16 @@ int build_file(char *filename) {
 
 	char *const file_contents = read_file(f);
 	if (!file_contents) {
+		SKULL_STATE.filename = filename;
 		PANIC(ERR_FILE_EMPTY, {0});
 	}
 	fclose(f);
 
-	char *main_func_name = create_llvm_main_func(filename);
-
 	generate_llvm(
 		filename,
-		main_func_name,
 		file_contents
 	);
 	free(file_contents);
-	free(main_func_name);
 
 	char *llvm_filename = create_llvm_filename(filename);
 
@@ -101,15 +98,16 @@ int build_file(char *filename) {
 }
 
 /*
-Create a module named `module_name` and a main function called
+Create a module named `filename` and a main function called
 `main_func_name` from `file_contents`.
 */
 void generate_llvm(
-	const char *module_name,
-	const char *main_func_name,
+	const char *filename,
 	char *file_contents
 ) {
-	LLVMModuleRef main_module = LLVMModuleCreateWithName(module_name);
+	char *main_func_name = create_llvm_main_func(filename);
+
+	LLVMModuleRef main_module = LLVMModuleCreateWithName(filename);
 
 	LLVMContextRef ctx = LLVMContextCreate();
 
@@ -125,6 +123,7 @@ void generate_llvm(
 		main_func_name,
 		main_func_type
 	);
+	free(main_func_name);
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
 		ctx,
@@ -143,6 +142,7 @@ void generate_llvm(
 		.builder = builder,
 		.ctx = ctx,
 		.module = main_module,
+		.filename = filename,
 		.current_func = main_func,
 		.main_func = main_func,
 		.scope = make_scope(),

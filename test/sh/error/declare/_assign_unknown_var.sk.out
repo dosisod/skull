@@ -1,1 +1,1 @@
-Compilation error: variable "y" not found
+./test/sh/error/declare/assign_unknown_var.sk: Compilation error: variable "y" not found

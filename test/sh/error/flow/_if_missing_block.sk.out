@@ -1,1 +1,1 @@
-Compilation error: line 1 column 4: if statement must be followed by code block
+./test/sh/error/flow/if_missing_block.sk: Compilation error: line 1 column 4: if statement must be followed by code block

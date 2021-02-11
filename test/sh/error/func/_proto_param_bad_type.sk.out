@@ -1,1 +1,1 @@
-Compilation error: type "does_not_exist" could not be found
+./test/sh/error/func/proto_param_bad_type.sk: Compilation error: type "does_not_exist" could not be found

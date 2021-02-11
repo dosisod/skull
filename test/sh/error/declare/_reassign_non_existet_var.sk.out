@@ -1,1 +1,1 @@
-Compilation error: variable "x" not found
+./test/sh/error/declare/reassign_non_existet_var.sk: Compilation error: variable "x" not found

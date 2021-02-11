@@ -1,1 +1,1 @@
-Compilation error: line 5 column 3: type mismatch: expected type "bool"
+./test/sh/error/func/bad_expr_param.sk: Compilation error: line 5 column 3: type mismatch: expected type "bool"

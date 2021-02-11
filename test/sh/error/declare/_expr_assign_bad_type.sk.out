@@ -1,1 +1,1 @@
-Compilation error: line 1 column 12: type mismatch: expected type "float"
+./test/sh/error/declare/expr_assign_bad_type.sk: Compilation error: line 1 column 12: type mismatch: expected type "float"

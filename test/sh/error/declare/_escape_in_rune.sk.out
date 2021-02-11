@@ -1,1 +1,1 @@
-Compilation error: line 1 column 6: control character cannot be used in rune
+./test/sh/error/declare/escape_in_rune.sk: Compilation error: line 1 column 6: control character cannot be used in rune

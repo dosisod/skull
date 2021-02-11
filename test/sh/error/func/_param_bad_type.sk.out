@@ -1,1 +1,1 @@
-Compilation error: line 5 column 3: type mismatch: expected type "int"
+./test/sh/error/func/param_bad_type.sk: Compilation error: line 5 column 3: type mismatch: expected type "int"

@@ -1,1 +1,1 @@
-Compilation error: line 1 column 4: type "fail" could not be found
+./test/sh/error/declare/bad_type_not_allowed.sk: Compilation error: line 1 column 4: type "fail" could not be found

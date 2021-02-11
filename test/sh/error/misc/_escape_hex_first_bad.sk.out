@@ -1,1 +1,1 @@
-Compilation error: line 1 column 6: bad string escape: "\xz"
+./test/sh/error/misc/escape_hex_first_bad.sk: Compilation error: line 1 column 6: bad string escape: "\xz"
