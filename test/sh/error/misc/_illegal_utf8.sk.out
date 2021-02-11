@@ -1,1 +1,1 @@
-illegal UTF8 sequence at character offset 0
+./test/sh/error/misc/illegal_utf8.sk: Compilation error: illegal UTF8 sequence at character offset 0

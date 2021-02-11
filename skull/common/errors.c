@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/eval/variable.h"
 #include "skull/llvm/shared.h"
@@ -66,6 +67,9 @@ Convert error msg `msg` for use in `fmt_error`.
 
 Depending on whether `msg` is a token, a variable, or a string, the resulting
 feild `real` will be created differently.
+
+If `i` (integer) is specified for `msg`, it must be one more then the actual
+value. This is due to `0` being falsey, and thus not being able to be checked.
 */
 void fmt_error_stringify(ErrorMsg *const msg) {
 	if (msg->var) {
@@ -76,6 +80,11 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 	}
 	else if (msg->str) {
 		msg->real = c32stombs(msg->str);
+	}
+	else if (msg->i) {
+		const size_t len = (size_t)snprintf(NULL, 0, "%zu", msg->i - 1) + 1;
+		msg->real = Malloc(len);
+		snprintf(msg->real, len, "%zu", msg->i - 1);
 	}
 	else if (msg->tok && !msg->real) {
 		msg->real = token_mbs_str(msg->tok);

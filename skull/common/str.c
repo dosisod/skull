@@ -5,6 +5,7 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/common/panic.h"
 
 #include "skull/common/str.h"
 
@@ -132,8 +133,7 @@ char32_t *mbstoc32s(const char *str) {
 		const size_t length = mbrtoc32(ret + offset, str, MB_CUR_MAX, &mbs);
 
 		if (errno == EILSEQ) {
-			printf("illegal UTF8 sequence at character offset %zu\n", offset);
-			exit(1);
+			PANIC(ERR_ILLEGAL_SEQ, { .i = offset + 1 });
 		}
 
 		if ((length == 0) || (length > MB_CUR_MAX)) {

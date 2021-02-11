@@ -49,6 +49,7 @@
 #define ERR_INVALID_NUM_PARAMS "invalid number of parameters\n"
 #define ERR_NESTED_BLOCK_COMMENT \
 	"cannot put opening block comment in existing block comment"
+#define ERR_ILLEGAL_SEQ "illegal UTF8 sequence at character offset %s\n"
 
 typedef struct Variable Variable;
 typedef struct Type Type;
@@ -64,6 +65,7 @@ typedef struct {
 	const Token *tok;
 	const Variable *var;
 	const Type *type;
+	size_t i;
 
 	// copy of string that will be used in final error msg
 	char *real;
