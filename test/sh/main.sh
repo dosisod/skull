@@ -38,7 +38,7 @@ test_error() {
 
 	printf "%s" "$dir/$file "
 
-	./build/skull/_skull "./$dir/$file" > "./$dir/.$file.out"
+	./build/skull/_skull "./$dir/$file" 2> "./$dir/.$file.out"
 
 	compare "./$dir/.$file.out" "./$dir/_$file.out"
 	rm -f "./$dir/.$file.out"
@@ -47,7 +47,7 @@ test_error() {
 test_option() {
 	printf "%s" "$1 "
 
-	[ "$(./build/skull/_skull "./test/sh/$1")" = "$2" ] && pass || fail
+	[ "$(./build/skull/_skull "./test/sh/$1" 2>&1)" = "$2" ] && pass || fail
 }
 
 test_skull() {

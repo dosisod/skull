@@ -28,10 +28,10 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 	}
 	msg = msgs;
 
-	printf("%s: Compilation error: ", SKULL_STATE.filename);
+	fprintf(stderr, "%s: Compilation error: ", SKULL_STATE.filename);
 
 	if (msg[0].tok) {
-		printf("line %u column %u: ", msg[0].tok->line, msg[0].tok->column);
+		fprintf(stderr, "line %u column %u: ", msg[0].tok->line, msg[0].tok->column);
 	}
 
 	#ifdef __clang__
@@ -42,13 +42,13 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 	# pragma GCC diagnostic ignored "-Wformat-nonliteral"
 	#endif
 	if (num_of_percents == 0) {
-		printf("%s\n", fmt);
+		fprintf(stderr, "%s\n", fmt);
 	}
 	else if (num_of_percents == 1) {
-		printf(fmt, msgs[0].real);
+		fprintf(stderr, fmt, msgs[0].real);
 	}
 	else if (num_of_percents == 2) {
-		printf(fmt, msgs[0].real, msgs[1].real);
+		fprintf(stderr, fmt, msgs[0].real, msgs[1].real);
 	}
 	#ifdef __clang__
 	# pragma clang diagnostic pop
