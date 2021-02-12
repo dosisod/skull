@@ -40,6 +40,12 @@ Expr llvm_make_mod(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for modulus of `lhs` and `rhs`.
 
 ```c
+Expr llvm_make_lshift(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
+```
+
+> Return expression for bitwise left shift of `lhs` and `rhs`.
+
+```c
 Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
