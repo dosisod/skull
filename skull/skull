@@ -68,7 +68,9 @@ rm "$base.ll"
 [ -z "$COMPILE" ] || exit 0
 
 MODULE_NAME=$(basename "${filename%.*}")
-SHIM="int main(void) { extern int x(void) __asm__(\".$MODULE_NAME\"); x(); }"
+SHIM="int main(void) {
+	extern int x(void) __asm__(\".$MODULE_NAME\"); return x();
+}"
 
 echo "$SHIM" | cc "$OUT_FILE" \
 	-o "${filename%.*}" "$@" \
