@@ -58,6 +58,7 @@ void classify_token(Token *const token) {
 	TOKEN_TRY_STR(U"<=", TOKEN_OPER_LESS_THAN_EQ)
 	TOKEN_TRY_STR(U">=", TOKEN_OPER_GTR_THAN_EQ)
 	TOKEN_TRY_STR(U"<<", TOKEN_OPER_LSHIFT)
+	TOKEN_TRY_STR(U">>", TOKEN_OPER_RSHIFT)
 
 	TOKEN_SET_IF(str[0] == '#' && (
 		str[1] == ' ' ||

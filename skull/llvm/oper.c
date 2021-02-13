@@ -125,7 +125,7 @@ Expr llvm_make_mod(
 }
 
 /*
-Return expression for bitwise left shift of `lhs` and `rhs`.
+Return expression for left shift of `lhs` and `rhs`.
 */
 Expr llvm_make_lshift(
 	const Type *const type,
@@ -135,6 +135,24 @@ Expr llvm_make_lshift(
 	if (type == &TYPE_INT) {
 		return (Expr){
 			.llvm_value = LLVMBuildShl(SKULL_STATE.builder, lhs, rhs, ""),
+			.type = &TYPE_INT
+		};
+	}
+
+	return (Expr){0};
+}
+
+/*
+Return expression for logical right shift of `lhs` and `rhs`.
+*/
+Expr llvm_make_rshift(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
+	if (type == &TYPE_INT) {
+		return (Expr){
+			.llvm_value = LLVMBuildLShr(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = &TYPE_INT
 		};
 	}

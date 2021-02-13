@@ -22,6 +22,7 @@ Operation llvm_make_gtr_than;
 Operation llvm_make_less_than_eq;
 Operation llvm_make_gtr_than_eq;
 Operation llvm_make_lshift;
+Operation llvm_make_rshift;
 Operation llvm_make_and;
 Operation llvm_make_or;
 Operation llvm_make_xor;
