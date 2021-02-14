@@ -172,6 +172,7 @@ switch (token->next->type) {
 	case TOKEN_OPER_MOD: node_type = AST_NODE_MOD; break;
 	case TOKEN_OPER_LSHIFT: node_type = AST_NODE_LSHIFT; break;
 	case TOKEN_OPER_RSHIFT: node_type = AST_NODE_RSHIFT; break;
+	case TOKEN_OPER_POW: node_type = AST_NODE_POW; break;
 	default: return false;
 }
 

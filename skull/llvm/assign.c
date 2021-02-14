@@ -107,6 +107,9 @@ Expr node_to_expr(
 	else if (node->type == AST_NODE_LSHIFT) {
 		expr = llvm_make_oper(type, node, &llvm_make_lshift);
 	}
+	else if (node->type == AST_NODE_POW) {
+		expr = llvm_make_oper(type, node, &llvm_make_pow);
+	}
 	else if (node->type == AST_NODE_RSHIFT) {
 		expr = llvm_make_oper(type, node, &llvm_make_rshift);
 	}

@@ -82,6 +82,14 @@ _Bool _strcmp(const char *a, const char *b) {
 	return !*a && !*b;
 }
 
+#include <stdint.h>
+int64_t _int_pow(int64_t, int64_t) __asm__(\".int_pow\");
+int64_t _int_pow(int64_t base, int64_t exp) {
+	int64_t result = base;
+	for (int64_t i = 1; i < exp; i++) result *= base;
+	return result;
+}
+
 int main(void) {
 	int x(void) __asm__(\".$MODULE_NAME\"); return x();
 }"

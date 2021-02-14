@@ -160,6 +160,49 @@ Expr llvm_make_rshift(
 	return (Expr){0};
 }
 
+/*
+Return expression for taking `lhs` to the power of `rhs`.
+*/
+Expr llvm_make_pow(
+	const Type *const type,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
+	(void)type;
+
+	LLVMTypeRef types[] = {
+		TYPE_INT.llvm_type(),
+		TYPE_INT.llvm_type()
+	};
+
+	LLVMTypeRef func_type = LLVMFunctionType(
+		TYPE_INT.llvm_type(),
+		types,
+		2,
+		false
+	);
+
+	LLVMValueRef func = LLVMAddFunction(
+		SKULL_STATE.module,
+		".int_pow",
+		func_type
+	);
+
+	LLVMValueRef values[] = { lhs, rhs };
+
+	return (Expr){
+		.llvm_value = LLVMBuildCall2(
+			SKULL_STATE.builder,
+			func_type,
+			func,
+			values,
+			2,
+			""
+		),
+		.type = &TYPE_INT
+	};
+}
+
 Expr llvm_make_is_str(LLVMValueRef, LLVMValueRef);
 
 /*

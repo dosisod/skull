@@ -26,3 +26,4 @@ Operation llvm_make_rshift;
 Operation llvm_make_and;
 Operation llvm_make_or;
 Operation llvm_make_xor;
+Operation llvm_make_pow;

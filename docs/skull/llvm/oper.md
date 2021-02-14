@@ -52,6 +52,12 @@ Expr llvm_make_rshift(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs
 > Return expression for logical right shift of `lhs` and `rhs`.
 
 ```c
+Expr llvm_make_pow(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
+```
+
+> Return expression for taking `lhs` to the power of `rhs`.
+
+```c
 Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
