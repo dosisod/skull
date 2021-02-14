@@ -58,6 +58,12 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for result of is operator for `lhs` and `rhs`.
 
 ```c
+Expr llvm_make_is_str(LLVMValueRef lhs, LLVMValueRef rhs)
+```
+
+> Return expression for string-is operator against `lhs` and `rhs`.
+
+```c
 Expr llvm_make_is_not(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 

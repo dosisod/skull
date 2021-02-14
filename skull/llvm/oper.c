@@ -160,6 +160,8 @@ Expr llvm_make_rshift(
 	return (Expr){0};
 }
 
+Expr llvm_make_is_str(LLVMValueRef, LLVMValueRef);
+
 /*
 Return expression for result of is operator for `lhs` and `rhs`.
 */
@@ -188,8 +190,48 @@ Expr llvm_make_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 			.type = &TYPE_BOOL
 		};
 	}
+	if (type == &TYPE_STR) {
+		return llvm_make_is_str(lhs, rhs);
+	}
 
 	return (Expr){0};
+}
+
+/*
+Return expression for string-is operator against `lhs` and `rhs`.
+*/
+Expr llvm_make_is_str(LLVMValueRef lhs, LLVMValueRef rhs) {
+	LLVMTypeRef types[] = {
+		TYPE_STR.llvm_type(),
+		TYPE_STR.llvm_type()
+	};
+
+	LLVMTypeRef func_type = LLVMFunctionType(
+		TYPE_BOOL.llvm_type(),
+		types,
+		2,
+		false
+	);
+
+	LLVMValueRef func = LLVMAddFunction(
+		SKULL_STATE.module,
+		".strcmp",
+		func_type
+	);
+
+	LLVMValueRef values[] = { lhs, rhs };
+
+	return (Expr){
+		.llvm_value = LLVMBuildCall2(
+			SKULL_STATE.builder,
+			func_type,
+			func,
+			values,
+			2,
+			""
+		),
+		.type = &TYPE_BOOL
+	};
 }
 
 /*

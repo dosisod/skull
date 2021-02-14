@@ -68,8 +68,22 @@ rm "$base.ll"
 [ -z "$COMPILE" ] || exit 0
 
 MODULE_NAME=$(basename "${filename%.*}")
-SHIM="int main(void) {
-	extern int x(void) __asm__(\".$MODULE_NAME\"); return x();
+SHIM="
+_Bool _strcmp(const char *, const char *) __asm__(\".strcmp\");
+_Bool _strcmp(const char *a, const char *b) {
+	while (*a && *b) {
+		if (*a != *b) {
+			return 0;
+		}
+		a++;
+		b++;
+	}
+
+	return !*a && !*b;
+}
+
+int main(void) {
+	int x(void) __asm__(\".$MODULE_NAME\"); return x();
 }"
 
 echo "$SHIM" | cc "$OUT_FILE" \
