@@ -456,6 +456,10 @@ AstNode *make_ast_tree_(
 		if (is_ast_return(&token, &last, &node)) {
 			continue;
 		}
+		if (token->type == TOKEN_KW_UNREACHABLE) {
+			push_ast_node(token, &last, AST_NODE_UNREACHABLE, &node);
+			continue;
+		}
 		if (is_conditional(TOKEN_KW_IF, &token, &last, &node, AST_NODE_IF)) {
 			continue;
 		}
