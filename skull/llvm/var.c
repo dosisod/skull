@@ -57,9 +57,9 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 }
 
 /*
-Make and add a variable from `node` to global scope.
+Make and add a variable from `node` to Skull state.
 */
-Variable *node_make_var(const AstNode *const node) {
+Variable *node_to_var(const AstNode *const node) {
 	const Token *token = node->token;
 
 	const bool is_const = ATTR(AstNodeVarDef, node, is_const);

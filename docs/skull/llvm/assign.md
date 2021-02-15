@@ -1,19 +1,13 @@
 # skull/llvm/assign
 
 ```c
-void llvm_make_type_alias(AstNode **node)
-```
-
-> Create a type alias from `node`.
-
-```c
-void llvm_make_var_def(AstNode **node)
+void gen_stmt_var_def(AstNode **node)
 ```
 
 > Builds a variable from `node`.
 
 ```c
-void llvm_make_var_assign(AstNode **node)
+void gen_stmt_var_assign(AstNode **node)
 ```
 
 > Build a LLVM `load` operation from `node`.
@@ -27,24 +21,30 @@ Expr node_to_expr(const Type *const type, const AstNode *const node, const Varia
 > Optionally pass `var` if expression is going to be assigned to a variable.
 
 ```c
-Expr llvm_make_bool_expr(const AstNode *const node)
+Expr gen_expr_bool_expr(const AstNode *const node)
 ```
 
 > Build LLVM code to handle boolean expressions from `node`.
 
 ```c
-void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value)
+void assign_value_to_var(LLVMValueRef value, Variable *const var)
 ```
 
 > Assign `value` to `var`.
 
 ```c
-Expr llvm_assign_identifier(const Type *const type, const AstNode *const node, const Variable *const var)
+Expr gen_expr_identifier(const Type *const type, const AstNode *const node, const Variable *const var)
 ```
 
-> Return expression for assigning existing identifier `node` with type `type`.
+> Return expression for identifier `node` with type `type`.
 > \
 > Optionally pass `var` if result is expected to be assigned to a variable.
 > \
 > If `type` is not set, the expression type will not be checked.
+
+```c
+void create_type_alias(AstNode **node)
+```
+
+> Create a type alias from `node`.
 

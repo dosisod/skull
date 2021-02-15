@@ -39,9 +39,9 @@ typedef struct FunctionDeclaration {
 	FunctionDeclaration *next;
 } FunctionDeclaration;
 
-void declare_function(const AstNode *const);
+void gen_stmt_func_decl(const AstNode *const);
 
-Expr llvm_make_function_call(const AstNode *const);
+Expr gen_expr_function_call(const AstNode *const);
 
 void define_function(const AstNode *const, FunctionDeclaration *);
 

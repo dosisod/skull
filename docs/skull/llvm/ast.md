@@ -1,16 +1,16 @@
 # skull/llvm/ast
 
 ```c
-void str_to_llvm_ir(char *const str_)
+void str_to_llvm(char *const str_)
 ```
 
-> Convert skull code from `str_` into LLVM IR (using `func` and `module`).
+> Generate LLVM from `str_`.
 
 ```c
-bool node_to_llvm_ir(AstNode *node)
+bool node_to_llvm(AstNode *node)
 ```
 
-> Internal LLVM IR parser.
+> Internal LLVM parser.
 > \
 > Return true if there was a `AST_NODE_RETURN` node was parsed, else false.
 

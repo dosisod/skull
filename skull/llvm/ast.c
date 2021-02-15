@@ -15,14 +15,14 @@
 #include "skull/llvm/ast.h"
 
 /*
-Convert skull code from `str_` into LLVM IR (using `func` and `module`).
+Generate LLVM from `str_`.
 */
-void str_to_llvm_ir(char *const str_) {
+void str_to_llvm(char *const str_) {
 	char32_t *const str = mbstoc32s(str_);
 
 	AstNode *const node = make_ast_tree(str);
 
-	if (!node_to_llvm_ir(node)) {
+	if (!node_to_llvm(node)) {
 		LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
 	}
 
@@ -31,18 +31,18 @@ void str_to_llvm_ir(char *const str_) {
 }
 
 /*
-Internal LLVM IR parser.
+Internal LLVM parser.
 
 Return true if there was a `AST_NODE_RETURN` node was parsed, else false.
 */
-bool node_to_llvm_ir(AstNode *node) {
+bool node_to_llvm(AstNode *node) {
 	bool returned = false;
 
 while (node) {
 	const NodeType node_type = node->type;
 
 	if (node_type == AST_NODE_IF) {
-		llvm_make_if(&node);
+		gen_control_if(&node);
 	}
 
 	else if (node_type == AST_NODE_ELSE) {
@@ -64,7 +64,7 @@ while (node) {
 	}
 
 	else if (node_type == AST_NODE_RETURN) {
-		llvm_make_return(&node);
+		gen_stmt_return(&node);
 		returned = true;
 	}
 
@@ -74,27 +74,27 @@ while (node) {
 	}
 
 	else if (node_type == AST_NODE_TYPE_ALIAS) {
-		llvm_make_type_alias(&node);
+		create_type_alias(&node);
 	}
 
 	else if (node_type == AST_NODE_VAR_DEF) {
-		llvm_make_var_def(&node);
+		gen_stmt_var_def(&node);
 	}
 
 	else if (node_type == AST_NODE_WHILE) {
-		llvm_make_while(&node);
+		gen_control_while(&node);
 	}
 
 	else if (node_type == AST_NODE_FUNCTION_PROTO) {
-		declare_function(node);
+		gen_stmt_func_decl(node);
 	}
 
 	else if (node_type == AST_NODE_FUNCTION) {
-		llvm_make_function_call(node);
+		gen_expr_function_call(node);
 	}
 
 	else if (node_type == AST_NODE_VAR_ASSIGN) {
-		llvm_make_var_assign(&node);
+		gen_stmt_var_assign(&node);
 	}
 
 	else {

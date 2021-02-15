@@ -9,10 +9,10 @@ Expr token_to_expr(const Token *const token, Variable **variable)
 > If `variable` is and `token` is a variable, store the found variable there.
 
 ```c
-Variable *node_make_var(const AstNode *const node)
+Variable *node_to_var(const AstNode *const node)
 ```
 
-> Make and add a variable from `node` to global scope.
+> Make and add a variable from `node` to Skull state.
 
 ```c
 Expr token_to_simple_expr_typed(const Type *const type, const Token *const token)

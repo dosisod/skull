@@ -16,37 +16,17 @@
 
 #include "skull/llvm/assign.h"
 
-void llvm_assign_value_to_var(Variable *const, LLVMValueRef);
-
-/*
-Create a type alias from `node`.
-*/
-void llvm_make_type_alias(AstNode **node) {
-	char *type_name = token_mbs_str((*node)->token->next->next);
-
-	const bool added = add_alias(
-		(Type *)find_type(type_name),
-		token_mbs_str((*node)->token)
-	);
-
-	free(type_name);
-
-	if (!added) {
-		PANIC(ERR_ALIAS_ALREADY_DEFINED, {
-			.tok = (*node)->token
-		});
-	}
-}
+void assign_value_to_var(LLVMValueRef, Variable *const);
 
 /*
 Builds a variable from `node`.
 */
-void llvm_make_var_def(AstNode **node) {
-	Variable *var = node_make_var(*node);
+void gen_stmt_var_def(AstNode **node) {
+	Variable *var = node_to_var(*node);
 
-	llvm_assign_value_to_var(
-		var,
-		node_to_expr(var->type, (*node)->next, var).llvm_value
+	assign_value_to_var(
+		node_to_expr(var->type, (*node)->next, var).llvm_value,
+		var
 	);
 
 	*node = (*node)->next;
@@ -55,7 +35,7 @@ void llvm_make_var_def(AstNode **node) {
 /*
 Build a LLVM `load` operation from `node`.
 */
-void llvm_make_var_assign(AstNode **node) {
+void gen_stmt_var_assign(AstNode **node) {
 	Variable *found_var = scope_find_var((*node)->token);
 
 	if (found_var->is_const) {
@@ -64,15 +44,21 @@ void llvm_make_var_assign(AstNode **node) {
 		});
 	}
 
-	llvm_assign_value_to_var(
-		found_var,
-		node_to_expr(found_var->type, (*node)->next, found_var).llvm_value
+	assign_value_to_var(
+		node_to_expr(found_var->type, (*node)->next, found_var).llvm_value,
+		found_var
 	);
 
 	*node = (*node)->next;
 }
 
-Expr llvm_make_bool_expr(const AstNode *const);
+Expr gen_expr_bool_expr(const AstNode *const);
+
+Expr gen_expr_identifier(
+	const Type *const,
+	const AstNode *const,
+	const Variable *const
+);
 
 /*
 Create an expression from `node` with type `type`.
@@ -87,37 +73,37 @@ Expr node_to_expr(
 	Expr expr;
 
 	if (node->type == AST_NODE_IDENTIFIER) {
-		expr = llvm_assign_identifier(type, node, var);
+		expr = gen_expr_identifier(type, node, var);
 	}
 	else if (node->type == AST_NODE_ADD) {
-		expr = llvm_make_oper(type, node, &llvm_make_add);
+		expr = gen_expr_oper(type, node, &gen_expr_add);
 	}
 	else if (node->type == AST_NODE_SUB) {
-		expr = llvm_make_oper(type, node, &llvm_make_sub);
+		expr = gen_expr_oper(type, node, &gen_expr_sub);
 	}
 	else if (node->type == AST_NODE_MULT) {
-		expr = llvm_make_oper(type, node, &llvm_make_mult);
+		expr = gen_expr_oper(type, node, &gen_expr_mult);
 	}
 	else if (node->type == AST_NODE_DIV) {
-		expr = llvm_make_oper(type, node, &llvm_make_div);
+		expr = gen_expr_oper(type, node, &gen_expr_div);
 	}
 	else if (node->type == AST_NODE_MOD) {
-		expr = llvm_make_oper(type, node, &llvm_make_mod);
+		expr = gen_expr_oper(type, node, &gen_expr_mod);
 	}
 	else if (node->type == AST_NODE_LSHIFT) {
-		expr = llvm_make_oper(type, node, &llvm_make_lshift);
+		expr = gen_expr_oper(type, node, &gen_expr_lshift);
 	}
 	else if (node->type == AST_NODE_POW) {
-		expr = llvm_make_oper(type, node, &llvm_make_pow);
+		expr = gen_expr_oper(type, node, &gen_expr_pow);
 	}
 	else if (node->type == AST_NODE_RSHIFT) {
-		expr = llvm_make_oper(type, node, &llvm_make_rshift);
+		expr = gen_expr_oper(type, node, &gen_expr_rshift);
 	}
 	else if (node->type == AST_NODE_BOOL_EXPR) {
-		expr = llvm_make_bool_expr(node);
+		expr = gen_expr_bool_expr(node);
 	}
 	else if (node->type == AST_NODE_FUNCTION) {
-		expr = llvm_make_function_call(node);
+		expr = gen_expr_function_call(node);
 
 		if (type && expr.type != type) {
 			PANIC(ERR_TYPE_MISMATCH, {
@@ -140,7 +126,7 @@ Expr node_to_expr(
 /*
 Build LLVM code to handle boolean expressions from `node`.
 */
-Expr llvm_make_bool_expr(const AstNode *const node) {
+Expr gen_expr_bool_expr(const AstNode *const node) {
 	const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
 	const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
 	const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
@@ -183,22 +169,22 @@ Expr llvm_make_bool_expr(const AstNode *const node) {
 		Operation *func = NULL;
 
 		if (oper == TOKEN_OPER_IS) {
-			func = llvm_make_is;
+			func = gen_expr_is;
 		}
 		else if (oper == TOKEN_OPER_ISNT) {
-			func = llvm_make_is_not;
+			func = gen_expr_is_not;
 		}
 		else if (oper == TOKEN_OPER_LESS_THAN) {
-			func = llvm_make_less_than;
+			func = gen_expr_less_than;
 		}
 		else if (oper == TOKEN_OPER_GTR_THAN) {
-			func = llvm_make_gtr_than;
+			func = gen_expr_gtr_than;
 		}
 		else if (oper == TOKEN_OPER_LESS_THAN_EQ) {
-			func = llvm_make_less_than_eq;
+			func = gen_expr_less_than_eq;
 		}
 		else if (oper == TOKEN_OPER_GTR_THAN_EQ) {
-			func = llvm_make_gtr_than_eq;
+			func = gen_expr_gtr_than_eq;
 		}
 		else {
 			if (lhs_expr.type != &TYPE_BOOL) {
@@ -209,13 +195,13 @@ Expr llvm_make_bool_expr(const AstNode *const node) {
 			}
 
 			if (oper == TOKEN_OPER_AND) {
-				func = llvm_make_and;
+				func = gen_expr_and;
 			}
 			else if (oper == TOKEN_OPER_OR) {
-				func = llvm_make_or;
+				func = gen_expr_or;
 			}
 			else if (oper == TOKEN_OPER_XOR) {
-				func = llvm_make_xor;
+				func = gen_expr_xor;
 			}
 		}
 
@@ -239,7 +225,7 @@ Expr llvm_make_bool_expr(const AstNode *const node) {
 /*
 Assign `value` to `var`.
 */
-void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
+void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	const bool is_first_assign = !var->llvm_value;
 	const bool is_const_literal = LLVMIsConstant(value);
 
@@ -287,13 +273,13 @@ void llvm_assign_value_to_var(Variable *const var, LLVMValueRef value) {
 }
 
 /*
-Return expression for assigning existing identifier `node` with type `type`.
+Return expression for identifier `node` with type `type`.
 
 Optionally pass `var` if result is expected to be assigned to a variable.
 
 If `type` is not set, the expression type will not be checked.
 */
-Expr llvm_assign_identifier(
+Expr gen_expr_identifier(
 	const Type *const type,
 	const AstNode *const node,
 	const Variable *const var
@@ -315,4 +301,24 @@ Expr llvm_assign_identifier(
 	}
 
 	return expr;
+}
+
+/*
+Create a type alias from `node`.
+*/
+void create_type_alias(AstNode **node) {
+	const Token *const token = (*node)->token;
+
+	char *type_name = token_mbs_str(token->next->next);
+
+	const bool added = add_alias(
+		(Type *)find_type(type_name),
+		token_mbs_str(token)
+	);
+
+	free(type_name);
+
+	if (!added) {
+		PANIC(ERR_ALIAS_ALREADY_DEFINED, { .tok = token });
+	}
 }

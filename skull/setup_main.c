@@ -151,7 +151,7 @@ void generate_llvm(
 		.template_types = ht_create()
 	};
 
-	str_to_llvm_ir(file_contents);
+	str_to_llvm(file_contents);
 }
 
 /*

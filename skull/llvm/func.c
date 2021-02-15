@@ -15,8 +15,9 @@
 
 #include "skull/llvm/func.h"
 
-bool node_to_llvm_ir(AstNode *);
-FunctionDeclaration *llvm_create_new_function(
+bool node_to_llvm(AstNode *);
+
+FunctionDeclaration *add_function(
 	const AstNode *const,
 	char *,
 	bool
@@ -31,7 +32,7 @@ Expr node_to_expr(
 /*
 Parse declaration (and potential definition) of function in `node`.
 */
-void declare_function(const AstNode *const node) {
+void gen_stmt_func_decl(const AstNode *const node) {
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
 	const bool is_export = ATTR(AstNodeFunctionProto, node, is_export);
 
@@ -60,7 +61,7 @@ void declare_function(const AstNode *const node) {
 		});
 	}
 
-	FunctionDeclaration *func = llvm_create_new_function(
+	FunctionDeclaration *func = add_function(
 		node,
 		func_name,
 		is_export || is_external
@@ -74,13 +75,13 @@ void declare_function(const AstNode *const node) {
 }
 
 /*
-Create the actual LLVM function named `name` from `node`.
+Add new LLVM function named `name` from `node`.
 
 If `is_private` is true the function will be private (statically linked).
 
 Else, the function will be globally available.
 */
-FunctionDeclaration *llvm_create_new_function(
+FunctionDeclaration *add_function(
 	const AstNode *const node,
 	char *name,
 	bool is_private
@@ -162,7 +163,7 @@ FunctionDeclaration *llvm_create_new_function(
 /*
 Builds a function call from `node`.
 */
-Expr llvm_make_function_call(const AstNode *const node) {
+Expr gen_expr_function_call(const AstNode *const node) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
@@ -267,7 +268,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 		}
 	}
 
-	bool returned = node_to_llvm_ir(node->child);
+	bool returned = node_to_llvm(node->child);
 
 	RESTORE_SUB_SCOPE;
 

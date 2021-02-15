@@ -7,23 +7,22 @@
 
 typedef Expr (Operation)(const Type *const, LLVMValueRef, LLVMValueRef);
 
-Expr llvm_make_oper(const Type *const, const AstNode *const, Operation *);
-LLVMValueRef token_to_llvm_value(const Type *const, const Token *const);
+Expr gen_expr_oper(const Type *const, const AstNode *const, Operation *);
 
-Operation llvm_make_add;
-Operation llvm_make_sub;
-Operation llvm_make_mult;
-Operation llvm_make_div;
-Operation llvm_make_mod;
-Operation llvm_make_is;
-Operation llvm_make_is_not;
-Operation llvm_make_less_than;
-Operation llvm_make_gtr_than;
-Operation llvm_make_less_than_eq;
-Operation llvm_make_gtr_than_eq;
-Operation llvm_make_lshift;
-Operation llvm_make_rshift;
-Operation llvm_make_and;
-Operation llvm_make_or;
-Operation llvm_make_xor;
-Operation llvm_make_pow;
+Operation gen_expr_add;
+Operation gen_expr_sub;
+Operation gen_expr_mult;
+Operation gen_expr_div;
+Operation gen_expr_mod;
+Operation gen_expr_is;
+Operation gen_expr_is_not;
+Operation gen_expr_less_than;
+Operation gen_expr_gtr_than;
+Operation gen_expr_less_than_eq;
+Operation gen_expr_gtr_than_eq;
+Operation gen_expr_lshift;
+Operation gen_expr_rshift;
+Operation gen_expr_and;
+Operation gen_expr_or;
+Operation gen_expr_xor;
+Operation gen_expr_pow;

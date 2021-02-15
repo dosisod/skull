@@ -2,6 +2,6 @@
 
 #include "skull/parse/ast_node.h"
 
-void llvm_make_return(AstNode **);
-void llvm_make_while(AstNode **);
-void llvm_make_if(AstNode **);
+void gen_stmt_return(AstNode **);
+void gen_control_while(AstNode **);
+void gen_control_if(AstNode **);
