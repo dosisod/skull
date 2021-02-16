@@ -28,8 +28,7 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	AstNode *const ret = make_ast_tree_(
 		token,
 		0,
-		&token_last,
-		TOKEN_BRACKET_CLOSE
+		&token_last
 	);
 
 	if (!ret) {
@@ -374,8 +373,7 @@ Internal AST tree generator.
 AstNode *make_ast_tree_(
 	Token *token,
 	unsigned indent_lvl,
-	Token **token_last,
-	TokenType bracket_or_paren
+	Token **token_last
 ) {
 	Token *last = token;
 
@@ -384,16 +382,11 @@ AstNode *make_ast_tree_(
 	bool allow_top_lvl_bracket = false;
 
 	while (token) {
-		if (token->type == TOKEN_BRACKET_OPEN ||
-			token->type == TOKEN_PAREN_OPEN
-		) {
+		if (token->type == TOKEN_BRACKET_OPEN) {
 			AstNode *const child = make_ast_tree_(
 				token->next,
 				indent_lvl + 1,
-				token_last,
-				(token->type == TOKEN_BRACKET_OPEN) ?
-					TOKEN_BRACKET_CLOSE :
-					TOKEN_PAREN_CLOSE
+				token_last
 			);
 
 			if (!child) {
@@ -423,7 +416,7 @@ AstNode *make_ast_tree_(
 			continue;
 		}
 
-		if (token->type == bracket_or_paren) {
+		if (token->type == TOKEN_BRACKET_CLOSE) {
 			if (indent_lvl == 0 && !allow_top_lvl_bracket) {
 				free(head);
 				PANIC(ERR_MISSING_OPEN_BRAK, { .tok = token });

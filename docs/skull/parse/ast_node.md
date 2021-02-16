@@ -119,7 +119,7 @@ AstNode *make_ast_tree(const char32_t *const code)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last, TokenType bracket_or_paren)
+AstNode *make_ast_tree_(Token *token, unsigned indent_lvl, Token **token_last)
 ```
 
 > Internal AST tree generator.
