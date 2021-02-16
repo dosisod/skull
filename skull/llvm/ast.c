@@ -90,7 +90,7 @@ while (node) {
 	}
 
 	else if (node_type == AST_NODE_FUNCTION) {
-		gen_expr_function_call(node);
+		gen_expr_function_call(node, NULL);
 	}
 
 	else if (node_type == AST_NODE_VAR_ASSIGN) {

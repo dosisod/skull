@@ -103,14 +103,7 @@ Expr node_to_expr(
 		expr = gen_expr_bool_expr(node);
 	}
 	else if (node->type == AST_NODE_FUNCTION) {
-		expr = gen_expr_function_call(node);
-
-		if (type && expr.type != type) {
-			PANIC(ERR_TYPE_MISMATCH, {
-				.tok = node->token,
-				.type = type
-			});
-		}
+		expr = gen_expr_function_call(node, type);
 	}
 	else {
 		expr = token_to_simple_expr_typed(type, node->token);

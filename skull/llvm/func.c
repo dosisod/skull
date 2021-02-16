@@ -163,7 +163,7 @@ FunctionDeclaration *add_function(
 /*
 Builds a function call from `node`.
 */
-Expr gen_expr_function_call(const AstNode *const node) {
+Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 	char32_t *const wide_func_name = token_str(node->token);
 	char *const func_name = c32stombs(wide_func_name);
 
@@ -225,6 +225,14 @@ Expr gen_expr_function_call(const AstNode *const node) {
 	};
 
 	free(params);
+
+	if (type && ret.type != type) {
+		PANIC(ERR_TYPE_MISMATCH, {
+			.tok = node->token,
+			.type = type
+		});
+	}
+
 	return ret;
 }
 
