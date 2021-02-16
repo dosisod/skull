@@ -13,6 +13,7 @@
 #define ERR_OVERFLOW "overflow occurred while parsing \"%s\"\n"
 #define ERR_FILE_EMPTY "file is empty"
 #define ERR_MISSING_OPEN_BRAK "missing opening bracket\n"
+#define ERR_MISSING_CLOSING_PAREN "missing closing parenthesis\n"
 #define ERR_MISSING_DECLARATION "function \"%s\" missing declaration\n"
 #define ERR_MISSING_BLOCK "%s statement must be followed by code block\n"
 #define ERR_NO_CLOSING_COMMENT "expected closing \"#}\" for block comment\n"
