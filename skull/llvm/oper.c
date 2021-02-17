@@ -168,38 +168,44 @@ Expr gen_expr_pow(
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	(void)type;
+	const char *asm_func = NULL;
 
-	LLVMTypeRef types[] = {
-		TYPE_INT.llvm_type(),
-		TYPE_INT.llvm_type()
-	};
+	if (type == &TYPE_INT) {
+		asm_func = ".int_pow";
+	}
+	else if (type == &TYPE_FLOAT) {
+		asm_func = ".float_pow";
+	}
+	else {
+		PANIC(ERR_POW_BAD_TYPE, { .type = type });
+	}
 
 	LLVMTypeRef func_type = LLVMFunctionType(
-		TYPE_INT.llvm_type(),
-		types,
+		type->llvm_type(),
+		(LLVMTypeRef[]){
+			type->llvm_type(),
+			type->llvm_type()
+		},
 		2,
 		false
 	);
 
 	LLVMValueRef func = LLVMAddFunction(
 		SKULL_STATE.module,
-		".int_pow",
+		asm_func,
 		func_type
 	);
-
-	LLVMValueRef values[] = { lhs, rhs };
 
 	return (Expr){
 		.llvm_value = LLVMBuildCall2(
 			SKULL_STATE.builder,
 			func_type,
 			func,
-			values,
+			(LLVMValueRef[]){ lhs, rhs },
 			2,
 			""
 		),
-		.type = &TYPE_INT
+		.type = type
 	};
 }
 

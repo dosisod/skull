@@ -1,0 +1,1 @@
+./test/sh/error/oper/pow_bad_type.sk: Compilation error: cannot use type "str" for power operator

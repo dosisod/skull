@@ -51,6 +51,7 @@
 #define ERR_NESTED_BLOCK_COMMENT \
 	"cannot put opening block comment in existing block comment"
 #define ERR_ILLEGAL_SEQ "illegal UTF8 sequence at character offset %s\n"
+#define ERR_POW_BAD_TYPE "cannot use type \"%s\" for power operator\n"
 
 typedef struct Variable Variable;
 typedef struct Type Type;
