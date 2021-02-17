@@ -3,7 +3,7 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-  clang-tidy:
+  clang-tidy-and-shellcheck:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -15,6 +15,14 @@ jobs:
       run: |
         clang-tidy-10 --version
         ./.github/workflows/clang_tidy.sh
+
+    - name: Install shellcheck
+      run: sudo apt install shellcheck
+
+    - name: Run Shellcheck
+      run: |
+        shellcheck --version
+        shellcheck skull/skull test/sh/main.sh Makefile
 
   test-gcc:
     runs-on: ubuntu-latest
@@ -79,7 +87,7 @@ jobs:
         cd test/docs/c-integration
         make
 
-  test-valgrind-and-precommit:
+  test-valgrind:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2

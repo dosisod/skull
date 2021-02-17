@@ -1,3 +1,7 @@
+#!/bin/sh
+
+# shellcheck disable=SC2046
+
 include config.mk
 
 all: skull test docs
@@ -20,7 +24,7 @@ skull: setup | $(OBJS) $(OBJS_LLVM)
 
 $(ODIR)/%.o: %.c
 	@echo "\033[92mCompile\033[0m $<"
-	@$(CC) $< -c -o $@ $(CFLAGS) $(LLVM_CFLAGS)
+	@$(CC) $< -c -o "$@" $(CFLAGS) $(LLVM_CFLAGS)
 
 test: setup | $(OBJS) $(OBJS_TEST)
 	@echo "\033[92mLink\033[0m test"
