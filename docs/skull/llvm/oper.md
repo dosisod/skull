@@ -70,6 +70,14 @@ Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for string-is operator against `lhs` and `rhs`.
 
 ```c
+Expr create_and_call_builtin_oper(const Type *rtype, LLVMTypeRef type, const char *name, LLVMValueRef lhs, LLVMValueRef rhs)
+```
+
+> Create a function called `name` (if it does not exist) which returns type
+> `rtype`, and has operands of type `type`. Afterwards, call the new function
+> with the `lhs` and `rhs` operands.
+
+```c
 Expr gen_expr_is_not(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 

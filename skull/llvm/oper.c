@@ -160,6 +160,14 @@ Expr gen_expr_rshift(
 	return (Expr){0};
 }
 
+Expr create_and_call_builtin_oper(
+	const Type *,
+	LLVMTypeRef,
+	const char *,
+	LLVMValueRef,
+	LLVMValueRef
+);
+
 /*
 Return expression for taking `lhs` to the power of `rhs`.
 */
@@ -168,45 +176,25 @@ Expr gen_expr_pow(
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	const char *asm_func = NULL;
+	const char *func_name = NULL;
 
 	if (type == &TYPE_INT) {
-		asm_func = "_int_pow";
+		func_name = "_int_pow";
 	}
 	else if (type == &TYPE_FLOAT) {
-		asm_func = "_float_pow";
+		func_name = "_float_pow";
 	}
 	else {
 		PANIC(ERR_POW_BAD_TYPE, { .type = type });
 	}
 
-	LLVMTypeRef func_type = LLVMFunctionType(
+	return create_and_call_builtin_oper(
+		type,
 		type->llvm_type(),
-		(LLVMTypeRef[]){
-			type->llvm_type(),
-			type->llvm_type()
-		},
-		2,
-		false
+		func_name,
+		lhs,
+		rhs
 	);
-
-	LLVMValueRef func = LLVMAddFunction(
-		SKULL_STATE.module,
-		asm_func,
-		func_type
-	);
-
-	return (Expr){
-		.llvm_value = LLVMBuildCall2(
-			SKULL_STATE.builder,
-			func_type,
-			func,
-			(LLVMValueRef[]){ lhs, rhs },
-			2,
-			""
-		),
-		.type = type
-	};
 }
 
 Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
@@ -250,36 +238,54 @@ Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 Return expression for string-is operator against `lhs` and `rhs`.
 */
 Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs) {
-	LLVMTypeRef types[] = {
+	return create_and_call_builtin_oper(
+		&TYPE_BOOL,
 		TYPE_STR.llvm_type(),
-		TYPE_STR.llvm_type()
-	};
+		"_strcmp",
+		lhs,
+		rhs
+	);
+}
+
+/*
+Create a function called `name` (if it does not exist) which returns type
+`rtype`, and has operands of type `type`. Afterwards, call the new function
+with the `lhs` and `rhs` operands.
+*/
+Expr create_and_call_builtin_oper(
+	const Type *rtype,
+	LLVMTypeRef type,
+	const char *name,
+	LLVMValueRef lhs,
+	LLVMValueRef rhs
+) {
+	LLVMValueRef func = LLVMGetNamedFunction(SKULL_STATE.module, name);
 
 	LLVMTypeRef func_type = LLVMFunctionType(
-		TYPE_BOOL.llvm_type(),
-		types,
+		rtype->llvm_type(),
+		(LLVMTypeRef[]){ type, type },
 		2,
 		false
 	);
 
-	LLVMValueRef func = LLVMAddFunction(
-		SKULL_STATE.module,
-		"_strcmp",
-		func_type
-	);
-
-	LLVMValueRef values[] = { lhs, rhs };
+	if (!func) {
+		func = LLVMAddFunction(
+			SKULL_STATE.module,
+			name,
+			func_type
+		);
+	}
 
 	return (Expr){
 		.llvm_value = LLVMBuildCall2(
 			SKULL_STATE.builder,
 			func_type,
 			func,
-			values,
+			(LLVMValueRef[]){ lhs, rhs },
 			2,
 			""
 		),
-		.type = &TYPE_BOOL
+		.type = rtype
 	};
 }
 
