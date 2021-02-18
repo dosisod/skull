@@ -171,10 +171,10 @@ Expr gen_expr_pow(
 	const char *asm_func = NULL;
 
 	if (type == &TYPE_INT) {
-		asm_func = ".int_pow";
+		asm_func = "_int_pow";
 	}
 	else if (type == &TYPE_FLOAT) {
-		asm_func = ".float_pow";
+		asm_func = "_float_pow";
 	}
 	else {
 		PANIC(ERR_POW_BAD_TYPE, { .type = type });
@@ -264,7 +264,7 @@ Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs) {
 
 	LLVMValueRef func = LLVMAddFunction(
 		SKULL_STATE.module,
-		".strcmp",
+		"_strcmp",
 		func_type
 	);
 

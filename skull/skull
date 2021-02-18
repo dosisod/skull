@@ -69,7 +69,6 @@ rm "$base.ll"
 
 MODULE_NAME=$(basename "${filename%.*}")
 SHIM="
-_Bool _strcmp(const char *, const char *) __asm__(\".strcmp\");
 _Bool _strcmp(const char *a, const char *b) {
 	while (*a && *b) {
 		if (*a != *b) {
@@ -83,10 +82,9 @@ _Bool _strcmp(const char *a, const char *b) {
 }
 
 #include <math.h>
-double (*_float_pow)(double, double) __asm__(\".float_pow\") = pow;
+double (*_float_pow)(double, double) = pow;
 
 #include <stdint.h>
-int64_t _int_pow(int64_t, int64_t) __asm__(\".int_pow\");
 int64_t _int_pow(int64_t base, int64_t exp) {
 	int64_t result = base;
 	for (int64_t i = 1; i < exp; i++) result *= base;
