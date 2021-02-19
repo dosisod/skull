@@ -31,7 +31,7 @@ while getopts ":vhcSEo:m:" o; do
 	esac
 done
 
-shift "$(echo "$OPTIND - 1" | bc)"
+shift $((OPTIND - 1))
 
 "${0%/*}/_skull" "$filename" || exit 1
 
