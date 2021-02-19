@@ -22,7 +22,7 @@
 Actual `main` function, can be called by external programs.
 */
 int setup_main(int argc, char *argv[]) {
-	SETUP_LOCALE();
+	setup_locale();
 
 	if (argc < 2) {
 		DIE("unexpected number of parameters");

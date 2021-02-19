@@ -24,7 +24,7 @@ noreturn void segfault_handler() {
 }
 
 int main(void) {
-	SETUP_LOCALE();
+	setup_locale();
 
 	_Bool passed = 1;
 

@@ -1,19 +1,9 @@
 # skull/common/local
 
 ```c
-#define SETUP_LOCALE() \
-	static_assert(__STDC_UTF_32__, \
-		"Your system does not support UTF-32 for 32 bit char types, we" \
-		"cannot ensure Unicode operations will be handled correctly" \
-	); \
-	const char *loc = ""; \
-	if (strcmp("C", setlocale(LC_CTYPE, "")) == 0) { \
-		loc = "en_US.UTF8"; \
-	} \
-	if (!setlocale(LC_CTYPE, loc)) { \
-		puts("cannot set type"); \
-	}
+void setup_locale(void)
 ```
 
-> Try setup locale with UTF-32 and UTF-8 support.
+> If system local is not set, default to "C.UTF-8". Throw assertion if system
+> does not support UTF-32, and exit if unable to setup a UTF-8 environment.
 
