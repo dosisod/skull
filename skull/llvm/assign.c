@@ -153,10 +153,10 @@ Expr gen_expr_bool_expr(const AstNode *const node) {
 		const Expr rhs_expr = token_to_expr(rhs, NULL);
 
 		if (lhs_expr.type != rhs_expr.type) {
-			PANIC(ERR_TYPE_MISMATCH, {
-				.tok = rhs,
-				.type = lhs_expr.type
-			});
+			PANIC(ERR_EXPECTED_SAME_TYPE,
+				{ .tok = rhs, .type = lhs_expr.type },
+				{ .type = rhs_expr.type }
+			);
 		}
 
 		Operation *func = NULL;
@@ -181,10 +181,7 @@ Expr gen_expr_bool_expr(const AstNode *const node) {
 		}
 		else {
 			if (lhs_expr.type != &TYPE_BOOL) {
-				PANIC(ERR_TYPE_MISMATCH, {
-					.tok = lhs,
-					.type = &TYPE_BOOL
-				});
+				PANIC(ERR_BOOL_ONLY, { .tok = lhs });
 			}
 
 			if (oper == TOKEN_OPER_AND) {
@@ -281,10 +278,10 @@ Expr gen_expr_identifier(
 	const Expr expr = token_to_expr(node->token, &var_found);
 
 	if (type && var_found->type != type) {
-		PANIC(ERR_TYPE_MISMATCH, {
-			.tok = node->token,
-			.type = type
-		});
+		PANIC(ERR_EXPECTED_SAME_TYPE,
+			{ .tok = node->token, .type = type },
+			{ .type = var_found->type }
+		);
 	}
 	if (var == var_found) {
 		PANIC(ERR_REDUNDANT_REASSIGN, {

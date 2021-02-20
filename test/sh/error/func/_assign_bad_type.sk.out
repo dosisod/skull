@@ -1,1 +1,1 @@
-./test/sh/error/func/assign_bad_type.sk: Compilation error: line 5 column 12: type mismatch: expected type "float"
+./test/sh/error/func/assign_bad_type.sk: Compilation error: line 5 column 12: cannot assign type "int" to type "float"

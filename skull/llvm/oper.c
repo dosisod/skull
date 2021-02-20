@@ -459,10 +459,10 @@ Expr gen_expr_oper(
 	const Expr rhs = token_to_expr(rhs_token, NULL);
 
 	if (lhs.type != rhs.type) {
-		PANIC(ERR_TYPE_MISMATCH, {
-			.tok = rhs_token,
-			.type = lhs.type
-		});
+		PANIC(ERR_EXPECTED_SAME_TYPE,
+			{ .tok = rhs_token, .type = lhs.type },
+			{ .type = rhs.type }
+		);
 	}
 
 	const Expr result = oper(
@@ -476,10 +476,10 @@ Expr gen_expr_oper(
 	}
 
 	if (type && result.type != type) {
-		PANIC(ERR_TYPE_MISMATCH, {
-			.tok = lhs_token,
-			.type = type
-		});
+		PANIC(ERR_EXPECTED_SAME_TYPE,
+			{ .tok = lhs_token, .type = type },
+			{ .type = result.type }
+		);
 	}
 
 	return result;

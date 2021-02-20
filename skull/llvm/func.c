@@ -202,10 +202,10 @@ Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 		);
 
 		if (expr.type != function->param_types[i]) {
-			PANIC(ERR_FUNC_TYPE_MISMATCH, {
-				.tok = param->token,
-				.real = strdup(function->param_types[i]->name)
-			});
+			PANIC(ERR_FUNC_TYPE_MISMATCH,
+				{ .tok = param->token, .type = function->param_types[i] },
+				{ .type = expr.type }
+			);
 		}
 
 		params[i] = expr.llvm_value;
@@ -227,10 +227,10 @@ Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 	free(params);
 
 	if (type && ret.type != type) {
-		PANIC(ERR_TYPE_MISMATCH, {
-			.tok = node->token,
-			.type = type
-		});
+		PANIC(ERR_ASSIGN_BAD_TYPE,
+			{ .tok = node->token, .type = ret.type },
+			{ .type = type }
+		);
 	}
 
 	return ret;

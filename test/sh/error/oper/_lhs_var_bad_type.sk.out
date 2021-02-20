@@ -1,1 +1,1 @@
-./test/sh/error/oper/lhs_var_bad_type.sk: Compilation error: line 3 column 10: type mismatch: expected type "int"
+./test/sh/error/oper/lhs_var_bad_type.sk: Compilation error: line 3 column 10: expected type "int", got "float"
