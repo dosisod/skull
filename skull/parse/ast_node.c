@@ -12,7 +12,7 @@
 
 #include "skull/parse/ast_node.h"
 
-#define MAX_PARAMS 256
+#define MAX_PARAMS 64
 
 bool try_gen_expression(Token **, Token **, AstNode **);
 bool try_gen_tuple(Token **, Token **, AstNode **, char *const);
@@ -228,6 +228,13 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 
 		token = token->next->next;
 		num_params++;
+
+		if (num_params > MAX_PARAMS) {
+			PANIC(ERR_MAX_PARAM_HIT, {
+				.tok = token,
+				.i = MAX_PARAMS + 1
+			});
+		}
 
 		if (token->type != TOKEN_COMMA) {
 			break;
