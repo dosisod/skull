@@ -97,7 +97,7 @@ while (node) {
 		gen_stmt_var_assign(&node);
 	}
 
-	else {
+	else if (node->token) {
 		PANIC(ERR_UNEXPECTED_TOKEN, { .tok = node->token });
 	}
 
