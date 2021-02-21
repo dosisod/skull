@@ -11,8 +11,6 @@ typedef struct FunctionDeclaration {
 	char32_t **param_names;
 
 	const Type *return_type;
-
-	FunctionDeclaration *next;
 }
 ```
 

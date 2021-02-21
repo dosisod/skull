@@ -143,12 +143,20 @@ void generate_llvm(
 		.ctx = ctx,
 		.module = main_module,
 		.filename = filename,
-		.current_func = main_func,
-		.main_func = main_func,
 		.scope = make_scope(),
 		.function_decls = ht_create(),
 		.type_aliases = ht_create(),
 		.template_types = ht_create()
+	};
+
+	SKULL_STATE.main_func = Calloc(1, sizeof(FunctionDeclaration));
+	SKULL_STATE.current_func = SKULL_STATE.main_func;
+
+	*SKULL_STATE.main_func = (FunctionDeclaration){
+		.name = main_func_name,
+		.function = main_func,
+		.type = main_func_type,
+		.return_type = &TYPE_INT
 	};
 
 	str_to_llvm(file_contents);

@@ -241,11 +241,11 @@ Create a native LLVM function.
 */
 void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
-		SKULL_STATE.current_func
+		SKULL_STATE.current_func->function
 	);
 
-	LLVMValueRef old_func = SKULL_STATE.current_func;
-	SKULL_STATE.current_func = func->function;
+	FunctionDeclaration *old_func = SKULL_STATE.current_func;
+	SKULL_STATE.current_func = func;
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,

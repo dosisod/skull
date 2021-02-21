@@ -35,8 +35,6 @@ typedef struct FunctionDeclaration {
 	char32_t **param_names;
 
 	const Type *return_type;
-
-	FunctionDeclaration *next;
 } FunctionDeclaration;
 
 void gen_stmt_func_decl(const AstNode *const);

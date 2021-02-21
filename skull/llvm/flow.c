@@ -34,6 +34,15 @@ void gen_stmt_return(AstNode **node) {
 		PANIC(ERR_NON_INT_MAIN, { .tok = node_val->token });
 	}
 
+	const Type *return_type = SKULL_STATE.current_func->return_type;
+
+	if (expr.type != return_type && return_type) {
+		PANIC(ERR_EXPECTED_SAME_TYPE,
+			{ .tok = node_val->token, .type = return_type },
+			{ .type = expr.type }
+		);
+	}
+
 	LLVMBuildRet(SKULL_STATE.builder, expr.llvm_value);
 
 	*node = node_val;
@@ -53,17 +62,17 @@ Builds LLVM for a while loop from `node`.
 void gen_control_while(AstNode **node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		SKULL_STATE.current_func,
+		SKULL_STATE.current_func->function,
 		"while_cond"
 	);
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		SKULL_STATE.current_func,
+		SKULL_STATE.current_func->function,
 		"while_loop"
 	);
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		SKULL_STATE.current_func,
+		SKULL_STATE.current_func->function,
 		"while_end"
 	);
 
@@ -98,7 +107,7 @@ void gen_control_if(AstNode **node) {
 		LLVMGetInsertBlock(SKULL_STATE.builder),
 		LLVMAppendBasicBlockInContext(
 			SKULL_STATE.ctx,
-			SKULL_STATE.current_func,
+			SKULL_STATE.current_func->function,
 			"end"
 		)
 	);
@@ -126,7 +135,7 @@ void gen_control_if_(
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		SKULL_STATE.current_func,
+		SKULL_STATE.current_func->function,
 		"if_true"
 	);
 	LLVMBasicBlockRef if_false = NULL;
@@ -144,7 +153,7 @@ void gen_control_if_(
 	) {
 		if_false = LLVMAppendBasicBlockInContext(
 			SKULL_STATE.ctx,
-			SKULL_STATE.current_func,
+			SKULL_STATE.current_func->function,
 			"if_false"
 		);
 		LLVMMoveBasicBlockAfter(end, if_false);

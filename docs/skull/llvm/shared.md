@@ -6,8 +6,8 @@ typedef struct {
 	LLVMContextRef ctx;
 	const char *filename;
 	LLVMModuleRef module;
-	LLVMValueRef current_func;
-	LLVMValueRef main_func;
+	FunctionDeclaration *current_func;
+	FunctionDeclaration *main_func;
 	Scope *scope;
 	HashTable *function_decls;
 	HashTable *type_aliases;
