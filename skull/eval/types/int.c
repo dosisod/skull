@@ -14,17 +14,22 @@ SkullInt eval_integer(const Token *const token) {
 	const char32_t *begin = token->begin;
 	int base = 10;
 
-	if (c32sncmp(U"0b", token->begin, 2)) {
+	if (*begin == '0') {
+		const char32_t modifier = begin[1];
 		begin += 2;
-		base = 2;
-	}
-	else if (c32sncmp(U"0o", token->begin, 2)) {
-		begin += 2;
-		base = 8;
-	}
-	else if (c32sncmp(U"0x", token->begin, 2)) {
-		begin += 2;
-		base = 16;
+
+		if (modifier == 'b') {
+			base = 2;
+		}
+		else if (modifier == 'o') {
+			base = 8;
+		}
+		else if (modifier == 'x') {
+			base = 16;
+		}
+		else {
+			begin -= 2;
+		}
 	}
 
 	char *const num_str = c32stombs(begin);

@@ -51,7 +51,7 @@ void gen_stmt_return(AstNode **node) {
 LLVMValueRef node_to_bool(const AstNode *const);
 
 void gen_control_code_block(
-	const char32_t *,
+	const char *,
 	const AstNode *const,
 	LLVMBasicBlockRef
 );
@@ -91,7 +91,7 @@ void gen_control_while(AstNode **node) {
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_loop);
 
-	gen_control_code_block(U"while", *node, while_cond);
+	gen_control_code_block("while", *node, while_cond);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_end);
 }
@@ -143,7 +143,7 @@ void gen_control_if_(
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_true);
 	*node = (*node)->next;
-	gen_control_code_block(U"if", *node, end);
+	gen_control_code_block("if", *node, end);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
 
@@ -175,7 +175,7 @@ void gen_control_if_(
 	// if there is an else block following the current if block
 	else if (next_non_comment && (next_non_comment->type == AST_NODE_ELSE)) {
 		LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_false);
-		gen_control_code_block(U"else", *node, end);
+		gen_control_code_block("else", *node, end);
 	}
 	// just a single if statement
 	else {
@@ -209,14 +209,14 @@ Parse `node` while in a new scope. Branch to `block` when done.
 `name` is the type of block: if, else, while, etc.
 */
 void gen_control_code_block(
-	const char32_t *name,
+	const char *name,
 	const AstNode *const node,
 	LLVMBasicBlockRef block
 ) {
 	if (!node->child) { // NOLINT
 		PANIC(ERR_MISSING_BLOCK, {
 			.tok = node->token,
-			.str = name
+			.real = strdup(name)
 		});
 	}
 

@@ -31,7 +31,7 @@ LLVMValueRef node_to_bool(const AstNode *const node)
 > Try and parse a condition (something returning a bool) from `node`.
 
 ```c
-void gen_control_code_block(const char32_t *name, const AstNode *const node, LLVMBasicBlockRef block)
+void gen_control_code_block(const char *name, const AstNode *const node, LLVMBasicBlockRef block)
 ```
 
 > Parse `node` while in a new scope. Branch to `block` when done.
