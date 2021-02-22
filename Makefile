@@ -32,7 +32,7 @@ test: setup | $(OBJS) $(OBJS_TEST)
 
 docs:
 	@echo "\033[92mBuild\033[0m docs"
-	@python3 make_docs.py
+	@python3 docs/make_docs.py
 
 clean:
 	@echo "\033[92mCleaning\033[0m"
