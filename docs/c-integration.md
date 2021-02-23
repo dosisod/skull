@@ -21,7 +21,7 @@ and in Skull:
 ```python
 # hello.sk
 
-external hello(name: str)
+external hello(name: Str)
 
 hello("world")
 
@@ -62,7 +62,7 @@ Here, the linker is throwing an error as we forgot to include `hello.c` to our c
 
 ## Using Skull types in your code
 
-As an example, `int` in Skull is different then `int` in C. It is recommended to use the Skull typdefs for the best possible compatibility.
+As an example, `Int` in Skull is different then `int` in C. It is recommended to use the Skull typdefs for the best possible compatibility.
 
 To install Skull headers, run `make install-dev`.
 
@@ -81,7 +81,7 @@ Usage in Skull:
 
 ```python
 # add_one.sk
-external add_one(a: int) int
+external add_one(a: Int) Int
 
 x := add_one(2)
 
@@ -116,7 +116,7 @@ int main(void) {
 ```
 # hello2.sk
 
-external puts(s: str) int
+external puts(s: Str) Int
 
 puts("hello, world 2!")
 ```

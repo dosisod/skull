@@ -1,1 +1,1 @@
-./test/sh/error/func/param_bad_type.sk: Compilation error: line 5 column 3: expected type "int", got "bool"
+./test/sh/error/func/param_bad_type.sk: Compilation error: line 5 column 3: expected type "Int", got "Bool"

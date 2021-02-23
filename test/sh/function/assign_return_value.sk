@@ -1,4 +1,4 @@
-external func() int
+external func() Int
 
 mut x := func()
 

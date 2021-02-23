@@ -1,3 +1,3 @@
-f(x: int y: int) {
+f(x: Int y: Int) {
 	# do nothing
 }

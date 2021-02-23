@@ -20,7 +20,7 @@ TEST(make_ast_node, {
 })
 
 TEST(push_ast_node, {
-	Token *token = tokenize(U"x: int = 0");
+	Token *token = tokenize(U"x: Int = 0");
 	Token *last = token;
 
 	classify_tokens(token);
@@ -42,11 +42,11 @@ TEST(make_ast_tree_identifier, {
 })
 
 TEST(make_ast_tree_variable_def, {
-	TEST_AST_TREE(U"x: int = 0", AST_NODE_VAR_DEF, 0, 8);
+	TEST_AST_TREE(U"x: Int = 0", AST_NODE_VAR_DEF, 0, 8);
 })
 
 TEST(make_ast_tree_mutable_variable_def, {
-	TEST_AST_TREE(U"mut x: int = 0", AST_NODE_VAR_DEF, 0, 12);
+	TEST_AST_TREE(U"mut x: Int = 0", AST_NODE_VAR_DEF, 0, 12);
 })
 
 TEST(make_ast_tree_auto_variable_def, {

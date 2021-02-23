@@ -1,1 +1,1 @@
-./test/sh/error/func/return_type_mismatch.sk: Compilation error: line 2 column 9: expected type "int", got "bool"
+./test/sh/error/func/return_type_mismatch.sk: Compilation error: line 2 column 9: expected type "Int", got "Bool"

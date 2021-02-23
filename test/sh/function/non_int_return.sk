@@ -1,8 +1,8 @@
-func() float {
+func() Float {
 	mut ret := 3.14
 	return ret
 }
 
-func2() float {
+func2() Float {
 	return 3.14
 }

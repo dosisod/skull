@@ -1,2 +1,2 @@
-external x() int
-external y(num: int) int
+external x() Int
+external y(num: Int) Int

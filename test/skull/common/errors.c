@@ -44,7 +44,7 @@ TEST(fmt_error_stringify, {
 	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_tok, "xxx"));
 	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_var, "var_name"));
 	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_str, "some string"));
-	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_type, "int"));
+	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_type, "Int"));
 
 	free_tokens(tok);
 	free_variable(var);

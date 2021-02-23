@@ -92,27 +92,27 @@ TemplateType *add_template_type(char *name, LLVMTypeRef *llvm_type) {
 }
 
 Type TYPE_BOOL = {
-	.name = "bool",
+	.name = "Bool",
 	.llvm_type = gen_llvm_bool_type
 };
 
 Type TYPE_INT = {
-	.name = "int",
+	.name = "Int",
 	.llvm_type = gen_llvm_int_type
 };
 
 Type TYPE_FLOAT = {
-	.name = "float",
+	.name = "Float",
 	.llvm_type = gen_llvm_float_type
 };
 
 Type TYPE_RUNE = {
-	.name = "rune",
+	.name = "Rune",
 	.llvm_type = gen_llvm_rune_type
 };
 
 Type TYPE_STR = {
-	.name = "str",
+	.name = "Str",
 	.llvm_type = gen_llvm_str_type
 };
 

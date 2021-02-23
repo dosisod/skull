@@ -1,1 +1,1 @@
-x: float = 1 + 2
+x: Float = 1 + 2

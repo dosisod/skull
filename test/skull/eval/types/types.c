@@ -7,7 +7,7 @@
 #include "test/testing.h"
 
 TEST(find_type, {
-	ASSERT_EQUAL(find_type("int"), &TYPE_INT);
+	ASSERT_EQUAL(find_type("Int"), &TYPE_INT);
 })
 
 _Bool mangle_types_fixture(
@@ -27,12 +27,12 @@ _Bool mangle_types_fixture(
 TEST(type_mangle_types, {
 	ASSERT_TRUTHY(mangle_types_fixture(
 		(const Type*[]){ &TYPE_INT, &TYPE_INT }, 2, 'X',
-		"_X<int,int>"
+		"_X<Int,Int>"
 	));
 
 	ASSERT_TRUTHY(mangle_types_fixture(
 		(const Type*[]){ &TYPE_INT }, 1, 'X',
-		"_X<int>"
+		"_X<Int>"
 	));
 })
 

@@ -1,5 +1,5 @@
 x := 0
 
-f(x: int) int {
+f(x: Int) Int {
 	return x
 }

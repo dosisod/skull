@@ -1,4 +1,4 @@
-int_alias := int
+int_alias := Int
 
 mut x: int_alias = 1234
 

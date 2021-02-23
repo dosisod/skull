@@ -1,1 +1,1 @@
-./test/sh/error/declare/expr_assign_bad_type.sk: Compilation error: line 1 column 12: expected type "float", got "int"
+./test/sh/error/declare/expr_assign_bad_type.sk: Compilation error: line 1 column 12: expected type "Float", got "Int"

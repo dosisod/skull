@@ -11,13 +11,13 @@ import io.print
 
 # this is a comment!
 
-func() {
+main() Int {
   print("hello world!")
+
+  return 0
 }
 
-func()
-
-return 0
+return main()
 ```
 
 ## Setup

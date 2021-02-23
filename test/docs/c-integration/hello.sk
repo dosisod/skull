@@ -1,4 +1,4 @@
-external hello(name: str)
+external hello(name: Str)
 
 hello("world")
 

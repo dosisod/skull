@@ -1,1 +1,1 @@
-external x(a: int)
+external x(a: Int)

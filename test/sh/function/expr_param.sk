@@ -1,4 +1,4 @@
-f(num: int) {
+f(num: Int) {
 	# do nothing
 }
 

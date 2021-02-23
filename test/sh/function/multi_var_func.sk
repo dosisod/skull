@@ -1,4 +1,4 @@
-f(num: int) int {
+f(num: Int) Int {
 	return num
 }
 

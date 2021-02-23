@@ -1,3 +1,3 @@
-external puts(s: str) int
+external puts(s: Str) int
 
 puts("hello, world 2!")

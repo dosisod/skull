@@ -1,5 +1,5 @@
-func() int {
+func() Int {
 	return 1
 }
 
-x: float = func()
+x: Float = func()

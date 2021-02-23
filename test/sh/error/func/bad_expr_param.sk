@@ -1,4 +1,4 @@
-f(b: bool) {
+f(b: Bool) {
 	# do nothing
 }
 

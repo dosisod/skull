@@ -12,7 +12,7 @@ To be more persice:
 In Skull, variables are const by default:
 
 ```python
-x: int = 0
+x: Int = 0
 
 # or this
 x := 0
@@ -23,7 +23,7 @@ x = 1  # error, cannot assign to const
 To make a non-const variable, use `mut`:
 
 ```python
-mut x: int = 0
+mut x: Int = 0
 
 # or this
 mut x := 0
@@ -52,7 +52,7 @@ Here, `123.456` is implicitly converted from `float` to `int`.
 In Skull, you must explicitly cast to `int`:
 
 ```python
-x: int = int(123.456)
+x: Int = int(123.456)
 ```
 
 In most languages, there exists a concept of "truthy" and "falsy":
@@ -88,11 +88,11 @@ Below is a table of built-in types, and their C/C++ equivalents:
 
 | Skull | C/C++ | Description |
 |:----- |:----- |:----------- |
-| `bool` | `bool` | `true` or `false` |
-| `int` | `int64_t` | 64 bit integer |
-| `float` | `double` | 64 bit floating number |
-| `rune` | `char32_t` | Single UTF-32 code point |
-| `str` | `char32_t*` | String of UTF-32 code points |
+| `Bool` | `bool` | `true` or `false` |
+| `Int` | `int64_t` | 64 bit integer |
+| `Float` | `double` | 64 bit floating number |
+| `Rune` | `char32_t` | Single UTF-32 code point |
+| `Str` | `char *` | UTF-8 string |
 | `T` | `template<typename T>` | Templated type `*` |
 | `:=` | `auto` | Automatically deduce type |
 

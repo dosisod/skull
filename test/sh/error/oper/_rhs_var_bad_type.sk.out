@@ -1,1 +1,1 @@
-./test/sh/error/oper/rhs_var_bad_type.sk: Compilation error: line 3 column 12: expected type "float", got "int"
+./test/sh/error/oper/rhs_var_bad_type.sk: Compilation error: line 3 column 12: expected type "Float", got "Int"

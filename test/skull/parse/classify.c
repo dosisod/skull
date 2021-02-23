@@ -7,7 +7,7 @@
 #include "test/testing.h"
 
 TEST(is_type_str, {
-	Token *token = tokenize(U"int not_a_type");
+	Token *token = tokenize(U"Int not_a_type");
 
 	char32_t *buf = token_str(token);
 	char32_t *buf_next = token_str(token->next);
@@ -131,16 +131,6 @@ TEST(token_div_oper, {
 	TEST_CLASSIFY_TOKEN(U"/", TOKEN_OPER_DIV);
 })
 
-TEST(token_type, {
-	Token *t = tokenize(U"int not_a_type");
-	classify_tokens(t);
-
-	ASSERT_EQUAL(t->type, TOKEN_TYPE);
-	ASSERT_NOT_EQUAL(t->next->type, TOKEN_TYPE);
-
-	free_tokens(t);
-})
-
 TEST(token_unknown, {
 	TEST_CLASSIFY_TOKEN(U"123garbage_value", TOKEN_UNKNOWN);
 })
@@ -173,8 +163,8 @@ TEST(token_str_constant, {
 	TEST_CLASSIFY_TOKEN_WITH_LEN(U"\"xyz\"", TOKEN_STR_CONST, 0, 5);
 })
 
-TEST(token_Typeype, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"int", TOKEN_TYPE, 0, 3);
+TEST(token_type, {
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"Int", TOKEN_TYPE, 0, 3);
 })
 
 TEST(token_comment, {
@@ -207,15 +197,15 @@ TEST(is_valid_identifier_token, {
 })
 
 TEST(new_identifier_clip_trailing_colon, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"x: int = 0", TOKEN_NEW_IDENTIFIER, 0, 1);
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"x: Int = 0", TOKEN_NEW_IDENTIFIER, 0, 1);
 })
 
 TEST(identifier_cannot_be_type, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"int: int = 0", TOKEN_UNKNOWN, 0, 4);
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"Int: Int = 0", TOKEN_UNKNOWN, 0, 4);
 })
 
 TEST(identifier_cannot_be_reserved, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"mut: int = 0", TOKEN_UNKNOWN, 0, 4);
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"mut: Int = 0", TOKEN_UNKNOWN, 0, 4);
 })
 
 TEST(classify_tokens, {
@@ -250,7 +240,6 @@ TEST_SELF(classifier,
 	test_token_mult_oper,
 	test_token_div_oper,
 	test_token_auto_equal_oper,
-	test_token_type,
 	test_token_unknown,
 	test_token_integer_constant,
 	test_token_float_constant,
@@ -259,7 +248,7 @@ TEST_SELF(classifier,
 	test_token_rune_constant_simple_escape,
 	test_token_rune_constant_hex_escape,
 	test_token_str_constant,
-	test_token_Typeype,
+	test_token_type,
 	test_token_comment,
 	test_token_comment_empty,
 	test_is_valid_identifier,

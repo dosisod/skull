@@ -1,2 +1,2 @@
-some_alias := int
-some_alias := float
+some_alias := Int
+some_alias := Float
