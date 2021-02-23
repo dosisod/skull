@@ -164,8 +164,7 @@ FunctionDeclaration *add_function(
 Builds a function call from `node`.
 */
 Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
-	char32_t *const wide_func_name = token_str(node->token);
-	char *const func_name = c32stombs(wide_func_name);
+	char *const func_name = token_mbs_str(node->token);
 
 	FunctionDeclaration *function = ht_get(SKULL_STATE.function_decls, func_name);
 
@@ -175,7 +174,6 @@ Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 		});
 	}
 	free(func_name);
-	free(wide_func_name);
 
 	unsigned short num_params = function->num_params;
 
