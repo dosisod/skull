@@ -15,7 +15,7 @@
 #define MAX_PARAMS 64
 
 bool try_gen_expression(Token **, Token **, AstNode **);
-bool try_gen_tuple(Token **, Token **, AstNode **, char *const);
+bool try_gen_tuple(Token **, Token **, AstNode **);
 
 /*
 Makes an AST (abstract syntax tree) from a given string.
@@ -531,7 +531,7 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 		*_token = token->next;
 		push_ast_node(token, last, AST_NODE_FUNCTION, node);
 
-		try_gen_tuple(_token, last, node, token_mbs_str(token));
+		try_gen_tuple(_token, last, node);
 	}
 	else if (token->type == TOKEN_IDENTIFIER) {
 		push_ast_node(token, last, AST_NODE_IDENTIFIER, node);
@@ -561,14 +561,11 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 Try and generate AST node for a tuple.
 
 Returns true if a node was added, false otherwise.
-
-If the tuple is attached to a function, pass `func_name`, otherwise `NULL`.
 */
 bool try_gen_tuple(
 	Token **_token,
 	Token **last,
-	AstNode **node,
-	char *const func_name /* NOLINT */
+	AstNode **node
 ) {
 	AstNode *child = make_ast_node();
 	(*node)->last->child = child;
@@ -605,8 +602,7 @@ bool try_gen_tuple(
 	}
 
 	MAKE_ATTR(AstNodeTuple, (*node)->last,
-		.num_values = num_values,
-		.func_name = func_name
+		.num_values = num_values
 	);
 
 	return true;
@@ -686,9 +682,6 @@ void free_ast_tree_(AstNode *node) {
 
 				free(param_type_names);
 				free(param_names);
-			}
-			else if (node->type == AST_NODE_FUNCTION) {
-				free(ATTR(AstNodeTuple, node, func_name));
 			}
 
 			free(node->attr);

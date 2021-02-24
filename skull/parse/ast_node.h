@@ -119,7 +119,6 @@ Used to store special data about tuples.
 */
 typedef struct {
 	unsigned short num_values;
-	char *func_name;
 } AstNodeTuple;
 
 /*
