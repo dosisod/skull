@@ -16,3 +16,6 @@ echo
 ./.github/workflows/clang_tidy.sh || stop
 
 ./.github/workflows/line_len.sh || stop
+
+cd test/docs/c-integration/
+make SKULL=../../../build/skull/skull || stop
