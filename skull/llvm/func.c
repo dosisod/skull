@@ -35,16 +35,17 @@ Parse declaration (and potential definition) of function in `node`.
 void gen_stmt_func_decl(const AstNode *const node) {
 	const bool is_external = ATTR(AstNodeFunctionProto, node, is_external);
 	const bool is_export = ATTR(AstNodeFunctionProto, node, is_export);
-
-	const Token *const func_name_token = (is_external || is_export) ?
-			node->token->next :
-			node->token;
-
-	char *func_name = token_mbs_str(func_name_token);
+	const Token *const func_name_token = ATTR(
+		AstNodeFunctionProto,
+		node,
+		name_tok
+	);
 
 	if ((is_export || is_external) && SKULL_STATE.scope->sub_scope) {
 		PANIC(ERR_NO_NESTED, { .tok = func_name_token });
 	}
+
+	char *func_name = token_mbs_str(func_name_token);
 
 	if (is_export && strcmp(func_name, "main") == 0) {
 		PANIC(ERR_MAIN_RESERVED, { .tok = func_name_token });

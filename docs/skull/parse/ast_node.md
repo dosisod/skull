@@ -56,6 +56,7 @@ typedef struct AstNode {
 typedef struct {
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
+	const Token *name_tok;
 }
 ```
 
@@ -63,6 +64,8 @@ typedef struct {
 
 ```c
 typedef struct {
+	const Token *name_tok;
+
 	char **param_type_names;
 	char32_t **param_names;
 

@@ -60,20 +60,16 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 Make and add a variable from `node` to Skull state.
 */
 Variable *node_to_var(const AstNode *const node) {
-	const Token *token = node->token;
-
-	const bool is_const = ATTR(AstNodeVarDef, node, is_const);
-	if (!is_const) {
-		token = token->next;
-	}
+	const Token *token = ATTR(AstNodeVarDef, node, name_tok);
 
 	char32_t *const name = token_str(token);
 	Variable *var = NULL;
 
+	const Type *type = NULL;
+
 	if (ATTR(AstNodeVarDef, node, is_implicit)) {
 		const TokenType token_type = node->next->token->type;
 		const NodeType node_type = node->next->type;
-		const Type *type = NULL;
 
 		if (token_type == TOKEN_BOOL_CONST ||
 			node_type == AST_NODE_BOOL_EXPR
@@ -127,20 +123,23 @@ Variable *node_to_var(const AstNode *const node) {
 			free(name);
 			PANIC(ERR_INVALID_INPUT, { .tok = node->next->token });
 		}
-		var = make_variable(type, name, is_const);
 	}
 	else {
 		char *const type_name = token_mbs_str(token->next);
 
-		const Type *type = find_type(type_name);
+		type = find_type(type_name);
 		free(type_name);
 
 		if (!type) {
 			PANIC(ERR_TYPE_NOT_FOUND, { .tok = token->next });
 		}
-
-		var = make_variable(type, name, is_const);
 	}
+
+	var = make_variable(
+		type,
+		name,
+		ATTR(AstNodeVarDef, node, is_const)
+	);
 
 	if (scope_add_var(SKULL_STATE.scope, var)) {
 		free(name);

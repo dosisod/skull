@@ -97,12 +97,15 @@ Used to store special data about `AST_NODE_VAR_DEF` nodes.
 typedef struct {
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
+	const Token *name_tok;
 } AstNodeVarDef;
 
 /*
 Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
 */
 typedef struct {
+	const Token *name_tok;
+
 	char **param_type_names;
 	char32_t **param_names;
 

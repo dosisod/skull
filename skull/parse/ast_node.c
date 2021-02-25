@@ -112,7 +112,8 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 
 	MAKE_ATTR(AstNodeVarDef, *node,
 		.is_const = is_const,
-		.is_implicit = is_implicit
+		.is_implicit = is_implicit,
+		.name_tok = token
 	);
 
 	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
@@ -200,6 +201,8 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		token = token->next;
 	}
 
+	const Token *const func_name_token = token;
+
 	if (!AST_TOKEN_CMP(token,
 		TOKEN_IDENTIFIER,
 		TOKEN_PAREN_OPEN)
@@ -276,6 +279,7 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	}
 
 	MAKE_ATTR(AstNodeFunctionProto, *node,
+		.name_tok = func_name_token,
 		.param_type_names = tmp_types,
 		.param_names = tmp_names,
 		.return_type_name = return_type_name,
