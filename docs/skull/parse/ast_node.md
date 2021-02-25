@@ -82,11 +82,12 @@ typedef struct {
 
 ```c
 typedef struct {
+	const Token *func_name_tok;
 	unsigned short num_values;
 }
 ```
 
-> Used to store special data about tuples.
+> Used to store special data about function call.
 
 ```c
 typedef struct {
@@ -135,10 +136,10 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node)
 > Returns true if a node was added, false otherwise.
 
 ```c
-bool try_gen_tuple(Token **_token, Token **last, AstNode **node)
+void gen_func_call(Token **_token, Token **last, AstNode **node)
 ```
 
-> Try and generate AST node for a tuple.
+> Try and generate AST node for a function call.
 > \
 > Returns true if a node was added, false otherwise.
 

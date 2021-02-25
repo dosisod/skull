@@ -118,11 +118,12 @@ typedef struct {
 } AstNodeFunctionProto;
 
 /*
-Used to store special data about tuples.
+Used to store special data about function call.
 */
 typedef struct {
+	const Token *func_name_tok;
 	unsigned short num_values;
-} AstNodeTuple;
+} AstNodeFunctionCall;
 
 /*
 Store special data about operator related nodes (`AST_NODE_ADD`, etc).

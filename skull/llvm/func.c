@@ -165,21 +165,27 @@ FunctionDeclaration *add_function(
 Builds a function call from `node`.
 */
 Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
-	char *const func_name = token_mbs_str(node->token);
+	const Token *func_name_token = ATTR(
+		AstNodeFunctionCall,
+		node,
+		func_name_tok
+	);
+
+	char *const func_name = token_mbs_str(func_name_token);
 
 	FunctionDeclaration *function = ht_get(SKULL_STATE.function_decls, func_name);
 
 	if (!function) {
 		PANIC(ERR_MISSING_DECLARATION, {
-			.tok = node->token
+			.tok = func_name_token
 		});
 	}
 	free(func_name);
 
 	unsigned short num_params = function->num_params;
 
-	if (num_params != ATTR(AstNodeTuple, node, num_values)) {
-		PANIC(ERR_INVALID_NUM_PARAMS, { .tok = node->token });
+	if (num_params != ATTR(AstNodeFunctionCall, node, num_values)) {
+		PANIC(ERR_INVALID_NUM_PARAMS, { .tok = func_name_token });
 	}
 
 	LLVMValueRef *params = NULL;

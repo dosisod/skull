@@ -15,7 +15,7 @@
 #define MAX_PARAMS 64
 
 bool try_gen_expression(Token **, Token **, AstNode **);
-bool try_gen_tuple(Token **, Token **, AstNode **);
+void gen_func_call(Token **, Token **, AstNode **);
 
 /*
 Makes an AST (abstract syntax tree) from a given string.
@@ -532,10 +532,7 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 		// pass
 	}
 	else if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
-		*_token = token->next;
-		push_ast_node(token, last, AST_NODE_FUNCTION, node);
-
-		try_gen_tuple(_token, last, node);
+		gen_func_call(_token, last, node);
 	}
 	else if (token->type == TOKEN_IDENTIFIER) {
 		push_ast_node(token, last, AST_NODE_IDENTIFIER, node);
@@ -562,19 +559,23 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 }
 
 /*
-Try and generate AST node for a tuple.
+Try and generate AST node for a function call.
 
 Returns true if a node was added, false otherwise.
 */
-bool try_gen_tuple(
+void gen_func_call(
 	Token **_token,
 	Token **last,
 	AstNode **node
 ) {
+	const Token *func_name_token = *_token;
+
+	push_ast_node(*_token, last, AST_NODE_FUNCTION, node);
+
 	AstNode *child = make_ast_node();
 	(*node)->last->child = child;
 
-	*_token = (*_token)->next;
+	*_token = (*_token)->next->next;
 
 	unsigned short num_values = 0;
 
@@ -605,11 +606,10 @@ bool try_gen_tuple(
 		*_token = (*_token)->next;
 	}
 
-	MAKE_ATTR(AstNodeTuple, (*node)->last,
+	MAKE_ATTR(AstNodeFunctionCall, (*node)->last,
+		.func_name_tok = func_name_token,
 		.num_values = num_values
 	);
-
-	return true;
 }
 
 /*
