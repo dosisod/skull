@@ -92,11 +92,12 @@ typedef struct {
 ```c
 typedef struct {
 	const Token *lhs;
+	TokenType oper;
 	const Token *rhs;
 }
 ```
 
-> Store special data about operator related nodes (`AST_NODE_ADD`, etc).
+> Store special data about operator related nodes.
 
 ```c
 typedef struct {

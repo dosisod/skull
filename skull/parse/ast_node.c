@@ -162,27 +162,28 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	NodeType node_type = AST_NODE_UNKNOWN;
+	const TokenType token_type = token->next->type;
 
-switch (token->next->type) {
-	case TOKEN_OPER_PLUS: node_type = AST_NODE_ADD; break;
-	case TOKEN_OPER_MINUS: node_type = AST_NODE_SUB; break;
-	case TOKEN_OPER_MULT: node_type = AST_NODE_MULT; break;
-	case TOKEN_OPER_DIV: node_type = AST_NODE_DIV; break;
-	case TOKEN_OPER_MOD: node_type = AST_NODE_MOD; break;
-	case TOKEN_OPER_LSHIFT: node_type = AST_NODE_LSHIFT; break;
-	case TOKEN_OPER_RSHIFT: node_type = AST_NODE_RSHIFT; break;
-	case TOKEN_OPER_POW: node_type = AST_NODE_POW; break;
-	default: return false;
-}
+	if (!(token_type == TOKEN_OPER_PLUS ||
+		token_type == TOKEN_OPER_MINUS ||
+		token_type == TOKEN_OPER_MULT ||
+		token_type == TOKEN_OPER_DIV ||
+		token_type == TOKEN_OPER_MOD ||
+		token_type == TOKEN_OPER_LSHIFT ||
+		token_type == TOKEN_OPER_RSHIFT ||
+		token_type == TOKEN_OPER_POW
+	)) {
+		return false;
+	}
 
 	MAKE_ATTR(AstNodeOper, *node,
 		.lhs = token,
+		.oper = token_type,
 		.rhs = token->next->next
 	);
 
 	*_token = token->next->next;
-	push_ast_node(*_token, last, node_type, node);
+	push_ast_node(*_token, last, AST_NODE_OPER_EXPR, node);
 	return true;
 }
 

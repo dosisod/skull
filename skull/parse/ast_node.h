@@ -34,15 +34,7 @@ typedef enum {
 	AST_NODE_FUNCTION,
 	AST_NODE_FUNCTION_PROTO,
 
-	AST_NODE_ADD,
-	AST_NODE_SUB,
-	AST_NODE_MULT,
-	AST_NODE_DIV,
-	AST_NODE_MOD,
-	AST_NODE_LSHIFT,
-	AST_NODE_RSHIFT,
-	AST_NODE_POW,
-
+	AST_NODE_OPER_EXPR,
 	AST_NODE_BOOL_EXPR,
 
 	AST_NODE_RETURN,
@@ -126,10 +118,11 @@ typedef struct {
 } AstNodeFunctionCall;
 
 /*
-Store special data about operator related nodes (`AST_NODE_ADD`, etc).
+Store special data about operator related nodes.
 */
 typedef struct {
 	const Token *lhs;
+	TokenType oper;
 	const Token *rhs;
 } AstNodeOper;
 

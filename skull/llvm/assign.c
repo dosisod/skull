@@ -70,34 +70,38 @@ Expr node_to_expr(
 	const AstNode *const node,
 	const Variable *const var
 ) {
-	Expr expr;
+	Expr expr = {0};
 
 	if (node->type == AST_NODE_IDENTIFIER) {
 		expr = gen_expr_identifier(type, node, var);
 	}
-	else if (node->type == AST_NODE_ADD) {
-		expr = gen_expr_oper(type, node, &gen_expr_add);
-	}
-	else if (node->type == AST_NODE_SUB) {
-		expr = gen_expr_oper(type, node, &gen_expr_sub);
-	}
-	else if (node->type == AST_NODE_MULT) {
-		expr = gen_expr_oper(type, node, &gen_expr_mult);
-	}
-	else if (node->type == AST_NODE_DIV) {
-		expr = gen_expr_oper(type, node, &gen_expr_div);
-	}
-	else if (node->type == AST_NODE_MOD) {
-		expr = gen_expr_oper(type, node, &gen_expr_mod);
-	}
-	else if (node->type == AST_NODE_LSHIFT) {
-		expr = gen_expr_oper(type, node, &gen_expr_lshift);
-	}
-	else if (node->type == AST_NODE_POW) {
-		expr = gen_expr_oper(type, node, &gen_expr_pow);
-	}
-	else if (node->type == AST_NODE_RSHIFT) {
-		expr = gen_expr_oper(type, node, &gen_expr_rshift);
+	else if (node->type == AST_NODE_OPER_EXPR) {
+		const TokenType token_type = ATTR(AstNodeOper, node, oper);
+
+		if (token_type == TOKEN_OPER_PLUS) {
+			expr = gen_expr_oper(type, node, &gen_expr_add);
+		}
+		else if (token_type == TOKEN_OPER_MINUS) {
+			expr = gen_expr_oper(type, node, &gen_expr_sub);
+		}
+		else if (token_type == TOKEN_OPER_MULT) {
+			expr = gen_expr_oper(type, node, &gen_expr_mult);
+		}
+		else if (token_type == TOKEN_OPER_DIV) {
+			expr = gen_expr_oper(type, node, &gen_expr_div);
+		}
+		else if (token_type == TOKEN_OPER_MOD) {
+			expr = gen_expr_oper(type, node, &gen_expr_mod);
+		}
+		else if (token_type == TOKEN_OPER_LSHIFT) {
+			expr = gen_expr_oper(type, node, &gen_expr_lshift);
+		}
+		else if (token_type == TOKEN_OPER_POW) {
+			expr = gen_expr_oper(type, node, &gen_expr_pow);
+		}
+		else if (token_type == TOKEN_OPER_RSHIFT) {
+			expr = gen_expr_oper(type, node, &gen_expr_rshift);
+		}
 	}
 	else if (node->type == AST_NODE_BOOL_EXPR) {
 		expr = gen_expr_bool_expr(node);
@@ -105,7 +109,7 @@ Expr node_to_expr(
 	else if (node->type == AST_NODE_FUNCTION) {
 		expr = gen_expr_function_call(node, type);
 	}
-	else {
+	else if (node->type == AST_NODE_CONST) {
 		expr = token_to_simple_expr_typed(type, node->token);
 	}
 

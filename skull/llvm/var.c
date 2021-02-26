@@ -110,11 +110,8 @@ Variable *node_to_var(const AstNode *const node) {
 				});
 			}
 		}
-		else if (node_type == AST_NODE_IDENTIFIER || (
-			(node_type == AST_NODE_ADD ||
-			node_type == AST_NODE_SUB ||
-			node_type == AST_NODE_MULT ||
-			node_type == AST_NODE_DIV) &&
+		else if (node_type == AST_NODE_IDENTIFIER ||
+			(node_type == AST_NODE_OPER_EXPR &&
 			token_type == TOKEN_IDENTIFIER)
 		) {
 			type = scope_find_var(node->next->token)->type;
