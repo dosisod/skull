@@ -16,7 +16,7 @@
 #include "skull/llvm/shared.h"
 #include "skull/setup_main.h"
 
-#define DIE(x) fprintf(stderr, "%s\n", x); return 1
+#define DIE(x) fprintf(stderr, "skull: %s\n", x); return 1
 
 /*
 Actual `main` function, can be called by external programs.
@@ -54,10 +54,10 @@ int build_file(char *filename) {
 	FILE *const f = fopen(filename, "re");
 	if (!f) {
 		if (errno == EACCES) {
-			fprintf(stderr, "cannot open \"%s\", permission denied\n", filename);
+			fprintf(stderr, "skull: cannot open \"%s\", permission denied\n", filename);
 		}
 		else if (errno == ENOENT) {
-			fprintf(stderr, "\"%s\" was not found, exiting\n", filename);
+			fprintf(stderr, "skull: \"%s\" was not found, exiting\n", filename);
 		}
 		return 1;
 	}
@@ -88,7 +88,7 @@ int build_file(char *filename) {
 	free(llvm_filename);
 
 	if (err || status) {
-		fprintf(stderr, "error occurred: %s\n", err);
+		fprintf(stderr, "skull: error occurred: %s\n", err);
 		LLVMDisposeMessage(err);
 		return 1;
 	}
