@@ -2,8 +2,8 @@ BIN := /usr/local/bin/
 HEADER := /usr/include
 MANPATH := $(shell manpath | cut -d : -f1)/man1/
 
-CC := $(shell readlink -f `which cc`)
-CXX := g++
+CC ?= $(shell readlink -f `which cc`)
+CXX ?= g++
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
