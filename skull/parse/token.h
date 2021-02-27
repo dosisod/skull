@@ -88,9 +88,6 @@ typedef struct Token {
 	Token *next;
 } Token;
 
-_Bool is_whitespace(char32_t);
-_Bool is_quote(char32_t);
-
 Token *make_token(void);
 
 Token *tokenize(const char32_t *);

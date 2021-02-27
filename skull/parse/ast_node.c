@@ -17,6 +17,32 @@
 bool try_gen_expression(Token **, Token **, AstNode **);
 void gen_func_call(Token **, Token **, AstNode **);
 
+AstNode *make_ast_tree_(Token *, unsigned, Token **);
+
+void free_ast_tree_(AstNode *);
+
+_Bool is_value(const Token *const);
+
+_Bool ast_token_cmp(Token *, ...);
+
+/*
+Compare a variable number of token types stored in `...` agains each
+successive token in `token`.
+*/
+#define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
+
+/*
+Create a new attribute struct of type `from`, assign to `node`, with data
+passed from `...`.
+*/
+#define MAKE_ATTR(from, node, ...) \
+	from *attr; \
+	attr = Malloc(sizeof *attr); \
+	*attr = (from){ \
+		__VA_ARGS__ \
+	}; \
+	(node)->attr = attr
+
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */

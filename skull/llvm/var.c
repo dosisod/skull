@@ -19,6 +19,8 @@
 
 #include "skull/llvm/var.h"
 
+Expr token_to_simple_expr(const Token *const);
+
 /*
 Convert `token` to an expression.
 

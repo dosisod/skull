@@ -17,6 +17,8 @@
 
 bool node_to_llvm(AstNode *);
 
+void define_function(const AstNode *const, FunctionDeclaration *);
+
 FunctionDeclaration *add_function(
 	const AstNode *const,
 	char *,

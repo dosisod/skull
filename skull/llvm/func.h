@@ -41,8 +41,4 @@ void gen_stmt_func_decl(const AstNode *const);
 
 Expr gen_expr_function_call(const AstNode *const, const Type *const);
 
-void define_function(const AstNode *const, FunctionDeclaration *);
-
-FunctionDeclaration *find_function(const char *);
-
 void free_function_declaration(FunctionDeclaration *);

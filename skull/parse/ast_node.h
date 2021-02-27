@@ -8,18 +8,6 @@ Get the attribute/property `prop` from `node`, assuming it is of type `from`.
 */
 #define ATTR(from, node, prop) ((from *)(node)->attr)->prop
 
-/*
-Create a new attribute struct of type `from`, assign to `node`, with data
-passed from `...`.
-*/
-#define MAKE_ATTR(from, node, ...) \
-	from *attr; \
-	attr = Malloc(sizeof *attr); \
-	*attr = (from){ \
-		__VA_ARGS__ \
-	}; \
-	(node)->attr = attr
-
 typedef enum {
 	AST_NODE_UNKNOWN,
 
@@ -140,16 +128,4 @@ AstNode *make_ast_node(void);
 void push_ast_node(Token *const, Token **, NodeType, AstNode **);
 
 AstNode *make_ast_tree(const char32_t *const);
-AstNode *make_ast_tree_(Token *, unsigned, Token **);
 void free_ast_tree(AstNode *);
-void free_ast_tree_(AstNode *);
-
-_Bool is_value(const Token *const);
-
-/*
-Compare a variable number of token types stored in `...` agains each
-successive token in `token`.
-*/
-#define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
-
-_Bool ast_token_cmp(Token *, ...);

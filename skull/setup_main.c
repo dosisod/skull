@@ -18,6 +18,13 @@
 
 #define DIE(x) fprintf(stderr, "skull: %s\n", x); return 1
 
+int build_file(char *);
+
+void generate_llvm(const char *, char *);
+
+char *create_llvm_filename(const char *);
+char *create_llvm_main_func(const char *);
+
 /*
 Actual `main` function, can be called by external programs.
 */

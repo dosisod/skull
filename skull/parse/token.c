@@ -7,6 +7,9 @@
 
 #include "skull/parse/token.h"
 
+_Bool is_whitespace(char32_t);
+_Bool is_quote(char32_t);
+
 //pinch end of current token, setup next token
 #define PINCH_TOKEN \
 	current->end = code; \

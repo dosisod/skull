@@ -7,22 +7,6 @@
 #include "test/skull/parse/token.h"
 #include "test/testing.h"
 
-TEST(is_whitespace, {
-	ASSERT_TRUTHY(is_whitespace(' '));
-	ASSERT_TRUTHY(is_whitespace('\t'));
-	ASSERT_TRUTHY(is_whitespace('\r'));
-	ASSERT_TRUTHY(is_whitespace('\n'));
-	ASSERT_FALSEY(is_whitespace('\v'));
-	ASSERT_FALSEY(is_whitespace('A'));
-})
-
-TEST(is_quote, {
-	ASSERT_TRUTHY(is_quote('\"'));
-	ASSERT_TRUTHY(is_quote('\''));
-	ASSERT_FALSEY(is_quote(U'字'));
-	ASSERT_FALSEY(is_quote('A'));
-})
-
 TEST(tokenize_single_token, {
 	const char32_t *code1 = U"token";
 	const char32_t *code2 = U"token字";
@@ -221,8 +205,6 @@ TEST(tokenize_with_lines_and_columns, {
 })
 
 TEST_SELF(tokenizer,
-	test_is_whitespace,
-	test_is_quote,
 	test_tokenize_single_token,
 	test_tokenize_no_tokens,
 	test_whitespace_between_tokens,

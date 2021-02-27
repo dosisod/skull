@@ -27,25 +27,6 @@ char32_t *c32sdup(const char32_t *const str) {
 }
 
 /*
-Concatenate `s1` and `s2`.
-
-The result of this function must be freed.
-*/
-char32_t *c32scat(const char32_t *const s1, const char32_t *const s2) {
-	const size_t len_s1 = c32slen(s1);
-	const size_t len_s2 = c32slen(s2);
-
-	char32_t *ret;
-	ret = Malloc((len_s1 + len_s2 + 1) * sizeof *ret);
-
-	c32sncpy(ret, s1, len_s1);
-	c32sncpy(ret + len_s1, s2, len_s2 + 1);
-	ret[len_s2 + len_s1] = '\0';
-
-	return ret;
-}
-
-/*
 char32_t equivalent of `strncpy`.
 
 If there is room between the end of `src` and `dest[n]`, fill it with NULL.
@@ -184,24 +165,6 @@ __attribute__((pure)) bool c32sncmp(
 		n--;
 	}
 	return n == 0;
-}
-
-/*
-Return pointer to first occurence of `c` in `str`.
-
-If it cannot be found, NULL is returned instead.
-*/
-__attribute__((pure)) const char32_t *c32schr(
-	const char32_t *str,
-	char32_t c
-) {
-	while (*str) {
-		if (*str == c) {
-			return str;
-		}
-		str++;
-	}
-	return NULL;
 }
 
 /*

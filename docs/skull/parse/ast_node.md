@@ -7,19 +7,6 @@
 > Get the attribute/property `prop` from `node`, assuming it is of type `from`.
 
 ```c
-#define MAKE_ATTR(from, node, ...) \
-	from *attr; \
-	attr = Malloc(sizeof *attr); \
-	*attr = (from){ \
-		__VA_ARGS__ \
-	}; \
-	(node)->attr = attr
-```
-
-> Create a new attribute struct of type `from`, assign to `node`, with data
-> passed from `...`.
-
-```c
 typedef struct AstNode {
 	NodeType type;
 
@@ -115,6 +102,19 @@ typedef struct {
 
 > Compare a variable number of token types stored in `...` agains each
 > successive token in `token`.
+
+```c
+#define MAKE_ATTR(from, node, ...) \
+	from *attr; \
+	attr = Malloc(sizeof *attr); \
+	*attr = (from){ \
+		__VA_ARGS__ \
+	}; \
+	(node)->attr = attr
+```
+
+> Create a new attribute struct of type `from`, assign to `node`, with data
+> passed from `...`.
 
 ```c
 AstNode *make_ast_tree(const char32_t *const code)

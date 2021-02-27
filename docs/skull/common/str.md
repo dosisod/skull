@@ -9,14 +9,6 @@ char32_t *c32sdup(const char32_t *const str)
 > The result of this function must be freed.
 
 ```c
-char32_t *c32scat(const char32_t *const s1, const char32_t *const s2)
-```
-
-> Concatenate `s1` and `s2`.
-> \
-> The result of this function must be freed.
-
-```c
 void c32sncpy(char32_t *dest, const char32_t *src, size_t n)
 ```
 
@@ -59,14 +51,6 @@ __attribute__((pure)) bool c32sncmp(const char32_t *a, const char32_t *b, size_t
 ```
 
 > Compare at most `n` chars of two UTF-32 strings, `a` and `b`.
-
-```c
-__attribute__((pure)) const char32_t *c32schr(const char32_t *str, char32_t c)
-```
-
-> Return pointer to first occurence of `c` in `str`.
-> \
-> If it cannot be found, NULL is returned instead.
 
 ```c
 __attribute__((const)) bool c32isxdigit(char32_t c)

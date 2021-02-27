@@ -52,14 +52,6 @@ TEST(c32sdup, {
 	free(str);
 })
 
-TEST(c32scat, {
-	char32_t *str = c32scat(U"hello", U" world!");
-
-	ASSERT_TRUTHY(c32scmp(str, U"hello world!"));
-
-	free(str);
-})
-
 TEST(c32slen, {
 	ASSERT_EQUAL(c32slen(U"abc"), 3);
 	ASSERT_EQUAL(c32slen(U""), 0);
@@ -100,15 +92,6 @@ TEST(c32sncmp, {
 	ASSERT_TRUTHY(c32sncmp(U"ax", U"ay", 1));
 	ASSERT_FALSEY(c32sncmp(U"x", U"y", 1));
 	ASSERT_FALSEY(c32sncmp(U"aaa", U"a", 3));
-})
-
-TEST(c32schr, {
-	const char32_t *str = U"abcdefg";
-
-	ASSERT_EQUAL(c32schr(str, 'a'), str);
-	ASSERT_EQUAL(c32schr(str, 'b'), str + 1);
-	ASSERT_EQUAL(c32schr(str, 'c'), str + 2);
-	ASSERT_FALSEY(c32schr(str, 'x'));
 })
 
 TEST(c32isdigit, {
@@ -153,14 +136,12 @@ TEST_SELF(str,
 	test_c32sncpy,
 	test_c32sncpy_fill_nulls,
 	test_c32sdup,
-	test_c32scat,
 	test_c32slen,
 	test_c32stombs,
 	test_c32stombs_with_null,
 	test_mbstoc32s,
 	test_c32scmp,
 	test_c32sncmp,
-	test_c32schr,
 	test_c32isalnum,
 	test_c32isdigit,
 	test_c32isxdigit
