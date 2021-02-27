@@ -14,7 +14,7 @@ SkullRune eval_rune(const Token *const token) {
 	const char32_t *start = token->begin + 1;
 	const char32_t *copy = start;
 
-	if (iscntrl(*start)) {
+	if (iscntrl((int)*start)) {
 		PANIC(ERR_NO_CONTROL_CHAR, { .tok = token });
 	}
 
