@@ -393,7 +393,7 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	MAKE_ATTR(AstNodeBoolExpr, *node,
+	MAKE_ATTR(AstNodeOper, *node,
 		.lhs = lhs,
 		.oper = oper,
 		.rhs = rhs

@@ -114,15 +114,6 @@ typedef struct {
 	const Token *rhs;
 } AstNodeOper;
 
-/*
-Store data about a conditional expression.
-*/
-typedef struct {
-	const Token *lhs;
-	TokenType oper;
-	const Token *rhs;
-} AstNodeBoolExpr;
-
 AstNode *make_ast_node(void);
 
 void push_ast_node(Token *const, Token **, NodeType, AstNode **);

@@ -87,16 +87,6 @@ typedef struct {
 > Store special data about operator related nodes.
 
 ```c
-typedef struct {
-	const Token *lhs;
-	TokenType oper;
-	const Token *rhs;
-}
-```
-
-> Store data about a conditional expression.
-
-```c
 #define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
 ```
 

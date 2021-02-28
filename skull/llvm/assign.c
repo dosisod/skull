@@ -124,9 +124,9 @@ Expr node_to_expr(
 Build LLVM code to handle boolean expressions from `node`.
 */
 Expr gen_expr_bool_expr(const AstNode *const node) {
-	const Token *const lhs = ATTR(AstNodeBoolExpr, node, lhs);
-	const TokenType oper = ATTR(AstNodeBoolExpr, node, oper);
-	const Token *const rhs = ATTR(AstNodeBoolExpr, node, rhs);
+	const Token *const lhs = ATTR(AstNodeOper, node, lhs);
+	const TokenType oper = ATTR(AstNodeOper, node, oper);
+	const Token *const rhs = ATTR(AstNodeOper, node, rhs);
 
 	if (oper == TOKEN_OPER_NOT) {
 		const Expr rhs_expr = token_to_expr(rhs, NULL);
