@@ -58,70 +58,17 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 	return token_to_simple_expr(token);
 }
 
+const Type *var_def_node_to_type(const AstNode *);
+
 /*
 Make and add a variable from `node` to Skull state.
 */
 Variable *node_to_var(const AstNode *const node) {
 	const Token *token = ATTR(AstNodeVarDef, node, name_tok);
-
-	char32_t *const name = token_str(token);
-	Variable *var = NULL;
-
 	const Type *type = NULL;
 
 	if (ATTR(AstNodeVarDef, node, is_implicit)) {
-		const TokenType token_type = node->next->token->type;
-		const NodeType node_type = node->next->type;
-
-		if (token_type == TOKEN_BOOL_CONST ||
-			node_type == AST_NODE_BOOL_EXPR
-		) {
-			type = &TYPE_BOOL;
-		}
-		else if (token_type == TOKEN_INT_CONST) {
-			type = &TYPE_INT;
-		}
-		else if (token_type == TOKEN_FLOAT_CONST) {
-			type = &TYPE_FLOAT;
-		}
-		else if (token_type == TOKEN_RUNE_CONST) {
-			type = &TYPE_RUNE;
-		}
-		else if (token_type == TOKEN_STR_CONST) {
-			type = &TYPE_STR;
-		}
-		else if (node_type == AST_NODE_FUNCTION) {
-			char *const func_name = token_mbs_str(node->next->token);
-
-			const FunctionDeclaration *const function = ht_get(
-				SKULL_STATE.function_decls,
-				func_name
-			);
-
-			free(func_name);
-
-			if (!function) {
-				PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
-			}
-
-			type = function->return_type;
-			if (!type) {
-				PANIC(ERR_NO_VOID_ASSIGN, {
-					.tok = node->next->token,
-					.str = name
-				});
-			}
-		}
-		else if (node_type == AST_NODE_IDENTIFIER ||
-			(node_type == AST_NODE_OPER_EXPR &&
-			token_type == TOKEN_IDENTIFIER)
-		) {
-			type = scope_find_var(node->next->token)->type;
-		}
-		else {
-			free(name);
-			PANIC(ERR_INVALID_INPUT, { .tok = node->next->token });
-		}
+		type = var_def_node_to_type(node);
 	}
 	else {
 		char *const type_name = token_mbs_str(token->next);
@@ -134,7 +81,9 @@ Variable *node_to_var(const AstNode *const node) {
 		}
 	}
 
-	var = make_variable(
+	char32_t *const name = token_str(token);
+
+	Variable *var = make_variable(
 		type,
 		name,
 		ATTR(AstNodeVarDef, node, is_const)
@@ -147,6 +96,58 @@ Variable *node_to_var(const AstNode *const node) {
 	free_variable(var);
 
 	PANIC(ERR_VAR_ALREADY_DEFINED, { .tok = token });
+}
+
+/*
+Return a variable type based on `node`.
+*/
+const Type *var_def_node_to_type(const AstNode *node) {
+	const TokenType token_type = node->next->token->type;
+	const NodeType node_type = node->next->type;
+
+	if (token_type == TOKEN_BOOL_CONST || node_type == AST_NODE_BOOL_EXPR) {
+		return &TYPE_BOOL;
+	}
+	if (token_type == TOKEN_INT_CONST) {
+		return &TYPE_INT;
+	}
+	if (token_type == TOKEN_FLOAT_CONST) {
+		return &TYPE_FLOAT;
+	}
+	if (token_type == TOKEN_RUNE_CONST) {
+		return &TYPE_RUNE;
+	}
+	if (token_type == TOKEN_STR_CONST) {
+		return &TYPE_STR;
+	}
+	if (node_type == AST_NODE_FUNCTION) {
+		char *const func_name = token_mbs_str(node->next->token);
+
+		const FunctionDeclaration *const function = ht_get(
+			SKULL_STATE.function_decls,
+			func_name
+		);
+		free(func_name);
+
+		if (!function) {
+			PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
+		}
+
+		const Type *type = function->return_type;
+		if (!type) {
+			PANIC(ERR_NO_VOID_ASSIGN, {
+				.tok = node->next->token,
+				.real = token_mbs_str(node->token)
+			});
+		}
+
+		return type;
+	}
+	if (token_type == TOKEN_IDENTIFIER) {
+		return scope_find_var(node->next->token)->type;
+	}
+
+	PANIC(ERR_INVALID_INPUT, { .tok = node->next->token });
 }
 
 /*

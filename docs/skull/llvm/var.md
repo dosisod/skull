@@ -15,6 +15,12 @@ Variable *node_to_var(const AstNode *const node)
 > Make and add a variable from `node` to Skull state.
 
 ```c
+const Type *var_def_node_to_type(const AstNode *node)
+```
+
+> Return a variable type based on `node`.
+
+```c
 Expr token_to_simple_expr_typed(const Type *const type, const Token *const token)
 ```
 
