@@ -58,6 +58,12 @@ Expr gen_expr_pow(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for taking `lhs` to the power of `rhs`.
 
 ```c
+Expr gen_expr_not(const Type *type, const Token *rhs)
+```
+
+> Return expression for result of not operator for `rhs`.
+
+```c
 Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 

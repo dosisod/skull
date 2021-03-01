@@ -197,6 +197,33 @@ Expr gen_expr_pow(
 	);
 }
 
+/*
+Return expression for result of not operator for `rhs`.
+*/
+Expr gen_expr_not(const Type *type, const Token *rhs) {
+	if (type && type != &TYPE_BOOL) {
+		PANIC(ERR_EXPECTED_SAME_TYPE,
+			{ .tok = rhs, .type = type },
+			{ .type = &TYPE_BOOL }
+		);
+	}
+
+	const Expr rhs_expr = token_to_expr(rhs, NULL);
+
+	if (rhs_expr.type != &TYPE_BOOL) {
+		PANIC(ERR_NON_BOOL_EXPR, { .tok = rhs });
+	}
+
+	return (Expr){
+		.llvm_value = LLVMBuildNot(
+			SKULL_STATE.builder,
+			rhs_expr.llvm_value,
+			""
+		),
+		.type = &TYPE_BOOL
+	};
+}
+
 Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 
 /*

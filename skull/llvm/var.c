@@ -105,7 +105,25 @@ const Type *var_def_node_to_type(const AstNode *node) {
 	const TokenType token_type = node->next->token->type;
 	const NodeType node_type = node->next->type;
 
-	if (token_type == TOKEN_BOOL_CONST || node_type == AST_NODE_BOOL_EXPR) {
+	if (node_type == AST_NODE_OPER_EXPR) {
+		const TokenType oper = ATTR(AstNodeOper, node->next, oper);
+
+		if (oper == TOKEN_OPER_NOT ||
+			oper == TOKEN_OPER_IS ||
+			oper == TOKEN_OPER_ISNT ||
+			oper == TOKEN_OPER_LESS_THAN ||
+			oper == TOKEN_OPER_GTR_THAN ||
+			oper == TOKEN_OPER_LESS_THAN_EQ ||
+			oper == TOKEN_OPER_GTR_THAN_EQ ||
+			oper == TOKEN_OPER_AND ||
+			oper == TOKEN_OPER_OR ||
+			oper == TOKEN_OPER_XOR
+		) {
+			return &TYPE_BOOL;
+		}
+	}
+
+	if (token_type == TOKEN_BOOL_CONST) {
 		return &TYPE_BOOL;
 	}
 	if (token_type == TOKEN_INT_CONST) {

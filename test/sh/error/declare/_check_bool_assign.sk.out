@@ -1,0 +1,1 @@
+./test/sh/error/declare/check_bool_assign.sk: Compilation error: line 1 column 14: expected type "Int", got "Bool"

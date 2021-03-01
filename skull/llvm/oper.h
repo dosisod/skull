@@ -14,6 +14,7 @@ Operation gen_expr_sub;
 Operation gen_expr_mult;
 Operation gen_expr_div;
 Operation gen_expr_mod;
+Expr gen_expr_not(const Type *, const Token *);
 Operation gen_expr_is;
 Operation gen_expr_is_not;
 Operation gen_expr_less_than;

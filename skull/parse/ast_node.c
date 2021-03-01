@@ -400,7 +400,7 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 	);
 
 	*_token = token;
-	push_ast_node(*_token, last, AST_NODE_BOOL_EXPR, node);
+	push_ast_node(*_token, last, AST_NODE_OPER_EXPR, node);
 
 	return true;
 }

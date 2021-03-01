@@ -52,8 +52,6 @@ void gen_stmt_var_assign(AstNode **node) {
 	*node = (*node)->next;
 }
 
-Expr gen_expr_bool_expr(const AstNode *const);
-
 Expr gen_expr_identifier(
 	const Type *const,
 	const AstNode *const,
@@ -102,9 +100,36 @@ Expr node_to_expr(
 		else if (token_type == TOKEN_OPER_RSHIFT) {
 			expr = gen_expr_oper(type, node, &gen_expr_rshift);
 		}
-	}
-	else if (node->type == AST_NODE_BOOL_EXPR) {
-		expr = gen_expr_bool_expr(node);
+		else if (token_type == TOKEN_OPER_NOT) {
+			expr = gen_expr_not(type, ATTR(AstNodeOper, node, rhs));
+		}
+		else if (token_type == TOKEN_OPER_IS) {
+			expr = gen_expr_oper(type, node, gen_expr_is);
+		}
+		else if (token_type == TOKEN_OPER_ISNT) {
+			expr = gen_expr_oper(type, node, gen_expr_is_not);
+		}
+		else if (token_type == TOKEN_OPER_LESS_THAN) {
+			expr = gen_expr_oper(type, node, gen_expr_less_than);
+		}
+		else if (token_type == TOKEN_OPER_GTR_THAN) {
+			expr = gen_expr_oper(type, node, gen_expr_gtr_than);
+		}
+		else if (token_type == TOKEN_OPER_LESS_THAN_EQ) {
+			expr = gen_expr_oper(type, node, gen_expr_less_than_eq);
+		}
+		else if (token_type == TOKEN_OPER_GTR_THAN_EQ) {
+			expr = gen_expr_oper(type, node, gen_expr_gtr_than_eq);
+		}
+		else if (token_type == TOKEN_OPER_AND) {
+			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_and);
+		}
+		else if (token_type == TOKEN_OPER_OR) {
+			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_or);
+		}
+		else if (token_type == TOKEN_OPER_XOR) {
+			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_xor);
+		}
 	}
 	else if (node->type == AST_NODE_FUNCTION) {
 		expr = gen_expr_function_call(node, type);
@@ -118,97 +143,6 @@ Expr node_to_expr(
 	}
 
 	return expr;
-}
-
-/*
-Build LLVM code to handle boolean expressions from `node`.
-*/
-Expr gen_expr_bool_expr(const AstNode *const node) {
-	const Token *const lhs = ATTR(AstNodeOper, node, lhs);
-	const TokenType oper = ATTR(AstNodeOper, node, oper);
-	const Token *const rhs = ATTR(AstNodeOper, node, rhs);
-
-	if (oper == TOKEN_OPER_NOT) {
-		const Expr rhs_expr = token_to_expr(rhs, NULL);
-
-		if (rhs_expr.type != &TYPE_BOOL) {
-			PANIC(ERR_NON_BOOL_EXPR, { .tok = rhs });
-		}
-
-		return (Expr){
-			.llvm_value = LLVMBuildNot(
-				SKULL_STATE.builder,
-				rhs_expr.llvm_value,
-				""
-			),
-			.type = &TYPE_BOOL
-		};
-	}
-
-	const Expr lhs_expr = token_to_expr(lhs, NULL);
-	const Expr rhs_expr = token_to_expr(rhs, NULL);
-
-	if (lhs_expr.type != rhs_expr.type) {
-		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = rhs, .type = lhs_expr.type },
-			{ .type = rhs_expr.type }
-		);
-	}
-
-	Operation *func = NULL;
-
-	if (oper == TOKEN_OPER_IS) {
-		func = gen_expr_is;
-	}
-	else if (oper == TOKEN_OPER_ISNT) {
-		func = gen_expr_is_not;
-	}
-	else if (oper == TOKEN_OPER_LESS_THAN) {
-		func = gen_expr_less_than;
-	}
-	else if (oper == TOKEN_OPER_GTR_THAN) {
-		func = gen_expr_gtr_than;
-	}
-	else if (oper == TOKEN_OPER_LESS_THAN_EQ) {
-		func = gen_expr_less_than_eq;
-	}
-	else if (oper == TOKEN_OPER_GTR_THAN_EQ) {
-		func = gen_expr_gtr_than_eq;
-	}
-	else {
-		if (lhs_expr.type != &TYPE_BOOL) {
-			PANIC(ERR_BOOL_ONLY, { .tok = lhs });
-		}
-
-		if (oper == TOKEN_OPER_AND) {
-			func = gen_expr_and;
-		}
-		else if (oper == TOKEN_OPER_OR) {
-			func = gen_expr_or;
-		}
-		else if (oper == TOKEN_OPER_XOR) {
-			func = gen_expr_xor;
-		}
-	}
-
-	LLVMValueRef value = NULL;
-
-	if (func) {
-		value = func(
-			lhs_expr.type,
-			lhs_expr.llvm_value,
-			rhs_expr.llvm_value
-		).llvm_value;
-	}
-
-	if (!value) {
-		PANIC(ERR_NOT_COMPARIBLE, { .tok = lhs });
-	}
-
-	return (Expr){
-		.llvm_value = value,
-		.type = &TYPE_BOOL
-	};
 }
 
 /*
