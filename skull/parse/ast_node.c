@@ -176,6 +176,30 @@ bool is_ast_var_assign(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
+ExprOperType token_type_to_expr_oper_type(TokenType type) {
+	switch (type) {
+		case TOKEN_OPER_PLUS: return EXPR_ADD;
+		case TOKEN_OPER_MINUS: return EXPR_SUB;
+		case TOKEN_OPER_MULT: return EXPR_MULT;
+		case TOKEN_OPER_DIV: return EXPR_DIV;
+		case TOKEN_OPER_MOD: return EXPR_MOD;
+		case TOKEN_OPER_LSHIFT: return EXPR_LSHIFT;
+		case TOKEN_OPER_RSHIFT: return EXPR_RSHIFT;
+		case TOKEN_OPER_POW: return EXPR_POW;
+		case TOKEN_OPER_IS: return EXPR_IS;
+		case TOKEN_OPER_ISNT: return EXPR_ISNT;
+		case TOKEN_OPER_LESS_THAN: return EXPR_LESS_THAN;
+		case TOKEN_OPER_GTR_THAN: return EXPR_GTR_THAN;
+		case TOKEN_OPER_LESS_THAN_EQ: return EXPR_LESS_THAN_EQ;
+		case TOKEN_OPER_GTR_THAN_EQ: return EXPR_GTR_THAN_EQ;
+		case TOKEN_OPER_AND: return EXPR_AND;
+		case TOKEN_OPER_XOR: return EXPR_XOR;
+		case TOKEN_OPER_OR: return EXPR_OR;
+		case TOKEN_OPER_NOT: return EXPR_NOT;
+		default: return EXPR_UNKNOWN;
+	}
+}
+
 bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
@@ -188,23 +212,15 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	const TokenType token_type = token->next->type;
+	const ExprOperType oper = token_type_to_expr_oper_type(token->next->type);
 
-	if (!(token_type == TOKEN_OPER_PLUS ||
-		token_type == TOKEN_OPER_MINUS ||
-		token_type == TOKEN_OPER_MULT ||
-		token_type == TOKEN_OPER_DIV ||
-		token_type == TOKEN_OPER_MOD ||
-		token_type == TOKEN_OPER_LSHIFT ||
-		token_type == TOKEN_OPER_RSHIFT ||
-		token_type == TOKEN_OPER_POW
-	)) {
+	if (oper == EXPR_UNKNOWN) {
 		return false;
 	}
 
 	MAKE_ATTR(AstNodeOper, *node,
 		.lhs = token,
-		.oper = token_type,
+		.oper = oper,
 		.rhs = token->next->next
 	);
 
@@ -352,11 +368,15 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
 	Token *lhs = NULL;
-	TokenType oper = TOKEN_UNKNOWN;
 	Token *rhs = NULL;
 
-	if (token->type == TOKEN_OPER_NOT && IS_BOOL_LIKE(token->next)) {
-		oper = TOKEN_OPER_NOT;
+	ExprOperType oper = token_type_to_expr_oper_type(token->type);
+	ExprOperType oper_next = EXPR_UNKNOWN;
+	if (token->next) {
+		oper_next = token_type_to_expr_oper_type(token->next->type);
+	}
+
+	if (oper == EXPR_NOT && token->next && IS_BOOL_LIKE(token->next)) {
 		rhs = token->next;
 		token = token->next;
 
@@ -367,20 +387,20 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 	else if (
 		is_value(token) &&
 		token->next &&
-		(token->next->type == TOKEN_OPER_IS ||
-		token->next->type == TOKEN_OPER_ISNT ||
-		token->next->type == TOKEN_OPER_LESS_THAN ||
-		token->next->type == TOKEN_OPER_GTR_THAN ||
-		token->next->type == TOKEN_OPER_LESS_THAN_EQ ||
-		token->next->type == TOKEN_OPER_GTR_THAN_EQ ||
-		token->next->type == TOKEN_OPER_AND ||
-		token->next->type == TOKEN_OPER_XOR ||
-		token->next->type == TOKEN_OPER_OR) &&
+		(oper_next == EXPR_IS ||
+		oper_next == EXPR_ISNT ||
+		oper_next == EXPR_LESS_THAN ||
+		oper_next == EXPR_GTR_THAN ||
+		oper_next == EXPR_LESS_THAN_EQ ||
+		oper_next == EXPR_GTR_THAN_EQ ||
+		oper_next == EXPR_AND ||
+		oper_next == EXPR_XOR ||
+		oper_next == EXPR_OR) &&
 		token->next->next &&
 		is_value(token->next->next)
 	) {
 		lhs = token;
-		oper = token->next->type;
+		oper = oper_next;
 
 		rhs = token->next->next;
 		token = rhs;

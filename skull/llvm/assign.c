@@ -71,63 +71,63 @@ Expr node_to_expr(
 	Expr expr = {0};
 
 	if (node->type == AST_NODE_OPER_EXPR) {
-		const TokenType token_type = ATTR(AstNodeOper, node, oper);
+		const ExprOperType token_type = ATTR(AstNodeOper, node, oper);
 
 		if (!token_type) {
 			expr = gen_expr_identifier(type, node, var);
 		}
-		if (token_type == TOKEN_OPER_PLUS) {
+		if (token_type == EXPR_ADD) {
 			expr = gen_expr_oper(type, node, &gen_expr_add);
 		}
-		else if (token_type == TOKEN_OPER_MINUS) {
+		else if (token_type == EXPR_SUB) {
 			expr = gen_expr_oper(type, node, &gen_expr_sub);
 		}
-		else if (token_type == TOKEN_OPER_MULT) {
+		else if (token_type == EXPR_MULT) {
 			expr = gen_expr_oper(type, node, &gen_expr_mult);
 		}
-		else if (token_type == TOKEN_OPER_DIV) {
+		else if (token_type == EXPR_DIV) {
 			expr = gen_expr_oper(type, node, &gen_expr_div);
 		}
-		else if (token_type == TOKEN_OPER_MOD) {
+		else if (token_type == EXPR_MOD) {
 			expr = gen_expr_oper(type, node, &gen_expr_mod);
 		}
-		else if (token_type == TOKEN_OPER_LSHIFT) {
+		else if (token_type == EXPR_LSHIFT) {
 			expr = gen_expr_oper(type, node, &gen_expr_lshift);
 		}
-		else if (token_type == TOKEN_OPER_POW) {
+		else if (token_type == EXPR_POW) {
 			expr = gen_expr_oper(type, node, &gen_expr_pow);
 		}
-		else if (token_type == TOKEN_OPER_RSHIFT) {
+		else if (token_type == EXPR_RSHIFT) {
 			expr = gen_expr_oper(type, node, &gen_expr_rshift);
 		}
-		else if (token_type == TOKEN_OPER_NOT) {
+		else if (token_type == EXPR_NOT) {
 			expr = gen_expr_not(type, ATTR(AstNodeOper, node, rhs));
 		}
-		else if (token_type == TOKEN_OPER_IS) {
+		else if (token_type == EXPR_IS) {
 			expr = gen_expr_oper(type, node, gen_expr_is);
 		}
-		else if (token_type == TOKEN_OPER_ISNT) {
+		else if (token_type == EXPR_ISNT) {
 			expr = gen_expr_oper(type, node, gen_expr_is_not);
 		}
-		else if (token_type == TOKEN_OPER_LESS_THAN) {
+		else if (token_type == EXPR_LESS_THAN) {
 			expr = gen_expr_oper(type, node, gen_expr_less_than);
 		}
-		else if (token_type == TOKEN_OPER_GTR_THAN) {
+		else if (token_type == EXPR_GTR_THAN) {
 			expr = gen_expr_oper(type, node, gen_expr_gtr_than);
 		}
-		else if (token_type == TOKEN_OPER_LESS_THAN_EQ) {
+		else if (token_type == EXPR_LESS_THAN_EQ) {
 			expr = gen_expr_oper(type, node, gen_expr_less_than_eq);
 		}
-		else if (token_type == TOKEN_OPER_GTR_THAN_EQ) {
+		else if (token_type == EXPR_GTR_THAN_EQ) {
 			expr = gen_expr_oper(type, node, gen_expr_gtr_than_eq);
 		}
-		else if (token_type == TOKEN_OPER_AND) {
+		else if (token_type == EXPR_AND) {
 			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_and);
 		}
-		else if (token_type == TOKEN_OPER_OR) {
+		else if (token_type == EXPR_OR) {
 			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_or);
 		}
-		else if (token_type == TOKEN_OPER_XOR) {
+		else if (token_type == EXPR_XOR) {
 			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_xor);
 		}
 	}

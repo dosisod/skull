@@ -106,18 +106,18 @@ const Type *var_def_node_to_type(const AstNode *node) {
 	const NodeType node_type = node->next->type;
 
 	if (node_type == AST_NODE_OPER_EXPR) {
-		const TokenType oper = ATTR(AstNodeOper, node->next, oper);
+		const ExprOperType oper = ATTR(AstNodeOper, node->next, oper);
 
-		if (oper == TOKEN_OPER_NOT ||
-			oper == TOKEN_OPER_IS ||
-			oper == TOKEN_OPER_ISNT ||
-			oper == TOKEN_OPER_LESS_THAN ||
-			oper == TOKEN_OPER_GTR_THAN ||
-			oper == TOKEN_OPER_LESS_THAN_EQ ||
-			oper == TOKEN_OPER_GTR_THAN_EQ ||
-			oper == TOKEN_OPER_AND ||
-			oper == TOKEN_OPER_OR ||
-			oper == TOKEN_OPER_XOR
+		if (oper == EXPR_NOT ||
+			oper == EXPR_IS ||
+			oper == EXPR_ISNT ||
+			oper == EXPR_LESS_THAN ||
+			oper == EXPR_GTR_THAN ||
+			oper == EXPR_LESS_THAN_EQ ||
+			oper == EXPR_GTR_THAN_EQ ||
+			oper == EXPR_AND ||
+			oper == EXPR_OR ||
+			oper == EXPR_XOR
 		) {
 			return &TYPE_BOOL;
 		}

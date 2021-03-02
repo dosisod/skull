@@ -102,12 +102,35 @@ typedef struct {
 	unsigned short num_values;
 } AstNodeFunctionCall;
 
+typedef enum {
+	EXPR_UNKNOWN,
+	EXPR_ADD,
+	EXPR_SUB,
+	EXPR_MULT,
+	EXPR_DIV,
+	EXPR_MOD,
+	EXPR_LSHIFT,
+	EXPR_RSHIFT,
+	EXPR_POW,
+	EXPR_NOT,
+	EXPR_IS,
+	EXPR_ISNT,
+	EXPR_LESS_THAN,
+	EXPR_GTR_THAN,
+	EXPR_LESS_THAN_EQ,
+	EXPR_GTR_THAN_EQ,
+	EXPR_AND,
+	EXPR_OR,
+	EXPR_XOR,
+	EXPR_IDENTIFIER
+} ExprOperType;
+
 /*
 Store special data about operator related nodes.
 */
 typedef struct {
 	const Token *lhs;
-	TokenType oper;
+	ExprOperType oper;
 	const Token *rhs;
 } AstNodeOper;
 
