@@ -11,8 +11,6 @@ Get the attribute/property `prop` from `node`, assuming it is of type `from`.
 typedef enum {
 	AST_NODE_UNKNOWN,
 
-	AST_NODE_IDENTIFIER,
-
 	AST_NODE_TYPE_ALIAS,
 
 	AST_NODE_VAR_DEF,

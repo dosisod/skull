@@ -562,7 +562,9 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 		gen_func_call(_token, last, node);
 	}
 	else if (token->type == TOKEN_IDENTIFIER) {
-		push_ast_node(token, last, AST_NODE_IDENTIFIER, node);
+		push_ast_node(token, last, AST_NODE_OPER_EXPR, node);
+
+		MAKE_ATTR(AstNodeOper, (*node)->last, 0);
 	}
 	else if (is_value(token)) {
 		push_ast_node(token, last, AST_NODE_CONST, node);

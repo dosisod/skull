@@ -70,12 +70,12 @@ Expr node_to_expr(
 ) {
 	Expr expr = {0};
 
-	if (node->type == AST_NODE_IDENTIFIER) {
-		expr = gen_expr_identifier(type, node, var);
-	}
-	else if (node->type == AST_NODE_OPER_EXPR) {
+	if (node->type == AST_NODE_OPER_EXPR) {
 		const TokenType token_type = ATTR(AstNodeOper, node, oper);
 
+		if (!token_type) {
+			expr = gen_expr_identifier(type, node, var);
+		}
 		if (token_type == TOKEN_OPER_PLUS) {
 			expr = gen_expr_oper(type, node, &gen_expr_add);
 		}
