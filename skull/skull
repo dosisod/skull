@@ -48,7 +48,7 @@ base=$(dirname "$filename")/.$(basename "$filename")
 }
 
 # mimic -E option in cc (print LLVM IR output to screen)
-[ ! -z "$PREPRO" ] &&
+[ -n "$PREPRO" ] &&
 	cat "$base.ll" &&
 	rm "$base.ll" &&
 	exit 0

@@ -16,9 +16,6 @@ jobs:
         clang-tidy-10 --version
         ./.github/workflows/clang_tidy.sh
 
-    - name: Install shellcheck
-      run: sudo apt install shellcheck
-
     - name: Run Shellcheck
       run: |
         shellcheck --version
