@@ -587,7 +587,11 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 		MAKE_ATTR(AstNodeOper, (*node)->last, 0);
 	}
 	else if (is_value(token)) {
-		push_ast_node(token, last, AST_NODE_CONST, node);
+		push_ast_node(token, last, AST_NODE_OPER_EXPR, node);
+
+		MAKE_ATTR(AstNodeOper, (*node)->last,
+			.oper = EXPR_CONST
+		);
 	}
 	else {
 		return false;

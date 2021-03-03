@@ -130,12 +130,12 @@ Expr node_to_expr(
 		else if (token_type == EXPR_XOR) {
 			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_xor);
 		}
+		else if (token_type == EXPR_CONST) {
+			expr = token_to_simple_expr_typed(type, node->token);
+		}
 	}
 	else if (node->type == AST_NODE_FUNCTION) {
 		expr = gen_expr_function_call(node, type);
-	}
-	else if (node->type == AST_NODE_CONST) {
-		expr = token_to_simple_expr_typed(type, node->token);
 	}
 
 	if (!expr.llvm_value) {

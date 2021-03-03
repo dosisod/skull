@@ -29,8 +29,6 @@ typedef enum {
 	AST_NODE_ELSE,
 	AST_NODE_WHILE,
 
-	AST_NODE_CONST,
-
 	AST_NODE_COMMENT
 } NodeType;
 
@@ -122,7 +120,8 @@ typedef enum {
 	EXPR_AND,
 	EXPR_OR,
 	EXPR_XOR,
-	EXPR_IDENTIFIER
+	EXPR_IDENTIFIER,
+	EXPR_CONST
 } ExprOperType;
 
 /*

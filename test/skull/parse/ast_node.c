@@ -96,30 +96,6 @@ TEST(make_ast_tree_if_with_var, {
 	free_ast_tree(node);
 })
 
-TEST(make_ast_tree_int_const, {
-	TEST_AST_TREE(U"1234", AST_NODE_CONST, 0, 4);
-})
-
-TEST(make_ast_tree_float_const, {
-	TEST_AST_TREE(U"3.1415", AST_NODE_CONST, 0, 6);
-})
-
-TEST(make_ast_tree_bool_const_true, {
-	TEST_AST_TREE(U"true", AST_NODE_CONST, 0, 4);
-})
-
-TEST(make_ast_tree_bool_const_false, {
-	TEST_AST_TREE(U"false", AST_NODE_CONST, 0, 5);
-})
-
-TEST(make_ast_tree_rune_const, {
-	TEST_AST_TREE(U"'x'", AST_NODE_CONST, 0, 3);
-})
-
-TEST(make_ast_tree_str_const, {
-	TEST_AST_TREE(U"\"abc\"", AST_NODE_CONST, 0, 5);
-})
-
 TEST(make_ast_tree_comment, {
 	TEST_AST_TREE(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
 })
@@ -141,12 +117,6 @@ TEST_SELF(ast_node,
 	test_make_ast_tree_return,
 	test_make_ast_tree_if,
 	test_make_ast_tree_if_with_var,
-	test_make_ast_tree_int_const,
-	test_make_ast_tree_float_const,
-	test_make_ast_tree_bool_const_true,
-	test_make_ast_tree_bool_const_false,
-	test_make_ast_tree_rune_const,
-	test_make_ast_tree_str_const,
 	test_make_ast_tree_comment,
 	test_free_ast_tree
 )
