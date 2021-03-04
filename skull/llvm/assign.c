@@ -70,8 +70,8 @@ Expr node_to_expr(
 ) {
 	Expr expr = {0};
 
-	if (node->type == AST_NODE_OPER_EXPR) {
-		const ExprOperType token_type = ATTR(AstNodeOper, node, oper);
+	if (node->type == AST_NODE_EXPR) {
+		const ExprType token_type = ATTR(AstNodeExpr, node, oper);
 
 		if (!token_type) {
 			expr = gen_expr_identifier(type, node, var);
@@ -101,7 +101,7 @@ Expr node_to_expr(
 			expr = gen_expr_oper(type, node, &gen_expr_rshift);
 		}
 		else if (token_type == EXPR_NOT) {
-			expr = gen_expr_not(type, ATTR(AstNodeOper, node, rhs));
+			expr = gen_expr_not(type, ATTR(AstNodeExpr, node, rhs));
 		}
 		else if (token_type == EXPR_IS) {
 			expr = gen_expr_oper(type, node, gen_expr_is);

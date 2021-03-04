@@ -105,8 +105,8 @@ const Type *var_def_node_to_type(const AstNode *node) {
 	const TokenType token_type = node->next->token->type;
 	const NodeType node_type = node->next->type;
 
-	if (node_type == AST_NODE_OPER_EXPR) {
-		const ExprOperType oper = ATTR(AstNodeOper, node->next, oper);
+	if (node_type == AST_NODE_EXPR) {
+		const ExprType oper = ATTR(AstNodeExpr, node->next, oper);
 
 		if (oper == EXPR_NOT ||
 			oper == EXPR_IS ||

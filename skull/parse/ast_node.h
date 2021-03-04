@@ -20,7 +20,7 @@ typedef enum {
 	AST_NODE_FUNCTION,
 	AST_NODE_FUNCTION_PROTO,
 
-	AST_NODE_OPER_EXPR,
+	AST_NODE_EXPR,
 
 	AST_NODE_RETURN,
 	AST_NODE_UNREACHABLE,
@@ -122,16 +122,16 @@ typedef enum {
 	EXPR_XOR,
 	EXPR_IDENTIFIER,
 	EXPR_CONST
-} ExprOperType;
+} ExprType;
 
 /*
 Store special data about operator related nodes.
 */
 typedef struct {
 	const Token *lhs;
-	ExprOperType oper;
 	const Token *rhs;
-} AstNodeOper;
+	ExprType oper;
+} AstNodeExpr;
 
 AstNode *make_ast_node(void);
 

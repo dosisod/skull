@@ -79,8 +79,8 @@ typedef struct {
 ```c
 typedef struct {
 	const Token *lhs;
-	ExprOperType oper;
 	const Token *rhs;
+	ExprType oper;
 }
 ```
 

@@ -176,7 +176,7 @@ bool is_ast_var_assign(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
-ExprOperType token_type_to_expr_oper_type(TokenType type) {
+ExprType token_type_to_expr_oper_type(TokenType type) {
 	switch (type) {
 		case TOKEN_OPER_PLUS: return EXPR_ADD;
 		case TOKEN_OPER_MINUS: return EXPR_SUB;
@@ -212,20 +212,20 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	const ExprOperType oper = token_type_to_expr_oper_type(token->next->type);
+	const ExprType oper = token_type_to_expr_oper_type(token->next->type);
 
 	if (oper == EXPR_UNKNOWN) {
 		return false;
 	}
 
-	MAKE_ATTR(AstNodeOper, *node,
+	MAKE_ATTR(AstNodeExpr, *node,
 		.lhs = token,
 		.oper = oper,
 		.rhs = token->next->next
 	);
 
 	*_token = token->next->next;
-	push_ast_node(*_token, last, AST_NODE_OPER_EXPR, node);
+	push_ast_node(*_token, last, AST_NODE_EXPR, node);
 	return true;
 }
 
@@ -370,8 +370,8 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 	Token *lhs = NULL;
 	Token *rhs = NULL;
 
-	ExprOperType oper = token_type_to_expr_oper_type(token->type);
-	ExprOperType oper_next = EXPR_UNKNOWN;
+	ExprType oper = token_type_to_expr_oper_type(token->type);
+	ExprType oper_next = EXPR_UNKNOWN;
 	if (token->next) {
 		oper_next = token_type_to_expr_oper_type(token->next->type);
 	}
@@ -413,14 +413,14 @@ bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	MAKE_ATTR(AstNodeOper, *node,
+	MAKE_ATTR(AstNodeExpr, *node,
 		.lhs = lhs,
 		.oper = oper,
 		.rhs = rhs
 	);
 
 	*_token = token;
-	push_ast_node(*_token, last, AST_NODE_OPER_EXPR, node);
+	push_ast_node(*_token, last, AST_NODE_EXPR, node);
 
 	return true;
 }
@@ -582,14 +582,14 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 		gen_func_call(_token, last, node);
 	}
 	else if (token->type == TOKEN_IDENTIFIER) {
-		push_ast_node(token, last, AST_NODE_OPER_EXPR, node);
+		push_ast_node(token, last, AST_NODE_EXPR, node);
 
-		MAKE_ATTR(AstNodeOper, (*node)->last, 0);
+		MAKE_ATTR(AstNodeExpr, (*node)->last, 0);
 	}
 	else if (is_value(token)) {
-		push_ast_node(token, last, AST_NODE_OPER_EXPR, node);
+		push_ast_node(token, last, AST_NODE_EXPR, node);
 
-		MAKE_ATTR(AstNodeOper, (*node)->last,
+		MAKE_ATTR(AstNodeExpr, (*node)->last,
 			.oper = EXPR_CONST
 		);
 	}
