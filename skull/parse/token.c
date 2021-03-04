@@ -75,7 +75,11 @@ Token *tokenize(const char32_t *code) {
 			}
 		}
 		else if (quote) {
-			if (*code == quote && code[-1] != '\\') {
+			if (*code == '\\' && (code[1] == '\\' || code[1] == quote)) {
+				code += 2;
+				continue;
+			}
+			if (*code == quote) {
 				quote = false;
 			}
 		}
