@@ -20,6 +20,7 @@
 #define ERR_MISSING_DECLARATION "function \"%s\" missing declaration\n"
 #define ERR_MISSING_BLOCK "%s statement must be followed by code block\n"
 #define ERR_NO_CLOSING_COMMENT "expected closing \"#}\" for block comment\n"
+#define ERR_NO_CLOSING_QUOTE "expected closing quote\n"
 #define ERR_NO_VOID_ASSIGN \
 	"function returning type void cannot be assigned to variable \"%s\"\n"
 #define ERR_INVALID_INPUT "invalid input: \"%s\"\n"

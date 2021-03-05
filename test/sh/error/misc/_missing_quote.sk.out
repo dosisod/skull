@@ -1,0 +1,1 @@
+./test/sh/error/misc/missing_quote.sk: Compilation error: line 1 column 6: expected closing quote
