@@ -1,5 +1,7 @@
+#!/bin/sh
+
 stop() {
-	echo "most recent command had non-zero exit code, commit aborted"
+	printf "most recent command had non-zero exit code, commit aborted\n"
 	exit 1
 }
 
@@ -11,7 +13,7 @@ cp ./skull/skull ./build/skull/skull
 ./test/sh/main.sh || stop
 
 valgrind --leak-check=full ./build/test/test || stop
-echo
+printf "\n"
 
 ./.github/workflows/clang_tidy.sh || stop
 
@@ -19,3 +21,12 @@ echo
 
 cd test/docs/c-integration/
 make SKULL=../../../build/skull/skull || stop
+cd ../../..
+
+printf "\nRunning shellcheck\n"
+
+# i prefer doas, but use sudo as a backup
+SUDO=$(command -v doas || command -v sudo)
+
+$SUDO docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable \
+	skull/skull test/sh/main.sh Makefile || stop
