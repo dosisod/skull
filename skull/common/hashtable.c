@@ -7,10 +7,16 @@
 
 #include "skull/common/hashtable.h"
 
+/*
+Create a new hashtable.
+*/
 HashTable *ht_create(void) {
 	return Calloc(1, sizeof(HashTable));
 }
 
+/*
+Return hashed key for a given key.
+*/
 unsigned ht_hash_key(const char *const key) {
 	const size_t len = strlen(key);
 
@@ -23,6 +29,9 @@ unsigned ht_hash_key(const char *const key) {
 	return hash % MAX_SLOTS;
 }
 
+/*
+Add key `key` with value `ptr` to hashtable `ht`.
+*/
 bool ht_add(HashTable *const ht, const char *const key, void *const ptr) {
 	if (!ptr || ht_get(ht, key)) {
 		return false;
@@ -54,6 +63,11 @@ bool ht_add(HashTable *const ht, const char *const key, void *const ptr) {
 	return true;
 }
 
+/*
+Get value with key `key` from hashtable `ht`.
+
+Return `NULL` if key does not exist.
+*/
 void *ht_get(const HashTable *const ht, const char *const key) {
 	if (!ht) {
 		return NULL;
@@ -71,6 +85,9 @@ void *ht_get(const HashTable *const ht, const char *const key) {
 	return NULL;
 }
 
+/*
+Free a hashtable `ht`, and free each item with `free_func`.
+*/
 void free_ht(HashTable *ht, void (*free_func)(void *)) {
 	for RANGE(i, MAX_SLOTS) { // NOLINT
 		HashItem *item = &ht->slots[i];

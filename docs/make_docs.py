@@ -45,7 +45,9 @@ def display_markdown(code: str) -> str:
 
 units = {}
 
-sources = [src for src in Path("./").rglob("*") if src.suffix in [".c", ".h"]]
+sources = [
+    src for src in Path("./skull").rglob("*") if src.suffix in [".c", ".h"]
+]
 for source in sources:
     filename = str(source)[:-2]
 
