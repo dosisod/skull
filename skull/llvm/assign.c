@@ -54,7 +54,7 @@ void gen_stmt_var_assign(AstNode **node) {
 
 Expr gen_expr_identifier(
 	const Type *const,
-	const AstNode *const,
+	const Token *const,
 	const Variable *const
 );
 
@@ -71,67 +71,44 @@ Expr node_to_expr(
 	Expr expr = {0};
 
 	if (node->type == AST_NODE_EXPR) {
-		const ExprType token_type = ATTR(AstNodeExpr, node, oper);
+		const ExprType oper = ATTR(AstNodeExpr, node, oper);
 
-		if (!token_type) {
-			expr = gen_expr_identifier(type, node, var);
+		if (oper == EXPR_IDENTIFIER) {
+			expr = gen_expr_identifier(type, node->token, var);
 		}
-		if (token_type == EXPR_ADD) {
-			expr = gen_expr_oper(type, node, &gen_expr_add);
-		}
-		else if (token_type == EXPR_SUB) {
-			expr = gen_expr_oper(type, node, &gen_expr_sub);
-		}
-		else if (token_type == EXPR_MULT) {
-			expr = gen_expr_oper(type, node, &gen_expr_mult);
-		}
-		else if (token_type == EXPR_DIV) {
-			expr = gen_expr_oper(type, node, &gen_expr_div);
-		}
-		else if (token_type == EXPR_MOD) {
-			expr = gen_expr_oper(type, node, &gen_expr_mod);
-		}
-		else if (token_type == EXPR_LSHIFT) {
-			expr = gen_expr_oper(type, node, &gen_expr_lshift);
-		}
-		else if (token_type == EXPR_POW) {
-			expr = gen_expr_oper(type, node, &gen_expr_pow);
-		}
-		else if (token_type == EXPR_RSHIFT) {
-			expr = gen_expr_oper(type, node, &gen_expr_rshift);
-		}
-		else if (token_type == EXPR_NOT) {
+		else if (oper == EXPR_NOT) {
 			expr = gen_expr_not(type, ATTR(AstNodeExpr, node, rhs));
 		}
-		else if (token_type == EXPR_IS) {
-			expr = gen_expr_oper(type, node, gen_expr_is);
-		}
-		else if (token_type == EXPR_ISNT) {
-			expr = gen_expr_oper(type, node, gen_expr_is_not);
-		}
-		else if (token_type == EXPR_LESS_THAN) {
-			expr = gen_expr_oper(type, node, gen_expr_less_than);
-		}
-		else if (token_type == EXPR_GTR_THAN) {
-			expr = gen_expr_oper(type, node, gen_expr_gtr_than);
-		}
-		else if (token_type == EXPR_LESS_THAN_EQ) {
-			expr = gen_expr_oper(type, node, gen_expr_less_than_eq);
-		}
-		else if (token_type == EXPR_GTR_THAN_EQ) {
-			expr = gen_expr_oper(type, node, gen_expr_gtr_than_eq);
-		}
-		else if (token_type == EXPR_AND) {
-			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_and);
-		}
-		else if (token_type == EXPR_OR) {
-			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_or);
-		}
-		else if (token_type == EXPR_XOR) {
-			expr = gen_expr_oper(&TYPE_BOOL, node, gen_expr_xor);
-		}
-		else if (token_type == EXPR_CONST) {
+		else if (oper == EXPR_CONST) {
 			expr = token_to_simple_expr_typed(type, node->token);
+		}
+		else {
+			Operation *func = NULL;
+
+			switch (oper) {
+				case EXPR_ADD: func = &gen_expr_add; break;
+				case EXPR_SUB: func = &gen_expr_sub; break;
+				case EXPR_MULT: func = &gen_expr_mult; break;
+				case EXPR_DIV: func = &gen_expr_div; break;
+				case EXPR_MOD: func = &gen_expr_mod; break;
+				case EXPR_LSHIFT: func = &gen_expr_lshift; break;
+				case EXPR_POW: func = &gen_expr_pow; break;
+				case EXPR_RSHIFT: func = &gen_expr_rshift; break;
+				case EXPR_IS: func = gen_expr_is; break;
+				case EXPR_ISNT: func = gen_expr_is_not; break;
+				case EXPR_LESS_THAN: func = gen_expr_less_than; break;
+				case EXPR_GTR_THAN: func = gen_expr_gtr_than; break;
+				case EXPR_LESS_THAN_EQ: func = gen_expr_less_than_eq; break;
+				case EXPR_GTR_THAN_EQ: func = gen_expr_gtr_than_eq; break;
+				case EXPR_AND: func = gen_expr_and; break;
+				case EXPR_OR: func = gen_expr_or; break;
+				case EXPR_XOR: func = gen_expr_xor; break;
+				default: break;
+			}
+
+			if (func) {
+				expr = gen_expr_oper(type, node, func);
+			}
 		}
 	}
 	else if (node->type == AST_NODE_FUNCTION) {
@@ -196,7 +173,7 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 }
 
 /*
-Return expression for identifier `node` with type `type`.
+Return expression for identifier `token` with type `type`.
 
 Optionally pass `var` if result is expected to be assigned to a variable.
 
@@ -204,21 +181,21 @@ If `type` is not set, the expression type will not be checked.
 */
 Expr gen_expr_identifier(
 	const Type *const type,
-	const AstNode *const node,
+	const Token *const token,
 	const Variable *const var
 ) {
 	Variable *var_found = NULL;
-	const Expr expr = token_to_expr(node->token, &var_found);
+	const Expr expr = token_to_expr(token, &var_found);
 
 	if (type && var_found->type != type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = node->token, .type = type },
+			{ .tok = token, .type = type },
 			{ .type = var_found->type }
 		);
 	}
 	if (var == var_found) {
 		PANIC(ERR_REDUNDANT_REASSIGN, {
-			.tok = node->token,
+			.tok = token,
 			.var = var
 		});
 	}

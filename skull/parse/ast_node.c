@@ -584,7 +584,9 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	else if (token->type == TOKEN_IDENTIFIER) {
 		push_ast_node(token, last, AST_NODE_EXPR, node);
 
-		MAKE_ATTR(AstNodeExpr, (*node)->last, 0);
+		MAKE_ATTR(AstNodeExpr, (*node)->last,
+			.oper = EXPR_IDENTIFIER
+		);
 	}
 	else if (is_value(token)) {
 		push_ast_node(token, last, AST_NODE_EXPR, node);
