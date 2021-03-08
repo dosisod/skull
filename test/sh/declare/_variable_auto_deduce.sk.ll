@@ -1,10 +1,10 @@
-; ModuleID = './test/sh/declare/variable_auto.sk'
-source_filename = "./test/sh/declare/variable_auto.sk"
+; ModuleID = './test/sh/declare/variable_auto_deduce.sk'
+source_filename = "./test/sh/declare/variable_auto_deduce.sk"
 
 @x = private global i64 0
 @z = private global i64 0
 
-define i64 @.variable_auto() {
+define i64 @.variable_auto_deduce() {
 entry:
   store i64 0, i64* @x
   %0 = load i64, i64* @x
