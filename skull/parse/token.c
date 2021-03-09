@@ -10,86 +10,97 @@
 _Bool is_whitespace(char32_t);
 _Bool is_quote(char32_t);
 
-//pinch end of current token, setup next token
-#define PINCH_TOKEN \
+// add current cursor/code state to token
+#define SETUP_TOKEN() \
+	current->begin = code; \
+	current->line = line_num; \
+	current->column = column;
+
+#define APPEND_TOKEN() \
+	last = current; \
+	current->next = make_token(); \
+	current = current->next
+
+// pinch end of current token, setup next token
+#define PINCH_TOKEN() \
 	current->end = code; \
-	Token *next_token = make_token(); \
-	next_token->begin = code; \
-	next_token->line = line_num; \
-	next_token->column = column; \
-	next_token->end = code + 1; \
-	current->next = next_token; \
-	current = next_token
+	APPEND_TOKEN(); \
+	current->end = code + 1; \
+	SETUP_TOKEN()
+
+typedef enum {
+	NO_COMMENT,
+	LINE_COMMENT,
+	BLOCK_COMMENT
+} CommentState;
 
 /*
 Tokenize `code`, return pointer to first token.
 */
 Token *tokenize(const char32_t *code) {
-	const char32_t * const code_copy = code;
+	const char32_t *const code_copy = code;
 
-	Token *head = make_token();
+	Token *const head = make_token();
 
 	Token *current = head;
 	Token *last = current;
 
 	unsigned line_num = 1;
 	unsigned column = 0;
-	char32_t quote = false;
-	bool comment = false;
-	bool block_comment = false;
+	char32_t quote = '\0';
+	CommentState comment = NO_COMMENT;
 
 	while (*code) {
 		column++;
 
 		if (comment) {
-			if (!block_comment && *code == '\n') {
+			if (comment == LINE_COMMENT && *code == '\n') {
 				code--;
-				comment = false;
+				comment = NO_COMMENT;
 			}
-			else if (block_comment && *code == '#' && code[1] == '{') {
-				PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
-			}
-			else if (block_comment && *code == '#' && code[1] == '}') {
-				comment = false;
-				block_comment = false;
+			else if (comment == BLOCK_COMMENT && *code == '#') {
 				code++;
+
+				if (*code == '{') {
+					PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
+				}
+
+				if (*code == '}') {
+					comment = NO_COMMENT;
+				}
 			}
 		}
-		else if (
-			!quote && !comment && code[0] == '#' && (
-				code[1] == ' ' ||
-				code[1] == '{'
-		)) {
-			comment = true;
-			if (code[1] == '{') {
-				block_comment = true;
+		else if (!quote && !comment && *code == '#') {
+			if (code[1] == ' ') {
+				comment = LINE_COMMENT;
+			}
+			else if (code[1] == '{') {
+				comment = BLOCK_COMMENT;
+			}
+			else {
+				PANIC(ERR_INVALID_COMMENT_START, { .i = line_num + 1 });
 			}
 
 			if (!current->begin) {
-				current->begin = code;
-				current->line = line_num;
-				current->column = column;
+				SETUP_TOKEN();
 			}
 			else {
-				PINCH_TOKEN;
+				PINCH_TOKEN();
 			}
 		}
 		else if (quote) {
 			if (*code == '\\' && (code[1] == '\\' || code[1] == quote)) {
-				code += 2;
-				continue;
+				code++;
 			}
-			if (*code == quote) {
-				quote = false;
+			else if (*code == quote) {
+				quote = '\0';
 			}
 		}
 		else if (!quote && is_quote(*code)) {
 			quote = *code;
 
 			if (!current->begin) {
-				current->begin = code;
-				current->line = line_num;
-				current->column = column;
+				SETUP_TOKEN();
 			}
 		}
 		else if (
@@ -101,37 +112,25 @@ Token *tokenize(const char32_t *code) {
 			*code == '\n'
 		) {
 			if (!current->begin) {
-				current->begin = code;
-				current->line = line_num;
-				current->column = column;
+				SETUP_TOKEN();
 				current->end = code + 1;
 			}
 			else {
-				PINCH_TOKEN;
+				PINCH_TOKEN();
 			}
 
-			Token *next_token = make_token();
-
-			last = current;
-			current->next = next_token;
-			current = next_token;
+			APPEND_TOKEN();
 		}
 		else if (!current->begin) {
 			if (!is_whitespace(*code)) {
-				current->begin = code;
-				current->line = line_num;
-				current->column = column;
+				SETUP_TOKEN();
 			}
 		}
 		else if (!current->end) {
 			if (is_whitespace(*code)) {
 				current->end = code;
 
-				Token *next_token = make_token();
-
-				last = current;
-				current->next = next_token;
-				current = next_token;
+				APPEND_TOKEN();
 			}
 		}
 
@@ -143,7 +142,7 @@ Token *tokenize(const char32_t *code) {
 		code++;
 	}
 
-	if (block_comment) {
+	if (comment == BLOCK_COMMENT) {
 		current->end = code;
 		PANIC(ERR_NO_CLOSING_COMMENT, { .tok = current });
 	}
@@ -152,16 +151,16 @@ Token *tokenize(const char32_t *code) {
 		PANIC(ERR_NO_CLOSING_QUOTE, { .tok = current });
 	}
 
-	//close dangling token if there was no whitespace at EOF
+	// close dangling token if there was no whitespace at EOF
 	if (current->begin) {
 		current->end = code;
 	}
-	//if there is a no token to be created, pop last token
+	// pop last token since it will not have any data
 	else if (current != head) {
 		last->next = NULL;
 		free(current);
 	}
-	//there where no tokens to parse, set safe defaults
+	// there where no tokens to parse, set safe defaults
 	else {
 		head->begin = code_copy;
 		head->end = code_copy;
@@ -177,12 +176,10 @@ Return true if `c` is whitespace.
 Whitespace is considered as indent/line related control characters.
 */
 __attribute__((const)) bool is_whitespace(char32_t c) {
-	return (
-		c == ' ' ||
+	return c == ' ' ||
 		c == '\t' ||
 		c == '\r' ||
-		c == '\n'
-	);
+		c == '\n';
 }
 
 /*
@@ -233,6 +230,7 @@ Returns true if `str` is equal to the value of `token`.
 */
 bool token_cmp(const char32_t *const str, const Token *const token) {
 	const size_t len = token_len(token);
+
 	return (
 		c32slen(str) == len &&
 		c32sncmp(str, token->begin, len)

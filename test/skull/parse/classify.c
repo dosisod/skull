@@ -172,7 +172,7 @@ TEST(token_comment, {
 })
 
 TEST(token_comment_empty, {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"#", TOKEN_COMMENT, 0, 1);
+	TEST_CLASSIFY_TOKEN_WITH_LEN(U"# ", TOKEN_COMMENT, 0, 2);
 })
 
 TEST(is_valid_identifier, {

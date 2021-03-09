@@ -54,6 +54,7 @@
 #define ERR_INVALID_NUM_PARAMS "invalid number of parameters\n"
 #define ERR_NESTED_BLOCK_COMMENT \
 	"cannot put opening block comment in existing block comment"
+#define ERR_INVALID_COMMENT_START "invalid start of comment on line %s\n"
 #define ERR_ILLEGAL_SEQ "illegal UTF8 sequence at character offset %s\n"
 #define ERR_POW_BAD_TYPE "cannot use type \"%s\" for power operator\n"
 #define ERR_MAX_PARAM_HIT "cannot have more then %s function parameters\n"
