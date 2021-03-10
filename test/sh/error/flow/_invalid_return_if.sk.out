@@ -1,1 +1,0 @@
-./test/sh/error/flow/invalid_return_if.sk: Compilation error: line 2 column 2: unexpected token: "x"
