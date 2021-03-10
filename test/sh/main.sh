@@ -14,7 +14,7 @@ fail() {
 }
 
 compare() {
-	cmp "$1" "$2" && pass || fail
+	cmp "$1" "$2" > /dev/null && pass || fail
 }
 
 test_normal() {
@@ -25,7 +25,7 @@ test_normal() {
 	printf "%s" "$dir/$file "
 
 	rm -f "./$dir/.$file.ll"
-	./build/skull/_skull "./$dir/$file"
+	./build/skull/_skull "./$dir/$file" 2> /dev/null
 
 	compare "./$dir/_$file.ll" "./$dir/.$file.ll"
 	rm -f "./$dir/.$file.ll"
