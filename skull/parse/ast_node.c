@@ -202,29 +202,44 @@ ExprType token_type_to_expr_oper_type(TokenType type) {
 
 bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
+	ExprType oper = EXPR_UNKNOWN;
 
-	if (!(
-		is_value(token) &&
+	const Token *lhs_token = NULL;
+	const Token *rhs_token = NULL;
+
+	if (token_type_to_expr_oper_type(token->type) == EXPR_NOT &&
+		is_value(token->next)
+	) {
+		oper = EXPR_NOT;
+		rhs_token = token->next;
+		*_token = token->next;
+	}
+	else if (is_value(token) &&
 		token->next &&
 		token->next->next &&
 		is_value(token->next->next)
-	)) {
-		return false;
+	) {
+		lhs_token = token;
+		rhs_token = token->next->next;
+
+		oper = token_type_to_expr_oper_type(token->next->type);
+
+		if (oper == EXPR_UNKNOWN) {
+			return false;
+		}
+
+		*_token = token->next->next;
 	}
-
-	const ExprType oper = token_type_to_expr_oper_type(token->next->type);
-
-	if (oper == EXPR_UNKNOWN) {
+	else {
 		return false;
 	}
 
 	MAKE_ATTR(AstNodeExpr, *node,
-		.lhs = token,
+		.lhs = lhs_token,
 		.oper = oper,
-		.rhs = token->next->next
+		.rhs = rhs_token
 	);
 
-	*_token = token->next->next;
 	push_ast_node(*_token, last, AST_NODE_EXPR, node);
 	return true;
 }
@@ -335,11 +350,6 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
-#define IS_BOOL_LIKE(tok) \
-	((tok)->type == TOKEN_IDENTIFIER || (tok)->type == TOKEN_BOOL_CONST)
-
-bool is_conditional_expr(Token **, Token **, AstNode **);
-
 bool is_conditional(
 	TokenType token_type,
 	Token **_token,
@@ -360,67 +370,6 @@ bool is_conditional(
 	if (!try_gen_expression(_token, last, node)) {
 		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *_token });
 	}
-
-	return true;
-}
-
-bool is_conditional_expr(Token **_token, Token **last, AstNode **node) {
-	Token *token = *_token;
-
-	Token *lhs = NULL;
-	Token *rhs = NULL;
-
-	ExprType oper = token_type_to_expr_oper_type(token->type);
-	ExprType oper_next = EXPR_UNKNOWN;
-	if (token->next) {
-		oper_next = token_type_to_expr_oper_type(token->next->type);
-	}
-
-	if (oper == EXPR_NOT && token->next && IS_BOOL_LIKE(token->next)) {
-		rhs = token->next;
-		token = token->next;
-
-		if (!token) {
-			return false;
-		}
-	}
-	else if (
-		is_value(token) &&
-		token->next &&
-		(oper_next == EXPR_IS ||
-		oper_next == EXPR_ISNT ||
-		oper_next == EXPR_LESS_THAN ||
-		oper_next == EXPR_GTR_THAN ||
-		oper_next == EXPR_LESS_THAN_EQ ||
-		oper_next == EXPR_GTR_THAN_EQ ||
-		oper_next == EXPR_AND ||
-		oper_next == EXPR_XOR ||
-		oper_next == EXPR_OR) &&
-		token->next->next &&
-		is_value(token->next->next)
-	) {
-		lhs = token;
-		oper = oper_next;
-
-		rhs = token->next->next;
-		token = rhs;
-
-		if (!token) {
-			return false;
-		}
-	}
-	else {
-		return false;
-	}
-
-	MAKE_ATTR(AstNodeExpr, *node,
-		.lhs = lhs,
-		.oper = oper,
-		.rhs = rhs
-	);
-
-	*_token = token;
-	push_ast_node(*_token, last, AST_NODE_EXPR, node);
 
 	return true;
 }
@@ -573,9 +522,7 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 		*_token = token;
 	}
 
-	if (is_const_oper(_token, last, node) ||
-		is_conditional_expr(_token, last, node)
-	) {
+	if (is_const_oper(_token, last, node)) {
 		// pass
 	}
 	else if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
