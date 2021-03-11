@@ -1,0 +1,1 @@
+./test/sh/error/misc/invalid_paren_expr.sk: Compilation error: line 1 column 7: invalid expression near "_"

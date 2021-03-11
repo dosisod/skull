@@ -513,13 +513,25 @@ Returns true if a node was added, false otherwise.
 bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	bool is_parenthesized = false;
-
 	if (token->type == TOKEN_PAREN_OPEN) {
-		is_parenthesized = true;
 		token = token->next;
 		*last = token;
 		*_token = token;
+
+		if (!try_gen_expression(_token, last, node)) {
+			PANIC(ERR_INVALID_EXPR, { .tok = *_token });
+		}
+
+		token = *last;
+
+		if (token->type != TOKEN_PAREN_CLOSE) {
+			PANIC(ERR_MISSING_CLOSING_PAREN, { .tok = token });
+		}
+
+		*_token = token->next;
+		*last = token->next;
+
+		return true;
 	}
 
 	if (is_const_oper(_token, last, node)) {
@@ -544,17 +556,6 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	}
 	else {
 		return false;
-	}
-
-	if (is_parenthesized) {
-		token = *last;
-
-		if (token->type != TOKEN_PAREN_CLOSE) {
-			PANIC(ERR_MISSING_CLOSING_PAREN, { .tok = token });
-		}
-
-		*_token = token->next;
-		*last = token->next;
 	}
 
 	return true;
