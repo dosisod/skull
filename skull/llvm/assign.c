@@ -79,6 +79,9 @@ Expr node_to_expr(
 		else if (oper == EXPR_NOT) {
 			expr = gen_expr_not(type, ATTR(AstNodeExpr, node, rhs));
 		}
+		else if (oper == EXPR_UNARY_NEG) {
+			expr = gen_expr_unary_neg(type, ATTR(AstNodeExpr, node, rhs));
+		}
 		else if (oper == EXPR_CONST) {
 			expr = token_to_simple_expr_typed(type, node->token);
 		}

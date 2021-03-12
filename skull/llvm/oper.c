@@ -224,6 +224,29 @@ Expr gen_expr_not(const Type *type, const Token *rhs) {
 	};
 }
 
+/*
+Return expression for result of unary negation operator for `rhs`.
+*/
+Expr gen_expr_unary_neg(const Type *type, const Token *rhs) {
+	const Expr rhs_expr = token_to_expr(rhs, NULL);
+
+	if (type && rhs_expr.type != type) {
+		PANIC(ERR_EXPECTED_SAME_TYPE,
+			{ .tok = rhs, .type = type },
+			{ .type = &TYPE_BOOL }
+		);
+	}
+
+	return gen_expr_math_oper(
+		rhs_expr.type,
+		LLVM_INT(0),
+		rhs_expr.llvm_value,
+		LLVMBuildNSWSub,
+		LLVMBuildFSub
+	);
+}
+
+
 Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 
 /*

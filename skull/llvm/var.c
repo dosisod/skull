@@ -102,7 +102,7 @@ Variable *node_to_var(const AstNode *const node) {
 Return a variable type based on `node`.
 */
 const Type *var_def_node_to_type(const AstNode *node) {
-	const TokenType token_type = node->next->token->type;
+	TokenType token_type = node->next->token->type;
 	const NodeType node_type = node->next->type;
 
 	if (node_type == AST_NODE_EXPR) {
@@ -120,6 +120,10 @@ const Type *var_def_node_to_type(const AstNode *node) {
 			oper == EXPR_XOR
 		) {
 			return &TYPE_BOOL;
+		}
+
+		if (oper == EXPR_UNARY_NEG) {
+			token_type = node->next->token->next->type;
 		}
 	}
 

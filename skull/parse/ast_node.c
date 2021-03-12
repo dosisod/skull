@@ -202,15 +202,17 @@ ExprType token_type_to_expr_oper_type(TokenType type) {
 
 bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
-	ExprType oper = EXPR_UNKNOWN;
 
 	const Token *lhs_token = NULL;
 	const Token *rhs_token = NULL;
 
-	if (token_type_to_expr_oper_type(token->type) == EXPR_NOT &&
-		is_value(token->next)
-	) {
-		oper = EXPR_NOT;
+	ExprType oper = token_type_to_expr_oper_type(token->type);
+
+	if ((oper == EXPR_NOT || oper == EXPR_SUB) && is_value(token->next)) {
+		if (oper == EXPR_SUB) {
+			oper = EXPR_UNARY_NEG;
+		}
+
 		rhs_token = token->next;
 		*_token = token->next;
 	}

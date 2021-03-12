@@ -64,6 +64,12 @@ Expr gen_expr_not(const Type *type, const Token *rhs)
 > Return expression for result of not operator for `rhs`.
 
 ```c
+Expr gen_expr_unary_neg(const Type *type, const Token *rhs)
+```
+
+> Return expression for result of unary negation operator for `rhs`.
+
+```c
 Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
