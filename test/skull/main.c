@@ -14,6 +14,7 @@
 #include "common/errors.h"
 #include "common/hashtable.h"
 #include "common/str.h"
+#include "common/vector.h"
 
 #include "skull/common/local.h"
 
@@ -42,6 +43,7 @@ int main(void) {
 	error_test_self(&passed);
 	hashtable_test_self(&passed);
 	str_test_self(&passed);
+	vector_test_self(&passed);
 
 	scope_test_self(&passed);
 	variable_test_self(&passed);
