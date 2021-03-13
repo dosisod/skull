@@ -42,12 +42,27 @@ Vector *make_vector(void) {
 }
 
 /*
-Free vector `v`.
+Free vector `v`, and any memory it might have allocated via `free_func`.
 */
 void free_vector(Vector *v, void (*free_func)(void *)) {
-	if (free_func) {
-		for RANGE(i, v->length) {
-			free_func(v->elements[i]);
+	free_vector2(v, NULL, free_func);
+}
+
+/*
+Free vector `v` using `free_func` to handle nested/managed objects
+(ie, `HashTable`), and `free_func2` to free the data in those objects.
+*/
+void free_vector2(
+	Vector *v,
+	void (*free_func)(void (*)(void *), void *),
+	void (*free_func2)(void *)
+) {
+	for RANGE(i, v->length) {
+		if (free_func) {
+			free_func(free_func2, v->elements[i]);
+		}
+		else if (free_func2) {
+			free_func2(v->elements[i]);
 		}
 	}
 

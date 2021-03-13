@@ -25,3 +25,8 @@ void vector_push(Vector *v, void *);
 void *vector_pop(Vector *v);
 
 void free_vector(Vector *v, void (*)(void *));
+void free_vector2(
+	Vector *v,
+	void (*)(void (*)(void *), void *),
+	void (*)(void *)
+);

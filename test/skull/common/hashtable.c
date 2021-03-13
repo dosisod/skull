@@ -32,14 +32,16 @@ TEST(hashtable_add_to_existing_slot, {
 	HashTable *ht = ht_create();
 
 	// simulate adding entry into slot that already has an entry
-	unsigned index = ht_hash_key("entry2");
-	ht->slots[index].key = "entry1";
-
 	int value = 123;
+	ht_add(ht, "entry2", &value);
+	unsigned index = ht_hash_key("entry2");
+	HashItem *item = ht->slots[index]->elements[0];
+	item->key = "entry1";
+
 	ht_add(ht, "entry2", &value);
 	int *found = ht_get(ht, "entry2");
 
-	ASSERT_EQUAL(strcmp(ht->slots[index].key, "entry1"), 0);
+	ASSERT_EQUAL(strcmp(item->key, "entry1"), 0);
 	ASSERT_TRUTHY(found);
 	ASSERT_EQUAL(value, *found);
 

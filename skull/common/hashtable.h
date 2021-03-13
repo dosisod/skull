@@ -1,15 +1,16 @@
 #pragma once
 
+#include "skull/common/vector.h"
+
 #define MAX_SLOTS 1024
 
 typedef struct {
 	const char *key;
 	void *data;
-	void *next;
 } HashItem;
 
 typedef struct {
-	HashItem slots[MAX_SLOTS];
+	Vector *slots[MAX_SLOTS];
 } HashTable;
 
 HashTable *ht_create(void);

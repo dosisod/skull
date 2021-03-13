@@ -37,20 +37,12 @@ bool ht_add(HashTable *const ht, const char *const key, void *const ptr) {
 		return false;
 	}
 
-	HashItem *head = &ht->slots[ht_hash_key(key)];
+	Vector **slot = &ht->slots[ht_hash_key(key)];
+	Vector *items = *slot;
 
-	if (!head->key) {
-		head->key = key;
-		head->data = ptr;
-		return true;
-	}
-
-	HashItem *item = head;
-	HashItem *last = head;
-
-	while (item) {
-		last = item;
-		item = item->next;
+	if (!items) {
+		items = make_vector();
+		*slot = items;
 	}
 
 	HashItem *new_item;
@@ -58,7 +50,8 @@ bool ht_add(HashTable *const ht, const char *const key, void *const ptr) {
 
 	new_item->key = key;
 	new_item->data = ptr;
-	last->next = new_item;
+
+	vector_push(items, new_item);
 
 	return true;
 }
@@ -73,16 +66,29 @@ void *ht_get(const HashTable *const ht, const char *const key) {
 		return NULL;
 	}
 
-	const HashItem *item = &ht->slots[ht_hash_key(key)];
+	const Vector *items = ht->slots[ht_hash_key(key)];
+	if (!items) {
+		return NULL;
+	}
 
-	while (item && item->key) {
+	for RANGE(i, items->length) {
+		const HashItem *item = items->elements[i];
+
 		if (strcmp(item->key, key) == 0) {
 			return item->data;
 		}
-		item = item->next;
 	}
 
 	return NULL;
+}
+
+void free_ht_item(void (*free_func)(void *), void *item) {
+	void *data = ((HashItem *)item)->data;
+	if (free_func && data) {
+		free_func(data);
+	}
+
+	free(item);
 }
 
 /*
@@ -90,21 +96,10 @@ Free a hashtable `ht`, and free each item with `free_func`.
 */
 void free_ht(HashTable *ht, void (*free_func)(void *)) {
 	for RANGE(i, MAX_SLOTS) { // NOLINT
-		HashItem *item = &ht->slots[i];
+		Vector *items = ht->slots[i];
 
-		if (free_func && item->data) {
-			free_func(item->data);
-		}
-		item = item->next;
-
-		while (item) {
-			if (free_func) {
-				free_func(item->data);
-			}
-
-			HashItem *tmp = item;
-			item = item->next;
-			free(tmp);
+		if (items) {
+			free_vector2(items, free_ht_item, free_func);
 		}
 	}
 

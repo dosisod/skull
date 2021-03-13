@@ -38,5 +38,12 @@ Vector *make_vector(void)
 void free_vector(Vector *v, void (*free_func)(void *))
 ```
 
-> Free vector `v`.
+> Free vector `v`, and any memory it might have allocated via `free_func`.
+
+```c
+void free_vector2(Vector *v, void (*free_func)(void (*)(void *), void *), void (*free_func2)(void *))
+```
+
+> Free vector `v` using `free_func` to handle nested/managed objects
+> (ie, `HashTable`), and `free_func2` to free the data in those objects.
 
