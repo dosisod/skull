@@ -1,4 +1,5 @@
 #include "skull/common/malloc.h"
+#include "skull/common/range.h"
 
 #include "skull/common/vector.h"
 
@@ -43,7 +44,13 @@ Vector *make_vector(void) {
 /*
 Free vector `v`.
 */
-void free_vector(Vector *v) {
+void free_vector(Vector *v, void (*free_func)(void *)) {
+	if (free_func) {
+		for RANGE(i, v->length) {
+			free_func(v->elements[i]);
+		}
+	}
+
 	free(v->elements);
 	v->elements = NULL;
 	free(v);

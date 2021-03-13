@@ -24,4 +24,4 @@ Vector *make_vector(void);
 void vector_push(Vector *v, void *);
 void *vector_pop(Vector *v);
 
-void free_vector(Vector *v);
+void free_vector(Vector *v, void (*)(void *));

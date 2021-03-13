@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/common/malloc.h"
 #include "skull/common/vector.h"
 
 #include "test/skull/common/vector.h"
@@ -15,7 +16,7 @@ TEST(vector_create_and_free, {
 	ASSERT_TRUTHY(v->max);
 	ASSERT_EQUAL(v->length, 0);
 
-	free_vector(v);
+	free_vector(v, NULL);
 })
 
 TEST(vector_push_pop, {
@@ -32,7 +33,7 @@ TEST(vector_push_pop, {
 	ASSERT_EQUAL(popped, &x);
 	ASSERT_EQUAL(v->length, 0);
 
-	free_vector(v);
+	free_vector(v, NULL);
 })
 
 TEST(vector_pop_empty, {
@@ -42,7 +43,7 @@ TEST(vector_pop_empty, {
 	ASSERT_FALSEY(vector_pop(v));
 	ASSERT_EQUAL(v->length, 0);
 
-	free_vector(v);
+	free_vector(v, NULL);
 })
 
 TEST(vector_scale, {
@@ -56,12 +57,21 @@ TEST(vector_scale, {
 
 	ASSERT_EQUAL(v->max, VECTOR_START_MAX * 2);
 
-	free_vector(v);
+	free_vector(v, NULL);
+})
+
+TEST(vector_free_func, {
+	Vector *v = make_vector();
+
+	vector_push(v, Malloc(1));
+
+	free_vector(v, free);
 })
 
 TEST_SELF(vector,
 	test_vector_create_and_free,
 	test_vector_push_pop,
 	test_vector_pop_empty,
-	test_vector_scale
+	test_vector_scale,
+	test_vector_free_func
 )

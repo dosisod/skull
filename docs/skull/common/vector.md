@@ -35,7 +35,7 @@ Vector *make_vector(void)
 > Return new vector.
 
 ```c
-void free_vector(Vector *v)
+void free_vector(Vector *v, void (*free_func)(void *))
 ```
 
 > Free vector `v`.
