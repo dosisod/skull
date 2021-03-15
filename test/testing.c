@@ -3,12 +3,13 @@
 #include <stdio.h>
 
 #include "../skull/common/color.h"
+#include "../skull/common/range.h"
+#include "../skull/common/vector.h"
 #include "skull/common/malloc.h"
 
 #include "test/testing.h"
 
-static Fail *fails_head = NULL;
-static Fail *fails_last = NULL;
+static Vector *fails;
 
 const char *FUNC_NAME = NULL;
 
@@ -22,19 +23,10 @@ void run_single_test(Test test, bool *pass) {
 		Fail *fail;
 		fail = Malloc(sizeof *fail);
 
-		fail->next = NULL;
+		fail->msg = msg;
+		fail->name = FUNC_NAME;
 
-		if (!fails_head) {
-			fail->next = NULL;
-			fails_head = fail;
-			fails_last = fail;
-		}
-		else {
-			fails_last->next = fail;
-			fails_last = fail;
-		}
-		fails_last->msg = msg;
-		fails_last->name = FUNC_NAME;
+		vector_push(fails, fail);
 	}
 	else {
 		printf(COLOR_BOLD COLOR_GREEN_FG "." COLOR_RESET);
@@ -44,6 +36,8 @@ void run_single_test(Test test, bool *pass) {
 void run_many_tests(const char *name, Test tests[], bool *pass) {
 	printf("%s ", name);
 
+	fails = make_vector();
+
 	while(*tests) {
 		run_single_test(*tests, pass);
 		tests++;
@@ -51,22 +45,18 @@ void run_many_tests(const char *name, Test tests[], bool *pass) {
 
 	putchar('\n');
 
-	if (fails_head) {
-		Fail *current = fails_head;
-		Fail *tmp = NULL;
+	if (fails->length) {
+		for RANGE(i, fails->length) {
+			Fail *current = fails->elements[i];
 
-		while (current) {
 			printf("%s " COLOR_BOLD COLOR_RED_FG "FAILED\n" COLOR_RESET, current->name);
 			printf("  %s\n\n", current->msg);
 
-			tmp = current;
-			current = current->next;
-			free(tmp);
+			free(current);
 		}
-
-		fails_last = NULL;
-		fails_head = NULL;
 	}
+
+	free_vector(fails, free);
 }
 
 TEST(pass_macro, {

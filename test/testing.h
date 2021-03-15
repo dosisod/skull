@@ -53,7 +53,6 @@ void name##_test_self (_Bool *pass) { \
 typedef struct Fail {
 	const char *name;
 	const char *msg;
-	struct Fail *next;
 } Fail;
 
 void run_single_test(Test, _Bool *);
