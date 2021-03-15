@@ -68,10 +68,23 @@ TEST(vector_free_func, {
 	free_vector(v, free);
 })
 
+TEST(vector_at, {
+	Vector *v = make_vector();
+
+	int i = 1234;
+	vector_push(v, &i);
+
+	ASSERT_EQUAL(vector_at(v, 0), &i);
+	ASSERT_EQUAL(vector_at(v, 9999), NULL);
+
+	free_vector(v, NULL);
+})
+
 TEST_SELF(vector,
 	test_vector_create_and_free,
 	test_vector_push_pop,
 	test_vector_pop_empty,
 	test_vector_scale,
-	test_vector_free_func
+	test_vector_free_func,
+	test_vector_at
 )

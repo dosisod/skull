@@ -72,7 +72,7 @@ void *ht_get(const HashTable *const ht, const char *const key) {
 	}
 
 	for RANGE(i, items->length) {
-		const HashItem *item = items->elements[i];
+		const HashItem *item = vector_at(items, i);
 
 		if (strcmp(item->key, key) == 0) {
 			return item->data;

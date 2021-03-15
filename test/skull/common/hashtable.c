@@ -35,7 +35,7 @@ TEST(hashtable_add_to_existing_slot, {
 	int value = 123;
 	ht_add(ht, "entry2", &value);
 	unsigned index = ht_hash_key("entry2");
-	HashItem *item = ht->slots[index]->elements[0];
+	HashItem *item = vector_at(ht->slots[index], 0);
 	item->key = "entry1";
 
 	ht_add(ht, "entry2", &value);

@@ -11,7 +11,7 @@ Simple Vector implementation.
 
 `max` stores the max length needed before reallocation.
 
-`elements` stores the actual elements.
+`elements` stores the actual elements of the vector.
 */
 typedef struct {
 	size_t length;
@@ -21,12 +21,16 @@ typedef struct {
 
 Vector *make_vector(void);
 
-void vector_push(Vector *v, void *);
-void *vector_pop(Vector *v);
+void vector_push(Vector *, void *);
+void *vector_pop(Vector *);
 
-void free_vector(Vector *v, void (*)(void *));
+#define VECTOR_AT(v, index, type) ((type)vector_at((v), (index)))
+
+void *vector_at(const Vector *const, size_t);
+
+void free_vector(Vector *, void (*)(void *));
 void free_vector2(
-	Vector *v,
+	Vector *,
 	void (*)(void (*)(void *), void *),
 	void (*)(void *)
 );

@@ -14,7 +14,7 @@ typedef struct {
 > \
 > `max` stores the max length needed before reallocation.
 > \
-> `elements` stores the actual elements.
+> `elements` stores the actual elements of the vector.
 
 ```c
 void vector_push(Vector *v, void *ptr)
@@ -33,6 +33,12 @@ Vector *make_vector(void)
 ```
 
 > Return new vector.
+
+```c
+void *vector_at(const Vector *const v, size_t index)
+```
+
+> Return the element at index `index` of the vector `v`, or NULL if out-of-bound.
 
 ```c
 void free_vector(Vector *v, void (*free_func)(void *))
