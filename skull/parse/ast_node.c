@@ -342,23 +342,26 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 }
 
 bool is_conditional(
-	TokenType token_type,
-	Token **_token,
+	Token **token,
 	Token **last,
-	AstNode **node,
-	NodeType node_type
+	AstNode **node
 ) {
-	Token *token = *_token;
+	const TokenType token_type = (*token)->type;
+	NodeType node_type;
 
-	if (token->type != token_type || !token->next) return false;
+	if (token_type == TOKEN_KW_IF) node_type = AST_NODE_IF;
+	else if (token_type == TOKEN_KW_ELIF) node_type = AST_NODE_ELIF;
+	else if (token_type == TOKEN_KW_WHILE) node_type = AST_NODE_WHILE;
+	else return false;
 
-	push_ast_node(token, last, node_type, node);
+	if (!(*token)->next) return false;
 
-	token = token->next;
-	*_token = token;
+	push_ast_node(*token, last, node_type, node);
 
-	if (!try_gen_expression(_token, last, node)) {
-		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *_token });
+	*token = (*token)->next;
+
+	if (!try_gen_expression(token, last, node)) {
+		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *token });
 	}
 
 	return true;
@@ -431,32 +434,22 @@ AstNode *make_ast_tree_(
 
 		last = token;
 
-		if (is_ast_type_alias(&token, &last, &node)) continue;
-		if (is_ast_var_def(&token, &last, &node)) continue;
-		if (is_ast_var_assign(&token, &last, &node)) continue;
-		if (is_ast_return(&token, &last, &node)) continue;
-		if (is_ast_function_proto(&token, &last, &node)) continue;
-		if (try_gen_expression(&token, &last, &node)) continue;
-
+		if (is_ast_type_alias(&token, &last, &node) ||
+			is_ast_var_def(&token, &last, &node) ||
+			is_ast_var_assign(&token, &last, &node) ||
+			is_ast_return(&token, &last, &node) ||
+			is_ast_function_proto(&token, &last, &node) ||
+			try_gen_expression(&token, &last, &node) ||
+			is_conditional(&token, &last, &node)
+		) {
+			continue;
+		}
 		if (token->type == TOKEN_KW_UNREACHABLE) {
 			push_ast_node(token, &last, AST_NODE_UNREACHABLE, &node);
 			continue;
 		}
-		if (is_conditional(TOKEN_KW_IF, &token, &last, &node, AST_NODE_IF)) {
-			continue;
-		}
-		if (is_conditional(
-			TOKEN_KW_ELIF, &token, &last, &node, AST_NODE_ELIF
-		)) {
-			continue;
-		}
 		if (token->type == TOKEN_KW_ELSE) {
 			push_ast_node(token, &last, AST_NODE_ELSE, &node);
-			continue;
-		}
-		if (is_conditional(
-			TOKEN_KW_WHILE, &token, &last, &node, AST_NODE_WHILE
-		)) {
 			continue;
 		}
 		if (token->type == TOKEN_COMMENT) {
