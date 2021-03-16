@@ -72,9 +72,8 @@ void gen_stmt_func_decl(const AstNode *const node) {
 
 	ht_add(SKULL_STATE.function_decls, func_name, func);
 
-	if (!is_external) {
+	if (!is_external)
 		define_function(node, func);
-	}
 }
 
 /*
@@ -123,9 +122,8 @@ FunctionDeclaration *add_function(
 	}
 
 	char *return_type_name = ATTR(AstNodeFunctionProto, node, return_type_name);
-	if (return_type_name) {
+	if (return_type_name)
 		func->return_type = find_type(return_type_name);
-	}
 
 	if (return_type_name && !func->return_type) {
 		PANIC(ERR_TYPE_NOT_FOUND, {
@@ -191,9 +189,8 @@ Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 	}
 
 	LLVMValueRef *params = NULL;
-	if (num_params) {
+	if (num_params)
 		params = Calloc(num_params, sizeof(LLVMValueRef));
-	}
 
 	const AstNode *param = node->child;
 
@@ -298,9 +295,8 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 		});
 	}
 
-	if (!func->return_type) {
+	if (!func->return_type)
 		LLVMBuildRetVoid(SKULL_STATE.builder);
-	}
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, current_block);
 

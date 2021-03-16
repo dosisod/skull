@@ -57,9 +57,7 @@ AstNode *make_ast_tree(const char32_t *const code) {
 		&token_last
 	);
 
-	if (!ret) {
-		free_tokens(token);
-	}
+	if (!ret) free_tokens(token);
 
 	return ret;
 }
@@ -67,14 +65,13 @@ AstNode *make_ast_tree(const char32_t *const code) {
 bool is_ast_return(Token **_token, Token **last, AstNode **node) {
 	Token *token = *_token;
 
-	if (token->type != TOKEN_KW_RETURN) {
-		return false;
-	}
+	if (token->type != TOKEN_KW_RETURN) return false;
 
 	push_ast_node(token, last, AST_NODE_RETURN, node);
 
 	*_token = token->next;
 	bool added = try_gen_expression(_token, last, node);
+
 	if (!added) {
 		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *_token });
 	}
@@ -110,9 +107,7 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 		is_const = false;
 		token = token->next;
 
-		if (!token) {
-			return false;
-		}
+		if (!token) return false;
 	}
 
 	if (token->type == TOKEN_NEW_IDENTIFIER &&
@@ -209,9 +204,7 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 	ExprType oper = token_type_to_expr_oper_type(token->type);
 
 	if ((oper == EXPR_NOT || oper == EXPR_SUB) && is_value(token->next)) {
-		if (oper == EXPR_SUB) {
-			oper = EXPR_UNARY_NEG;
-		}
+		if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
 
 		rhs_token = token->next;
 		*_token = token->next;
@@ -226,9 +219,7 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 
 		oper = token_type_to_expr_oper_type(token->next->type);
 
-		if (oper == EXPR_UNKNOWN) {
-			return false;
-		}
+		if (oper == EXPR_UNKNOWN) return false;
 
 		*_token = token->next->next;
 	}
@@ -299,9 +290,7 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 			});
 		}
 
-		if (token->type != TOKEN_COMMA) {
-			break;
-		}
+		if (token->type != TOKEN_COMMA) break;
 
 		token = token->next;
 	}
@@ -361,9 +350,8 @@ bool is_conditional(
 ) {
 	Token *token = *_token;
 
-	if (token->type != token_type || !token->next) {
-		return false;
-	}
+	if (token->type != token_type || !token->next) return false;
+
 	push_ast_node(token, last, node_type, node);
 
 	token = token->next;
@@ -413,9 +401,7 @@ AstNode *make_ast_tree_(
 			}
 
 			if (!child->token_end) {
-				if (!token->next) {
-					return head;
-				}
+				if (!token->next) return head;
 			}
 			else {
 				token = child->token_end->next;
@@ -445,19 +431,13 @@ AstNode *make_ast_tree_(
 
 		last = token;
 
-		if (is_ast_type_alias(&token, &last, &node)) {
-			continue;
-		}
+		if (is_ast_type_alias(&token, &last, &node)) continue;
+		if (is_ast_var_def(&token, &last, &node)) continue;
+		if (is_ast_var_assign(&token, &last, &node)) continue;
+		if (is_ast_return(&token, &last, &node)) continue;
+		if (is_ast_function_proto(&token, &last, &node)) continue;
+		if (try_gen_expression(&token, &last, &node)) continue;
 
-		if (is_ast_var_def(&token, &last, &node)) {
-			continue;
-		}
-		if (is_ast_var_assign(&token, &last, &node)) {
-			continue;
-		}
-		if (is_ast_return(&token, &last, &node)) {
-			continue;
-		}
 		if (token->type == TOKEN_KW_UNREACHABLE) {
 			push_ast_node(token, &last, AST_NODE_UNREACHABLE, &node);
 			continue;
@@ -479,14 +459,8 @@ AstNode *make_ast_tree_(
 		)) {
 			continue;
 		}
-		if (is_ast_function_proto(&token, &last, &node)) {
-			continue;
-		}
 		if (token->type == TOKEN_COMMENT) {
 			push_ast_node(token, &last, AST_NODE_COMMENT, &node);
-			continue;
-		}
-		if (try_gen_expression(&token, &last, &node)) {
 			continue;
 		}
 
@@ -696,9 +670,8 @@ void free_ast_tree_(AstNode *node) {
 			free(node->attr);
 		}
 
-		if (node->child) {
+		if (node->child)
 			free_ast_tree_(node->child);
-		}
 
 		current = node;
 		node = node->next;
@@ -794,9 +767,8 @@ void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 
 		free(indent);
 
-		if (node->child) {
+		if (node->child)
 			print_ast_tree_(node->child, indent_lvl + 2);
-		}
 
 		node = node->next;
 	}

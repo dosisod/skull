@@ -11,9 +11,7 @@ char *read_file(FILE *const fd) {
 	fseek(fd, 0, SEEK_END);
 
 	const long len = ftell(fd);
-	if (len == -1) {
-		return NULL;
-	}
+	if (len == -1) return NULL;
 
 	fseek(fd, 0, SEEK_SET);
 

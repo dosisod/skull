@@ -13,16 +13,12 @@ Returns pointer to type with name `name`.
 */
 const Type __attribute__((pure)) *find_type(const char *const name) {
 	const Type *const alias = ht_get(SKULL_STATE.type_aliases, name);
-	if (alias) {
-		return alias;
-	}
+	if (alias) return alias;
 
 	const Type **type = TYPES_BUILTIN;
 
 	while (*type) {
-		if (strcmp(name, (*type)->name) == 0) {
-			return *type;
-		}
+		if (strcmp(name, (*type)->name) == 0) return *type;
 
 		type++;
 	}

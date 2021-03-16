@@ -33,9 +33,7 @@ unsigned ht_hash_key(const char *const key) {
 Add key `key` with value `ptr` to hashtable `ht`.
 */
 bool ht_add(HashTable *const ht, const char *const key, void *const ptr) {
-	if (!ptr || ht_get(ht, key)) {
-		return false;
-	}
+	if (!ptr || ht_get(ht, key)) return false;
 
 	Vector **slot = &ht->slots[ht_hash_key(key)];
 	Vector *items = *slot;
@@ -62,21 +60,15 @@ Get value with key `key` from hashtable `ht`.
 Return `NULL` if key does not exist.
 */
 void *ht_get(const HashTable *const ht, const char *const key) {
-	if (!ht) {
-		return NULL;
-	}
+	if (!ht) return NULL;
 
 	const Vector *items = ht->slots[ht_hash_key(key)];
-	if (!items) {
-		return NULL;
-	}
+	if (!items) return NULL;
 
 	for RANGE(i, items->length) {
 		const HashItem *item = vector_at(items, i);
 
-		if (strcmp(item->key, key) == 0) {
-			return item->data;
-		}
+		if (strcmp(item->key, key) == 0) return item->data;
 	}
 
 	return NULL;
@@ -84,9 +76,7 @@ void *ht_get(const HashTable *const ht, const char *const key) {
 
 void free_ht_item(void (*free_func)(void *), void *item) {
 	void *data = ((HashItem *)item)->data;
-	if (free_func && data) {
-		free_func(data);
-	}
+	if (free_func && data) free_func(data);
 
 	free(item);
 }
@@ -98,9 +88,7 @@ void free_ht(HashTable *ht, void (*free_func)(void *)) {
 	for RANGE(i, MAX_SLOTS) { // NOLINT
 		Vector *items = ht->slots[i];
 
-		if (items) {
-			free_vector2(items, free_ht_item, free_func);
-		}
+		if (items) free_vector2(items, free_ht_item, free_func);
 	}
 
 	free(ht);

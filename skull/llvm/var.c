@@ -30,9 +30,7 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 	if (token->type == TOKEN_IDENTIFIER) {
 		Variable *const var_found = scope_find_var(token);
 
-		if (variable) {
-			*variable = var_found;
-		}
+		if (variable) *variable = var_found;
 
 		if (var_found->is_const &&
 			!(var_found->is_global &&
@@ -122,26 +120,25 @@ const Type *var_def_node_to_type(const AstNode *node) {
 			return &TYPE_BOOL;
 		}
 
-		if (oper == EXPR_UNARY_NEG) {
+		if (oper == EXPR_UNARY_NEG)
 			token_type = node->next->token->next->type;
-		}
 	}
 
-	if (token_type == TOKEN_BOOL_CONST) {
+	if (token_type == TOKEN_BOOL_CONST)
 		return &TYPE_BOOL;
-	}
-	if (token_type == TOKEN_INT_CONST) {
+
+	if (token_type == TOKEN_INT_CONST)
 		return &TYPE_INT;
-	}
-	if (token_type == TOKEN_FLOAT_CONST) {
+
+	if (token_type == TOKEN_FLOAT_CONST)
 		return &TYPE_FLOAT;
-	}
-	if (token_type == TOKEN_RUNE_CONST) {
+
+	if (token_type == TOKEN_RUNE_CONST)
 		return &TYPE_RUNE;
-	}
-	if (token_type == TOKEN_STR_CONST) {
+
+	if (token_type == TOKEN_STR_CONST)
 		return &TYPE_STR;
-	}
+
 	if (node_type == AST_NODE_FUNCTION) {
 		char *const func_name = token_mbs_str(node->next->token);
 

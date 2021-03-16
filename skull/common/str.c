@@ -49,9 +49,7 @@ Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 The result of this function must be freed.
 */
 char *c32stombs(const char32_t *str) {
-	if (!str) {
-		return NULL;
-	}
+	if (!str) return NULL;
 
 	//allocate the max that str could expand to
 	char *ret = Malloc((c32slen(str) + 1) * MB_CUR_MAX);
@@ -62,9 +60,8 @@ char *c32stombs(const char32_t *str) {
 	while (*str) {
 		size_t length = c32rtomb(ret + offset, *str, &mbs);
 
-		if ((length == 0) || (length > MB_CUR_MAX)) {
-			break;
-		}
+		if ((length == 0) || (length > MB_CUR_MAX)) break;
+
 		offset += length;
 		str++;
 	}
@@ -80,9 +77,7 @@ char *c32stombs(const char32_t *str) {
 Return the size of a UTF-32 string.
 */
 __attribute__((pure)) size_t c32slen(const char32_t *str) {
-	if (!str) {
-		return 0;
-	}
+	if (!str) return 0;
 
 	size_t len = 0;
 
@@ -117,9 +112,8 @@ char32_t *mbstoc32s(const char *str) {
 			PANIC(ERR_ILLEGAL_SEQ, { .i = offset + 1 });
 		}
 
-		if ((length == 0) || (length > MB_CUR_MAX)) {
-			break;
-		}
+		if ((length == 0) || (length > MB_CUR_MAX)) break;
+
 		offset++;
 		str += length;
 	}
@@ -138,9 +132,8 @@ Compare two UTF-32 strings `a` and `b`.
 */
 __attribute__((pure)) bool c32scmp(const char32_t *a, const char32_t *b) {
 	while (*a && *b) {
-		if (*a != *b) {
-			return false;
-		}
+		if (*a != *b) return false;
+
 		a++;
 		b++;
 	}
@@ -157,9 +150,8 @@ __attribute__((pure)) bool c32sncmp(
 	size_t n
 ) {
 	while (*a && *b && n > 0) {
-		if (*a != *b) {
-			return false;
-		}
+		if (*a != *b) return false;
+
 		a++;
 		b++;
 		n--;
@@ -171,22 +163,18 @@ __attribute__((pure)) bool c32sncmp(
 Return whether the UTF-32 character `c` is a hexidecimal digit.
 */
 __attribute__((const)) bool c32isxdigit(char32_t c) {
-	return (
-		((c >= '0') && (c <= '9')) ||
+	return ((c >= '0') && (c <= '9')) ||
 		((c >= 'a') && (c <= 'f')) ||
-		((c >= 'A') && (c <= 'F'))
-	);
+		((c >= 'A') && (c <= 'F'));
 }
 
 /*
 Returns whether the UTF-32 character `c` is an alpha numeric character.
 */
 __attribute__((const)) bool c32isalnum(char32_t c) {
-	return (
-		c32isdigit(c) ||
+	return c32isdigit(c) ||
 		((c >= 'A') && (c <= 'Z')) ||
-		((c >= 'a') && (c <= 'z'))
-	);
+		((c >= 'a') && (c <= 'z'));
 }
 
 /*
@@ -211,9 +199,8 @@ const char __attribute__((pure)) *strrstr(
 	const char *look = str + str_len - sub_len;
 
 	while (look >= str) {
-		if (strncmp(look, sub, sub_len) == 0) {
-			return look;
-		}
+		if (strncmp(look, sub, sub_len) == 0) return look;
+
 		look--;
 	}
 	return NULL;
@@ -226,9 +213,7 @@ NULL character.
 char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 	const char32_t *str = *str_;
 
-	if (*str != '\\') {
-		return '\0';
-	}
+	if (*str != '\\') return '\0';
 
 	char32_t escape = str[1];
 	char32_t opt1 = '\0';
@@ -254,21 +239,18 @@ switch (escape) {
 		opt1 = str[2];
 		opt2 = str[3];
 
-		if (c32isxdigit(str[2]) && c32isxdigit(str[3])) {
+		if (c32isxdigit(str[2]) && c32isxdigit(str[3]))
 			return ((opt1 - 0x30) << 4) + (opt2 - 0x30);
-		}
 
-		if (opt1 == '\'' || opt1 == '\"') {
+		if (opt1 == '\'' || opt1 == '\"')
 			opt1 = '\0';
-		}
-		else if (opt2 == '\'' || opt2 == '\"') {
+
+		else if (opt2 == '\'' || opt2 == '\"')
 			opt2 = '\0';
-		}
 	}
 
-	if (escape == '\'' || escape == '\"') {
+	if (escape == '\'' || escape == '\"')
 		escape = '\0';
-	}
 
 	static char32_t bad_escape[5] = {0};
 	bad_escape[0] = '\\';

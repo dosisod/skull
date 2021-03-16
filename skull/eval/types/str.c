@@ -24,9 +24,7 @@ SkullStr eval_str(const Token *const token) {
 			PANIC(ERR_BAD_ESCAPE, { .tok = token, .str = error });
 		}
 
-		if (str == original) {
-			copy[wrote] = *str;
-		}
+		if (str == original) copy[wrote] = *str;
 
 		str++;
 		wrote++;

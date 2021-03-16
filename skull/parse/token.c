@@ -65,18 +65,17 @@ Token *tokenize(const char32_t *code) {
 					PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
 				}
 
-				if (*code == '}') {
+				if (*code == '}')
 					comment = NO_COMMENT;
-				}
 			}
 		}
 		else if (!quote && !comment && *code == '#') {
-			if (code[1] == ' ') {
+			if (code[1] == ' ')
 				comment = LINE_COMMENT;
-			}
-			else if (code[1] == '{') {
+
+			else if (code[1] == '{')
 				comment = BLOCK_COMMENT;
-			}
+
 			else {
 				PANIC(ERR_INVALID_COMMENT_START, { .i = line_num + 1 });
 			}
@@ -89,12 +88,11 @@ Token *tokenize(const char32_t *code) {
 			}
 		}
 		else if (quote) {
-			if (*code == '\\' && (code[1] == '\\' || code[1] == quote)) {
+			if (*code == '\\' && (code[1] == '\\' || code[1] == quote))
 				code++;
-			}
-			else if (*code == quote) {
+
+			else if (*code == quote)
 				quote = '\0';
-			}
 		}
 		else if (!quote && is_quote(*code)) {
 			quote = *code;
@@ -231,10 +229,8 @@ Returns true if `str` is equal to the value of `token`.
 bool token_cmp(const char32_t *const str, const Token *const token) {
 	const size_t len = token_len(token);
 
-	return (
-		c32slen(str) == len &&
-		c32sncmp(str, token->begin, len)
-	);
+	return c32slen(str) == len &&
+		c32sncmp(str, token->begin, len);
 }
 
 /*

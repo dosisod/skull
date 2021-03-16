@@ -22,9 +22,8 @@ void str_to_llvm(char *const str_) {
 
 	AstNode *const node = make_ast_tree(str);
 
-	if (!node_to_llvm(node)) {
+	if (!node_to_llvm(node))
 		LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
-	}
 
 	free_ast_tree(node);
 	free(str);
@@ -41,9 +40,8 @@ bool node_to_llvm(AstNode *node) {
 while (node) {
 	const NodeType node_type = node->type;
 
-	if (node_type == AST_NODE_IF) {
+	if (node_type == AST_NODE_IF)
 		gen_control_if(&node);
-	}
 
 	else if (node_type == AST_NODE_ELSE) {
 		PANIC(ERR_ELSE_MISSING_IF, {0});
@@ -73,29 +71,23 @@ while (node) {
 		returned = true;
 	}
 
-	else if (node_type == AST_NODE_TYPE_ALIAS) {
+	else if (node_type == AST_NODE_TYPE_ALIAS)
 		create_type_alias(&node);
-	}
 
-	else if (node_type == AST_NODE_VAR_DEF) {
+	else if (node_type == AST_NODE_VAR_DEF)
 		gen_stmt_var_def(&node);
-	}
 
-	else if (node_type == AST_NODE_WHILE) {
+	else if (node_type == AST_NODE_WHILE)
 		gen_control_while(&node);
-	}
 
-	else if (node_type == AST_NODE_FUNCTION_PROTO) {
+	else if (node_type == AST_NODE_FUNCTION_PROTO)
 		gen_stmt_func_decl(node);
-	}
 
-	else if (node_type == AST_NODE_FUNCTION) {
+	else if (node_type == AST_NODE_FUNCTION)
 		gen_expr_function_call(node, NULL);
-	}
 
-	else if (node_type == AST_NODE_VAR_ASSIGN) {
+	else if (node_type == AST_NODE_VAR_ASSIGN)
 		gen_stmt_var_assign(&node);
-	}
 
 	else if (node->token) {
 		PANIC(ERR_UNEXPECTED_TOKEN, { .tok = node->token });

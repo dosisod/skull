@@ -132,9 +132,7 @@ bool is_reserved_str(const char32_t *const str) {
 
 #define EXHAUST_STR(cond) \
 	while (*str) { \
-		if (!(cond)) { \
-			return false; \
-		} \
+		if (!(cond)) return false; \
 		str++; \
 	}
 
@@ -164,12 +162,8 @@ bool is_constant_integer_str(const char32_t *str) {
 		return true;
 	}
 
-	if (*str == '-') {
-		str++;
-	}
-	if (!*str) {
-		return false;
-	}
+	if (*str == '-') str++;
+	if (!*str) return false;
 
 	EXHAUST_STR(c32isdigit(*str));
 
@@ -182,31 +176,20 @@ Returns true if `str` is a valid float (with decimal).
 Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
 bool is_constant_float_str(const char32_t *str) {
-	if (*str == '-') {
-		str++;
-	}
+	if (*str == '-') str++;
 
-	if (c32scmp(U"Infinity", str)) {
-		return true;
-	}
+	if (c32scmp(U"Infinity", str)) return true;
 
-	if (*str == '.') {
-		return false;
-	}
+	if (*str == '.') return false;
 
 	while (*str && *str != '.') {
-		if (!c32isdigit(*str)) {
-			return false;
-		}
-
+		if (!c32isdigit(*str)) return false;
 		str++;
 	}
 
-	if (!*str || !str[1]) {
-		return false;
-	}
-	str++;
+	if (!*str || !str[1]) return false;
 
+	str++;
 	EXHAUST_STR(c32isdigit(*str));
 
 	return true;
@@ -230,13 +213,11 @@ Won't work: `''`, `'\'`, `'x '`, or `' x'`.
 bool is_constant_rune_str(const char32_t *const str) {
 	const size_t len = c32slen(str);
 
-	if (*str != '\'' || str[len - 1] != '\'') {
+	if (*str != '\'' || str[len - 1] != '\'')
 		return false;
-	}
 
-	if (4 <= len && len <= 6) {
+	if (4 <= len && len <= 6)
 		return str[1] == '\\';
-	}
 
 	return len == 3;
 }
@@ -249,20 +230,18 @@ Examples: `""` and `"hello"`.
 bool is_constant_str_str(const char32_t *const str) {
 	const size_t len = c32slen(str);
 
-	return (
-		len >= 2 &&
+	return len >= 2 &&
 		str[0] == '\"' &&
-		str[len - 1] == '\"'
-	);
+		str[len - 1] == '\"';
 }
 
 /*
 Returns true if `str` is a valid identifer.
 */
 bool is_valid_identifier_str(const char32_t *str) {
-	if (*str < 'A' || ('Z' < *str && *str < 'a') || *str > 'z') {
+	if (*str < 'A' || ('Z' < *str && *str < 'a') || *str > 'z')
 		return false;
-	}
+
 	str++;
 
 	while (*str) {
@@ -270,9 +249,9 @@ bool is_valid_identifier_str(const char32_t *str) {
 			str++;
 			break;
 		}
-		if (!(c32isalnum(*str) ^ (*str == '_'))) {
+		if (!(c32isalnum(*str) ^ (*str == '_')))
 			return false;
-		}
+
 		str++;
 	}
 

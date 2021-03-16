@@ -73,18 +73,14 @@ Expr node_to_expr(
 	if (node->type == AST_NODE_EXPR) {
 		const ExprType oper = ATTR(AstNodeExpr, node, oper);
 
-		if (oper == EXPR_IDENTIFIER) {
+		if (oper == EXPR_IDENTIFIER)
 			expr = gen_expr_identifier(type, node->token, var);
-		}
-		else if (oper == EXPR_NOT) {
+		else if (oper == EXPR_NOT)
 			expr = gen_expr_not(type, ATTR(AstNodeExpr, node, rhs));
-		}
-		else if (oper == EXPR_UNARY_NEG) {
+		else if (oper == EXPR_UNARY_NEG)
 			expr = gen_expr_unary_neg(type, ATTR(AstNodeExpr, node, rhs));
-		}
-		else if (oper == EXPR_CONST) {
+		else if (oper == EXPR_CONST)
 			expr = token_to_simple_expr_typed(type, node->token);
-		}
 		else {
 			Operation *func = NULL;
 
@@ -109,14 +105,12 @@ Expr node_to_expr(
 				default: break;
 			}
 
-			if (func) {
+			if (func)
 				expr = gen_expr_oper(type, node, func);
-			}
 		}
 	}
-	else if (node->type == AST_NODE_FUNCTION) {
+	else if (node->type == AST_NODE_FUNCTION)
 		expr = gen_expr_function_call(node, type);
-	}
 
 	if (!expr.llvm_value) {
 		PANIC(ERR_INVALID_EXPR, { .tok = node->token });

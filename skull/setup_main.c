@@ -37,9 +37,7 @@ int setup_main(int argc, char *argv[]) {
 
 	for (int i = 0; i < argc - 1 ; i++) {
 		const int err = build_file(argv[i + 1]);
-		if (err) {
-			return err;
-		}
+		if (err) return err;
 	}
 
 	return 0;
@@ -60,12 +58,11 @@ int build_file(char *filename) {
 	errno = 0;
 	FILE *const f = fopen(filename, "re");
 	if (!f) {
-		if (errno == EACCES) {
+		if (errno == EACCES)
 			fprintf(stderr, "skull: cannot open \"%s\", permission denied\n", filename);
-		}
-		else if (errno == ENOENT) {
+		else if (errno == ENOENT)
 			fprintf(stderr, "skull: \"%s\" was not found, exiting\n", filename);
-		}
+
 		return 1;
 	}
 

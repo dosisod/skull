@@ -25,9 +25,7 @@ SkullRune eval_rune(const Token *const token) {
 		PANIC(ERR_BAD_ESCAPE, { .tok = token, .str = error });
 	}
 
-	if (start == copy) {
-		ret = *start;
-	}
+	if (start == copy) ret = *start;
 
 	return ret;
 }

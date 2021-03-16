@@ -29,18 +29,17 @@ Expr gen_expr_math_oper(
 	LLVMBuildX int_func,
 	LLVMBuildX float_func
 ) {
-	if (type == &TYPE_INT) {
+	if (type == &TYPE_INT)
 		return (Expr){
 			.llvm_value = int_func(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = type
 		};
-	}
-	if (type == &TYPE_FLOAT) {
+
+	if (type == &TYPE_FLOAT)
 		return (Expr){
 			.llvm_value = float_func(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = type
 		};
-	}
 
 	return (Expr){0};
 }
@@ -132,12 +131,11 @@ Expr gen_expr_lshift(
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	if (type == &TYPE_INT) {
+	if (type == &TYPE_INT)
 		return (Expr){
 			.llvm_value = LLVMBuildShl(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = &TYPE_INT
 		};
-	}
 
 	return (Expr){0};
 }
@@ -150,12 +148,11 @@ Expr gen_expr_rshift(
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	if (type == &TYPE_INT) {
+	if (type == &TYPE_INT)
 		return (Expr){
 			.llvm_value = LLVMBuildLShr(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = &TYPE_INT
 		};
-	}
 
 	return (Expr){0};
 }
@@ -178,12 +175,12 @@ Expr gen_expr_pow(
 ) {
 	const char *func_name = NULL;
 
-	if (type == &TYPE_INT) {
+	if (type == &TYPE_INT)
 		func_name = "_int_pow";
-	}
-	else if (type == &TYPE_FLOAT) {
+
+	else if (type == &TYPE_FLOAT)
 		func_name = "_float_pow";
-	}
+
 	else {
 		PANIC(ERR_POW_BAD_TYPE, { .type = type });
 	}
@@ -253,7 +250,7 @@ Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 Return expression for result of is operator for `lhs` and `rhs`.
 */
 Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
-	if (type == &TYPE_INT || type == &TYPE_RUNE) {
+	if (type == &TYPE_INT || type == &TYPE_RUNE)
 		return (Expr){
 			.llvm_value = LLVMBuildICmp(
 				SKULL_STATE.builder,
@@ -264,8 +261,8 @@ Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 			),
 			.type = &TYPE_BOOL
 		};
-	}
-	if (type == &TYPE_FLOAT) {
+
+	if (type == &TYPE_FLOAT)
 		return (Expr){
 			.llvm_value = LLVMBuildFCmp(
 				SKULL_STATE.builder,
@@ -276,10 +273,9 @@ Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 			),
 			.type = &TYPE_BOOL
 		};
-	}
-	if (type == &TYPE_STR) {
+
+	if (type == &TYPE_STR)
 		return gen_expr_is_str(lhs, rhs);
-	}
 
 	return (Expr){0};
 }
@@ -318,13 +314,12 @@ Expr create_and_call_builtin_oper(
 		false
 	);
 
-	if (!func) {
+	if (!func)
 		func = LLVMAddFunction(
 			SKULL_STATE.module,
 			name,
 			func_type
 		);
-	}
 
 	return (Expr){
 		.llvm_value = LLVMBuildCall2(
@@ -371,7 +366,7 @@ Expr gen_expr_relational_oper(
 	LLVMIntPredicate int_pred,
 	LLVMRealPredicate float_pred
 ) {
-	if (type == &TYPE_INT) {
+	if (type == &TYPE_INT)
 		return (Expr){
 			.llvm_value = LLVMBuildICmp(
 				SKULL_STATE.builder,
@@ -382,8 +377,8 @@ Expr gen_expr_relational_oper(
 			),
 			.type = &TYPE_BOOL
 		};
-	}
-	if (type == &TYPE_FLOAT) {
+
+	if (type == &TYPE_FLOAT)
 		return (Expr){
 			.llvm_value = LLVMBuildFCmp(
 				SKULL_STATE.builder,
@@ -394,7 +389,6 @@ Expr gen_expr_relational_oper(
 			),
 			.type = &TYPE_BOOL
 		};
-	}
 
 	return (Expr){0};
 }
@@ -521,9 +515,7 @@ Expr gen_expr_oper(
 		rhs.llvm_value
 	);
 
-	if (!result.type && !result.llvm_value) {
-		return (Expr){0};
-	}
+	if (!result.type && !result.llvm_value) return (Expr){0};
 
 	if (type && result.type != type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,

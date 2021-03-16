@@ -30,9 +30,8 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 
 	fprintf(stderr, "%s: Compilation error: ", SKULL_STATE.filename);
 
-	if (msg[0].tok) {
+	if (msg[0].tok)
 		fprintf(stderr, "line %u column %u: ", msg[0].tok->line, msg[0].tok->column);
-	}
 
 	#ifdef __clang__
 	# pragma clang diagnostic push
@@ -41,15 +40,12 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 	# pragma GCC diagnostic push
 	# pragma GCC diagnostic ignored "-Wformat-nonliteral"
 	#endif
-	if (num_of_percents == 0) {
+	if (num_of_percents == 0)
 		fprintf(stderr, "%s\n", fmt);
-	}
-	else if (num_of_percents == 1) {
+	else if (num_of_percents == 1)
 		fprintf(stderr, fmt, msgs[0].real);
-	}
-	else if (num_of_percents == 2) {
+	else if (num_of_percents == 2)
 		fprintf(stderr, fmt, msgs[0].real, msgs[1].real);
-	}
 	#ifdef __clang__
 	# pragma clang diagnostic pop
 	#else
@@ -72,21 +68,17 @@ If `i` (integer) is specified for `msg`, it must be one more then the actual
 value. This is due to `0` being falsey, and thus not being able to be checked.
 */
 void fmt_error_stringify(ErrorMsg *const msg) {
-	if (msg->var) {
+	if (msg->var)
 		msg->real = strdup(msg->var->name);
-	}
-	else if (msg->type) {
+	else if (msg->type)
 		msg->real = strdup(msg->type->name);
-	}
-	else if (msg->str) {
+	else if (msg->str)
 		msg->real = c32stombs(msg->str);
-	}
 	else if (msg->i) {
 		const size_t len = (size_t)snprintf(NULL, 0, "%zu", msg->i - 1) + 1;
 		msg->real = Malloc(len);
 		snprintf(msg->real, len, "%zu", msg->i - 1);
 	}
-	else if (msg->tok && !msg->real) {
+	else if (msg->tok && !msg->real)
 		msg->real = token_mbs_str(msg->tok);
-	}
 }

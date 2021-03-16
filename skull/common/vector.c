@@ -20,9 +20,7 @@ void vector_push(Vector *v, void *ptr) {
 Pop and return last element from vector `v`.
 */
 void *vector_pop(Vector *v) {
-	if (!v->length) {
-		return NULL;
-	}
+	if (!v->length) return NULL;
 
 	v->length--;
 	return v->elements[v->length];
@@ -45,9 +43,7 @@ Vector *make_vector(void) {
 Return the element at index `index` of the vector `v`, or NULL if out-of-bound.
 */
 void *vector_at(const Vector *const v, size_t index) {
-	if (index >= v->length) {
-		return NULL;
-	}
+	if (index >= v->length) return NULL;
 
 	return v->elements[index];
 }
@@ -69,12 +65,11 @@ void free_vector2(
 	void (*free_func2)(void *)
 ) {
 	for RANGE(i, v->length) {
-		if (free_func) {
+		if (free_func)
 			free_func(free_func2, v->elements[i]);
-		}
-		else if (free_func2) {
+
+		else if (free_func2)
 			free_func2(v->elements[i]);
-		}
 	}
 
 	free(v->elements);

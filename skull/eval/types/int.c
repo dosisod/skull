@@ -18,18 +18,10 @@ SkullInt eval_integer(const Token *const token) {
 		const char32_t modifier = begin[1];
 		begin += 2;
 
-		if (modifier == 'b') {
-			base = 2;
-		}
-		else if (modifier == 'o') {
-			base = 8;
-		}
-		else if (modifier == 'x') {
-			base = 16;
-		}
-		else {
-			begin -= 2;
-		}
+		if (modifier == 'b') base = 2;
+		else if (modifier == 'o') base = 8;
+		else if (modifier == 'x') base = 16;
+		else begin -= 2;
 	}
 
 	char *const num_str = c32stombs(begin);

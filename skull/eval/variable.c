@@ -21,9 +21,7 @@ Variable *make_variable(
 	const char32_t *const name,
 	bool is_const
 ) {
-	if (!type || !is_valid_identifier_str(name)) {
-		return NULL;
-	}
+	if (!type || !is_valid_identifier_str(name)) return NULL;
 
 	Variable *var;
 	var = Malloc(sizeof *var);

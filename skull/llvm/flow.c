@@ -225,9 +225,8 @@ void gen_control_code_block(
 	if (node->child->token) {
 		const bool returned = node_to_llvm(node->child);
 
-		if (!returned) {
+		if (!returned)
 			LLVMBuildBr(SKULL_STATE.builder, block);
-		}
 	}
 	else {
 		LLVMBuildBr(SKULL_STATE.builder, block);
