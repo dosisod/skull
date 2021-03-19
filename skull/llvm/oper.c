@@ -496,8 +496,8 @@ Expr gen_expr_oper(
 	const AstNode *const node,
 	Operation *oper
 ) {
-	const Token *rhs_token = ATTR(AstNodeExpr, node, rhs);
-	const Token *lhs_token = ATTR(AstNodeExpr, node, lhs);
+	const Token *rhs_token = node->attr.expr->rhs;
+	const Token *lhs_token = node->attr.expr->lhs;
 
 	const Expr lhs = token_to_expr(lhs_token, NULL);
 	const Expr rhs = token_to_expr(rhs_token, NULL);

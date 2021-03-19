@@ -3,11 +3,6 @@
 #include "skull/eval/types/types.h"
 #include "skull/parse/token.h"
 
-/*
-Get the attribute/property `prop` from `node`, assuming it is of type `from`.
-*/
-#define ATTR(from, node, prop) ((from *)(node)->attr)->prop
-
 typedef enum {
 	AST_NODE_UNKNOWN,
 
@@ -33,6 +28,10 @@ typedef enum {
 } NodeType;
 
 typedef struct AstNode AstNode;
+typedef struct AstNodeVarDef AstNodeVarDef;
+typedef struct AstNodeFunctionProto AstNodeFunctionProto;
+typedef struct AstNodeFunctionCall AstNodeFunctionCall;
+typedef struct AstNodeExpr AstNodeExpr;
 
 /*
 An `AstNode` abstractly stores data about parsed code.
@@ -63,13 +62,18 @@ typedef struct AstNode {
 	AstNode *parent;
 
 	// used to store arbitrary data associated with a certain node type
-	void *attr;
+	union {
+		AstNodeVarDef *var_def;
+		AstNodeFunctionProto *func_proto;
+		AstNodeFunctionCall *func_call;
+		AstNodeExpr *expr;
+	} attr;
 } AstNode;
 
 /*
 Used to store special data about `AST_NODE_VAR_DEF` nodes.
 */
-typedef struct {
+typedef struct AstNodeVarDef {
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
 	const Token *name_tok;
@@ -78,7 +82,7 @@ typedef struct {
 /*
 Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
 */
-typedef struct {
+typedef struct AstNodeFunctionProto {
 	const Token *name_tok;
 
 	char **param_type_names;
@@ -95,7 +99,7 @@ typedef struct {
 /*
 Used to store special data about function call.
 */
-typedef struct {
+typedef struct AstNodeFunctionCall {
 	const Token *func_name_tok;
 	unsigned short num_values;
 } AstNodeFunctionCall;
@@ -128,7 +132,7 @@ typedef enum {
 /*
 Store special data about operator related nodes.
 */
-typedef struct {
+typedef struct AstNodeExpr {
 	const Token *lhs;
 	const Token *rhs;
 	ExprType oper;

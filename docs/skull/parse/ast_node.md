@@ -1,12 +1,6 @@
 # skull/parse/ast_node
 
 ```c
-#define ATTR(from, node, prop) ((from *)(node)->attr)->prop
-```
-
-> Get the attribute/property `prop` from `node`, assuming it is of type `from`.
-
-```c
 typedef struct AstNode {
 	NodeType type;
 
@@ -20,8 +14,12 @@ typedef struct AstNode {
 	AstNode *parent;
 
 	// used to store arbitrary data associated with a certain node type
-	void *attr;
-}
+	union {
+		AstNodeVarDef *var_def;
+		AstNodeFunctionProto *func_proto;
+		AstNodeFunctionCall *func_call;
+		AstNodeExpr *expr;
+	}
 ```
 
 > An `AstNode` abstractly stores data about parsed code.
@@ -40,7 +38,7 @@ typedef struct AstNode {
 > re-parsing.
 
 ```c
-typedef struct {
+typedef struct AstNodeVarDef {
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
 	const Token *name_tok;
@@ -50,7 +48,7 @@ typedef struct {
 > Used to store special data about `AST_NODE_VAR_DEF` nodes.
 
 ```c
-typedef struct {
+typedef struct AstNodeFunctionProto {
 	const Token *name_tok;
 
 	char **param_type_names;
@@ -68,7 +66,7 @@ typedef struct {
 > Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
 
 ```c
-typedef struct {
+typedef struct AstNodeFunctionCall {
 	const Token *func_name_tok;
 	unsigned short num_values;
 }
@@ -77,7 +75,7 @@ typedef struct {
 > Used to store special data about function call.
 
 ```c
-typedef struct {
+typedef struct AstNodeExpr {
 	const Token *lhs;
 	const Token *rhs;
 	ExprType oper;
@@ -92,19 +90,6 @@ typedef struct {
 
 > Compare a variable number of token types stored in `...` agains each
 > successive token in `token`.
-
-```c
-#define MAKE_ATTR(from, node, ...) \
-	from *attr; \
-	attr = Malloc(sizeof *attr); \
-	*attr = (from){ \
-		__VA_ARGS__ \
-	}; \
-	(node)->attr = attr
-```
-
-> Create a new attribute struct of type `from`, assign to `node`, with data
-> passed from `...`.
 
 ```c
 AstNode *make_ast_tree(const char32_t *const code)

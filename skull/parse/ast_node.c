@@ -32,18 +32,6 @@ successive token in `token`.
 #define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
 
 /*
-Create a new attribute struct of type `from`, assign to `node`, with data
-passed from `...`.
-*/
-#define MAKE_ATTR(from, node, ...) \
-	from *attr; \
-	attr = Malloc(sizeof *attr); \
-	*attr = (from){ \
-		__VA_ARGS__ \
-	}; \
-	(node)->attr = attr
-
-/*
 Makes an AST (abstract syntax tree) from a given string.
 */
 AstNode *make_ast_tree(const char32_t *const code) {
@@ -131,11 +119,12 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	MAKE_ATTR(AstNodeVarDef, *node,
+	(*node)->attr.var_def = Malloc(sizeof(AstNodeVarDef));
+	*(*node)->attr.var_def = (AstNodeVarDef){
 		.is_const = is_const,
 		.is_implicit = is_implicit,
 		.name_tok = token
-	);
+	};
 
 	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
 	*_token = (*_token)->next;
@@ -227,11 +216,12 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	MAKE_ATTR(AstNodeExpr, *node,
+	(*node)->attr.expr = Malloc(sizeof(AstNodeExpr));
+	*(*node)->attr.expr = (AstNodeExpr){
 		.lhs = lhs_token,
 		.oper = oper,
 		.rhs = rhs_token
-	);
+	};
 
 	push_ast_node(*_token, last, AST_NODE_EXPR, node);
 	return true;
@@ -327,7 +317,8 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		memcpy(tmp_types, param_type_names, num_params * sizeof(char *));
 	}
 
-	MAKE_ATTR(AstNodeFunctionProto, *node,
+	(*node)->attr.func_proto = Malloc(sizeof(AstNodeFunctionProto));
+	*(*node)->attr.func_proto = (AstNodeFunctionProto){
 		.name_tok = func_name_token,
 		.param_type_names = tmp_types,
 		.param_names = tmp_names,
@@ -335,7 +326,7 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		.is_external = is_external,
 		.is_export = is_export,
 		.num_params = num_params
-	);
+	};
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
 	return true;
@@ -512,16 +503,18 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	else if (token->type == TOKEN_IDENTIFIER) {
 		push_ast_node(token, last, AST_NODE_EXPR, node);
 
-		MAKE_ATTR(AstNodeExpr, (*node)->last,
+		(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
+		*(*node)->last->attr.expr = (AstNodeExpr){
 			.oper = EXPR_IDENTIFIER
-		);
+		};
 	}
 	else if (is_value(token)) {
 		push_ast_node(token, last, AST_NODE_EXPR, node);
 
-		MAKE_ATTR(AstNodeExpr, (*node)->last,
+		(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
+		*(*node)->last->attr.expr = (AstNodeExpr){
 			.oper = EXPR_CONST
-		);
+		};
 	}
 	else {
 		return false;
@@ -578,10 +571,11 @@ void gen_func_call(
 		*_token = (*_token)->next;
 	}
 
-	MAKE_ATTR(AstNodeFunctionCall, (*node)->last,
+	(*node)->last->attr.func_call = Malloc(sizeof(AstNodeFunctionCall));
+	*(*node)->last->attr.func_call = (AstNodeFunctionCall){
 		.func_name_tok = func_name_token,
 		.num_values = num_values
-	);
+	};
 }
 
 /*
@@ -630,37 +624,34 @@ void free_ast_tree_(AstNode *node) {
 	AstNode *current = NULL;
 
 	while (node) {
-		if (node->attr) {
-			if (node->type == AST_NODE_FUNCTION_PROTO) {
-				free(ATTR(AstNodeFunctionProto, node, return_type_name));
+		if (node->type == AST_NODE_FUNCTION_PROTO) {
+			free(node->attr.func_proto->return_type_name);
 
-				char **param_type_names = ATTR(
-					AstNodeFunctionProto,
-					node,
-					param_type_names
-				);
-				char32_t **param_names = ATTR(
-					AstNodeFunctionProto,
-					node,
-					param_names
-				);
+			char **param_type_names = \
+				node->attr.func_proto->param_type_names;
 
-				unsigned num_params = ATTR(
-					AstNodeFunctionProto,
-					node,
-					num_params
-				);
+			char32_t **param_names = node->attr.func_proto->param_names;
 
-				for RANGE(i, num_params) { // NOLINT
-					free(param_type_names[i]);
-					free(param_names[i]);
-				}
+			unsigned num_params = node->attr.func_proto->num_params;
 
-				free(param_type_names);
-				free(param_names);
+			for RANGE(i, num_params) { // NOLINT
+				free(param_type_names[i]);
+				free(param_names[i]);
 			}
 
-			free(node->attr);
+			free(param_type_names);
+			free(param_names);
+
+			free(node->attr.func_proto);
+		}
+		else if (node->type == AST_NODE_VAR_DEF) {
+			free(node->attr.var_def);
+		}
+		else if (node->type == AST_NODE_FUNCTION) {
+			free(node->attr.func_call);
+		}
+		else if (node->type == AST_NODE_EXPR) {
+			free(node->attr.expr);
 		}
 
 		if (node->child)
