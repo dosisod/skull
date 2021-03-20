@@ -76,7 +76,6 @@ bool is_ast_type_alias(Token **token, Token **last, AstNode **node) {
 	) {
 		*token = (*token)->next->next->next;
 		push_ast_node(*token, *last, AST_NODE_TYPE_ALIAS, node);
-		*last = (*token)->next;
 		return true;
 	}
 
@@ -335,7 +334,6 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 	};
 
 	push_ast_node(*_token, *last, AST_NODE_FUNCTION_PROTO, node);
-	*last = (*_token)->next;
 	return true;
 }
 
@@ -444,19 +442,16 @@ AstNode *make_ast_tree_(
 		}
 		if (token->type == TOKEN_KW_UNREACHABLE) {
 			push_ast_node(token, last, AST_NODE_UNREACHABLE, &node);
-			last = token->next;
 			token = *_token;
 			continue;
 		}
 		if (token->type == TOKEN_KW_ELSE) {
 			push_ast_node(token, last, AST_NODE_ELSE, &node);
-			last = token->next;
 			token = *_token;
 			continue;
 		}
 		if (token->type == TOKEN_COMMENT) {
 			push_ast_node(token, last, AST_NODE_COMMENT, &node);
-			last = token->next;
 			token = *_token;
 			continue;
 		}
@@ -551,7 +546,6 @@ void gen_func_call(
 	const Token *func_name_token = *_token;
 
 	push_ast_node(*_token, *last, AST_NODE_FUNCTION, node);
-	*last = (*_token)->next;
 
 	AstNode *child = make_ast_node();
 	(*node)->last->child = child;
