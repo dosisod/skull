@@ -28,7 +28,7 @@ TEST(push_ast_node, {
 	AstNode *node = make_ast_node();
 	AstNode *tmp = node;
 
-	push_ast_node(token, &last, AST_NODE_VAR_DEF, &node);
+	push_ast_node(token, last, AST_NODE_VAR_DEF, &node);
 
 	ASSERT_FALSEY(tmp->last);
 	ASSERT_EQUAL(tmp->next, node);

@@ -140,7 +140,7 @@ typedef struct AstNodeExpr {
 
 AstNode *make_ast_node(void);
 
-void push_ast_node(Token *const, Token **, NodeType, AstNode **);
+void push_ast_node(Token *const, Token *, NodeType, AstNode **);
 
 AstNode *make_ast_tree(const char32_t *const);
 void free_ast_tree(AstNode *);
