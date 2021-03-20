@@ -516,7 +516,6 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	else if (token->type == TOKEN_IDENTIFIER) {
 		push_ast_node(token, *last, AST_NODE_EXPR, node);
 		*last = token->next;
-		*_token = *last;
 
 		(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
 		*(*node)->last->attr.expr = (AstNodeExpr){
@@ -526,7 +525,6 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 	else if (is_value(token)) {
 		push_ast_node(token, *last, AST_NODE_EXPR, node);
 		*last = token->next;
-		*_token = *last;
 
 		(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
 		*(*node)->last->attr.expr = (AstNodeExpr){
