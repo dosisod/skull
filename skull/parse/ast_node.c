@@ -14,8 +14,8 @@
 
 #define MAX_PARAMS 64
 
-bool try_gen_expression(Token **, Token **, AstNode **);
-void gen_func_call(Token **, Token **, AstNode **);
+bool try_gen_expression(Token **, AstNode **);
+void gen_func_call(Token **, AstNode **);
 
 AstNode *make_ast_tree_(Token **, unsigned);
 
@@ -50,16 +50,15 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	return ret;
 }
 
-bool is_ast_return(Token **_token, Token **last, AstNode **node) {
+bool is_ast_return(Token **_token, AstNode **node) {
 	Token *token = *_token;
 
 	if (token->type != TOKEN_KW_RETURN) return false;
 
-	push_ast_node(token, *last, AST_NODE_RETURN, node);
-	*last = token->next;
+	push_ast_node(token, *_token, AST_NODE_RETURN, node);
 
 	*_token = token->next;
-	bool added = try_gen_expression(_token, last, node);
+	bool added = try_gen_expression(_token, node);
 
 	if (!added) {
 		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *_token });
@@ -68,14 +67,15 @@ bool is_ast_return(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
-bool is_ast_type_alias(Token **token, Token **last, AstNode **node) {
+bool is_ast_type_alias(Token **token, AstNode **node) {
 	if (AST_TOKEN_CMP(*token,
 		TOKEN_IDENTIFIER,
 		TOKEN_OPER_AUTO_EQUAL,
 		TOKEN_TYPE)
 	) {
-		*token = (*token)->next->next->next;
-		push_ast_node(*token, *last, AST_NODE_TYPE_ALIAS, node);
+		Token *next = (*token)->next->next->next;
+		push_ast_node(next, *token, AST_NODE_TYPE_ALIAS, node);
+		*token = next;
 		return true;
 	}
 
@@ -85,12 +85,13 @@ bool is_ast_type_alias(Token **token, Token **last, AstNode **node) {
 #define IS_TYPE_LIKE(token) \
 	((token)->type == TOKEN_TYPE || (token)->type == TOKEN_IDENTIFIER)
 
-bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
+bool is_ast_var_def(Token **_token, AstNode **node) {
 	bool is_const = true;
 	bool is_implicit = true;
 
 	// too lazy to dereference each `token`
 	Token *token = *_token;
+	Token *last = token;
 
 	if (token->type == TOKEN_KW_MUT) {
 		is_const = false;
@@ -127,11 +128,10 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 		.name_tok = token
 	};
 
-	push_ast_node(*_token, *last, AST_NODE_VAR_DEF, node);
-	*last = (*_token)->next;
+	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
 	*_token = (*_token)->next;
 
-	bool added = try_gen_expression(_token, last, node);
+	bool added = try_gen_expression(_token, node);
 	if (!added) {
 		PANIC(ERR_ASSIGN_MISSING_EXPR, { .tok = *_token });
 	}
@@ -139,7 +139,7 @@ bool is_ast_var_def(Token **_token, Token **last, AstNode **node) {
 	return true;
 }
 
-bool is_ast_var_assign(Token **_token, Token **last, AstNode **node) {
+bool is_ast_var_assign(Token **_token, AstNode **node) {
 	Token *token = *_token;
 
 	if (!AST_TOKEN_CMP(token,
@@ -149,14 +149,11 @@ bool is_ast_var_assign(Token **_token, Token **last, AstNode **node) {
 		return false;
 	}
 
-	token = token->next;
-	push_ast_node(token, *last, AST_NODE_VAR_ASSIGN, node);
-	*last = token->next;
-
-	token = token->next;
+	push_ast_node(token->next, token, AST_NODE_VAR_ASSIGN, node);
+	token = token->next->next;
 	*_token = token;
 
-	bool added = try_gen_expression(_token, last, node);
+	bool added = try_gen_expression(_token, node);
 	if (!added) {
 		PANIC(ERR_ASSIGN_MISSING_EXPR, { .tok = *_token });
 	}
@@ -188,8 +185,9 @@ ExprType token_type_to_expr_oper_type(TokenType type) {
 	}
 }
 
-bool is_const_oper(Token **_token, Token **last, AstNode **node) {
+bool is_const_oper(Token **_token, AstNode **node) {
 	Token *token = *_token;
+	Token *last = token;
 
 	const Token *lhs_token = NULL;
 	const Token *rhs_token = NULL;
@@ -227,13 +225,13 @@ bool is_const_oper(Token **_token, Token **last, AstNode **node) {
 		.rhs = rhs_token
 	};
 
-	push_ast_node(*_token, *last, AST_NODE_EXPR, node);
-	*last = (*_token)->next;
+	push_ast_node(*_token, last, AST_NODE_EXPR, node);
 	return true;
 }
 
-bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
+bool is_ast_function_proto(Token **_token, AstNode **node) {
 	Token *token = *_token;
+	Token *last = token;
 
 	bool is_external = false;
 	bool is_export = false;
@@ -333,15 +331,11 @@ bool is_ast_function_proto(Token **_token, Token **last, AstNode **node) {
 		.num_params = num_params
 	};
 
-	push_ast_node(*_token, *last, AST_NODE_FUNCTION_PROTO, node);
+	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
 	return true;
 }
 
-bool is_conditional(
-	Token **token,
-	Token **last,
-	AstNode **node
-) {
+bool is_conditional(Token **token, AstNode **node) {
 	const TokenType token_type = (*token)->type;
 	NodeType node_type;
 
@@ -352,12 +346,11 @@ bool is_conditional(
 
 	if (!(*token)->next) return false;
 
-	push_ast_node(*token, *last, node_type, node);
-	*last = (*token)->next;
+	push_ast_node(*token, *token, node_type, node);
 
 	*token = (*token)->next;
 
-	if (!try_gen_expression(token, last, node)) {
+	if (!try_gen_expression(token, node)) {
 		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *token });
 	}
 
@@ -367,12 +360,8 @@ bool is_conditional(
 /*
 Internal AST tree generator.
 */
-AstNode *make_ast_tree_(
-	Token **_token,
-	unsigned indent_lvl
-) {
+AstNode *make_ast_tree_(Token **_token, unsigned indent_lvl) {
 	Token *token = *_token;
-	Token *last = token;
 
 	AstNode *node = make_ast_node();
 	AstNode *head = node;
@@ -427,31 +416,29 @@ AstNode *make_ast_tree_(
 			continue;
 		}
 
-		last = token;
-
-		if (is_ast_type_alias(_token, &last, &node) ||
-			is_ast_var_def(_token, &last, &node) ||
-			is_ast_var_assign(_token, &last, &node) ||
-			is_ast_return(_token, &last, &node) ||
-			is_ast_function_proto(_token, &last, &node) ||
-			try_gen_expression(_token, &last, &node) ||
-			is_conditional(_token, &last, &node)
+		if (is_ast_type_alias(_token, &node) ||
+			is_ast_var_def(_token, &node) ||
+			is_ast_var_assign(_token, &node) ||
+			is_ast_return(_token, &node) ||
+			is_ast_function_proto(_token, &node) ||
+			try_gen_expression(_token, &node) ||
+			is_conditional(_token, &node)
 		) {
 			token = *_token;
 			continue;
 		}
 		if (token->type == TOKEN_KW_UNREACHABLE) {
-			push_ast_node(token, last, AST_NODE_UNREACHABLE, &node);
+			push_ast_node(token, token, AST_NODE_UNREACHABLE, &node);
 			token = *_token;
 			continue;
 		}
 		if (token->type == TOKEN_KW_ELSE) {
-			push_ast_node(token, last, AST_NODE_ELSE, &node);
+			push_ast_node(token, token, AST_NODE_ELSE, &node);
 			token = *_token;
 			continue;
 		}
 		if (token->type == TOKEN_COMMENT) {
-			push_ast_node(token, last, AST_NODE_COMMENT, &node);
+			push_ast_node(token, token, AST_NODE_COMMENT, &node);
 			token = *_token;
 			continue;
 		}
@@ -478,39 +465,34 @@ Try and generate AST node for expression.
 
 Returns true if a node was added, false otherwise.
 */
-bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
+bool try_gen_expression(Token **_token, AstNode **node) {
 	Token *token = *_token;
 
 	if (token->type == TOKEN_PAREN_OPEN) {
 		token = token->next;
-		*last = token;
 		*_token = token;
 
-		if (!try_gen_expression(_token, last, node)) {
+		if (!try_gen_expression(_token, node)) {
 			PANIC(ERR_INVALID_EXPR, { .tok = *_token });
 		}
-
-		token = *last;
 
 		if (token->type != TOKEN_PAREN_CLOSE) {
 			PANIC(ERR_MISSING_CLOSING_PAREN, { .tok = token });
 		}
 
 		*_token = token->next;
-		*last = token->next;
 
 		return true;
 	}
 
-	if (is_const_oper(_token, last, node)) {
+	if (is_const_oper(_token, node)) {
 		// pass
 	}
 	else if (AST_TOKEN_CMP(token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
-		gen_func_call(_token, last, node);
+		gen_func_call(_token, node);
 	}
 	else if (token->type == TOKEN_IDENTIFIER) {
-		push_ast_node(token, *last, AST_NODE_EXPR, node);
-		*last = token->next;
+		push_ast_node(token, *_token, AST_NODE_EXPR, node);
 
 		(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
 		*(*node)->last->attr.expr = (AstNodeExpr){
@@ -518,8 +500,7 @@ bool try_gen_expression(Token **_token, Token **last, AstNode **node) {
 		};
 	}
 	else if (is_value(token)) {
-		push_ast_node(token, *last, AST_NODE_EXPR, node);
-		*last = token->next;
+		push_ast_node(token, *_token, AST_NODE_EXPR, node);
 
 		(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
 		*(*node)->last->attr.expr = (AstNodeExpr){
@@ -538,14 +519,10 @@ Try and generate AST node for a function call.
 
 Returns true if a node was added, false otherwise.
 */
-void gen_func_call(
-	Token **_token,
-	Token **last,
-	AstNode **node
-) {
+void gen_func_call(Token **_token, AstNode **node) {
 	const Token *func_name_token = *_token;
 
-	push_ast_node(*_token, *last, AST_NODE_FUNCTION, node);
+	push_ast_node(*_token, *_token, AST_NODE_FUNCTION, node);
 
 	AstNode *child = make_ast_node();
 	(*node)->last->child = child;
@@ -555,8 +532,7 @@ void gen_func_call(
 	unsigned short num_values = 0;
 
 	while (true) {
-		*last = *_token;
-		const bool added = try_gen_expression(_token, last, &child);
+		const bool added = try_gen_expression(_token, &child);
 		if (added) {
 			num_values++;
 

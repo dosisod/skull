@@ -1,1 +1,1 @@
-./test/sh/error/misc/paren_expr_missing_paren.sk: Compilation error: line 1 column 8: missing closing parenthesis
+./test/sh/error/misc/paren_expr_missing_paren.sk: Compilation error: line 1 column 7: missing closing parenthesis
