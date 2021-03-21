@@ -1,11 +1,3 @@
-#{
-TODO: actually fix this test
-
 mut x := (1 + 2)
 
 mut y := (((1 + 2)))
-#}
-
-mut x := 1 + 2
-
-mut y := 1 + 2

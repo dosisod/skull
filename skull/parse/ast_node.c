@@ -226,6 +226,8 @@ bool is_const_oper(Token **_token, AstNode **node) {
 	};
 
 	push_ast_node(*_token, last, AST_NODE_EXPR, node);
+	*_token = (*_token)->next;
+
 	return true;
 }
 
@@ -476,6 +478,8 @@ bool try_gen_expression(Token **_token, AstNode **node) {
 			PANIC(ERR_INVALID_EXPR, { .tok = *_token });
 		}
 
+		token = *_token;
+
 		if (token->type != TOKEN_PAREN_CLOSE) {
 			PANIC(ERR_MISSING_CLOSING_PAREN, { .tok = token });
 		}
@@ -498,6 +502,8 @@ bool try_gen_expression(Token **_token, AstNode **node) {
 		*(*node)->last->attr.expr = (AstNodeExpr){
 			.oper = EXPR_IDENTIFIER
 		};
+
+		*_token = (*_token)->next;
 	}
 	else if (is_value(token)) {
 		push_ast_node(token, *_token, AST_NODE_EXPR, node);
@@ -506,6 +512,8 @@ bool try_gen_expression(Token **_token, AstNode **node) {
 		*(*node)->last->attr.expr = (AstNodeExpr){
 			.oper = EXPR_CONST
 		};
+
+		*_token = (*_token)->next;
 	}
 	else {
 		return false;
@@ -535,12 +543,6 @@ void gen_func_call(Token **_token, AstNode **node) {
 		const bool added = try_gen_expression(_token, &child);
 		if (added) {
 			num_values++;
-
-			// dont move to next token if function was parsed, as the token will
-			// already been moved to where it should be
-			if (child->last->type != AST_NODE_FUNCTION) {
-				*_token = (*_token)->next;
-			}
 		}
 
 		if ((*_token)->type == TOKEN_PAREN_CLOSE) {
