@@ -98,13 +98,13 @@ AstNode *make_ast_tree(const char32_t *const code)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-AstNode *make_ast_tree_(Token **_token, unsigned indent_lvl)
+AstNode *make_ast_tree_(Token **token, unsigned indent_lvl)
 ```
 
 > Internal AST tree generator.
 
 ```c
-bool try_gen_expression(Token **_token, AstNode **node)
+bool try_gen_expression(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for expression.
@@ -112,7 +112,7 @@ bool try_gen_expression(Token **_token, AstNode **node)
 > Returns true if a node was added, false otherwise.
 
 ```c
-void gen_func_call(Token **_token, AstNode **node)
+void gen_func_call(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for a function call.
@@ -151,10 +151,10 @@ bool ast_token_cmp(Token *token, ...)
 > corresponding token type specified in `...`
 
 ```c
-__attribute__((pure)) bool is_value(const Token *const token)
+__attribute__((pure)) bool is_value(TokenType token_type)
 ```
 
-> Return whether `token` represents a constant literal, or an identifier.
+> Return whether `token_type` represents a constant literal, or an identifier.
 
 ```c
 void print_ast_tree(const AstNode *node)
