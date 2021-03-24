@@ -7,6 +7,8 @@
 
 #include "skull/common/hashtable.h"
 
+MAKE_VECTOR(HashItem)
+
 /*
 Create a new hashtable.
 */
@@ -49,7 +51,7 @@ bool ht_add(HashTable *const ht, const char *const key, void *const ptr) {
 	new_item->key = key;
 	new_item->data = ptr;
 
-	vector_push(items, new_item);
+	vector_push_HashItem(items, new_item);
 
 	return true;
 }
@@ -66,7 +68,7 @@ void *ht_get(const HashTable *const ht, const char *const key) {
 	if (!items) return NULL;
 
 	for RANGE(i, items->length) {
-		const HashItem *item = vector_at(items, i);
+		const HashItem *item = vector_at_HashItem(items, i);
 
 		if (strcmp(item->key, key) == 0) return item->data;
 	}

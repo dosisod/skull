@@ -11,6 +11,8 @@
 
 static Vector *fails;
 
+MAKE_VECTOR(Fail)
+
 const char *FUNC_NAME = NULL;
 
 void run_single_test(Test test, bool *pass) {
@@ -26,7 +28,7 @@ void run_single_test(Test test, bool *pass) {
 		fail->msg = msg;
 		fail->name = FUNC_NAME;
 
-		vector_push(fails, fail);
+		vector_push_Fail(fails, fail);
 	}
 	else {
 		printf(COLOR_BOLD COLOR_GREEN_FG "." COLOR_RESET);

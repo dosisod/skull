@@ -4,6 +4,17 @@
 
 #define VECTOR_START_MAX 8
 
+#define MAKE_VECTOR(type) \
+	void vector_push_##type(Vector *v, type *ptr) { /* NOLINT */ \
+		vector_push(v, (void *)ptr); \
+	} \
+	type *vector_pop_##type(Vector *v) { /* NOLINT */ \
+		return (type *)vector_pop(v); \
+	} \
+	type *vector_at_##type(const Vector *const v, size_t index) { /* NOLINT */\
+		return (type *)vector_at(v, index); \
+	}
+
 /*
 Simple Vector implementation.
 
