@@ -130,7 +130,7 @@ bool is_reserved_str(const char32_t *const str) {
 		c32scmp(U"is", str);
 }
 
-#define EXHAUST_STR(cond) \
+#define EXHAUST_STR_INT(cond) \
 	if (*str == '_') return false; \
 	bool was_last_underscore = false; \
 	while (*str) { \
@@ -140,6 +140,12 @@ bool is_reserved_str(const char32_t *const str) {
 		str++; \
 	} \
 	if (str[-1] == '_') return false
+
+#define EXHAUST_STR(cond) \
+	while (*str) { \
+		if (!(cond)) return false; \
+		str++; \
+	}
 
 /*
 Returns true if `str` is a valid hex/octal/binary/decimal representation
@@ -152,13 +158,13 @@ bool is_constant_integer_str(const char32_t *str) {
 		str += 2;
 
 		if (str[-1] == 'x') {
-			EXHAUST_STR(c32isxdigit(*str));
+			EXHAUST_STR_INT(c32isxdigit(*str));
 		}
 		else if (str[-1] == 'b') {
-			EXHAUST_STR(*str == '0' || *str == '1');
+			EXHAUST_STR_INT(*str == '0' || *str == '1');
 		}
 		else if (str[-1] == 'o') {
-			EXHAUST_STR('0' <= *str && *str <= '7');
+			EXHAUST_STR_INT('0' <= *str && *str <= '7');
 		}
 		else {
 			return false;
@@ -170,7 +176,7 @@ bool is_constant_integer_str(const char32_t *str) {
 	if (*str == '-') str++;
 	if (!*str) return false;
 
-	EXHAUST_STR(c32isdigit(*str));
+	EXHAUST_STR_INT(c32isdigit(*str));
 
 	return !*str;
 }
@@ -200,6 +206,7 @@ bool is_constant_float_str(const char32_t *str) {
 	return true;
 }
 
+#undef EXHAUST_STR_INT
 #undef EXHAUST_STR
 
 /*

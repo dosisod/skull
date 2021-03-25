@@ -55,7 +55,9 @@ TEST(is_constant_float, {
 	ASSERT_TRUTHY(is_constant_float_str(U"0.0"));
 	ASSERT_TRUTHY(is_constant_float_str(U"Infinity"));
 	ASSERT_TRUTHY(is_constant_float_str(U"-Infinity"));
+
 	ASSERT_FALSEY(is_constant_float_str(U"123"));
+	ASSERT_FALSEY(is_constant_float_str(U"123.456_789"));
 	ASSERT_FALSEY(is_constant_float_str(U"123."));
 	ASSERT_FALSEY(is_constant_float_str(U".123"));
 	ASSERT_FALSEY(is_constant_float_str(U"123aaa"));
