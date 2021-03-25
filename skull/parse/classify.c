@@ -131,10 +131,15 @@ bool is_reserved_str(const char32_t *const str) {
 }
 
 #define EXHAUST_STR(cond) \
+	if (*str == '_') return false; \
+	bool was_last_underscore = false; \
 	while (*str) { \
-		if (!(cond)) return false; \
+		if (was_last_underscore && *str == '_') return false; \
+		if (!(cond) && *str != '_') return false; \
+		was_last_underscore = *str == '_'; \
 		str++; \
-	}
+	} \
+	if (str[-1] == '_') return false
 
 /*
 Returns true if `str` is a valid hex/octal/binary/decimal representation

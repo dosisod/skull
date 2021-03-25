@@ -34,6 +34,12 @@ TEST(is_constant_integer, {
 	ASSERT_TRUTHY(is_constant_integer_str(U"0xabcdef"));
 	ASSERT_TRUTHY(is_constant_integer_str(U"0b10101"));
 	ASSERT_TRUTHY(is_constant_integer_str(U"0o01234567"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"123_456"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"123_456_789"));
+
+	ASSERT_FALSEY(is_constant_integer_str(U"_123"));
+	ASSERT_FALSEY(is_constant_integer_str(U"123__456"));
+	ASSERT_FALSEY(is_constant_integer_str(U"123_"));
 	ASSERT_FALSEY(is_constant_integer_str(U"0b"));
 	ASSERT_FALSEY(is_constant_integer_str(U"0x"));
 	ASSERT_FALSEY(is_constant_integer_str(U"0o"));

@@ -24,7 +24,26 @@ SkullInt eval_integer(const Token *const token) {
 		else begin -= 2;
 	}
 
-	char *const num_str = c32stombs(begin);
+	// create a dummy token since we cannot modify `token`
+	// but still need to advance the `begin` field
+	char *num_str = token_mbs_str(&(Token){
+		.begin = begin, .end = token->end
+	});
+
+	char *num_probe = num_str;
+	char *const num_str_copy = num_str;
+
+	// copy `num_str` on top of itself, skipping over the '_' chars
+	while (*num_probe) {
+		if (*num_probe == '_') num_probe++;
+
+		*num_str = *num_probe;
+		num_str++;
+		num_probe++;
+	}
+	*num_str = '\0';
+
+	num_str = num_str_copy;
 
 	errno = 0;
 	SkullInt ret = strtoll(num_str, NULL, base);
