@@ -53,8 +53,6 @@ void run_many_tests(const char *name, Test tests[], bool *pass) {
 
 			printf("%s " COLOR_BOLD COLOR_RED_FG "FAILED\n" COLOR_RESET, current->name);
 			printf("  %s\n\n", current->msg);
-
-			free(current);
 		}
 	}
 
