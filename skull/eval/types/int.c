@@ -4,6 +4,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
+#include "skull/eval/types/_underscore_num.h"
 
 #include "skull/eval/types/int.h"
 
@@ -30,20 +31,7 @@ SkullInt eval_integer(const Token *const token) {
 		.begin = begin, .end = token->end
 	});
 
-	char *num_probe = num_str;
-	char *const num_str_copy = num_str;
-
-	// copy `num_str` on top of itself, skipping over the '_' chars
-	while (*num_probe) {
-		if (*num_probe == '_') num_probe++;
-
-		*num_str = *num_probe;
-		num_str++;
-		num_probe++;
-	}
-	*num_str = '\0';
-
-	num_str = num_str_copy;
+	strip_underscore_num(num_str, 0);
 
 	errno = 0;
 	SkullInt ret = strtoll(num_str, NULL, base);

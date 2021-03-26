@@ -5,6 +5,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
+#include "skull/eval/types/_underscore_num.h"
 
 #include "skull/eval/types/float.h"
 
@@ -22,6 +23,8 @@ SkullFloat eval_float(const Token *const token) {
 		free(float_str);
 		return -HUGE_VAL;
 	}
+
+	strip_underscore_num(float_str, '.');
 
 	errno = 0;
 	SkullFloat ret = strtod(float_str, NULL);

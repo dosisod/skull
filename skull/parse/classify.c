@@ -188,15 +188,21 @@ Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
 bool is_constant_float_str(const char32_t *str) {
 	if (*str == '-') str++;
-
 	if (c32scmp(U"Infinity", str)) return true;
+	if (*str == '.' || *str == '_') return false;
 
-	if (*str == '.') return false;
-
+	bool was_last_underscore = false;
 	while (*str && *str != '.') {
-		if (!c32isdigit(*str)) return false;
+		if ((was_last_underscore && *str == '_') ||
+			(!c32isdigit(*str) && *str != '_')
+		) {
+			return false;
+		}
+
+		was_last_underscore = *str == '_';
 		str++;
 	}
+	if (str[-1] == '_') return false;
 
 	if (!*str || !str[1]) return false;
 
