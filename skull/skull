@@ -19,7 +19,7 @@ esac
 while getopts ":vhcSEo:m:" o; do
 	case "$o" in
 		v)
-			printf "\033[92mSkull\033[0m v0.5.0\n"
+			printf "\033[92mSkull\033[0m v0.6.0\n"
 			exit 0
 			;;
 		h) usage; exit 0 ;;
