@@ -1,3 +1,5 @@
+#!/bin/sh
+
 case "$@" in
 	*Skull*v*.*.*) ;;
 	*) exit 1 ;;

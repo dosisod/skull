@@ -1,3 +1,5 @@
+#!/bin/sh
+
 [ "$2" = "0" ]
 
 expected="; ModuleID = './test/sh/skull/dummy.sk'

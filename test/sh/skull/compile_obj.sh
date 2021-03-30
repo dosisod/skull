@@ -1,3 +1,5 @@
+#!/bin/sh
+
 [ -f "./test/sh/skull/.dummy.sk.o" ]
 
 case "$(file ./test/sh/skull/.dummy.sk.o)" in
