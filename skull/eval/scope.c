@@ -42,11 +42,15 @@ Scope *make_scope(void) {
 	return scope;
 }
 
+void free_ht_variable(HashItem *item) {
+	if (item->data) free_variable(item->data);
+}
+
 /*
 Frees a `scope` and all the variables inside of it.
 */
 void free_scope(Scope *scope) {
-	free_ht(scope->vars, (void(*)(void *))free_variable);
+	free_ht(scope->vars, (void(*)(void *))free_ht_variable);
 
 	free(scope);
 }

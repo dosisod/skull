@@ -46,3 +46,5 @@ const Type **TYPES_BUILTIN;
 const Type *find_type(const char *const);
 _Bool add_alias(Type *const, char *const);
 char *mangle_types(const Type **, unsigned, char);
+
+void free_ht_type_alias(HashItem *);

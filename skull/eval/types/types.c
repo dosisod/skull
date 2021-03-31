@@ -143,3 +143,7 @@ const Type **TYPES_BUILTIN = (const Type *[]){
 	&TYPE_STR,
 	NULL
 };
+
+void free_ht_type_alias(HashItem *item) {
+	free((char *)item->key);
+}

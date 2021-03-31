@@ -3,7 +3,10 @@
 #include "skull/llvm/shared.h"
 
 void free_state(SkullState state) {
-	free_ht(state.type_aliases, NULL);
+	free_ht(
+		state.type_aliases,
+		(void(*)(void *))free_ht_type_alias
+	);
 	free_ht(
 		state.function_decls,
 		(void(*)(void *))free_function_declaration

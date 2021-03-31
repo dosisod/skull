@@ -291,7 +291,11 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 	SKULL_STATE.current_func = old_func;
 }
 
-void free_function_declaration(FunctionDeclaration *func) {
+void free_function_declaration(HashItem *item) {
+	FunctionDeclaration *func = item->data;
+
+	if (!func) return;
+
 	free(func->name);
 	free(func->param_types);
 	free(func);

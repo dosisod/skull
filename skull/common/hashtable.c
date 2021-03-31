@@ -77,8 +77,7 @@ void *ht_get(const HashTable *const ht, const char *const key) {
 }
 
 void free_ht_item(void (*free_func)(void *), void *item) {
-	void *data = ((HashItem *)item)->data;
-	if (free_func && data) free_func(data);
+	if (free_func) free_func(item);
 
 	free(item);
 }
