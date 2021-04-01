@@ -22,7 +22,7 @@ skull: setup | $(OBJS) $(OBJS_LLVM)
 	@echo "\033[92mLink\033[0m Skull"
 	@$(CC) $(OBJS) $(OBJS_LLVM) -o build/skull/_skull $(CFLAGS) $(LLVM_LDFLAGS)
 
-$(ODIR)/%.o: %.c
+$(ODIR)/%.o: %.c %.h
 	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o "$@" $(CFLAGS) $(LLVM_CFLAGS)
 
