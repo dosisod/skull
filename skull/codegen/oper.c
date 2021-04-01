@@ -2,6 +2,7 @@
 
 #include "skull/codegen/aliases.h"
 #include "skull/codegen/scope.h"
+#include "skull/codegen/types.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/eval/types/float.h"
@@ -187,7 +188,7 @@ Expr gen_expr_pow(
 
 	return create_and_call_builtin_oper(
 		type,
-		type->llvm_type(),
+		gen_llvm_type(type),
 		func_name,
 		lhs,
 		rhs
@@ -286,7 +287,7 @@ Return expression for string-is operator against `lhs` and `rhs`.
 Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs) {
 	return create_and_call_builtin_oper(
 		&TYPE_BOOL,
-		TYPE_STR.llvm_type(),
+		gen_llvm_type(&TYPE_STR),
 		"_strcmp",
 		lhs,
 		rhs
@@ -308,7 +309,7 @@ Expr create_and_call_builtin_oper(
 	LLVMValueRef func = LLVMGetNamedFunction(SKULL_STATE.module, name);
 
 	LLVMTypeRef func_type = LLVMFunctionType(
-		rtype->llvm_type(),
+		gen_llvm_type(rtype),
 		(LLVMTypeRef[]){ type, type },
 		2,
 		false

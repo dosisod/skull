@@ -5,6 +5,7 @@
 #include "skull/codegen/aliases.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
+#include "skull/codegen/types.h"
 #include "skull/codegen/var.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
@@ -109,7 +110,7 @@ FunctionDeclaration *add_function(
 				});
 			}
 
-			params[i] = func->param_types[i]->llvm_type();
+			params[i] = gen_llvm_type(func->param_types[i]);
 		}
 	}
 
@@ -126,7 +127,7 @@ FunctionDeclaration *add_function(
 	LLVMTypeRef llvm_return_type = LLVMVoidType();
 
 	if (func->return_type) {
-		llvm_return_type = func->return_type->llvm_type();
+		llvm_return_type = gen_llvm_type(func->return_type);
 	}
 
 	func->type = LLVMFunctionType(

@@ -7,6 +7,7 @@
 #include "skull/codegen/func.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
+#include "skull/codegen/types.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
@@ -45,7 +46,7 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 		return (Expr) {
 			.llvm_value = LLVMBuildLoad2(
 				SKULL_STATE.builder,
-				var_found->type->llvm_type(),
+				gen_llvm_type(var_found->type),
 				var_found->llvm_value,
 				""
 			),
@@ -218,7 +219,7 @@ Expr token_to_simple_expr(const Token *const token) {
 		llvm_value = LLVMBuildBitCast(
 			SKULL_STATE.builder,
 			LLVMBuildGlobalString(SKULL_STATE.builder, mbs, ""),
-			TYPE_STR.llvm_type(),
+			gen_llvm_type(&TYPE_STR),
 			""
 		);
 

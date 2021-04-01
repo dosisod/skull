@@ -8,6 +8,7 @@
 #include "skull/codegen/oper.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
+#include "skull/codegen/types.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
@@ -134,7 +135,7 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 		if (is_global && (!var->is_const || !is_const_literal)) {
 			var->llvm_value = LLVMAddGlobal(
 				SKULL_STATE.module,
-				var->type->llvm_type(),
+				gen_llvm_type(var->type),
 				var->name
 			);
 
@@ -142,13 +143,13 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 
 			LLVMSetInitializer(
 				var->llvm_value,
-				LLVMConstNull(var->type->llvm_type())
+				LLVMConstNull(gen_llvm_type(var->type))
 			);
 		}
 		else if (!is_global && !var->is_const) {
 			var->llvm_value = LLVMBuildAlloca(
 				SKULL_STATE.builder,
-				var->type->llvm_type(),
+				gen_llvm_type(var->type),
 				var->name
 			);
 		}

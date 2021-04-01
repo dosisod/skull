@@ -88,52 +88,24 @@ TemplateType *add_template_type(char *name, LLVMTypeRef *llvm_type) {
 }
 
 Type TYPE_BOOL = {
-	.name = "Bool",
-	.llvm_type = gen_llvm_bool_type
+	.name = "Bool"
 };
 
 Type TYPE_INT = {
-	.name = "Int",
-	.llvm_type = gen_llvm_int_type
+	.name = "Int"
 };
 
 Type TYPE_FLOAT = {
-	.name = "Float",
-	.llvm_type = gen_llvm_float_type
+	.name = "Float"
 };
 
 Type TYPE_RUNE = {
-	.name = "Rune",
-	.llvm_type = gen_llvm_rune_type
+	.name = "Rune"
 };
 
 Type TYPE_STR = {
-	.name = "Str",
-	.llvm_type = gen_llvm_str_type
+	.name = "Str"
 };
-
-LLVMTypeRef gen_llvm_bool_type(void) {
-	return LLVMInt1TypeInContext(SKULL_STATE.ctx);
-}
-
-LLVMTypeRef gen_llvm_int_type(void) {
-	return LLVMInt64TypeInContext(SKULL_STATE.ctx);
-}
-
-LLVMTypeRef gen_llvm_float_type(void) {
-	return LLVMDoubleTypeInContext(SKULL_STATE.ctx);
-}
-
-LLVMTypeRef gen_llvm_rune_type(void) {
-	return LLVMInt32TypeInContext(SKULL_STATE.ctx);
-}
-
-LLVMTypeRef gen_llvm_str_type(void) {
-	return LLVMPointerType(
-		LLVMInt8TypeInContext(SKULL_STATE.ctx),
-		0
-	);
-}
 
 const Type **TYPES_BUILTIN = (const Type *[]){
 	&TYPE_BOOL,

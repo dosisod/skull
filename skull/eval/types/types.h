@@ -10,13 +10,9 @@
 `Type` is an abstraction on top of the existing LLVM type system.
 
 `name` is the name of the type.
-
-`llvm_type` is a pointer to a function that returns the desired LLVM type.
 */
 typedef struct Type {
 	const char *name;
-
-	LLVMTypeRef (*llvm_type)(void);
 } Type;
 
 /*
@@ -28,12 +24,6 @@ typedef struct TemplateType {
 
 	LLVMTypeRef *llvm_type;
 } TemplateType;
-
-LLVMTypeRef gen_llvm_bool_type(void);
-LLVMTypeRef gen_llvm_int_type(void);
-LLVMTypeRef gen_llvm_float_type(void);
-LLVMTypeRef gen_llvm_rune_type(void);
-LLVMTypeRef gen_llvm_str_type(void);
 
 Type TYPE_BOOL;
 Type TYPE_INT;
