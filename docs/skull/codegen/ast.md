@@ -1,13 +1,13 @@
-# skull/llvm/ast
+# skull/codegen/ast
 
 ```c
-void str_to_llvm(char *const str_)
+void codegen_str(char *const str_)
 ```
 
-> Generate LLVM from `str_`.
+> Generate code from `str_`.
 
 ```c
-bool node_to_llvm(AstNode *node)
+bool gen_node(AstNode *node)
 ```
 
 > Internal LLVM parser.

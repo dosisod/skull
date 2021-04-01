@@ -1,9 +1,9 @@
+#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/eval/scope.h"
-#include "skull/llvm/shared.h"
 
-#include "skull/llvm/scope.h"
+#include "skull/codegen/scope.h"
 
 /*
 Try and find a variable stored in `token`.

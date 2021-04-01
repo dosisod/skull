@@ -1,7 +1,7 @@
 #pragma once
 
+#include "skull/codegen/shared.h"
 #include "skull/eval/variable.h"
-#include "skull/llvm/shared.h"
 #include "skull/parse/token.h"
 
 /*

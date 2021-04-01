@@ -1,4 +1,4 @@
-# skull/llvm/oper
+# skull/codegen/oper
 
 ```c
 Expr gen_expr_math_oper(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX int_func, LLVMBuildX float_func)

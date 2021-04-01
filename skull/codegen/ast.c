@@ -2,27 +2,27 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "skull/codegen/aliases.h"
+#include "skull/codegen/assign.h"
+#include "skull/codegen/flow.h"
+#include "skull/codegen/func.h"
+#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/scope.h"
-#include "skull/llvm/aliases.h"
-#include "skull/llvm/assign.h"
-#include "skull/llvm/flow.h"
-#include "skull/llvm/func.h"
-#include "skull/llvm/shared.h"
 
-#include "skull/llvm/ast.h"
+#include "skull/codegen/ast.h"
 
 /*
-Generate LLVM from `str_`.
+Generate code from `str_`.
 */
-void str_to_llvm(char *const str_) {
+void codegen_str(char *const str_) {
 	char32_t *const str = mbstoc32s(str_);
 
 	AstNode *const node = make_ast_tree(str);
 
-	if (!node_to_llvm(node))
+	if (!gen_node(node))
 		LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
 
 	free_ast_tree(node);
@@ -34,7 +34,7 @@ Internal LLVM parser.
 
 Return true if there was a `AST_NODE_RETURN` node was parsed, else false.
 */
-bool node_to_llvm(AstNode *node) {
+bool gen_node(AstNode *node) {
 	bool returned = false;
 
 while (node) {

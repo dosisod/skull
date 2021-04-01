@@ -3,18 +3,18 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/codegen/aliases.h"
+#include "skull/codegen/func.h"
+#include "skull/codegen/oper.h"
+#include "skull/codegen/scope.h"
+#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/eval/scope.h"
 #include "skull/eval/types/defs.h"
-#include "skull/llvm/aliases.h"
-#include "skull/llvm/func.h"
-#include "skull/llvm/oper.h"
-#include "skull/llvm/scope.h"
-#include "skull/llvm/shared.h"
 
-#include "skull/llvm/assign.h"
+#include "skull/codegen/assign.h"
 
 void assign_value_to_var(LLVMValueRef, Variable *const);
 

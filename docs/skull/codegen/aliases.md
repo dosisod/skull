@@ -1,4 +1,4 @@
-# skull/llvm/aliases
+# skull/codegen/aliases
 
 ```c
 #define LLVM_INT(num) \

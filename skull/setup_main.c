@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/codegen/ast.h"
+#include "skull/codegen/func.h"
+#include "skull/codegen/shared.h"
 #include "skull/common/color.h"
 #include "skull/common/errors.h"
 #include "skull/common/io.h"
@@ -11,9 +14,6 @@
 #include "skull/common/malloc.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
-#include "skull/llvm/ast.h"
-#include "skull/llvm/func.h"
-#include "skull/llvm/shared.h"
 #include "skull/setup_main.h"
 
 #define DIE(x) fprintf(stderr, "skull: %s\n", x); return 1
@@ -22,7 +22,7 @@ int build_file(char *);
 
 void generate_llvm(const char *, char *);
 
-char *create_llvm_filename(const char *);
+char *gen_filename(const char *);
 char *create_llvm_main_func(const char *);
 
 /*
@@ -79,17 +79,17 @@ int build_file(char *filename) {
 	);
 	free(file_contents);
 
-	char *llvm_filename = create_llvm_filename(filename);
+	char *tmp_filename = gen_filename(filename);
 
 	char *err = NULL;
 	LLVMBool status = LLVMPrintModuleToFile(
 		SKULL_STATE.module,
-		llvm_filename,
+		tmp_filename,
 		&err
 	);
 
 	free_state(SKULL_STATE);
-	free(llvm_filename);
+	free(tmp_filename);
 
 	if (err || status) {
 		fprintf(stderr, "skull: error occurred: %s\n", err);
@@ -163,7 +163,7 @@ void generate_llvm(
 		.return_type = &TYPE_INT
 	};
 
-	str_to_llvm(file_contents);
+	codegen_str(file_contents);
 }
 
 /*
@@ -187,28 +187,28 @@ char *create_llvm_main_func(const char *filename) {
 }
 
 /*
-Modify filename to add `.ll` extention to it.
+Create Skull filename based on `filename`.
 */
-char *create_llvm_filename(const char *filename) {
+char *gen_filename(const char *filename) {
 	const size_t len = strlen(filename);
-	char *const llvm_filename = Malloc(len + 5);
+	char *const new_filename = Malloc(len + 5);
 
 	const char *const slash_pos = strrchr(filename, '/');
 	if (!slash_pos) {
-		llvm_filename[0] = '.';
-		strncpy(llvm_filename + 1, filename, len);
+		new_filename[0] = '.';
+		strncpy(new_filename + 1, filename, len);
 	}
 	else {
 		const long offset = slash_pos - filename;
 
-		strncpy(llvm_filename, filename, len);
-		llvm_filename[offset + 1] = '.';
+		strncpy(new_filename, filename, len);
+		new_filename[offset + 1] = '.';
 		strncpy(
-			llvm_filename + offset + 2,
+			new_filename + offset + 2,
 			slash_pos + 1, len - (size_t)offset
 		);
 	}
-	strncpy(llvm_filename + len + 1, ".ll", 4);
+	strncpy(new_filename + len + 1, ".ll", 4);
 
-	return llvm_filename;
+	return new_filename;
 }

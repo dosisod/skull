@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/codegen/shared.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/eval/variable.h"
-#include "skull/llvm/shared.h"
 
 #include "skull/common/errors.h"
 

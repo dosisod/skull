@@ -3,6 +3,10 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/codegen/aliases.h"
+#include "skull/codegen/func.h"
+#include "skull/codegen/scope.h"
+#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
@@ -12,12 +16,8 @@
 #include "skull/eval/types/int.h"
 #include "skull/eval/types/rune.h"
 #include "skull/eval/types/str.h"
-#include "skull/llvm/aliases.h"
-#include "skull/llvm/func.h"
-#include "skull/llvm/scope.h"
-#include "skull/llvm/shared.h"
 
-#include "skull/llvm/var.h"
+#include "skull/codegen/var.h"
 
 Expr token_to_simple_expr(const Token *const);
 

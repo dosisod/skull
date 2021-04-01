@@ -3,6 +3,12 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/codegen/aliases.h"
+#include "skull/codegen/assign.h"
+#include "skull/codegen/oper.h"
+#include "skull/codegen/scope.h"
+#include "skull/codegen/shared.h"
+#include "skull/codegen/var.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
@@ -10,16 +16,10 @@
 #include "skull/eval/types/bool.h"
 #include "skull/eval/types/int.h"
 #include "skull/eval/variable.h"
-#include "skull/llvm/aliases.h"
-#include "skull/llvm/assign.h"
-#include "skull/llvm/oper.h"
-#include "skull/llvm/scope.h"
-#include "skull/llvm/shared.h"
-#include "skull/llvm/var.h"
 
-#include "skull/llvm/flow.h"
+#include "skull/codegen/flow.h"
 
-bool node_to_llvm(AstNode *);
+bool gen_node(AstNode *);
 
 /*
 Builds an return statement from `node`.
@@ -223,7 +223,7 @@ void gen_control_code_block(
 	MAKE_SUB_SCOPE;
 
 	if (node->child->token) {
-		const bool returned = node_to_llvm(node->child);
+		const bool returned = gen_node(node->child);
 
 		if (!returned)
 			LLVMBuildBr(SKULL_STATE.builder, block);

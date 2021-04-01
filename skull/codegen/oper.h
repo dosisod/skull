@@ -2,7 +2,7 @@
 
 #include <llvm-c/Core.h>
 
-#include "skull/llvm/var.h"
+#include "skull/codegen/var.h"
 #include "skull/parse/ast_node.h"
 
 typedef Expr (Operation)(const Type *const, LLVMValueRef, LLVMValueRef);

@@ -1,10 +1,10 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "skull/codegen/shared.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/eval/types/defs.h"
-#include "skull/llvm/shared.h"
 
 #include "skull/eval/types/types.h"
 

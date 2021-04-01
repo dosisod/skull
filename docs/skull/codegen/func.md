@@ -1,4 +1,4 @@
-# skull/llvm/func
+# skull/codegen/func
 
 ```c
 typedef struct FunctionDeclaration {

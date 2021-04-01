@@ -1,6 +1,6 @@
-#include "skull/llvm/func.h"
+#include "skull/codegen/func.h"
 
-#include "skull/llvm/shared.h"
+#include "skull/codegen/shared.h"
 
 void free_state(SkullState state) {
 	free_ht(

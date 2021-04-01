@@ -26,8 +26,8 @@ char *create_llvm_main_func(const char *filename)
 > Convert/mangle `filename` into suitable name for "main" method for module.
 
 ```c
-char *create_llvm_filename(const char *filename)
+char *gen_filename(const char *filename)
 ```
 
-> Modify filename to add `.ll` extention to it.
+> Create Skull filename based on `filename`.
 

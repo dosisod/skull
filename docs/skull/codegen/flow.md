@@ -1,4 +1,4 @@
-# skull/llvm/flow
+# skull/codegen/flow
 
 ```c
 void gen_stmt_return(AstNode **node)

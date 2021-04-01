@@ -2,20 +2,20 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "skull/codegen/aliases.h"
+#include "skull/codegen/scope.h"
+#include "skull/codegen/shared.h"
+#include "skull/codegen/var.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/panic.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/eval/types/types.h"
-#include "skull/llvm/aliases.h"
-#include "skull/llvm/scope.h"
-#include "skull/llvm/shared.h"
-#include "skull/llvm/var.h"
 
-#include "skull/llvm/func.h"
+#include "skull/codegen/func.h"
 
-bool node_to_llvm(AstNode *);
+bool gen_node(AstNode *);
 
 void define_function(const AstNode *const, FunctionDeclaration *);
 
@@ -268,7 +268,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 		}
 	}
 
-	bool returned = node_to_llvm(node->child);
+	bool returned = gen_node(node->child);
 
 	RESTORE_SUB_SCOPE;
 

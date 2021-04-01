@@ -68,9 +68,9 @@ else
 	CFLAGS += -Wno-newline-eof
 endif
 
-_OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|llvm"))
+_OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|codegen"))
 _OBJS_TEST := $(patsubst %.c,%.o,$(shell find test/skull -name "*.c") test/testing.c)
-_OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/llvm -name "*.c") skull/main.c skull/setup_main.c)
+_OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/codegen -name "*.c") skull/main.c skull/setup_main.c)
 
 ODIR := build/objs
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
@@ -82,7 +82,7 @@ DIRS := build/skull \
 	$(ODIR)/skull/eval/types \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common \
-	$(ODIR)/skull/llvm \
+	$(ODIR)/skull/codegen \
 	$(ODIR)/test/skull/eval/types \
 	$(ODIR)/test/skull/parse/ast \
 	$(ODIR)/test/skull/common

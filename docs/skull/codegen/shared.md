@@ -1,4 +1,4 @@
-# skull/llvm/shared
+# skull/codegen/shared
 
 ```c
 typedef struct {

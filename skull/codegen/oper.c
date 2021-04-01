@@ -1,13 +1,13 @@
 #include <stdbool.h>
 
+#include "skull/codegen/aliases.h"
+#include "skull/codegen/scope.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/eval/types/float.h"
 #include "skull/eval/types/int.h"
-#include "skull/llvm/aliases.h"
-#include "skull/llvm/scope.h"
 
-#include "skull/llvm/oper.h"
+#include "skull/codegen/oper.h"
 
 typedef LLVMValueRef (LLVMBuildX)(
 	LLVMBuilderRef,

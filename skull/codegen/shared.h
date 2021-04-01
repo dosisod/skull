@@ -2,9 +2,9 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/codegen/func.h"
 #include "skull/common/hashtable.h"
 #include "skull/eval/scope.h"
-#include "skull/llvm/func.h"
 
 /*
 Shared state for a given Skull program.

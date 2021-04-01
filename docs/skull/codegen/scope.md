@@ -1,4 +1,4 @@
-# skull/llvm/scope
+# skull/codegen/scope
 
 ```c
 #define MAKE_SUB_SCOPE \

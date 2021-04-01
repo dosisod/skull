@@ -1,4 +1,4 @@
-# skull/llvm/var
+# skull/codegen/var
 
 ```c
 Expr token_to_expr(const Token *const token, Variable **variable)
