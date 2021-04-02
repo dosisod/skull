@@ -30,7 +30,7 @@ jobs:
       run: sudo apt install llvm-10-dev
 
     - name: Build
-      run: make CC=gcc-8 options clean all
+      run: make CC=gcc-9 options clean all
 
     - name: Run tests
       run: ./build/test/test
@@ -68,7 +68,7 @@ jobs:
       run: sudo apt install llvm-10-dev
 
     - name: Build
-      run: sudo make CC=gcc-8 options install install-dev
+      run: sudo make CC=gcc-9 options install install-dev
 
     - name: Run Skull
       run: |
@@ -89,7 +89,7 @@ jobs:
       run: sudo apt install llvm-10-dev
 
     - name: Build tests
-      run: make CC=gcc-8 options clean test
+      run: make CC=gcc-9 options clean test
 
     - name: Install Valgrind
       run: |

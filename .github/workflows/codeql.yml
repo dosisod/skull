@@ -15,9 +15,6 @@ jobs:
       with:
         fetch-depth: 2
 
-    - run: git checkout HEAD^2
-      if: ${{ github.event_name == 'pull_request' }}
-
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
 
@@ -26,8 +23,7 @@ jobs:
 
     - name: Build
       run: |
-        export CC=$(which gcc-8)
-        make options clean all -e
+        make CC=gcc-9 options clean all -e
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
