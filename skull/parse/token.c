@@ -83,9 +83,6 @@ Token *tokenize(const char32_t *code) {
 			if (!current->begin) {
 				SETUP_TOKEN();
 			}
-			else {
-				PINCH_TOKEN();
-			}
 		}
 		else if (quote) {
 			if (*code == '\\' && (code[1] == '\\' || code[1] == quote))

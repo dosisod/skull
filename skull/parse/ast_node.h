@@ -138,7 +138,10 @@ typedef struct AstNodeExpr {
 	ExprType oper;
 } AstNodeExpr;
 
-AstNode *make_ast_node(void);
+/*
+Makes an empty AstNode.
+*/
+#define make_ast_node() Calloc(1, sizeof(AstNode))
 
 void push_ast_node(Token *const, Token *, NodeType, AstNode **);
 

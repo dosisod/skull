@@ -85,6 +85,12 @@ typedef struct AstNodeExpr {
 > Store special data about operator related nodes.
 
 ```c
+#define make_ast_node() Calloc(1, sizeof(AstNode))
+```
+
+> Makes an empty AstNode.
+
+```c
 #define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
 ```
 
@@ -104,7 +110,7 @@ AstNode *make_ast_tree_(Token **token, unsigned indent_lvl)
 > Internal AST tree generator.
 
 ```c
-bool try_gen_expression(Token **token, AstNode **node)
+bool try_parse_expression(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for expression.
@@ -112,7 +118,7 @@ bool try_gen_expression(Token **token, AstNode **node)
 > Returns true if a node was added, false otherwise.
 
 ```c
-void gen_func_call(Token **token, AstNode **node)
+void parse_func_call(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for a function call.
@@ -124,12 +130,6 @@ void push_ast_node(Token *const token, Token *last, NodeType node_type, AstNode 
 ```
 
 > Push a new AST node to `node` with type `node_type`
-
-```c
-AstNode *make_ast_node(void)
-```
-
-> Makes an AstNode with default values
 
 ```c
 void free_ast_tree(AstNode *node)
