@@ -7,6 +7,20 @@ Token *tokenize(const char32_t *code)
 > Tokenize `code`, return pointer to first token.
 
 ```c
+static bool iter_comment(Token *current, const char32_t **_code, unsigned line_num, unsigned column)
+```
+
+> Iterate through comment, starting at `code`.
+> \
+> Return `true` if the caller should break (EOF was reached).
+
+```c
+static void iter_quote(Token *current, const char32_t **_code, unsigned line_num, unsigned column)
+```
+
+> Iterate through a quote, starting at `code`.
+
+```c
 __attribute__((const)) bool is_whitespace(char32_t c)
 ```
 

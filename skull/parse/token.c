@@ -7,8 +7,11 @@
 
 #include "skull/parse/token.h"
 
-_Bool is_whitespace(char32_t);
-_Bool is_quote(char32_t);
+bool is_whitespace(char32_t);
+bool is_quote(char32_t);
+
+static bool iter_comment(Token *, const char32_t **, unsigned, unsigned);
+static void iter_quote(Token *, const char32_t **, unsigned, unsigned);
 
 // add current cursor/code state to token
 #define SETUP_TOKEN() \
@@ -52,72 +55,11 @@ Token *tokenize(const char32_t *code) {
 		column++;
 
 		if (*code == '#') {
-			CommentState comment = NO_COMMENT;
-
-			if (code[1] == ' ')
-				comment = LINE_COMMENT;
-
-			else if (code[1] == '{')
-				comment = BLOCK_COMMENT;
-
-			else {
-				PANIC(ERR_INVALID_COMMENT_START, { .i = line_num + 1 });
-			}
-
-			if (!current->begin) {
-				SETUP_TOKEN();
-			}
-
-			code++;
-
-			do {
-				code++;
-
-				if (comment == LINE_COMMENT && *code == '\n') {
-					code--;
-					break;
-				}
-				if (comment == BLOCK_COMMENT && *code == '#') {
-					code++;
-
-					if (*code == '}') break;
-
-					if (*code == '{') {
-						PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
-					}
-				}
-			} while (*code);
-
-			if (!*code) {
-				if (comment == BLOCK_COMMENT) {
-					current->end = code;
-					PANIC(ERR_NO_CLOSING_COMMENT, { .tok = current });
-				}
-
+			if (iter_comment(current, &code, line_num, column))
 				break;
-			}
 		}
 		else if (is_quote(*code)) {
-			char32_t quote = *code;
-
-			if (!current->begin) {
-				SETUP_TOKEN();
-			}
-
-			do {
-				code++;
-
-				if (*code == '\\' && (code[1] == '\\' || code[1] == quote))
-					code++;
-
-				else if (*code == quote) break;
-
-			} while (*code);
-
-			if (!*code) {
-				current->end = code;
-				PANIC(ERR_NO_CLOSING_QUOTE, { .tok = current });
-			}
+			iter_quote(current, &code, line_num, column);
 		}
 		else if (
 			*code == '{' ||
@@ -175,6 +117,104 @@ Token *tokenize(const char32_t *code) {
 	}
 
 	return head;
+}
+
+/*
+Iterate through comment, starting at `code`.
+
+Return `true` if the caller should break (EOF was reached).
+*/
+static bool iter_comment(
+	Token *current,
+	const char32_t **_code,
+	unsigned line_num,
+	unsigned column
+) {
+	const char32_t *code = *_code;
+
+	CommentState comment = NO_COMMENT;
+
+	if (code[1] == ' ')
+		comment = LINE_COMMENT;
+
+	else if (code[1] == '{')
+		comment = BLOCK_COMMENT;
+
+	else {
+		PANIC(ERR_INVALID_COMMENT_START, { .i = line_num + 1 });
+	}
+
+	if (!current->begin) {
+		SETUP_TOKEN();
+	}
+
+	code++;
+
+	do {
+		code++;
+
+		if (comment == LINE_COMMENT && *code == '\n') {
+			code--;
+			break;
+		}
+		if (comment == BLOCK_COMMENT && *code == '#') {
+			code++;
+
+			if (*code == '}') break;
+
+			if (*code == '{') {
+				PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
+			}
+		}
+	} while (*code);
+
+	*_code = code;
+
+	if (!*code) {
+		if (comment == BLOCK_COMMENT) {
+			current->end = code;
+			PANIC(ERR_NO_CLOSING_COMMENT, { .tok = current });
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+/*
+Iterate through a quote, starting at `code`.
+*/
+static void iter_quote(
+	Token *current,
+	const char32_t **_code,
+	unsigned line_num,
+	unsigned column
+) {
+	const char32_t *code = *_code;
+
+	char32_t quote = *code;
+
+	if (!current->begin) {
+		SETUP_TOKEN();
+	}
+
+	do {
+		code++;
+
+		if (*code == '\\' && (code[1] == '\\' || code[1] == quote))
+			code++;
+
+		else if (*code == quote) break;
+
+	} while (*code);
+
+	if (!*code) {
+		current->end = code;
+		PANIC(ERR_NO_CLOSING_QUOTE, { .tok = current });
+	}
+
+	*_code = code;
 }
 
 /*
