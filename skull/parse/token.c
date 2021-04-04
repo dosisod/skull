@@ -47,28 +47,13 @@ Token *tokenize(const char32_t *code) {
 
 	unsigned line_num = 1;
 	unsigned column = 0;
-	CommentState comment = NO_COMMENT;
 
 	while (*code) {
 		column++;
 
-		if (comment) {
-			if (comment == LINE_COMMENT && *code == '\n') {
-				code--;
-				comment = NO_COMMENT;
-			}
-			else if (comment == BLOCK_COMMENT && *code == '#') {
-				code++;
+		if (*code == '#') {
+			CommentState comment = NO_COMMENT;
 
-				if (*code == '{') {
-					PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
-				}
-
-				if (*code == '}')
-					comment = NO_COMMENT;
-			}
-		}
-		else if (!comment && *code == '#') {
 			if (code[1] == ' ')
 				comment = LINE_COMMENT;
 
@@ -81,6 +66,35 @@ Token *tokenize(const char32_t *code) {
 
 			if (!current->begin) {
 				SETUP_TOKEN();
+			}
+
+			code++;
+
+			do {
+				code++;
+
+				if (comment == LINE_COMMENT && *code == '\n') {
+					code--;
+					break;
+				}
+				if (comment == BLOCK_COMMENT && *code == '#') {
+					code++;
+
+					if (*code == '}') break;
+
+					if (*code == '{') {
+						PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
+					}
+				}
+			} while (*code);
+
+			if (!*code) {
+				if (comment == BLOCK_COMMENT) {
+					current->end = code;
+					PANIC(ERR_NO_CLOSING_COMMENT, { .tok = current });
+				}
+
+				break;
 			}
 		}
 		else if (is_quote(*code)) {
@@ -142,11 +156,6 @@ Token *tokenize(const char32_t *code) {
 		}
 
 		code++;
-	}
-
-	if (comment == BLOCK_COMMENT) {
-		current->end = code;
-		PANIC(ERR_NO_CLOSING_COMMENT, { .tok = current });
 	}
 
 	// close dangling token if there was no whitespace at EOF
