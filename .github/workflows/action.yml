@@ -97,7 +97,7 @@ jobs:
         sudo apt install valgrind
 
     - name: Run Valgrind on tests
-      run: valgrind --leak-check=full ./build/test/test
+      run: valgrind --leak-check=full --error-exitcode=1 ./build/test/test
 
     - name: Install clang-tidy
       run: sudo apt install clang-tidy-10
