@@ -10,7 +10,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
-#include "skull/eval/scope.h"
+#include "skull/compiler/scope.h"
 
 #include "skull/codegen/ast.h"
 

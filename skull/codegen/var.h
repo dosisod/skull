@@ -2,8 +2,8 @@
 
 #include <llvm-c/Core.h>
 
-#include "skull/eval/scope.h"
-#include "skull/eval/variable.h"
+#include "skull/compiler/scope.h"
+#include "skull/compiler/variable.h"
 #include "skull/parse/ast_node.h"
 
 /*

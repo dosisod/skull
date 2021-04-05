@@ -12,10 +12,10 @@
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
-#include "skull/eval/scope.h"
-#include "skull/eval/types/bool.h"
-#include "skull/eval/types/int.h"
-#include "skull/eval/variable.h"
+#include "skull/compiler/scope.h"
+#include "skull/compiler/types/bool.h"
+#include "skull/compiler/types/int.h"
+#include "skull/compiler/variable.h"
 
 #include "skull/codegen/flow.h"
 

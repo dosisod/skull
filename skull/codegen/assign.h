@@ -1,7 +1,7 @@
 #pragma once
 
 #include "skull/codegen/var.h"
-#include "skull/eval/variable.h"
+#include "skull/compiler/variable.h"
 #include "skull/parse/ast_node.h"
 
 void create_type_alias(AstNode **);

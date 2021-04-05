@@ -7,9 +7,9 @@
 #include "parse/classify.h"
 #include "parse/token.h"
 
-#include "eval/scope.h"
-#include "eval/types/types.h"
-#include "eval/variable.h"
+#include "compiler/scope.h"
+#include "compiler/types/types.h"
+#include "compiler/variable.h"
 
 #include "common/errors.h"
 #include "common/hashtable.h"

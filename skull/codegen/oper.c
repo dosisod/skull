@@ -5,8 +5,8 @@
 #include "skull/codegen/types.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
-#include "skull/eval/types/float.h"
-#include "skull/eval/types/int.h"
+#include "skull/compiler/types/float.h"
+#include "skull/compiler/types/int.h"
 
 #include "skull/codegen/oper.h"
 

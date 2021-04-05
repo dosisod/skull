@@ -12,8 +12,8 @@
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
-#include "skull/eval/scope.h"
-#include "skull/eval/types/defs.h"
+#include "skull/compiler/scope.h"
+#include "skull/compiler/types/defs.h"
 
 #include "skull/codegen/assign.h"
 

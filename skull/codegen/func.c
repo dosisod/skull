@@ -12,7 +12,7 @@
 #include "skull/common/panic.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
-#include "skull/eval/types/types.h"
+#include "skull/compiler/types/types.h"
 
 #include "skull/codegen/func.h"
 

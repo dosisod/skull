@@ -1,7 +1,7 @@
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
-#include "skull/eval/scope.h"
+#include "skull/compiler/scope.h"
 
 #include "skull/codegen/scope.h"
 

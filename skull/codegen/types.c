@@ -1,7 +1,7 @@
 #include <stddef.h>
 
 #include "skull/codegen/shared.h"
-#include "skull/eval/types/types.h"
+#include "skull/compiler/types/types.h"
 
 #include "skull/codegen/types.h"
 

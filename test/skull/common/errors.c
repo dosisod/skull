@@ -4,7 +4,7 @@
 
 #include "skull/common/str.h"
 #include "skull/common/errors.h"
-#include "skull/eval/variable.h"
+#include "skull/compiler/variable.h"
 
 #include "test/skull/common/errors.h"
 #include "test/testing.h"

@@ -11,12 +11,12 @@
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
 #include "skull/common/str.h"
-#include "skull/eval/types/bool.h"
-#include "skull/eval/types/defs.h"
-#include "skull/eval/types/float.h"
-#include "skull/eval/types/int.h"
-#include "skull/eval/types/rune.h"
-#include "skull/eval/types/str.h"
+#include "skull/compiler/types/bool.h"
+#include "skull/compiler/types/defs.h"
+#include "skull/compiler/types/float.h"
+#include "skull/compiler/types/int.h"
+#include "skull/compiler/types/rune.h"
+#include "skull/compiler/types/str.h"
 
 #include "skull/codegen/var.h"
 

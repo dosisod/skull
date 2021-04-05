@@ -4,7 +4,7 @@
 
 #include "skull/codegen/func.h"
 #include "skull/common/hashtable.h"
-#include "skull/eval/scope.h"
+#include "skull/compiler/scope.h"
 
 /*
 Shared state for a given Skull program.

@@ -6,7 +6,7 @@
 #include "skull/codegen/shared.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/eval/variable.h"
+#include "skull/compiler/variable.h"
 
 #include "skull/common/errors.h"
 

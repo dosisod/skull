@@ -79,10 +79,10 @@ OBJS_LLVM := $(addprefix $(ODIR)/,$(_OBJS_LLVM))
 
 DIRS := build/skull \
 	build/test \
-	$(ODIR)/skull/eval/types \
+	$(ODIR)/skull/compiler/types \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common \
 	$(ODIR)/skull/codegen \
-	$(ODIR)/test/skull/eval/types \
+	$(ODIR)/test/skull/compiler/types \
 	$(ODIR)/test/skull/parse/ast \
 	$(ODIR)/test/skull/common
