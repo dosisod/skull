@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 
@@ -7,6 +9,8 @@
 Push pointer `ptr` to vector `v`. Scale vector if needed.
 */
 void vector_push(Vector *v, void *ptr) {
+	if (v->is_array) return;
+
 	if (v->length >= v->max) {
 		v->max *= 2;
 		v->elements = Realloc(v->elements, v->max * sizeof(void *));
@@ -20,7 +24,7 @@ void vector_push(Vector *v, void *ptr) {
 Pop and return last element from vector `v`.
 */
 void *vector_pop(Vector *v) {
-	if (!v->length) return NULL;
+	if (!v->length || v->is_array) return NULL;
 
 	v->length--;
 	return v->elements[v->length];
@@ -37,6 +41,15 @@ Vector *make_vector(void) {
 	v->elements = Calloc(VECTOR_START_MAX, sizeof(void *));
 
 	return v;
+}
+
+/*
+"Freeze" vector `v` into an array, making it immutable.
+*/
+void *vector_freeze(Vector *v) {
+	v->is_array = true;
+
+	return v->elements;
 }
 
 /*
@@ -72,7 +85,9 @@ void free_vector2(
 			free_func2(v->elements[i]);
 	}
 
-	free(v->elements);
-	v->elements = NULL;
+	if (!v->is_array) {
+		free(v->elements);
+		v->elements = NULL;
+	}
 	free(v);
 }

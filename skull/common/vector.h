@@ -23,14 +23,20 @@ Simple Vector implementation.
 `max` stores the max length needed before reallocation.
 
 `elements` stores the actual elements of the vector.
+
+`is_array` indicates that the vector has been converted into an array, and
+should not be used further.
 */
 typedef struct {
 	size_t length;
 	size_t max;
 	void **elements;
+	_Bool is_array : 1;
 } Vector;
 
 Vector *make_vector(void);
+
+void *vector_freeze(Vector *);
 
 void vector_push(Vector *, void *);
 void *vector_pop(Vector *);

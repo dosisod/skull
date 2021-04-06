@@ -80,11 +80,32 @@ TEST(vector_at, {
 	free_vector(v, NULL);
 })
 
+TEST(vector_freeze, {
+	Vector *v = make_vector();
+
+	int i = 1234;
+	vector_push(v, &i);
+
+	int **ints = vector_freeze(v);
+
+	ASSERT_EQUAL(ints[0], &i);
+
+	ASSERT_EQUAL(v->length, 1);
+	vector_push(v, &i);
+	ASSERT_EQUAL(v->length, 1);
+
+	ASSERT_FALSEY(vector_pop(v));
+
+	free_vector(v, NULL);
+	free(ints);
+})
+
 TEST_SELF(vector,
 	test_vector_create_and_free,
 	test_vector_push_pop,
 	test_vector_pop_empty,
 	test_vector_scale,
 	test_vector_free_func,
-	test_vector_at
+	test_vector_at,
+	test_vector_freeze
 )

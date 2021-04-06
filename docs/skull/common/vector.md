@@ -5,6 +5,7 @@ typedef struct {
 	size_t length;
 	size_t max;
 	void **elements;
+	_Bool is_array : 1;
 }
 ```
 
@@ -15,6 +16,9 @@ typedef struct {
 > `max` stores the max length needed before reallocation.
 > \
 > `elements` stores the actual elements of the vector.
+> \
+> `is_array` indicates that the vector has been converted into an array, and
+> should not be used further.
 
 ```c
 void vector_push(Vector *v, void *ptr)
@@ -33,6 +37,12 @@ Vector *make_vector(void)
 ```
 
 > Return new vector.
+
+```c
+void *vector_freeze(Vector *v)
+```
+
+> "Freeze" vector `v` into an array, making it immutable.
 
 ```c
 void *vector_at(const Vector *const v, size_t index)
