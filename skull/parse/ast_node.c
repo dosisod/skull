@@ -12,8 +12,6 @@
 
 #include "skull/parse/ast_node.h"
 
-#define MAX_PARAMS 64
-
 bool try_parse_expression(Token **, AstNode **);
 void parse_func_call(Token **, AstNode **);
 
@@ -240,11 +238,8 @@ bool is_ast_function_proto(Token **_token, AstNode **node) {
 
 	token = token->next->next;
 
-	// prevent realloc by pre-allocating MAX_PARAMS number of params.
-	// if you need more then that, you are insane.
-	char *param_type_names[MAX_PARAMS] = {0};
-	char32_t *param_names[MAX_PARAMS] = {0};
-	unsigned short num_params = 0;
+	Vector *param_names = make_vector();
+	Vector *param_type_names = make_vector();
 
 	const TokenType token_type = is_external ?
 		TOKEN_NEWLINE :
@@ -254,18 +249,10 @@ bool is_ast_function_proto(Token **_token, AstNode **node) {
 		token->next &&
 		IS_TYPE_LIKE(token->next)
 	) {
-		param_names[num_params] = token_str(token);
-		param_type_names[num_params] = token_mbs_str(token->next);
+		vector_push(param_names, token_str(token));
+		vector_push(param_type_names, token_mbs_str(token->next));
 
 		token = token->next->next;
-		num_params++;
-
-		if (num_params > MAX_PARAMS) {
-			PANIC(ERR_MAX_PARAM_HIT, {
-				.tok = token,
-				.i = MAX_PARAMS + 1
-			});
-		}
 
 		if (token->type != TOKEN_COMMA) break;
 
@@ -288,6 +275,9 @@ bool is_ast_function_proto(Token **_token, AstNode **node) {
 		TOKEN_PAREN_CLOSE,
 		token_type)
 	) {
+		free_vector(param_names, NULL);
+		free_vector(param_type_names, NULL);
+
 		return false;
 	}
 
@@ -295,14 +285,15 @@ bool is_ast_function_proto(Token **_token, AstNode **node) {
 
 	char32_t **tmp_names = NULL;
 	char **tmp_types = NULL;
+	const unsigned short num_params = (unsigned short)param_names->length;
 
-	if (num_params) {
-		tmp_names = Calloc(num_params, sizeof(char32_t *));
-		memcpy(tmp_names, param_names, num_params * sizeof(char32_t *));
-
-		tmp_types = Calloc(num_params, sizeof(char *));
-		memcpy(tmp_types, param_type_names, num_params * sizeof(char *));
+	if (param_names->length) {
+		tmp_names = vector_freeze(param_names);
+		tmp_types = vector_freeze(param_type_names);
 	}
+
+	free_vector(param_names, NULL);
+	free_vector(param_type_names, NULL);
 
 	(*node)->attr.func_proto = Malloc(sizeof(AstNodeFunctionProto));
 	*(*node)->attr.func_proto = (AstNodeFunctionProto){
