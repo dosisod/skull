@@ -648,18 +648,16 @@ void print_ast_tree(const AstNode *node) {
 
 void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 	while (node) {
-		char *indent = Malloc(indent_lvl + 1);
-		memset(indent, ' ', indent_lvl);
-		indent[indent_lvl] = '\0';
+		for RANGE(_, indent_lvl) { // NOLINT
+			putchar(' ');
+		}
 
-		printf("%s<node at %p, node_type: %u>\n",
-			indent,
+		printf("<node at %p, node_type: %u>\n",
 			(void *)node,
 			node->type
 		);
 
 		if (!node->token) {
-			free(indent);
 			break;
 		}
 
@@ -669,10 +667,13 @@ void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 		while (token != token_end) {
 			char *str = token_mbs_str(token);
 
+			for RANGE(_, indent_lvl) { // NOLINT
+				putchar(' ');
+			}
+
 			printf(
-				"%s   <token at %p, token_type: %u, "
+				"   <token at %p, token_type: %u, "
 				"column: %u, line: %u, data: `%s`>\n",
-				indent,
 				(void *)token,
 				token->type,
 				token->line,
@@ -684,8 +685,6 @@ void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 
 			token = token->next;
 		}
-
-		free(indent);
 
 		if (node->child)
 			print_ast_tree_(node->child, indent_lvl + 2);
