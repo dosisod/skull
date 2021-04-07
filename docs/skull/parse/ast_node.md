@@ -17,7 +17,6 @@ typedef struct AstNode {
 	union {
 		AstNodeVarDef *var_def;
 		AstNodeFunctionProto *func_proto;
-		AstNodeFunctionCall *func_call;
 		AstNodeExpr *expr;
 	}
 ```
@@ -79,6 +78,9 @@ typedef struct AstNodeExpr {
 	const Token *lhs;
 	const Token *rhs;
 	ExprType oper;
+
+	// only for use in function expressions
+	AstNodeFunctionCall *func_call;
 }
 ```
 

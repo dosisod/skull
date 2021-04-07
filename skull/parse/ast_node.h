@@ -12,7 +12,6 @@ typedef enum {
 
 	AST_NODE_VAR_ASSIGN,
 
-	AST_NODE_FUNCTION,
 	AST_NODE_FUNCTION_PROTO,
 
 	AST_NODE_EXPR,
@@ -65,7 +64,6 @@ typedef struct AstNode {
 	union {
 		AstNodeVarDef *var_def;
 		AstNodeFunctionProto *func_proto;
-		AstNodeFunctionCall *func_call;
 		AstNodeExpr *expr;
 	} attr;
 } AstNode;
@@ -126,7 +124,8 @@ typedef enum {
 	EXPR_OR,
 	EXPR_XOR,
 	EXPR_IDENTIFIER,
-	EXPR_CONST
+	EXPR_CONST,
+	EXPR_FUNC
 } ExprType;
 
 /*
@@ -136,6 +135,9 @@ typedef struct AstNodeExpr {
 	const Token *lhs;
 	const Token *rhs;
 	ExprType oper;
+
+	// only for use in function expressions
+	AstNodeFunctionCall *func_call;
 } AstNodeExpr;
 
 /*

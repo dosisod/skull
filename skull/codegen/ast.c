@@ -49,7 +49,7 @@ while (node) {
 
 	else if (node->child && !(
 		node_type == AST_NODE_WHILE ||
-		node_type == AST_NODE_FUNCTION ||
+		(node_type == AST_NODE_EXPR && node->attr.expr->oper == EXPR_FUNC) ||
 		node_type == AST_NODE_FUNCTION_PROTO
 	)) {
 		PANIC(ERR_UNEXPECTED_CODE_BLOCK, {0});
@@ -83,7 +83,7 @@ while (node) {
 	else if (node_type == AST_NODE_FUNCTION_PROTO)
 		gen_stmt_func_decl(node);
 
-	else if (node_type == AST_NODE_FUNCTION)
+	else if (node_type == AST_NODE_EXPR && node->attr.expr->oper == EXPR_FUNC)
 		gen_expr_function_call(node, NULL);
 
 	else if (node_type == AST_NODE_VAR_ASSIGN)

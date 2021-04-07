@@ -123,6 +123,30 @@ const Type *var_def_node_to_type(const AstNode *node) {
 
 		if (oper == EXPR_UNARY_NEG)
 			token_type = node->next->token->next->type;
+
+		else if (oper == EXPR_FUNC) {
+			char *const func_name = token_mbs_str(node->next->token);
+
+			const FunctionDeclaration *const function = ht_get(
+				SKULL_STATE.function_decls,
+				func_name
+			);
+			free(func_name);
+
+			if (!function) {
+				PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
+			}
+
+			const Type *type = function->return_type;
+			if (!type) {
+				PANIC(ERR_NO_VOID_ASSIGN, {
+					.tok = node->next->token,
+					.real = token_mbs_str(node->token)
+				});
+			}
+
+			return type;
+		}
 	}
 
 	if (token_type == TOKEN_BOOL_CONST)
@@ -140,29 +164,6 @@ const Type *var_def_node_to_type(const AstNode *node) {
 	if (token_type == TOKEN_STR_CONST)
 		return &TYPE_STR;
 
-	if (node_type == AST_NODE_FUNCTION) {
-		char *const func_name = token_mbs_str(node->next->token);
-
-		const FunctionDeclaration *const function = ht_get(
-			SKULL_STATE.function_decls,
-			func_name
-		);
-		free(func_name);
-
-		if (!function) {
-			PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
-		}
-
-		const Type *type = function->return_type;
-		if (!type) {
-			PANIC(ERR_NO_VOID_ASSIGN, {
-				.tok = node->next->token,
-				.real = token_mbs_str(node->token)
-			});
-		}
-
-		return type;
-	}
 	if (token_type == TOKEN_IDENTIFIER) {
 		return scope_find_var(node->next->token)->type;
 	}

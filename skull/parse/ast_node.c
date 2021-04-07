@@ -481,7 +481,7 @@ Returns true if a node was added, false otherwise.
 void parse_func_call(Token **token, AstNode **node) {
 	const Token *func_name_token = *token;
 
-	push_ast_node(*token, *token, AST_NODE_FUNCTION, node);
+	push_ast_node(*token, *token, AST_NODE_EXPR, node);
 
 	AstNode *child = make_ast_node();
 	(*node)->last->child = child;
@@ -507,8 +507,13 @@ void parse_func_call(Token **token, AstNode **node) {
 
 	*token = (*token)->next;
 
-	(*node)->last->attr.func_call = Malloc(sizeof(AstNodeFunctionCall));
-	*(*node)->last->attr.func_call = (AstNodeFunctionCall){
+	(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
+	*(*node)->last->attr.expr = (AstNodeExpr){
+		.oper = EXPR_FUNC
+	};
+
+	(*node)->last->attr.expr->func_call = Malloc(sizeof(AstNodeFunctionCall));
+	*(*node)->last->attr.expr->func_call = (AstNodeFunctionCall){
 		.func_name_tok = func_name_token,
 		.num_values = num_values
 	};
@@ -574,10 +579,11 @@ void free_ast_tree_(AstNode *node) {
 		else if (node->type == AST_NODE_VAR_DEF) {
 			free(node->attr.var_def);
 		}
-		else if (node->type == AST_NODE_FUNCTION) {
-			free(node->attr.func_call);
-		}
 		else if (node->type == AST_NODE_EXPR) {
+			if (node->attr.expr->oper == EXPR_FUNC) {
+				free(node->attr.expr->func_call);
+			}
+
 			free(node->attr.expr);
 		}
 

@@ -158,7 +158,7 @@ FunctionDeclaration *add_function(
 Builds a function call from `node`.
 */
 Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
-	const Token *func_name_token = node->attr.func_call->func_name_tok;
+	const Token *func_name_token = node->attr.expr->func_call->func_name_tok;
 
 	char *const func_name = token_mbs_str(func_name_token);
 
@@ -173,7 +173,7 @@ Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 
 	unsigned short num_params = function->num_params;
 
-	if (num_params != node->attr.func_call->num_values) {
+	if (num_params != node->attr.expr->func_call->num_values) {
 		PANIC(ERR_INVALID_NUM_PARAMS, { .tok = func_name_token });
 	}
 
