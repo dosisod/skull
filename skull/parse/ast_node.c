@@ -45,7 +45,7 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	return ret;
 }
 
-bool is_ast_return(Token **token, AstNode **node) {
+bool try_parse_return(Token **token, AstNode **node) {
 	if ((*token)->type != TOKEN_KW_RETURN) return false;
 
 	push_ast_node(*token, *token, AST_NODE_RETURN, node);
@@ -58,7 +58,7 @@ bool is_ast_return(Token **token, AstNode **node) {
 	return true;
 }
 
-bool is_ast_type_alias(Token **token, AstNode **node) {
+bool try_parse_type_alias(Token **token, AstNode **node) {
 	if (!AST_TOKEN_CMP(*token,
 		TOKEN_IDENTIFIER,
 		TOKEN_OPER_AUTO_EQUAL,
@@ -76,7 +76,7 @@ bool is_ast_type_alias(Token **token, AstNode **node) {
 #define IS_TYPE_LIKE(token) \
 	((token)->type == TOKEN_TYPE || (token)->type == TOKEN_IDENTIFIER)
 
-bool is_ast_var_def(Token **_token, AstNode **node) {
+bool try_parse_var_def(Token **_token, AstNode **node) {
 	bool is_const = true;
 	bool is_implicit = true;
 
@@ -129,7 +129,7 @@ bool is_ast_var_def(Token **_token, AstNode **node) {
 	return true;
 }
 
-bool is_ast_var_assign(Token **token, AstNode **node) {
+bool try_parse_var_assign(Token **token, AstNode **node) {
 	if (!AST_TOKEN_CMP(*token,
 		TOKEN_IDENTIFIER,
 		TOKEN_OPER_EQUAL)
@@ -192,7 +192,7 @@ void push_expr_ast_node(
 	*token = (*token)->next;
 }
 
-bool is_const_oper(Token **token, AstNode **node) {
+bool try_parse_binary_oper(Token **token, AstNode **node) {
 	if (!(is_value((*token)->type) &&
 		(*token)->next &&
 		(*token)->next->next &&
@@ -208,7 +208,7 @@ bool is_const_oper(Token **token, AstNode **node) {
 	return true;
 }
 
-bool is_const_unary_oper(Token **token, AstNode **node) {
+bool try_parse_unary_oper(Token **token, AstNode **node) {
 	if (!(*token)->next || !is_value((*token)->next->type)) return false;
 
 	ExprType oper = token_type_to_expr_oper_type((*token)->type);
@@ -220,7 +220,7 @@ bool is_const_unary_oper(Token **token, AstNode **node) {
 	return true;
 }
 
-bool is_ast_function_proto(Token **_token, AstNode **node) {
+bool try_parse_function_proto(Token **_token, AstNode **node) {
 	Token *token = *_token;
 	Token *last = token;
 
@@ -312,7 +312,7 @@ bool is_ast_function_proto(Token **_token, AstNode **node) {
 	return true;
 }
 
-bool is_conditional(Token **token, AstNode **node) {
+bool try_parse_condition(Token **token, AstNode **node) {
 	const TokenType token_type = (*token)->type;
 	NodeType node_type;
 
@@ -385,13 +385,13 @@ AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 			continue;
 		}
 
-		if (is_ast_type_alias(token, &node) ||
-			is_ast_var_def(token, &node) ||
-			is_ast_var_assign(token, &node) ||
-			is_ast_return(token, &node) ||
-			is_ast_function_proto(token, &node) ||
+		if (try_parse_type_alias(token, &node) ||
+			try_parse_var_def(token, &node) ||
+			try_parse_var_assign(token, &node) ||
+			try_parse_return(token, &node) ||
+			try_parse_function_proto(token, &node) ||
 			try_parse_expression(token, &node) ||
-			is_conditional(token, &node)
+			try_parse_condition(token, &node)
 		) {
 			continue;
 		}
@@ -423,6 +423,7 @@ AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 }
 
 void parse_single_token_expr(Token **, AstNode **);
+void parse_paren_expr(Token **, AstNode **);
 
 /*
 Try and generate AST node for expression.
@@ -431,22 +432,14 @@ Returns true if a node was added, false otherwise.
 */
 bool try_parse_expression(Token **token, AstNode **node) {
 	if ((*token)->type == TOKEN_PAREN_OPEN) {
-		*token = (*token)->next;
-
-		if (!try_parse_expression(token, node)) {
-			PANIC(ERR_INVALID_EXPR, { .tok = *token });
-		}
-
-		if ((*token)->type != TOKEN_PAREN_CLOSE) {
-			PANIC(ERR_MISSING_CLOSING_PAREN, { .tok = *token });
-		}
-
-		*token = (*token)->next;
+		parse_paren_expr(token, node);
 	}
 	else if (AST_TOKEN_CMP(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
 		parse_func_call(token, node);
 	}
-	else if (is_const_oper(token, node) || is_const_unary_oper(token, node)) {
+	else if (try_parse_binary_oper(token, node) ||
+		try_parse_unary_oper(token, node)
+	) {
 		// pass
 	}
 	else if (is_value((*token)->type)) {
@@ -457,6 +450,20 @@ bool try_parse_expression(Token **token, AstNode **node) {
 	}
 
 	return true;
+}
+
+void parse_paren_expr(Token **token, AstNode **node) {
+	*token = (*token)->next;
+
+	if (!try_parse_expression(token, node)) {
+		PANIC(ERR_INVALID_EXPR, { .tok = *token });
+	}
+
+	if ((*token)->type != TOKEN_PAREN_CLOSE) {
+		PANIC(ERR_MISSING_CLOSING_PAREN, { .tok = *token });
+	}
+
+	*token = (*token)->next;
 }
 
 void parse_single_token_expr(Token **token, AstNode **node) {
