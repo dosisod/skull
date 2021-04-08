@@ -75,13 +75,10 @@ typedef struct AstNodeFunctionCall {
 
 ```c
 typedef struct AstNodeExpr {
-	const Token *lhs;
-	const Token *rhs;
-	ExprType oper;
-
-	// only for use in function expressions
-	AstNodeFunctionCall *func_call;
-}
+	union {
+		const Token *tok;
+		const AstNodeExpr *expr;
+	}
 ```
 
 > Store special data about operator related nodes.

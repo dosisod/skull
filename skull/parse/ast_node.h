@@ -132,8 +132,16 @@ typedef enum {
 Store special data about operator related nodes.
 */
 typedef struct AstNodeExpr {
-	const Token *lhs;
-	const Token *rhs;
+	union {
+		const Token *tok;
+		const AstNodeExpr *expr;
+	} lhs;
+
+	union {
+		const Token *tok;
+		const AstNodeExpr *expr;
+	} rhs;
+
 	ExprType oper;
 
 	// only for use in function expressions

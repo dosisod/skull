@@ -183,9 +183,9 @@ void push_expr_ast_node(
 
 	(*node)->attr.expr = Malloc(sizeof(AstNodeExpr));
 	*(*node)->attr.expr = (AstNodeExpr){
-		.lhs = lhs,
+		.lhs = { .tok = lhs },
 		.oper = oper,
-		.rhs = rhs
+		.rhs = { .tok = rhs }
 	};
 
 	push_ast_node(*token, last, AST_NODE_EXPR, node);
