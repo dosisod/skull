@@ -194,19 +194,45 @@ AstNode *push_expr_ast_node(
 	return pushed;
 }
 
-AstNode *try_parse_binary_oper(Token **token, AstNode **node) {
-	if (!(is_value((*token)->type) &&
+AstNode *push_expr_ast_node2(
+	AstNodeExpr *lhs,
+	ExprType oper,
+	Token *rhs,
+	Token **token,
+	AstNode **node
+) {
+	*token = rhs;
+
+	AstNodeExpr *new_expr = Malloc(sizeof(AstNodeExpr));
+
+	*new_expr = (AstNodeExpr){
+		.lhs = { .expr = lhs },
+		.oper = oper,
+		.rhs = { .tok = rhs }
+	};
+
+	(*node)->last->attr.expr = new_expr;
+
+	*token = (*token)->next;
+	return (*node)->last;
+}
+
+AstNode *try_parse_binary_oper(
+	AstNodeExpr *expr,
+	Token **token,
+	AstNode **node
+) {
+	if (!(*token &&
 		(*token)->next &&
-		(*token)->next->next &&
-		is_value((*token)->next->next->type)
+		is_value((*token)->next->type)
 	)) {
 		return NULL;
 	}
 
-	const ExprType oper = token_type_to_expr_oper_type((*token)->next->type);
+	const ExprType oper = token_type_to_expr_oper_type((*token)->type);
 	if (oper == EXPR_UNKNOWN) return NULL;
 
-	return push_expr_ast_node(*token, oper, (*token)->next->next, token, node);
+	return push_expr_ast_node2(expr, oper, (*token)->next, token, node);
 }
 
 AstNode *try_parse_unary_oper(Token **token, AstNode **node) {
@@ -431,25 +457,32 @@ Try and generate AST node for expression.
 Returns node if one was added, NULL otherwise.
 */
 AstNode *try_parse_expression(Token **token, AstNode **node) {
-	AstNode *x;
+	AstNode *x = NULL;
 
 	if ((*token)->type == TOKEN_PAREN_OPEN) {
-		return parse_paren_expr(token, node);
+		x = parse_paren_expr(token, node);
 	}
-	if (AST_TOKEN_CMP(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
-		return parse_func_call(token, node);
+	else if (AST_TOKEN_CMP(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
+		x = parse_func_call(token, node);
 	}
-	if ((x = try_parse_binary_oper(token, node))) {
-		return x;
+	else if ((x = try_parse_unary_oper(token, node))) {
+		// pass
 	}
-	if ((x = try_parse_unary_oper(token, node))) {
-		return x;
-	}
-	if (is_value((*token)->type)) {
-		return parse_single_token_expr(token, node);
+	else if (is_value((*token)->type)) {
+		x = parse_single_token_expr(token, node);
 	}
 
-	return NULL;
+	if (x) {
+		AstNode *backup = x;
+
+		if ((x = try_parse_binary_oper(x->attr.expr, token, node))) {
+			return x;
+		}
+
+		return backup;
+	}
+
+	return x;
 }
 
 AstNode *parse_paren_expr(Token **token, AstNode **node) {
@@ -480,6 +513,7 @@ AstNode *parse_single_token_expr(Token **token, AstNode **node) {
 
 	pushed->attr.expr = Malloc(sizeof(AstNodeExpr));
 	*pushed->attr.expr = (AstNodeExpr){
+		.lhs = { .tok = *token },
 		.oper = oper
 	};
 
