@@ -171,50 +171,52 @@ ExprType token_type_to_expr_oper_type(TokenType type) {
 	}
 }
 
-bool is_const_oper(Token **_token, AstNode **node) {
-	Token *token = *_token;
-	Token *last = token;
-
-	const Token *lhs_token = NULL;
-	Token *rhs_token = NULL;
-
-	ExprType oper = token_type_to_expr_oper_type(token->type);
-
-	if ((oper == EXPR_NOT || oper == EXPR_SUB) &&
-		is_value(token->next->type)
-	) {
-		if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
-
-		rhs_token = token->next;
-	}
-	else if (is_value(token->type) &&
-		token->next &&
-		token->next->next &&
-		is_value(token->next->next->type)
-	) {
-		lhs_token = token;
-		rhs_token = token->next->next;
-
-		oper = token_type_to_expr_oper_type(token->next->type);
-
-		if (oper == EXPR_UNKNOWN) return false;
-	}
-	else {
-		return false;
-	}
-
-	*_token = rhs_token;
+void push_expr_ast_node(
+	Token *lhs,
+	ExprType oper,
+	Token *rhs,
+	Token **token,
+	AstNode **node
+) {
+	Token *last = *token;
+	*token = rhs;
 
 	(*node)->attr.expr = Malloc(sizeof(AstNodeExpr));
 	*(*node)->attr.expr = (AstNodeExpr){
-		.lhs = lhs_token,
+		.lhs = lhs,
 		.oper = oper,
-		.rhs = rhs_token
+		.rhs = rhs
 	};
 
-	push_ast_node(*_token, last, AST_NODE_EXPR, node);
-	*_token = (*_token)->next;
+	push_ast_node(*token, last, AST_NODE_EXPR, node);
+	*token = (*token)->next;
+}
 
+bool is_const_oper(Token **token, AstNode **node) {
+	if (!(is_value((*token)->type) &&
+		(*token)->next &&
+		(*token)->next->next &&
+		is_value((*token)->next->next->type)
+	)) {
+		return false;
+	}
+
+	const ExprType oper = token_type_to_expr_oper_type((*token)->next->type);
+	if (oper == EXPR_UNKNOWN) return false;
+
+	push_expr_ast_node(*token, oper, (*token)->next->next, token, node);
+	return true;
+}
+
+bool is_const_unary_oper(Token **token, AstNode **node) {
+	if (!(*token)->next || !is_value((*token)->next->type)) return false;
+
+	ExprType oper = token_type_to_expr_oper_type((*token)->type);
+
+	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
+	else if (oper != EXPR_NOT) return false;
+
+	push_expr_ast_node(NULL, oper, (*token)->next, token, node);
 	return true;
 }
 
@@ -444,7 +446,7 @@ bool try_parse_expression(Token **token, AstNode **node) {
 	else if (AST_TOKEN_CMP(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
 		parse_func_call(token, node);
 	}
-	else if (is_const_oper(token, node)) {
+	else if (is_const_oper(token, node) || is_const_unary_oper(token, node)) {
 		// pass
 	}
 	else if (is_value((*token)->type)) {
