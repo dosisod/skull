@@ -12,8 +12,8 @@
 
 #include "skull/parse/ast_node.h"
 
-bool try_parse_expression(Token **, AstNode **);
-void parse_func_call(Token **, AstNode **);
+AstNode *try_parse_expression(Token **, AstNode **);
+AstNode *parse_func_call(Token **, AstNode **);
 
 AstNode *make_ast_tree_(Token **, unsigned);
 
@@ -194,32 +194,30 @@ AstNode *push_expr_ast_node(
 	return pushed;
 }
 
-bool try_parse_binary_oper(Token **token, AstNode **node) {
+AstNode *try_parse_binary_oper(Token **token, AstNode **node) {
 	if (!(is_value((*token)->type) &&
 		(*token)->next &&
 		(*token)->next->next &&
 		is_value((*token)->next->next->type)
 	)) {
-		return false;
+		return NULL;
 	}
 
 	const ExprType oper = token_type_to_expr_oper_type((*token)->next->type);
-	if (oper == EXPR_UNKNOWN) return false;
+	if (oper == EXPR_UNKNOWN) return NULL;
 
-	push_expr_ast_node(*token, oper, (*token)->next->next, token, node);
-	return true;
+	return push_expr_ast_node(*token, oper, (*token)->next->next, token, node);
 }
 
-bool try_parse_unary_oper(Token **token, AstNode **node) {
-	if (!(*token)->next || !is_value((*token)->next->type)) return false;
+AstNode *try_parse_unary_oper(Token **token, AstNode **node) {
+	if (!(*token)->next || !is_value((*token)->next->type)) return NULL;
 
 	ExprType oper = token_type_to_expr_oper_type((*token)->type);
 
 	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
-	else if (oper != EXPR_NOT) return false;
+	else if (oper != EXPR_NOT) return NULL;
 
-	push_expr_ast_node(NULL, oper, (*token)->next, token, node);
-	return true;
+	return push_expr_ast_node(NULL, oper, (*token)->next, token, node);
 }
 
 bool try_parse_function_proto(Token **_token, AstNode **node) {
@@ -424,40 +422,42 @@ AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 	return head;
 }
 
-void parse_single_token_expr(Token **, AstNode **);
-void parse_paren_expr(Token **, AstNode **);
+AstNode *parse_single_token_expr(Token **, AstNode **);
+AstNode *parse_paren_expr(Token **, AstNode **);
 
 /*
 Try and generate AST node for expression.
 
-Returns true if a node was added, false otherwise.
+Returns node if one was added, NULL otherwise.
 */
-bool try_parse_expression(Token **token, AstNode **node) {
+AstNode *try_parse_expression(Token **token, AstNode **node) {
+	AstNode *x;
+
 	if ((*token)->type == TOKEN_PAREN_OPEN) {
-		parse_paren_expr(token, node);
+		return parse_paren_expr(token, node);
 	}
-	else if (AST_TOKEN_CMP(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
-		parse_func_call(token, node);
+	if (AST_TOKEN_CMP(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
+		return parse_func_call(token, node);
 	}
-	else if (try_parse_binary_oper(token, node) ||
-		try_parse_unary_oper(token, node)
-	) {
-		// pass
+	if ((x = try_parse_binary_oper(token, node))) {
+		return x;
 	}
-	else if (is_value((*token)->type)) {
-		parse_single_token_expr(token, node);
+	if ((x = try_parse_unary_oper(token, node))) {
+		return x;
 	}
-	else {
-		return false;
+	if (is_value((*token)->type)) {
+		return parse_single_token_expr(token, node);
 	}
 
-	return true;
+	return NULL;
 }
 
-void parse_paren_expr(Token **token, AstNode **node) {
+AstNode *parse_paren_expr(Token **token, AstNode **node) {
 	*token = (*token)->next;
 
-	if (!try_parse_expression(token, node)) {
+	AstNode *pushed = try_parse_expression(token, node);
+
+	if (!pushed) {
 		PANIC(ERR_INVALID_EXPR, { .tok = *token });
 	}
 
@@ -466,9 +466,11 @@ void parse_paren_expr(Token **token, AstNode **node) {
 	}
 
 	*token = (*token)->next;
+
+	return pushed;
 }
 
-void parse_single_token_expr(Token **token, AstNode **node) {
+AstNode *parse_single_token_expr(Token **token, AstNode **node) {
 	ExprType oper = EXPR_CONST;
 
 	if ((*token)->type == TOKEN_IDENTIFIER)
@@ -482,6 +484,8 @@ void parse_single_token_expr(Token **token, AstNode **node) {
 	};
 
 	*token = (*token)->next;
+
+	return pushed;
 }
 
 /*
@@ -489,7 +493,7 @@ Try and generate AST node for a function call.
 
 Returns true if a node was added, false otherwise.
 */
-void parse_func_call(Token **token, AstNode **node) {
+AstNode *parse_func_call(Token **token, AstNode **node) {
 	const Token *func_name_token = *token;
 
 	AstNode *pushed = push_ast_node(*token, *token, AST_NODE_EXPR, node);
@@ -528,6 +532,8 @@ void parse_func_call(Token **token, AstNode **node) {
 		.func_name_tok = func_name_token,
 		.num_values = num_values
 	};
+
+	return pushed;
 }
 
 /*

@@ -109,15 +109,15 @@ AstNode *make_ast_tree_(Token **token, unsigned indent_lvl)
 > Internal AST tree generator.
 
 ```c
-bool try_parse_expression(Token **token, AstNode **node)
+AstNode *try_parse_expression(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for expression.
 > \
-> Returns true if a node was added, false otherwise.
+> Returns node if one was added, NULL otherwise.
 
 ```c
-void parse_func_call(Token **token, AstNode **node)
+AstNode *parse_func_call(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for a function call.
