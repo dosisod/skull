@@ -171,7 +171,7 @@ ExprType token_type_to_expr_oper_type(TokenType type) {
 	}
 }
 
-void push_expr_ast_node(
+AstNode *push_expr_ast_node(
 	Token *lhs,
 	ExprType oper,
 	Token *rhs,
@@ -188,8 +188,10 @@ void push_expr_ast_node(
 		.rhs = { .tok = rhs }
 	};
 
-	push_ast_node(*token, last, AST_NODE_EXPR, node);
+	AstNode *pushed = push_ast_node(*token, last, AST_NODE_EXPR, node);
 	*token = (*token)->next;
+
+	return pushed;
 }
 
 bool try_parse_binary_oper(Token **token, AstNode **node) {
@@ -472,10 +474,10 @@ void parse_single_token_expr(Token **token, AstNode **node) {
 	if ((*token)->type == TOKEN_IDENTIFIER)
 		oper = EXPR_IDENTIFIER;
 
-	push_ast_node(*token, *token, AST_NODE_EXPR, node);
+	AstNode *pushed = push_ast_node(*token, *token, AST_NODE_EXPR, node);
 
-	(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
-	*(*node)->last->attr.expr = (AstNodeExpr){
+	pushed->attr.expr = Malloc(sizeof(AstNodeExpr));
+	*pushed->attr.expr = (AstNodeExpr){
 		.oper = oper
 	};
 
@@ -490,10 +492,10 @@ Returns true if a node was added, false otherwise.
 void parse_func_call(Token **token, AstNode **node) {
 	const Token *func_name_token = *token;
 
-	push_ast_node(*token, *token, AST_NODE_EXPR, node);
+	AstNode *pushed = push_ast_node(*token, *token, AST_NODE_EXPR, node);
 
 	AstNode *child = make_ast_node();
-	(*node)->last->child = child;
+	pushed->child = child;
 
 	*token = (*token)->next->next;
 
@@ -516,13 +518,13 @@ void parse_func_call(Token **token, AstNode **node) {
 
 	*token = (*token)->next;
 
-	(*node)->last->attr.expr = Malloc(sizeof(AstNodeExpr));
-	*(*node)->last->attr.expr = (AstNodeExpr){
+	pushed->attr.expr = Malloc(sizeof(AstNodeExpr));
+	*pushed->attr.expr = (AstNodeExpr){
 		.oper = EXPR_FUNC
 	};
 
-	(*node)->last->attr.expr->func_call = Malloc(sizeof(AstNodeFunctionCall));
-	*(*node)->last->attr.expr->func_call = (AstNodeFunctionCall){
+	pushed->attr.expr->func_call = Malloc(sizeof(AstNodeFunctionCall));
+	*pushed->attr.expr->func_call = (AstNodeFunctionCall){
 		.func_name_tok = func_name_token,
 		.num_values = num_values
 	};
@@ -531,7 +533,7 @@ void parse_func_call(Token **token, AstNode **node) {
 /*
 Push a new AST node to `node` with type `node_type`
 */
-void push_ast_node(
+AstNode *push_ast_node(
 	Token *const token,
 	Token *last,
 	NodeType node_type,
@@ -546,6 +548,8 @@ void push_ast_node(
 	(*node)->next = new_node;
 
 	(*node) = new_node;
+
+	return (*node)->last;
 }
 
 /*

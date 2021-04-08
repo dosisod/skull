@@ -125,7 +125,7 @@ void parse_func_call(Token **token, AstNode **node)
 > Returns true if a node was added, false otherwise.
 
 ```c
-void push_ast_node(Token *const token, Token *last, NodeType node_type, AstNode **node)
+AstNode *push_ast_node(Token *const token, Token *last, NodeType node_type, AstNode **node)
 ```
 
 > Push a new AST node to `node` with type `node_type`
