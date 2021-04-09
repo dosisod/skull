@@ -13,6 +13,7 @@
 #include "skull/parse/ast_node.h"
 
 AstNode *try_parse_expression(Token **, AstNode **);
+AstNode *_try_parse_expression(Token **, AstNode **);
 AstNode *parse_func_call(Token **, AstNode **);
 
 AstNode *make_ast_tree_(Token **, unsigned);
@@ -457,6 +458,13 @@ Try and generate AST node for expression.
 Returns node if one was added, NULL otherwise.
 */
 AstNode *try_parse_expression(Token **token, AstNode **node) {
+	return _try_parse_expression(token, node);
+}
+
+/*
+Internal `try_parse_expression` function. Used for recursive expr parsing.
+*/
+AstNode *_try_parse_expression(Token **token, AstNode **node) {
 	AstNode *x = NULL;
 
 	if ((*token)->type == TOKEN_PAREN_OPEN) {
@@ -488,7 +496,7 @@ AstNode *try_parse_expression(Token **token, AstNode **node) {
 AstNode *parse_paren_expr(Token **token, AstNode **node) {
 	*token = (*token)->next;
 
-	AstNode *pushed = try_parse_expression(token, node);
+	AstNode *pushed = _try_parse_expression(token, node);
 
 	if (!pushed) {
 		PANIC(ERR_INVALID_EXPR, { .tok = *token });
@@ -540,7 +548,7 @@ AstNode *parse_func_call(Token **token, AstNode **node) {
 	unsigned short num_values = 0;
 
 	while (true) {
-		if (try_parse_expression(token, &child))
+		if (_try_parse_expression(token, &child))
 			num_values++;
 
 		if ((*token)->type == TOKEN_PAREN_CLOSE) break;
