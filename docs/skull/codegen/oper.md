@@ -155,6 +155,16 @@ Expr gen_expr_xor(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return result of logical "xor" operation of `lhs` and `rhs`.
 
 ```c
+Expr gen_expr_identifier(const Type *const type, const Token *const token, const Variable *const var)
+```
+
+> Return expression for identifier `token` with type `type`.
+> \
+> Optionally pass `var` if result is expected to be assigned to a variable.
+> \
+> If `type` is not set, the expression type will not be checked.
+
+```c
 Expr gen_expr_oper(const Type *const type, const AstNodeExpr *const expr)
 ```
 

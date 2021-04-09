@@ -27,16 +27,6 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var)
 > Assign `value` to `var`.
 
 ```c
-Expr gen_expr_identifier(const Type *const type, const Token *const token, const Variable *const var)
-```
-
-> Return expression for identifier `token` with type `type`.
-> \
-> Optionally pass `var` if result is expected to be assigned to a variable.
-> \
-> If `type` is not set, the expression type will not be checked.
-
-```c
 void create_type_alias(AstNode **node)
 ```
 

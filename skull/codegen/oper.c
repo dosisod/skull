@@ -469,6 +469,37 @@ Expr gen_expr_xor(
 }
 
 /*
+Return expression for identifier `token` with type `type`.
+
+Optionally pass `var` if result is expected to be assigned to a variable.
+
+If `type` is not set, the expression type will not be checked.
+*/
+Expr gen_expr_identifier(
+	const Type *const type,
+	const Token *const token,
+	const Variable *const var
+) {
+	Variable *var_found = NULL;
+	const Expr expr = token_to_expr(token, &var_found);
+
+	if (type && var_found && var_found->type != type) {
+		PANIC(ERR_EXPECTED_SAME_TYPE,
+			{ .tok = token, .type = type },
+			{ .type = var_found->type }
+		);
+	}
+	if (var == var_found) {
+		PANIC(ERR_REDUNDANT_REASSIGN, {
+			.tok = token,
+			.var = var
+		});
+	}
+
+	return expr;
+}
+
+/*
 Return expression for operation `oper` on `expr`.
 */
 Expr gen_expr_oper(

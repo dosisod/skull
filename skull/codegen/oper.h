@@ -31,3 +31,8 @@ Operation gen_expr_pow;
 
 Expr token_to_expr(const Token *const, Variable **);
 Expr gen_expr_const(const Type *const, const Token *const);
+Expr gen_expr_identifier(
+	const Type *const,
+	const Token *const,
+	const Variable *const
+);

@@ -53,12 +53,6 @@ void gen_stmt_var_assign(AstNode **node) {
 	*node = (*node)->next;
 }
 
-Expr gen_expr_identifier(
-	const Type *const,
-	const Token *const,
-	const Variable *const
-);
-
 /*
 Create an expression from `node` with type `type`.
 
@@ -143,37 +137,6 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 			var->llvm_value
 		);
 	}
-}
-
-/*
-Return expression for identifier `token` with type `type`.
-
-Optionally pass `var` if result is expected to be assigned to a variable.
-
-If `type` is not set, the expression type will not be checked.
-*/
-Expr gen_expr_identifier(
-	const Type *const type,
-	const Token *const token,
-	const Variable *const var
-) {
-	Variable *var_found = NULL;
-	const Expr expr = token_to_expr(token, &var_found);
-
-	if (type && var_found->type != type) {
-		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = token, .type = type },
-			{ .type = var_found->type }
-		);
-	}
-	if (var == var_found) {
-		PANIC(ERR_REDUNDANT_REASSIGN, {
-			.tok = token,
-			.var = var
-		});
-	}
-
-	return expr;
 }
 
 /*
