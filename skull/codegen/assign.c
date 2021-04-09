@@ -84,33 +84,7 @@ Expr node_to_expr(
 			expr = gen_expr_function_call(node, type);
 
 		else {
-			Operation *func = NULL;
-
-			switch (oper) {
-				case EXPR_ADD: func = &gen_expr_add; break;
-				case EXPR_SUB: func = &gen_expr_sub; break;
-				case EXPR_UNARY_NEG: func = &gen_expr_unary_neg; break;
-				case EXPR_MULT: func = &gen_expr_mult; break;
-				case EXPR_DIV: func = &gen_expr_div; break;
-				case EXPR_MOD: func = &gen_expr_mod; break;
-				case EXPR_NOT: func = &gen_expr_not; break;
-				case EXPR_LSHIFT: func = &gen_expr_lshift; break;
-				case EXPR_POW: func = &gen_expr_pow; break;
-				case EXPR_RSHIFT: func = &gen_expr_rshift; break;
-				case EXPR_IS: func = gen_expr_is; break;
-				case EXPR_ISNT: func = gen_expr_is_not; break;
-				case EXPR_LESS_THAN: func = gen_expr_less_than; break;
-				case EXPR_GTR_THAN: func = gen_expr_gtr_than; break;
-				case EXPR_LESS_THAN_EQ: func = gen_expr_less_than_eq; break;
-				case EXPR_GTR_THAN_EQ: func = gen_expr_gtr_than_eq; break;
-				case EXPR_AND: func = gen_expr_and; break;
-				case EXPR_OR: func = gen_expr_or; break;
-				case EXPR_XOR: func = gen_expr_xor; break;
-				default: break;
-			}
-
-			if (func)
-				expr = gen_expr_oper(type, node->attr.expr, func);
+			expr = gen_expr_oper(type, node->attr.expr);
 		}
 	}
 

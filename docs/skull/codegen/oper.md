@@ -155,7 +155,7 @@ Expr gen_expr_xor(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return result of logical "xor" operation of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_oper(const Type *const type, const AstNodeExpr *const expr, Operation *oper)
+Expr gen_expr_oper(const Type *const type, const AstNodeExpr *const expr)
 ```
 
 > Return expression for operation `oper` on `expr`.
