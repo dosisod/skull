@@ -66,20 +66,7 @@ Expr node_to_expr(
 	Expr expr = {0};
 
 	if (node->type == AST_NODE_EXPR) {
-		const ExprType oper = node->attr.expr->oper;
-
-		if (oper == EXPR_IDENTIFIER)
-			expr = gen_expr_identifier(type, node->token, var);
-
-		else if (oper == EXPR_CONST)
-			expr = gen_expr_const(type, node->token);
-
-		else if (oper == EXPR_FUNC)
-			expr = gen_expr_function_call(node, type);
-
-		else {
-			expr = gen_expr_oper(type, node->attr.expr);
-		}
+		expr = gen_expr_oper(type, node, var);
 	}
 
 	if (!expr.llvm_value) {

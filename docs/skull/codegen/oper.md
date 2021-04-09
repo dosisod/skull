@@ -165,10 +165,10 @@ Expr gen_expr_identifier(const Type *const type, const Token *const token, const
 > If `type` is not set, the expression type will not be checked.
 
 ```c
-Expr gen_expr_oper(const Type *const type, const AstNodeExpr *const expr)
+Expr gen_expr_oper(const Type *const type, const AstNode *const node, const Variable *const var)
 ```
 
-> Return expression for operation `oper` on `expr`.
+> Return expression for operation `oper` for `node`.
 
 ```c
 Expr token_to_expr(const Token *const token, Variable **variable)

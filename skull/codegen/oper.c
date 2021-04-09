@@ -500,13 +500,15 @@ Expr gen_expr_identifier(
 }
 
 /*
-Return expression for operation `oper` on `expr`.
+Return expression for operation `oper` for `node`.
 */
 Expr gen_expr_oper(
 	const Type *const type,
-	const AstNodeExpr *const expr
+	const AstNode *const node,
+	const Variable *const var
 ) {
 	Operation *func = NULL;
+	const AstNodeExpr *const expr = node->attr.expr;
 
 	switch (expr->oper) {
 		case EXPR_ADD: func = &gen_expr_add; break;
@@ -528,10 +530,14 @@ Expr gen_expr_oper(
 		case EXPR_AND: func = gen_expr_and; break;
 		case EXPR_OR: func = gen_expr_or; break;
 		case EXPR_XOR: func = gen_expr_xor; break;
-		default: break;
+		case EXPR_IDENTIFIER:
+			return gen_expr_identifier(type, node->token, var);
+		case EXPR_CONST:
+			return gen_expr_const(type, node->token);
+		case EXPR_FUNC:
+			return gen_expr_function_call(node, type);
+		default: return (Expr){0};
 	}
-
-	if (!func) return (Expr){0};
 
 	const Token *lhs_token = expr->lhs.expr ? expr->lhs.expr->lhs.tok : NULL;
 	const Expr lhs = lhs_token ? token_to_expr(lhs_token, NULL) : (Expr){0};
