@@ -564,6 +564,7 @@ AstNode *parse_func_call(Token **token, AstNode **node) {
 	pushed->attr.expr->func_call = Malloc(sizeof(AstNodeFunctionCall));
 	*pushed->attr.expr->func_call = (AstNodeFunctionCall){
 		.func_name_tok = func_name_token,
+		.params = pushed->child,
 		.num_values = num_values
 	};
 
@@ -726,8 +727,8 @@ void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 				"column: %u, line: %u, data: `%s`>\n",
 				(void *)token,
 				token->type,
-				token->line,
 				token->column,
+				token->line,
 				str
 			);
 

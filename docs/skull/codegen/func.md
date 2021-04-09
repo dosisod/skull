@@ -47,10 +47,10 @@ FunctionDeclaration *add_function(const AstNode *const node, char *name, bool is
 > Else, the function will be globally available.
 
 ```c
-Expr gen_expr_function_call(const AstNode *const node, const Type *const type)
+Expr gen_expr_function_call(const AstNodeExpr *const expr, const Type *const type)
 ```
 
-> Builds a function call from `node`.
+> Builds a function call from `expr`.
 
 ```c
 void define_function(const AstNode *const node, FunctionDeclaration *func)

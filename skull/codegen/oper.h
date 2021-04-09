@@ -9,7 +9,7 @@ typedef Expr (Operation)(const Type *const, LLVMValueRef, LLVMValueRef);
 
 Expr gen_expr_oper(
 	const Type *const,
-	const AstNode *const,
+	const AstNodeExpr *const,
 	const Variable *const
 );
 

@@ -155,10 +155,13 @@ FunctionDeclaration *add_function(
 }
 
 /*
-Builds a function call from `node`.
+Builds a function call from `expr`.
 */
-Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
-	const Token *func_name_token = node->attr.expr->func_call->func_name_tok;
+Expr gen_expr_function_call(
+	const AstNodeExpr *const expr,
+	const Type *const type
+) {
+	const Token *func_name_token = expr->func_call->func_name_tok;
 
 	char *const func_name = token_mbs_str(func_name_token);
 
@@ -173,7 +176,7 @@ Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 
 	unsigned short num_params = function->num_params;
 
-	if (num_params != node->attr.expr->func_call->num_values) {
+	if (num_params != expr->func_call->num_values) {
 		PANIC(ERR_INVALID_NUM_PARAMS, { .tok = func_name_token });
 	}
 
@@ -181,27 +184,27 @@ Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 	if (num_params)
 		params = Calloc(num_params, sizeof(LLVMValueRef));
 
-	const AstNode *param = node->child;
+	const AstNode *param = expr->func_call->params;
 
 	if (num_params == 0 && param->token) {
 		PANIC(ERR_ZERO_PARAM_FUNC, { .tok = param->token });
 	}
 
 	for RANGE(i, num_params) {
-		const Expr expr = node_to_expr(
+		const Expr param_expr = node_to_expr(
 			function->param_types[i],
 			param,
 			NULL
 		);
 
-		if (expr.type != function->param_types[i]) {
+		if (param_expr.type != function->param_types[i]) {
 			PANIC(ERR_FUNC_TYPE_MISMATCH,
 				{ .tok = param->token, .type = function->param_types[i] },
-				{ .type = expr.type }
+				{ .type = param_expr.type }
 			);
 		}
 
-		params[i] = expr.llvm_value;
+		params[i] = param_expr.llvm_value;
 		param = param->next;
 	}
 
@@ -221,7 +224,7 @@ Expr gen_expr_function_call(const AstNode *const node, const Type *const type) {
 
 	if (type && ret.type != type) {
 		PANIC(ERR_ASSIGN_BAD_TYPE,
-			{ .tok = node->token, .type = ret.type },
+			{ .tok = func_name_token, .type = ret.type },
 			{ .type = type }
 		);
 	}
