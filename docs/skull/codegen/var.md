@@ -1,14 +1,6 @@
 # skull/codegen/var
 
 ```c
-Expr token_to_expr(const Token *const token, Variable **variable)
-```
-
-> Convert `token` to an expression.
-> \
-> If `variable` is and `token` is a variable, store the found variable there.
-
-```c
 Variable *node_to_var(const AstNode *const node)
 ```
 
@@ -19,18 +11,6 @@ const Type *var_def_node_to_type(const AstNode *node)
 ```
 
 > Return a variable type based on `node`.
-
-```c
-Expr token_to_simple_expr_typed(const Type *const type, const Token *const token)
-```
-
-> Make an expression from `token`, checking for compatibility with `type`.
-
-```c
-Expr token_to_simple_expr(const Token *const token)
-```
-
-> Make a simple expression (const literal) from `token`.
 
 ```c
 typedef struct {

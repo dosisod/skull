@@ -158,5 +158,25 @@ Expr gen_expr_xor(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 Expr gen_expr_oper(const Type *const type, const AstNodeExpr *const expr, Operation *oper)
 ```
 
-> Return expression for operation `oper` from `node`.
+> Return expression for operation `oper` on `expr`.
+
+```c
+Expr token_to_expr(const Token *const token, Variable **variable)
+```
+
+> Convert `token` to an expression.
+> \
+> If `variable` is and `token` is a variable, store the found variable there.
+
+```c
+Expr token_to_simple_expr_typed(const Type *const type, const Token *const token)
+```
+
+> Make an expression from `token`, checking for compatibility with `type`.
+
+```c
+Expr token_to_simple_expr(const Token *const token)
+```
+
+> Make a simple expression (const literal) from `token`.
 

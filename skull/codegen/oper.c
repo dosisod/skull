@@ -469,7 +469,7 @@ Expr gen_expr_xor(
 }
 
 /*
-Return expression for operation `oper` from `node`.
+Return expression for operation `oper` on `expr`.
 */
 Expr gen_expr_oper(
 	const Type *const type,
@@ -477,9 +477,9 @@ Expr gen_expr_oper(
 	Operation *oper
 ) {
 	const Token *lhs_token = expr->lhs.expr ? expr->lhs.expr->lhs.tok : NULL;
-	const Token *rhs_token = expr->rhs.tok;
-
 	const Expr lhs = lhs_token ? token_to_expr(lhs_token, NULL) : (Expr){0};
+
+	const Token *rhs_token = expr->rhs.tok;
 	const Expr rhs = token_to_expr(rhs_token, NULL);
 
 	if (lhs.llvm_value && lhs.type != rhs.type) {
@@ -507,4 +507,113 @@ Expr gen_expr_oper(
 	}
 
 	return result;
+}
+
+#include "skull/compiler/types/bool.h"
+#include "skull/compiler/types/defs.h"
+#include "skull/compiler/types/float.h"
+#include "skull/compiler/types/int.h"
+#include "skull/compiler/types/rune.h"
+#include "skull/compiler/types/str.h"
+
+Expr token_to_simple_expr(const Token *const);
+
+/*
+Convert `token` to an expression.
+
+If `variable` is and `token` is a variable, store the found variable there.
+*/
+Expr token_to_expr(const Token *const token, Variable **variable) {
+	if (token->type == TOKEN_IDENTIFIER) {
+		Variable *const var_found = scope_find_var(token);
+
+		if (variable) *variable = var_found;
+
+		if (var_found->is_const &&
+			!(var_found->is_global &&
+			!var_found->is_const_lit)
+		) {
+			return (Expr){
+				.llvm_value = var_found->llvm_value,
+				.type = var_found->type
+			};
+		}
+
+		return (Expr) {
+			.llvm_value = LLVMBuildLoad2(
+				SKULL_STATE.builder,
+				gen_llvm_type(var_found->type),
+				var_found->llvm_value,
+				""
+			),
+			.type = var_found->type
+		};
+	}
+
+	return token_to_simple_expr(token);
+}
+
+/*
+Make an expression from `token`, checking for compatibility with `type`.
+*/
+Expr token_to_simple_expr_typed(
+	const Type *const type,
+	const Token *const token
+) {
+	const Expr expr = token_to_simple_expr(token);
+
+	if (!expr.type) {
+		PANIC(ERR_TYPE_MISMATCH, {
+			.tok = token,
+			.type = type
+		});
+	}
+
+	return expr;
+}
+
+/*
+Make a simple expression (const literal) from `token`.
+*/
+Expr token_to_simple_expr(const Token *const token) {
+	LLVMValueRef llvm_value = NULL;
+	const Type *type = NULL;
+
+	if (token->type == TOKEN_INT_CONST) {
+		llvm_value = LLVM_INT(eval_integer(token));
+		type = &TYPE_INT;
+	}
+	else if (token->type == TOKEN_FLOAT_CONST) {
+		llvm_value = LLVM_FLOAT(eval_float(token));
+		type = &TYPE_FLOAT;
+	}
+	else if (token->type == TOKEN_BOOL_CONST) {
+		llvm_value = LLVM_BOOL(eval_bool(token));
+		type = &TYPE_BOOL;
+	}
+	else if (token->type == TOKEN_RUNE_CONST) {
+		llvm_value = LLVM_RUNE(eval_rune(token));
+		type = &TYPE_RUNE;
+	}
+	else if (token->type == TOKEN_STR_CONST) {
+		SkullStr str = eval_str(token);
+		char *const mbs = c32stombs(str);
+
+		llvm_value = LLVMBuildBitCast(
+			SKULL_STATE.builder,
+			LLVMBuildGlobalString(SKULL_STATE.builder, mbs, ""),
+			gen_llvm_type(&TYPE_STR),
+			""
+		);
+
+		free(mbs);
+		free(str);
+
+		type = &TYPE_STR;
+	}
+
+	return (Expr){
+		.llvm_value = llvm_value,
+		.type = type
+	};
 }
