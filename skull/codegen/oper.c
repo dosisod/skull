@@ -556,7 +556,7 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 /*
 Make an expression from `token`, checking for compatibility with `type`.
 */
-Expr token_to_simple_expr_typed(
+Expr gen_expr_const(
 	const Type *const type,
 	const Token *const token
 ) {

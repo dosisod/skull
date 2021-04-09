@@ -30,4 +30,4 @@ Operation gen_expr_xor;
 Operation gen_expr_pow;
 
 Expr token_to_expr(const Token *const, Variable **);
-Expr token_to_simple_expr_typed(const Type *const, const Token *const);
+Expr gen_expr_const(const Type *const, const Token *const);

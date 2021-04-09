@@ -169,7 +169,7 @@ Expr token_to_expr(const Token *const token, Variable **variable)
 > If `variable` is and `token` is a variable, store the found variable there.
 
 ```c
-Expr token_to_simple_expr_typed(const Type *const type, const Token *const token)
+Expr gen_expr_const(const Type *const type, const Token *const token)
 ```
 
 > Make an expression from `token`, checking for compatibility with `type`.

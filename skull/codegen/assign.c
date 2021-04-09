@@ -78,7 +78,7 @@ Expr node_to_expr(
 			expr = gen_expr_identifier(type, node->token, var);
 
 		else if (oper == EXPR_CONST)
-			expr = token_to_simple_expr_typed(type, node->token);
+			expr = gen_expr_const(type, node->token);
 
 		else if (oper == EXPR_FUNC)
 			expr = gen_expr_function_call(node, type);
