@@ -538,8 +538,13 @@ Expr gen_expr_oper(
 		default: return (Expr){0};
 	}
 
-	const Token *lhs_token = expr->lhs.expr ? expr->lhs.expr->lhs.tok : NULL;
-	const Expr lhs = lhs_token ? token_to_expr(lhs_token, NULL) : (Expr){0};
+	const Token *lhs_token = expr->lhs.expr ?
+		expr->lhs.expr->lhs.tok :
+		NULL;
+
+	const Expr lhs = expr->lhs.expr ?
+		gen_expr_oper(type, expr->lhs.expr, var) :
+		(Expr){0};
 
 	const Token *rhs_token = expr->rhs.tok;
 	const Expr rhs = token_to_expr(rhs_token, NULL);
