@@ -18,7 +18,8 @@ typedef struct AstNode {
 		AstNodeVarDef *var_def;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
-	}
+	} attr;
+}
 ```
 
 > An `AstNode` abstractly stores data about parsed code.
