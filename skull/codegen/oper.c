@@ -531,9 +531,9 @@ Expr gen_expr_oper(
 		case EXPR_OR: func = gen_expr_or; break;
 		case EXPR_XOR: func = gen_expr_xor; break;
 		case EXPR_IDENTIFIER:
-			return gen_expr_identifier(type, node->token, var);
+			return gen_expr_identifier(type, expr->lhs.tok, var);
 		case EXPR_CONST:
-			return gen_expr_const(type, node->token);
+			return gen_expr_const(type, expr->lhs.tok);
 		case EXPR_FUNC:
 			return gen_expr_function_call(node, type);
 		default: return (Expr){0};
