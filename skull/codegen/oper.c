@@ -196,49 +196,28 @@ Expr gen_expr_pow(
 }
 
 /*
-Return expression for result of not operator for `expr`.
+Return expression for result of not operator for `rhs`.
 */
-Expr gen_expr_not(const Type *type, const AstNodeExpr *expr) {
-	if (type && type != &TYPE_BOOL) {
-		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = expr->rhs.tok, .type = type },
-			{ .type = &TYPE_BOOL }
-		);
-	}
-
-	const Expr rhs_expr = token_to_expr(expr->rhs.tok, NULL);
-
-	if (rhs_expr.type != &TYPE_BOOL) {
-		PANIC(ERR_NON_BOOL_EXPR, { .tok = expr->rhs.tok });
-	}
+Expr gen_expr_not(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	(void)type;
+	(void)lhs;
 
 	return (Expr){
-		.llvm_value = LLVMBuildNot(
-			SKULL_STATE.builder,
-			rhs_expr.llvm_value,
-			""
-		),
+		.llvm_value = LLVMBuildNot(SKULL_STATE.builder, rhs, ""),
 		.type = &TYPE_BOOL
 	};
 }
 
 /*
-Return expression for result of unary negation operator for `expr`.
+Return expression for result of unary negation operator for `rhs`.
 */
-Expr gen_expr_unary_neg(const Type *type, const AstNodeExpr *expr) {
-	const Expr rhs_expr = token_to_expr(expr->rhs.tok, NULL);
-
-	if (type && rhs_expr.type != type) {
-		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = expr->rhs.tok, .type = type },
-			{ .type = &TYPE_BOOL }
-		);
-	}
+Expr gen_expr_unary_neg(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	(void)lhs;
 
 	return gen_expr_math_oper(
-		rhs_expr.type,
+		type,
 		LLVM_INT(0),
-		rhs_expr.llvm_value,
+		rhs,
 		LLVMBuildNSWSub,
 		LLVMBuildFSub
 	);
@@ -497,13 +476,13 @@ Expr gen_expr_oper(
 	const AstNodeExpr *const expr,
 	Operation *oper
 ) {
+	const Token *lhs_token = expr->lhs.expr ? expr->lhs.expr->lhs.tok : NULL;
 	const Token *rhs_token = expr->rhs.tok;
-	const Token *lhs_token = expr->lhs.expr->lhs.tok;
 
-	const Expr lhs = token_to_expr(lhs_token, NULL);
+	const Expr lhs = lhs_token ? token_to_expr(lhs_token, NULL) : (Expr){0};
 	const Expr rhs = token_to_expr(rhs_token, NULL);
 
-	if (lhs.type != rhs.type) {
+	if (lhs.llvm_value && lhs.type != rhs.type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
 			{ .tok = rhs_token, .type = lhs.type },
 			{ .type = rhs.type }
@@ -511,7 +490,7 @@ Expr gen_expr_oper(
 	}
 
 	const Expr result = oper(
-		lhs.type,
+		rhs.type,
 		lhs.llvm_value,
 		rhs.llvm_value
 	);
@@ -519,8 +498,10 @@ Expr gen_expr_oper(
 	if (!result.type && !result.llvm_value) return (Expr){0};
 
 	if (type && result.type != type) {
+		const Token *tok = lhs_token ? lhs_token : rhs_token;
+
 		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = lhs_token, .type = type },
+			{ .tok = tok, .type = type },
 			{ .type = result.type }
 		);
 	}

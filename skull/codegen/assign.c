@@ -77,12 +77,6 @@ Expr node_to_expr(
 		if (oper == EXPR_IDENTIFIER)
 			expr = gen_expr_identifier(type, node->token, var);
 
-		else if (oper == EXPR_NOT)
-			expr = gen_expr_not(type, node->attr.expr);
-
-		else if (oper == EXPR_UNARY_NEG)
-			expr = gen_expr_unary_neg(type, node->attr.expr);
-
 		else if (oper == EXPR_CONST)
 			expr = token_to_simple_expr_typed(type, node->token);
 
@@ -95,9 +89,11 @@ Expr node_to_expr(
 			switch (oper) {
 				case EXPR_ADD: func = &gen_expr_add; break;
 				case EXPR_SUB: func = &gen_expr_sub; break;
+				case EXPR_UNARY_NEG: func = &gen_expr_unary_neg; break;
 				case EXPR_MULT: func = &gen_expr_mult; break;
 				case EXPR_DIV: func = &gen_expr_div; break;
 				case EXPR_MOD: func = &gen_expr_mod; break;
+				case EXPR_NOT: func = &gen_expr_not; break;
 				case EXPR_LSHIFT: func = &gen_expr_lshift; break;
 				case EXPR_POW: func = &gen_expr_pow; break;
 				case EXPR_RSHIFT: func = &gen_expr_rshift; break;
