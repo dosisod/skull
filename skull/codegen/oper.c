@@ -196,20 +196,20 @@ Expr gen_expr_pow(
 }
 
 /*
-Return expression for result of not operator for `rhs`.
+Return expression for result of not operator for `expr`.
 */
-Expr gen_expr_not(const Type *type, const Token *rhs) {
+Expr gen_expr_not(const Type *type, const AstNodeExpr *expr) {
 	if (type && type != &TYPE_BOOL) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = rhs, .type = type },
+			{ .tok = expr->rhs.tok, .type = type },
 			{ .type = &TYPE_BOOL }
 		);
 	}
 
-	const Expr rhs_expr = token_to_expr(rhs, NULL);
+	const Expr rhs_expr = token_to_expr(expr->rhs.tok, NULL);
 
 	if (rhs_expr.type != &TYPE_BOOL) {
-		PANIC(ERR_NON_BOOL_EXPR, { .tok = rhs });
+		PANIC(ERR_NON_BOOL_EXPR, { .tok = expr->rhs.tok });
 	}
 
 	return (Expr){
@@ -223,14 +223,14 @@ Expr gen_expr_not(const Type *type, const Token *rhs) {
 }
 
 /*
-Return expression for result of unary negation operator for `rhs`.
+Return expression for result of unary negation operator for `expr`.
 */
-Expr gen_expr_unary_neg(const Type *type, const Token *rhs) {
-	const Expr rhs_expr = token_to_expr(rhs, NULL);
+Expr gen_expr_unary_neg(const Type *type, const AstNodeExpr *expr) {
+	const Expr rhs_expr = token_to_expr(expr->rhs.tok, NULL);
 
 	if (type && rhs_expr.type != type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = rhs, .type = type },
+			{ .tok = expr->rhs.tok, .type = type },
 			{ .type = &TYPE_BOOL }
 		);
 	}
@@ -494,11 +494,11 @@ Return expression for operation `oper` from `node`.
 */
 Expr gen_expr_oper(
 	const Type *const type,
-	const AstNode *const node,
+	const AstNodeExpr *const expr,
 	Operation *oper
 ) {
-	const Token *rhs_token = node->attr.expr->rhs.tok;
-	const Token *lhs_token = node->attr.expr->lhs.expr->lhs.tok;
+	const Token *rhs_token = expr->rhs.tok;
+	const Token *lhs_token = expr->lhs.expr->lhs.tok;
 
 	const Expr lhs = token_to_expr(lhs_token, NULL);
 	const Expr rhs = token_to_expr(rhs_token, NULL);

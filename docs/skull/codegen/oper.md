@@ -58,16 +58,16 @@ Expr gen_expr_pow(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for taking `lhs` to the power of `rhs`.
 
 ```c
-Expr gen_expr_not(const Type *type, const Token *rhs)
+Expr gen_expr_not(const Type *type, const AstNodeExpr *expr)
 ```
 
-> Return expression for result of not operator for `rhs`.
+> Return expression for result of not operator for `expr`.
 
 ```c
-Expr gen_expr_unary_neg(const Type *type, const Token *rhs)
+Expr gen_expr_unary_neg(const Type *type, const AstNodeExpr *expr)
 ```
 
-> Return expression for result of unary negation operator for `rhs`.
+> Return expression for result of unary negation operator for `expr`.
 
 ```c
 Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
@@ -155,7 +155,7 @@ Expr gen_expr_xor(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return result of logical "xor" operation of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_oper(const Type *const type, const AstNode *const node, Operation *oper)
+Expr gen_expr_oper(const Type *const type, const AstNodeExpr *const expr, Operation *oper)
 ```
 
 > Return expression for operation `oper` from `node`.
