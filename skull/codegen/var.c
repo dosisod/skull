@@ -77,11 +77,7 @@ const Type *var_def_node_to_type(const AstNode *node) {
 		) {
 			return &TYPE_BOOL;
 		}
-
-		if (oper == EXPR_UNARY_NEG)
-			token_type = node->next->attr.expr->lhs.tok->type;
-
-		else if (oper == EXPR_FUNC) {
+		if (oper == EXPR_FUNC) {
 			const Token *func_name_token = \
 				node->next->attr.expr->func_call->func_name_tok;
 
