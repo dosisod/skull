@@ -79,10 +79,13 @@ const Type *var_def_node_to_type(const AstNode *node) {
 		}
 
 		if (oper == EXPR_UNARY_NEG)
-			token_type = node->next->token->next->type;
+			token_type = node->next->attr.expr->lhs.tok->type;
 
 		else if (oper == EXPR_FUNC) {
-			char *const func_name = token_mbs_str(node->next->token);
+			const Token *func_name_token = \
+				node->next->attr.expr->func_call->func_name_tok;
+
+			char *const func_name = token_mbs_str(func_name_token);
 
 			const FunctionDeclaration *const function = ht_get(
 				SKULL_STATE.function_decls,
@@ -91,13 +94,13 @@ const Type *var_def_node_to_type(const AstNode *node) {
 			free(func_name);
 
 			if (!function) {
-				PANIC(ERR_MISSING_DECLARATION, { .tok = node->next->token });
+				PANIC(ERR_MISSING_DECLARATION, { .tok = func_name_token });
 			}
 
 			const Type *type = function->return_type;
 			if (!type) {
 				PANIC(ERR_NO_VOID_ASSIGN, {
-					.tok = node->next->token,
+					.tok = func_name_token,
 					.real = token_mbs_str(node->token)
 				});
 			}
