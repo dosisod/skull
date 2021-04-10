@@ -2,6 +2,25 @@ from pathlib import Path
 import re
 
 re_comment = re.compile(r"\/\*[\s\S]*?\*\/")
+re_struct = re.compile(r"typedef\ struct\ .*\{(.*)\}")
+
+def iter_stack(code: str) -> int:
+    # from: https://stackoverflow.com/a/38212061
+    index = 0
+    stack = 0
+
+    for i, c in enumerate(code):
+        index += 1
+        if c == '{':
+            stack += 1
+
+        elif c == '}':
+            stack -= 1
+
+            if stack == 0:
+                return index
+
+    return 0
 
 def display_markdown(code: str) -> str:
     ret = ""
@@ -16,7 +35,7 @@ def display_markdown(code: str) -> str:
 
         lines = code[end:].split("\n")
         if lines[1].startswith("typedef struct"):
-            struct_end = code[end:].index("}")
+            struct_end = iter_stack(code[end + 1:])
 
             value = code[(end + 1):(end + struct_end + 1)]
 
