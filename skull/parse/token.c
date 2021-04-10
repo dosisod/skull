@@ -10,8 +10,8 @@
 bool is_whitespace(char32_t);
 bool is_quote(char32_t);
 
-static bool iter_comment(Token *, const char32_t **, unsigned, unsigned);
-static void iter_quote(Token *, const char32_t **, unsigned, unsigned);
+static bool iter_comment(Token *, const char32_t **, unsigned *, unsigned *);
+static void iter_quote(Token *, const char32_t **, unsigned *, unsigned *);
 
 // add current cursor/code state to token
 #define SETUP_TOKEN() \
@@ -55,11 +55,11 @@ Token *tokenize(const char32_t *code) {
 		column++;
 
 		if (*code == '#') {
-			if (iter_comment(current, &code, line_num, column))
+			if (iter_comment(current, &code, &line_num, &column))
 				break;
 		}
 		else if (is_quote(*code)) {
-			iter_quote(current, &code, line_num, column);
+			iter_quote(current, &code, &line_num, &column);
 		}
 		else if (
 			*code == '{' ||
@@ -127,8 +127,8 @@ Return `true` if the caller should break (EOF was reached).
 static bool iter_comment(
 	Token *current,
 	const char32_t **_code,
-	unsigned line_num,
-	unsigned column
+	unsigned *line_num,
+	unsigned *column
 ) {
 	const char32_t *code = *_code;
 
@@ -141,17 +141,21 @@ static bool iter_comment(
 		comment = BLOCK_COMMENT;
 
 	else {
-		PANIC(ERR_INVALID_COMMENT_START, { .i = line_num + 1 });
+		PANIC(ERR_INVALID_COMMENT_START, { .i = *line_num + 1 });
 	}
 
 	if (!current->begin) {
-		SETUP_TOKEN();
+		current->begin = code;
+		current->line = *line_num;
+		current->column = *column;
 	}
 
 	code++;
+	(*column)++;
 
 	do {
 		code++;
+		(*column)++;
 
 		if (comment == LINE_COMMENT && *code == '\n') {
 			code--;
@@ -159,10 +163,16 @@ static bool iter_comment(
 		}
 		if (comment == BLOCK_COMMENT && *code == '#') {
 			code++;
+			(*column)++;
 
 			if (*code == '}') break;
 
-			if (*code == '{') {
+			if (*code == '\n') {
+				(*line_num)++;
+				*column = 0;
+			}
+
+			else if (*code == '{') {
 				PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
 			}
 		}
@@ -188,22 +198,31 @@ Iterate through a quote, starting at `code`.
 static void iter_quote(
 	Token *current,
 	const char32_t **_code,
-	unsigned line_num,
-	unsigned column
+	unsigned *line_num,
+	unsigned *column
 ) {
 	const char32_t *code = *_code;
 
 	char32_t quote = *code;
 
 	if (!current->begin) {
-		SETUP_TOKEN();
+		current->begin = code;
+		current->line = *line_num;
+		current->column = *column;
 	}
 
 	do {
 		code++;
 
-		if (*code == '\\' && (code[1] == '\\' || code[1] == quote))
+		if (*code == '\n') {
+			(*line_num)++;
+			*column = 0;
+		}
+
+		if (*code == '\\' && (code[1] == '\\' || code[1] == quote)) {
 			code++;
+			(*column)++;
+		}
 
 		else if (*code == quote) break;
 
