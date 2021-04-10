@@ -539,10 +539,12 @@ Expr gen_expr_oper(
 	}
 
 	const Token *lhs_token = expr->lhs.expr ?
-		expr->lhs.expr->lhs.tok :
-		NULL;
+		(expr->lhs.expr->func_call ?
+			expr->lhs.expr->func_call->func_name_tok :
+			expr->lhs.expr->lhs.tok) :
+			NULL;
 
-	const Expr lhs = expr->lhs.expr ?
+	const Expr lhs = lhs_token ?
 		gen_expr_oper(type, expr->lhs.expr, var) :
 		(Expr){0};
 
