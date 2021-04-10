@@ -172,29 +172,6 @@ ExprType token_type_to_expr_oper_type(TokenType type) {
 	}
 }
 
-AstNode *push_expr_ast_node2(
-	AstNodeExpr *lhs,
-	ExprType oper,
-	Token *rhs,
-	Token **token,
-	AstNode **node
-) {
-	*token = rhs;
-
-	AstNodeExpr *new_expr = Malloc(sizeof(AstNodeExpr));
-
-	*new_expr = (AstNodeExpr){
-		.lhs = { .expr = lhs },
-		.oper = oper,
-		.rhs = { .tok = rhs }
-	};
-
-	(*node)->last->attr.expr = new_expr;
-
-	*token = (*token)->next;
-	return (*node)->last;
-}
-
 AstNode *try_parse_binary_oper(
 	AstNodeExpr *expr,
 	Token **token,
@@ -210,7 +187,20 @@ AstNode *try_parse_binary_oper(
 	const ExprType oper = token_type_to_expr_oper_type((*token)->type);
 	if (oper == EXPR_UNKNOWN) return NULL;
 
-	return push_expr_ast_node2(expr, oper, (*token)->next, token, node);
+	*token = (*token)->next;
+
+	AstNodeExpr *new_expr = Malloc(sizeof(AstNodeExpr));
+
+	*new_expr = (AstNodeExpr){
+		.lhs = { .expr = expr },
+		.oper = oper,
+		.rhs = { .tok = *token }
+	};
+
+	(*node)->last->attr.expr = new_expr;
+
+	*token = (*token)->next;
+	return (*node)->last;
 }
 
 AstNode *try_parse_unary_oper(Token **token, AstNode **node) {
