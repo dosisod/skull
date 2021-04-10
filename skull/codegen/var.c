@@ -77,7 +77,23 @@ const Type *var_def_node_to_type(const AstNode *node) {
 		) {
 			return &TYPE_BOOL;
 		}
-		if (oper == EXPR_FUNC) {
+
+		// Check if expr is a paren expr. We basically have to iterate
+		// until we find a non-paren token. To fix this we have to
+		// set the start token for the node based on the start of the
+		// expr itself. XXX: this will fail if the expr in parens is
+		// a function.
+		if (token_type == TOKEN_PAREN_OPEN) {
+			Token *iter = node->next->token;
+
+			while (iter && iter->type == TOKEN_PAREN_OPEN)
+				iter = iter->next;
+
+			if (iter)
+				token_type = iter->type;
+		}
+
+		else if (oper == EXPR_FUNC) {
 			const Token *func_name_token = \
 				node->next->attr.expr->func_call->func_name_tok;
 

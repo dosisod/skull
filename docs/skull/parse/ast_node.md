@@ -130,13 +130,13 @@ AstNode *try_parse_expression(Token **token, AstNode **node)
 > Returns node if one was added, NULL otherwise.
 
 ```c
-AstNode *_try_parse_expression(Token **token, AstNode **node)
+AstNodeExpr *_try_parse_expression(Token **token, AstNode **node)
 ```
 
 > Internal `try_parse_expression` function. Used for recursive expr parsing.
 
 ```c
-AstNode *parse_func_call(Token **token, AstNode **node)
+AstNodeExpr *parse_func_call(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for a function call.
