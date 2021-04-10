@@ -172,29 +172,6 @@ ExprType token_type_to_expr_oper_type(TokenType type) {
 	}
 }
 
-AstNode *push_expr_ast_node(
-	Token *lhs,
-	ExprType oper,
-	Token *rhs,
-	Token **token,
-	AstNode **node
-) {
-	Token *last = *token;
-	*token = rhs;
-
-	(*node)->attr.expr = Malloc(sizeof(AstNodeExpr));
-	*(*node)->attr.expr = (AstNodeExpr){
-		.lhs = { .tok = lhs },
-		.oper = oper,
-		.rhs = { .tok = rhs }
-	};
-
-	AstNode *pushed = push_ast_node(*token, last, AST_NODE_EXPR, node);
-	*token = (*token)->next;
-
-	return pushed;
-}
-
 AstNode *push_expr_ast_node2(
 	AstNodeExpr *lhs,
 	ExprType oper,
@@ -244,7 +221,19 @@ AstNode *try_parse_unary_oper(Token **token, AstNode **node) {
 	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
 	else if (oper != EXPR_NOT) return NULL;
 
-	return push_expr_ast_node(NULL, oper, (*token)->next, token, node);
+	Token *last = *token;
+	*token = (*token)->next;
+
+	(*node)->attr.expr = Malloc(sizeof(AstNodeExpr));
+	*(*node)->attr.expr = (AstNodeExpr){
+		.oper = oper,
+		.rhs = { .tok = *token }
+	};
+
+	AstNode *pushed = push_ast_node(*token, last, AST_NODE_EXPR, node);
+	*token = (*token)->next;
+
+	return pushed;
 }
 
 bool try_parse_function_proto(Token **_token, AstNode **node) {
@@ -541,7 +530,7 @@ AstNode *parse_func_call(Token **token, AstNode **node) {
 	AstNode *pushed = push_ast_node(*token, *token, AST_NODE_EXPR, node);
 
 	AstNode *child = make_ast_node();
-	pushed->child = child;
+	AstNode *child_copy = child;
 
 	*token = (*token)->next->next;
 
@@ -572,7 +561,7 @@ AstNode *parse_func_call(Token **token, AstNode **node) {
 	pushed->attr.expr->func_call = Malloc(sizeof(AstNodeFunctionCall));
 	*pushed->attr.expr->func_call = (AstNodeFunctionCall){
 		.func_name_tok = func_name_token,
-		.params = pushed->child,
+		.params = child_copy,
 		.num_values = num_values
 	};
 
@@ -643,6 +632,7 @@ void free_ast_tree_(AstNode *node) {
 		}
 		else if (node->type == AST_NODE_EXPR) {
 			if (node->attr.expr->oper == EXPR_FUNC) {
+				free_ast_tree_((AstNode *)node->attr.expr->func_call->params);
 				free(node->attr.expr->func_call);
 			}
 
