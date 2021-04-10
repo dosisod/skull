@@ -539,7 +539,8 @@ AstNodeExpr *parse_func_call(Token **token) {
 		*token = (*token)->next;
 	}
 
-	*token = (*token)->next;
+	if ((*token)->next && (*token)->next->type == TOKEN_PAREN_CLOSE)
+		*token = (*token)->next;
 
 	AstNodeExpr *expr_node = Malloc(sizeof(AstNodeExpr));
 	*expr_node = (AstNodeExpr){

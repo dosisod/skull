@@ -63,9 +63,12 @@ TEST(make_ast_tree_external, {
 })
 
 TEST(make_ast_tree_function, {
-	// TODO(dosisod) fix segfault when there is no newline after function.
-	// TODO(dosisod) fix function including next token in node
-	TEST_AST_TREE(U"x()\n", AST_NODE_EXPR, 0, 4);
+	{
+		TEST_AST_TREE(U"x()", AST_NODE_EXPR, 0, 3);
+	}
+	{
+		TEST_AST_TREE(U"x()\n", AST_NODE_EXPR, 0, 3);
+	}
 })
 
 TEST(make_ast_tree_return, {
