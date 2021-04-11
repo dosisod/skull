@@ -185,15 +185,16 @@ AstNodeExpr *try_parse_binary_oper(AstNodeExpr *expr, Token **token) {
 
 	*token = (*token)->next;
 
+	AstNodeExpr *rhs_expr = _try_parse_expression(token);
+
 	AstNodeExpr *new_expr = Malloc(sizeof(AstNodeExpr));
 
 	*new_expr = (AstNodeExpr){
 		.lhs = { .expr = expr },
 		.oper = oper,
-		.rhs = { .tok = *token }
+		.rhs = { .expr = rhs_expr }
 	};
 
-	*token = (*token)->next;
 	return new_expr;
 }
 

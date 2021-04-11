@@ -509,6 +509,9 @@ Expr gen_expr_oper(
 ) {
 	Operation *func = NULL;
 
+	// true if expr results in different type then its operands
+	bool is_diff_type = false;
+
 	switch (expr->oper) {
 		case EXPR_ADD: func = &gen_expr_add; break;
 		case EXPR_SUB: func = &gen_expr_sub; break;
@@ -520,15 +523,24 @@ Expr gen_expr_oper(
 		case EXPR_LSHIFT: func = &gen_expr_lshift; break;
 		case EXPR_POW: func = &gen_expr_pow; break;
 		case EXPR_RSHIFT: func = &gen_expr_rshift; break;
-		case EXPR_IS: func = gen_expr_is; break;
-		case EXPR_ISNT: func = gen_expr_is_not; break;
-		case EXPR_LESS_THAN: func = gen_expr_less_than; break;
-		case EXPR_GTR_THAN: func = gen_expr_gtr_than; break;
-		case EXPR_LESS_THAN_EQ: func = gen_expr_less_than_eq; break;
-		case EXPR_GTR_THAN_EQ: func = gen_expr_gtr_than_eq; break;
-		case EXPR_AND: func = gen_expr_and; break;
-		case EXPR_OR: func = gen_expr_or; break;
-		case EXPR_XOR: func = gen_expr_xor; break;
+		case EXPR_IS:
+			func = gen_expr_is; is_diff_type = true; break;
+		case EXPR_ISNT:
+			func = gen_expr_is_not; is_diff_type = true; break;
+		case EXPR_LESS_THAN:
+			func = gen_expr_less_than; is_diff_type = true; break;
+		case EXPR_GTR_THAN:
+			func = gen_expr_gtr_than; is_diff_type = true; break;
+		case EXPR_LESS_THAN_EQ:
+			func = gen_expr_less_than_eq; is_diff_type = true; break;
+		case EXPR_GTR_THAN_EQ:
+			func = gen_expr_gtr_than_eq; is_diff_type = true; break;
+		case EXPR_AND:
+			func = gen_expr_and; is_diff_type = true; break;
+		case EXPR_OR:
+			func = gen_expr_or; is_diff_type = true; break;
+		case EXPR_XOR:
+			func = gen_expr_xor; is_diff_type = true; break;
 		case EXPR_IDENTIFIER:
 			return gen_expr_identifier(type, expr->lhs.tok, var);
 		case EXPR_CONST:
@@ -548,8 +560,15 @@ Expr gen_expr_oper(
 		gen_expr_oper(type, expr->lhs.expr, var) :
 		(Expr){0};
 
-	const Token *rhs_token = expr->rhs.tok;
-	const Expr rhs = token_to_expr(rhs_token, NULL);
+	const bool is_unary = func == gen_expr_not || func == gen_expr_unary_neg;
+
+	const Token *rhs_token = is_unary ?
+		expr->rhs.tok :
+		expr->rhs.expr->lhs.tok;
+
+	const Expr rhs = is_unary ?
+		token_to_expr(rhs_token, NULL) :
+		gen_expr_oper(is_diff_type ? lhs.type : type, expr->rhs.expr, var);
 
 	if (lhs.llvm_value && lhs.type != rhs.type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
