@@ -116,13 +116,13 @@ AstNode *make_ast_tree(const char32_t *const code)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-AstNode *make_ast_tree_(Token **token, unsigned indent_lvl)
+static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl)
 ```
 
 > Internal AST tree generator.
 
 ```c
-AstNode *try_parse_expression(Token **token, AstNode **node)
+static AstNode *try_parse_expression(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for expression.
@@ -130,13 +130,13 @@ AstNode *try_parse_expression(Token **token, AstNode **node)
 > Returns node if one was added, NULL otherwise.
 
 ```c
-AstNodeExpr *_try_parse_expression(Token **token)
+static AstNodeExpr *_try_parse_expression(Token **token)
 ```
 
 > Internal `try_parse_expression` function. Used for recursive expr parsing.
 
 ```c
-AstNodeExpr *parse_func_call(Token **token)
+static AstNodeExpr *parse_func_call(Token **token)
 ```
 
 > Try and generate AST node for a function call.
@@ -144,7 +144,7 @@ AstNodeExpr *parse_func_call(Token **token)
 > Returns true if a node was added, false otherwise.
 
 ```c
-AstNode *push_ast_node(Token *const token, Token *last, NodeType node_type, AstNode **node)
+void push_ast_node(Token *const token, Token *last, NodeType node_type, AstNode **node)
 ```
 
 > Push a new AST node to `node` with type `node_type`
@@ -156,7 +156,7 @@ void free_ast_tree(AstNode *node)
 > Frees an AST tree.
 
 ```c
-void free_ast_tree_(AstNode *node)
+static void free_ast_tree_(AstNode *node)
 ```
 
 > Internal AST freeing function, dont call directly.
@@ -169,7 +169,7 @@ bool ast_token_cmp(Token *token, ...)
 > corresponding token type specified in `...`
 
 ```c
-__attribute__((pure)) bool is_value(TokenType token_type)
+static __attribute__((pure)) bool is_value(TokenType token_type)
 ```
 
 > Return whether `token_type` represents a constant literal, or an identifier.
