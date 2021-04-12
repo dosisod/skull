@@ -5,8 +5,13 @@
 #include "skull/codegen/types.h"
 #include "skull/common/errors.h"
 #include "skull/common/panic.h"
+#include "skull/compiler/types/bool.h"
+#include "skull/compiler/types/defs.h"
 #include "skull/compiler/types/float.h"
 #include "skull/compiler/types/int.h"
+#include "skull/compiler/types/rune.h"
+#include "skull/compiler/types/str.h"
+
 
 #include "skull/codegen/oper.h"
 
@@ -523,24 +528,17 @@ Expr gen_expr_oper(
 		case EXPR_LSHIFT: func = &gen_expr_lshift; break;
 		case EXPR_POW: func = &gen_expr_pow; break;
 		case EXPR_RSHIFT: func = &gen_expr_rshift; break;
-		case EXPR_IS:
-			func = gen_expr_is; is_diff_type = true; break;
-		case EXPR_ISNT:
-			func = gen_expr_is_not; is_diff_type = true; break;
-		case EXPR_LESS_THAN:
-			func = gen_expr_less_than; is_diff_type = true; break;
-		case EXPR_GTR_THAN:
-			func = gen_expr_gtr_than; is_diff_type = true; break;
+		case EXPR_IS: func = gen_expr_is; is_diff_type = true; break;
+		case EXPR_ISNT: func = gen_expr_is_not; is_diff_type = true; break;
+		case EXPR_LESS_THAN: func = gen_expr_less_than; is_diff_type = true; break;
+		case EXPR_GTR_THAN: func = gen_expr_gtr_than; is_diff_type = true; break;
 		case EXPR_LESS_THAN_EQ:
 			func = gen_expr_less_than_eq; is_diff_type = true; break;
 		case EXPR_GTR_THAN_EQ:
 			func = gen_expr_gtr_than_eq; is_diff_type = true; break;
-		case EXPR_AND:
-			func = gen_expr_and; is_diff_type = true; break;
-		case EXPR_OR:
-			func = gen_expr_or; is_diff_type = true; break;
-		case EXPR_XOR:
-			func = gen_expr_xor; is_diff_type = true; break;
+		case EXPR_AND: func = gen_expr_and; is_diff_type = true; break;
+		case EXPR_OR: func = gen_expr_or; is_diff_type = true; break;
+		case EXPR_XOR: func = gen_expr_xor; is_diff_type = true; break;
 		case EXPR_IDENTIFIER:
 			return gen_expr_identifier(type, expr->lhs.tok, var);
 		case EXPR_CONST:
@@ -594,13 +592,6 @@ Expr gen_expr_oper(
 
 	return result;
 }
-
-#include "skull/compiler/types/bool.h"
-#include "skull/compiler/types/defs.h"
-#include "skull/compiler/types/float.h"
-#include "skull/compiler/types/int.h"
-#include "skull/compiler/types/rune.h"
-#include "skull/compiler/types/str.h"
 
 Expr token_to_simple_expr(const Token *const);
 
