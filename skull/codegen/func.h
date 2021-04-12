@@ -39,6 +39,6 @@ typedef struct FunctionDeclaration {
 
 void gen_stmt_func_decl(const AstNode *const);
 
-Expr gen_expr_function_call(const AstNode *const, const Type *const);
+Expr gen_expr_function_call(const AstNodeExpr *const, const Type *const);
 
 void free_function_declaration(HashItem *);

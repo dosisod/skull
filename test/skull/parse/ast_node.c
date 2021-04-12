@@ -63,7 +63,13 @@ TEST(make_ast_tree_external, {
 })
 
 TEST(make_ast_tree_function, {
-	TEST_AST_TREE(U"x()", AST_NODE_EXPR, 0, 1);
+	{
+		TEST_AST_TREE(U"x()", AST_NODE_EXPR, 0, 3);
+	}
+	{
+		// TODO(dosisod): fix newline being added
+		TEST_AST_TREE(U"x()\n", AST_NODE_EXPR, 0, 4);
+	}
 })
 
 TEST(make_ast_tree_return, {

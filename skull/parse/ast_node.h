@@ -99,6 +99,7 @@ Used to store special data about function call.
 */
 typedef struct AstNodeFunctionCall {
 	const Token *func_name_tok;
+	const AstNode *params;
 	unsigned short num_values;
 } AstNodeFunctionCall;
 
@@ -132,8 +133,16 @@ typedef enum {
 Store special data about operator related nodes.
 */
 typedef struct AstNodeExpr {
-	const Token *lhs;
-	const Token *rhs;
+	union {
+		const Token *tok;
+		const AstNodeExpr *expr;
+	} lhs;
+
+	union {
+		const Token *tok;
+		const AstNodeExpr *expr;
+	} rhs;
+
 	ExprType oper;
 
 	// only for use in function expressions

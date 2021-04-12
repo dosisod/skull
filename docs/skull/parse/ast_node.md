@@ -68,6 +68,7 @@ typedef struct AstNodeFunctionProto {
 ```c
 typedef struct AstNodeFunctionCall {
 	const Token *func_name_tok;
+	const AstNode *params;
 	unsigned short num_values;
 }
 ```
@@ -76,8 +77,16 @@ typedef struct AstNodeFunctionCall {
 
 ```c
 typedef struct AstNodeExpr {
-	const Token *lhs;
-	const Token *rhs;
+	union {
+		const Token *tok;
+		const AstNodeExpr *expr;
+	} lhs;
+
+	union {
+		const Token *tok;
+		const AstNodeExpr *expr;
+	} rhs;
+
 	ExprType oper;
 
 	// only for use in function expressions
@@ -107,21 +116,27 @@ AstNode *make_ast_tree(const char32_t *const code)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-AstNode *make_ast_tree_(Token **token, unsigned indent_lvl)
+static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl)
 ```
 
 > Internal AST tree generator.
 
 ```c
-bool try_parse_expression(Token **token, AstNode **node)
+static AstNode *try_parse_expression(Token **token, AstNode **node)
 ```
 
 > Try and generate AST node for expression.
 > \
-> Returns true if a node was added, false otherwise.
+> Returns node if one was added, NULL otherwise.
 
 ```c
-void parse_func_call(Token **token, AstNode **node)
+static AstNodeExpr *_try_parse_expression(Token **token)
+```
+
+> Internal `try_parse_expression` function. Used for recursive expr parsing.
+
+```c
+static AstNodeExpr *parse_func_call(Token **token)
 ```
 
 > Try and generate AST node for a function call.
@@ -141,7 +156,7 @@ void free_ast_tree(AstNode *node)
 > Frees an AST tree.
 
 ```c
-void free_ast_tree_(AstNode *node)
+static void free_ast_tree_(AstNode *node)
 ```
 
 > Internal AST freeing function, dont call directly.
@@ -154,7 +169,7 @@ bool ast_token_cmp(Token *token, ...)
 > corresponding token type specified in `...`
 
 ```c
-__attribute__((pure)) bool is_value(TokenType token_type)
+static __attribute__((pure)) bool is_value(TokenType token_type)
 ```
 
 > Return whether `token_type` represents a constant literal, or an identifier.

@@ -84,7 +84,7 @@ while (node) {
 		gen_stmt_func_decl(node);
 
 	else if (node_type == AST_NODE_EXPR && node->attr.expr->oper == EXPR_FUNC)
-		gen_expr_function_call(node, NULL);
+		gen_expr_function_call(node->attr.expr, NULL);
 
 	else if (node_type == AST_NODE_VAR_ASSIGN)
 		gen_stmt_var_assign(&node);

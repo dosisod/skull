@@ -2,7 +2,6 @@
 
 #include <llvm-c/Core.h>
 
-#include "skull/compiler/scope.h"
 #include "skull/compiler/variable.h"
 #include "skull/parse/ast_node.h"
 
@@ -18,8 +17,4 @@ typedef struct {
 	const Type *type;
 } Expr;
 
-Expr token_to_expr(const Token *const, Variable **);
-
 Variable *node_to_var(const AstNode *const);
-
-Expr token_to_simple_expr_typed(const Type *const, const Token *const);

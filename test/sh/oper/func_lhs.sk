@@ -1,0 +1,3 @@
+external f() Int
+
+mut x := f() + 1

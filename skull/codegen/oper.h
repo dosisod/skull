@@ -7,15 +7,19 @@
 
 typedef Expr (Operation)(const Type *const, LLVMValueRef, LLVMValueRef);
 
-Expr gen_expr_oper(const Type *const, const AstNode *const, Operation *);
+Expr gen_expr_oper(
+	const Type *const,
+	const AstNodeExpr *const,
+	const Variable *const
+);
 
 Operation gen_expr_add;
 Operation gen_expr_sub;
 Operation gen_expr_mult;
 Operation gen_expr_div;
 Operation gen_expr_mod;
-Expr gen_expr_not(const Type *, const Token *);
-Expr gen_expr_unary_neg(const Type *, const Token *);
+Operation gen_expr_not;
+Operation gen_expr_unary_neg;
 Operation gen_expr_is;
 Operation gen_expr_is_not;
 Operation gen_expr_less_than;
@@ -28,3 +32,11 @@ Operation gen_expr_and;
 Operation gen_expr_or;
 Operation gen_expr_xor;
 Operation gen_expr_pow;
+
+Expr token_to_expr(const Token *const, Variable **);
+Expr gen_expr_const(const Type *const, const Token *const);
+Expr gen_expr_identifier(
+	const Type *const,
+	const Token *const,
+	const Variable *const
+);

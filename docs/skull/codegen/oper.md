@@ -58,13 +58,13 @@ Expr gen_expr_pow(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for taking `lhs` to the power of `rhs`.
 
 ```c
-Expr gen_expr_not(const Type *type, const Token *rhs)
+Expr gen_expr_not(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of not operator for `rhs`.
 
 ```c
-Expr gen_expr_unary_neg(const Type *type, const Token *rhs)
+Expr gen_expr_unary_neg(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of unary negation operator for `rhs`.
@@ -155,8 +155,38 @@ Expr gen_expr_xor(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return result of logical "xor" operation of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_oper(const Type *const type, const AstNode *const node, Operation *oper)
+Expr gen_expr_identifier(const Type *const type, const Token *const token, const Variable *const var)
 ```
 
-> Return expression for operation `oper` from `node`.
+> Return expression for identifier `token` with type `type`.
+> \
+> Optionally pass `var` if result is expected to be assigned to a variable.
+> \
+> If `type` is not set, the expression type will not be checked.
+
+```c
+Expr gen_expr_oper(const Type *const type, const AstNodeExpr *const expr, const Variable *const var)
+```
+
+> Return expression for operation `oper` for `expr`.
+
+```c
+Expr token_to_expr(const Token *const token, Variable **variable)
+```
+
+> Convert `token` to an expression.
+> \
+> If `variable` is and `token` is a variable, store the found variable there.
+
+```c
+Expr gen_expr_const(const Type *const type, const Token *const token)
+```
+
+> Make an expression from `token`, checking for compatibility with `type`.
+
+```c
+Expr token_to_simple_expr(const Token *const token)
+```
+
+> Make a simple expression (const literal) from `token`.
 
