@@ -78,50 +78,33 @@ Return a variable type based on `node`.
 */
 const Type *var_def_node_to_type(const AstNode *node) {
 	TokenType token_type = node->next->token->type;
-	const NodeType node_type = node->next->type;
 
-	const AstNodeExpr *expr = NULL;
+	if (node->next->type == AST_NODE_EXPR) {
+		const AstNodeExpr *expr = node->next->attr.expr;
 
-	if (node_type == AST_NODE_EXPR) {
-		expr = node->next->attr.expr;
-
-		const ExprType oper = expr->oper;
-
-		if (oper == EXPR_NOT ||
-			oper == EXPR_IS ||
-			oper == EXPR_ISNT ||
-			oper == EXPR_LESS_THAN ||
-			oper == EXPR_GTR_THAN ||
-			oper == EXPR_LESS_THAN_EQ ||
-			oper == EXPR_GTR_THAN_EQ ||
-			oper == EXPR_AND ||
-			oper == EXPR_OR ||
-			oper == EXPR_XOR
-		) {
-			return &TYPE_BOOL;
+		switch (expr->oper) {
+			case EXPR_NOT:
+			case EXPR_IS:
+			case EXPR_ISNT:
+			case EXPR_LESS_THAN:
+			case EXPR_GTR_THAN:
+			case EXPR_LESS_THAN_EQ:
+			case EXPR_GTR_THAN_EQ:
+			case EXPR_AND:
+			case EXPR_OR:
+			case EXPR_XOR:
+				return &TYPE_BOOL;
+			default: break;
 		}
 
 		expr = leftmost_expr(expr);
 
-		// Check if expr is a paren expr. We basically have to iterate
-		// until we find a non-paren token. To fix this we have to
-		// set the start token for the node based on the start of the
-		// expr itself. XXX: this will fail if the expr in parens is
-		// a function.
-		if (token_type == TOKEN_PAREN_OPEN) {
-			Token *iter = node->next->token;
-
-			while (iter && iter->type == TOKEN_PAREN_OPEN)
-				iter = iter->next;
-
-			if (iter)
-				token_type = iter->type;
-		}
-
-		else if (expr->oper == EXPR_CONST || expr->oper == EXPR_IDENTIFIER) {
+		if (expr->oper == EXPR_CONST) {
 			token_type = expr->lhs.tok->type;
 		}
-
+		else if (expr->oper == EXPR_IDENTIFIER) {
+			return scope_find_var(expr->lhs.tok)->type;
+		}
 		else if (expr->oper == EXPR_FUNC) {
 			const Token *func_name_token = expr->func_call->func_name_tok;
 
@@ -149,23 +132,13 @@ const Type *var_def_node_to_type(const AstNode *node) {
 		}
 	}
 
-	if (token_type == TOKEN_BOOL_CONST)
-		return &TYPE_BOOL;
-
-	if (token_type == TOKEN_INT_CONST)
-		return &TYPE_INT;
-
-	if (token_type == TOKEN_FLOAT_CONST)
-		return &TYPE_FLOAT;
-
-	if (token_type == TOKEN_RUNE_CONST)
-		return &TYPE_RUNE;
-
-	if (token_type == TOKEN_STR_CONST)
-		return &TYPE_STR;
-
-	if (token_type == TOKEN_IDENTIFIER && expr) {
-		return scope_find_var(expr->lhs.tok)->type;
+	switch (token_type) {
+		case TOKEN_BOOL_CONST: return &TYPE_BOOL;
+		case TOKEN_INT_CONST: return &TYPE_INT;
+		case TOKEN_FLOAT_CONST: return &TYPE_FLOAT;
+		case TOKEN_RUNE_CONST: return &TYPE_RUNE;
+		case TOKEN_STR_CONST: return &TYPE_STR;
+		default: break;
 	}
 
 	PANIC(ERR_INVALID_INPUT, { .tok = node->next->token });
