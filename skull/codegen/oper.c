@@ -560,15 +560,13 @@ Expr gen_expr_oper(
 		gen_expr_oper(type, expr->lhs.expr, var) :
 		(Expr){0};
 
-	const bool is_unary = func == gen_expr_not || func == gen_expr_unary_neg;
+	const Token *rhs_token = expr->rhs.expr->lhs.tok;
 
-	const Token *rhs_token = is_unary ?
-		expr->rhs.tok :
-		expr->rhs.expr->lhs.tok;
-
-	const Expr rhs = is_unary ?
-		token_to_expr(rhs_token, NULL) :
-		gen_expr_oper(is_diff_type ? lhs.type : type, expr->rhs.expr, var);
+	const Expr rhs = gen_expr_oper(
+		is_diff_type ? lhs.type : type,
+		expr->rhs.expr,
+		var
+	);
 
 	if (lhs.llvm_value && lhs.type != rhs.type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
