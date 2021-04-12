@@ -1,4 +1,3 @@
 external f() Int
 
-# TODO: fix not being able to auto-deduce type here
-mut x: Int = f() + 1
+mut x := f() + 1

@@ -55,14 +55,37 @@ Variable *node_to_var(const AstNode *const node) {
 }
 
 /*
+Returns the left-most expr that is either a constant, variable, or function.
+*/
+const AstNodeExpr *leftmost_expr(const AstNodeExpr *expr) {
+	while (expr->oper != EXPR_CONST &&
+		expr->oper != EXPR_IDENTIFIER &&
+		expr->oper != EXPR_FUNC
+	) {
+		if (expr->oper == EXPR_UNARY_NEG) {
+			expr = expr->rhs.expr;
+		}
+		else {
+			expr = expr->lhs.expr;
+		}
+	}
+
+	return expr;
+}
+
+/*
 Return a variable type based on `node`.
 */
 const Type *var_def_node_to_type(const AstNode *node) {
 	TokenType token_type = node->next->token->type;
 	const NodeType node_type = node->next->type;
 
+	const AstNodeExpr *expr = NULL;
+
 	if (node_type == AST_NODE_EXPR) {
-		const ExprType oper = node->next->attr.expr->oper;
+		expr = node->next->attr.expr;
+
+		const ExprType oper = expr->oper;
 
 		if (oper == EXPR_NOT ||
 			oper == EXPR_IS ||
@@ -77,6 +100,8 @@ const Type *var_def_node_to_type(const AstNode *node) {
 		) {
 			return &TYPE_BOOL;
 		}
+
+		expr = leftmost_expr(expr);
 
 		// Check if expr is a paren expr. We basically have to iterate
 		// until we find a non-paren token. To fix this we have to
@@ -93,9 +118,12 @@ const Type *var_def_node_to_type(const AstNode *node) {
 				token_type = iter->type;
 		}
 
-		else if (oper == EXPR_FUNC) {
-			const Token *func_name_token = \
-				node->next->attr.expr->func_call->func_name_tok;
+		else if (expr->oper == EXPR_CONST || expr->oper == EXPR_IDENTIFIER) {
+			token_type = expr->lhs.tok->type;
+		}
+
+		else if (expr->oper == EXPR_FUNC) {
+			const Token *func_name_token = expr->func_call->func_name_tok;
 
 			char *const func_name = token_mbs_str(func_name_token);
 
@@ -136,8 +164,8 @@ const Type *var_def_node_to_type(const AstNode *node) {
 	if (token_type == TOKEN_STR_CONST)
 		return &TYPE_STR;
 
-	if (token_type == TOKEN_IDENTIFIER) {
-		return scope_find_var(node->next->token)->type;
+	if (token_type == TOKEN_IDENTIFIER && expr) {
+		return scope_find_var(expr->lhs.tok)->type;
 	}
 
 	PANIC(ERR_INVALID_INPUT, { .tok = node->next->token });
