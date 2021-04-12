@@ -173,12 +173,7 @@ ExprType token_type_to_expr_oper_type(TokenType type) {
 }
 
 AstNodeExpr *try_parse_binary_oper(AstNodeExpr *expr, Token **token) {
-	if (!(*token &&
-		(*token)->next &&
-		is_value((*token)->next->type)
-	)) {
-		return NULL;
-	}
+	if (!*token || !(*token)->next) return NULL;
 
 	const ExprType oper = token_type_to_expr_oper_type((*token)->type);
 	if (oper == EXPR_UNKNOWN) return NULL;
