@@ -37,13 +37,13 @@ Expr gen_expr_math_oper(
 ) {
 	if (type == &TYPE_INT)
 		return (Expr){
-			.llvm_value = int_func(SKULL_STATE.builder, lhs, rhs, ""),
+			.value = int_func(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = type
 		};
 
 	if (type == &TYPE_FLOAT)
 		return (Expr){
-			.llvm_value = float_func(SKULL_STATE.builder, lhs, rhs, ""),
+			.value = float_func(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = type
 		};
 
@@ -139,7 +139,7 @@ Expr gen_expr_lshift(
 ) {
 	if (type == &TYPE_INT)
 		return (Expr){
-			.llvm_value = LLVMBuildShl(SKULL_STATE.builder, lhs, rhs, ""),
+			.value = LLVMBuildShl(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = &TYPE_INT
 		};
 
@@ -156,7 +156,7 @@ Expr gen_expr_rshift(
 ) {
 	if (type == &TYPE_INT)
 		return (Expr){
-			.llvm_value = LLVMBuildLShr(SKULL_STATE.builder, lhs, rhs, ""),
+			.value = LLVMBuildLShr(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = &TYPE_INT
 		};
 
@@ -208,7 +208,7 @@ Expr gen_expr_not(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	(void)lhs;
 
 	return (Expr){
-		.llvm_value = LLVMBuildNot(SKULL_STATE.builder, rhs, ""),
+		.value = LLVMBuildNot(SKULL_STATE.builder, rhs, ""),
 		.type = &TYPE_BOOL
 	};
 }
@@ -237,7 +237,7 @@ Return expression for result of is operator for `lhs` and `rhs`.
 Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_INT || type == &TYPE_RUNE || type == &TYPE_BOOL)
 		return (Expr){
-			.llvm_value = LLVMBuildICmp(
+			.value = LLVMBuildICmp(
 				SKULL_STATE.builder,
 				LLVMIntEQ,
 				lhs,
@@ -249,7 +249,7 @@ Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 
 	if (type == &TYPE_FLOAT)
 		return (Expr){
-			.llvm_value = LLVMBuildFCmp(
+			.value = LLVMBuildFCmp(
 				SKULL_STATE.builder,
 				LLVMRealOEQ,
 				lhs,
@@ -307,7 +307,7 @@ Expr create_and_call_builtin_oper(
 		);
 
 	return (Expr){
-		.llvm_value = LLVMBuildCall2(
+		.value = LLVMBuildCall2(
 			SKULL_STATE.builder,
 			func_type,
 			func,
@@ -329,9 +329,9 @@ Expr gen_expr_is_not(
 ) {
 	Expr expr = gen_expr_is(type, lhs, rhs);
 
-	expr.llvm_value = LLVMBuildNot(
+	expr.value = LLVMBuildNot(
 		SKULL_STATE.builder,
-		expr.llvm_value,
+		expr.value,
 		""
 	);
 
@@ -353,7 +353,7 @@ Expr gen_expr_relational_oper(
 ) {
 	if (type == &TYPE_INT)
 		return (Expr){
-			.llvm_value = LLVMBuildICmp(
+			.value = LLVMBuildICmp(
 				SKULL_STATE.builder,
 				int_pred,
 				lhs,
@@ -365,7 +365,7 @@ Expr gen_expr_relational_oper(
 
 	if (type == &TYPE_FLOAT)
 		return (Expr){
-			.llvm_value = LLVMBuildFCmp(
+			.value = LLVMBuildFCmp(
 				SKULL_STATE.builder,
 				float_pred,
 				lhs,
@@ -434,7 +434,7 @@ Expr gen_expr_logical_oper(
 	LLVMBuildX func
 ) {
 	return (Expr){
-		.llvm_value = func(
+		.value = func(
 			SKULL_STATE.builder,
 			lhs,
 			rhs,
@@ -566,7 +566,7 @@ Expr gen_expr_oper(
 		var
 	);
 
-	if (lhs.llvm_value && lhs.type != rhs.type) {
+	if (lhs.value && lhs.type != rhs.type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
 			{ .tok = rhs_token, .type = lhs.type },
 			{ .type = rhs.type }
@@ -575,11 +575,11 @@ Expr gen_expr_oper(
 
 	const Expr result = func(
 		rhs.type,
-		lhs.llvm_value,
-		rhs.llvm_value
+		lhs.value,
+		rhs.value
 	);
 
-	if (!result.type && !result.llvm_value) return (Expr){0};
+	if (!result.type && !result.value) return (Expr){0};
 
 	if (type && result.type != type) {
 		const Token *tok = lhs_token ? lhs_token : rhs_token;
@@ -611,16 +611,16 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 			!var_found->is_const_lit)
 		) {
 			return (Expr){
-				.llvm_value = var_found->llvm_value,
+				.value = var_found->value,
 				.type = var_found->type
 			};
 		}
 
 		return (Expr) {
-			.llvm_value = LLVMBuildLoad2(
+			.value = LLVMBuildLoad2(
 				SKULL_STATE.builder,
 				gen_llvm_type(var_found->type),
-				var_found->llvm_value,
+				var_found->value,
 				""
 			),
 			.type = var_found->type
@@ -653,30 +653,30 @@ Expr gen_expr_const(
 Make a simple expression (const literal) from `token`.
 */
 Expr token_to_simple_expr(const Token *const token) {
-	LLVMValueRef llvm_value = NULL;
+	LLVMValueRef value = NULL;
 	const Type *type = NULL;
 
 	if (token->type == TOKEN_INT_CONST) {
-		llvm_value = LLVM_INT(eval_integer(token));
+		value = LLVM_INT(eval_integer(token));
 		type = &TYPE_INT;
 	}
 	else if (token->type == TOKEN_FLOAT_CONST) {
-		llvm_value = LLVM_FLOAT(eval_float(token));
+		value = LLVM_FLOAT(eval_float(token));
 		type = &TYPE_FLOAT;
 	}
 	else if (token->type == TOKEN_BOOL_CONST) {
-		llvm_value = LLVM_BOOL(eval_bool(token));
+		value = LLVM_BOOL(eval_bool(token));
 		type = &TYPE_BOOL;
 	}
 	else if (token->type == TOKEN_RUNE_CONST) {
-		llvm_value = LLVM_RUNE(eval_rune(token));
+		value = LLVM_RUNE(eval_rune(token));
 		type = &TYPE_RUNE;
 	}
 	else if (token->type == TOKEN_STR_CONST) {
 		SkullStr str = eval_str(token);
 		char *const mbs = c32stombs(str);
 
-		llvm_value = LLVMBuildBitCast(
+		value = LLVMBuildBitCast(
 			SKULL_STATE.builder,
 			LLVMBuildGlobalString(SKULL_STATE.builder, mbs, ""),
 			gen_llvm_type(&TYPE_STR),
@@ -690,7 +690,7 @@ Expr token_to_simple_expr(const Token *const token) {
 	}
 
 	return (Expr){
-		.llvm_value = llvm_value,
+		.value = value,
 		.type = type
 	};
 }

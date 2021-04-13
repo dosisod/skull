@@ -204,12 +204,12 @@ Expr gen_expr_function_call(
 			);
 		}
 
-		params[i] = param_expr.llvm_value;
+		params[i] = param_expr.value;
 		param = param->next;
 	}
 
 	Expr ret = (Expr){
-		.llvm_value = LLVMBuildCall2(
+		.value = LLVMBuildCall2(
 			SKULL_STATE.builder,
 			function->type,
 			function->function,
@@ -267,7 +267,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 				PANIC(ERR_SHADOW_VAR, { .var = param_var });
 			}
 
-			param_var->llvm_value = next_param;
+			param_var->value = next_param;
 			next_param = LLVMGetNextParam(next_param);
 		}
 	}

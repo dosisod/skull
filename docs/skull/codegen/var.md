@@ -20,14 +20,14 @@ const Type *var_def_node_to_type(const AstNode *node)
 
 ```c
 typedef struct {
-	LLVMValueRef llvm_value;
+	LLVMValueRef value;
 	const Type *type;
 }
 ```
 
 > Expr stores all the data needed to do type comparisons with LLVMValueRef's.
 > \
-> `llvm_value` is the LLVM component.
+> `value` is the LLVM component.
 > \
-> `type` is the Skull usable which `llvm_value` evaluates to.
+> `type` is the Skull usable which `value` evaluates to.
 

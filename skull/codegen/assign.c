@@ -26,7 +26,7 @@ void gen_stmt_var_def(AstNode **node) {
 	Variable *var = node_to_var(*node);
 
 	assign_value_to_var(
-		node_to_expr(var->type, (*node)->next, var).llvm_value,
+		node_to_expr(var->type, (*node)->next, var).value,
 		var
 	);
 
@@ -46,7 +46,7 @@ void gen_stmt_var_assign(AstNode **node) {
 	}
 
 	assign_value_to_var(
-		node_to_expr(found_var->type, (*node)->next, found_var).llvm_value,
+		node_to_expr(found_var->type, (*node)->next, found_var).value,
 		found_var
 	);
 
@@ -69,7 +69,7 @@ Expr node_to_expr(
 		expr = gen_expr_oper(type, node->attr.expr, var);
 	}
 
-	if (!expr.llvm_value) {
+	if (!expr.value) {
 		PANIC(ERR_INVALID_EXPR, { .tok = node->token });
 	}
 
@@ -80,7 +80,7 @@ Expr node_to_expr(
 Assign `value` to `var`.
 */
 void assign_value_to_var(LLVMValueRef value, Variable *const var) {
-	const bool is_first_assign = !var->llvm_value;
+	const bool is_first_assign = !var->value;
 	const bool is_const_literal = LLVMIsConstant(value);
 
 	const bool is_global = is_first_assign ?
@@ -89,21 +89,21 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 
 	if (is_first_assign) {
 		if (is_global && (!var->is_const || !is_const_literal)) {
-			var->llvm_value = LLVMAddGlobal(
+			var->value = LLVMAddGlobal(
 				SKULL_STATE.module,
 				gen_llvm_type(var->type),
 				var->name
 			);
 
-			LLVMSetLinkage(var->llvm_value, LLVMPrivateLinkage);
+			LLVMSetLinkage(var->value, LLVMPrivateLinkage);
 
 			LLVMSetInitializer(
-				var->llvm_value,
+				var->value,
 				LLVMConstNull(gen_llvm_type(var->type))
 			);
 		}
 		else if (!is_global && !var->is_const) {
-			var->llvm_value = LLVMBuildAlloca(
+			var->value = LLVMBuildAlloca(
 				SKULL_STATE.builder,
 				gen_llvm_type(var->type),
 				var->name
@@ -115,13 +115,13 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	}
 
 	if (var->is_const && !(is_global && !is_const_literal)) {
-		var->llvm_value = value;
+		var->value = value;
 	}
 	else {
 		LLVMBuildStore(
 			SKULL_STATE.builder,
 			value,
-			var->llvm_value
+			var->value
 		);
 	}
 }

@@ -20,7 +20,7 @@
 `is_global` stores whether the variable was declared at the top level of a
 module.
 
-`llvm_value` stores the actual LLVM alloca/constant/global.
+`value` stores the actual LLVM alloca/constant/global.
 */
 typedef struct Variable {
 	const Type *type;
@@ -29,7 +29,7 @@ typedef struct Variable {
 	_Bool is_const_lit : 1;
 	_Bool is_global : 1;
 
-	LLVMValueRef llvm_value;
+	LLVMValueRef value;
 } Variable;
 
 Variable *make_variable(const Type *const, const char32_t *const, _Bool);

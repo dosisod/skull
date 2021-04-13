@@ -32,7 +32,7 @@ Variable *make_variable(
 		.is_const = is_const,
 		.is_const_lit = false,
 		.is_global = false,
-		.llvm_value = NULL
+		.value = NULL
 	};
 
 	return var;

@@ -43,7 +43,7 @@ void gen_stmt_return(AstNode **node) {
 		);
 	}
 
-	LLVMBuildRet(SKULL_STATE.builder, expr.llvm_value);
+	LLVMBuildRet(SKULL_STATE.builder, expr.value);
 
 	*node = node_val;
 }
@@ -200,7 +200,7 @@ LLVMValueRef node_to_bool(const AstNode *const node) {
 		PANIC(ERR_NON_BOOL_EXPR, { .tok = node->token });
 	}
 
-	return expr.llvm_value;
+	return expr.value;
 }
 
 /*
