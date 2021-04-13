@@ -235,7 +235,7 @@ Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 Return expression for result of is operator for `lhs` and `rhs`.
 */
 Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
-	if (type == &TYPE_INT || type == &TYPE_RUNE)
+	if (type == &TYPE_INT || type == &TYPE_RUNE || type == &TYPE_BOOL)
 		return (Expr){
 			.llvm_value = LLVMBuildICmp(
 				SKULL_STATE.builder,
