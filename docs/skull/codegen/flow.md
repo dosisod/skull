@@ -1,7 +1,7 @@
 # skull/codegen/flow
 
 ```c
-void gen_stmt_return(AstNode **node)
+Expr gen_stmt_return(AstNode **node)
 ```
 
 > Builds an return statement from `node`.

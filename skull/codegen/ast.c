@@ -22,36 +22,36 @@ void codegen_str(char *const str_) {
 
 	AstNode *const node = make_ast_tree(str);
 
-	if (!gen_node(node))
+	if (!gen_node(node).value)
 		LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
 
 	free_ast_tree(node);
 	free(str);
 }
 
-bool _gen_node(AstNode **);
+Expr _gen_node(AstNode **);
 
 /*
 Internal LLVM parser.
 
-Return true if there was a `AST_NODE_RETURN` node was parsed, else false.
+Return expr from an `AST_NODE_RETURN` if one was found.
 */
-bool gen_node(AstNode *node) {
-	bool already_returned = false;
+Expr gen_node(AstNode *node) {
+	Expr returned = (Expr){0};
 
 	while (node) {
-		if (already_returned) {
+		if (returned.value) {
 			PANIC(ERR_UNREACHALE_RETURN, {0});
 		}
 
-		already_returned = _gen_node(&node);
+		returned = _gen_node(&node);
 		node = node->next;
 	}
 
-	return already_returned;
+	return returned;
 }
 
-bool _gen_node(AstNode **node) {
+Expr _gen_node(AstNode **node) {
 	const NodeType node_type = (*node)->type;
 
 	if (node_type == AST_NODE_IF)
@@ -72,13 +72,13 @@ bool _gen_node(AstNode **node) {
 	else if (node_type == AST_NODE_COMMENT) {}
 
 	else if (node_type == AST_NODE_RETURN) {
-		gen_stmt_return(node);
-		return true;
+		return gen_stmt_return(node);
 	}
 
 	else if (node_type == AST_NODE_UNREACHABLE) {
-		LLVMBuildUnreachable(SKULL_STATE.builder);
-		return true;
+		return (Expr){
+			.value = LLVMBuildUnreachable(SKULL_STATE.builder)
+		};
 	}
 
 	else if (node_type == AST_NODE_TYPE_ALIAS)
@@ -103,5 +103,5 @@ bool _gen_node(AstNode **node) {
 		PANIC(ERR_UNEXPECTED_TOKEN, { .tok = (*node)->token });
 	}
 
-	return false;
+	return (Expr){0};
 }

@@ -19,12 +19,12 @@
 
 #include "skull/codegen/flow.h"
 
-bool gen_node(AstNode *);
+Expr gen_node(AstNode *);
 
 /*
 Builds an return statement from `node`.
 */
-void gen_stmt_return(AstNode **node) {
+Expr gen_stmt_return(AstNode **node) {
 	AstNode *const node_val = (*node)->next;
 	const bool is_main = SKULL_STATE.current_func == SKULL_STATE.main_func;
 
@@ -44,8 +44,9 @@ void gen_stmt_return(AstNode **node) {
 	}
 
 	LLVMBuildRet(SKULL_STATE.builder, expr.value);
-
 	*node = node_val;
+
+	return expr;
 }
 
 LLVMValueRef node_to_bool(const AstNode *const);
@@ -223,9 +224,9 @@ void gen_control_code_block(
 	MAKE_SUB_SCOPE;
 
 	if (node->child->token) {
-		const bool returned = gen_node(node->child);
+		const Expr returned = gen_node(node->child);
 
-		if (!returned)
+		if (!returned.value)
 			LLVMBuildBr(SKULL_STATE.builder, block);
 	}
 	else {

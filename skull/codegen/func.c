@@ -16,7 +16,7 @@
 
 #include "skull/codegen/func.h"
 
-bool gen_node(AstNode *);
+Expr gen_node(AstNode *);
 
 void define_function(const AstNode *const, FunctionDeclaration *);
 
@@ -272,16 +272,16 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 		}
 	}
 
-	bool returned = gen_node(node->child);
+	const Expr returned = gen_node(node->child);
 
 	RESTORE_SUB_SCOPE;
 
-	if (!returned && func->return_type) {
+	if (!returned.value && func->return_type) {
 		PANIC(ERR_EXPECTED_RETURN, {
 			.real = func->name
 		});
 	}
-	if (returned && !func->return_type) {
+	if (returned.value && !func->return_type) {
 		PANIC(ERR_NO_VOID_RETURN, {
 			.real = func->name
 		});
