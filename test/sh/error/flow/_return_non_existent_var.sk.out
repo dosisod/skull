@@ -1,1 +1,1 @@
-./test/sh/error/flow/return_non_existent_var.sk: Compilation error: variable "x" not found
+./test/sh/error/flow/return_non_existent_var.sk: Compilation error: line 1 column 8: variable "x" not found

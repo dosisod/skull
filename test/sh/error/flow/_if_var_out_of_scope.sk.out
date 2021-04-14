@@ -1,1 +1,1 @@
-./test/sh/error/flow/if_var_out_of_scope.sk: Compilation error: variable "x" not found
+./test/sh/error/flow/if_var_out_of_scope.sk: Compilation error: line 5 column 8: variable "x" not found

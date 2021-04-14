@@ -13,7 +13,7 @@ Variable *scope_find_var(const Token *const token) {
 	Variable *const var = scope_find_name(SKULL_STATE.scope, var_name);
 
 	if (!var) {
-		PANIC(ERR_VAR_NOT_FOUND, { .real = var_name });
+		PANIC(ERR_VAR_NOT_FOUND, { .tok = token, .real = var_name });
 	}
 	free(var_name);
 
