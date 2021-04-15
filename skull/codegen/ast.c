@@ -64,7 +64,7 @@ static Expr _gen_node(AstNode **node) {
 		node_type == AST_NODE_FUNCTION_PROTO ||
 		(node_type == AST_NODE_EXPR && (*node)->attr.expr->oper == EXPR_FUNC)
 	)) {
-		PANIC(ERR_UNEXPECTED_CODE_BLOCK, {0});
+		PANIC(ERR_UNEXPECTED_CODE_BLOCK, { .tok = (*node)->child->token });
 	}
 
 	switch (node_type) {

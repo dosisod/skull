@@ -1,0 +1,1 @@
+./test/sh/error/misc/duplicated_code_block.sk: Compilation error: line 3 column 3: unexpected code block

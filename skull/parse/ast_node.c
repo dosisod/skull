@@ -335,6 +335,10 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 		const TokenType token_type = (*token)->type;
 
 		if (token_type == TOKEN_BRACKET_OPEN) {
+			if (node->last && node->last->child) {
+				PANIC(ERR_UNEXPECTED_CODE_BLOCK, { .tok = *token });
+			}
+
 			*token = (*token)->next;
 			AstNode *const child = make_ast_tree_(token, indent_lvl + 1);
 

@@ -35,7 +35,7 @@
 #define ERR_EXPECTED_RETURN "expected return value in function \"%s\"\n"
 #define ERR_NO_VOID_RETURN "unexpected return from void function \"%s\"\n"
 #define ERR_ELSE_MISSING_IF "else statement missing preceding if statement"
-#define ERR_UNEXPECTED_CODE_BLOCK "unexpected code block"
+#define ERR_UNEXPECTED_CODE_BLOCK "unexpected code block\n"
 #define ERR_UNREACHALE_RETURN "unreachable code after return"
 #define ERR_REASSIGN_CONST "cannot reassign const variable \"%s\"\n"
 #define ERR_INVALID_EXPR "invalid expression near \"%s\"\n"
@@ -58,7 +58,6 @@
 #define ERR_INVALID_COMMENT_START "invalid start of comment on line %s\n"
 #define ERR_ILLEGAL_SEQ "illegal UTF8 sequence at character offset %s\n"
 #define ERR_POW_BAD_TYPE "cannot use type \"%s\" for power operator\n"
-#define ERR_MAX_PARAM_HIT "cannot have more then %s function parameters\n"
 
 typedef struct Variable Variable;
 typedef struct Type Type;
