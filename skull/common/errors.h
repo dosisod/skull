@@ -39,6 +39,7 @@
 #define ERR_UNREACHALE_RETURN "unreachable code after return"
 #define ERR_REASSIGN_CONST "cannot reassign const variable \"%s\"\n"
 #define ERR_INVALID_EXPR "invalid expression near \"%s\"\n"
+#define ERR_NO_DANGLING_EXPR "expression cannot be used on its own\n"
 #define ERR_REDUNDANT_REASSIGN \
 	"redundant assignment of variable \"%s\" to itself\n"
 #define ERR_DIV_BY_ZERO "division by zero"

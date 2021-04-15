@@ -1,1 +1,1 @@
-./test/sh/error/misc/token_iter_keep_loc.sk: Compilation error: line 4 column 21: unexpected token: "invalid_token"
+./test/sh/error/misc/token_iter_keep_loc.sk: Compilation error: line 4 column 21: expression cannot be used on its own

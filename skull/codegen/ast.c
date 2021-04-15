@@ -29,7 +29,7 @@ void codegen_str(char *const str_) {
 	free(str);
 }
 
-Expr _gen_node(AstNode **);
+static Expr _gen_node(AstNode **);
 
 /*
 Internal LLVM parser.
@@ -51,57 +51,48 @@ Expr gen_node(AstNode *node) {
 	return returned;
 }
 
-Expr _gen_node(AstNode **node) {
+static void gen_expr_node(const AstNode *);
+
+static Expr _gen_node(AstNode **node) {
 	const NodeType node_type = (*node)->type;
 
-	if (node_type == AST_NODE_IF)
-		gen_control_if(node);
-
-	else if (node_type == AST_NODE_ELSE) {
-		PANIC(ERR_ELSE_MISSING_IF, {0});
-	}
-
-	else if ((*node)->child && !(
+	if ((*node)->child && !(
 		node_type == AST_NODE_WHILE ||
-		(node_type == AST_NODE_EXPR && (*node)->attr.expr->oper == EXPR_FUNC) ||
-		node_type == AST_NODE_FUNCTION_PROTO
+		node_type == AST_NODE_IF ||
+		node_type == AST_NODE_ELSE ||
+		node_type == AST_NODE_ELIF ||
+		node_type == AST_NODE_FUNCTION_PROTO ||
+		(node_type == AST_NODE_EXPR && (*node)->attr.expr->oper == EXPR_FUNC)
 	)) {
 		PANIC(ERR_UNEXPECTED_CODE_BLOCK, {0});
 	}
 
-	else if (node_type == AST_NODE_COMMENT) {}
-
-	else if (node_type == AST_NODE_RETURN) {
-		return gen_stmt_return(node);
-	}
-
-	else if (node_type == AST_NODE_UNREACHABLE) {
-		return (Expr){
-			.value = LLVMBuildUnreachable(SKULL_STATE.builder)
-		};
-	}
-
-	else if (node_type == AST_NODE_TYPE_ALIAS)
-		create_type_alias(node);
-
-	else if (node_type == AST_NODE_VAR_DEF)
-		gen_stmt_var_def(node);
-
-	else if (node_type == AST_NODE_WHILE)
-		gen_control_while(node);
-
-	else if (node_type == AST_NODE_FUNCTION_PROTO)
-		gen_stmt_func_decl(*node);
-
-	else if (node_type == AST_NODE_EXPR && (*node)->attr.expr->oper == EXPR_FUNC)
-		gen_expr_function_call((*node)->attr.expr, NULL);
-
-	else if (node_type == AST_NODE_VAR_ASSIGN)
-		gen_stmt_var_assign(node);
-
-	else if ((*node)->token) {
-		PANIC(ERR_UNEXPECTED_TOKEN, { .tok = (*node)->token });
+	switch (node_type) {
+		case AST_NODE_IF: gen_control_if(node); break;
+		case AST_NODE_ELSE: { PANIC(ERR_ELSE_MISSING_IF, {0}); }
+		case AST_NODE_COMMENT: break;
+		case AST_NODE_RETURN: return gen_stmt_return(node);
+		case AST_NODE_UNREACHABLE: return gen_stmt_unreachable();
+		case AST_NODE_TYPE_ALIAS: create_type_alias(node); break;
+		case AST_NODE_VAR_DEF: gen_stmt_var_def(node); break;
+		case AST_NODE_WHILE: gen_control_while(node); break;
+		case AST_NODE_FUNCTION_PROTO: gen_stmt_func_decl(*node); break;
+		case AST_NODE_VAR_ASSIGN: gen_stmt_var_assign(node); break;
+		case AST_NODE_EXPR: gen_expr_node(*node); break;
+		default: {
+			if ((*node)->token) {
+				PANIC(ERR_UNEXPECTED_TOKEN, { .tok = (*node)->token });
+			}
+		}
 	}
 
 	return (Expr){0};
+}
+
+static void gen_expr_node(const AstNode *node) {
+	if (node->attr.expr->oper != EXPR_FUNC) {
+		PANIC(ERR_NO_DANGLING_EXPR, { .tok = node->token });
+	}
+
+	gen_expr_function_call(node->attr.expr, NULL);
 }

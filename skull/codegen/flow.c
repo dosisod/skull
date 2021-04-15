@@ -21,6 +21,12 @@
 
 Expr gen_node(AstNode *);
 
+Expr gen_stmt_unreachable(void) {
+	return (Expr){
+		.value = LLVMBuildUnreachable(SKULL_STATE.builder)
+	};
+}
+
 /*
 Builds an return statement from `node`.
 */
