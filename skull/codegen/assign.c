@@ -18,6 +18,7 @@
 #include "skull/codegen/assign.h"
 
 void assign_value_to_var(LLVMValueRef, Variable *const);
+void assert_sane_child(AstNode *);
 
 /*
 Builds a variable from `node`.
@@ -31,6 +32,7 @@ void gen_stmt_var_def(AstNode **node) {
 	);
 
 	*node = (*node)->next;
+	assert_sane_child(*node);
 }
 
 /*
@@ -51,6 +53,7 @@ void gen_stmt_var_assign(AstNode **node) {
 	);
 
 	*node = (*node)->next;
+	assert_sane_child(*node);
 }
 
 /*

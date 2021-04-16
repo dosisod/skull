@@ -20,6 +20,7 @@
 #include "skull/codegen/flow.h"
 
 Expr gen_node(AstNode *);
+void assert_sane_child(AstNode *);
 
 Expr gen_stmt_unreachable(void) {
 	return (Expr){
@@ -32,6 +33,8 @@ Builds an return statement from `node`.
 */
 Expr gen_stmt_return(AstNode **node) {
 	AstNode *const node_val = (*node)->next;
+	assert_sane_child(node_val);
+
 	const bool is_main = SKULL_STATE.current_func == SKULL_STATE.main_func;
 
 	const Expr expr = node_to_expr(NULL, node_val, NULL);

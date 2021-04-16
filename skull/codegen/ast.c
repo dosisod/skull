@@ -53,21 +53,24 @@ Expr gen_node(AstNode *node) {
 
 static void gen_expr_node(const AstNode *);
 
-static Expr _gen_node(AstNode **node) {
-	const NodeType node_type = (*node)->type;
+void assert_sane_child(AstNode *node) {
+	if (!node) return;
 
-	if ((*node)->child && !(
-		node_type == AST_NODE_WHILE ||
-		node_type == AST_NODE_IF ||
+	const NodeType node_type = node->type;
+
+	if (node->child && !(
 		node_type == AST_NODE_ELSE ||
-		node_type == AST_NODE_ELIF ||
 		node_type == AST_NODE_FUNCTION_PROTO ||
-		(node_type == AST_NODE_EXPR && (*node)->attr.expr->oper == EXPR_FUNC)
+		(node_type == AST_NODE_EXPR && node->attr.expr->oper == EXPR_FUNC)
 	)) {
-		PANIC(ERR_UNEXPECTED_CODE_BLOCK, { .tok = (*node)->child->token });
+		PANIC(ERR_UNEXPECTED_CODE_BLOCK, { .tok = node->child->token });
 	}
+}
 
-	switch (node_type) {
+static Expr _gen_node(AstNode **node) {
+	assert_sane_child(*node);
+
+	switch ((*node)->type) {
 		case AST_NODE_IF: gen_control_if(node); break;
 		case AST_NODE_ELSE: { PANIC(ERR_ELSE_MISSING_IF, {0}); }
 		case AST_NODE_COMMENT: break;
