@@ -1,0 +1,1 @@
+./test/sh/error/oper/trailing_token.sk: Compilation error: line 1 column 8: expression cannot be used on its own

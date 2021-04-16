@@ -373,19 +373,22 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 			break;
 		}
 
-		if (token_type == TOKEN_NEWLINE ||
-			token_type == TOKEN_COMMA ||
-			(node->last && node->last->token_end == *token)
-		) {
+		if (token_type == TOKEN_NEWLINE || token_type == TOKEN_COMMA) {
 			*token = (*token)->next;
 			continue;
 		}
 
-		if (try_parse_type_alias(token, &node) ||
+		if (
+			try_parse_function_proto(token, &node) ||
+			try_parse_type_alias(token, &node)
+		) {
+			*token = (*token)->next;
+			continue;
+		}
+		if (
 			try_parse_var_def(token, &node) ||
 			try_parse_var_assign(token, &node) ||
 			try_parse_return(token, &node) ||
-			try_parse_function_proto(token, &node) ||
 			try_parse_expression(token, &node) ||
 			try_parse_condition(token, &node)
 		) {
@@ -393,10 +396,12 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 		}
 		if (token_type == TOKEN_KW_UNREACHABLE) {
 			push_ast_node(*token, *token, AST_NODE_UNREACHABLE, &node);
+			*token = (*token)->next;
 			continue;
 		}
 		if (token_type == TOKEN_COMMENT) {
 			push_ast_node(*token, *token, AST_NODE_COMMENT, &node);
+			*token = (*token)->next;
 			continue;
 		}
 
@@ -527,9 +532,6 @@ static AstNodeExpr *parse_func_call(Token **token) {
 		*token = (*token)->next;
 	}
 
-	if ((*token)->next)
-		*token = (*token)->next;
-
 	AstNodeExpr *expr_node = Malloc(sizeof(AstNodeExpr));
 	*expr_node = (AstNodeExpr){
 		.oper = EXPR_FUNC
@@ -541,6 +543,8 @@ static AstNodeExpr *parse_func_call(Token **token) {
 		.params = child_copy,
 		.num_values = num_values
 	};
+
+	*token = (*token)->next;
 
 	return expr_node;
 }

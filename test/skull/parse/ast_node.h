@@ -10,7 +10,9 @@
 	} \
 	ASSERT_EQUAL(node->type, (node_type)); \
 	ASSERT_EQUAL(node->token->begin, code + (begin_offset)); \
-	ASSERT_EQUAL(node->token_end->end, code + (end_offset)); \
+	if (node->token_end) { \
+		ASSERT_EQUAL(node->token_end->end, code + (end_offset)); \
+	} \
 	ASSERT_FALSEY(node->last); \
 	free_ast_tree(node)
 
