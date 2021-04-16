@@ -176,9 +176,13 @@ static AstNodeExpr *build_rhs_expr(
 	ExprType oper,
 	Token **token
 ) {
+	const Token *oper_tok = *token;
 	*token = (*token)->next;
 
 	AstNodeExpr *rhs = _try_parse_expression(token);
+	if (!rhs) {
+		PANIC(ERR_EXPECTED_EXPR, { .tok = oper_tok });
+	}
 
 	AstNodeExpr *new_expr = Malloc(sizeof(AstNodeExpr));
 	*new_expr = (AstNodeExpr){
