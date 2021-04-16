@@ -317,8 +317,10 @@ static bool try_parse_condition(Token **token, AstNode **node) {
 	push_ast_node(*token, *token, node_type, node);
 	*token = (*token)->next;
 
-	if (token_type != TOKEN_KW_ELSE && !try_parse_expression(token, node)) {
-		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *token });
+	if (token_type == TOKEN_KW_ELSE) return true;
+
+	if (!try_parse_expression(token, node)) {
+		PANIC(ERR_INVALID_EXPR, { .tok = *token });
 	}
 
 	return true;
