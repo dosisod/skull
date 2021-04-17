@@ -55,7 +55,7 @@ void *vector_freeze(Vector *v) {
 /*
 Return the element at index `index` of the vector `v`, or NULL if out-of-bound.
 */
-void *vector_at(const Vector *const v, size_t index) {
+__attribute__((pure)) void *vector_at(const Vector *const v, size_t index) {
 	if (index >= v->length) return NULL;
 
 	return v->elements[index];

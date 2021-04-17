@@ -7,7 +7,7 @@ HashTable *ht_create(void)
 > Create a new hashtable.
 
 ```c
-unsigned ht_hash_key(const char *const key)
+__attribute__((pure)) unsigned ht_hash_key(const char *const key)
 ```
 
 > Return hashed key for a given key.

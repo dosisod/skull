@@ -45,7 +45,7 @@ void *vector_freeze(Vector *v)
 > "Freeze" vector `v` into an array, making it immutable.
 
 ```c
-void *vector_at(const Vector *const v, size_t index)
+__attribute__((pure)) void *vector_at(const Vector *const v, size_t index)
 ```
 
 > Return the element at index `index` of the vector `v`, or NULL if out-of-bound.

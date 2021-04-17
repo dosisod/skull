@@ -57,8 +57,8 @@ char *mangle_types(Type *types, unsigned num_types, char ident) {
 
 	for RANGE(i, num_types) { // NOLINT
 		const size_t tmp_len = strlen(types[i]);
+		memcpy(name + at, types[i], tmp_len);
 
-		strncpy(name + at, types[i], tmp_len);
 		at += tmp_len;
 		name[at] = ',';
 		at++;

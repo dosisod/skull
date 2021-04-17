@@ -19,7 +19,7 @@ HashTable *ht_create(void) {
 /*
 Return hashed key for a given key.
 */
-unsigned ht_hash_key(const char *const key) {
+__attribute__((pure)) unsigned ht_hash_key(const char *const key) {
 	const size_t len = strlen(key);
 
 	unsigned long long hash = 0;

@@ -85,12 +85,12 @@ char *gen_filename(const char *filename) {
 	const char *const slash_pos = strrchr(filename, '/');
 	if (!slash_pos) {
 		new_filename[0] = '.';
-		strncpy(new_filename + 1, filename, len);
+		strncpy(new_filename + 1, filename, len + 1);
 	}
 	else {
 		const long offset = slash_pos - filename;
 
-		strncpy(new_filename, filename, len);
+		strncpy(new_filename, filename, len + 1);
 		new_filename[offset + 1] = '.';
 		strncpy(
 			new_filename + offset + 2,

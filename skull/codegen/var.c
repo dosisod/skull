@@ -57,7 +57,9 @@ Variable *node_to_var(const AstNode *const node) {
 /*
 Returns the left-most expr that is either a constant, variable, or function.
 */
-const AstNodeExpr *leftmost_expr(const AstNodeExpr *expr) {
+__attribute__((pure)) const AstNodeExpr *leftmost_expr(
+	const AstNodeExpr *expr
+) {
 	while (expr->oper != EXPR_CONST &&
 		expr->oper != EXPR_IDENTIFIER &&
 		expr->oper != EXPR_FUNC
