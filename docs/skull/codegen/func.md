@@ -7,10 +7,10 @@ typedef struct FunctionDeclaration {
 	LLVMTypeRef type;
 
 	unsigned short num_params;
-	const Type **param_types;
+	Type *param_types;
 	char32_t **param_names;
 
-	const Type *return_type;
+	Type return_type;
 }
 ```
 
@@ -47,7 +47,7 @@ FunctionDeclaration *add_function(const AstNode *const node, char *name, bool is
 > Else, the function will be globally available.
 
 ```c
-Expr gen_expr_function_call(const AstNodeExpr *const expr, const Type *const type)
+Expr gen_expr_function_call(const AstNodeExpr *const expr, Type type)
 ```
 
 > Builds a function call from `expr`.

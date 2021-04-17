@@ -14,7 +14,7 @@ TEST(make_scope, {
 
 TEST(scope_find_name, {
 	Scope *scope = make_scope();
-	Variable *var = make_variable(&TYPE_INT, U"x", true);
+	Variable *var = make_variable(TYPE_INT, U"x", true);
 
 	scope_add_var(scope, var);
 
@@ -26,7 +26,7 @@ TEST(scope_find_name, {
 
 TEST(add_vars_to_scope, {
 	Scope *scope = make_scope();
-	Variable *var = make_variable(&TYPE_INT, U"x", true);
+	Variable *var = make_variable(TYPE_INT, U"x", true);
 
 	scope_add_var(scope, var);
 
@@ -37,8 +37,8 @@ TEST(add_vars_to_scope, {
 
 TEST(cannot_add_same_varname_to_scope, {
 	Scope *scope = make_scope();
-	Variable *var1 = make_variable(&TYPE_INT, U"x", true);
-	Variable *var2 = make_variable(&TYPE_INT, U"x", true);
+	Variable *var1 = make_variable(TYPE_INT, U"x", true);
+	Variable *var2 = make_variable(TYPE_INT, U"x", true);
 
 	ASSERT_TRUTHY(scope_add_var(scope, var1));
 	ASSERT_FALSEY(scope_add_var(scope, var2));
@@ -51,7 +51,7 @@ TEST(cannot_add_same_varname_to_scope, {
 
 TEST(free_scope, {
 	Scope *scope = make_scope();
-	Variable *var = make_variable(&TYPE_INT, U"x", true);
+	Variable *var = make_variable(TYPE_INT, U"x", true);
 
 	scope_add_var(scope, var);
 

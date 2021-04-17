@@ -27,13 +27,13 @@ TEST(fmt_error_stringify, {
 		.tok = tok
 	};
 
-	Variable *var = make_variable(&TYPE_INT, U"var_name", true);
+	Variable *var = make_variable(TYPE_INT, U"var_name", true);
 	ErrorMsg err_var = {
 		.var = var
 	};
 
 	ErrorMsg err_type = {
-		.type = &TYPE_INT
+		.type = TYPE_INT
 	};
 
 	const char32_t *str = U"some string";

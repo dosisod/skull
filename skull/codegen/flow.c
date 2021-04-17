@@ -39,13 +39,13 @@ Expr gen_stmt_return(AstNode **node) {
 
 	const Expr expr = node_to_expr(NULL, node_val, NULL);
 
-	if (is_main && expr.type != &TYPE_INT) {
+	if (is_main && expr.type != TYPE_INT) {
 		PANIC(ERR_NON_INT_MAIN, { .tok = node_val->token });
 	}
 
-	const Type *return_type = SKULL_STATE.current_func->return_type;
+	Type return_type = SKULL_STATE.current_func->return_type;
 
-	if (expr.type != return_type && return_type) {
+	if (return_type && expr.type != return_type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
 			{ .tok = node_val->token, .type = return_type },
 			{ .type = expr.type }
@@ -206,7 +206,7 @@ Try and parse a condition (something returning a bool) from `node`.
 LLVMValueRef node_to_bool(const AstNode *const node) {
 	const Expr expr = node_to_expr(NULL, node, NULL);
 
-	if (expr.type != &TYPE_BOOL) {
+	if (expr.type != TYPE_BOOL) {
 		PANIC(ERR_NON_BOOL_EXPR, { .tok = node->token });
 	}
 

@@ -14,14 +14,14 @@
 
 #include "skull/codegen/var.h"
 
-const Type *var_def_node_to_type(const AstNode *);
+Type var_def_node_to_type(const AstNode *);
 
 /*
 Make and add a variable from `node` to Skull state.
 */
 Variable *node_to_var(const AstNode *const node) {
 	const Token *token = node->attr.var_def->name_tok;
-	const Type *type = NULL;
+	Type type = NULL;
 
 	if (node->attr.var_def->is_implicit) {
 		type = var_def_node_to_type(node);
@@ -76,7 +76,7 @@ const AstNodeExpr *leftmost_expr(const AstNodeExpr *expr) {
 /*
 Return a variable type based on `node`.
 */
-const Type *var_def_node_to_type(const AstNode *node) {
+Type var_def_node_to_type(const AstNode *node) {
 	TokenType token_type = node->next->token->type;
 
 	if (node->next->type == AST_NODE_EXPR) {
@@ -93,7 +93,7 @@ const Type *var_def_node_to_type(const AstNode *node) {
 			case EXPR_AND:
 			case EXPR_OR:
 			case EXPR_XOR:
-				return &TYPE_BOOL;
+				return TYPE_BOOL;
 			default: break;
 		}
 
@@ -120,7 +120,8 @@ const Type *var_def_node_to_type(const AstNode *node) {
 				PANIC(ERR_MISSING_DECLARATION, { .tok = func_name_token });
 			}
 
-			const Type *type = function->return_type;
+			Type type = function->return_type;
+
 			if (!type) {
 				PANIC(ERR_NO_VOID_ASSIGN, {
 					.tok = func_name_token,
@@ -133,11 +134,11 @@ const Type *var_def_node_to_type(const AstNode *node) {
 	}
 
 	switch (token_type) {
-		case TOKEN_BOOL_CONST: return &TYPE_BOOL;
-		case TOKEN_INT_CONST: return &TYPE_INT;
-		case TOKEN_FLOAT_CONST: return &TYPE_FLOAT;
-		case TOKEN_RUNE_CONST: return &TYPE_RUNE;
-		case TOKEN_STR_CONST: return &TYPE_STR;
+		case TOKEN_BOOL_CONST: return TYPE_BOOL;
+		case TOKEN_INT_CONST: return TYPE_INT;
+		case TOKEN_FLOAT_CONST: return TYPE_FLOAT;
+		case TOKEN_RUNE_CONST: return TYPE_RUNE;
+		case TOKEN_STR_CONST: return TYPE_STR;
 		default: break;
 	}
 

@@ -5,10 +5,10 @@
 #include "skull/codegen/var.h"
 #include "skull/parse/ast_node.h"
 
-typedef Expr (Operation)(const Type *const, LLVMValueRef, LLVMValueRef);
+typedef Expr (Operation)(Type, LLVMValueRef, LLVMValueRef);
 
 Expr gen_expr_oper(
-	const Type *const,
+	Type,
 	const AstNodeExpr *const,
 	const Variable *const
 );
@@ -34,9 +34,9 @@ Operation gen_expr_xor;
 Operation gen_expr_pow;
 
 Expr token_to_expr(const Token *const, Variable **);
-Expr gen_expr_const(const Type *const, const Token *const);
+Expr gen_expr_const(Type, const Token *const);
 Expr gen_expr_identifier(
-	const Type *const,
+	Type,
 	const Token *const,
 	const Variable *const
 );

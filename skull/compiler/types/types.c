@@ -11,14 +11,14 @@
 /*
 Returns pointer to type with name `name`.
 */
-const Type __attribute__((pure)) *find_type(const char *const name) {
-	const Type *const alias = ht_get(SKULL_STATE.type_aliases, name);
+Type __attribute__((pure)) find_type(const char *const name) {
+	Type alias = ht_get(SKULL_STATE.type_aliases, name);
 	if (alias) return alias;
 
-	const Type **type = TYPES_BUILTIN;
+	Type **type = TYPES_BUILTIN;
 
 	while (*type) {
-		if (strcmp(name, (*type)->name) == 0) return *type;
+		if (strcmp(name, **type) == 0) return **type;
 
 		type++;
 	}
@@ -31,8 +31,8 @@ Add named `alias` for `type`.
 
 Return `true` if alias was added, `false` if it already exists.
 */
-bool add_alias(Type *const type, char *const alias) {
-	return ht_add(SKULL_STATE.type_aliases, alias, type);
+bool add_alias(Type type, char *const alias) {
+	return ht_add(SKULL_STATE.type_aliases, alias, (void *)type);
 }
 
 /*
@@ -40,12 +40,12 @@ Return mangled type name which consists of `types`.
 
 Use `ident` as an identifer for what the mandled type is.
 */
-char *mangle_types(const Type **types, unsigned num_types, char ident) {
+char *mangle_types(Type *types, unsigned num_types, char ident) {
 	// mangled type is in form "_x<>" with the types being in the <>'s
 	size_t len = 4;
 
 	for RANGE(i, num_types) { // NOLINT
-		len += strlen(types[i]->name) + 1;
+		len += strlen(types[i]) + 1;
 	}
 
 	char *name = Malloc(len);
@@ -56,9 +56,9 @@ char *mangle_types(const Type **types, unsigned num_types, char ident) {
 	size_t at = 3;
 
 	for RANGE(i, num_types) { // NOLINT
-		const size_t tmp_len = strlen(types[i]->name);
+		const size_t tmp_len = strlen(types[i]);
 
-		strncpy(name + at, types[i]->name, tmp_len);
+		strncpy(name + at, types[i], tmp_len);
 		at += tmp_len;
 		name[at] = ',';
 		at++;
@@ -87,27 +87,13 @@ TemplateType *add_template_type(char *name, LLVMTypeRef *llvm_type) {
 	return new_type;
 }
 
-Type TYPE_BOOL = {
-	.name = "Bool"
-};
+Type TYPE_BOOL = "Bool";
+Type TYPE_INT = "Int";
+Type TYPE_FLOAT = "Float";
+Type TYPE_RUNE = "Rune";
+Type TYPE_STR = "Str";
 
-Type TYPE_INT = {
-	.name = "Int"
-};
-
-Type TYPE_FLOAT = {
-	.name = "Float"
-};
-
-Type TYPE_RUNE = {
-	.name = "Rune"
-};
-
-Type TYPE_STR = {
-	.name = "Str"
-};
-
-const Type **TYPES_BUILTIN = (const Type *[]){
+Type **TYPES_BUILTIN = (Type *[]){
 	&TYPE_BOOL,
 	&TYPE_INT,
 	&TYPE_FLOAT,

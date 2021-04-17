@@ -17,7 +17,7 @@ Make a variable called `name` with type `type`, and make it const if
 Returns `NULL` if var cannot be created, else pointer to created var.
 */
 Variable *make_variable(
-	const Type *const type,
+	Type type,
 	const char32_t *const name,
 	bool is_const
 ) {

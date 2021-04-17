@@ -94,7 +94,7 @@ void generate_llvm(
 		.name = main_func_name,
 		.function = main_func,
 		.type = main_func_type,
-		.return_type = &TYPE_INT
+		.return_type = TYPE_INT
 	};
 
 	codegen_str(file_contents);

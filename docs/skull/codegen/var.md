@@ -13,7 +13,7 @@ const AstNodeExpr *leftmost_expr(const AstNodeExpr *expr)
 > Returns the left-most expr that is either a constant, variable, or function.
 
 ```c
-const Type *var_def_node_to_type(const AstNode *node)
+Type var_def_node_to_type(const AstNode *node)
 ```
 
 > Return a variable type based on `node`.
@@ -21,7 +21,7 @@ const Type *var_def_node_to_type(const AstNode *node)
 ```c
 typedef struct {
 	LLVMValueRef value;
-	const Type *type;
+	Type type;
 }
 ```
 

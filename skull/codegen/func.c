@@ -27,7 +27,7 @@ FunctionDeclaration *add_function(
 );
 
 Expr node_to_expr(
-	const Type *const type,
+	Type type,
 	const AstNode *const,
 	const Variable *const
 );
@@ -99,7 +99,7 @@ FunctionDeclaration *add_function(
 
 	if (param_type_names) {
 		params = Malloc(num_params * sizeof(LLVMValueRef));
-		func->param_types = Calloc(num_params, sizeof(Type *));
+		func->param_types = Calloc(num_params, sizeof(Type));
 
 		for RANGE(i, num_params) {
 			func->param_types[i] = find_type(param_type_names[i]);
@@ -159,7 +159,7 @@ Builds a function call from `expr`.
 */
 Expr gen_expr_function_call(
 	const AstNodeExpr *const expr,
-	const Type *const type
+	Type type
 ) {
 	const Token *func_name_token = expr->func_call->func_name_tok;
 

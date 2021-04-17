@@ -14,7 +14,7 @@ Expr stores all the data needed to do type comparisons with LLVMValueRef's.
 */
 typedef struct {
 	LLVMValueRef value;
-	const Type *type;
+	Type type;
 } Expr;
 
 Variable *node_to_var(const AstNode *const);

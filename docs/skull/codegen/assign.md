@@ -13,7 +13,7 @@ void gen_stmt_var_assign(AstNode **node)
 > Build a LLVM `load` operation from `node`.
 
 ```c
-Expr node_to_expr(const Type *const type, const AstNode *const node, const Variable *const var)
+Expr node_to_expr(Type type, const AstNode *const node, const Variable *const var)
 ```
 
 > Create an expression from `node` with type `type`.

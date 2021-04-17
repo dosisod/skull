@@ -23,7 +23,7 @@ module.
 `value` stores the actual LLVM alloca/constant/global.
 */
 typedef struct Variable {
-	const Type *type;
+	Type type;
 	char *name;
 	_Bool is_const : 1;
 	_Bool is_const_lit : 1;
@@ -32,6 +32,6 @@ typedef struct Variable {
 	LLVMValueRef value;
 } Variable;
 
-Variable *make_variable(const Type *const, const char32_t *const, _Bool);
+Variable *make_variable(Type, const char32_t *const, _Bool);
 
 void free_variable(Variable *);

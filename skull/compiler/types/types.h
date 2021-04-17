@@ -6,18 +6,11 @@
 
 #include "skull/common/hashtable.h"
 
-/*
-`Type` is an abstraction on top of the existing LLVM type system.
-
-`name` is the name of the type.
-*/
-typedef struct Type {
-	const char *name;
-} Type;
+// Types are simply named strings.
+typedef const char * Type;
 
 /*
-Similar to `Type` except that `llvm_type` is stored directly, and is not
-a function.
+Similar to `Type` except that LLVM type is generated at runtime.
 */
 typedef struct TemplateType {
 	char *name;
@@ -31,10 +24,10 @@ Type TYPE_FLOAT;
 Type TYPE_RUNE;
 Type TYPE_STR;
 
-const Type **TYPES_BUILTIN;
+Type **TYPES_BUILTIN;
 
-const Type *find_type(const char *const);
-_Bool add_alias(Type *const, char *const);
-char *mangle_types(const Type **, unsigned, char);
+Type find_type(const char *const);
+_Bool add_alias(Type, char *const);
+char *mangle_types(Type *, unsigned, char);
 
 void free_ht_type_alias(HashItem *);

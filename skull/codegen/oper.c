@@ -29,19 +29,19 @@ Depending on whether `type` is an int or float, combine `lhs` and `rhs`
 using `int_func` or `float_func`.
 */
 Expr gen_expr_math_oper(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs,
 	LLVMBuildX int_func,
 	LLVMBuildX float_func
 ) {
-	if (type == &TYPE_INT)
+	if (type == TYPE_INT)
 		return (Expr){
 			.value = int_func(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = type
 		};
 
-	if (type == &TYPE_FLOAT)
+	if (type == TYPE_FLOAT)
 		return (Expr){
 			.value = float_func(SKULL_STATE.builder, lhs, rhs, ""),
 			.type = type
@@ -54,7 +54,7 @@ Expr gen_expr_math_oper(
 Return expression for addition of `lhs` and `rhs`.
 */
 Expr gen_expr_add(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -65,7 +65,7 @@ Expr gen_expr_add(
 Return expression for subtraction of `lhs` and `rhs`.
 */
 Expr gen_expr_sub(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -76,7 +76,7 @@ Expr gen_expr_sub(
 Return expression for multiplication of `lhs` and `rhs`.
 */
 Expr gen_expr_mult(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -87,11 +87,11 @@ Expr gen_expr_mult(
 Return expression for division of `lhs` and `rhs`.
 */
 Expr gen_expr_div(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	if (type == &TYPE_INT) {
+	if (type == TYPE_INT) {
 		if (LLVMConstIntGetSExtValue(rhs) == 0) {
 			PANIC(ERR_DIV_BY_ZERO, {0});
 		}
@@ -110,11 +110,11 @@ Expr gen_expr_div(
 Return expression for modulus of `lhs` and `rhs`.
 */
 Expr gen_expr_mod(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	if (type == &TYPE_INT) {
+	if (type == TYPE_INT) {
 		if (LLVMConstIntGetSExtValue(rhs) == 0) {
 			PANIC(ERR_DIV_BY_ZERO, {0});
 		}
@@ -133,14 +133,14 @@ Expr gen_expr_mod(
 Return expression for left shift of `lhs` and `rhs`.
 */
 Expr gen_expr_lshift(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	if (type == &TYPE_INT)
+	if (type == TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildShl(SKULL_STATE.builder, lhs, rhs, ""),
-			.type = &TYPE_INT
+			.type = TYPE_INT
 		};
 
 	return (Expr){0};
@@ -150,21 +150,21 @@ Expr gen_expr_lshift(
 Return expression for logical right shift of `lhs` and `rhs`.
 */
 Expr gen_expr_rshift(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	if (type == &TYPE_INT)
+	if (type == TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildLShr(SKULL_STATE.builder, lhs, rhs, ""),
-			.type = &TYPE_INT
+			.type = TYPE_INT
 		};
 
 	return (Expr){0};
 }
 
 Expr create_and_call_builtin_oper(
-	const Type *,
+	Type,
 	LLVMTypeRef,
 	const char *,
 	LLVMValueRef,
@@ -175,16 +175,16 @@ Expr create_and_call_builtin_oper(
 Return expression for taking `lhs` to the power of `rhs`.
 */
 Expr gen_expr_pow(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
 	const char *func_name = NULL;
 
-	if (type == &TYPE_INT)
+	if (type == TYPE_INT)
 		func_name = "_int_pow";
 
-	else if (type == &TYPE_FLOAT)
+	else if (type == TYPE_FLOAT)
 		func_name = "_float_pow";
 
 	else {
@@ -203,20 +203,20 @@ Expr gen_expr_pow(
 /*
 Return expression for result of not operator for `rhs`.
 */
-Expr gen_expr_not(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr gen_expr_not(Type type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	(void)type;
 	(void)lhs;
 
 	return (Expr){
 		.value = LLVMBuildNot(SKULL_STATE.builder, rhs, ""),
-		.type = &TYPE_BOOL
+		.type = TYPE_BOOL
 	};
 }
 
 /*
 Return expression for result of unary negation operator for `rhs`.
 */
-Expr gen_expr_unary_neg(const Type *type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr gen_expr_unary_neg(Type type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	(void)lhs;
 
 	return gen_expr_math_oper(
@@ -234,8 +234,8 @@ Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 /*
 Return expression for result of is operator for `lhs` and `rhs`.
 */
-Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
-	if (type == &TYPE_INT || type == &TYPE_RUNE || type == &TYPE_BOOL)
+Expr gen_expr_is(Type type, LLVMValueRef lhs, LLVMValueRef rhs) {
+	if (type == TYPE_INT || type == TYPE_RUNE || type == TYPE_BOOL)
 		return (Expr){
 			.value = LLVMBuildICmp(
 				SKULL_STATE.builder,
@@ -244,10 +244,10 @@ Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 				rhs,
 				""
 			),
-			.type = &TYPE_BOOL
+			.type = TYPE_BOOL
 		};
 
-	if (type == &TYPE_FLOAT)
+	if (type == TYPE_FLOAT)
 		return (Expr){
 			.value = LLVMBuildFCmp(
 				SKULL_STATE.builder,
@@ -256,10 +256,10 @@ Expr gen_expr_is(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 				rhs,
 				""
 			),
-			.type = &TYPE_BOOL
+			.type = TYPE_BOOL
 		};
 
-	if (type == &TYPE_STR)
+	if (type == TYPE_STR)
 		return gen_expr_is_str(lhs, rhs);
 
 	return (Expr){0};
@@ -270,8 +270,8 @@ Return expression for string-is operator against `lhs` and `rhs`.
 */
 Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs) {
 	return create_and_call_builtin_oper(
-		&TYPE_BOOL,
-		gen_llvm_type(&TYPE_STR),
+		TYPE_BOOL,
+		gen_llvm_type(TYPE_STR),
 		"_strcmp",
 		lhs,
 		rhs
@@ -284,7 +284,7 @@ Create a function called `name` (if it does not exist) which returns type
 with the `lhs` and `rhs` operands.
 */
 Expr create_and_call_builtin_oper(
-	const Type *rtype,
+	Type rtype,
 	LLVMTypeRef type,
 	const char *name,
 	LLVMValueRef lhs,
@@ -323,7 +323,7 @@ Expr create_and_call_builtin_oper(
 Return expression for result of is not operator for `lhs` and `rhs`.
 */
 Expr gen_expr_is_not(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -345,13 +345,13 @@ Depending on whether `type` is an int or float, compare `lhs` and `rhs` using
 `int_func` or `float_func`.
 */
 Expr gen_expr_relational_oper(
-	const Type *type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs,
 	LLVMIntPredicate int_pred,
 	LLVMRealPredicate float_pred
 ) {
-	if (type == &TYPE_INT)
+	if (type == TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildICmp(
 				SKULL_STATE.builder,
@@ -360,10 +360,10 @@ Expr gen_expr_relational_oper(
 				rhs,
 				""
 			),
-			.type = &TYPE_BOOL
+			.type = TYPE_BOOL
 		};
 
-	if (type == &TYPE_FLOAT)
+	if (type == TYPE_FLOAT)
 		return (Expr){
 			.value = LLVMBuildFCmp(
 				SKULL_STATE.builder,
@@ -372,7 +372,7 @@ Expr gen_expr_relational_oper(
 				rhs,
 				""
 			),
-			.type = &TYPE_BOOL
+			.type = TYPE_BOOL
 		};
 
 	return (Expr){0};
@@ -382,7 +382,7 @@ Expr gen_expr_relational_oper(
 Return expression for result of less than operator for `lhs` and `rhs`.
 */
 Expr gen_expr_less_than(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -393,7 +393,7 @@ Expr gen_expr_less_than(
 Return expression for result of greater than operator for `lhs` and `rhs`.
 */
 Expr gen_expr_gtr_than(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -405,7 +405,7 @@ Return expression for result of less than or equal to operator for `lhs` and
 `rhs`.
 */
 Expr gen_expr_less_than_eq(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -417,7 +417,7 @@ Return expression for result of greater than or equal to operator for `lhs`
 and `rhs`.
 */
 Expr gen_expr_gtr_than_eq(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -428,7 +428,7 @@ Expr gen_expr_gtr_than_eq(
 Return result of logical operation `func` on `lhs` and `rhs`.
 */
 Expr gen_expr_logical_oper(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs,
 	LLVMBuildX func
@@ -448,7 +448,7 @@ Expr gen_expr_logical_oper(
 Return result of logical "and" operation of `lhs` and `rhs`.
 */
 Expr gen_expr_and(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -458,7 +458,7 @@ Expr gen_expr_and(
 /*
 Return result of logical "or" operation of `lhs` and `rhs`.
 */
-Expr gen_expr_or(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
+Expr gen_expr_or(Type type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	return gen_expr_logical_oper(type, lhs, rhs, LLVMBuildOr);
 }
 
@@ -466,7 +466,7 @@ Expr gen_expr_or(const Type *const type, LLVMValueRef lhs, LLVMValueRef rhs) {
 Return result of logical "xor" operation of `lhs` and `rhs`.
 */
 Expr gen_expr_xor(
-	const Type *const type,
+	Type type,
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
@@ -481,7 +481,7 @@ Optionally pass `var` if result is expected to be assigned to a variable.
 If `type` is not set, the expression type will not be checked.
 */
 Expr gen_expr_identifier(
-	const Type *const type,
+	Type type,
 	const Token *const token,
 	const Variable *const var
 ) {
@@ -508,7 +508,7 @@ Expr gen_expr_identifier(
 Return expression for operation `oper` for `expr`.
 */
 Expr gen_expr_oper(
-	const Type *const type,
+	Type type,
 	const AstNodeExpr *const expr,
 	const Variable *const var
 ) {
@@ -634,7 +634,7 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 Make an expression from `token`, checking for compatibility with `type`.
 */
 Expr gen_expr_const(
-	const Type *const type,
+	Type type,
 	const Token *const token
 ) {
 	const Expr expr = token_to_simple_expr(token);
@@ -654,23 +654,23 @@ Make a simple expression (const literal) from `token`.
 */
 Expr token_to_simple_expr(const Token *const token) {
 	LLVMValueRef value = NULL;
-	const Type *type = NULL;
+	Type type = NULL;
 
 	if (token->type == TOKEN_INT_CONST) {
 		value = LLVM_INT(eval_integer(token));
-		type = &TYPE_INT;
+		type = TYPE_INT;
 	}
 	else if (token->type == TOKEN_FLOAT_CONST) {
 		value = LLVM_FLOAT(eval_float(token));
-		type = &TYPE_FLOAT;
+		type = TYPE_FLOAT;
 	}
 	else if (token->type == TOKEN_BOOL_CONST) {
 		value = LLVM_BOOL(eval_bool(token));
-		type = &TYPE_BOOL;
+		type = TYPE_BOOL;
 	}
 	else if (token->type == TOKEN_RUNE_CONST) {
 		value = LLVM_RUNE(eval_rune(token));
-		type = &TYPE_RUNE;
+		type = TYPE_RUNE;
 	}
 	else if (token->type == TOKEN_STR_CONST) {
 		SkullStr str = eval_str(token);
@@ -679,14 +679,14 @@ Expr token_to_simple_expr(const Token *const token) {
 		value = LLVMBuildBitCast(
 			SKULL_STATE.builder,
 			LLVMBuildGlobalString(SKULL_STATE.builder, mbs, ""),
-			gen_llvm_type(&TYPE_STR),
+			gen_llvm_type(TYPE_STR),
 			""
 		);
 
 		free(mbs);
 		free(str);
 
-		type = &TYPE_STR;
+		type = TYPE_STR;
 	}
 
 	return (Expr){

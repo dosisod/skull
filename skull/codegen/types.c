@@ -5,20 +5,20 @@
 
 #include "skull/codegen/types.h"
 
-LLVMTypeRef gen_llvm_type(const Type *const type) {
-	if (type == &TYPE_BOOL) {
+LLVMTypeRef gen_llvm_type(Type type) {
+	if (type == TYPE_BOOL) {
 		return gen_llvm_bool_type();
 	}
-	if (type == &TYPE_INT) {
+	if (type == TYPE_INT) {
 		return gen_llvm_int_type();
 	}
-	if (type == &TYPE_FLOAT) {
+	if (type == TYPE_FLOAT) {
 		return gen_llvm_float_type();
 	}
-	if (type == &TYPE_RUNE) {
+	if (type == TYPE_RUNE) {
 		return gen_llvm_rune_type();
 	}
-	if (type == &TYPE_STR) {
+	if (type == TYPE_STR) {
 		return gen_llvm_str_type();
 	}
 

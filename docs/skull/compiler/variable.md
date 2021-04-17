@@ -2,7 +2,7 @@
 
 ```c
 typedef struct Variable {
-	const Type *type;
+	Type type;
 	char *name;
 	_Bool is_const : 1;
 	_Bool is_const_lit : 1;
@@ -28,7 +28,7 @@ typedef struct Variable {
 > `value` stores the actual LLVM alloca/constant/global.
 
 ```c
-Variable *make_variable(const Type *const type, const char32_t *const name, bool is_const)
+Variable *make_variable(Type type, const char32_t *const name, bool is_const)
 ```
 
 > Make a variable called `name` with type `type`, and make it const if

@@ -62,7 +62,7 @@ Create an expression from `node` with type `type`.
 Optionally pass `var` if expression is going to be assigned to a variable.
 */
 Expr node_to_expr(
-	const Type *const type,
+	Type type,
 	const AstNode *const node,
 	const Variable *const var
 ) {
@@ -138,7 +138,7 @@ void create_type_alias(AstNode **node) {
 	char *type_name = token_mbs_str(token->next->next);
 
 	const bool added = add_alias(
-		(Type *)find_type(type_name),
+		(Type)find_type(type_name),
 		token_mbs_str(token)
 	);
 

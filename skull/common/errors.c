@@ -71,7 +71,7 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 	if (msg->var)
 		msg->real = strdup(msg->var->name);
 	else if (msg->type)
-		msg->real = strdup(msg->type->name);
+		msg->real = strdup(msg->type);
 	else if (msg->str)
 		msg->real = c32stombs(msg->str);
 	else if (msg->i) {

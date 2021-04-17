@@ -61,7 +61,7 @@
 #define ERR_POW_BAD_TYPE "cannot use type \"%s\" for power operator\n"
 
 typedef struct Variable Variable;
-typedef struct Type Type;
+typedef const char * Type;
 
 /*
 `ErrorMsg` stores a reference to a given object, generating an error msg based
@@ -73,7 +73,7 @@ typedef struct {
 	const char32_t *str;
 	const Token *tok;
 	const Variable *var;
-	const Type *type;
+	Type type;
 	size_t i;
 
 	// copy of string that will be used in final error msg

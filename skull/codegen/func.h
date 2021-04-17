@@ -31,14 +31,14 @@ typedef struct FunctionDeclaration {
 	LLVMTypeRef type;
 
 	unsigned short num_params;
-	const Type **param_types;
+	Type *param_types;
 	char32_t **param_names;
 
-	const Type *return_type;
+	Type return_type;
 } FunctionDeclaration;
 
 void gen_stmt_func_decl(const AstNode *const);
 
-Expr gen_expr_function_call(const AstNodeExpr *const, const Type *const);
+Expr gen_expr_function_call(const AstNodeExpr *const, Type);
 
 void free_function_declaration(HashItem *);

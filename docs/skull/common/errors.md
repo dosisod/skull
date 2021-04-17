@@ -5,7 +5,7 @@ typedef struct {
 	const char32_t *str;
 	const Token *tok;
 	const Variable *var;
-	const Type *type;
+	Type type;
 	size_t i;
 
 	// copy of string that will be used in final error msg
