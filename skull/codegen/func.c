@@ -267,7 +267,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 				PANIC(ERR_SHADOW_VAR, { .var = param_var });
 			}
 
-			param_var->value = next_param;
+			param_var->ref = next_param;
 			next_param = LLVMGetNextParam(next_param);
 		}
 	}

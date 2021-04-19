@@ -83,7 +83,7 @@ Expr node_to_expr(
 Assign `value` to `var`.
 */
 void assign_value_to_var(LLVMValueRef value, Variable *const var) {
-	const bool is_first_assign = !var->value;
+	const bool is_first_assign = !var->ref;
 	const bool is_const_literal = LLVMIsConstant(value);
 
 	const bool is_global = is_first_assign ?
@@ -92,21 +92,21 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 
 	if (is_first_assign) {
 		if (is_global && (!var->is_const || !is_const_literal)) {
-			var->value = LLVMAddGlobal(
+			var->ref = LLVMAddGlobal(
 				SKULL_STATE.module,
 				gen_llvm_type(var->type),
 				var->name
 			);
 
-			LLVMSetLinkage(var->value, LLVMPrivateLinkage);
+			LLVMSetLinkage(var->ref, LLVMPrivateLinkage);
 
 			LLVMSetInitializer(
-				var->value,
+				var->ref,
 				LLVMConstNull(gen_llvm_type(var->type))
 			);
 		}
 		else if (!is_global && !var->is_const) {
-			var->value = LLVMBuildAlloca(
+			var->ref = LLVMBuildAlloca(
 				SKULL_STATE.builder,
 				gen_llvm_type(var->type),
 				var->name
@@ -118,13 +118,13 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	}
 
 	if (var->is_const && !(is_global && !is_const_literal)) {
-		var->value = value;
+		var->ref = value;
 	}
 	else {
 		LLVMBuildStore(
 			SKULL_STATE.builder,
 			value,
-			var->value
+			var->ref
 		);
 	}
 }

@@ -611,7 +611,7 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 			!var_found->is_const_lit)
 		) {
 			return (Expr){
-				.value = var_found->value,
+				.value = var_found->ref,
 				.type = var_found->type
 			};
 		}
@@ -620,7 +620,7 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 			.value = LLVMBuildLoad2(
 				SKULL_STATE.builder,
 				gen_llvm_type(var_found->type),
-				var_found->value,
+				var_found->ref,
 				""
 			),
 			.type = var_found->type

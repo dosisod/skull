@@ -41,7 +41,7 @@ Expr gen_node(AstNode *node) {
 
 	while (node) {
 		if (returned.value) {
-			PANIC(ERR_UNREACHALE_RETURN, {0});
+			PANIC(ERR_UNREACHALE_CODE, {0});
 		}
 
 		returned = _gen_node(&node);

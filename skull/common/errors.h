@@ -36,7 +36,7 @@
 #define ERR_NO_VOID_RETURN "unexpected return from void function \"%s\"\n"
 #define ERR_ELSE_MISSING_IF "else statement missing preceding if statement"
 #define ERR_UNEXPECTED_CODE_BLOCK "unexpected code block\n"
-#define ERR_UNREACHALE_RETURN "unreachable code after return"
+#define ERR_UNREACHALE_CODE "unreachable code after return"
 #define ERR_REASSIGN_CONST "cannot reassign const variable \"%s\"\n"
 #define ERR_INVALID_EXPR "invalid expression near \"%s\"\n"
 #define ERR_NO_DANGLING_EXPR "expression cannot be used on its own\n"

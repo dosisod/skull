@@ -15,7 +15,7 @@ TEST(create_variable, {
 	ASSERT_EQUAL(strcmp(var->type, TYPE_INT), 0);
 	ASSERT_EQUAL(strcmp(var->name, "x"), 0);
 	ASSERT_TRUTHY(var->is_const);
-	ASSERT_FALSEY(var->value);
+	ASSERT_FALSEY(var->ref);
 
 	free_variable(var);
 })
