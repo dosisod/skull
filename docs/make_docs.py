@@ -32,12 +32,17 @@ def display_markdown(code: str) -> str:
             continue
 
         value = ""
-
         lines = code[end:].split("\n")
+
         if lines[1].startswith("typedef struct"):
             struct_end = iter_stack(code[end + 1:])
 
             value = code[(end + 1):(end + struct_end + 1)]
+
+        elif lines[1].startswith("typedef"):
+            typedef_end = code[end:].index(";")
+
+            value = code[(end + 1):(end + typedef_end)]
 
         elif lines[1].startswith("#define"):
             define_end = code[end:].index("\n\n")

@@ -1,6 +1,12 @@
 # skull/compiler/types/types
 
 ```c
+typedef const char * Type
+```
+
+> Types are simply named strings.
+
+```c
 typedef struct TemplateType {
 	char *name;
 

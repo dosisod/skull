@@ -6,7 +6,9 @@
 
 #include "skull/common/hashtable.h"
 
-// Types are simply named strings.
+/*
+Types are simply named strings.
+*/
 typedef const char * Type;
 
 /*
