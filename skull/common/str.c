@@ -207,6 +207,37 @@ const char __attribute__((pure)) *strrstr(
 }
 
 /*
+Convert `c` as an ASCII hex value to an integer.
+*/
+char32_t c32unhex(char32_t c) {
+	switch (c) {
+		case '0': return 0;
+		case '1': return 1;
+		case '2': return 2;
+		case '3': return 3;
+		case '4': return 4;
+		case '5': return 5;
+		case '6': return 6;
+		case '7': return 7;
+		case '8': return 8;
+		case '9': return 9;
+		case 'A':
+		case 'a': return 10;
+		case 'B':
+		case 'b': return 11;
+		case 'C':
+		case 'c': return 12;
+		case 'D':
+		case 'd': return 13;
+		case 'E':
+		case 'e': return 14;
+		case 'F':
+		case 'f': return 15;
+		default: return 0;
+	}
+}
+
+/*
 Returns the unescaped version of an escaped character starting at `str`, or
 NULL character.
 */
@@ -216,8 +247,7 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 	if (*str != '\\') return '\0';
 
 	char32_t escape = str[1];
-	char32_t opt1 = '\0';
-	char32_t opt2 = '\0';
+	char32_t option[8] = {0};
 
 	(*str_)++;
 
@@ -233,30 +263,37 @@ switch (escape) {
 	default: break;
 }
 
-	if (escape == 'x' && str[2]) {
-		*str_ += 2;
+	if (escape == 'x') {
+		char32_t value = 0;
+		size_t i = 0;
 
-		opt1 = str[2];
-		opt2 = str[3];
+		str = (*str_) + 1;
+		option[0] = *str;
 
-		if (c32isxdigit(str[2]) && c32isxdigit(str[3]))
-			return ((opt1 - 0x30) << 4) + (opt2 - 0x30);
+		while (c32isxdigit(*str) && i < 8) {
+			*str_ += 1;
 
-		if (opt1 == '\'' || opt1 == '\"')
-			opt1 = '\0';
+			option[i] = *str;
 
-		else if (opt2 == '\'' || opt2 == '\"')
-			opt2 = '\0';
+			if (c32isxdigit(*str))
+				value = (value << 4) + c32unhex(*str);
+
+			i++;
+			str = (*str_) + 1;
+		}
+
+		if (*str == '\'' || *str == '\"')
+			option[i] = '\0';
+
+		if (i > 0) {
+			return value;
+		}
 	}
-
-	if (escape == '\'' || escape == '\"')
-		escape = '\0';
 
 	static char32_t bad_escape[5] = {0};
 	bad_escape[0] = '\\';
 	bad_escape[1] = escape;
-	bad_escape[2] = opt1;
-	bad_escape[3] = opt2;
+	bad_escape[2] = option[0];
 	*error = bad_escape;
 
 	return '\0';

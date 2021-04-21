@@ -234,7 +234,7 @@ bool is_constant_rune_str(const char32_t *const str) {
 	if (*str != '\'' || str[len - 1] != '\'')
 		return false;
 
-	if (4 <= len && len <= 6)
+	if (4 <= len && len <= 12)
 		return str[1] == '\\';
 
 	return len == 3;
