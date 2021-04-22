@@ -63,6 +63,14 @@ typedef enum {
 } TokenType;
 
 /*
+Stores the line and column of a certain token/variable/function.
+*/
+typedef struct {
+	unsigned line;
+	unsigned column;
+} Location;
+
+/*
 Stores the smallest meaningful chunk of parsed code.
 
 `begin` points to the first character in the token.
@@ -71,10 +79,6 @@ Stores the smallest meaningful chunk of parsed code.
 
 `type` stores the type of token.
 
-`line` stores the line that the token starts at.
-
-`column` stores the column that the token start of the token is in.
-
 `next` stores the next parsed token.
 */
 typedef struct Token {
@@ -82,8 +86,7 @@ typedef struct Token {
 	const char32_t *end;
 
 	TokenType type;
-	unsigned line;
-	unsigned column;
+	Location location;
 
 	Token *next;
 } Token;

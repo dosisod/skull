@@ -709,8 +709,8 @@ static void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 				"column: %u, line: %u, data: `%s`>\n",
 				(void *)token,
 				token->type,
-				token->column,
-				token->line,
+				token->location.column,
+				token->location.line,
 				str
 			);
 

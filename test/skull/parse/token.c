@@ -194,12 +194,12 @@ TEST(tokenize_with_lines_and_columns, {
 	const char32_t *code = U"token1\ntoken2";
 	Token *t = tokenize(code);
 
-	ASSERT_EQUAL(t->line, 1);
-	ASSERT_EQUAL(t->column, 1);
-	ASSERT_EQUAL(t->next->line, 1);
-	ASSERT_EQUAL(t->next->column, 7);
-	ASSERT_EQUAL(t->next->next->line, 2);
-	ASSERT_EQUAL(t->next->next->column, 1);
+	ASSERT_EQUAL(t->location.line, 1);
+	ASSERT_EQUAL(t->location.column, 1);
+	ASSERT_EQUAL(t->next->location.line, 1);
+	ASSERT_EQUAL(t->next->location.column, 7);
+	ASSERT_EQUAL(t->next->next->location.line, 2);
+	ASSERT_EQUAL(t->next->next->location.column, 1);
 
 	free_tokens(t);
 })

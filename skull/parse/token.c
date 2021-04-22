@@ -16,8 +16,8 @@ static void iter_quote(Token *, const char32_t **, unsigned *, unsigned *);
 // add current cursor/code state to token
 #define SETUP_TOKEN() \
 	current->begin = code; \
-	current->line = line_num; \
-	current->column = column;
+	current->location.line = line_num; \
+	current->location.column = column;
 
 #define APPEND_TOKEN() \
 	last = current; \
@@ -146,8 +146,8 @@ static bool iter_comment(
 
 	if (!current->begin) {
 		current->begin = code;
-		current->line = *line_num;
-		current->column = *column;
+		current->location.line = *line_num;
+		current->location.column = *column;
 	}
 
 	code++;
@@ -207,8 +207,8 @@ static void iter_quote(
 
 	if (!current->begin) {
 		current->begin = code;
-		current->line = *line_num;
-		current->column = *column;
+		current->location.line = *line_num;
+		current->location.column = *column;
 	}
 
 	do {

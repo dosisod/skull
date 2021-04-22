@@ -35,8 +35,12 @@ void fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 		fprintf(stderr, "%s: Warning: ", SKULL_STATE.filename);
 	}
 
-	if (msg[0].tok)
-		fprintf(stderr, "line %u column %u: ", msg[0].tok->line, msg[0].tok->column);
+	if (msg[0].tok) {
+		fprintf(stderr, "line %u column %u: ",
+			msg[0].tok->location.line,
+			msg[0].tok->location.column
+		);
+	}
 
 	#ifdef __clang__
 	# pragma clang diagnostic push
