@@ -14,7 +14,7 @@ fail() {
 }
 
 compare() {
-	cmp "$1" "$2" > /dev/null && pass || fail
+	cmp "$1" "$2" > /dev/null 2>&1 && pass || fail
 }
 
 test_normal() {

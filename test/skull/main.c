@@ -18,6 +18,8 @@
 
 #include "skull/common/local.h"
 
+_Bool SKULL_TESTING = 1;
+
 noreturn void segfault_handler() {
 	fprintf(stderr, "\n\nsegfault occurred in function `%s`, exiting\n\n", FUNC_NAME);
 

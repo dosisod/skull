@@ -7,6 +7,8 @@ typedef struct Variable {
 	_Bool is_const : 1;
 	_Bool is_const_lit : 1;
 	_Bool is_global : 1;
+	_Bool was_reassigned : 1;
+	_Bool was_read : 1;
 
 	LLVMValueRef ref;
 }
@@ -26,6 +28,10 @@ typedef struct Variable {
 > module.
 > \
 > `ref` stores the actual LLVM alloca/constant/global.
+> \
+> `was_reassigned` stores whether a (mutable) variable was reassigned.
+> \
+> `was_read` stores whether a variable was read from or not.
 
 ```c
 Variable *make_variable(Type type, const char32_t *const name, bool is_const)

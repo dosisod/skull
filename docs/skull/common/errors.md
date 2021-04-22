@@ -19,7 +19,7 @@ typedef struct {
 > See `fmt_error_stringify` for uses of these fields.
 
 ```c
-void fmt_error(const char *const fmt, ErrorMsg msgs[])
+void fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[])
 ```
 
 > Prints formatted an error message.

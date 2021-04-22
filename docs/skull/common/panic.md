@@ -2,10 +2,7 @@
 
 ```c
 #define PANIC(fmt, ...) \
-	fmt_error(fmt, (ErrorMsg[]){ \
-		__VA_ARGS__, \
-		{0} \
-	}); \
+	FMT_ERROR(fmt, __VA_ARGS__); \
 	exit(1)
 ```
 

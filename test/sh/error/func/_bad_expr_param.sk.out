@@ -1,1 +1,2 @@
+./test/sh/error/func/bad_expr_param.sk: Warning: variable "b" is unused
 ./test/sh/error/func/bad_expr_param.sk: Compilation error: line 5 column 3: expected type "Bool", got "Int"

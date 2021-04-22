@@ -603,6 +603,7 @@ If `variable` is and `token` is a variable, store the found variable there.
 Expr token_to_expr(const Token *const token, Variable **variable) {
 	if (token->type == TOKEN_IDENTIFIER) {
 		Variable *const var_found = scope_find_var(token);
+		var_found->was_read = true;
 
 		if (variable) *variable = var_found;
 

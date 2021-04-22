@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "skull/common/errors.h"
@@ -38,11 +39,22 @@ Variable *make_variable(
 	return var;
 }
 
+extern bool SKULL_TESTING;
+
 /*
 Free variable `var`.
 */
 void free_variable(Variable *var) {
 	if (var) {
+		if (!SKULL_TESTING) {
+			if (!var->is_const && !var->was_reassigned) {
+				FMT_WARN(WARN_VAR_NOT_CONST, { .var = var });
+			}
+			if (!var->was_read) {
+				FMT_WARN(WARN_VAR_UNUSED, { .var = var });
+			}
+		}
+
 		free(var->name);
 		free(var);
 	}

@@ -59,6 +59,8 @@
 #define ERR_INVALID_COMMENT_START "invalid start of comment on line %s\n"
 #define ERR_ILLEGAL_SEQ "illegal UTF8 sequence at character offset %s\n"
 #define ERR_POW_BAD_TYPE "cannot use type \"%s\" for power operator\n"
+#define WARN_VAR_NOT_CONST "variable \"%s\" should be constant\n"
+#define WARN_VAR_UNUSED "variable \"%s\" is unused\n"
 
 typedef struct Variable Variable;
 typedef const char * Type;
@@ -80,6 +82,23 @@ typedef struct {
 	char *real;
 } ErrorMsg;
 
-void fmt_error(const char *fmt, ErrorMsg []);
+typedef enum {
+	ERROR_FATAL,
+	ERROR_WARN
+} ErrorType;
+
+#define FMT_WARN(fmt, ...) \
+	fmt_error(ERROR_WARN, fmt, (ErrorMsg[]){ \
+		__VA_ARGS__, \
+		{0} \
+	})
+
+#define FMT_ERROR(fmt, ...) \
+	fmt_error(ERROR_FATAL, fmt, (ErrorMsg[]){ \
+		__VA_ARGS__, \
+		{0} \
+	})
+
+void fmt_error(ErrorType, const char *fmt, ErrorMsg []);
 
 void fmt_error_stringify(ErrorMsg *const);

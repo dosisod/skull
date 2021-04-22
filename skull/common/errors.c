@@ -16,7 +16,7 @@ Prints formatted an error message.
 Every `%s` in the string is expanded according to the corresponding `ErrorMsg`
 in `msgs`.
 */
-void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
+void fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 	ErrorMsg *msg = msgs;
 	fmt_error_stringify(msg);
 
@@ -28,7 +28,12 @@ void fmt_error(const char *const fmt, ErrorMsg msgs[]) {
 	}
 	msg = msgs;
 
-	fprintf(stderr, "%s: Compilation error: ", SKULL_STATE.filename);
+	if (type == ERROR_FATAL) {
+		fprintf(stderr, "%s: Compilation error: ", SKULL_STATE.filename);
+	}
+	if (type == ERROR_WARN) {
+		fprintf(stderr, "%s: Warning: ", SKULL_STATE.filename);
+	}
 
 	if (msg[0].tok)
 		fprintf(stderr, "line %u column %u: ", msg[0].tok->line, msg[0].tok->column);

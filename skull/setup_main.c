@@ -20,6 +20,8 @@
 int build_file(char *);
 char *gen_filename(const char *);
 
+bool SKULL_TESTING = false;
+
 /*
 Actual `main` function, can be called by external programs.
 */

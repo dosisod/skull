@@ -47,6 +47,8 @@ void gen_stmt_var_assign(AstNode **node) {
 		});
 	}
 
+	found_var->was_read = true;
+
 	assign_value_to_var(
 		node_to_expr(found_var->type, (*node)->next, found_var).value,
 		found_var
