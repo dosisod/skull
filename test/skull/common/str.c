@@ -131,6 +131,14 @@ TEST(c32isxdigit, {
 	ASSERT_FALSEY(c32isxdigit('g'));
 })
 
+TEST(uvsnsprintf, {
+	char *str = uvsnprintf("%s %s %i!", "hello", "world", 1234);
+
+	ASSERT_EQUAL(strcmp(str, "hello world 1234!"), 0);
+
+	free(str);
+})
+
 TEST_SELF(str,
 	test_strrstr,
 	test_c32sncpy,
@@ -144,5 +152,6 @@ TEST_SELF(str,
 	test_c32sncmp,
 	test_c32isalnum,
 	test_c32isdigit,
-	test_c32isxdigit
+	test_c32isxdigit,
+	test_uvsnsprintf
 )

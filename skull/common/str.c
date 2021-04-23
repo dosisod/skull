@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -298,3 +299,47 @@ switch (escape) {
 
 	return '\0';
 }
+
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wformat-nonliteral"
+#else
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+/*
+Useful `vsnprintf` function (formats `...` based on `fmt`).
+
+Result of function must be freed.
+
+`fmt` MUST be a constant, non-user supplied string (ie, printf safe).
+*/
+__attribute__ (( format(printf, 1, 2))) char *uvsnprintf(
+	const char *const fmt, ...
+) {
+	// Modified from: https://stackoverflow.com/a/10627731
+	va_list vargs;
+	va_list vargs_copy;
+	va_start(vargs, fmt);
+
+	va_copy(vargs_copy, vargs);
+
+	const size_t len = (size_t)vsnprintf( // NOLINT
+		NULL, 0, fmt, vargs_copy
+	) + 1;
+	char *out =  malloc(len);
+
+	va_end(vargs_copy);
+	va_copy(vargs_copy, vargs);
+
+	vsnprintf(out, len, fmt, vargs_copy);
+
+	va_end(vargs_copy);
+	va_end(vargs);
+	return out;
+}
+#ifdef __clang__
+# pragma clang diagnostic pop
+#else
+# pragma GCC diagnostic pop
+#endif

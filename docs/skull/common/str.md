@@ -91,3 +91,13 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error)
 > Returns the unescaped version of an escaped character starting at `str`, or
 > NULL character.
 
+```c
+__attribute__ ((format(printf, 1, 2))) char *uvsnprintf(const char *const fmt, ...)
+```
+
+> Useful `vsnprintf` function (formats `...` based on `fmt`).
+> \
+> Result of function must be freed.
+> \
+> `fmt` MUST be a constant, non-user supplied string (ie, printf safe).
+

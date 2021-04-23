@@ -42,24 +42,24 @@ void fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 		);
 	}
 
-	#ifdef __clang__
-	# pragma clang diagnostic push
-	# pragma clang diagnostic ignored "-Wformat-nonliteral"
-	#else
-	# pragma GCC diagnostic push
-	# pragma GCC diagnostic ignored "-Wformat-nonliteral"
-	#endif
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wformat-nonliteral"
+#else
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
 	if (num_of_percents == 0)
 		fprintf(stderr, "%s\n", fmt);
 	else if (num_of_percents == 1)
 		fprintf(stderr, fmt, msgs[0].real);
 	else if (num_of_percents == 2)
 		fprintf(stderr, fmt, msgs[0].real, msgs[1].real);
-	#ifdef __clang__
-	# pragma clang diagnostic pop
-	#else
-	# pragma GCC diagnostic pop
-	#endif
+#ifdef __clang__
+# pragma clang diagnostic pop
+#else
+# pragma GCC diagnostic pop
+#endif
 
 	while (msg->real) {
 		free(msg->real);
@@ -83,11 +83,8 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 		msg->real = strdup(msg->type);
 	else if (msg->str)
 		msg->real = c32stombs(msg->str);
-	else if (msg->i) {
-		const size_t len = (size_t)snprintf(NULL, 0, "%zu", msg->i - 1) + 1;
-		msg->real = Malloc(len);
-		snprintf(msg->real, len, "%zu", msg->i - 1);
-	}
+	else if (msg->i)
+		msg->real = uvsnprintf("%zu", msg->i - 1);
 	else if (msg->tok && !msg->real)
 		msg->real = token_mbs_str(msg->tok);
 }
