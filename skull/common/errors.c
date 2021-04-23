@@ -36,12 +36,19 @@ char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 		prefix = uvsnprintf("%s: Warning: ", SKULL_STATE.filename);
 	}
 
-	char *location = msg[0].tok ?
-		uvsnprintf("line %u column %u: ",
-			msg[0].tok->location.line,
-			msg[0].tok->location.column
-		) :
-		NULL;
+	const Location *location = msg[0].tok ?
+		&msg[0].tok->location :
+		(msg[0].loc ?
+			msg[0].loc :
+			NULL);
+
+	char *location_str = NULL;
+	if (location) {
+		location_str = uvsnprintf("line %u column %u: ",
+			location->line,
+			location->column
+		);
+	}
 
 #ifdef __clang__
 # pragma clang diagnostic push
@@ -67,11 +74,11 @@ char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 
 	char *final_str = uvsnprintf("%s%s%s",
 		prefix,
-		location ? location : "",
+		location_str ? location_str : "",
 		error_msg
 	);
 	free(prefix);
-	free(location);
+	free(location_str);
 	free(error_msg);
 
 	while (msg->real) {

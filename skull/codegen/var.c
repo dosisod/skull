@@ -126,7 +126,7 @@ Type var_def_node_to_type(const AstNode *node) {
 
 			if (!type) {
 				PANIC(ERR_NO_VOID_ASSIGN, {
-					.tok = func_name_token,
+					.loc = &func_name_token->location,
 					.real = token_mbs_str(node->token)
 				});
 			}

@@ -490,13 +490,13 @@ Expr gen_expr_identifier(
 
 	if (type && var_found && var_found->type != type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = token, .type = type },
+			{ .loc = &token->location, .type = type },
 			{ .type = var_found->type }
 		);
 	}
 	if (var == var_found) {
 		PANIC(ERR_REDUNDANT_REASSIGN, {
-			.tok = token,
+			.loc = &token->location,
 			.var = var
 		});
 	}
@@ -568,7 +568,7 @@ Expr gen_expr_oper(
 
 	if (lhs.value && lhs.type != rhs.type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = rhs_token, .type = lhs.type },
+			{ .loc = &rhs_token->location, .type = lhs.type },
 			{ .type = rhs.type }
 		);
 	}
@@ -585,7 +585,7 @@ Expr gen_expr_oper(
 		const Token *tok = lhs_token ? lhs_token : rhs_token;
 
 		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = tok, .type = type },
+			{ .loc = &tok->location, .type = type },
 			{ .type = result.type }
 		);
 	}
@@ -642,7 +642,7 @@ Expr gen_expr_const(
 
 	if (!expr.type) {
 		PANIC(ERR_TYPE_MISMATCH, {
-			.tok = token,
+			.loc = &token->location,
 			.type = type
 		});
 	}

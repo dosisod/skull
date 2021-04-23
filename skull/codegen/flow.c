@@ -47,7 +47,7 @@ Expr gen_stmt_return(AstNode **node) {
 
 	if (return_type && expr.type != return_type) {
 		PANIC(ERR_EXPECTED_SAME_TYPE,
-			{ .tok = node_val->token, .type = return_type },
+			{ .loc = &node_val->token->location, .type = return_type },
 			{ .type = expr.type }
 		);
 	}
@@ -225,7 +225,7 @@ void gen_control_code_block(
 ) {
 	if (!node->child) { // NOLINT
 		PANIC(ERR_MISSING_BLOCK, {
-			.tok = node->token,
+			.loc = &node->token->location,
 			.real = strdup(name)
 		});
 	}

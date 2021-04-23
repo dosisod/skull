@@ -74,6 +74,7 @@ See `fmt_error_stringify` for uses of these fields.
 typedef struct {
 	const char32_t *str;
 	const Token *tok;
+	const Location *loc;
 	const Variable *var;
 	Type type;
 	size_t i;

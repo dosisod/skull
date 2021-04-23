@@ -199,7 +199,10 @@ Expr gen_expr_function_call(
 
 		if (param_expr.type != function->param_types[i]) {
 			PANIC(ERR_FUNC_TYPE_MISMATCH,
-				{ .tok = param->token, .type = function->param_types[i] },
+				{
+					.loc = &param->token->location,
+					.type = function->param_types[i]
+				},
 				{ .type = param_expr.type }
 			);
 		}
@@ -224,7 +227,7 @@ Expr gen_expr_function_call(
 
 	if (type && ret.type != type) {
 		PANIC(ERR_ASSIGN_BAD_TYPE,
-			{ .tok = func_name_token, .type = ret.type },
+			{ .loc = &func_name_token->location, .type = ret.type },
 			{ .type = type }
 		);
 	}
