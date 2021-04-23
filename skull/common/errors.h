@@ -88,17 +88,21 @@ typedef enum {
 } ErrorType;
 
 #define FMT_WARN(fmt, ...) \
-	fmt_error(ERROR_WARN, fmt, (ErrorMsg[]){ \
+	char *_fmt_error_str = fmt_error(ERROR_WARN, fmt, (ErrorMsg[]){ \
 		__VA_ARGS__, \
 		{0} \
-	})
+	}); \
+	fprintf(stderr, "%s", _fmt_error_str); \
+	free(_fmt_error_str)
 
 #define FMT_ERROR(fmt, ...) \
-	fmt_error(ERROR_FATAL, fmt, (ErrorMsg[]){ \
+	char *_fmt_error_str = fmt_error(ERROR_FATAL, fmt, (ErrorMsg[]){ \
 		__VA_ARGS__, \
 		{0} \
-	})
+	}); \
+	fprintf(stderr, "%s", _fmt_error_str); \
+	free(_fmt_error_str)
 
-void fmt_error(ErrorType, const char *fmt, ErrorMsg []);
+char *fmt_error(ErrorType, const char *fmt, ErrorMsg []);
 
 void fmt_error_stringify(ErrorMsg *const);

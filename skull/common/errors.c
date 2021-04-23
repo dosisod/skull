@@ -11,12 +11,12 @@
 #include "skull/common/errors.h"
 
 /*
-Prints formatted an error message.
+Returns formatted error message.
 
 Every `%s` in the string is expanded according to the corresponding `ErrorMsg`
 in `msgs`.
 */
-void fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
+char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 	ErrorMsg *msg = msgs;
 	fmt_error_stringify(msg);
 
@@ -28,19 +28,20 @@ void fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 	}
 	msg = msgs;
 
+	char *prefix = NULL;
 	if (type == ERROR_FATAL) {
-		fprintf(stderr, "%s: Compilation error: ", SKULL_STATE.filename);
+		prefix = uvsnprintf("%s: Compilation error: ", SKULL_STATE.filename);
 	}
-	if (type == ERROR_WARN) {
-		fprintf(stderr, "%s: Warning: ", SKULL_STATE.filename);
+	else if (type == ERROR_WARN) {
+		prefix = uvsnprintf("%s: Warning: ", SKULL_STATE.filename);
 	}
 
-	if (msg[0].tok) {
-		fprintf(stderr, "line %u column %u: ",
+	char *location = msg[0].tok ?
+		uvsnprintf("line %u column %u: ",
 			msg[0].tok->location.line,
 			msg[0].tok->location.column
-		);
-	}
+		) :
+		NULL;
 
 #ifdef __clang__
 # pragma clang diagnostic push
@@ -49,22 +50,36 @@ void fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wformat-nonliteral"
 #endif
+
+	char *error_msg = NULL;
 	if (num_of_percents == 0)
-		fprintf(stderr, "%s\n", fmt);
+		error_msg = uvsnprintf("%s\n", fmt);
 	else if (num_of_percents == 1)
-		fprintf(stderr, fmt, msgs[0].real);
+		error_msg = uvsnprintf(fmt, msgs[0].real);
 	else if (num_of_percents == 2)
-		fprintf(stderr, fmt, msgs[0].real, msgs[1].real);
+		error_msg = uvsnprintf(fmt, msgs[0].real, msgs[1].real);
+
 #ifdef __clang__
 # pragma clang diagnostic pop
 #else
 # pragma GCC diagnostic pop
 #endif
 
+	char *final_str = uvsnprintf("%s%s%s",
+		prefix,
+		location ? location : "",
+		error_msg
+	);
+	free(prefix);
+	free(location);
+	free(error_msg);
+
 	while (msg->real) {
 		free(msg->real);
 		msg++;
 	}
+
+	return final_str;
 }
 
 /*

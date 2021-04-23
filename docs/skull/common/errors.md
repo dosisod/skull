@@ -19,10 +19,10 @@ typedef struct {
 > See `fmt_error_stringify` for uses of these fields.
 
 ```c
-void fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[])
+char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[])
 ```
 
-> Prints formatted an error message.
+> Returns formatted error message.
 > \
 > Every `%s` in the string is expanded according to the corresponding `ErrorMsg`
 > in `msgs`.
