@@ -59,7 +59,7 @@ TEST(c32slen, {
 })
 
 TEST(c32stombs, {
-	char *str = c32stombs(U"hello world! 存");
+	char *str = c32stombs(U"hello world! 存", NULL);
 
 	ASSERT_EQUAL(strcmp(str, "hello world! 存"), 0);
 
@@ -67,7 +67,7 @@ TEST(c32stombs, {
 })
 
 TEST(c32stombs_with_null, {
-	ASSERT_FALSEY(c32stombs(NULL));
+	ASSERT_FALSEY(c32stombs(NULL, NULL));
 })
 
 TEST(mbstoc32s, {

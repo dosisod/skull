@@ -285,7 +285,7 @@ The result of this function must be freed.
 */
 char *token_mbs_str(const Token *const token) {
 	char32_t *const tmp = token_str(token);
-	char *const ret = c32stombs(tmp);
+	char *const ret = c32stombs(tmp, &token->location);
 
 	free(tmp);
 	return ret;

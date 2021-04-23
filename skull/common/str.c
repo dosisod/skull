@@ -47,9 +47,11 @@ void c32sncpy(char32_t *dest, const char32_t *src, size_t n) {
 /*
 Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 
+Optionaly load use `location` for printing error.
+
 The result of this function must be freed.
 */
-char *c32stombs(const char32_t *str) {
+char *c32stombs(const char32_t *str, const Location *location) {
 	if (!str) return NULL;
 
 	//allocate the max that str could expand to
@@ -59,7 +61,12 @@ char *c32stombs(const char32_t *str) {
 	static mbstate_t mbs;
 
 	while (*str) {
+		errno = 0;
 		size_t length = c32rtomb(ret + offset, *str, &mbs);
+
+		if (errno == EILSEQ) {
+			PANIC(ERR_ILLEGAL_SEQ, { .loc = location });
+		}
 
 		if ((length == 0) || (length > MB_CUR_MAX)) break;
 
@@ -110,7 +117,7 @@ char32_t *mbstoc32s(const char *str) {
 		const size_t length = mbrtoc32(ret + offset, str, MB_CUR_MAX, &mbs);
 
 		if (errno == EILSEQ) {
-			PANIC(ERR_ILLEGAL_SEQ, { .i = offset + 1 });
+			PANIC(ERR_ILLEGAL_SEQ_AT, { .i = offset + 1 });
 		}
 
 		if ((length == 0) || (length > MB_CUR_MAX)) break;

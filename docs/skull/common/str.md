@@ -17,10 +17,12 @@ void c32sncpy(char32_t *dest, const char32_t *src, size_t n)
 > If there is room between the end of `src` and `dest[n]`, fill it with NULL.
 
 ```c
-char *c32stombs(const char32_t *str)
+char *c32stombs(const char32_t *str, const Location *location)
 ```
 
 > Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
+> \
+> Optionaly load use `location` for printing error.
 > \
 > The result of this function must be freed.
 

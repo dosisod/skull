@@ -65,7 +65,7 @@ typedef enum {
 /*
 Stores the line and column of a certain token/variable/function.
 */
-typedef struct {
+typedef struct Location {
 	unsigned line;
 	unsigned column;
 } Location;

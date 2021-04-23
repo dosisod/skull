@@ -104,7 +104,7 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 	else if (msg->type)
 		msg->real = strdup(msg->type);
 	else if (msg->str)
-		msg->real = c32stombs(msg->str);
+		msg->real = c32stombs(msg->str, NULL);
 	else if (msg->i)
 		msg->real = uvsnprintf("%zu", msg->i - 1);
 	else if (msg->tok && !msg->real)

@@ -75,7 +75,7 @@ void free_tokens(Token *head)
 > Free all tokens from `head` and beyond.
 
 ```c
-typedef struct {
+typedef struct Location {
 	unsigned line;
 	unsigned column;
 }

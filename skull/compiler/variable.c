@@ -28,7 +28,7 @@ Variable *make_variable(
 	var = Malloc(sizeof *var);
 
 	*var = (Variable){
-		.name = c32stombs(name),
+		.name = c32stombs(name, NULL),
 		.type = type,
 		.is_const = is_const,
 		.is_const_lit = false,

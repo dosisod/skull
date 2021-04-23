@@ -675,7 +675,7 @@ Expr token_to_simple_expr(const Token *const token) {
 	}
 	else if (token->type == TOKEN_STR_CONST) {
 		SkullStr str = eval_str(token);
-		char *const mbs = c32stombs(str);
+		char *const mbs = c32stombs(str, &token->location);
 
 		value = LLVMBuildBitCast(
 			SKULL_STATE.builder,
