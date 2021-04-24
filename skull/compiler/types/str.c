@@ -21,7 +21,7 @@ SkullStr eval_str(const Token *const token) {
 		copy[wrote] = c32sunescape(&str, &error);
 
 		if (error) {
-			PANIC(ERR_BAD_ESCAPE, { .tok = token, .str = error });
+			PANIC(ERR_BAD_ESCAPE, { .loc = &token->location, .str = error });
 		}
 
 		if (str == original) copy[wrote] = *str;

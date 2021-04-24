@@ -47,7 +47,7 @@ void gen_stmt_func_decl(const AstNode *const node) {
 	char *func_name = token_mbs_str(func_name_token);
 
 	if (is_export && strcmp(func_name, "main") == 0) {
-		PANIC(ERR_MAIN_RESERVED, { .tok = func_name_token });
+		PANIC(ERR_MAIN_RESERVED, { .loc = &func_name_token->location });
 	}
 
 	FunctionDeclaration *found_func = ht_get(
