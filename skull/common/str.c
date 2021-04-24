@@ -58,7 +58,8 @@ char *c32stombs(const char32_t *str, const Location *location) {
 	char *ret = Malloc((c32slen(str) + 1) * MB_CUR_MAX);
 
 	size_t offset = 0;
-	static mbstate_t mbs;
+	mbstate_t mbs;
+	memset(&mbs, 0, sizeof mbs);
 
 	while (*str) {
 		errno = 0;
