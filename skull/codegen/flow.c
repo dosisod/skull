@@ -207,7 +207,7 @@ LLVMValueRef node_to_bool(const AstNode *const node) {
 	const Expr expr = node_to_expr(NULL, node, NULL);
 
 	if (expr.type != TYPE_BOOL) {
-		PANIC(ERR_NON_BOOL_EXPR, { .tok = node->token });
+		PANIC(ERR_NON_BOOL_EXPR, { .loc = &node->token->location });
 	}
 
 	return expr.value;

@@ -183,7 +183,7 @@ static bool iter_comment(
 	if (!*code) {
 		if (comment == BLOCK_COMMENT) {
 			current->end = code;
-			PANIC(ERR_NO_CLOSING_COMMENT, { .tok = current });
+			PANIC(ERR_NO_CLOSING_COMMENT, { .loc = &current->location });
 		}
 
 		return true;
@@ -229,8 +229,7 @@ static void iter_quote(
 	} while (*code);
 
 	if (!*code) {
-		current->end = code;
-		PANIC(ERR_NO_CLOSING_QUOTE, { .tok = current });
+		PANIC(ERR_NO_CLOSING_QUOTE, { .loc = &current->location });
 	}
 
 	*_code = code;

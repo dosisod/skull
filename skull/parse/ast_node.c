@@ -53,7 +53,7 @@ static bool try_parse_return(Token **token, AstNode **node) {
 	*token = (*token)->next;
 
 	if (!try_parse_expression(token, node)) {
-		PANIC(ERR_RETURN_MISSING_EXPR, { .tok = *token });
+		PANIC(ERR_RETURN_MISSING_EXPR, { .loc = &(*token)->location });
 	}
 
 	return true;
@@ -123,7 +123,7 @@ static bool try_parse_var_def(Token **_token, AstNode **node) {
 	*_token = (*_token)->next;
 
 	if (!try_parse_expression(_token, node)) {
-		PANIC(ERR_ASSIGN_MISSING_EXPR, { .tok = *_token });
+		PANIC(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*_token)->location });
 	}
 
 	return true;
@@ -141,7 +141,7 @@ static bool try_parse_var_assign(Token **token, AstNode **node) {
 	*token = (*token)->next->next;
 
 	if (!try_parse_expression(token, node)) {
-		PANIC(ERR_ASSIGN_MISSING_EXPR, { .tok = *token });
+		PANIC(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*token)->location });
 	}
 
 	return true;
@@ -342,7 +342,9 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 
 		if (token_type == TOKEN_BRACKET_OPEN) {
 			if (node->last && node->last->child) {
-				PANIC(ERR_UNEXPECTED_CODE_BLOCK, { .tok = *token });
+				PANIC(ERR_UNEXPECTED_CODE_BLOCK, {
+					.loc = &(*token)->location
+				});
 			}
 
 			*token = (*token)->next;
@@ -371,7 +373,7 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 		if (token_type == TOKEN_BRACKET_CLOSE) {
 			if (indent_lvl == 0) {
 				free(head);
-				PANIC(ERR_MISSING_OPEN_BRAK, { .tok = *token });
+				PANIC(ERR_MISSING_OPEN_BRAK, { .loc = &(*token)->location });
 			}
 
 			break;
@@ -486,7 +488,7 @@ static AstNodeExpr *parse_paren_expr(Token **token) {
 	}
 
 	if ((*token)->type != TOKEN_PAREN_CLOSE) {
-		PANIC(ERR_MISSING_CLOSING_PAREN, { .tok = *token });
+		PANIC(ERR_MISSING_CLOSING_PAREN, { .loc = &(*token)->location });
 	}
 
 	*token = (*token)->next;
@@ -529,7 +531,7 @@ static AstNodeExpr *parse_func_call(Token **token) {
 
 		if ((*token)->type != TOKEN_COMMA) {
 			PANIC(ERR_EXPECTED_COMMA, {
-				.tok = *token
+				.loc = &(*token)->location
 			});
 		}
 

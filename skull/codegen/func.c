@@ -177,7 +177,7 @@ Expr gen_expr_function_call(
 	unsigned short num_params = function->num_params;
 
 	if (num_params != expr->func_call->num_values) {
-		PANIC(ERR_INVALID_NUM_PARAMS, { .tok = func_name_token });
+		PANIC(ERR_INVALID_NUM_PARAMS, { .loc = &func_name_token->location });
 	}
 
 	LLVMValueRef *params = NULL;
@@ -187,7 +187,7 @@ Expr gen_expr_function_call(
 	const AstNode *param = expr->func_call->params;
 
 	if (num_params == 0 && param->token) {
-		PANIC(ERR_ZERO_PARAM_FUNC, { .tok = param->token });
+		PANIC(ERR_ZERO_PARAM_FUNC, { .loc = &param->token->location });
 	}
 
 	for RANGE(i, num_params) {
