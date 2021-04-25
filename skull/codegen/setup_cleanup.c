@@ -81,10 +81,7 @@ void generate_llvm(
 		.ctx = ctx,
 		.module = main_module,
 		.filename = filename,
-		.scope = make_scope(),
-		.function_decls = ht_create(),
-		.type_aliases = ht_create(),
-		.template_types = ht_create()
+		.scope = make_scope()
 	};
 
 	SKULL_STATE.main_func = Calloc(1, sizeof(FunctionDeclaration));

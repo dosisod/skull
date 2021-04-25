@@ -12,7 +12,6 @@ TEST(vector_create_and_free, {
 	Vector *v = make_vector();
 
 	ASSERT_TRUTHY(v);
-	ASSERT_TRUTHY(v->elements);
 	ASSERT_TRUTHY(v->max);
 	ASSERT_EQUAL(v->length, 0);
 

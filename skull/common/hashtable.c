@@ -35,7 +35,7 @@ __attribute__((pure)) unsigned ht_hash_key(const char *const key) {
 Add key `key` with value `ptr` to hashtable `ht`.
 */
 bool ht_add(HashTable *const ht, const char *const key, void *const ptr) {
-	if (!ptr || ht_get(ht, key)) return false;
+	if (!ptr || !ht || ht_get(ht, key)) return false;
 
 	Vector **slot = &ht->slots[ht_hash_key(key)];
 	Vector *items = *slot;
@@ -86,6 +86,8 @@ void free_ht_item(void (*free_func)(void *), void *item) {
 Free a hashtable `ht`, and free each item with `free_func`.
 */
 void free_ht(HashTable *ht, void (*free_func)(void *)) {
+	if (!ht) return;
+
 	for RANGE(i, MAX_SLOTS) { // NOLINT
 		Vector *items = ht->slots[i];
 

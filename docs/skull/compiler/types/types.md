@@ -38,9 +38,3 @@ char *mangle_types(Type *types, unsigned num_types, char ident)
 > \
 > Use `ident` as an identifer for what the mandled type is.
 
-```c
-TemplateType *add_template_type(char *name, LLVMTypeRef *llvm_type)
-```
-
-> Return newly created template type with called `name` of type `llvm_type`.
-

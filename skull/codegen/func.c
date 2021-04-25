@@ -67,6 +67,9 @@ void gen_stmt_func_decl(const AstNode *const node) {
 		is_export || is_external
 	);
 
+	if (!SKULL_STATE.function_decls) {
+		SKULL_STATE.function_decls = ht_create();
+	}
 	ht_add(SKULL_STATE.function_decls, func_name, func);
 
 	if (!is_external)

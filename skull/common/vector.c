@@ -11,6 +11,10 @@ Push pointer `ptr` to vector `v`. Scale vector if needed.
 void vector_push(Vector *v, void *ptr) {
 	if (v->is_array) return;
 
+	if (!v->elements) {
+		v->elements = Calloc(VECTOR_START_MAX, sizeof(void *));
+	}
+
 	if (v->length >= v->max) {
 		v->max *= 2;
 		v->elements = Realloc(v->elements, v->max * sizeof(void *));
@@ -24,7 +28,7 @@ void vector_push(Vector *v, void *ptr) {
 Pop and return last element from vector `v`.
 */
 void *vector_pop(Vector *v) {
-	if (!v->length || v->is_array) return NULL;
+	if (!v->elements || !v->length || v->is_array) return NULL;
 
 	v->length--;
 	return v->elements[v->length];
@@ -37,8 +41,6 @@ Vector *make_vector(void) {
 	Vector *v;
 	v = Calloc(1, sizeof *v);
 	v->max = VECTOR_START_MAX;
-
-	v->elements = Calloc(VECTOR_START_MAX, sizeof(void *));
 
 	return v;
 }
@@ -56,7 +58,7 @@ void *vector_freeze(Vector *v) {
 Return the element at index `index` of the vector `v`, or NULL if out-of-bound.
 */
 __attribute__((pure)) void *vector_at(const Vector *const v, size_t index) {
-	if (index >= v->length) return NULL;
+	if (!v->elements || index >= v->length) return NULL;
 
 	return v->elements[index];
 }
@@ -78,14 +80,14 @@ void free_vector2(
 	void (*free_func2)(void *)
 ) {
 	for RANGE(i, v->length) {
-		if (free_func)
+		if (free_func && v->elements)
 			free_func(free_func2, v->elements[i]);
 
-		else if (free_func2)
+		else if (free_func2 && v->elements)
 			free_func2(v->elements[i]);
 	}
 
-	if (!v->is_array) {
+	if (!v->is_array && v->elements) {
 		free(v->elements);
 		v->elements = NULL;
 	}

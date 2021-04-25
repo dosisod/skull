@@ -32,6 +32,10 @@ Add named `alias` for `type`.
 Return `true` if alias was added, `false` if it already exists.
 */
 bool add_alias(Type type, char *const alias) {
+	if (!SKULL_STATE.type_aliases) {
+		SKULL_STATE.type_aliases = ht_create();
+	}
+
 	return ht_add(SKULL_STATE.type_aliases, alias, (void *)type);
 }
 
@@ -68,23 +72,6 @@ char *mangle_types(Type *types, unsigned num_types, char ident) {
 	name[at] = '\0';
 
 	return name;
-}
-
-/*
-Return newly created template type with called `name` of type `llvm_type`.
-*/
-TemplateType *add_template_type(char *name, LLVMTypeRef *llvm_type) {
-	TemplateType *new_type;
-	new_type = Malloc(sizeof *new_type);
-
-	*new_type = (TemplateType){
-		.name = name,
-		.llvm_type = llvm_type
-	};
-
-	ht_add(SKULL_STATE.template_types, name, new_type);
-
-	return new_type;
 }
 
 Type TYPE_BOOL = "Bool";

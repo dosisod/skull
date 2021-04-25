@@ -68,8 +68,10 @@ TEST(hashtable_cannot_add_key_twice, {
 	free_ht(ht, NULL);
 })
 
-TEST(hashtable_with_null, {
-	ht_get(NULL, "");
+TEST(hashtable_with_nulls, {
+	ASSERT_FALSEY(ht_get(NULL, "key"));
+	ASSERT_FALSEY(ht_add(NULL, "key", NULL));
+	free_ht(NULL, NULL);
 })
 
 TEST_SELF(hashtable,
@@ -78,5 +80,5 @@ TEST_SELF(hashtable,
 	test_hashtable_add_to_existing_slot,
 	test_hashtable_cannot_add_null,
 	test_hashtable_cannot_add_key_twice,
-	test_hashtable_with_null
+	test_hashtable_with_nulls
 )
