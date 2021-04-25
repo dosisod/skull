@@ -15,7 +15,7 @@ typedef struct {
 	const char *filename;
 	LLVMModuleRef module;
 	FunctionDeclaration *current_func;
-	FunctionDeclaration *main_func;
+	FunctionDeclaration main_func;
 	Scope *scope;
 	HashTable *function_decls;
 	HashTable *type_aliases;

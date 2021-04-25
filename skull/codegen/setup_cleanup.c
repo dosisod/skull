@@ -84,15 +84,13 @@ void generate_llvm(
 		.scope = make_scope()
 	};
 
-	SKULL_STATE.main_func = Calloc(1, sizeof(FunctionDeclaration));
-	SKULL_STATE.current_func = SKULL_STATE.main_func;
-
-	*SKULL_STATE.main_func = (FunctionDeclaration){
+	SKULL_STATE.main_func = (FunctionDeclaration){
 		.name = main_func_name,
 		.function = main_func,
 		.type = main_func_type,
 		.return_type = TYPE_INT
 	};
+	SKULL_STATE.current_func = &SKULL_STATE.main_func;
 
 	codegen_str(file_contents);
 }

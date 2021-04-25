@@ -335,7 +335,7 @@ __attribute__ (( format(printf, 1, 2))) char *uvsnprintf(
 	const size_t len = (size_t)vsnprintf( // NOLINT
 		NULL, 0, fmt, vargs_copy
 	) + 1;
-	char *out =  malloc(len);
+	char *out = Malloc(len);
 
 	va_end(vargs_copy);
 	va_copy(vargs_copy, vargs);

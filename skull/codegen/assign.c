@@ -89,7 +89,7 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	const bool is_const_literal = LLVMIsConstant(value);
 
 	const bool is_global = is_first_assign ?
-		(SKULL_STATE.current_func == SKULL_STATE.main_func) :
+		SKULL_STATE.current_func == &SKULL_STATE.main_func :
 		var->is_global;
 
 	if (is_first_assign) {
