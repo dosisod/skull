@@ -36,9 +36,9 @@ Expr node_to_expr(
 Parse declaration (and potential definition) of function in `node`.
 */
 void gen_stmt_func_decl(const AstNode *const node) {
-	const bool is_external = node->attr.func_proto->is_external;
-	const bool is_export = node->attr.func_proto->is_export;
-	const Token *const func_name_token = node->attr.func_proto->name_tok;
+	const bool is_external = node->func_proto->is_external;
+	const bool is_export = node->func_proto->is_export;
+	const Token *const func_name_token = node->func_proto->name_tok;
 
 	if ((is_export || is_external) && SKULL_STATE.scope->sub_scope) {
 		PANIC(ERR_NO_NESTED, { .tok = func_name_token });
@@ -93,11 +93,11 @@ FunctionDeclaration *add_function(
 
 	func->name = name;
 
-	char **param_type_names = node->attr.func_proto->param_type_names;
-	func->param_names = node->attr.func_proto->param_names;
+	char **param_type_names = node->func_proto->param_type_names;
+	func->param_names = node->func_proto->param_names;
 	LLVMTypeRef *params = NULL;
 
-	unsigned short num_params = node->attr.func_proto->num_params;
+	unsigned short num_params = node->func_proto->num_params;
 	func->num_params = num_params;
 
 	if (param_type_names) {
@@ -117,7 +117,7 @@ FunctionDeclaration *add_function(
 		}
 	}
 
-	char *return_type_name = node->attr.func_proto->return_type_name;
+	char *return_type_name = node->func_proto->return_type_name;
 	if (return_type_name)
 		func->return_type = find_type(return_type_name);
 

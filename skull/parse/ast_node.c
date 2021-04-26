@@ -112,8 +112,8 @@ static bool try_parse_var_def(Token **_token, AstNode **node) {
 		return false;
 	}
 
-	(*node)->attr.var_def = Malloc(sizeof(AstNodeVarDef));
-	*(*node)->attr.var_def = (AstNodeVarDef){
+	(*node)->var_def = Malloc(sizeof(AstNodeVarDef));
+	*(*node)->var_def = (AstNodeVarDef){
 		.is_const = is_const,
 		.is_implicit = is_implicit,
 		.name_tok = token
@@ -291,8 +291,8 @@ static bool try_parse_function_proto(Token **_token, AstNode **node) {
 	free_vector(param_names, NULL);
 	free_vector(param_type_names, NULL);
 
-	(*node)->attr.func_proto = Malloc(sizeof(AstNodeFunctionProto));
-	*(*node)->attr.func_proto = (AstNodeFunctionProto){
+	(*node)->func_proto = Malloc(sizeof(AstNodeFunctionProto));
+	*(*node)->func_proto = (AstNodeFunctionProto){
 		.name_tok = func_name_token,
 		.param_type_names = tmp_types,
 		.param_names = tmp_names,
@@ -446,7 +446,7 @@ static AstNode *try_parse_expression(Token **token, AstNode **node) {
 	push_ast_node(NULL, last, AST_NODE_EXPR, node);
 
 	(*node)->last->token_end = *token;
-	(*node)->last->attr.expr = expr_node;
+	(*node)->last->expr = expr_node;
 
 	return (*node)->last;
 }
@@ -593,14 +593,14 @@ static void free_ast_tree_(AstNode *node) {
 
 	while (node) {
 		if (node->type == AST_NODE_FUNCTION_PROTO) {
-			free(node->attr.func_proto->return_type_name);
+			free(node->func_proto->return_type_name);
 
 			char **param_type_names = \
-				node->attr.func_proto->param_type_names;
+				node->func_proto->param_type_names;
 
-			char32_t **param_names = node->attr.func_proto->param_names;
+			char32_t **param_names = node->func_proto->param_names;
 
-			unsigned num_params = node->attr.func_proto->num_params;
+			unsigned num_params = node->func_proto->num_params;
 
 			for RANGE(i, num_params) { // NOLINT
 				free(param_type_names[i]);
@@ -610,18 +610,18 @@ static void free_ast_tree_(AstNode *node) {
 			free(param_type_names);
 			free(param_names);
 
-			free(node->attr.func_proto);
+			free(node->func_proto);
 		}
 		else if (node->type == AST_NODE_VAR_DEF) {
-			free(node->attr.var_def);
+			free(node->var_def);
 		}
 		else if (node->type == AST_NODE_EXPR) {
-			if (node->attr.expr->oper == EXPR_FUNC) {
-				free_ast_tree_((AstNode *)node->attr.expr->func_call->params);
-				free(node->attr.expr->func_call);
+			if (node->expr->oper == EXPR_FUNC) {
+				free_ast_tree_((AstNode *)node->expr->func_call->params);
+				free(node->expr->func_call);
 			}
 
-			free(node->attr.expr);
+			free(node->expr);
 		}
 
 		if (node->child)

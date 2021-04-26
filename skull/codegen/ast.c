@@ -61,7 +61,7 @@ void assert_sane_child(AstNode *node) {
 	if (node->child && !(
 		node_type == AST_NODE_ELSE ||
 		node_type == AST_NODE_FUNCTION_PROTO ||
-		(node_type == AST_NODE_EXPR && node->attr.expr->oper == EXPR_FUNC)
+		(node_type == AST_NODE_EXPR && node->expr->oper == EXPR_FUNC)
 	)) {
 		PANIC(ERR_UNEXPECTED_CODE_BLOCK, {
 			.loc = node->child->token ?
@@ -97,9 +97,9 @@ static Expr _gen_node(AstNode **node) {
 }
 
 static void gen_expr_node(const AstNode *node) {
-	if (node->attr.expr->oper != EXPR_FUNC) {
+	if (node->expr->oper != EXPR_FUNC) {
 		PANIC(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });
 	}
 
-	gen_expr_function_call(node->attr.expr, NULL);
+	gen_expr_function_call(node->expr, NULL);
 }

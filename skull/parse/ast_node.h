@@ -44,9 +44,6 @@ Adjacent `AstNode`s are accessed via `next` and `last`.
 
 `child` and `parent` are used to access the child and parent node of a given
 node.
-
-Certain `node_type`s may chose to store arbitrary data in `attr` to save time
-re-parsing.
 */
 typedef struct AstNode {
 	NodeType type;
@@ -65,7 +62,7 @@ typedef struct AstNode {
 		AstNodeVarDef *var_def;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
-	} attr;
+	};
 } AstNode;
 
 /*

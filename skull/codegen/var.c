@@ -20,10 +20,10 @@ Type var_def_node_to_type(const AstNode *);
 Make and add a variable from `node` to Skull state.
 */
 Variable *node_to_var(const AstNode *const node) {
-	const Token *token = node->attr.var_def->name_tok;
+	const Token *token = node->var_def->name_tok;
 	Type type = NULL;
 
-	if (node->attr.var_def->is_implicit) {
+	if (node->var_def->is_implicit) {
 		type = var_def_node_to_type(node);
 	}
 	else {
@@ -42,7 +42,7 @@ Variable *node_to_var(const AstNode *const node) {
 	Variable *var = make_variable(
 		type,
 		name,
-		node->attr.var_def->is_const
+		node->var_def->is_const
 	);
 
 	if (scope_add_var(SKULL_STATE.scope, var)) {
@@ -82,7 +82,7 @@ Type var_def_node_to_type(const AstNode *node) {
 	TokenType token_type = node->next->token->type;
 
 	if (node->next->type == AST_NODE_EXPR) {
-		const AstNodeExpr *expr = node->next->attr.expr;
+		const AstNodeExpr *expr = node->next->expr;
 
 		switch (expr->oper) {
 			case EXPR_NOT:

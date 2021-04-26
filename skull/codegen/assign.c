@@ -71,7 +71,7 @@ Expr node_to_expr(
 	Expr expr = {0};
 
 	if (node->type == AST_NODE_EXPR) {
-		expr = gen_expr_oper(type, node->attr.expr, var);
+		expr = gen_expr_oper(type, node->expr, var);
 	}
 
 	if (!expr.value) {
