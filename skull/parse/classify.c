@@ -68,12 +68,12 @@ void classify_token(Token *const token) {
 		!str[1]
 	), TOKEN_COMMENT)
 
-	TOKEN_SET_IF(is_type_str(str), TOKEN_TYPE)
 	TOKEN_SET_IF(is_constant_integer_str(str), TOKEN_INT_CONST)
 	TOKEN_SET_IF(is_constant_float_str(str), TOKEN_FLOAT_CONST)
 	TOKEN_SET_IF(is_constant_bool_str(str), TOKEN_BOOL_CONST)
 	TOKEN_SET_IF(is_constant_rune_str(str), TOKEN_RUNE_CONST)
 	TOKEN_SET_IF(is_constant_str_str(str), TOKEN_STR_CONST)
+	TOKEN_SET_IF(is_type_str(str), TOKEN_TYPE)
 
 	else if (is_valid_identifier_str(str)) {
 		token->type = TOKEN_IDENTIFIER;
@@ -84,7 +84,7 @@ void classify_token(Token *const token) {
 			const size_t len = token_len(token);
 			str[len - 1] = '\0';
 
-			if (is_type_str(str) || is_reserved_str(str)) {
+			if (is_reserved_str(str) || is_type_str(str)) {
 				token->type = TOKEN_UNKNOWN;
 			}
 			else {
@@ -127,7 +127,19 @@ bool is_reserved_str(const char32_t *const str) {
 	return c32scmp(U"return", str) ||
 		c32scmp(U"mut", str) ||
 		c32scmp(U"not", str) ||
-		c32scmp(U"is", str);
+		c32scmp(U"is", str) ||
+		c32scmp(U"unreachable", str) ||
+		c32scmp(U"if", str) ||
+		c32scmp(U"elif", str) ||
+		c32scmp(U"else", str) ||
+		c32scmp(U"while", str) ||
+		c32scmp(U"external", str) ||
+		c32scmp(U"export", str) ||
+		c32scmp(U"mod", str) ||
+		c32scmp(U"isnt", str) ||
+		c32scmp(U"and", str) ||
+		c32scmp(U"or", str) ||
+		c32scmp(U"xor", str);
 }
 
 #define EXHAUST_STR_INT(cond) \

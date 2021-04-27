@@ -24,6 +24,18 @@ TEST(is_reserved_str, {
 	ASSERT_TRUTHY(is_reserved_str(U"return"));
 	ASSERT_TRUTHY(is_reserved_str(U"mut"));
 	ASSERT_FALSEY(is_reserved_str(U"not_reserved"));
+	ASSERT_TRUTHY(is_reserved_str(U"unreachable"));
+	ASSERT_TRUTHY(is_reserved_str(U"if"));
+	ASSERT_TRUTHY(is_reserved_str(U"elif"));
+	ASSERT_TRUTHY(is_reserved_str(U"else"));
+	ASSERT_TRUTHY(is_reserved_str(U"while"));
+	ASSERT_TRUTHY(is_reserved_str(U"external"));
+	ASSERT_TRUTHY(is_reserved_str(U"export"));
+	ASSERT_TRUTHY(is_reserved_str(U"mod"));
+	ASSERT_TRUTHY(is_reserved_str(U"isnt"));
+	ASSERT_TRUTHY(is_reserved_str(U"and"));
+	ASSERT_TRUTHY(is_reserved_str(U"or"));
+	ASSERT_TRUTHY(is_reserved_str(U"xor"));
 })
 
 TEST(is_constant_integer, {
