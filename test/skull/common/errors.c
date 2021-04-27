@@ -21,7 +21,7 @@ bool fmt_error_stringify_wrapper(ErrorMsg *error, const char *expected) {
 	return pass;
 }
 
-TEST(fmt_error_stringify, {
+bool test_fmt_error_stringify() {
 	Token *tok = tokenize(U"xxx");
 	ErrorMsg err_tok = {
 		.tok = tok
@@ -48,8 +48,12 @@ TEST(fmt_error_stringify, {
 
 	free_tokens(tok);
 	free_variable(var);
-})
 
-TEST_SELF(error,
-	test_fmt_error_stringify
-)
+	PASS
+}
+
+void error_test_self(bool *pass) {
+	RUN_ALL(
+		test_fmt_error_stringify
+	)
+}

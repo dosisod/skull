@@ -1,4 +1,3 @@
-#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdnoreturn.h>
@@ -20,20 +19,10 @@
 
 _Bool SKULL_TESTING = 1;
 
-noreturn void segfault_handler() {
-	fprintf(stderr, "\n\nsegfault occurred in function `%s`, exiting\n\n", FUNC_NAME);
-
-	exit(1);
-}
-
 int main(void) {
 	setup_locale();
 
 	_Bool passed = 1;
-
-	struct sigaction sa = {0};
-	sa.sa_handler = &segfault_handler;
-	sigaction(SIGSEGV, &sa, NULL);
 
 	testing_test_self(&passed);
 
@@ -49,6 +38,8 @@ int main(void) {
 
 	scope_test_self(&passed);
 	variable_test_self(&passed);
+
+	putchar('\n');
 
 	if (!passed) {
 		puts("\n1 or more errors occurred.");

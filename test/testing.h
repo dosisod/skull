@@ -3,60 +3,50 @@
 #include <stddef.h>
 #include <stdio.h>
 
-typedef _Bool (*Test)(const char **);
+#include "../skull/common/color.h"
 
-const char *FUNC_NAME;
+typedef _Bool (*Test)();
 
-#define TEST(name, code) \
-_Bool test_##name (const char **msg) { \
-	*msg = NULL; \
-	FUNC_NAME = __func__; \
-	code; \
-	return 1; \
-}
-
-#define TEST_SELF(name, ...) \
-void name##_test_self (_Bool *pass) { \
-	run_many_tests(__FILE__, (Test[]){ \
+#define RUN_ALL(...) \
+	run_many_tests((Test[]){ \
 		__VA_ARGS__, NULL \
-	}, pass); \
-}
+	}, pass);
 
-#define PASS return 1
-
-#define FAIL return 0
+#define PASS return 1;
 
 #define ASSERT_TRUTHY(x) \
+	printf(__FILE__":%s:%i: ", __func__, __LINE__); \
 	if (!(x)) { \
-		*msg = "Expected `" #x "` to be truthy"; \
+		printf( \
+			COLOR_BOLD COLOR_RED_FG "FAILED " COLOR_RESET \
+			"Expected `" #x "` to be truthy\n" \
+		); \
 		return 0; \
-	}
+	} \
+	printf(COLOR_BOLD COLOR_GREEN_FG "PASSED" COLOR_RESET "\n");
 
 #define ASSERT_FALSEY(x) \
+	printf(__FILE__":%s:%i: ", __func__, __LINE__); \
 	if ((x)) { \
-		*msg = "Expected `" #x "` to be falsey"; \
+		printf( \
+			COLOR_BOLD COLOR_RED_FG "FAILED " COLOR_RESET \
+			"Expected `" #x "` to be falsey\n" \
+		); \
 		return 0; \
-	}
-
-#define ASSERT_NOT_EQUAL(x, y) \
-	if ((x) == (y)) { \
-		*msg = "Expected `" #x "` and `" #y "` to be not be equal"; \
-		return 0; \
-	}
+	} \
+	printf(COLOR_BOLD COLOR_GREEN_FG "PASSED" COLOR_RESET "\n");
 
 #define ASSERT_EQUAL(x, y) \
+	printf(__FILE__":%s:%i: ", __func__, __LINE__); \
 	if ((x) != (y)) { \
-		*msg = "Expected `" #x "` and `" #y "` to be be equal"; \
+		printf( \
+			COLOR_BOLD COLOR_RED_FG "FAILED " COLOR_RESET \
+			"Expected `" #x "` and `" #y "` to be equal\n" \
+		); \
 		return 0; \
-	}
+	} \
+	printf(COLOR_BOLD COLOR_GREEN_FG "PASSED" COLOR_RESET "\n");
 
-typedef struct Fail {
-	const char *name;
-	const char *msg;
-} Fail;
-
-void run_single_test(Test, _Bool *);
-
-void run_many_tests(const char *, Test [], _Bool *);
+void run_many_tests(Test [], _Bool *);
 
 void testing_test_self(_Bool *);

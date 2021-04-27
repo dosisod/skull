@@ -7,7 +7,7 @@
 #include "test/skull/parse/token.h"
 #include "test/testing.h"
 
-TEST(tokenize_single_token, {
+bool test_tokenize_single_token() {
 	const char32_t *code1 = U"token";
 	const char32_t *code2 = U"token字";
 	Token *t1 = tokenize(code1);
@@ -20,9 +20,11 @@ TEST(tokenize_single_token, {
 
 	free_tokens(t1);
 	free_tokens(t2);
-})
 
-TEST(tokenize_no_tokens, {
+	PASS
+}
+
+bool test_tokenize_no_tokens() {
 	const char32_t *code = U"";
 	Token *t = tokenize(code);
 
@@ -30,9 +32,11 @@ TEST(tokenize_no_tokens, {
 	ASSERT_EQUAL(t->end, code);
 
 	free_tokens(t);
-})
 
-TEST(whitespace_between_tokens, {
+	PASS
+}
+
+bool test_whitespace_between_tokens() {
 	const char32_t *code = U"token1\r\t token2";
 	Token *t = tokenize(code);
 
@@ -42,9 +46,11 @@ TEST(whitespace_between_tokens, {
 	ASSERT_EQUAL(t->next->end, code + 15);
 
 	free_tokens(t);
-})
 
-TEST(whitespace_at_eol_ignored, {
+	PASS
+}
+
+bool test_whitespace_at_eol_ignored() {
 	const char32_t *code = U"token   ";
 	Token *t = tokenize(code);
 
@@ -52,9 +58,11 @@ TEST(whitespace_at_eol_ignored, {
 	ASSERT_EQUAL(t->end, code + 5);
 
 	free_tokens(t);
-})
 
-TEST(whitespace_inside_double_quotes_respected, {
+	PASS
+}
+
+bool test_whitespace_inside_double_quotes_respected() {
 	const char32_t *code = U"\"this is a single token\"";
 	Token *t = tokenize(code);
 
@@ -63,9 +71,11 @@ TEST(whitespace_inside_double_quotes_respected, {
 	ASSERT_EQUAL(t->end, code + 24);
 
 	free_tokens(t);
-})
 
-TEST(whitespace_inside_single_quotes_respected, {
+	PASS
+}
+
+bool test_whitespace_inside_single_quotes_respected() {
 	const char32_t *code = U"'this is a single token'";
 	Token *t = tokenize(code);
 
@@ -74,9 +84,11 @@ TEST(whitespace_inside_single_quotes_respected, {
 	ASSERT_EQUAL(t->end, code + 24);
 
 	free_tokens(t);
-})
 
-TEST(brackets_always_make_their_own_token, {
+	PASS
+}
+
+bool test_brackets_always_make_their_own_token() {
 	const char32_t *code = U"left{}right";
 	Token *t = tokenize(code);
 
@@ -93,9 +105,11 @@ TEST(brackets_always_make_their_own_token, {
 	ASSERT_EQUAL(t->next->next->next->end, code + 11);
 
 	free_tokens(t);
-})
 
-TEST(newlines_always_make_their_own_token, {
+	PASS
+}
+
+bool test_newlines_always_make_their_own_token() {
 	const char32_t *code = U"left\nright";
 	Token *t = tokenize(code);
 
@@ -109,26 +123,32 @@ TEST(newlines_always_make_their_own_token, {
 	ASSERT_EQUAL(t->next->next->end, code + 10);
 
 	free_tokens(t);
-})
 
-TEST(token_len, {
+	PASS
+}
+
+bool test_token_len() {
 	Token *token = tokenize(U"token");
 
 	ASSERT_EQUAL(token_len(token), 5);
 
 	free_tokens(token);
-})
 
-TEST(token_cmp, {
+	PASS
+}
+
+bool test_token_cmp() {
 	Token *token = tokenize(U"data");
 
 	ASSERT_TRUTHY(token_cmp(U"data", token));
 	ASSERT_FALSEY(token_cmp(U"not_data", token));
 
 	free_tokens(token);
-})
 
-TEST(token_cmp_match_exact_strings_only, {
+	PASS
+}
+
+bool test_token_cmp_match_exact_strings_only() {
 	Token *token1 = tokenize(U"data");
 	Token *token2 = tokenize(U"dat");
 	Token *token3 = tokenize(U"da");
@@ -143,9 +163,11 @@ TEST(token_cmp_match_exact_strings_only, {
 	free_tokens(token2);
 	free_tokens(token3);
 	free_tokens(token4);
-})
 
-TEST(token_str, {
+	PASS
+}
+
+bool test_token_str() {
 	Token *token = tokenize(U"left right");
 	char32_t *buf = token_str(token);
 
@@ -153,9 +175,11 @@ TEST(token_str, {
 
 	free(buf);
 	free_tokens(token);
-})
 
-TEST(tokenize_comment, {
+	PASS
+}
+
+bool test_tokenize_comment() {
 	const char32_t *code = U"# this is a comment";
 	Token *token = tokenize(code);
 	char32_t *buf = token_str(token);
@@ -164,9 +188,11 @@ TEST(tokenize_comment, {
 
 	free(buf);
 	free_tokens(token);
-})
 
-TEST(tokenize_trailing_comment, {
+	PASS
+}
+
+bool test_tokenize_trailing_comment() {
 	Token *token = tokenize(U"stuff # this is a comment");
 	char32_t *buf1 = token_str(token);
 	char32_t *buf2 = token_str(token->next);
@@ -177,9 +203,11 @@ TEST(tokenize_trailing_comment, {
 	free(buf1);
 	free(buf2);
 	free_tokens(token);
-})
 
-TEST(make_token, {
+	PASS
+}
+
+bool test_make_token() {
 	Token *token = make_token();
 
 	ASSERT_FALSEY(token->begin);
@@ -188,9 +216,11 @@ TEST(make_token, {
 	ASSERT_FALSEY(token->next);
 
 	free_tokens(token);
-})
 
-TEST(tokenize_with_lines_and_columns, {
+	PASS
+}
+
+bool test_tokenize_with_lines_and_columns() {
 	const char32_t *code = U"token1\ntoken2";
 	Token *t = tokenize(code);
 
@@ -202,23 +232,27 @@ TEST(tokenize_with_lines_and_columns, {
 	ASSERT_EQUAL(t->next->next->location.column, 1);
 
 	free_tokens(t);
-})
 
-TEST_SELF(tokenizer,
-	test_tokenize_single_token,
-	test_tokenize_no_tokens,
-	test_whitespace_between_tokens,
-	test_whitespace_at_eol_ignored,
-	test_whitespace_inside_double_quotes_respected,
-	test_whitespace_inside_single_quotes_respected,
-	test_brackets_always_make_their_own_token,
-	test_newlines_always_make_their_own_token,
-	test_token_len,
-	test_token_cmp,
-	test_token_cmp_match_exact_strings_only,
-	test_token_str,
-	test_tokenize_comment,
-	test_tokenize_trailing_comment,
-	test_make_token,
-	test_tokenize_with_lines_and_columns
-)
+	PASS
+}
+
+void tokenizer_test_self(bool *pass) {
+	RUN_ALL(
+		test_tokenize_single_token,
+		test_tokenize_no_tokens,
+		test_whitespace_between_tokens,
+		test_whitespace_at_eol_ignored,
+		test_whitespace_inside_double_quotes_respected,
+		test_whitespace_inside_single_quotes_respected,
+		test_brackets_always_make_their_own_token,
+		test_newlines_always_make_their_own_token,
+		test_token_len,
+		test_token_cmp,
+		test_token_cmp_match_exact_strings_only,
+		test_token_str,
+		test_tokenize_comment,
+		test_tokenize_trailing_comment,
+		test_make_token,
+		test_tokenize_with_lines_and_columns
+	)
+}

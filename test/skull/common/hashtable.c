@@ -7,15 +7,17 @@
 #include "test/skull/common/hashtable.h"
 #include "test/testing.h"
 
-TEST(hashtable_create_and_free, {
+bool test_hashtable_create_and_free() {
 	HashTable *ht = ht_create();
 
 	ASSERT_TRUTHY(ht);
 
 	free_ht(ht, NULL);
-})
 
-TEST(hashtable_add_and_get, {
+	PASS
+}
+
+bool test_hashtable_add_and_get() {
 	HashTable *ht = ht_create();
 
 	int value = 123;
@@ -26,9 +28,11 @@ TEST(hashtable_add_and_get, {
 	ASSERT_EQUAL(value, *found);
 
 	free_ht(ht, NULL);
-})
 
-TEST(hashtable_add_to_existing_slot, {
+	PASS
+}
+
+bool test_hashtable_add_to_existing_slot() {
 	HashTable *ht = ht_create();
 
 	// simulate adding entry into slot that already has an entry
@@ -46,18 +50,22 @@ TEST(hashtable_add_to_existing_slot, {
 	ASSERT_EQUAL(value, *found);
 
 	free_ht(ht, NULL);
-})
 
-TEST(hashtable_cannot_add_null, {
+	PASS
+}
+
+bool test_hashtable_cannot_add_null() {
 	HashTable *ht = ht_create();
 
 	ASSERT_FALSEY(ht_add(ht, "key", NULL));
 	ASSERT_FALSEY(ht_get(ht, "key"));
 
 	free_ht(ht, NULL);
-})
 
-TEST(hashtable_cannot_add_key_twice, {
+	PASS
+}
+
+bool test_hashtable_cannot_add_key_twice() {
 	HashTable *ht = ht_create();
 
 	int value = 123;
@@ -66,19 +74,25 @@ TEST(hashtable_cannot_add_key_twice, {
 	ASSERT_FALSEY(ht_add(ht, "key", &value));
 
 	free_ht(ht, NULL);
-})
 
-TEST(hashtable_with_nulls, {
+	PASS
+}
+
+bool test_hashtable_with_nulls() {
 	ASSERT_FALSEY(ht_get(NULL, "key"));
 	ASSERT_FALSEY(ht_add(NULL, "key", NULL));
 	free_ht(NULL, NULL);
-})
 
-TEST_SELF(hashtable,
-	test_hashtable_create_and_free,
-	test_hashtable_add_and_get,
-	test_hashtable_add_to_existing_slot,
-	test_hashtable_cannot_add_null,
-	test_hashtable_cannot_add_key_twice,
-	test_hashtable_with_nulls
-)
+	PASS
+}
+
+void hashtable_test_self(bool *pass) {
+	RUN_ALL(
+		test_hashtable_create_and_free,
+		test_hashtable_add_and_get,
+		test_hashtable_add_to_existing_slot,
+		test_hashtable_cannot_add_null,
+		test_hashtable_cannot_add_key_twice,
+		test_hashtable_with_nulls
+	)
+}

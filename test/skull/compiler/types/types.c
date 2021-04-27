@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -6,9 +7,11 @@
 #include "test/skull/compiler/types/types.h"
 #include "test/testing.h"
 
-TEST(find_type, {
+bool test_find_type() {
 	ASSERT_EQUAL(find_type("Int"), TYPE_INT);
-})
+
+	PASS
+}
 
 _Bool mangle_types_fixture(
 	Type *type,
@@ -24,7 +27,7 @@ _Bool mangle_types_fixture(
 	return ret;
 }
 
-TEST(type_mangle_types, {
+bool test_type_mangle_types() {
 	ASSERT_TRUTHY(mangle_types_fixture(
 		(Type[]){ TYPE_INT, TYPE_INT }, 2, 'X',
 		"_X<Int,Int>"
@@ -34,9 +37,13 @@ TEST(type_mangle_types, {
 		(Type[]){ TYPE_INT }, 1, 'X',
 		"_X<Int>"
 	));
-})
 
-TEST_SELF(types,
-	test_find_type,
-	test_type_mangle_types
-)
+	PASS
+}
+
+void types_test_self(bool *pass) {
+	RUN_ALL(
+		test_find_type,
+		test_type_mangle_types
+	)
+}
