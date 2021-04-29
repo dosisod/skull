@@ -127,7 +127,8 @@ static void iter_comment(
 		comment = BLOCK_COMMENT;
 
 	else {
-		PANIC(ERR_INVALID_COMMENT_START, { .i = *line_num + 1 });
+		Location location = (Location){ .line = *line_num, .column = *column };
+		PANIC(ERR_INVALID_COMMENT_START, { .loc = &location });
 	}
 
 	if (!token->begin) {
@@ -159,7 +160,11 @@ static void iter_comment(
 			}
 
 			else if (*code == '{') {
-				PANIC(ERR_NESTED_BLOCK_COMMENT, {0});
+				Location location = (Location){
+					.line = *line_num,
+					.column = *column
+				};
+				PANIC(ERR_NESTED_BLOCK_COMMENT, { .loc = &location });
 			}
 		}
 	} while (*code);
