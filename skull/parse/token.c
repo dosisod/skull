@@ -10,26 +10,8 @@
 bool is_whitespace(char32_t);
 bool is_quote(char32_t);
 
-static bool iter_comment(Token *, const char32_t **, unsigned *, unsigned *);
+static void iter_comment(Token *, const char32_t **, unsigned *, unsigned *);
 static void iter_quote(Token *, const char32_t **, unsigned *, unsigned *);
-
-// add current cursor/code state to token
-#define SETUP_TOKEN() \
-	current->begin = code; \
-	current->location.line = line_num; \
-	current->location.column = column;
-
-#define APPEND_TOKEN() \
-	last = current; \
-	current->next = make_token(); \
-	current = current->next
-
-// pinch end of current token, setup next token
-#define PINCH_TOKEN() \
-	current->end = code; \
-	APPEND_TOKEN(); \
-	current->end = code + 1; \
-	SETUP_TOKEN()
 
 typedef enum {
 	NO_COMMENT,
@@ -38,15 +20,20 @@ typedef enum {
 } CommentState;
 
 /*
-Tokenize `code`, return pointer to first token.
+Allocate and append next token, return newly created token.
+*/
+Token *setup_next(Token *token) {
+	return (token->next = make_token());
+}
+
+/*
+Tokenize `code` into linked list of tokens.
 */
 Token *tokenize(const char32_t *code) {
-	const char32_t *const code_copy = code;
-
 	Token *const head = make_token();
 
-	Token *current = head;
-	Token *last = current;
+	Token *token = head;
+	Token *last = token;
 
 	unsigned line_num = 1;
 	unsigned column = 0;
@@ -55,11 +42,12 @@ Token *tokenize(const char32_t *code) {
 		column++;
 
 		if (*code == '#') {
-			if (iter_comment(current, &code, &line_num, &column))
-				break;
+			iter_comment(token, &code, &line_num, &column);
+
+			if (!*code) break;
 		}
 		else if (is_quote(*code)) {
-			iter_quote(current, &code, &line_num, &column);
+			iter_quote(token, &code, &line_num, &column);
 		}
 		else if (
 			*code == '{' ||
@@ -69,26 +57,32 @@ Token *tokenize(const char32_t *code) {
 			*code == ',' ||
 			*code == '\n'
 		) {
-			if (!current->begin) {
-				SETUP_TOKEN();
-				current->end = code + 1;
-			}
-			else {
-				PINCH_TOKEN();
+			if (token->begin) {
+				token->end = code;
+				token = setup_next(token);
 			}
 
-			APPEND_TOKEN();
+			*token = (Token){
+				.begin = code,
+				.end = code + 1,
+				.location = { .line = line_num, .column = column }
+			};
+
+			last = token;
+			token = setup_next(token);
 		}
-		else if (!current->begin) {
+		else if (!token->begin) {
 			if (!is_whitespace(*code)) {
-				SETUP_TOKEN();
+				token->begin = code;
+				token->location.line = line_num;
+				token->location.column = column;
 			}
 		}
-		else if (!current->end) {
+		else if (!token->end) {
 			if (is_whitespace(*code)) {
-				current->end = code;
-
-				APPEND_TOKEN();
+				token->end = code;
+				last = token;
+				token = setup_next(token);
 			}
 		}
 
@@ -101,19 +95,13 @@ Token *tokenize(const char32_t *code) {
 	}
 
 	// close dangling token if there was no whitespace at EOF
-	if (current->begin) {
-		current->end = code;
+	if (token->begin) {
+		token->end = code;
 	}
 	// pop last token since it will not have any data
-	else if (current != head) {
+	else if (token != head) {
 		last->next = NULL;
-		free(current);
-	}
-	// there where no tokens to parse, set safe defaults
-	else {
-		head->begin = code_copy;
-		head->end = code_copy;
-		head->next = NULL;
+		free(token);
 	}
 
 	return head;
@@ -121,11 +109,9 @@ Token *tokenize(const char32_t *code) {
 
 /*
 Iterate through comment, starting at `code`.
-
-Return `true` if the caller should break (EOF was reached).
 */
-static bool iter_comment(
-	Token *current,
+static void iter_comment(
+	Token *token,
 	const char32_t **_code,
 	unsigned *line_num,
 	unsigned *column
@@ -144,10 +130,10 @@ static bool iter_comment(
 		PANIC(ERR_INVALID_COMMENT_START, { .i = *line_num + 1 });
 	}
 
-	if (!current->begin) {
-		current->begin = code;
-		current->location.line = *line_num;
-		current->location.column = *column;
+	if (!token->begin) {
+		token->begin = code;
+		token->location.line = *line_num;
+		token->location.column = *column;
 	}
 
 	code++;
@@ -180,23 +166,16 @@ static bool iter_comment(
 
 	*_code = code;
 
-	if (!*code) {
-		if (comment == BLOCK_COMMENT) {
-			current->end = code;
-			PANIC(ERR_NO_CLOSING_COMMENT, { .loc = &current->location });
-		}
-
-		return true;
+	if (!*code && comment == BLOCK_COMMENT) {
+		PANIC(ERR_NO_CLOSING_COMMENT, { .loc = &token->location });
 	}
-
-	return false;
 }
 
 /*
 Iterate through a quote, starting at `code`.
 */
 static void iter_quote(
-	Token *current,
+	Token *token,
 	const char32_t **_code,
 	unsigned *line_num,
 	unsigned *column
@@ -205,10 +184,10 @@ static void iter_quote(
 
 	char32_t quote = *code;
 
-	if (!current->begin) {
-		current->begin = code;
-		current->location.line = *line_num;
-		current->location.column = *column;
+	if (!token->begin) {
+		token->begin = code;
+		token->location.line = *line_num;
+		token->location.column = *column;
 	}
 
 	do {
@@ -229,7 +208,7 @@ static void iter_quote(
 	} while (*code);
 
 	if (!*code) {
-		PANIC(ERR_NO_CLOSING_QUOTE, { .loc = &current->location });
+		PANIC(ERR_NO_CLOSING_QUOTE, { .loc = &token->location });
 	}
 
 	*_code = code;
@@ -241,10 +220,7 @@ Return true if `c` is whitespace.
 Whitespace is considered as indent/line related control characters.
 */
 __attribute__((const)) bool is_whitespace(char32_t c) {
-	return c == ' ' ||
-		c == '\t' ||
-		c == '\r' ||
-		c == '\n';
+	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
 
 /*
@@ -311,12 +287,12 @@ __attribute__((pure)) size_t token_len(const Token *const token) {
 Free all tokens from `head` and beyond.
 */
 void free_tokens(Token *head) {
-	Token *current;
+	Token *token;
 
 	while (head) {
-		current = head;
+		token = head;
 		head = head->next;
-		current->next = NULL;
-		free(current);
+		token->next = NULL;
+		free(token);
 	}
 }

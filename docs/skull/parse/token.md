@@ -1,21 +1,25 @@
 # skull/parse/token
 
 ```c
+Token *setup_next(Token *token)
+```
+
+> Allocate and append next token, return newly created token.
+
+```c
 Token *tokenize(const char32_t *code)
 ```
 
-> Tokenize `code`, return pointer to first token.
+> Tokenize `code` into linked list of tokens.
 
 ```c
-static bool iter_comment(Token *current, const char32_t **_code, unsigned *line_num, unsigned *column)
+static void iter_comment(Token *token, const char32_t **_code, unsigned *line_num, unsigned *column)
 ```
 
 > Iterate through comment, starting at `code`.
-> \
-> Return `true` if the caller should break (EOF was reached).
 
 ```c
-static void iter_quote(Token *current, const char32_t **_code, unsigned *line_num, unsigned *column)
+static void iter_quote(Token *token, const char32_t **_code, unsigned *line_num, unsigned *column)
 ```
 
 > Iterate through a quote, starting at `code`.

@@ -28,8 +28,8 @@ bool test_tokenize_no_tokens() {
 	const char32_t *code = U"";
 	Token *t = tokenize(code);
 
-	ASSERT_EQUAL(t->begin, code);
-	ASSERT_EQUAL(t->end, code);
+	ASSERT_FALSEY(t->begin);
+	ASSERT_FALSEY(t->end);
 
 	free_tokens(t);
 
