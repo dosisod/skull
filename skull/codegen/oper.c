@@ -555,7 +555,7 @@ Expr gen_expr_oper(
 			NULL;
 
 	const Expr lhs = lhs_token ?
-		gen_expr_oper(type, expr->lhs.expr, var) :
+		gen_expr_oper(is_diff_type ? NULL : type, expr->lhs.expr, var) :
 		(Expr){0};
 
 	const Token *rhs_token = expr->rhs.expr->lhs.tok;
