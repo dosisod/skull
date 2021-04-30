@@ -12,7 +12,7 @@ Variable *scope_find_var(const Token *const token) {
 	char *const var_name = token_mbs_str(token);
 	Variable *const var = scope_find_name(SKULL_STATE.scope, var_name);
 
-	if (!var) {
+	if (!var || !var->ref) {
 		PANIC(ERR_VAR_NOT_FOUND, {
 			.loc = &token->location, .real = var_name
 		});
