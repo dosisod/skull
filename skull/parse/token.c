@@ -43,6 +43,7 @@ Token *tokenize(const char32_t *code) {
 
 		if (*code == '#') {
 			iter_comment(token, &code, &line_num, &column);
+			token->type = TOKEN_COMMENT;
 
 			if (!*code) break;
 		}
@@ -67,6 +68,16 @@ Token *tokenize(const char32_t *code) {
 				.end = code + 1,
 				.location = { .line = line_num, .column = column }
 			};
+
+			switch (*code) {
+				case '{': token->type = TOKEN_BRACKET_OPEN; break;
+				case '}': token->type = TOKEN_BRACKET_CLOSE; break;
+				case '(': token->type = TOKEN_PAREN_OPEN; break;
+				case ')': token->type = TOKEN_PAREN_CLOSE; break;
+				case ',': token->type = TOKEN_COMMA; break;
+				case '\n': token->type = TOKEN_NEWLINE; break;
+				default: break; // make GCC happy
+			}
 
 			last = token;
 			token = setup_next(token);

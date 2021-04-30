@@ -22,16 +22,28 @@
 Classify the token `token`.
 */
 void classify_token(Token *const token) {
+	if (token->type) return;
+
+	const size_t len = token_len(token);
+
+	if (len == 1) {
+		switch (*token->begin) {
+			case '=': token->type = TOKEN_OPER_EQUAL; return;
+			case '+': token->type = TOKEN_OPER_PLUS; return;
+			case '-': token->type = TOKEN_OPER_MINUS; return;
+			case '*': token->type = TOKEN_OPER_MULT; return;
+			case '/': token->type = TOKEN_OPER_DIV; return;
+			case '<': token->type = TOKEN_OPER_LESS_THAN; return;
+			case '>': token->type = TOKEN_OPER_GTR_THAN; return;
+			case '^': token->type = TOKEN_OPER_POW; return;
+			default: break;
+		}
+	}
+
 	char32_t *const str = token_str(token);
 
-	if (false) {} // setup for macros
+	if (false) {}
 
-	TOKEN_TRY_STR("\n", TOKEN_NEWLINE)
-	TOKEN_TRY_STR(",", TOKEN_COMMA)
-	TOKEN_TRY_STR("{", TOKEN_BRACKET_OPEN)
-	TOKEN_TRY_STR("}", TOKEN_BRACKET_CLOSE)
-	TOKEN_TRY_STR("(", TOKEN_PAREN_OPEN)
-	TOKEN_TRY_STR(")", TOKEN_PAREN_CLOSE)
 	TOKEN_TRY_STR("mut", TOKEN_KW_MUT)
 	TOKEN_TRY_STR("return", TOKEN_KW_RETURN)
 	TOKEN_TRY_STR("unreachable", TOKEN_KW_UNREACHABLE)
@@ -41,11 +53,6 @@ void classify_token(Token *const token) {
 	TOKEN_TRY_STR("while", TOKEN_KW_WHILE)
 	TOKEN_TRY_STR("external", TOKEN_KW_EXTERNAL)
 	TOKEN_TRY_STR("export", TOKEN_KW_EXPORT)
-	TOKEN_TRY_STR("=", TOKEN_OPER_EQUAL)
-	TOKEN_TRY_STR("+", TOKEN_OPER_PLUS)
-	TOKEN_TRY_STR("-", TOKEN_OPER_MINUS)
-	TOKEN_TRY_STR("*", TOKEN_OPER_MULT)
-	TOKEN_TRY_STR("/", TOKEN_OPER_DIV)
 	TOKEN_TRY_STR("mod", TOKEN_OPER_MOD)
 	TOKEN_TRY_STR(":=", TOKEN_OPER_AUTO_EQUAL)
 	TOKEN_TRY_STR("not", TOKEN_OPER_NOT)
@@ -54,19 +61,10 @@ void classify_token(Token *const token) {
 	TOKEN_TRY_STR("and", TOKEN_OPER_AND)
 	TOKEN_TRY_STR("or", TOKEN_OPER_OR)
 	TOKEN_TRY_STR("xor", TOKEN_OPER_XOR)
-	TOKEN_TRY_STR("<", TOKEN_OPER_LESS_THAN)
-	TOKEN_TRY_STR(">", TOKEN_OPER_GTR_THAN)
 	TOKEN_TRY_STR("<=", TOKEN_OPER_LESS_THAN_EQ)
 	TOKEN_TRY_STR(">=", TOKEN_OPER_GTR_THAN_EQ)
 	TOKEN_TRY_STR("<<", TOKEN_OPER_LSHIFT)
 	TOKEN_TRY_STR(">>", TOKEN_OPER_RSHIFT)
-	TOKEN_TRY_STR("^", TOKEN_OPER_POW)
-
-	TOKEN_SET_IF(str[0] == '#' && (
-		str[1] == ' ' ||
-		str[1] == '{' ||
-		!str[1]
-	), TOKEN_COMMENT)
 
 	TOKEN_SET_IF(is_constant_integer_str(str), TOKEN_INT_CONST)
 	TOKEN_SET_IF(is_constant_float_str(str), TOKEN_FLOAT_CONST)
@@ -80,8 +78,6 @@ void classify_token(Token *const token) {
 
 		if (token->end[-1] == ':') {
 			token->type = TOKEN_NEW_IDENTIFIER;
-
-			const size_t len = token_len(token);
 			str[len - 1] = '\0';
 
 			if (is_reserved_str(str) || is_type_str(str)) {
