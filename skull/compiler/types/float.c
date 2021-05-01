@@ -17,15 +17,15 @@ SkullFloat eval_float(const Token *const token) {
 
 	if (strcmp("Infinity", float_str) == 0) {
 		free(float_str);
-		return INFINITY;
+		return (double)INFINITY;
 	}
 	if (strcmp("-Infinity", float_str) == 0) {
 		free(float_str);
-		return -INFINITY;
+		return (double)-INFINITY;
 	}
 	if (strcmp("NaN", float_str) == 0) {
 		free(float_str);
-		return NAN;
+		return (double)NAN;
 	}
 
 	strip_underscore_num(float_str, '.');
