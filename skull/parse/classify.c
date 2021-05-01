@@ -195,6 +195,7 @@ Returns true if `str` is a valid float (with decimal).
 Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
 bool is_constant_float_str(const char32_t *str) {
+	if (c32scmp(U"NaN", str)) return true;
 	if (*str == '-') str++;
 	if (c32scmp(U"Infinity", str)) return true;
 	if (*str == '.' || *str == '_') return false;
