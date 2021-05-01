@@ -81,7 +81,7 @@ const char __attribute__((pure)) *strrstr(const char *const str, const char *con
 > `NULL` is returned if no such string is found.
 
 ```c
-char32_t c32unhex(char32_t c)
+__attribute__((const)) char32_t c32unhex(char32_t c)
 ```
 
 > Convert `c` as an ASCII hex value to an integer.

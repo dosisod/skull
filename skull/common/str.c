@@ -218,7 +218,7 @@ const char __attribute__((pure)) *strrstr(
 /*
 Convert `c` as an ASCII hex value to an integer.
 */
-char32_t c32unhex(char32_t c) {
+__attribute__((const)) char32_t c32unhex(char32_t c) {
 	switch (c) {
 		case '0': return 0;
 		case '1': return 1;
