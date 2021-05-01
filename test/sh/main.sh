@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# shellcheck disable=SC2015,SC2044
+# shellcheck disable=SC2015,SC2044,SC2181
 
 passed=true
 
@@ -26,6 +26,7 @@ test_normal() {
 
 	rm -f "./$dir/.$file.ll"
 	./build/skull/_skull "./$dir/$file" 2> /dev/null
+	[ "$?" = "0" ] || { fail; return; }
 
 	compare "./$dir/_$file.ll" "./$dir/.$file.ll"
 	rm -f "./$dir/.$file.ll"
@@ -39,6 +40,7 @@ test_error() {
 	printf "%s" "$dir/$file "
 
 	./build/skull/_skull "./$dir/$file" 2> "./$dir/.$file.out"
+	[ "$?" = "1" ] || { fail; return; }
 
 	compare "./$dir/.$file.out" "./$dir/_$file.out"
 	rm -f "./$dir/.$file.out"
