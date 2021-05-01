@@ -24,6 +24,6 @@ typedef struct Scope {
 Scope *make_scope(void);
 
 Variable *scope_find_name(const Scope *const, const char *);
-_Bool scope_add_var(Scope *const, Variable *const);
+_Bool scope_add_var(Scope **, Variable *const);
 
 void free_scope(Scope *);

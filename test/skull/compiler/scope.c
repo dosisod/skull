@@ -18,7 +18,7 @@ bool test_scope_find_name() {
 	Scope *scope = make_scope();
 	Variable *var = make_variable(TYPE_INT, U"x", true);
 
-	scope_add_var(scope, var);
+	scope_add_var(&scope, var);
 
 	ASSERT_EQUAL(scope_find_name(scope, "x"), var);
 	ASSERT_FALSEY(scope_find_name(scope, "y"));
@@ -32,7 +32,7 @@ bool test_add_vars_to_scope() {
 	Scope *scope = make_scope();
 	Variable *var = make_variable(TYPE_INT, U"x", true);
 
-	scope_add_var(scope, var);
+	scope_add_var(&scope, var);
 
 	ASSERT_EQUAL(ht_get(scope->vars, "x"), var);
 
@@ -46,8 +46,8 @@ bool test_cannot_add_same_varname_to_scope() {
 	Variable *var1 = make_variable(TYPE_INT, U"x", true);
 	Variable *var2 = make_variable(TYPE_INT, U"x", true);
 
-	ASSERT_TRUTHY(scope_add_var(scope, var1));
-	ASSERT_FALSEY(scope_add_var(scope, var2));
+	ASSERT_TRUTHY(scope_add_var(&scope, var1));
+	ASSERT_FALSEY(scope_add_var(&scope, var2));
 
 	ASSERT_EQUAL(ht_get(scope->vars, "x"), var1);
 
@@ -61,7 +61,7 @@ bool test_free_scope() {
 	Scope *scope = make_scope();
 	Variable *var = make_variable(TYPE_INT, U"x", true);
 
-	scope_add_var(scope, var);
+	scope_add_var(&scope, var);
 
 	free_scope(scope);
 

@@ -80,8 +80,7 @@ void generate_llvm(
 		.builder = builder,
 		.ctx = ctx,
 		.module = main_module,
-		.filename = filename,
-		.scope = make_scope()
+		.filename = filename
 	};
 
 	SKULL_STATE.main_func = (FunctionDeclaration){

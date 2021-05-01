@@ -45,7 +45,7 @@ Variable *node_to_var(const AstNode *const node) {
 		node->var_def->is_const
 	);
 
-	if (scope_add_var(SKULL_STATE.scope, var)) {
+	if (scope_add_var(&SKULL_STATE.scope, var)) {
 		free(name);
 		return var;
 	}

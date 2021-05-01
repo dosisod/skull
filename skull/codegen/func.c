@@ -40,7 +40,10 @@ void gen_stmt_func_decl(const AstNode *const node) {
 	const bool is_export = node->func_proto->is_export;
 	const Token *const func_name_token = node->func_proto->name_tok;
 
-	if ((is_export || is_external) && SKULL_STATE.scope->sub_scope) {
+	if ((is_export || is_external) &&
+		SKULL_STATE.scope &&
+		SKULL_STATE.scope->sub_scope
+	) {
 		PANIC(ERR_NO_NESTED, { .tok = func_name_token });
 	}
 
@@ -257,7 +260,8 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
 
-	MAKE_SUB_SCOPE;
+	Scope *scope_copy;
+	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
 
 	if (func->param_types) {
 		LLVMValueRef next_param = LLVMGetFirstParam(func->function);
@@ -269,7 +273,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 				true
 			);
 
-			if (!scope_add_var(SKULL_STATE.scope, param_var)) {
+			if (!scope_add_var(&SKULL_STATE.scope, param_var)) {
 				PANIC(ERR_SHADOW_VAR, { .var = param_var });
 			}
 
@@ -280,7 +284,7 @@ void define_function(const AstNode *const node, FunctionDeclaration *func) {
 
 	const Expr returned = gen_node(node->child);
 
-	RESTORE_SUB_SCOPE;
+	restore_sub_scope(&SKULL_STATE.scope, &scope_copy);
 
 	if (!returned.value && func->return_type) {
 		PANIC(ERR_EXPECTED_RETURN, {

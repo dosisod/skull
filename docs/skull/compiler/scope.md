@@ -17,7 +17,7 @@ typedef struct Scope {
 > `sub_scope` stores a nested scope with more variables in it.
 
 ```c
-bool scope_add_var(Scope *const scope, Variable *const var)
+bool scope_add_var(Scope **scope, Variable *const var)
 ```
 
 > Add variable `var` to `scope`.

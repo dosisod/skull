@@ -21,3 +21,21 @@ Variable *scope_find_var(const Token *const token) {
 
 	return var;
 }
+
+/*
+Make new scope and set the current scope to be a sub-scope of the new one.
+*/
+void make_sub_scope(Scope **old, Scope **new) {
+	*new = *old;
+	if (!*new) *new = make_scope();
+	*old = make_scope();
+	(*old)->sub_scope = *new;
+}
+
+/*
+Free the new scope, set the current scope to the old sub-scope.
+*/
+void restore_sub_scope(Scope **old, Scope **new) {
+	free_scope(*old);
+	*old = *new;
+}

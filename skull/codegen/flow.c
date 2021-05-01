@@ -230,7 +230,8 @@ void gen_control_code_block(
 		});
 	}
 
-	MAKE_SUB_SCOPE;
+	Scope *scope_copy;
+	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
 
 	if (node->child->token) {
 		const Expr returned = gen_node(node->child);
@@ -242,5 +243,5 @@ void gen_control_code_block(
 		LLVMBuildBr(SKULL_STATE.builder, block);
 	}
 
-	RESTORE_SUB_SCOPE;
+	restore_sub_scope(&SKULL_STATE.scope, &scope_copy);
 }
