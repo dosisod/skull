@@ -41,7 +41,7 @@ Expr gen_node(AstNode *node) {
 
 	while (node) {
 		if (returned.value) {
-			PANIC(ERR_UNREACHALE_CODE, {0});
+			PANIC(ERR_UNREACHABLE_CODE, { .loc = &node->token->location });
 		}
 
 		returned = _gen_node(&node);
@@ -76,7 +76,9 @@ static Expr _gen_node(AstNode **node) {
 
 	switch ((*node)->type) {
 		case AST_NODE_IF: gen_control_if(node); break;
-		case AST_NODE_ELSE: { PANIC(ERR_ELSE_MISSING_IF, {0}); }
+		case AST_NODE_ELSE: {
+			PANIC(ERR_ELSE_MISSING_IF, { .loc = &(*node)->token->location });
+		}
 		case AST_NODE_COMMENT: break;
 		case AST_NODE_RETURN: return gen_stmt_return(node);
 		case AST_NODE_UNREACHABLE: return gen_stmt_unreachable();
