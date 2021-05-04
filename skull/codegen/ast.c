@@ -40,11 +40,16 @@ Expr gen_node(AstNode *node) {
 	Expr returned = (Expr){0};
 
 	while (node) {
-		if (returned.value) {
+		if (returned.value && !(
+			node->type == AST_NODE_COMMENT ||
+			node->type == AST_NODE_UNREACHABLE
+		)) {
 			PANIC(ERR_UNREACHABLE_CODE, { .loc = &node->token->location });
 		}
 
-		returned = _gen_node(&node);
+		Expr parsed = _gen_node(&node);
+		if (!returned.value) returned = parsed;
+
 		node = node->next;
 	}
 
