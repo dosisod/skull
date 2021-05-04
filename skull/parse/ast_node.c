@@ -525,6 +525,12 @@ static AstNodeExpr *parse_func_call(Token **token) {
 	unsigned short num_values = 0;
 
 	while (true) {
+		if (!*token) {
+			PANIC(ERR_UNCLOSED_FUNC_CALL, {
+				.loc = &func_name_token->location
+			});
+		}
+
 		if (try_parse_expression(token, &child)) num_values++;
 
 		if ((*token)->type == TOKEN_PAREN_CLOSE) break;

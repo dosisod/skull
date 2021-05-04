@@ -46,6 +46,7 @@
 	"cannot declare nested function \"%s\" as external or exported\n"
 #define ERR_NOT_COMPARIBLE "cannot compare value near \"%s\"\n"
 #define ERR_EXPECTED_COMMA "expected comma"
+#define ERR_UNCLOSED_FUNC_CALL "function call missing closing parenthesis"
 #define ERR_TYPE_NOT_FOUND "type \"%s\" could not be found\n"
 #define ERR_ALIAS_ALREADY_DEFINED "alias \"%s\" is already defined\n"
 #define ERR_ASSIGN_MISSING_EXPR "expected expression in assignment variable"
