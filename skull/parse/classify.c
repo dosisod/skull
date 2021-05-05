@@ -53,6 +53,7 @@ void classify_token(Token *const token) {
 	TOKEN_TRY_STR("while", TOKEN_KW_WHILE)
 	TOKEN_TRY_STR("external", TOKEN_KW_EXTERNAL)
 	TOKEN_TRY_STR("export", TOKEN_KW_EXPORT)
+	TOKEN_TRY_STR("noop", TOKEN_KW_NOOP)
 	TOKEN_TRY_STR("mod", TOKEN_OPER_MOD)
 	TOKEN_TRY_STR(":=", TOKEN_OPER_AUTO_EQUAL)
 	TOKEN_TRY_STR("not", TOKEN_OPER_NOT)
@@ -131,6 +132,7 @@ bool is_reserved_str(const char32_t *const str) {
 		c32scmp(U"while", str) ||
 		c32scmp(U"external", str) ||
 		c32scmp(U"export", str) ||
+		c32scmp(U"noop", str) ||
 		c32scmp(U"mod", str) ||
 		c32scmp(U"isnt", str) ||
 		c32scmp(U"and", str) ||

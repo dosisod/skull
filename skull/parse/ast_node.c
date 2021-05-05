@@ -410,6 +410,11 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 			*token = (*token)->next;
 			continue;
 		}
+		if (token_type == TOKEN_KW_NOOP) {
+			push_ast_node(*token, *token, AST_NODE_NOOP, &node);
+			*token = (*token)->next;
+			continue;
+		}
 
 		free(head);
 		PANIC(ERR_UNEXPECTED_TOKEN, { .tok = *token });

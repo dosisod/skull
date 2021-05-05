@@ -1,3 +1,4 @@
 return 0
 unreachable
 # some comment
+noop

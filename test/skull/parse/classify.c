@@ -35,6 +35,7 @@ bool test_is_reserved_str() {
 	ASSERT_TRUTHY(is_reserved_str(U"while"));
 	ASSERT_TRUTHY(is_reserved_str(U"external"));
 	ASSERT_TRUTHY(is_reserved_str(U"export"));
+	ASSERT_TRUTHY(is_reserved_str(U"noop"));
 	ASSERT_TRUTHY(is_reserved_str(U"mod"));
 	ASSERT_TRUTHY(is_reserved_str(U"isnt"));
 	ASSERT_TRUTHY(is_reserved_str(U"and"));
