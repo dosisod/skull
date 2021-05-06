@@ -354,7 +354,9 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 				free(head);
 				return NULL;
 			}
-
+			if (!child->token) {
+				PANIC(ERR_EMPTY_BLOCK, { .loc = &(*token)->location });
+			}
 			if (!node->last) {
 				head->child = child;
 				child->parent = head;

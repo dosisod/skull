@@ -70,9 +70,7 @@ void assert_sane_child(AstNode *node) {
 		(node_type == AST_NODE_EXPR && node->expr->oper == EXPR_FUNC)
 	)) {
 		PANIC(ERR_UNEXPECTED_CODE_BLOCK, {
-			.loc = node->child->token ?
-				&node->child->token->location :
-				NULL
+			.loc = &node->child->token->location
 		});
 	}
 }

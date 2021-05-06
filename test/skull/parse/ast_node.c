@@ -96,7 +96,7 @@ bool test_make_ast_tree_return() {
 	PASS
 }
 bool test_make_ast_tree_if() {
-	const char32_t *const code = U"if true { }";
+	const char32_t *const code = U"if true { noop }";
 	AstNode *node = make_ast_tree(code);
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
@@ -112,7 +112,7 @@ bool test_make_ast_tree_if() {
 }
 
 bool test_make_ast_tree_if_with_var() {
-	const char32_t *const code = U"if x { }";
+	const char32_t *const code = U"if x { noop }";
 	AstNode *node = make_ast_tree(code);
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
