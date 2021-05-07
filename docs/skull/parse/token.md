@@ -13,16 +13,20 @@ Token *tokenize(const char32_t *code)
 > Tokenize `code` into linked list of tokens.
 
 ```c
-static void iter_comment(Token *token, const char32_t **_code, unsigned *line_num, unsigned *column)
+static bool iter_comment(Token *token, const char32_t **_code, unsigned *line_num, unsigned *column)
 ```
 
 > Iterate through comment, starting at `code`.
+> \
+> Return `true` if errors occurred.
 
 ```c
-static void iter_quote(Token *token, const char32_t **_code, unsigned *line_num, unsigned *column)
+static bool iter_quote(Token *token, const char32_t **_code, unsigned *line_num, unsigned *column)
 ```
 
 > Iterate through a quote, starting at `code`.
+> \
+> Return `true` if errors occurred.
 
 ```c
 __attribute__((const)) bool is_whitespace(char32_t c)

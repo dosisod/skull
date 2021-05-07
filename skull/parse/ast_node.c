@@ -37,6 +37,10 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	Token *token = tokenize(code);
 	Token *head = token;
 
+	if (!token) {
+		return NULL;
+	}
+
 	classify_tokens(token);
 
 	AstNode *const tree = make_ast_tree_(&token, 0);

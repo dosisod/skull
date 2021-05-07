@@ -10,8 +10,8 @@
 bool is_whitespace(char32_t);
 bool is_quote(char32_t);
 
-static void iter_comment(Token *, const char32_t **, unsigned *, unsigned *);
-static void iter_quote(Token *, const char32_t **, unsigned *, unsigned *);
+static bool iter_comment(Token *, const char32_t **, unsigned *, unsigned *);
+static bool iter_quote(Token *, const char32_t **, unsigned *, unsigned *);
 
 typedef enum {
 	NO_COMMENT,
@@ -42,13 +42,19 @@ Token *tokenize(const char32_t *code) {
 		column++;
 
 		if (*code == '#') {
-			iter_comment(token, &code, &line_num, &column);
+			if (iter_comment(token, &code, &line_num, &column)) {
+				return NULL;
+			}
+
 			token->type = TOKEN_COMMENT;
 
 			if (!*code) break;
 		}
 		else if (is_quote(*code)) {
-			iter_quote(token, &code, &line_num, &column);
+			if (iter_quote(token, &code, &line_num, &column)) {
+				free_tokens(head);
+				return NULL;
+			}
 		}
 		else if (
 			*code == '{' ||
@@ -120,8 +126,10 @@ Token *tokenize(const char32_t *code) {
 
 /*
 Iterate through comment, starting at `code`.
+
+Return `true` if errors occurred.
 */
-static void iter_comment(
+static bool iter_comment(
 	Token *token,
 	const char32_t **_code,
 	unsigned *line_num,
@@ -139,7 +147,8 @@ static void iter_comment(
 
 	else {
 		Location location = (Location){ .line = *line_num, .column = *column };
-		PANIC(ERR_INVALID_COMMENT_START, { .loc = &location });
+		FMT_ERROR(ERR_INVALID_COMMENT_START, { .loc = &location });
+		return true;
 	}
 
 	if (!token->begin) {
@@ -175,7 +184,8 @@ static void iter_comment(
 					.line = *line_num,
 					.column = *column
 				};
-				PANIC(ERR_NESTED_BLOCK_COMMENT, { .loc = &location });
+				FMT_ERROR(ERR_NESTED_BLOCK_COMMENT, { .loc = &location });
+				return true;
 			}
 		}
 	} while (*code);
@@ -183,14 +193,19 @@ static void iter_comment(
 	*_code = code;
 
 	if (!*code && comment == BLOCK_COMMENT) {
-		PANIC(ERR_NO_CLOSING_COMMENT, { .loc = &token->location });
+		FMT_ERROR(ERR_NO_CLOSING_COMMENT, { .loc = &token->location });
+		return true;
 	}
+
+	return false;
 }
 
 /*
 Iterate through a quote, starting at `code`.
+
+Return `true` if errors occurred.
 */
-static void iter_quote(
+static bool iter_quote(
 	Token *token,
 	const char32_t **_code,
 	unsigned *line_num,
@@ -224,10 +239,12 @@ static void iter_quote(
 	} while (*code);
 
 	if (!*code) {
-		PANIC(ERR_NO_CLOSING_QUOTE, { .loc = &token->location });
+		FMT_ERROR(ERR_NO_CLOSING_QUOTE, { .loc = &token->location });
+		return true;
 	}
 
 	*_code = code;
+	return false;
 }
 
 /*

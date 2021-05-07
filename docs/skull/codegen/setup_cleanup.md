@@ -1,7 +1,7 @@
 # skull/codegen/setup_cleanup
 
 ```c
-int write_file(char *filename)
+bool write_file(char *filename)
 ```
 
 > Write LLVM code to `filename`, return whether error occured.
@@ -9,10 +9,12 @@ int write_file(char *filename)
 > Function takes control of `filename`.
 
 ```c
-void generate_llvm(const char *filename, char *file_contents)
+bool generate_llvm(const char *filename, char *file_contents)
 ```
 
 > Create a module named `filename` from `file_contents`.
+> \
+> Return `true` if errors occurred.
 
 ```c
 char *create_llvm_main_func(const char *filename)

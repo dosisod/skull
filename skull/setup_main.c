@@ -71,8 +71,10 @@ int build_file(char *filename) {
 	}
 	fclose(f);
 
-	generate_llvm(filename, file_contents);
+	const bool failed = generate_llvm(filename, file_contents);
 	free(file_contents);
+
+	if (failed) return failed;
 
 	return write_file(gen_filename(filename));
 }

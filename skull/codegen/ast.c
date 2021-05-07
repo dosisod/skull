@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -16,17 +15,25 @@
 
 /*
 Generate code from `str_`.
+
+Return `true` if errors occurred.
 */
-void codegen_str(char *const str_) {
+bool codegen_str(char *const str_) {
 	char32_t *const str = mbstoc32s(str_);
 
 	AstNode *const node = make_ast_tree(str);
+	if (!node) {
+		free(str);
+		return true;
+	}
 
 	if (!gen_node(node).value)
 		LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
 
 	free_ast_tree(node);
 	free(str);
+
+	return false;
 }
 
 static Expr _gen_node(AstNode **);

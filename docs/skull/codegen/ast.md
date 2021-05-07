@@ -1,10 +1,12 @@
 # skull/codegen/ast
 
 ```c
-void codegen_str(char *const str_)
+bool codegen_str(char *const str_)
 ```
 
 > Generate code from `str_`.
+> \
+> Return `true` if errors occurred.
 
 ```c
 Expr gen_node(AstNode *node)
