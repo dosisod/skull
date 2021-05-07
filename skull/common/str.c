@@ -119,6 +119,8 @@ char32_t *mbstoc32s(const char *str) {
 
 		if (errno == EILSEQ) {
 			FMT_ERROR(ERR_ILLEGAL_SEQ_AT, { .i = offset + 1 });
+
+			free(ret);
 			return NULL;
 		}
 

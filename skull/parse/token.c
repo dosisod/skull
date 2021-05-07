@@ -43,6 +43,7 @@ Token *tokenize(const char32_t *code) {
 
 		if (*code == '#') {
 			if (iter_comment(token, &code, &line_num, &column)) {
+				free_tokens(head);
 				return NULL;
 			}
 

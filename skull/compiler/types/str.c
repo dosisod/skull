@@ -31,11 +31,5 @@ SkullStr eval_str(const Token *const token) {
 	}
 	copy[wrote] = '\0';
 
-	char32_t *old_str = copy;
-	copy = Realloc(copy, (wrote + 1) * sizeof(char32_t));
-	if (copy != old_str) {
-		free(old_str);
-	}
-
-	return copy;
+	return Realloc(copy, (wrote + 1) * sizeof(char32_t));
 }

@@ -275,8 +275,8 @@ static bool try_parse_function_proto(Token **_token, AstNode **node) {
 		TOKEN_PAREN_CLOSE,
 		token_type)
 	) {
-		free_vector(param_names, NULL);
-		free_vector(param_type_names, NULL);
+		free_vector(param_names, free);
+		free_vector(param_type_names, free);
 
 		return false;
 	}
@@ -350,6 +350,7 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 					.loc = &(*token)->location
 				});
 
+				free_ast_tree_(head);
 				return NULL;
 			}
 
@@ -357,12 +358,14 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 			AstNode *const child = make_ast_tree_(token, indent_lvl + 1);
 
 			if (!child) {
-				free(head);
+				free_ast_tree_(head);
 				return NULL;
 			}
 			if (!child->token) {
 				FMT_ERROR(ERR_EMPTY_BLOCK, { .loc = &(*token)->location });
 
+				free_ast_tree_(head);
+				free_ast_tree_(child);
 				return NULL;
 			}
 			if (!node->last) {
@@ -382,7 +385,7 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 
 		if (token_type == TOKEN_BRACKET_CLOSE) {
 			if (indent_lvl == 0) {
-				free(head);
+				free_ast_tree_(head);
 				FMT_ERROR(ERR_MISSING_OPEN_BRAK, { .loc = &(*token)->location });
 				return NULL;
 			}
@@ -427,13 +430,13 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 			continue;
 		}
 
-		free(head);
+		free_ast_tree_(head);
 		FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = *token });
 		return NULL;
 	}
 
 	if (!*token && indent_lvl != 0) {
-		free(head);
+		free_ast_tree_(head);
 		FMT_ERROR(ERR_EOF_NO_BRACKET, {0});
 		return NULL;
 	}
@@ -609,6 +612,25 @@ void free_ast_tree(AstNode *node) {
 	};
 }
 
+static void free_expr_node(AstNodeExpr *expr) {
+	if (!expr) return;
+
+	if (expr->oper == EXPR_IDENTIFIER || expr->oper == EXPR_CONST) {
+		free(expr);
+		return;
+	}
+	if (expr->oper == EXPR_FUNC) {
+		free_ast_tree_((void *)expr->func_call->params);
+		free(expr->func_call);
+		free(expr);
+		return;
+	}
+
+	free_expr_node((void *)expr->lhs.expr);
+	free_expr_node((void *)expr->rhs.expr);
+	free(expr);
+}
+
 /*
 Internal AST freeing function, dont call directly.
 */
@@ -640,12 +662,7 @@ static void free_ast_tree_(AstNode *node) {
 			free(node->var_def);
 		}
 		else if (node->type == AST_NODE_EXPR) {
-			if (node->expr->oper == EXPR_FUNC) {
-				free_ast_tree_((AstNode *)node->expr->func_call->params);
-				free(node->expr->func_call);
-			}
-
-			free(node->expr);
+			free_expr_node(node->expr);
 		}
 
 		if (node->child)
