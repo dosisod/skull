@@ -12,7 +12,7 @@
 #include "skull/common/io.h"
 #include "skull/common/local.h"
 #include "skull/common/malloc.h"
-#include "skull/common/panic.h"
+#include "skull/common/str.h"
 #include "skull/setup_main.h"
 
 #define DIE(x) fprintf(stderr, "skull: %s\n", x); return 1
@@ -67,7 +67,9 @@ int build_file(char *filename) {
 	char *const file_contents = read_file(f);
 	if (!file_contents) {
 		SKULL_STATE.filename = filename;
-		PANIC(ERR_FILE_EMPTY, {0});
+
+		FMT_ERROR(ERR_FILE_EMPTY, {0});
+		return 1;
 	}
 	fclose(f);
 

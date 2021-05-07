@@ -20,6 +20,9 @@ Return `true` if errors occurred.
 */
 bool codegen_str(char *const str_) {
 	char32_t *const str = mbstoc32s(str_);
+	if (!str) {
+		return true;
+	}
 
 	AstNode *const node = make_ast_tree(str);
 	if (!node) {

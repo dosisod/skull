@@ -346,9 +346,11 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 
 		if (token_type == TOKEN_BRACKET_OPEN) {
 			if (node->last && node->last->child) {
-				PANIC(ERR_UNEXPECTED_CODE_BLOCK, {
+				FMT_ERROR(ERR_UNEXPECTED_CODE_BLOCK, {
 					.loc = &(*token)->location
 				});
+
+				return NULL;
 			}
 
 			*token = (*token)->next;
@@ -359,7 +361,9 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 				return NULL;
 			}
 			if (!child->token) {
-				PANIC(ERR_EMPTY_BLOCK, { .loc = &(*token)->location });
+				FMT_ERROR(ERR_EMPTY_BLOCK, { .loc = &(*token)->location });
+
+				return NULL;
 			}
 			if (!node->last) {
 				head->child = child;
@@ -379,7 +383,8 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 		if (token_type == TOKEN_BRACKET_CLOSE) {
 			if (indent_lvl == 0) {
 				free(head);
-				PANIC(ERR_MISSING_OPEN_BRAK, { .loc = &(*token)->location });
+				FMT_ERROR(ERR_MISSING_OPEN_BRAK, { .loc = &(*token)->location });
+				return NULL;
 			}
 
 			break;
@@ -423,12 +428,14 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 		}
 
 		free(head);
-		PANIC(ERR_UNEXPECTED_TOKEN, { .tok = *token });
+		FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = *token });
+		return NULL;
 	}
 
 	if (!*token && indent_lvl != 0) {
 		free(head);
-		PANIC(ERR_EOF_NO_BRACKET, {0});
+		FMT_ERROR(ERR_EOF_NO_BRACKET, {0});
+		return NULL;
 	}
 
 	if (node->last && head != node) {

@@ -118,7 +118,8 @@ char32_t *mbstoc32s(const char *str) {
 		const size_t length = mbrtoc32(ret + offset, str, MB_CUR_MAX, &mbs);
 
 		if (errno == EILSEQ) {
-			PANIC(ERR_ILLEGAL_SEQ_AT, { .i = offset + 1 });
+			FMT_ERROR(ERR_ILLEGAL_SEQ_AT, { .i = offset + 1 });
+			return NULL;
 		}
 
 		if ((length == 0) || (length > MB_CUR_MAX)) break;
