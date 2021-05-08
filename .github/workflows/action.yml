@@ -30,7 +30,7 @@ jobs:
       run: sudo apt install llvm-10-dev
 
     - name: Build
-      run: make CC=gcc-9 options clean all
+      run: make TRACE=1 CC=gcc-9 options clean all
 
     - name: Run tests
       run: ./build/test/test
@@ -49,7 +49,7 @@ jobs:
       run: sudo apt install llvm-10-dev
 
     - name: Build
-      run: make CC=clang options clean all
+      run: make TRACE=1 CC=clang options clean all
 
     - name: Run tests
       run: ./build/test/test
@@ -68,7 +68,7 @@ jobs:
       run: sudo apt install llvm-10-dev
 
     - name: Build
-      run: sudo make CC=gcc-9 options install install-dev
+      run: sudo make TRACE=1 CC=gcc-9 options install install-dev
 
     - name: Run Skull
       run: |
@@ -79,25 +79,3 @@ jobs:
       run: |
         cd test/docs/c-integration
         make
-
-  test-valgrind:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install LLVM 10
-      run: sudo apt install llvm-10-dev
-
-    - name: Build tests
-      run: make CC=gcc-9 options clean test
-
-    - name: Install Valgrind
-      run: |
-        sudo apt update
-        sudo apt install valgrind
-
-    - name: Run Valgrind on tests
-      run: valgrind --leak-check=full --error-exitcode=1 ./build/test/test
-
-    - name: Install clang-tidy
-      run: sudo apt install clang-tidy-10

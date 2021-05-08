@@ -7,7 +7,12 @@ CXX ?= g++
 
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
-	CFLAGS = -g3 -O0
+	CFLAGS += -g3 -O0
+endif
+
+TRACE ?= 0
+ifeq ($(TRACE), 1)
+	CFLAGS += -fsanitize=address -fsanitize=leak
 endif
 
 CFLAGS += -std=c18 \

@@ -5,15 +5,12 @@ stop() {
 	exit 1
 }
 
-make clean all || stop
+make TRACE=1 clean all || stop
 
 ./build/test/test || stop
 
 cp ./skull/skull ./build/skull/skull
 ./test/sh/main.sh || stop
-
-valgrind --leak-check=full --error-exitcode=1 ./build/test/test || stop
-printf "\n"
 
 ./.github/workflows/clang_tidy.sh || stop
 
