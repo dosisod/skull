@@ -12,17 +12,14 @@
 
 #include "skull/parse/ast_node.h"
 
-static AstNode *try_parse_expression(Token **, AstNode **);
-static AstNodeExpr *_try_parse_expression(Token **);
-static AstNodeExpr *parse_func_call(Token **);
-
-static AstNode *make_ast_tree_(Token **, unsigned);
-
+static AstNode *try_parse_expression(Token **, AstNode **, bool *);
+static AstNodeExpr *_try_parse_expression(Token **, bool *);
+static AstNodeExpr *parse_func_call(Token **, bool *);
+static AstNode *make_ast_tree_(Token **, unsigned, bool *);
 static void free_ast_tree_(AstNode *);
-
 static bool is_value(TokenType);
-
 bool ast_token_cmp(Token *, ...);
+static void free_expr_node(AstNodeExpr *);
 
 /*
 Compare a variable number of token types stored in `...` agains each
@@ -43,21 +40,31 @@ AstNode *make_ast_tree(const char32_t *const code) {
 
 	classify_tokens(token);
 
-	AstNode *const tree = make_ast_tree_(&token, 0);
+	bool err = false;
+	AstNode *const tree = make_ast_tree_(&token, 0, &err);
 
 	if (!tree) free_tokens(head);
+	else if (err) {
+		free_ast_tree(tree);
+		return NULL;
+	}
 
 	return tree;
 }
 
-static bool try_parse_return(Token **token, AstNode **node) {
+static bool try_parse_return(Token **token, AstNode **node, bool *err) {
 	if ((*token)->type != TOKEN_KW_RETURN) return false;
 
 	push_ast_node(*token, *token, AST_NODE_RETURN, node);
 	*token = (*token)->next;
 
-	if (!try_parse_expression(token, node)) {
-		PANIC(ERR_RETURN_MISSING_EXPR, { .loc = &(*token)->location });
+	const bool success = try_parse_expression(token, node, err);
+	if (*err) return false;
+
+	if (!success) {
+		FMT_ERROR(ERR_RETURN_MISSING_EXPR, { .loc = &(*token)->location });
+		*err = true;
+		return false;
 	}
 
 	return true;
@@ -82,7 +89,7 @@ static bool try_parse_type_alias(Token **token, AstNode **node) {
 #define IS_TYPE_LIKE(token) \
 	((token)->type == TOKEN_TYPE || (token)->type == TOKEN_IDENTIFIER)
 
-static bool try_parse_var_def(Token **_token, AstNode **node) {
+static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 	bool is_const = true;
 	bool is_implicit = true;
 
@@ -126,14 +133,19 @@ static bool try_parse_var_def(Token **_token, AstNode **node) {
 	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
 	*_token = (*_token)->next;
 
-	if (!try_parse_expression(_token, node)) {
-		PANIC(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*_token)->location });
+	const bool success = try_parse_expression(_token, node, err);
+	if (*err) return false;
+
+	if (!success) {
+		FMT_ERROR(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*_token)->location });
+		*err = true;
+		return false;
 	}
 
 	return true;
 }
 
-static bool try_parse_var_assign(Token **token, AstNode **node) {
+static bool try_parse_var_assign(Token **token, AstNode **node, bool *err) {
 	if (!AST_TOKEN_CMP(*token,
 		TOKEN_IDENTIFIER,
 		TOKEN_OPER_EQUAL)
@@ -144,8 +156,13 @@ static bool try_parse_var_assign(Token **token, AstNode **node) {
 	push_ast_node((*token)->next, *token, AST_NODE_VAR_ASSIGN, node);
 	*token = (*token)->next->next;
 
-	if (!try_parse_expression(token, node)) {
-		PANIC(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*token)->location });
+	const bool success = try_parse_expression(token, node, err);
+	if (*err) return false;
+
+	if (!success) {
+		FMT_ERROR(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*token)->location });
+		*err = true;
+		return false;
 	}
 
 	return true;
@@ -178,14 +195,18 @@ static ExprType token_type_to_expr_oper_type(TokenType type) {
 static AstNodeExpr *build_rhs_expr(
 	AstNodeExpr *lhs,
 	ExprType oper,
-	Token **token
+	Token **token,
+	bool *err
 ) {
 	const Token *oper_tok = *token;
 	*token = (*token)->next;
 
-	AstNodeExpr *rhs = _try_parse_expression(token);
+	AstNodeExpr *rhs = _try_parse_expression(token, err);
+	if (*err) return false;
 	if (!rhs) {
-		PANIC(ERR_EXPECTED_EXPR, { .tok = oper_tok });
+		FMT_ERROR(ERR_EXPECTED_EXPR, { .tok = oper_tok });
+		*err = true;
+		return false;
 	}
 
 	AstNodeExpr *new_expr = Malloc(sizeof(AstNodeExpr));
@@ -198,16 +219,20 @@ static AstNodeExpr *build_rhs_expr(
 	return new_expr;
 }
 
-static AstNodeExpr *try_parse_binary_oper(AstNodeExpr *expr, Token **token) {
+static AstNodeExpr *try_parse_binary_oper(
+	AstNodeExpr *expr,
+	Token **token,
+	bool *err
+) {
 	if (!*token || !(*token)->next) return NULL;
 
 	const ExprType oper = token_type_to_expr_oper_type((*token)->type);
 	if (oper == EXPR_UNKNOWN) return NULL;
 
-	return build_rhs_expr(expr, oper, token);
+	return build_rhs_expr(expr, oper, token, err);
 }
 
-static AstNodeExpr *try_parse_unary_oper(Token **token) {
+static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err) {
 	if (!(*token)->next) return NULL;
 
 	ExprType oper = token_type_to_expr_oper_type((*token)->type);
@@ -215,7 +240,7 @@ static AstNodeExpr *try_parse_unary_oper(Token **token) {
 	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
 	else if (oper != EXPR_NOT) return NULL;
 
-	return build_rhs_expr(NULL, oper, token);
+	return build_rhs_expr(NULL, oper, token, err);
 }
 
 static bool try_parse_function_proto(Token **_token, AstNode **node) {
@@ -310,7 +335,7 @@ static bool try_parse_function_proto(Token **_token, AstNode **node) {
 	return true;
 }
 
-static bool try_parse_condition(Token **token, AstNode **node) {
+static bool try_parse_condition(Token **token, AstNode **node, bool *err) {
 	const TokenType token_type = (*token)->type;
 	NodeType node_type;
 
@@ -327,8 +352,12 @@ static bool try_parse_condition(Token **token, AstNode **node) {
 
 	if (token_type == TOKEN_KW_ELSE) return true;
 
-	if (!try_parse_expression(token, node)) {
-		PANIC(ERR_INVALID_EXPR, { .tok = *token });
+	const bool success = try_parse_expression(token, node, err);
+
+	if (!success) {
+		FMT_ERROR(ERR_INVALID_EXPR, { .tok = *token });
+		*err = true;
+		return false;
 	}
 
 	return true;
@@ -337,7 +366,7 @@ static bool try_parse_condition(Token **token, AstNode **node) {
 /*
 Internal AST tree generator.
 */
-static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
+static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl, bool *err) {
 	AstNode *node = make_ast_node();
 	AstNode *head = node;
 
@@ -355,7 +384,7 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 			}
 
 			*token = (*token)->next;
-			AstNode *const child = make_ast_tree_(token, indent_lvl + 1);
+			AstNode *const child = make_ast_tree_(token, indent_lvl + 1, err);
 
 			if (!child) {
 				free_ast_tree_(head);
@@ -405,14 +434,17 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 			*token = (*token)->next;
 			continue;
 		}
-		if (
-			try_parse_var_def(token, &node) ||
-			try_parse_var_assign(token, &node) ||
-			try_parse_return(token, &node) ||
-			try_parse_expression(token, &node) ||
-			try_parse_condition(token, &node)
+		if (try_parse_var_def(token, &node, err) ||
+			(!*err && try_parse_var_assign(token, &node, err)) ||
+			(!*err && try_parse_return(token, &node, err)) ||
+			(!*err && try_parse_expression(token, &node, err)) ||
+			(!*err && try_parse_condition(token, &node, err))
 		) {
 			continue;
+		}
+		if (*err) {
+			free_ast_tree_(head);
+			return NULL;
 		}
 		if (token_type == TOKEN_KW_UNREACHABLE) {
 			push_ast_node(*token, *token, AST_NODE_UNREACHABLE, &node);
@@ -451,18 +483,22 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl) {
 }
 
 static AstNodeExpr *parse_single_token_expr(Token **);
-static AstNodeExpr *parse_paren_expr(Token **);
+static AstNodeExpr *parse_paren_expr(Token **, bool *);
 
 /*
 Try and generate AST node for expression.
 
 Returns node if one was added, NULL otherwise.
 */
-static AstNode *try_parse_expression(Token **token, AstNode **node) {
+static AstNode *try_parse_expression(
+	Token **token,
+	AstNode **node,
+	bool *err
+) {
 	Token *last = *token;
 
-	AstNodeExpr *expr_node = _try_parse_expression(token);
-	if (!expr_node) return NULL;
+	AstNodeExpr *expr_node = _try_parse_expression(token, err);
+	if (!expr_node || *err) return NULL;
 
 	push_ast_node(NULL, last, AST_NODE_EXPR, node);
 
@@ -475,16 +511,16 @@ static AstNode *try_parse_expression(Token **token, AstNode **node) {
 /*
 Internal `try_parse_expression` function. Used for recursive expr parsing.
 */
-static AstNodeExpr *_try_parse_expression(Token **token) {
+static AstNodeExpr *_try_parse_expression(Token **token, bool *err) {
 	AstNodeExpr *expr = NULL;
 
 	if ((*token)->type == TOKEN_PAREN_OPEN) {
-		expr = parse_paren_expr(token);
+		expr = parse_paren_expr(token, err);
 	}
 	else if (AST_TOKEN_CMP(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
-		expr = parse_func_call(token);
+		expr = parse_func_call(token, err);
 	}
-	else if ((expr = try_parse_unary_oper(token))) {
+	else if ((expr = try_parse_unary_oper(token, err))) {
 		// pass
 	}
 	else if (is_value((*token)->type)) {
@@ -493,23 +529,37 @@ static AstNodeExpr *_try_parse_expression(Token **token) {
 
 	if (!expr) return NULL;
 
-	AstNodeExpr *binary_oper = try_parse_binary_oper(expr, token);
-	if (binary_oper) return binary_oper;
+	AstNodeExpr *binary_oper = try_parse_binary_oper(expr, token, err);
+	if (*err) {
+		free_expr_node(expr);
+		return NULL;
+	}
 
+	if (binary_oper) return binary_oper;
 	return expr;
 }
 
-static AstNodeExpr *parse_paren_expr(Token **token) {
+static AstNodeExpr *parse_paren_expr(Token **token, bool *err) {
 	*token = (*token)->next;
 
-	AstNodeExpr *pushed = _try_parse_expression(token);
+	AstNodeExpr *pushed = _try_parse_expression(token, err);
 
-	if (!pushed) {
-		PANIC(ERR_INVALID_EXPR, { .tok = *token });
+	if (!pushed || *err) {
+		FMT_ERROR(ERR_INVALID_EXPR, { .tok = *token });
+
+		if (pushed) {
+			free_expr_node(pushed);
+		}
+		*err = true;
+		return NULL;
 	}
 
-	if ((*token)->type != TOKEN_PAREN_CLOSE) {
-		PANIC(ERR_MISSING_CLOSING_PAREN, { .loc = &(*token)->location });
+	if (!*token || (*token)->type != TOKEN_PAREN_CLOSE) {
+		FMT_ERROR(ERR_MISSING_CLOSING_PAREN, { .loc = &(*token)->location });
+
+		free_expr_node(pushed);
+		*err = true;
+		return NULL;
 	}
 
 	*token = (*token)->next;
@@ -535,7 +585,7 @@ Try and generate AST node for a function call.
 
 Returns true if a node was added, false otherwise.
 */
-static AstNodeExpr *parse_func_call(Token **token) {
+static AstNodeExpr *parse_func_call(Token **token, bool *err) {
 	const Token *func_name_token = *token;
 
 	AstNode *child = make_ast_node();
@@ -547,19 +597,27 @@ static AstNodeExpr *parse_func_call(Token **token) {
 
 	while (true) {
 		if (!*token) {
-			PANIC(ERR_UNCLOSED_FUNC_CALL, {
+			FMT_ERROR(ERR_UNCLOSED_FUNC_CALL, {
 				.loc = &func_name_token->location
 			});
+
+			free_ast_tree_(child_copy);
+			*err = true;
+			return NULL;
 		}
 
-		if (try_parse_expression(token, &child)) num_values++;
+		if (try_parse_expression(token, &child, err)) num_values++;
 
 		if ((*token)->type == TOKEN_PAREN_CLOSE) break;
 
 		if ((*token)->type != TOKEN_COMMA) {
-			PANIC(ERR_EXPECTED_COMMA, {
+			FMT_ERROR(ERR_EXPECTED_COMMA, {
 				.loc = &(*token)->location
 			});
+
+			free_ast_tree_(child_copy);
+			*err = true;
+			return NULL;
 		}
 
 		*token = (*token)->next;

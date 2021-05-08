@@ -113,13 +113,13 @@ AstNode *make_ast_tree(const char32_t *const code)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl)
+static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl, bool *err)
 ```
 
 > Internal AST tree generator.
 
 ```c
-static AstNode *try_parse_expression(Token **token, AstNode **node)
+static AstNode *try_parse_expression(Token **token, AstNode **node, bool *err)
 ```
 
 > Try and generate AST node for expression.
@@ -127,13 +127,13 @@ static AstNode *try_parse_expression(Token **token, AstNode **node)
 > Returns node if one was added, NULL otherwise.
 
 ```c
-static AstNodeExpr *_try_parse_expression(Token **token)
+static AstNodeExpr *_try_parse_expression(Token **token, bool *err)
 ```
 
 > Internal `try_parse_expression` function. Used for recursive expr parsing.
 
 ```c
-static AstNodeExpr *parse_func_call(Token **token)
+static AstNodeExpr *parse_func_call(Token **token, bool *err)
 ```
 
 > Try and generate AST node for a function call.
