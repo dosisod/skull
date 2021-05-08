@@ -139,14 +139,21 @@ void create_type_alias(AstNode **node) {
 
 	char *type_name = token_mbs_str(token->next->next);
 
+	char *alias = token_mbs_str(token);
+
 	const bool added = add_alias(
 		(Type)find_type(type_name),
-		token_mbs_str(token)
+		alias
 	);
 
 	free(type_name);
 
 	if (!added) {
-		PANIC(ERR_ALIAS_ALREADY_DEFINED, { .tok = token });
+		// TODO(dosisod): memory leak if multiple type aliases are created
+		// before hitting this
+		PANIC(ERR_ALIAS_ALREADY_DEFINED, {
+			.loc = &token->location,
+			.real = alias
+		});
 	}
 }
