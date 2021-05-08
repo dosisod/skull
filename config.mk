@@ -12,7 +12,7 @@ endif
 
 TRACE ?= 0
 ifeq ($(TRACE), 1)
-	CFLAGS += -fsanitize=address -fsanitize=leak
+	CFLAGS += -fsanitize=address -fsanitize=leak -fsanitize=undefined
 endif
 
 CFLAGS += -std=c18 \
