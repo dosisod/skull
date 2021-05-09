@@ -210,6 +210,14 @@ LLVMValueRef node_to_bool(const AstNode *const node) {
 		PANIC(ERR_NON_BOOL_EXPR, { .loc = &node->token->location });
 	}
 
+	if (LLVMIsConstant(expr.value)) {
+		FMT_WARN(LLVMConstIntGetSExtValue(expr.value) ?
+			WARN_COND_ALWAYS_TRUE :
+			WARN_COND_ALWAYS_FALSE,
+			{ .loc = &node->token->location }
+		);
+	}
+
 	return expr.value;
 }
 

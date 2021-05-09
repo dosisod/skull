@@ -63,6 +63,8 @@
 #define ERR_POW_BAD_TYPE "cannot use type \"%s\" for power operator\n"
 #define WARN_VAR_NOT_CONST "variable \"%s\" should be constant\n"
 #define WARN_VAR_UNUSED "variable \"%s\" is unused\n"
+#define WARN_COND_ALWAYS_TRUE "condition is always true"
+#define WARN_COND_ALWAYS_FALSE "condition is always false"
 
 typedef struct Variable Variable;
 typedef const char * Type;
