@@ -1,1 +1,1 @@
-./test/sh/error/func/multi_param_missing_comma.sk: Compilation error: line 1 column 3: expected comma
+./test/sh/error/func/multi_param_missing_comma.sk: Compilation error: line 1 column 10: expected comma

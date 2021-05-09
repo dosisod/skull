@@ -270,10 +270,14 @@ static bool try_parse_function_proto(Token **_token, AstNode **node) {
 		TOKEN_NEWLINE :
 		TOKEN_BRACKET_OPEN;
 
+	bool is_proto = false;
+
 	while (token->type == TOKEN_NEW_IDENTIFIER &&
 		token->next &&
 		IS_TYPE_LIKE(token->next)
 	) {
+		is_proto = true;
+
 		vector_push(param_names, token_str(token));
 		vector_push(param_type_names, token_mbs_str(token->next));
 
@@ -302,6 +306,12 @@ static bool try_parse_function_proto(Token **_token, AstNode **node) {
 	) {
 		free_vector(param_names, free);
 		free_vector(param_type_names, free);
+
+		if (is_proto) {
+			PANIC(ERR_EXPECTED_COMMA, {
+				.loc = &token->location
+			});
+		}
 
 		return false;
 	}
