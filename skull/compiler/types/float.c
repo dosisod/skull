@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "skull/common/errors.h"
-#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types/_underscore_num.h"
 
@@ -12,7 +11,7 @@
 /*
 Returns a Skull float parsed from `token`.
 */
-SkullFloat eval_float(const Token *const token) {
+SkullFloat eval_float(const Token *const token, bool *err) {
 	char *const float_str = token_mbs_str(token);
 
 	if (strcmp("Infinity", float_str) == 0) {
@@ -35,7 +34,10 @@ SkullFloat eval_float(const Token *const token) {
 	free(float_str);
 
 	if (isinf(ret) && errno == ERANGE) {
-		PANIC(ERR_OVERFLOW, { .tok = token });
+		FMT_ERROR(ERR_OVERFLOW, { .tok = token });
+
+		*err = true;
+		return 0;
 	}
 
 	return ret;

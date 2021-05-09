@@ -6,18 +6,20 @@
 #include "skull/parse/ast_node.h"
 
 typedef Expr (Operation)(Type, LLVMValueRef, LLVMValueRef);
+typedef Expr (OperationWithErr)(Type, LLVMValueRef, LLVMValueRef, bool *);
 
 Expr gen_expr_oper(
 	Type,
 	const AstNodeExpr *const,
-	const Variable *const
+	const Variable *const,
+	bool *
 );
 
 Operation gen_expr_add;
 Operation gen_expr_sub;
 Operation gen_expr_mult;
-Operation gen_expr_div;
-Operation gen_expr_mod;
+OperationWithErr gen_expr_div;
+OperationWithErr gen_expr_mod;
 Operation gen_expr_not;
 Operation gen_expr_unary_neg;
 Operation gen_expr_is;
@@ -31,12 +33,13 @@ Operation gen_expr_rshift;
 Operation gen_expr_and;
 Operation gen_expr_or;
 Operation gen_expr_xor;
-Operation gen_expr_pow;
+OperationWithErr gen_expr_pow;
 
-Expr token_to_expr(const Token *const, Variable **);
-Expr gen_expr_const(Type, const Token *const);
+Expr token_to_expr(const Token *const, Variable **, bool *);
+Expr gen_expr_const(Type, const Token *const, bool *);
 Expr gen_expr_identifier(
 	Type,
 	const Token *const,
-	const Variable *const
+	const Variable *const,
+	bool *
 );

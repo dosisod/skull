@@ -2,7 +2,6 @@
 #include <limits.h>
 
 #include "skull/common/errors.h"
-#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types/_underscore_num.h"
 
@@ -11,7 +10,7 @@
 /*
 Returns an Skull integer parsed from `token`.
 */
-SkullInt eval_integer(const Token *const token) {
+SkullInt eval_integer(const Token *const token, bool *err) {
 	const char32_t *begin = token->begin;
 	int base = 10;
 
@@ -38,7 +37,10 @@ SkullInt eval_integer(const Token *const token) {
 	free(num_str);
 
 	if ((ret == LLONG_MAX || ret == LLONG_MIN) && errno == ERANGE) {
-		PANIC(ERR_OVERFLOW, { .tok = token });
+		FMT_ERROR(ERR_OVERFLOW, { .tok = token });
+
+		*err = true;
+		return 0;
 	}
 
 	return ret;

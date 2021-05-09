@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <uchar.h>
 
 #include "skull/parse/token.h"

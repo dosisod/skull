@@ -2,7 +2,6 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
-#include "skull/common/panic.h"
 #include "skull/common/str.h"
 
 #include "skull/parse/token.h"

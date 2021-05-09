@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <string.h>
 
 #include <llvm-c/Core.h>
@@ -9,22 +8,22 @@
 #include "skull/codegen/shared.h"
 #include "skull/codegen/types.h"
 #include "skull/common/errors.h"
-#include "skull/common/panic.h"
 #include "skull/common/str.h"
 
 #include "skull/codegen/var.h"
 
-Type var_def_node_to_type(const AstNode *);
+static Type var_def_node_to_type(const AstNode *, bool *);
 
 /*
 Make and add a variable from `node` to Skull state.
 */
-Variable *node_to_var(const AstNode *const node) {
+Variable *node_to_var(const AstNode *const node, bool *err) {
 	const Token *token = node->var_def->name_tok;
 	Type type = NULL;
 
 	if (node->var_def->is_implicit) {
-		type = var_def_node_to_type(node);
+		type = var_def_node_to_type(node, err);
+		if (*err) return NULL;
 	}
 	else {
 		char *const type_name = token_mbs_str(token->next);
@@ -33,7 +32,10 @@ Variable *node_to_var(const AstNode *const node) {
 		free(type_name);
 
 		if (!type) {
-			PANIC(ERR_TYPE_NOT_FOUND, { .tok = token->next });
+			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = token->next });
+
+			*err = true;
+			return NULL;
 		}
 	}
 
@@ -44,14 +46,17 @@ Variable *node_to_var(const AstNode *const node) {
 		name,
 		node->var_def->is_const
 	);
+	free(name);
 
 	if (scope_add_var(&SKULL_STATE.scope, var)) {
-		free(name);
 		return var;
 	}
 	free_variable(var);
 
-	PANIC(ERR_VAR_ALREADY_DEFINED, { .tok = token });
+	FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .tok = token });
+
+	*err = true;
+	return NULL;
 }
 
 /*
@@ -78,7 +83,7 @@ __attribute__((pure)) const AstNodeExpr *leftmost_expr(
 /*
 Return a variable type based on `node`.
 */
-Type var_def_node_to_type(const AstNode *node) {
+static Type var_def_node_to_type(const AstNode *node, bool *err) {
 	TokenType token_type = node->next->token->type;
 
 	if (node->next->type == AST_NODE_EXPR) {
@@ -105,7 +110,8 @@ Type var_def_node_to_type(const AstNode *node) {
 			token_type = expr->lhs.tok->type;
 		}
 		else if (expr->oper == EXPR_IDENTIFIER) {
-			return scope_find_var(expr->lhs.tok)->type;
+			const Variable *var = scope_find_var(expr->lhs.tok, err);
+			return *err ? NULL : var->type;
 		}
 		else if (expr->oper == EXPR_FUNC) {
 			const Token *func_name_token = expr->func_call->func_name_tok;
@@ -119,16 +125,21 @@ Type var_def_node_to_type(const AstNode *node) {
 			free(func_name);
 
 			if (!function) {
-				PANIC(ERR_MISSING_DECLARATION, { .tok = func_name_token });
+				FMT_ERROR(ERR_MISSING_DECLARATION, { .tok = func_name_token });
+
+				*err = true;
+				return NULL;
 			}
 
 			Type type = function->return_type;
 
 			if (!type) {
-				PANIC(ERR_NO_VOID_ASSIGN, {
+				FMT_ERROR(ERR_NO_VOID_ASSIGN, {
 					.loc = &func_name_token->location,
 					.real = token_mbs_str(node->token)
 				});
+
+				*err = true;
 			}
 
 			return type;
@@ -144,5 +155,7 @@ Type var_def_node_to_type(const AstNode *node) {
 		default: break;
 	}
 
-	PANIC(ERR_INVALID_INPUT, { .tok = node->next->token });
+	FMT_ERROR(ERR_INVALID_INPUT, { .tok = node->next->token });
+
+	return NULL;
 }

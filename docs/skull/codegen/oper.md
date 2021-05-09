@@ -28,16 +28,20 @@ Expr gen_expr_mult(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for multiplication of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_div(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+Expr gen_expr_div(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 ```
 
 > Return expression for division of `lhs` and `rhs`.
+> \
+> Set `err` if an error occurred.
 
 ```c
-Expr gen_expr_mod(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+Expr gen_expr_mod(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 ```
 
 > Return expression for modulus of `lhs` and `rhs`.
+> \
+> Set `err` if an error occurred.
 
 ```c
 Expr gen_expr_lshift(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
@@ -52,10 +56,12 @@ Expr gen_expr_rshift(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for logical right shift of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_pow(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+Expr gen_expr_pow(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 ```
 
 > Return expression for taking `lhs` to the power of `rhs`.
+> \
+> Set `err` if an error occurred.
 
 ```c
 Expr gen_expr_not(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
@@ -155,7 +161,7 @@ Expr gen_expr_xor(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return result of logical "xor" operation of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_identifier(Type type, const Token *const token, const Variable *const var)
+Expr gen_expr_identifier(Type type, const Token *const token, const Variable *const var, bool *err)
 ```
 
 > Return expression for identifier `token` with type `type`.
@@ -163,15 +169,19 @@ Expr gen_expr_identifier(Type type, const Token *const token, const Variable *co
 > Optionally pass `var` if result is expected to be assigned to a variable.
 > \
 > If `type` is not set, the expression type will not be checked.
+> \
+> Set `err` if an error occurred.
 
 ```c
-Expr gen_expr_oper(Type type, const AstNodeExpr *const expr, const Variable *const var)
+Expr gen_expr_oper(Type type, const AstNodeExpr *const expr, const Variable *const var, bool *err)
 ```
 
 > Return expression for operation `oper` for `expr`.
+> \
+> Set `err` if an error occurred.
 
 ```c
-Expr token_to_expr(const Token *const token, Variable **variable)
+Expr token_to_expr(const Token *const token, Variable **variable, bool *err)
 ```
 
 > Convert `token` to an expression.
@@ -179,13 +189,15 @@ Expr token_to_expr(const Token *const token, Variable **variable)
 > If `variable` is and `token` is a variable, store the found variable there.
 
 ```c
-Expr gen_expr_const(Type type, const Token *const token)
+Expr gen_expr_const(Type type, const Token *const token, bool *err)
 ```
 
 > Make an expression from `token`, checking for compatibility with `type`.
+> \
+> Set `err` if an error occurred.
 
 ```c
-Expr token_to_simple_expr(const Token *const token)
+Expr token_to_simple_expr(const Token *const token, bool *err)
 ```
 
 > Make a simple expression (const literal) from `token`.

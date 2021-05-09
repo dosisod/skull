@@ -173,7 +173,7 @@ static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static bool try_parse_function_proto(Token **_token, AstNode **node)
+static bool try_parse_function_proto(Token **_token, AstNode **node, bool *err)
 ```
 
 > Try to parse a function prototype from `_token`.

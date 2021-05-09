@@ -1,10 +1,12 @@
 # skull/codegen/scope
 
 ```c
-Variable *scope_find_var(const Token *const token)
+Variable *scope_find_var(const Token *const token, bool *err)
 ```
 
 > Try and find a variable stored in `token`.
+> \
+> Set `err` if an error occurred.
 
 ```c
 void make_sub_scope(Scope **old, Scope **new)

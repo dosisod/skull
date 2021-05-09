@@ -1,21 +1,25 @@
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
-#include "skull/common/panic.h"
 #include "skull/compiler/scope.h"
 
 #include "skull/codegen/scope.h"
 
 /*
 Try and find a variable stored in `token`.
+
+Set `err` if an error occurred.
 */
-Variable *scope_find_var(const Token *const token) {
+Variable *scope_find_var(const Token *const token, bool *err) {
 	char *const var_name = token_mbs_str(token);
 	Variable *const var = scope_find_name(SKULL_STATE.scope, var_name);
 
 	if (!var || !var->ref) {
-		PANIC(ERR_VAR_NOT_FOUND, {
+		FMT_ERROR(ERR_VAR_NOT_FOUND, {
 			.loc = &token->location, .real = var_name
 		});
+
+		*err = true;
+		return NULL;
 	}
 	free(var_name);
 

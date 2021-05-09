@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/var.h"
@@ -37,8 +39,8 @@ typedef struct FunctionDeclaration {
 	Type return_type;
 } FunctionDeclaration;
 
-void gen_stmt_func_decl(const AstNode *const);
+bool gen_stmt_func_decl(const AstNode *const);
 
-Expr gen_expr_function_call(const AstNodeExpr *const, Type);
+Expr gen_expr_function_call(const AstNodeExpr *const, Type, bool *);
 
 void free_function_declaration(HashItem *);

@@ -6,7 +6,6 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
-#include "skull/common/panic.h"
 
 #include "skull/common/str.h"
 
@@ -50,11 +49,11 @@ Convert a UTF-32 string `str` into a multi-byte string (probably UTF-8).
 Optionaly load use `location` for printing error.
 
 The result of this function must be freed.
+
+Return `NULL` if an error occurred.
 */
 char *c32stombs(const char32_t *str, const Location *location) {
-	if (!str) return NULL;
-
-	//allocate the max that str could expand to
+	// allocate the max that str could expand to
 	char *ret = Malloc((c32slen(str) + 1) * MB_CUR_MAX);
 
 	size_t offset = 0;
@@ -66,7 +65,10 @@ char *c32stombs(const char32_t *str, const Location *location) {
 		size_t length = c32rtomb(ret + offset, *str, &mbs);
 
 		if (errno == EILSEQ) {
-			PANIC(ERR_ILLEGAL_SEQ, { .loc = location });
+			FMT_ERROR(ERR_ILLEGAL_SEQ, { .loc = location });
+
+			free(ret);
+			return NULL;
 		}
 
 		if ((length == 0) || (length > MB_CUR_MAX)) break;
@@ -75,7 +77,7 @@ char *c32stombs(const char32_t *str, const Location *location) {
 		str++;
 	}
 
-	//shrink string to only what we need
+	// shrink string to only what we need
 	ret = Realloc(ret, offset + 1);
 	ret[offset] = '\0';
 

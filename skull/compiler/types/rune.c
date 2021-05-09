@@ -3,7 +3,6 @@
 #include <string.h>
 
 #include "skull/common/errors.h"
-#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types/types.h"
 
@@ -12,12 +11,15 @@
 /*
 Return rune type converted from `token`.
 */
-SkullRune eval_rune(const Token *const token) {
+SkullRune eval_rune(const Token *const token, bool *err) {
 	const char32_t *start = token->begin + 1;
 	const char32_t *copy = start;
 
 	if (iscntrl((int)*start)) {
-		PANIC(ERR_NO_CONTROL_CHAR, { .loc = &token->location });
+		FMT_ERROR(ERR_NO_CONTROL_CHAR, { .loc = &token->location });
+
+		*err = true;
+		return '\0';
 	}
 
 	const char32_t *error = NULL;
@@ -31,11 +33,17 @@ SkullRune eval_rune(const Token *const token) {
 	c32rtomb(buf, ret, &mbs);
 
 	if (errno == EILSEQ) {
-		PANIC(ERR_ILLEGAL_SEQ, { .loc = &token->location });
+		FMT_ERROR(ERR_ILLEGAL_SEQ, { .loc = &token->location });
+
+		*err = true;
+		return '\0';
 	}
 
 	if (error) {
-		PANIC(ERR_BAD_ESCAPE, { .loc = &token->location, .str = error });
+		FMT_ERROR(ERR_BAD_ESCAPE, { .loc = &token->location, .str = error });
+
+		*err = true;
+		return '\0';
 	}
 
 	if (start == copy) ret = *start;

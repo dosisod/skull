@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdbool.h>
+
 #include <llvm-c/Core.h>
 
 #include "skull/compiler/variable.h"
@@ -17,4 +19,4 @@ typedef struct {
 	Type type;
 } Expr;
 
-Variable *node_to_var(const AstNode *const);
+Variable *node_to_var(const AstNode *const, bool *);

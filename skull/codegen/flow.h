@@ -1,9 +1,11 @@
 #pragma once
 
+#include <stdbool.h>
+
 #include "skull/codegen/var.h"
 #include "skull/parse/ast_node.h"
 
-Expr gen_stmt_return(AstNode **);
+Expr gen_stmt_return(AstNode **, bool *);
 Expr gen_stmt_unreachable(void);
-void gen_control_while(AstNode **);
-void gen_control_if(AstNode **);
+bool gen_control_while(AstNode **);
+bool gen_control_if(AstNode **);

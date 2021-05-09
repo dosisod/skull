@@ -31,13 +31,15 @@ typedef struct FunctionDeclaration {
 > `next` stores the next function declaration.
 
 ```c
-void gen_stmt_func_decl(const AstNode *const node)
+bool gen_stmt_func_decl(const AstNode *const node)
 ```
 
 > Parse declaration (and potential definition) of function in `node`.
+> \
+> Return `true` if an error occurred.
 
 ```c
-FunctionDeclaration *add_function(const AstNode *const node, char *name, bool is_private)
+FunctionDeclaration *add_function(const AstNode *const node, char *name, bool is_private, bool *err)
 ```
 
 > Add new LLVM function named `name` from `node`.
@@ -45,15 +47,19 @@ FunctionDeclaration *add_function(const AstNode *const node, char *name, bool is
 > If `is_private` is true the function will be private (statically linked).
 > \
 > Else, the function will be globally available.
+> \
+> Set `err` if an error occurred.
 
 ```c
-Expr gen_expr_function_call(const AstNodeExpr *const expr, Type type)
+Expr gen_expr_function_call(const AstNodeExpr *const expr, Type type, bool *err)
 ```
 
 > Builds a function call from `expr`.
+> \
+> Set `err` if an error occurred.
 
 ```c
-void define_function(const AstNode *const node, FunctionDeclaration *func)
+bool define_function(const AstNode *const node, FunctionDeclaration *func)
 ```
 
 > Create a native LLVM function.

@@ -4,7 +4,6 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
-#include "skull/common/panic.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types/types.h"
@@ -44,7 +43,12 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	AstNode *const tree = make_ast_tree_(&token, 0, &err);
 
 	if (!tree) free_tokens(head);
-	else if (err) {
+	else if (!tree->token) {
+		// in case the first node does not have a token, assign the head of
+		// the token list to it
+		tree->token = head;
+	}
+	if (err) {
 		free_ast_tree(tree);
 		return NULL;
 	}
@@ -282,7 +286,11 @@ static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err) {
 /*
 Try to parse a function prototype from `_token`.
 */
-static bool try_parse_function_proto(Token **_token, AstNode **node) {
+static bool try_parse_function_proto(
+	Token **_token,
+	AstNode **node,
+	bool *err
+) {
 	Token *token = *_token;
 	Token *last = token;
 
@@ -347,9 +355,12 @@ static bool try_parse_function_proto(Token **_token, AstNode **node) {
 		free_vector(param_type_names, free);
 
 		if (is_proto) {
-			PANIC(ERR_EXPECTED_COMMA, {
+			FMT_ERROR(ERR_EXPECTED_COMMA, {
 				.loc = &token->location
 			});
+
+			*err = true;
+			return false;
 		}
 
 		return false;
@@ -482,8 +493,8 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl, bool *err) {
 		}
 
 		if (
-			try_parse_function_proto(token, &node) ||
-			try_parse_type_alias(token, &node)
+			try_parse_function_proto(token, &node, err) ||
+			(!*err && try_parse_type_alias(token, &node))
 		) {
 			*token = (*token)->next;
 			continue;

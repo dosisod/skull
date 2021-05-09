@@ -1,7 +1,7 @@
 # skull/compiler/types/rune
 
 ```c
-SkullRune eval_rune(const Token *const token)
+SkullRune eval_rune(const Token *const token, bool *err)
 ```
 
 > Return rune type converted from `token`.

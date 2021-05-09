@@ -78,12 +78,6 @@ bool test_c32stombs() {
 	PASS
 }
 
-bool test_c32stombs_with_null() {
-	ASSERT_FALSEY(c32stombs(NULL, NULL));
-
-	PASS
-}
-
 bool test_mbstoc32s() {
 	char32_t *str = mbstoc32s("left 字 right");
 
@@ -175,7 +169,6 @@ void str_test_self(bool *pass) {
 		test_c32sdup,
 		test_c32slen,
 		test_c32stombs,
-		test_c32stombs_with_null,
 		test_mbstoc32s,
 		test_c32scmp,
 		test_c32sncmp,

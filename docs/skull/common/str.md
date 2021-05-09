@@ -25,6 +25,8 @@ char *c32stombs(const char32_t *str, const Location *location)
 > Optionaly load use `location` for printing error.
 > \
 > The result of this function must be freed.
+> \
+> Return `NULL` if an error occurred.
 
 ```c
 __attribute__((pure)) size_t c32slen(const char32_t *str)

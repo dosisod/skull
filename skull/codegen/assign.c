@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <string.h>
 
 #include <llvm-c/Core.h>
@@ -10,7 +9,6 @@
 #include "skull/codegen/shared.h"
 #include "skull/codegen/types.h"
 #include "skull/common/errors.h"
-#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/compiler/scope.h"
 #include "skull/compiler/types/defs.h"
@@ -18,64 +16,92 @@
 #include "skull/codegen/assign.h"
 
 void assign_value_to_var(LLVMValueRef, Variable *const);
-void assert_sane_child(AstNode *);
+bool assert_sane_child(AstNode *);
 
 /*
 Builds a variable from `node`.
-*/
-void gen_stmt_var_def(AstNode **node) {
-	Variable *var = node_to_var(*node);
 
-	assign_value_to_var(
-		node_to_expr(var->type, (*node)->next, var).value,
-		var
-	);
+Return `true` if an error occurred.
+*/
+bool gen_stmt_var_def(AstNode **node) {
+	bool err = false;
+	Variable *var = node_to_var(*node, &err);
+	if (err) return true;
+
+	LLVMValueRef value = node_to_expr(
+		var->type,
+		(*node)->next,
+		var,
+		&err
+	).value;
+
+	if (err) return true;
+
+	assign_value_to_var(value, var);
 
 	*node = (*node)->next;
-	assert_sane_child(*node);
+	return !assert_sane_child(*node);
 }
 
 /*
 Build a LLVM `load` operation from `node`.
+
+Return `true` if an error occurred.
 */
-void gen_stmt_var_assign(AstNode **node) {
-	Variable *found_var = scope_find_var((*node)->token);
+bool gen_stmt_var_assign(AstNode **node) {
+	bool err = false;
+	Variable *found_var = scope_find_var((*node)->token, &err);
+
+	if (err) return true;
 
 	if (found_var->is_const) {
-		PANIC(ERR_REASSIGN_CONST, {
+		FMT_ERROR(ERR_REASSIGN_CONST, {
 			.tok = (*node)->token
 		});
+
+		return true;
 	}
 
 	found_var->was_read = true;
 
-	assign_value_to_var(
-		node_to_expr(found_var->type, (*node)->next, found_var).value,
-		found_var
-	);
+	LLVMValueRef value = node_to_expr(
+		found_var->type,
+		(*node)->next,
+		found_var,
+		&err
+	).value;
+
+	if (err) return true;
+
+	assign_value_to_var(value, found_var);
 
 	*node = (*node)->next;
-	assert_sane_child(*node);
+	return !assert_sane_child(*node);
 }
 
 /*
 Create an expression from `node` with type `type`.
 
 Optionally pass `var` if expression is going to be assigned to a variable.
+
+Set `err` if an error occurred.
 */
 Expr node_to_expr(
 	Type type,
 	const AstNode *const node,
-	const Variable *const var
+	const Variable *const var,
+	bool *err
 ) {
 	Expr expr = {0};
 
 	if (node->type == AST_NODE_EXPR) {
-		expr = gen_expr_oper(type, node->expr, var);
+		expr = gen_expr_oper(type, node->expr, var, err);
 	}
 
-	if (!expr.value) {
-		PANIC(ERR_INVALID_EXPR, { .tok = node->token });
+	if (!expr.value && !*err) {
+		FMT_ERROR(ERR_INVALID_EXPR, { .tok = node->token });
+
+		*err = true;
 	}
 
 	return expr;
@@ -133,8 +159,10 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 
 /*
 Create a type alias from `node`.
+
+Return `true` if an error occurred.
 */
-void create_type_alias(AstNode **node) {
+bool create_type_alias(AstNode **node) {
 	const Token *const token = (*node)->token;
 
 	char *type_name = token_mbs_str(token->next->next);
@@ -148,12 +176,12 @@ void create_type_alias(AstNode **node) {
 
 	free(type_name);
 
-	if (!added) {
-		// TODO(dosisod): memory leak if multiple type aliases are created
-		// before hitting this
-		PANIC(ERR_ALIAS_ALREADY_DEFINED, {
-			.loc = &token->location,
-			.real = alias
-		});
-	}
+	if (added) return false;
+
+	FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, {
+		.loc = &token->location,
+		.real = alias
+	});
+
+	return true;
 }

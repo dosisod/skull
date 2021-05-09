@@ -1,6 +1,5 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
-#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types/types.h"
 
@@ -9,7 +8,7 @@
 /*
 Return Skull string converted from `token`
 */
-SkullStr eval_str(const Token *const token) {
+SkullStr eval_str(const Token *const token, bool *err) {
 	char32_t *copy;
 	copy = Malloc((token_len(token) - 1) * sizeof *copy);
 
@@ -21,7 +20,11 @@ SkullStr eval_str(const Token *const token) {
 		copy[wrote] = c32sunescape(&str, &error);
 
 		if (error) {
-			PANIC(ERR_BAD_ESCAPE, { .loc = &token->location, .str = error });
+			FMT_ERROR(ERR_BAD_ESCAPE, { .loc = &token->location, .str = error });
+
+			free(copy);
+			*err = true;
+			return NULL;
 		}
 
 		if (str == original) copy[wrote] = *str;

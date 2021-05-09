@@ -10,7 +10,6 @@
 #include "skull/codegen/shared.h"
 #include "skull/codegen/var.h"
 #include "skull/common/errors.h"
-#include "skull/common/panic.h"
 #include "skull/common/str.h"
 #include "skull/compiler/scope.h"
 #include "skull/compiler/types/bool.h"
@@ -19,8 +18,8 @@
 
 #include "skull/codegen/flow.h"
 
-Expr gen_node(AstNode *);
-void assert_sane_child(AstNode *);
+Expr gen_node(AstNode *, bool *);
+bool assert_sane_child(AstNode *);
 
 /*
 Build an unreachable statement.
@@ -33,26 +32,38 @@ Expr gen_stmt_unreachable(void) {
 
 /*
 Builds an return statement from `node`.
+
+Set `err` if error occurrs.
 */
-Expr gen_stmt_return(AstNode **node) {
+Expr gen_stmt_return(AstNode **node, bool *err) {
 	AstNode *const node_val = (*node)->next;
-	assert_sane_child(node_val);
+	if (!assert_sane_child(node_val)) {
+		*err = true;
+		return (Expr){0};
+	}
 
 	const bool is_main = SKULL_STATE.current_func == &SKULL_STATE.main_func;
 
-	const Expr expr = node_to_expr(NULL, node_val, NULL);
+	const Expr expr = node_to_expr(NULL, node_val, NULL, err);
+	if (*err) return (Expr){0};
 
 	if (is_main && expr.type != TYPE_INT) {
-		PANIC(ERR_NON_INT_MAIN, { .tok = node_val->token });
+		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = node_val->token });
+
+		*err = true;
+		return (Expr){0};
 	}
 
 	Type return_type = SKULL_STATE.current_func->return_type;
 
 	if (return_type && expr.type != return_type) {
-		PANIC(ERR_EXPECTED_SAME_TYPE,
+		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{ .loc = &node_val->token->location, .type = return_type },
 			{ .type = expr.type }
 		);
+
+		*err = true;
+		return (Expr){0};
 	}
 
 	LLVMBuildRet(SKULL_STATE.builder, expr.value);
@@ -61,9 +72,9 @@ Expr gen_stmt_return(AstNode **node) {
 	return expr;
 }
 
-LLVMValueRef node_to_bool(const AstNode *const);
+static LLVMValueRef node_to_bool(const AstNode *const, bool *);
 
-void gen_control_code_block(
+static bool gen_control_code_block(
 	const char *,
 	const AstNode *const,
 	LLVMBasicBlockRef
@@ -72,7 +83,7 @@ void gen_control_code_block(
 /*
 Builds LLVM for a while loop from `node`.
 */
-void gen_control_while(AstNode **node) {
+bool gen_control_while(AstNode **node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
 		SKULL_STATE.current_func->function,
@@ -95,27 +106,34 @@ void gen_control_while(AstNode **node) {
 
 	*node = (*node)->next;
 
+	bool err = false;
+	LLVMValueRef cond = node_to_bool(*node, &err);
+	if (err) return true;
+
 	LLVMBuildCondBr(
 		SKULL_STATE.builder,
-		node_to_bool(*node),
+		cond,
 		while_loop,
 		while_end
 	);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_loop);
 
-	gen_control_code_block("while", *node, while_cond);
+	if (gen_control_code_block("while", *node, while_cond))
+		return true;
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_end);
+
+	return false;
 }
 
-void gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
+bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
 
 /*
 Builds an if block from `node`.
 */
-void gen_control_if(AstNode **node) {
-	gen_control_if_(
+bool gen_control_if(AstNode **node) {
+	return gen_control_if_(
 		node,
 		LLVMGetInsertBlock(SKULL_STATE.builder),
 		LLVMAppendBasicBlockInContext(
@@ -129,7 +147,7 @@ void gen_control_if(AstNode **node) {
 /*
 Internal function for building an `if` node.
 */
-void gen_control_if_(
+bool gen_control_if_(
 	AstNode **node,
 	LLVMBasicBlockRef entry,
 	LLVMBasicBlockRef end
@@ -156,7 +174,8 @@ void gen_control_if_(
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_true);
 	*node = (*node)->next;
-	gen_control_code_block("if", *node, end);
+	if (gen_control_code_block("if", *node, end))
+		return true;
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
 
@@ -171,9 +190,13 @@ void gen_control_if_(
 		);
 		LLVMMoveBasicBlockAfter(end, if_false);
 
+		bool err = false;
+		LLVMValueRef cond = node_to_bool(*node, &err);
+		if (err) return true;
+
 		LLVMBuildCondBr(
 			SKULL_STATE.builder,
-			node_to_bool(*node),
+			cond,
 			if_true,
 			if_false
 		);
@@ -188,29 +211,43 @@ void gen_control_if_(
 	// if there is an else block following the current if block
 	else if (next_non_comment && (next_non_comment->type == AST_NODE_ELSE)) {
 		LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_false);
-		gen_control_code_block("else", *node, end);
+
+		if (gen_control_code_block("else", *node, end))
+			return true;
 	}
 	// just a single if statement
 	else {
+		bool err = false;
+		LLVMValueRef cond = node_to_bool(*node, &err);
+		if (err) return true;
+
 		LLVMBuildCondBr(
 			SKULL_STATE.builder,
-			node_to_bool(*node),
+			cond,
 			if_true,
 			end
 		);
 	}
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, end);
+
+	return false;
 }
 
 /*
 Try and parse a condition (something returning a bool) from `node`.
+
+Set `err` if an error occurred.
 */
-LLVMValueRef node_to_bool(const AstNode *const node) {
-	const Expr expr = node_to_expr(NULL, node, NULL);
+static LLVMValueRef node_to_bool(const AstNode *const node, bool *err) {
+	const Expr expr = node_to_expr(NULL, node, NULL, err);
+	if (*err) return NULL;
 
 	if (expr.type != TYPE_BOOL) {
-		PANIC(ERR_NON_BOOL_EXPR, { .loc = &node->token->location });
+		FMT_ERROR(ERR_NON_BOOL_EXPR, { .loc = &node->token->location });
+
+		*err = true;
+		return NULL;
 	}
 
 	if (LLVMIsConstant(expr.value)) {
@@ -228,24 +265,30 @@ LLVMValueRef node_to_bool(const AstNode *const node) {
 Parse `node` while in a new scope. Branch to `block` when done.
 
 `name` is the type of block: if, else, while, etc.
+
+Return `true` if error occurred.
 */
-void gen_control_code_block(
+static bool gen_control_code_block(
 	const char *name,
 	const AstNode *const node,
 	LLVMBasicBlockRef block
 ) {
 	if (!node->child) { // NOLINT
-		PANIC(ERR_MISSING_BLOCK, {
+		FMT_ERROR(ERR_MISSING_BLOCK, {
 			.loc = &node->token->location,
 			.real = strdup(name)
 		});
+
+		return true;
 	}
 
 	Scope *scope_copy;
 	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
 
 	if (node->child->token) {
-		const Expr returned = gen_node(node->child);
+		bool err = false;
+		const Expr returned = gen_node(node->child, &err);
+		if (err) return true;
 
 		if (!returned.value)
 			LLVMBuildBr(SKULL_STATE.builder, block);
@@ -255,4 +298,6 @@ void gen_control_code_block(
 	}
 
 	restore_sub_scope(&SKULL_STATE.scope, &scope_copy);
+
+	return false;
 }

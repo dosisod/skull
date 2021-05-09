@@ -4,14 +4,13 @@
 #include "skull/codegen/scope.h"
 #include "skull/codegen/types.h"
 #include "skull/common/errors.h"
-#include "skull/common/panic.h"
+#include "skull/common/str.h"
 #include "skull/compiler/types/bool.h"
 #include "skull/compiler/types/defs.h"
 #include "skull/compiler/types/float.h"
 #include "skull/compiler/types/int.h"
 #include "skull/compiler/types/rune.h"
 #include "skull/compiler/types/str.h"
-
 
 #include "skull/codegen/oper.h"
 
@@ -85,15 +84,21 @@ Expr gen_expr_mult(
 
 /*
 Return expression for division of `lhs` and `rhs`.
+
+Set `err` if an error occurred.
 */
 Expr gen_expr_div(
 	Type type,
 	LLVMValueRef lhs,
-	LLVMValueRef rhs
+	LLVMValueRef rhs,
+	bool *err
 ) {
 	if (type == TYPE_INT) {
 		if (LLVMConstIntGetSExtValue(rhs) == 0) {
-			PANIC(ERR_DIV_BY_ZERO, {0});
+			FMT_ERROR(ERR_DIV_BY_ZERO, {0});
+
+			*err = true;
+			return (Expr){0};
 		}
 	}
 
@@ -108,15 +113,21 @@ Expr gen_expr_div(
 
 /*
 Return expression for modulus of `lhs` and `rhs`.
+
+Set `err` if an error occurred.
 */
 Expr gen_expr_mod(
 	Type type,
 	LLVMValueRef lhs,
-	LLVMValueRef rhs
+	LLVMValueRef rhs,
+	bool *err
 ) {
 	if (type == TYPE_INT) {
 		if (LLVMConstIntGetSExtValue(rhs) == 0) {
-			PANIC(ERR_DIV_BY_ZERO, {0});
+			FMT_ERROR(ERR_DIV_BY_ZERO, {0});
+
+			*err = true;
+			return (Expr){0};
 		}
 	}
 
@@ -173,11 +184,14 @@ Expr create_and_call_builtin_oper(
 
 /*
 Return expression for taking `lhs` to the power of `rhs`.
+
+Set `err` if an error occurred.
 */
 Expr gen_expr_pow(
 	Type type,
 	LLVMValueRef lhs,
-	LLVMValueRef rhs
+	LLVMValueRef rhs,
+	bool *err
 ) {
 	const char *func_name = NULL;
 
@@ -188,7 +202,10 @@ Expr gen_expr_pow(
 		func_name = "_float_pow";
 
 	else {
-		PANIC(ERR_POW_BAD_TYPE, { .type = type });
+		FMT_ERROR(ERR_POW_BAD_TYPE, { .type = type });
+
+		*err = true;
+		return (Expr){0};
 	}
 
 	return create_and_call_builtin_oper(
@@ -479,26 +496,36 @@ Return expression for identifier `token` with type `type`.
 Optionally pass `var` if result is expected to be assigned to a variable.
 
 If `type` is not set, the expression type will not be checked.
+
+Set `err` if an error occurred.
 */
 Expr gen_expr_identifier(
 	Type type,
 	const Token *const token,
-	const Variable *const var
+	const Variable *const var,
+	bool *err
 ) {
 	Variable *var_found = NULL;
-	const Expr expr = token_to_expr(token, &var_found);
+	const Expr expr = token_to_expr(token, &var_found, err);
+	if (*err) return (Expr){0};
 
 	if (type && var_found && var_found->type != type) {
-		PANIC(ERR_EXPECTED_SAME_TYPE,
+		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{ .loc = &token->location, .type = type },
 			{ .type = var_found->type }
 		);
+
+		*err = true;
+		return (Expr){0};
 	}
 	if (var == var_found) {
-		PANIC(ERR_REDUNDANT_REASSIGN, {
+		FMT_ERROR(ERR_REDUNDANT_REASSIGN, {
 			.loc = &token->location,
 			.var = var
 		});
+
+		*err = true;
+		return (Expr){0};
 	}
 
 	return expr;
@@ -506,13 +533,17 @@ Expr gen_expr_identifier(
 
 /*
 Return expression for operation `oper` for `expr`.
+
+Set `err` if an error occurred.
 */
 Expr gen_expr_oper(
 	Type type,
 	const AstNodeExpr *const expr,
-	const Variable *const var
+	const Variable *const var,
+	bool *err
 ) {
 	Operation *func = NULL;
+	OperationWithErr *func_with_err = NULL;
 
 	// true if expr results in different type then its operands
 	bool is_diff_type = false;
@@ -522,11 +553,11 @@ Expr gen_expr_oper(
 		case EXPR_SUB: func = &gen_expr_sub; break;
 		case EXPR_UNARY_NEG: func = &gen_expr_unary_neg; break;
 		case EXPR_MULT: func = &gen_expr_mult; break;
-		case EXPR_DIV: func = &gen_expr_div; break;
-		case EXPR_MOD: func = &gen_expr_mod; break;
+		case EXPR_DIV: func_with_err = &gen_expr_div; break;
+		case EXPR_MOD: func_with_err = &gen_expr_mod; break;
 		case EXPR_NOT: func = &gen_expr_not; break;
 		case EXPR_LSHIFT: func = &gen_expr_lshift; break;
-		case EXPR_POW: func = &gen_expr_pow; break;
+		case EXPR_POW: func_with_err = &gen_expr_pow; break;
 		case EXPR_RSHIFT: func = &gen_expr_rshift; break;
 		case EXPR_IS: func = gen_expr_is; is_diff_type = true; break;
 		case EXPR_ISNT: func = gen_expr_is_not; is_diff_type = true; break;
@@ -540,11 +571,11 @@ Expr gen_expr_oper(
 		case EXPR_OR: func = gen_expr_or; is_diff_type = true; break;
 		case EXPR_XOR: func = gen_expr_xor; is_diff_type = true; break;
 		case EXPR_IDENTIFIER:
-			return gen_expr_identifier(type, expr->lhs.tok, var);
+			return gen_expr_identifier(type, expr->lhs.tok, var, err);
 		case EXPR_CONST:
-			return gen_expr_const(type, expr->lhs.tok);
+			return gen_expr_const(type, expr->lhs.tok, err);
 		case EXPR_FUNC:
-			return gen_expr_function_call(expr, type);
+			return gen_expr_function_call(expr, type, err);
 		default: return (Expr){0};
 	}
 
@@ -555,54 +586,65 @@ Expr gen_expr_oper(
 			NULL;
 
 	const Expr lhs = lhs_token ?
-		gen_expr_oper(is_diff_type ? NULL : type, expr->lhs.expr, var) :
+		gen_expr_oper(is_diff_type ? NULL : type, expr->lhs.expr, var, err) :
 		(Expr){0};
+
+	if (*err) return (Expr){0};
 
 	const Token *rhs_token = expr->rhs.expr->lhs.tok;
 
 	const Expr rhs = gen_expr_oper(
 		is_diff_type ? lhs.type : type,
 		expr->rhs.expr,
-		var
+		var,
+		err
 	);
 
+	if (*err) return (Expr){0};
+
 	if (lhs.value && lhs.type != rhs.type) {
-		PANIC(ERR_EXPECTED_SAME_TYPE,
+		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{ .loc = &rhs_token->location, .type = lhs.type },
 			{ .type = rhs.type }
 		);
+
+		*err = true;
+		return (Expr){0};
 	}
 
-	const Expr result = func(
-		rhs.type,
-		lhs.value,
-		rhs.value
-	);
+	const Expr result = func ?
+			func(rhs.type, lhs.value, rhs.value) :
+			func_with_err(rhs.type, lhs.value, rhs.value, err);
 
-	if (!result.type && !result.value) return (Expr){0};
+	if ((!result.type && !result.value) || *err) return (Expr){0};
 
 	if (type && result.type != type) {
 		const Token *tok = lhs_token ? lhs_token : rhs_token;
 
-		PANIC(ERR_EXPECTED_SAME_TYPE,
+		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{ .loc = &tok->location, .type = type },
 			{ .type = result.type }
 		);
+
+		*err = true;
+		return (Expr){0};
 	}
 
 	return result;
 }
 
-Expr token_to_simple_expr(const Token *const);
+Expr token_to_simple_expr(const Token *const, bool *err);
 
 /*
 Convert `token` to an expression.
 
 If `variable` is and `token` is a variable, store the found variable there.
 */
-Expr token_to_expr(const Token *const token, Variable **variable) {
+Expr token_to_expr(const Token *const token, Variable **variable, bool *err) {
 	if (token->type == TOKEN_IDENTIFIER) {
-		Variable *const var_found = scope_find_var(token);
+		Variable *const var_found = scope_find_var(token, err);
+		if (*err) return (Expr){0};
+
 		var_found->was_read = true;
 
 		if (variable) *variable = var_found;
@@ -628,23 +670,29 @@ Expr token_to_expr(const Token *const token, Variable **variable) {
 		};
 	}
 
-	return token_to_simple_expr(token);
+	return token_to_simple_expr(token, err);
 }
 
 /*
 Make an expression from `token`, checking for compatibility with `type`.
+
+Set `err` if an error occurred.
 */
 Expr gen_expr_const(
 	Type type,
-	const Token *const token
+	const Token *const token,
+	bool *err
 ) {
-	const Expr expr = token_to_simple_expr(token);
+	const Expr expr = token_to_simple_expr(token, err);
 
-	if (!expr.type) {
-		PANIC(ERR_TYPE_MISMATCH, {
+	if (!expr.type && !*err) {
+		FMT_ERROR(ERR_TYPE_MISMATCH, {
 			.loc = &token->location,
 			.type = type
 		});
+
+		*err = true;
+		return (Expr){0};
 	}
 
 	return expr;
@@ -653,16 +701,16 @@ Expr gen_expr_const(
 /*
 Make a simple expression (const literal) from `token`.
 */
-Expr token_to_simple_expr(const Token *const token) {
+Expr token_to_simple_expr(const Token *const token, bool *err) {
 	LLVMValueRef value = NULL;
 	Type type = NULL;
 
 	if (token->type == TOKEN_INT_CONST) {
-		value = LLVM_INT(eval_integer(token));
+		value = LLVM_INT(eval_integer(token, err));
 		type = TYPE_INT;
 	}
 	else if (token->type == TOKEN_FLOAT_CONST) {
-		value = LLVM_FLOAT(eval_float(token));
+		value = LLVM_FLOAT(eval_float(token, err));
 		type = TYPE_FLOAT;
 	}
 	else if (token->type == TOKEN_BOOL_CONST) {
@@ -670,12 +718,22 @@ Expr token_to_simple_expr(const Token *const token) {
 		type = TYPE_BOOL;
 	}
 	else if (token->type == TOKEN_RUNE_CONST) {
-		value = LLVM_RUNE(eval_rune(token));
+		value = LLVM_RUNE(eval_rune(token, err));
 		type = TYPE_RUNE;
 	}
 	else if (token->type == TOKEN_STR_CONST) {
-		SkullStr str = eval_str(token);
+		SkullStr str = eval_str(token, err);
+		if (!str) {
+			*err = true;
+			return (Expr){0};
+		}
+
 		char *const mbs = c32stombs(str, &token->location);
+		if (!mbs) {
+			free(str);
+			*err = true;
+			return (Expr){0};
+		}
 
 		value = LLVMBuildBitCast(
 			SKULL_STATE.builder,

@@ -7,40 +7,46 @@ Expr gen_stmt_unreachable(void)
 > Build an unreachable statement.
 
 ```c
-Expr gen_stmt_return(AstNode **node)
+Expr gen_stmt_return(AstNode **node, bool *err)
 ```
 
 > Builds an return statement from `node`.
+> \
+> Set `err` if error occurrs.
 
 ```c
-void gen_control_while(AstNode **node)
+bool gen_control_while(AstNode **node)
 ```
 
 > Builds LLVM for a while loop from `node`.
 
 ```c
-void gen_control_if(AstNode **node)
+bool gen_control_if(AstNode **node)
 ```
 
 > Builds an if block from `node`.
 
 ```c
-void gen_control_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end)
+bool gen_control_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end)
 ```
 
 > Internal function for building an `if` node.
 
 ```c
-LLVMValueRef node_to_bool(const AstNode *const node)
+static LLVMValueRef node_to_bool(const AstNode *const node, bool *err)
 ```
 
 > Try and parse a condition (something returning a bool) from `node`.
+> \
+> Set `err` if an error occurred.
 
 ```c
-void gen_control_code_block(const char *name, const AstNode *const node, LLVMBasicBlockRef block)
+static bool gen_control_code_block(const char *name, const AstNode *const node, LLVMBasicBlockRef block)
 ```
 
 > Parse `node` while in a new scope. Branch to `block` when done.
 > \
 > `name` is the type of block: if, else, while, etc.
+> \
+> Return `true` if error occurred.
 
