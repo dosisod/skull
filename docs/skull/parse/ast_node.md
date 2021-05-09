@@ -113,6 +113,80 @@ AstNode *make_ast_tree(const char32_t *const code)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
+static bool try_parse_return(Token **token, AstNode **node, bool *err)
+```
+
+> Try and generate a valid return node from `token`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static bool try_parse_type_alias(Token **token, AstNode **node)
+```
+
+> Try and generate a type alias node from `token`.
+
+```c
+static bool try_parse_var_def(Token **_token, AstNode **node, bool *err)
+```
+
+> Try and generate a variable definition node from `token`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static bool try_parse_var_assign(Token **token, AstNode **node, bool *err)
+```
+
+> Try and generate a variable assignment node from `token`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static ExprType token_type_to_expr_oper_type(TokenType type)
+```
+
+> Convert a `TokenType` to an `ExprType`.
+
+```c
+static AstNodeExpr *build_rhs_expr(AstNodeExpr *lhs, ExprType oper, Token **token, bool *err)
+```
+
+> Parse the right-hand-side of an expression given `lhs`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static AstNodeExpr *try_parse_binary_oper(AstNodeExpr *expr, Token **token, bool *err)
+```
+
+> Try to parse a binary operator from `expr`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err)
+```
+
+> Try to parse a unary operator from `expr`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static bool try_parse_function_proto(Token **_token, AstNode **node)
+```
+
+> Try to parse a function prototype from `_token`.
+
+```c
+static bool try_parse_condition(Token **token, AstNode **node, bool *err)
+```
+
+> Try to parse a conditional (if/elif/else/while statement) from `token`.
+> \
+> Set `err` if an error occurred.
+
+```c
 static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl, bool *err)
 ```
 
@@ -133,6 +207,20 @@ static AstNodeExpr *_try_parse_expression(Token **token, bool *err)
 > Internal `try_parse_expression` function. Used for recursive expr parsing.
 
 ```c
+static AstNodeExpr *parse_paren_expr(Token **token, bool *err)
+```
+
+> Parse parenthesis expression from `token`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static AstNodeExpr *parse_single_token_expr(Token **token)
+```
+
+> Parse a single token expression (constant or variable) from `token`.
+
+```c
 static AstNodeExpr *parse_func_call(Token **token, bool *err)
 ```
 
@@ -151,6 +239,12 @@ void free_ast_tree(AstNode *node)
 ```
 
 > Frees an AST tree.
+
+```c
+static void free_expr_node(AstNodeExpr *expr)
+```
+
+> Free an expression nodes and all its sub-expressions.
 
 ```c
 static void free_ast_tree_(AstNode *node)

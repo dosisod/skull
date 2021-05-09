@@ -22,6 +22,9 @@
 Expr gen_node(AstNode *);
 void assert_sane_child(AstNode *);
 
+/*
+Build an unreachable statement.
+*/
 Expr gen_stmt_unreachable(void) {
 	return (Expr){
 		.value = LLVMBuildUnreachable(SKULL_STATE.builder)

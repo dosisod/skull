@@ -1,3 +1,5 @@
+#include "skull/compiler/types/_underscore_num.h"
+
 /*
 Strip underscores from `str`.
 

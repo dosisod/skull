@@ -27,6 +27,12 @@ void *ht_get(const HashTable *const ht, const char *const key)
 > Return `NULL` if key does not exist.
 
 ```c
+void free_ht_item(void (*free_func)(void *), void *item)
+```
+
+> Free `item` using `free_func` (if passed).
+
+```c
 void free_ht(HashTable *ht, void (*free_func)(void *))
 ```
 

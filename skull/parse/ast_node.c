@@ -52,6 +52,11 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	return tree;
 }
 
+/*
+Try and generate a valid return node from `token`.
+
+Set `err` if an error occurred.
+*/
 static bool try_parse_return(Token **token, AstNode **node, bool *err) {
 	if ((*token)->type != TOKEN_KW_RETURN) return false;
 
@@ -70,6 +75,9 @@ static bool try_parse_return(Token **token, AstNode **node, bool *err) {
 	return true;
 }
 
+/*
+Try and generate a type alias node from `token`.
+*/
 static bool try_parse_type_alias(Token **token, AstNode **node) {
 	if (!AST_TOKEN_CMP(*token,
 		TOKEN_IDENTIFIER,
@@ -89,6 +97,11 @@ static bool try_parse_type_alias(Token **token, AstNode **node) {
 #define IS_TYPE_LIKE(token) \
 	((token)->type == TOKEN_TYPE || (token)->type == TOKEN_IDENTIFIER)
 
+/*
+Try and generate a variable definition node from `token`.
+
+Set `err` if an error occurred.
+*/
 static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 	bool is_const = true;
 	bool is_implicit = true;
@@ -145,6 +158,11 @@ static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 	return true;
 }
 
+/*
+Try and generate a variable assignment node from `token`.
+
+Set `err` if an error occurred.
+*/
 static bool try_parse_var_assign(Token **token, AstNode **node, bool *err) {
 	if (!AST_TOKEN_CMP(*token,
 		TOKEN_IDENTIFIER,
@@ -168,6 +186,9 @@ static bool try_parse_var_assign(Token **token, AstNode **node, bool *err) {
 	return true;
 }
 
+/*
+Convert a `TokenType` to an `ExprType`.
+*/
 static ExprType token_type_to_expr_oper_type(TokenType type) {
 	switch (type) {
 		case TOKEN_OPER_PLUS: return EXPR_ADD;
@@ -192,6 +213,11 @@ static ExprType token_type_to_expr_oper_type(TokenType type) {
 	}
 }
 
+/*
+Parse the right-hand-side of an expression given `lhs`.
+
+Set `err` if an error occurred.
+*/
 static AstNodeExpr *build_rhs_expr(
 	AstNodeExpr *lhs,
 	ExprType oper,
@@ -219,6 +245,11 @@ static AstNodeExpr *build_rhs_expr(
 	return new_expr;
 }
 
+/*
+Try to parse a binary operator from `expr`.
+
+Set `err` if an error occurred.
+*/
 static AstNodeExpr *try_parse_binary_oper(
 	AstNodeExpr *expr,
 	Token **token,
@@ -232,6 +263,11 @@ static AstNodeExpr *try_parse_binary_oper(
 	return build_rhs_expr(expr, oper, token, err);
 }
 
+/*
+Try to parse a unary operator from `expr`.
+
+Set `err` if an error occurred.
+*/
 static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err) {
 	if (!(*token)->next) return NULL;
 
@@ -243,6 +279,9 @@ static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err) {
 	return build_rhs_expr(NULL, oper, token, err);
 }
 
+/*
+Try to parse a function prototype from `_token`.
+*/
 static bool try_parse_function_proto(Token **_token, AstNode **node) {
 	Token *token = *_token;
 	Token *last = token;
@@ -345,6 +384,11 @@ static bool try_parse_function_proto(Token **_token, AstNode **node) {
 	return true;
 }
 
+/*
+Try to parse a conditional (if/elif/else/while statement) from `token`.
+
+Set `err` if an error occurred.
+*/
 static bool try_parse_condition(Token **token, AstNode **node, bool *err) {
 	const TokenType token_type = (*token)->type;
 	NodeType node_type;
@@ -549,6 +593,11 @@ static AstNodeExpr *_try_parse_expression(Token **token, bool *err) {
 	return expr;
 }
 
+/*
+Parse parenthesis expression from `token`.
+
+Set `err` if an error occurred.
+*/
 static AstNodeExpr *parse_paren_expr(Token **token, bool *err) {
 	*token = (*token)->next;
 
@@ -577,6 +626,9 @@ static AstNodeExpr *parse_paren_expr(Token **token, bool *err) {
 	return pushed;
 }
 
+/*
+Parse a single token expression (constant or variable) from `token`.
+*/
 static AstNodeExpr *parse_single_token_expr(Token **token) {
 	AstNodeExpr *expr = Malloc(sizeof(AstNodeExpr));
 	*expr = (AstNodeExpr){
@@ -680,6 +732,9 @@ void free_ast_tree(AstNode *node) {
 	};
 }
 
+/*
+Free an expression nodes and all its sub-expressions.
+*/
 static void free_expr_node(AstNodeExpr *expr) {
 	if (!expr) return;
 

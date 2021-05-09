@@ -76,6 +76,9 @@ void *ht_get(const HashTable *const ht, const char *const key) {
 	return NULL;
 }
 
+/*
+Free `item` using `free_func` (if passed).
+*/
 void free_ht_item(void (*free_func)(void *), void *item) {
 	if (free_func) free_func(item);
 

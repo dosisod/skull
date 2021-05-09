@@ -16,3 +16,21 @@ Expr gen_node(AstNode *node)
 > \
 > Return expr from an `AST_NODE_RETURN` if one was found.
 
+```c
+void assert_sane_child(AstNode *node)
+```
+
+> Verify that `node` doens't contain child node if it shouldn't.
+
+```c
+static Expr _gen_node(AstNode **node)
+```
+
+> Internal `gen_node` function.
+
+```c
+static void gen_expr_node(const AstNode *node)
+```
+
+> Generate a (function) expression from `node`.
+

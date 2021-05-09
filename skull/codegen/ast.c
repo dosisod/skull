@@ -69,6 +69,9 @@ Expr gen_node(AstNode *node) {
 
 static void gen_expr_node(const AstNode *);
 
+/*
+Verify that `node` doens't contain child node if it shouldn't.
+*/
 void assert_sane_child(AstNode *node) {
 	if (!node) return;
 
@@ -85,6 +88,9 @@ void assert_sane_child(AstNode *node) {
 	}
 }
 
+/*
+Internal `gen_node` function.
+*/
 static Expr _gen_node(AstNode **node) {
 	assert_sane_child(*node);
 
@@ -113,6 +119,9 @@ static Expr _gen_node(AstNode **node) {
 	return (Expr){0};
 }
 
+/*
+Generate a (function) expression from `node`.
+*/
 static void gen_expr_node(const AstNode *node) {
 	if (node->expr->oper != EXPR_FUNC) {
 		PANIC(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });

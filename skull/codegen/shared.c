@@ -2,6 +2,9 @@
 
 #include "skull/codegen/shared.h"
 
+/*
+Free everything about a Skull compiler instance.
+*/
 void free_state(SkullState state) {
 	free_ht(
 		state.type_aliases,

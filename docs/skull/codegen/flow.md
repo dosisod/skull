@@ -1,6 +1,12 @@
 # skull/codegen/flow
 
 ```c
+Expr gen_stmt_unreachable(void)
+```
+
+> Build an unreachable statement.
+
+```c
 Expr gen_stmt_return(AstNode **node)
 ```
 

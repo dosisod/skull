@@ -17,3 +17,9 @@ typedef struct {
 
 > Shared state for a given Skull program.
 
+```c
+void free_state(SkullState state)
+```
+
+> Free everything about a Skull compiler instance.
+
