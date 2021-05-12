@@ -6,7 +6,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types/bool.h"
-#include "skull/compiler/types/defs.h"
 #include "skull/compiler/types/float.h"
 #include "skull/compiler/types/int.h"
 #include "skull/compiler/types/rune.h"
@@ -722,7 +721,7 @@ Expr token_to_simple_expr(const Token *const token, bool *err) {
 		type = TYPE_RUNE;
 	}
 	else if (token->type == TOKEN_STR_CONST) {
-		SkullStr str = eval_str(token, err);
+		char32_t *str = eval_str(token, err);
 		if (!str) {
 			*err = true;
 			return (Expr){0};

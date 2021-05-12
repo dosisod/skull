@@ -6,7 +6,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/compiler/types/defs.h"
 #include "skull/parse/classify.h"
 
 #include "skull/compiler/variable.h"

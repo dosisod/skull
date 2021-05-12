@@ -9,9 +9,9 @@
 #include "skull/compiler/types/rune.h"
 
 /*
-Return rune type converted from `token`.
+Return "rune" converted from `token`.
 */
-SkullRune eval_rune(const Token *const token, bool *err) {
+char32_t eval_rune(const Token *const token, bool *err) {
 	const char32_t *start = token->begin + 1;
 	const char32_t *copy = start;
 
@@ -23,7 +23,7 @@ SkullRune eval_rune(const Token *const token, bool *err) {
 	}
 
 	const char32_t *error = NULL;
-	SkullRune ret = c32sunescape(&start, &error);
+	char32_t ret = c32sunescape(&start, &error);
 
 	mbstate_t mbs;
 	memset(&mbs, 0, sizeof mbs);

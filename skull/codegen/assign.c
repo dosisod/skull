@@ -11,7 +11,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/compiler/scope.h"
-#include "skull/compiler/types/defs.h"
 
 #include "skull/codegen/assign.h"
 

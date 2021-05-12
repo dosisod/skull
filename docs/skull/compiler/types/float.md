@@ -1,8 +1,8 @@
 # skull/compiler/types/float
 
 ```c
-SkullFloat eval_float(const Token *const token, bool *err)
+double eval_float(const Token *const token, bool *err)
 ```
 
-> Returns a Skull float parsed from `token`.
+> Returns a float (actually a double) parsed from `token`.
 

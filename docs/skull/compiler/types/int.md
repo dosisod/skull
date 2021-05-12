@@ -1,8 +1,8 @@
 # skull/compiler/types/int
 
 ```c
-SkullInt eval_integer(const Token *const token, bool *err)
+int64_t eval_integer(const Token *const token, bool *err)
 ```
 
-> Returns an Skull integer parsed from `token`.
+> Returns a 64 bit integer parsed from `token`.
 

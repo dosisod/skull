@@ -9,9 +9,9 @@
 #include "skull/compiler/types/float.h"
 
 /*
-Returns a Skull float parsed from `token`.
+Returns a float (actually a double) parsed from `token`.
 */
-SkullFloat eval_float(const Token *const token, bool *err) {
+double eval_float(const Token *const token, bool *err) {
 	char *const float_str = token_mbs_str(token);
 
 	if (strcmp("Infinity", float_str) == 0) {
@@ -30,7 +30,7 @@ SkullFloat eval_float(const Token *const token, bool *err) {
 	strip_underscore_num(float_str, '.');
 
 	errno = 0;
-	SkullFloat ret = strtod(float_str, NULL);
+	double ret = strtod(float_str, NULL);
 	free(float_str);
 
 	if (isinf(ret) && errno == ERANGE) {

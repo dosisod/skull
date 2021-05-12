@@ -3,7 +3,6 @@
 
 #include "skull/common/str.h"
 #include "skull/common/errors.h"
-#include "skull/compiler/types/defs.h"
 #include "skull/compiler/variable.h"
 
 #include "test/skull/compiler/variable.h"

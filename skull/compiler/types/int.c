@@ -8,9 +8,9 @@
 #include "skull/compiler/types/int.h"
 
 /*
-Returns an Skull integer parsed from `token`.
+Returns a 64 bit integer parsed from `token`.
 */
-SkullInt eval_integer(const Token *const token, bool *err) {
+int64_t eval_integer(const Token *const token, bool *err) {
 	const char32_t *begin = token->begin;
 	int base = 10;
 
@@ -33,7 +33,7 @@ SkullInt eval_integer(const Token *const token, bool *err) {
 	strip_underscore_num(num_str, 0);
 
 	errno = 0;
-	SkullInt ret = strtoll(num_str, NULL, base);
+	int64_t ret = strtoll(num_str, NULL, base);
 	free(num_str);
 
 	if ((ret == LLONG_MAX || ret == LLONG_MIN) && errno == ERANGE) {

@@ -6,9 +6,9 @@
 #include "skull/compiler/types/str.h"
 
 /*
-Return Skull string converted from `token`
+Return string converted from `token`
 */
-SkullStr eval_str(const Token *const token, bool *err) {
+char32_t *eval_str(const Token *const token, bool *err) {
 	char32_t *copy;
 	copy = Malloc((token_len(token) - 1) * sizeof *copy);
 
