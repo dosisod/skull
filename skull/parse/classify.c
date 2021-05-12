@@ -278,8 +278,7 @@ bool is_valid_identifier_str(const char32_t *str) {
 			str++;
 			break;
 		}
-		if (!(c32isalnum(*str) ^ (*str == '_')))
-			return false;
+		if (*str != '_' && !c32isalnum(*str)) return false;
 
 		str++;
 	}
