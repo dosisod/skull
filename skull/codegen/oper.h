@@ -11,7 +11,6 @@ typedef Expr (OperationWithErr)(Type, LLVMValueRef, LLVMValueRef, bool *);
 Expr gen_expr_oper(
 	Type,
 	const AstNodeExpr *const,
-	const Variable *const,
 	bool *
 );
 
@@ -40,6 +39,5 @@ Expr gen_expr_const(Type, const Token *const, bool *);
 Expr gen_expr_identifier(
 	Type,
 	const Token *const,
-	const Variable *const,
 	bool *
 );

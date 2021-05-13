@@ -28,7 +28,6 @@ FunctionDeclaration *add_function(
 Expr node_to_expr(
 	Type type,
 	const AstNode *const,
-	const Variable *const,
 	bool *
 );
 
@@ -247,7 +246,6 @@ Expr gen_expr_function_call(
 		const Expr param_expr = node_to_expr(
 			function->param_types[i],
 			param,
-			NULL,
 			err
 		);
 

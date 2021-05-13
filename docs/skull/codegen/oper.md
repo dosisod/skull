@@ -161,7 +161,7 @@ Expr gen_expr_xor(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return result of logical "xor" operation of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_identifier(Type type, const Token *const token, const Variable *const var, bool *err)
+Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
 ```
 
 > Return expression for identifier `token` with type `type`.
@@ -173,7 +173,7 @@ Expr gen_expr_identifier(Type type, const Token *const token, const Variable *co
 > Set `err` if an error occurred.
 
 ```c
-Expr gen_expr_oper(Type type, const AstNodeExpr *const expr, const Variable *const var, bool *err)
+Expr gen_expr_oper(Type type, const AstNodeExpr *const expr, bool *err)
 ```
 
 > Return expression for operation `oper` for `expr`.

@@ -4,7 +4,7 @@
 bool gen_stmt_var_def(AstNode **node)
 ```
 
-> Builds a variable from `node`.
+> Builds a variable definition from `node`.
 > \
 > Return `true` if an error occurred.
 
@@ -12,12 +12,20 @@ bool gen_stmt_var_def(AstNode **node)
 bool gen_stmt_var_assign(AstNode **node)
 ```
 
-> Build a LLVM `load` operation from `node`.
+> Assign a to a variable from `node`.
 > \
 > Return `true` if an error occurred.
 
 ```c
-Expr node_to_expr(Type type, const AstNode *const node, const Variable *const var, bool *err)
+bool _gen_stmt_var_assign(Variable *var, AstNode **node)
+```
+
+> Does the actual assignment of `node` to `var`.
+> \
+> Return `true` if an error occurred.
+
+```c
+Expr node_to_expr(Type type, const AstNode *const node, bool *err)
 ```
 
 > Create an expression from `node` with type `type`.

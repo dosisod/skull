@@ -16,9 +16,10 @@
 
 void assign_value_to_var(LLVMValueRef, Variable *const);
 bool assert_sane_child(AstNode *);
+bool _gen_stmt_var_assign(Variable *, AstNode **);
 
 /*
-Builds a variable from `node`.
+Builds a variable definition from `node`.
 
 Return `true` if an error occurred.
 */
@@ -27,52 +28,48 @@ bool gen_stmt_var_def(AstNode **node) {
 	Variable *var = node_to_var(*node, &err);
 	if (err) return true;
 
-	LLVMValueRef value = node_to_expr(
-		var->type,
-		(*node)->next,
-		var,
-		&err
-	).value;
-
-	if (err) return true;
-
-	assign_value_to_var(value, var);
-
-	*node = (*node)->next;
-	return !assert_sane_child(*node);
+	return _gen_stmt_var_assign(var, node);
 }
 
 /*
-Build a LLVM `load` operation from `node`.
+Assign a to a variable from `node`.
 
 Return `true` if an error occurred.
 */
 bool gen_stmt_var_assign(AstNode **node) {
 	bool err = false;
-	Variable *found_var = scope_find_var((*node)->token, &err);
-
+	Variable *var = scope_find_var((*node)->token, &err);
 	if (err) return true;
 
-	if (found_var->is_const) {
+	if (var->is_const) {
 		FMT_ERROR(ERR_REASSIGN_CONST, {
 			.tok = (*node)->token
 		});
 
 		return true;
 	}
+	var->was_reassigned = true;
 
-	found_var->was_read = true;
+	return _gen_stmt_var_assign(var, node);
+}
+
+/*
+Does the actual assignment of `node` to `var`.
+
+Return `true` if an error occurred.
+*/
+bool _gen_stmt_var_assign(Variable *var, AstNode **node) {
+	bool err = false;
 
 	LLVMValueRef value = node_to_expr(
-		found_var->type,
+		var->type,
 		(*node)->next,
-		found_var,
 		&err
 	).value;
 
 	if (err) return true;
 
-	assign_value_to_var(value, found_var);
+	assign_value_to_var(value, var);
 
 	*node = (*node)->next;
 	return !assert_sane_child(*node);
@@ -88,13 +85,12 @@ Set `err` if an error occurred.
 Expr node_to_expr(
 	Type type,
 	const AstNode *const node,
-	const Variable *const var,
 	bool *err
 ) {
 	Expr expr = {0};
 
 	if (node->type == AST_NODE_EXPR) {
-		expr = gen_expr_oper(type, node->expr, var, err);
+		expr = gen_expr_oper(type, node->expr, err);
 	}
 
 	if (!expr.value && !*err) {

@@ -501,27 +501,17 @@ Set `err` if an error occurred.
 Expr gen_expr_identifier(
 	Type type,
 	const Token *const token,
-	const Variable *const var,
 	bool *err
 ) {
-	Variable *var_found = NULL;
-	const Expr expr = token_to_expr(token, &var_found, err);
+	Variable *var = NULL;
+	const Expr expr = token_to_expr(token, &var, err);
 	if (*err) return (Expr){0};
 
-	if (type && var_found && var_found->type != type) {
+	if (type && var && var->type != type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{ .loc = &token->location, .type = type },
-			{ .type = var_found->type }
+			{ .type = var->type }
 		);
-
-		*err = true;
-		return (Expr){0};
-	}
-	if (var == var_found) {
-		FMT_ERROR(ERR_REDUNDANT_REASSIGN, {
-			.loc = &token->location,
-			.var = var
-		});
 
 		*err = true;
 		return (Expr){0};
@@ -538,7 +528,6 @@ Set `err` if an error occurred.
 Expr gen_expr_oper(
 	Type type,
 	const AstNodeExpr *const expr,
-	const Variable *const var,
 	bool *err
 ) {
 	Operation *func = NULL;
@@ -570,7 +559,7 @@ Expr gen_expr_oper(
 		case EXPR_OR: func = gen_expr_or; is_diff_type = true; break;
 		case EXPR_XOR: func = gen_expr_xor; is_diff_type = true; break;
 		case EXPR_IDENTIFIER:
-			return gen_expr_identifier(type, expr->lhs.tok, var, err);
+			return gen_expr_identifier(type, expr->lhs.tok, err);
 		case EXPR_CONST:
 			return gen_expr_const(type, expr->lhs.tok, err);
 		case EXPR_FUNC:
@@ -585,7 +574,7 @@ Expr gen_expr_oper(
 			NULL;
 
 	const Expr lhs = lhs_token ?
-		gen_expr_oper(is_diff_type ? NULL : type, expr->lhs.expr, var, err) :
+		gen_expr_oper(is_diff_type ? NULL : type, expr->lhs.expr, err) :
 		(Expr){0};
 
 	if (*err) return (Expr){0};
@@ -595,7 +584,6 @@ Expr gen_expr_oper(
 	const Expr rhs = gen_expr_oper(
 		is_diff_type ? lhs.type : type,
 		expr->rhs.expr,
-		var,
 		err
 	);
 

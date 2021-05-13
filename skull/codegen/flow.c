@@ -44,7 +44,7 @@ Expr gen_stmt_return(AstNode **node, bool *err) {
 
 	const bool is_main = SKULL_STATE.current_func == &SKULL_STATE.main_func;
 
-	const Expr expr = node_to_expr(NULL, node_val, NULL, err);
+	const Expr expr = node_to_expr(NULL, node_val, err);
 	if (*err) return (Expr){0};
 
 	if (is_main && expr.type != TYPE_INT) {
@@ -240,7 +240,7 @@ Try and parse a condition (something returning a bool) from `node`.
 Set `err` if an error occurred.
 */
 static LLVMValueRef node_to_bool(const AstNode *const node, bool *err) {
-	const Expr expr = node_to_expr(NULL, node, NULL, err);
+	const Expr expr = node_to_expr(NULL, node, err);
 	if (*err) return NULL;
 
 	if (expr.type != TYPE_BOOL) {

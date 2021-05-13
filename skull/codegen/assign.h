@@ -14,6 +14,5 @@ bool gen_stmt_var_assign(AstNode **);
 Expr node_to_expr(
 	Type,
 	const AstNode *const,
-	const Variable *const,
 	bool *
 );
