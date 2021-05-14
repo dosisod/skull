@@ -1,7 +1,7 @@
 # skull/codegen/oper
 
 ```c
-Expr gen_expr_math_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX int_func, LLVMBuildX float_func)
+static Expr gen_expr_math_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX int_func, LLVMBuildX float_func)
 ```
 
 > Returns the result of a mathematical operation on `lhs` and `rhs`.
@@ -10,25 +10,25 @@ Expr gen_expr_math_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuild
 > using `int_func` or `float_func`.
 
 ```c
-Expr gen_expr_add(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_add(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for addition of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_sub(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_sub(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for subtraction of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_mult(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_mult(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for multiplication of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_div(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
+static Expr gen_expr_div(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 ```
 
 > Return expression for division of `lhs` and `rhs`.
@@ -36,7 +36,7 @@ Expr gen_expr_div(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-Expr gen_expr_mod(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
+static Expr gen_expr_mod(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 ```
 
 > Return expression for modulus of `lhs` and `rhs`.
@@ -44,19 +44,19 @@ Expr gen_expr_mod(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-Expr gen_expr_lshift(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_lshift(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for left shift of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_rshift(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_rshift(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for logical right shift of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_pow(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
+static Expr gen_expr_pow(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 ```
 
 > Return expression for taking `lhs` to the power of `rhs`.
@@ -64,31 +64,31 @@ Expr gen_expr_pow(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-Expr gen_expr_not(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_not(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of not operator for `rhs`.
 
 ```c
-Expr gen_expr_unary_neg(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_unary_neg(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of unary negation operator for `rhs`.
 
 ```c
-Expr gen_expr_is(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_is(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of is operator for `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for string-is operator against `lhs` and `rhs`.
 
 ```c
-Expr create_and_call_builtin_oper(Type rtype, LLVMTypeRef type, const char *name, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr create_and_call_builtin_oper(Type rtype, LLVMTypeRef type, const char *name, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Create a function called `name` (if it does not exist) which returns type
@@ -96,13 +96,13 @@ Expr create_and_call_builtin_oper(Type rtype, LLVMTypeRef type, const char *name
 > with the `lhs` and `rhs` operands.
 
 ```c
-Expr gen_expr_is_not(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_is_not(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of is not operator for `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_relational_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMIntPredicate int_pred, LLVMRealPredicate float_pred)
+static Expr gen_expr_relational_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMIntPredicate int_pred, LLVMRealPredicate float_pred)
 ```
 
 > Return result of relational comparison on `lhs` and `rhs`.
@@ -111,57 +111,57 @@ Expr gen_expr_relational_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLV
 > `int_func` or `float_func`.
 
 ```c
-Expr gen_expr_less_than(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_less_than(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of less than operator for `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_gtr_than(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_gtr_than(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of greater than operator for `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_less_than_eq(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_less_than_eq(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of less than or equal to operator for `lhs` and
 > `rhs`.
 
 ```c
-Expr gen_expr_gtr_than_eq(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_gtr_than_eq(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for result of greater than or equal to operator for `lhs`
 > and `rhs`.
 
 ```c
-Expr gen_expr_logical_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX func)
+static Expr gen_expr_logical_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX func)
 ```
 
 > Return result of logical operation `func` on `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_and(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_and(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return result of logical "and" operation of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_or(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_or(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return result of logical "or" operation of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_xor(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr gen_expr_xor(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return result of logical "xor" operation of `lhs` and `rhs`.
 
 ```c
-Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
+static Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
 ```
 
 > Return expression for identifier `token` with type `type`.
@@ -181,7 +181,7 @@ Expr gen_expr_oper(Type type, const AstNodeExpr *const expr, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-Expr token_to_expr(const Token *const token, Variable **variable, bool *err)
+static Expr token_to_expr(const Token *const token, Variable **variable, bool *err)
 ```
 
 > Convert `token` to an expression.
@@ -189,7 +189,7 @@ Expr token_to_expr(const Token *const token, Variable **variable, bool *err)
 > If `variable` is and `token` is a variable, store the found variable there.
 
 ```c
-Expr gen_expr_const(Type type, const Token *const token, bool *err)
+static Expr gen_expr_const(Type type, const Token *const token, bool *err)
 ```
 
 > Make an expression from `token`, checking for compatibility with `type`.
@@ -197,7 +197,7 @@ Expr gen_expr_const(Type type, const Token *const token, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-Expr token_to_simple_expr(const Token *const token, bool *err)
+static Expr token_to_simple_expr(const Token *const token, bool *err)
 ```
 
 > Make a simple expression (const literal) from `token`.
