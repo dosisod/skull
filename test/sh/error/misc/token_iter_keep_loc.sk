@@ -1,4 +1,12 @@
 x := "
 
 
-" #{ some comment #} invalid_token
+"
+
+#{
+
+some comment
+
+#}
+
+invalid_token

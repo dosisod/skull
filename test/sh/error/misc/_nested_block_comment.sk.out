@@ -1,1 +1,0 @@
-./test/sh/error/misc/nested_block_comment.sk: Compilation error: line 1 column 5: cannot put opening block comment in existing block comment

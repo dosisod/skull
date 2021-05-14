@@ -184,9 +184,12 @@ static bool iter_comment(
 					.line = *line_num,
 					.column = *column
 				};
-				FMT_ERROR(ERR_NESTED_BLOCK_COMMENT, { .loc = &location });
-				return true;
+				FMT_WARN(WARN_NESTED_BLOCK_COMMENT, { .loc = &location });
 			}
+		}
+		else if (*code == '\n') {
+			(*line_num)++;
+			*column = 0;
 		}
 	} while (*code);
 

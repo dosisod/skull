@@ -15,7 +15,6 @@
 #define ERR_BAD_ESCAPE "bad string escape: \"%s\"\n"
 #define ERR_VAR_NOT_FOUND "variable \"%s\" not found\n"
 #define ERR_OVERFLOW "overflow occurred while parsing \"%s\"\n"
-#define ERR_FILE_EMPTY "file is empty"
 #define ERR_MISSING_OPEN_BRAK "missing opening bracket"
 #define ERR_MISSING_CLOSING_PAREN "missing closing parenthesis"
 #define ERR_MISSING_DECLARATION "function \"%s\" missing declaration\n"
@@ -57,8 +56,6 @@
 #define ERR_EXPECTED_EXPR "expected expression after \"%s\"\n"
 #define ERR_NO_CONTROL_CHAR "control character cannot be used in rune"
 #define ERR_INVALID_NUM_PARAMS "invalid number of parameters"
-#define ERR_NESTED_BLOCK_COMMENT \
-	"cannot put opening block comment in existing block comment"
 #define ERR_INVALID_COMMENT_START "invalid start of comment"
 #define ERR_ILLEGAL_SEQ_AT "illegal UTF8 sequence at character offset %s\n"
 #define ERR_ILLEGAL_SEQ "illegal UTF8 sequence in this region"
@@ -67,6 +64,9 @@
 #define WARN_VAR_UNUSED "variable \"%s\" is unused\n"
 #define WARN_COND_ALWAYS_TRUE "condition is always true"
 #define WARN_COND_ALWAYS_FALSE "condition is always false"
+#define WARN_FILE_EMPTY "file is empty"
+#define WARN_NESTED_BLOCK_COMMENT \
+	"cannot put opening block comment in existing block comment"
 
 typedef struct Variable Variable;
 typedef const char * Type;

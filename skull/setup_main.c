@@ -68,8 +68,9 @@ int build_file(char *filename) {
 	if (!file_contents) {
 		SKULL_STATE.filename = filename;
 
-		FMT_ERROR(ERR_FILE_EMPTY, {0});
-		return 1;
+		FMT_WARN(WARN_FILE_EMPTY, {0});
+		fclose(f);
+		return 0;
 	}
 	fclose(f);
 
