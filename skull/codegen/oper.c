@@ -657,7 +657,11 @@ Convert `token` to an expression.
 
 If `variable` is and `token` is a variable, store the found variable there.
 */
-static Expr token_to_expr(const Token *const token, Variable **variable, bool *err) {
+static Expr token_to_expr(
+	const Token *const token,
+	Variable **variable,
+	bool *err
+) {
 	if (token->type == TOKEN_IDENTIFIER) {
 		Variable *const var_found = scope_find_var(token, err);
 		if (*err) return (Expr){0};

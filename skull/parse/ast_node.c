@@ -17,14 +17,15 @@ static AstNodeExpr *parse_func_call(Token **, bool *);
 static AstNode *make_ast_tree_(Token **, unsigned, bool *);
 static void free_ast_tree_(AstNode *);
 static bool is_value(TokenType);
-bool ast_token_cmp(Token *, ...);
 static void free_expr_node(AstNodeExpr *);
 
-/*
-Compare a variable number of token types stored in `...` agains each
-successive token in `token`.
-*/
-#define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
+#define AST_TOKEN_CMP2(tok, type1, type2) \
+	((tok) && (tok)->type == (type1) && \
+	(tok)->next && (tok)->next->type == (type2))
+
+#define AST_TOKEN_CMP3(tok, type1, type2, type3) \
+	(AST_TOKEN_CMP2(tok, type1, type2) && \
+	(tok)->next->next && (tok)->next->next->type == (type3))
 
 /*
 Makes an AST (abstract syntax tree) from a given string.
@@ -33,9 +34,7 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	Token *token = tokenize(code);
 	Token *head = token;
 
-	if (!token) {
-		return NULL;
-	}
+	if (!token) return NULL;
 
 	classify_tokens(token);
 
@@ -83,7 +82,7 @@ static bool try_parse_return(Token **token, AstNode **node, bool *err) {
 Try and generate a type alias node from `token`.
 */
 static bool try_parse_type_alias(Token **token, AstNode **node) {
-	if (!AST_TOKEN_CMP(*token,
+	if (!AST_TOKEN_CMP3(*token,
 		TOKEN_IDENTIFIER,
 		TOKEN_OPER_AUTO_EQUAL,
 		TOKEN_TYPE)
@@ -130,15 +129,13 @@ static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 		is_implicit = false;
 		*_token = token->next->next;
 	}
-	else if (AST_TOKEN_CMP(token,
+	else if (AST_TOKEN_CMP2(token,
 		TOKEN_IDENTIFIER,
 		TOKEN_OPER_AUTO_EQUAL)
 	) {
 		*_token = token->next;
 	}
-	else {
-		return false;
-	}
+	else return false;
 
 	(*node)->var_def = Malloc(sizeof(AstNodeVarDef));
 	*(*node)->var_def = (AstNodeVarDef){
@@ -168,7 +165,7 @@ Try and generate a variable assignment node from `token`.
 Set `err` if an error occurred.
 */
 static bool try_parse_var_assign(Token **token, AstNode **node, bool *err) {
-	if (!AST_TOKEN_CMP(*token,
+	if (!AST_TOKEN_CMP2(*token,
 		TOKEN_IDENTIFIER,
 		TOKEN_OPER_EQUAL)
 	) {
@@ -301,7 +298,7 @@ static bool try_parse_function_proto(
 
 	const Token *const func_name_token = token;
 
-	if (!AST_TOKEN_CMP(token,
+	if (!AST_TOKEN_CMP2(token,
 		TOKEN_IDENTIFIER,
 		TOKEN_PAREN_OPEN)
 	) {
@@ -347,7 +344,7 @@ static bool try_parse_function_proto(
 		token = token->next;
 	}
 
-	else if (!AST_TOKEN_CMP(token,
+	else if (!AST_TOKEN_CMP2(token,
 		TOKEN_PAREN_CLOSE,
 		token_type)
 	) {
@@ -582,7 +579,7 @@ static AstNodeExpr *_try_parse_expression(Token **token, bool *err) {
 	if ((*token)->type == TOKEN_PAREN_OPEN) {
 		expr = parse_paren_expr(token, err);
 	}
-	else if (AST_TOKEN_CMP(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
+	else if (AST_TOKEN_CMP2(*token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
 		expr = parse_func_call(token, err);
 	}
 	else if ((expr = try_parse_unary_oper(token, err))) {
@@ -617,9 +614,8 @@ static AstNodeExpr *parse_paren_expr(Token **token, bool *err) {
 	if (!pushed || *err) {
 		FMT_ERROR(ERR_INVALID_EXPR, { .tok = *token });
 
-		if (pushed) {
-			free_expr_node(pushed);
-		}
+		if (pushed) free_expr_node(pushed);
+
 		*err = true;
 		return NULL;
 	}
@@ -633,7 +629,6 @@ static AstNodeExpr *parse_paren_expr(Token **token, bool *err) {
 	}
 
 	*token = (*token)->next;
-
 	return pushed;
 }
 
@@ -807,30 +802,6 @@ static void free_ast_tree_(AstNode *node) {
 		current->next = NULL;
 		free(current);
 	}
-}
-
-/*
-Check each token's type starting at `token`, checking against the
-corresponding token type specified in `...`
-*/
-bool ast_token_cmp(Token *token, ...) {
-	va_list vargs;
-	va_start(vargs, token);
-
-	TokenType current_type = va_arg(vargs, TokenType); // NOLINT
-
-	while (current_type != TOKEN_END) {
-		if (!token || token->type != current_type) {
-			va_end(vargs);
-			return false;
-		}
-
-		current_type = va_arg(vargs, TokenType); // NOLINT
-		token = token->next;
-	}
-
-	va_end(vargs);
-	return true;
 }
 
 /*

@@ -100,13 +100,6 @@ typedef struct AstNodeExpr {
 > Makes an empty AstNode.
 
 ```c
-#define AST_TOKEN_CMP(tok, ...) ast_token_cmp((tok), __VA_ARGS__, TOKEN_END)
-```
-
-> Compare a variable number of token types stored in `...` agains each
-> successive token in `token`.
-
-```c
 AstNode *make_ast_tree(const char32_t *const code)
 ```
 
@@ -251,13 +244,6 @@ static void free_ast_tree_(AstNode *node)
 ```
 
 > Internal AST freeing function, dont call directly.
-
-```c
-bool ast_token_cmp(Token *token, ...)
-```
-
-> Check each token's type starting at `token`, checking against the
-> corresponding token type specified in `...`
 
 ```c
 static __attribute__((pure)) bool is_value(TokenType token_type)
