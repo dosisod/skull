@@ -58,6 +58,15 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 		return true;
 	}
 
+	if (scope_find_name(SKULL_STATE.scope, func_name)) {
+		FMT_ERROR(ERR_NO_REDEFINE_VAR_AS_FUNC, {
+			.loc = &func_name_token->location,
+			.real = func_name
+		});
+
+		return true;
+	}
+
 	FunctionDeclaration *found_func = ht_get(
 		SKULL_STATE.function_decls,
 		func_name

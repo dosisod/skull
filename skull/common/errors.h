@@ -29,6 +29,10 @@
 #define ERR_NON_BOOL_EXPR "expected boolean expression"
 #define ERR_MAIN_RESERVED "cannot export function \"main\""
 #define ERR_NO_REDEFINE_FUNC "cannot redeclare function \"%s\"\n"
+#define ERR_NO_REDEFINE_VAR_AS_FUNC \
+	"cannot redeclare variable \"%s\" as function\n"
+#define ERR_NO_REDEFINE_FUNC_AS_VAR \
+	"cannot redeclare function \"%s\" as variable\n"
 #define ERR_ZERO_PARAM_FUNC \
 	"passing parameter to function that takes zero parameters"
 #define ERR_SHADOW_VAR "variable \"%s\" shadows existing variable\n"

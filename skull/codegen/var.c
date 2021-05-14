@@ -48,6 +48,20 @@ Variable *node_to_var(const AstNode *const node, bool *err) {
 	);
 	free(name);
 
+	if (ht_get(SKULL_STATE.function_decls, var->name)) {
+		FMT_ERROR(ERR_NO_REDEFINE_FUNC_AS_VAR, {
+			.loc = &token->location,
+			.var = var
+		});
+
+		var->was_reassigned = true;
+		var->was_read = true;
+		free_variable(var);
+
+		*err = true;
+		return NULL;
+	}
+
 	if (scope_add_var(&SKULL_STATE.scope, var)) {
 		return var;
 	}
