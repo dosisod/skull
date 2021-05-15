@@ -100,13 +100,13 @@ typedef struct AstNodeExpr {
 > Makes an empty AstNode.
 
 ```c
-AstNode *make_ast_tree(const char32_t *const code)
+AstNode *parse_ast_tree(const char32_t *const code)
 ```
 
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-static bool try_parse_return(Token **token, AstNode **node, bool *err)
+static void parse_return(Token **token, AstNode **node, bool *err)
 ```
 
 > Try and generate a valid return node from `token`.
@@ -172,15 +172,15 @@ static bool try_parse_function_proto(Token **_token, AstNode **node, bool *err)
 > Try to parse a function prototype from `_token`.
 
 ```c
-static bool try_parse_condition(Token **token, AstNode **node, bool *err)
+static bool parse_condition(Token **token, AstNode **node, NodeType node_type)
 ```
 
 > Try to parse a conditional (if/elif/else/while statement) from `token`.
 > \
-> Set `err` if an error occurred.
+> Return `true` if error occurred.
 
 ```c
-static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl, bool *err)
+static AstNode *parse_ast_tree_(Token **token, unsigned indent_lvl, bool *err)
 ```
 
 > Internal AST tree generator.

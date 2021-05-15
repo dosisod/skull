@@ -23,7 +23,7 @@ bool codegen_str(char *const str_) {
 		return true;
 	}
 
-	AstNode *const node = make_ast_tree(str);
+	AstNode *const node = parse_ast_tree(str);
 	if (!node) {
 		free(str);
 		return true;

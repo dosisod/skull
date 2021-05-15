@@ -4,7 +4,7 @@
 
 #define TEST_AST_TREE(str, node_type, begin_offset, end_offset) \
 	const char32_t *code = str; \
-	AstNode *node = make_ast_tree(code); \
+	AstNode *node = parse_ast_tree(code); \
 	if (!node->type && !(node_type)) { \
 		return true; \
 	} \

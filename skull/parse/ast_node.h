@@ -154,5 +154,5 @@ Makes an empty AstNode.
 
 void push_ast_node(Token *const, Token *, NodeType, AstNode **);
 
-AstNode *make_ast_tree(const char32_t *const);
+AstNode *parse_ast_tree(const char32_t *const);
 void free_ast_tree(AstNode *);

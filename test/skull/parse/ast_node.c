@@ -42,43 +42,43 @@ bool test_push_ast_node() {
 	PASS
 }
 
-bool test_make_ast_tree_variable_def() {
+bool test_parse_ast_tree_variable_def() {
 	TEST_AST_TREE(U"x: Int = 0", AST_NODE_VAR_DEF, 0, 8);
 
 	PASS
 }
 
-bool test_make_ast_tree_mutable_variable_def() {
+bool test_parse_ast_tree_mutable_variable_def() {
 	TEST_AST_TREE(U"mut x: Int = 0", AST_NODE_VAR_DEF, 0, 12);
 
 	PASS
 }
 
-bool test_make_ast_tree_auto_variable_def() {
+bool test_parse_ast_tree_auto_variable_def() {
 	TEST_AST_TREE(U"x := 0", AST_NODE_VAR_DEF, 0, 4);
 
 	PASS
 }
 
-bool test_make_ast_tree_auto_mutable_variable_def() {
+bool test_parse_ast_tree_auto_mutable_variable_def() {
 	TEST_AST_TREE(U"mut x := 0", AST_NODE_VAR_DEF, 0, 8);
 
 	PASS
 }
 
-bool test_make_ast_tree_var_assign() {
+bool test_parse_ast_tree_var_assign() {
 	TEST_AST_TREE(U"x = 0", AST_NODE_VAR_ASSIGN, 0, 3);
 
 	PASS
 }
 
-bool test_make_ast_tree_external() {
+bool test_parse_ast_tree_external() {
 	TEST_AST_TREE(U"external x()\n", AST_NODE_FUNCTION_PROTO, 0, 12);
 
 	PASS
 }
 
-bool test_make_ast_tree_function() {
+bool test_parse_ast_tree_function() {
 	{
 		TEST_AST_TREE(U"x()", AST_NODE_EXPR, 0, 3);
 	}
@@ -90,14 +90,14 @@ bool test_make_ast_tree_function() {
 	PASS
 }
 
-bool test_make_ast_tree_return() {
+bool test_parse_ast_tree_return() {
 	TEST_AST_TREE(U"return 0", AST_NODE_RETURN, 0, 6);
 
 	PASS
 }
-bool test_make_ast_tree_if() {
+bool test_parse_ast_tree_if() {
 	const char32_t *const code = U"if true { noop }";
-	AstNode *node = make_ast_tree(code);
+	AstNode *node = parse_ast_tree(code);
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
@@ -111,9 +111,9 @@ bool test_make_ast_tree_if() {
 	PASS
 }
 
-bool test_make_ast_tree_if_with_var() {
+bool test_parse_ast_tree_if_with_var() {
 	const char32_t *const code = U"if x { noop }";
-	AstNode *node = make_ast_tree(code);
+	AstNode *node = parse_ast_tree(code);
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
@@ -127,14 +127,14 @@ bool test_make_ast_tree_if_with_var() {
 	PASS
 }
 
-bool test_make_ast_tree_comment() {
+bool test_parse_ast_tree_comment() {
 	TEST_AST_TREE(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
 
 	PASS
 }
 
 bool test_free_ast_tree() {
-	free_ast_tree(make_ast_tree(U"# whatever"));
+	free_ast_tree(parse_ast_tree(U"# whatever"));
 
 	PASS
 }
@@ -143,17 +143,17 @@ void ast_node_test_self(bool *pass) {
 	RUN_ALL(
 		test_make_ast_node,
 		test_push_ast_node,
-		test_make_ast_tree_variable_def,
-		test_make_ast_tree_mutable_variable_def,
-		test_make_ast_tree_auto_variable_def,
-		test_make_ast_tree_auto_mutable_variable_def,
-		test_make_ast_tree_var_assign,
-		test_make_ast_tree_external,
-		test_make_ast_tree_function,
-		test_make_ast_tree_return,
-		test_make_ast_tree_if,
-		test_make_ast_tree_if_with_var,
-		test_make_ast_tree_comment,
+		test_parse_ast_tree_variable_def,
+		test_parse_ast_tree_mutable_variable_def,
+		test_parse_ast_tree_auto_variable_def,
+		test_parse_ast_tree_auto_mutable_variable_def,
+		test_parse_ast_tree_var_assign,
+		test_parse_ast_tree_external,
+		test_parse_ast_tree_function,
+		test_parse_ast_tree_return,
+		test_parse_ast_tree_if,
+		test_parse_ast_tree_if_with_var,
+		test_parse_ast_tree_comment,
 		test_free_ast_tree
 	)
 }

@@ -14,7 +14,7 @@
 static AstNode *try_parse_expression(Token **, AstNode **, bool *);
 static AstNodeExpr *_try_parse_expression(Token **, bool *);
 static AstNodeExpr *parse_func_call(Token **, bool *);
-static AstNode *make_ast_tree_(Token **, unsigned, bool *);
+static AstNode *parse_ast_tree_(Token **, unsigned, bool *);
 static void free_ast_tree_(AstNode *);
 static bool is_value(TokenType);
 static void free_expr_node(AstNodeExpr *);
@@ -30,7 +30,7 @@ static void free_expr_node(AstNodeExpr *);
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-AstNode *make_ast_tree(const char32_t *const code) {
+AstNode *parse_ast_tree(const char32_t *const code) {
 	Token *token = tokenize(code);
 	Token *head = token;
 
@@ -39,7 +39,7 @@ AstNode *make_ast_tree(const char32_t *const code) {
 	classify_tokens(token);
 
 	bool err = false;
-	AstNode *const tree = make_ast_tree_(&token, 0, &err);
+	AstNode *const tree = parse_ast_tree_(&token, 0, &err);
 
 	if (!tree) free_tokens(head);
 	else if (!tree->token) {
@@ -60,22 +60,17 @@ Try and generate a valid return node from `token`.
 
 Set `err` if an error occurred.
 */
-static bool try_parse_return(Token **token, AstNode **node, bool *err) {
-	if ((*token)->type != TOKEN_KW_RETURN) return false;
-
+static void parse_return(Token **token, AstNode **node, bool *err) {
 	push_ast_node(*token, *token, AST_NODE_RETURN, node);
-	*token = (*token)->next;
+	*token = (*token)->next; // NOLINT
 
 	const bool success = try_parse_expression(token, node, err);
-	if (*err) return false;
+	if (*err) return;
 
 	if (!success) {
 		FMT_ERROR(ERR_RETURN_MISSING_EXPR, { .loc = &(*token)->location });
 		*err = true;
-		return false;
 	}
-
-	return true;
 }
 
 /*
@@ -93,7 +88,7 @@ static bool try_parse_type_alias(Token **token, AstNode **node) {
 	Token *next = (*token)->next->next->next;
 	push_ast_node(next, *token, AST_NODE_TYPE_ALIAS, node);
 
-	*token = next;
+	*token = next->next;
 	return true;
 }
 
@@ -389,149 +384,89 @@ static bool try_parse_function_proto(
 	};
 
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
+	*_token = (*_token)->next;
 	return true;
 }
 
 /*
 Try to parse a conditional (if/elif/else/while statement) from `token`.
 
-Set `err` if an error occurred.
+Return `true` if error occurred.
 */
-static bool try_parse_condition(Token **token, AstNode **node, bool *err) {
-	const TokenType token_type = (*token)->type;
-	NodeType node_type;
-
-	if (token_type == TOKEN_KW_IF) node_type = AST_NODE_IF;
-	else if (token_type == TOKEN_KW_ELIF) node_type = AST_NODE_ELIF;
-	else if (token_type == TOKEN_KW_ELSE) node_type = AST_NODE_ELSE;
-	else if (token_type == TOKEN_KW_WHILE) node_type = AST_NODE_WHILE;
-	else return false;
-
-	if (!(*token)->next) return false;
+static bool parse_condition(
+	Token **token,
+	AstNode **node,
+	NodeType node_type
+) {
+	if (!*token || !(*token)->next) return true;
 
 	push_ast_node(*token, *token, node_type, node);
 	*token = (*token)->next;
 
-	if (token_type == TOKEN_KW_ELSE) return true;
+	bool err = false;
+	const bool success = try_parse_expression(token, node, &err);
 
-	const bool success = try_parse_expression(token, node, err);
+	if (success && !err) return false;
 
-	if (!success) {
-		FMT_ERROR(ERR_INVALID_EXPR, { .tok = *token });
-		*err = true;
-		return false;
-	}
-
+	FMT_ERROR(ERR_INVALID_EXPR, { .tok = *token });
 	return true;
 }
+
+static bool parse_if(Token **token, AstNode **node) {
+	return parse_condition(token, node, AST_NODE_IF);
+}
+
+static bool parse_elif(Token **token, AstNode **node) {
+	return parse_condition(token, node, AST_NODE_ELIF);
+}
+
+static void parse_else(Token **token, AstNode **node) {
+	push_ast_node(*token, *token, AST_NODE_ELSE, node);
+	*token = (*token)->next; // NOLINT
+}
+
+static bool parse_while(Token **token, AstNode **node) {
+	return parse_condition(token, node, AST_NODE_WHILE);
+}
+
+static bool parse_ast_sub_tree_(
+	Token **,
+	unsigned,
+	AstNode *,
+	AstNode *
+);
+
+static bool parse_ast_node(
+	Token **,
+	unsigned,
+	AstNode **,
+	AstNode *,
+	bool *
+);
 
 /*
 Internal AST tree generator.
 */
-static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl, bool *err) {
+static AstNode *parse_ast_tree_(Token **token, unsigned indent_lvl, bool *err) {
 	AstNode *node = make_ast_node();
 	AstNode *head = node;
 
 	while (*token) {
-		const TokenType token_type = (*token)->type;
+		const bool done = parse_ast_node(token, indent_lvl, &node, head, err);
 
-		if (token_type == TOKEN_BRACKET_OPEN) {
-			if (node->last && node->last->child) {
-				FMT_ERROR(ERR_UNEXPECTED_CODE_BLOCK, {
-					.loc = &(*token)->location
-				});
+		if (done || *err) break;
+	}
 
-				free_ast_tree_(head);
-				return NULL;
-			}
-
-			*token = (*token)->next;
-			AstNode *const child = make_ast_tree_(token, indent_lvl + 1, err);
-
-			if (!child) {
-				free_ast_tree_(head);
-				return NULL;
-			}
-			if (!child->token) {
-				FMT_ERROR(ERR_EMPTY_BLOCK, { .loc = &(*token)->location });
-
-				free_ast_tree_(head);
-				free_ast_tree_(child);
-				return NULL;
-			}
-			if (!node->last) {
-				head->child = child;
-				child->parent = head;
-			}
-			else {
-				node->last->child = child;
-				child->parent = node->last;
-			}
-
-			if (!child->token_end && !(*token)->next) return head;
-
-			*token = (*token)->next;
-			continue;
-		}
-
-		if (token_type == TOKEN_BRACKET_CLOSE) {
-			if (indent_lvl == 0) {
-				free_ast_tree_(head);
-				FMT_ERROR(ERR_MISSING_OPEN_BRAK, { .loc = &(*token)->location });
-				return NULL;
-			}
-
-			break;
-		}
-
-		if (token_type == TOKEN_NEWLINE || token_type == TOKEN_COMMA) {
-			*token = (*token)->next;
-			continue;
-		}
-
-		if (
-			try_parse_function_proto(token, &node, err) ||
-			(!*err && try_parse_type_alias(token, &node))
-		) {
-			*token = (*token)->next;
-			continue;
-		}
-		if (try_parse_var_def(token, &node, err) ||
-			(!*err && try_parse_var_assign(token, &node, err)) ||
-			(!*err && try_parse_return(token, &node, err)) ||
-			(!*err && try_parse_expression(token, &node, err)) ||
-			(!*err && try_parse_condition(token, &node, err))
-		) {
-			continue;
-		}
-		if (*err) {
-			free_ast_tree_(head);
-			return NULL;
-		}
-		if (token_type == TOKEN_KW_UNREACHABLE) {
-			push_ast_node(*token, *token, AST_NODE_UNREACHABLE, &node);
-			*token = (*token)->next;
-			continue;
-		}
-		if (token_type == TOKEN_COMMENT) {
-			push_ast_node(*token, *token, AST_NODE_COMMENT, &node);
-			*token = (*token)->next;
-			continue;
-		}
-		if (token_type == TOKEN_KW_NOOP) {
-			push_ast_node(*token, *token, AST_NODE_NOOP, &node);
-			*token = (*token)->next;
-			continue;
-		}
-
+	if (*err) {
 		free_ast_tree_(head);
-		FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = *token });
 		return NULL;
 	}
 
 	if (!*token && indent_lvl != 0) {
-		free_ast_tree_(head);
 		FMT_ERROR(ERR_EOF_NO_BRACKET, {0});
+
+		free_ast_tree_(head);
+		*err = true;
 		return NULL;
 	}
 
@@ -542,6 +477,111 @@ static AstNode *make_ast_tree_(Token **token, unsigned indent_lvl, bool *err) {
 	}
 
 	return head;
+}
+
+static bool parse_ast_node(
+	Token **token,
+	unsigned indent_lvl,
+	AstNode **node,
+	AstNode *head,
+	bool *err
+) {
+	const TokenType token_type = (*token)->type;
+
+	if (token_type == TOKEN_BRACKET_OPEN) {
+		*err |= parse_ast_sub_tree_(token, indent_lvl, *node, head);
+	}
+	else if (token_type == TOKEN_BRACKET_CLOSE) {
+		if (indent_lvl == 0) {
+			FMT_ERROR(ERR_MISSING_OPEN_BRAK, { .loc = &(*token)->location });
+
+			*err = true;
+		}
+		return true;
+	}
+	else if (token_type == TOKEN_NEWLINE || token_type == TOKEN_COMMA) {
+		*token = (*token)->next;
+	}
+	else if (token_type == TOKEN_KW_RETURN) {
+		parse_return(token, node, err);
+	}
+	else if (token_type == TOKEN_KW_IF) {
+		*err |= parse_if(token, node);
+	}
+	else if (token_type == TOKEN_KW_ELIF) {
+		*err |= parse_elif(token, node);
+	}
+	else if (token_type == TOKEN_KW_ELSE) {
+		parse_else(token, node);
+	}
+	else if (token_type == TOKEN_KW_WHILE) {
+		*err |= parse_while(token, node);
+	}
+	else if (token_type == TOKEN_KW_UNREACHABLE) {
+		push_ast_node(*token, *token, AST_NODE_UNREACHABLE, node);
+		*token = (*token)->next;
+	}
+	else if (token_type == TOKEN_COMMENT) {
+		push_ast_node(*token, *token, AST_NODE_COMMENT, node);
+		*token = (*token)->next;
+	}
+	else if (token_type == TOKEN_KW_NOOP) {
+		push_ast_node(*token, *token, AST_NODE_NOOP, node);
+		*token = (*token)->next;
+	}
+	else if (
+		try_parse_type_alias(token, node) ||
+		try_parse_function_proto(token, node, err) ||
+		(!*err && try_parse_var_def(token, node, err)) ||
+		(!*err && try_parse_var_assign(token, node, err)) ||
+		(!*err && try_parse_expression(token, node, err)) ||
+		*err
+	) {}
+	else {
+		FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = *token });
+		*err = true;
+	}
+
+	return false;
+}
+
+static bool parse_ast_sub_tree_(
+	Token **token,
+	unsigned indent_lvl,
+	AstNode *node,
+	AstNode *head
+) {
+	if (node->last && node->last->child) {
+		FMT_ERROR(ERR_UNEXPECTED_CODE_BLOCK, {
+			.loc = &(*token)->location
+		});
+
+		return true;
+	}
+
+	*token = (*token)->next;
+	bool err = false;
+	AstNode *const child = parse_ast_tree_(token, indent_lvl + 1, &err);
+
+	if (!child || err) return true;
+
+	if (!child->token) {
+		FMT_ERROR(ERR_EMPTY_BLOCK, { .loc = &(*token)->location });
+
+		free_ast_tree_(child);
+		return true;
+	}
+	if (!node->last) {
+		head->child = child;
+		child->parent = head;
+	}
+	else {
+		node->last->child = child;
+		child->parent = node->last;
+	}
+
+	*token = (*token)->next;
+	return false;
 }
 
 static AstNodeExpr *parse_single_token_expr(Token **);
@@ -575,6 +615,8 @@ Internal `try_parse_expression` function. Used for recursive expr parsing.
 */
 static AstNodeExpr *_try_parse_expression(Token **token, bool *err) {
 	AstNodeExpr *expr = NULL;
+
+	if (!*token) return NULL;
 
 	if ((*token)->type == TOKEN_PAREN_OPEN) {
 		expr = parse_paren_expr(token, err);
