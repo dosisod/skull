@@ -78,6 +78,7 @@ Type TYPE_INT = "Int";
 Type TYPE_FLOAT = "Float";
 Type TYPE_RUNE = "Rune";
 Type TYPE_STR = "Str";
+Type TYPE_VOID = "Void";
 
 Type **TYPES_BUILTIN = (Type *[]){
 	&TYPE_BOOL,
@@ -85,6 +86,7 @@ Type **TYPES_BUILTIN = (Type *[]){
 	&TYPE_FLOAT,
 	&TYPE_RUNE,
 	&TYPE_STR,
+	&TYPE_VOID,
 	NULL
 };
 

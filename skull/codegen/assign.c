@@ -87,19 +87,19 @@ Expr node_to_expr(
 	const AstNode *const node,
 	bool *err
 ) {
-	Expr expr = {0};
+	if (node && node->type == AST_NODE_EXPR) {
+		const Expr expr = gen_expr_oper(type, node->expr, err);
 
-	if (node->type == AST_NODE_EXPR) {
-		expr = gen_expr_oper(type, node->expr, err);
+		if (!expr.value && !*err) {
+			FMT_ERROR(ERR_INVALID_EXPR, { .tok = node->token });
+			*err = true;
+		}
+
+		return expr;
 	}
 
-	if (!expr.value && !*err) {
-		FMT_ERROR(ERR_INVALID_EXPR, { .tok = node->token });
-
-		*err = true;
-	}
-
-	return expr;
+	// node was not an expr, caller must handle this
+	return (Expr){0};
 }
 
 /*

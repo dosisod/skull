@@ -173,14 +173,8 @@ FunctionDeclaration *add_function(
 		return NULL;
 	}
 
-	LLVMTypeRef llvm_return_type = LLVMVoidType();
-
-	if (func->return_type) {
-		llvm_return_type = gen_llvm_type(func->return_type);
-	}
-
 	func->type = LLVMFunctionType(
-		llvm_return_type,
+		gen_llvm_type(func->return_type),
 		params,
 		num_params,
 		false
@@ -364,14 +358,14 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 
 	if (err) return true;
 
-	if (!returned.value && func->return_type) {
+	if (!returned.value && func->return_type != TYPE_VOID) {
 		FMT_ERROR(ERR_EXPECTED_RETURN, {
 			.real = func->name
 		});
 
 		return true;
 	}
-	if (returned.value && !func->return_type) {
+	if (returned.value && func->return_type == TYPE_VOID) {
 		FMT_ERROR(ERR_NO_VOID_RETURN, {
 			.real = func->name
 		});
@@ -379,7 +373,7 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 		return true;
 	}
 
-	if (!func->return_type)
+	if (func->return_type == TYPE_VOID && returned.type != TYPE_VOID)
 		LLVMBuildRetVoid(SKULL_STATE.builder);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, current_block);

@@ -106,12 +106,12 @@ AstNode *parse_ast_tree(const char32_t *const code)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-static void parse_return(Token **token, AstNode **node, bool *err)
+static bool parse_return(Token **token, AstNode **node)
 ```
 
 > Try and generate a valid return node from `token`.
 > \
-> Set `err` if an error occurred.
+> Return `true` if error occurred.
 
 ```c
 static bool try_parse_type_alias(Token **token, AstNode **node)

@@ -147,7 +147,7 @@ static Type var_def_node_to_type(const AstNode *node, bool *err) {
 
 			Type type = function->return_type;
 
-			if (!type) {
+			if (type == TYPE_VOID) {
 				FMT_ERROR(ERR_NO_VOID_ASSIGN, {
 					.loc = &func_name_token->location,
 					.real = token_mbs_str(node->token)

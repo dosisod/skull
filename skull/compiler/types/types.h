@@ -25,6 +25,7 @@ Type TYPE_INT;
 Type TYPE_FLOAT;
 Type TYPE_RUNE;
 Type TYPE_STR;
+Type TYPE_VOID;
 
 Type **TYPES_BUILTIN;
 

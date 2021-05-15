@@ -66,7 +66,7 @@ Expr gen_node(AstNode *node, bool *err) {
 		if (*err) break;
 
 		if (!returned.value) returned = parsed;
-		node = node->next;
+		if (node) node = node->next;
 	}
 
 	return returned;

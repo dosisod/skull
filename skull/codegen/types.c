@@ -28,6 +28,10 @@ static LLVMTypeRef gen_llvm_str_type(void) {
 	);
 }
 
+static LLVMTypeRef gen_llvm_void_type(void) {
+	return LLVMVoidTypeInContext(SKULL_STATE.ctx);
+}
+
 /*
 Generate the LLVM type for `type`.
 */
@@ -46,6 +50,9 @@ LLVMTypeRef gen_llvm_type(Type type) {
 	}
 	if (type == TYPE_STR) {
 		return gen_llvm_str_type();
+	}
+	if (type == TYPE_VOID) {
+		return gen_llvm_void_type();
 	}
 
 	return NULL;

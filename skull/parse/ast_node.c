@@ -58,19 +58,15 @@ AstNode *parse_ast_tree(const char32_t *const code) {
 /*
 Try and generate a valid return node from `token`.
 
-Set `err` if an error occurred.
+Return `true` if error occurred.
 */
-static void parse_return(Token **token, AstNode **node, bool *err) {
+static bool parse_return(Token **token, AstNode **node) {
 	push_ast_node(*token, *token, AST_NODE_RETURN, node);
 	*token = (*token)->next; // NOLINT
 
-	const bool success = try_parse_expression(token, node, err);
-	if (*err) return;
-
-	if (!success) {
-		FMT_ERROR(ERR_RETURN_MISSING_EXPR, { .loc = &(*token)->location });
-		*err = true;
-	}
+	bool err = false;
+	try_parse_expression(token, node, &err);
+	return err;
 }
 
 /*
@@ -377,7 +373,9 @@ static bool try_parse_function_proto(
 		.name_tok = func_name_token,
 		.param_type_names = tmp_types,
 		.param_names = tmp_names,
-		.return_type_name = return_type_name,
+		.return_type_name = return_type_name ?
+			return_type_name :
+			strdup(TYPE_VOID),
 		.is_external = is_external,
 		.is_export = is_export,
 		.num_params = num_params
@@ -503,7 +501,7 @@ static bool parse_ast_node(
 		*token = (*token)->next;
 	}
 	else if (token_type == TOKEN_KW_RETURN) {
-		parse_return(token, node, err);
+		*err |= parse_return(token, node);
 	}
 	else if (token_type == TOKEN_KW_IF) {
 		*err |= parse_if(token, node);
