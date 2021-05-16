@@ -410,19 +410,39 @@ static bool parse_condition(
 	return true;
 }
 
+/*
+Parse an "if" AST node.
+
+Return `true` if an error occurred.
+*/
 static bool parse_if(Token **token, AstNode **node) {
 	return parse_condition(token, node, AST_NODE_IF);
 }
 
+/*
+Parse an "elif" AST node.
+
+Return `true` if an error occurred.
+*/
 static bool parse_elif(Token **token, AstNode **node) {
 	return parse_condition(token, node, AST_NODE_ELIF);
 }
 
+/*
+Parse an "else" AST node.
+
+Return `true` if an error occurred.
+*/
 static void parse_else(Token **token, AstNode **node) {
 	push_ast_node(*token, *token, AST_NODE_ELSE, node);
 	*token = (*token)->next; // NOLINT
 }
 
+/*
+Parse a "while" AST node.
+
+Return `true` if an error occurred.
+*/
 static bool parse_while(Token **token, AstNode **node) {
 	return parse_condition(token, node, AST_NODE_WHILE);
 }
@@ -477,6 +497,13 @@ static AstNode *parse_ast_tree_(Token **token, unsigned indent_lvl, bool *err) {
 	return head;
 }
 
+/*
+Parse a single AST node.
+
+Set `err` if an error occurred.
+
+Return `true` if a terminating token was reached (closing bracket).
+*/
 static bool parse_ast_node(
 	Token **token,
 	unsigned indent_lvl,
@@ -543,6 +570,11 @@ static bool parse_ast_node(
 	return false;
 }
 
+/*
+Start parsing a AST sub tree.
+
+Return `true` if an error occurred.
+*/
 static bool parse_ast_sub_tree_(
 	Token **token,
 	unsigned indent_lvl,
@@ -869,6 +901,12 @@ void print_ast_tree(const AstNode *node) {
 	print_ast_tree_(node, 0);
 }
 
+/*
+The actual `print_ast_tree` function.
+
+Print `node` and all of its properties (including tokens).
+Indent more depending on the value of `indent_lvl`.
+*/
 static void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 	while (node) {
 		for RANGE(_, indent_lvl) { // NOLINT
