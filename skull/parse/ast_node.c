@@ -147,6 +147,13 @@ static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 		return false;
 	}
 
+	if (*_token && (*_token)->type != TOKEN_NEWLINE) {
+		FMT_ERROR(ERR_EXPECTED_NEWLINE, {
+			.loc = &(*_token)->location
+		});
+		*err = true;
+	}
+
 	return true;
 }
 

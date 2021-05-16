@@ -64,6 +64,8 @@
 #define ERR_ILLEGAL_SEQ_AT "illegal UTF8 sequence at character offset %s\n"
 #define ERR_ILLEGAL_SEQ "illegal UTF8 sequence in this region"
 #define ERR_POW_BAD_TYPE "cannot use type \"%s\" for power operator\n"
+#define ERR_EXPECTED_NEWLINE "expected a newline"
+
 #define WARN_VAR_NOT_CONST "variable \"%s\" should be constant\n"
 #define WARN_VAR_UNUSED "variable \"%s\" is unused\n"
 #define WARN_COND_ALWAYS_TRUE "condition is always true"
