@@ -100,21 +100,23 @@ typedef enum {
 	ERROR_WARN
 } ErrorType;
 
-#define FMT_WARN(fmt, ...) \
+#define FMT_WARN(fmt, ...) { \
 	char *_fmt_error_str = fmt_error(ERROR_WARN, fmt, (ErrorMsg[]){ \
 		__VA_ARGS__, \
 		{0} \
 	}); \
 	fprintf(stderr, "%s", _fmt_error_str); \
-	free(_fmt_error_str)
+	free(_fmt_error_str); \
+}
 
-#define FMT_ERROR(fmt, ...) \
+#define FMT_ERROR(fmt, ...) {\
 	char *_fmt_error_str = fmt_error(ERROR_FATAL, fmt, (ErrorMsg[]){ \
 		__VA_ARGS__, \
 		{0} \
 	}); \
 	fprintf(stderr, "%s", _fmt_error_str); \
-	free(_fmt_error_str)
+	free(_fmt_error_str); \
+}
 
 char *fmt_error(ErrorType, const char *fmt, ErrorMsg []);
 

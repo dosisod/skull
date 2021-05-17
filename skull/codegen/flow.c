@@ -263,13 +263,12 @@ static LLVMValueRef node_to_bool(const AstNode *const node, bool *err) {
 		return NULL;
 	}
 
-	if (LLVMIsConstant(expr.value)) {
+	if (LLVMIsConstant(expr.value))
 		FMT_WARN(LLVMConstIntGetSExtValue(expr.value) ?
 			WARN_COND_ALWAYS_TRUE :
 			WARN_COND_ALWAYS_FALSE,
 			{ .loc = &node->token->location }
 		);
-	}
 
 	return expr.value;
 }
