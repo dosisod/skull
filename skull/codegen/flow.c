@@ -25,9 +25,9 @@ bool assert_sane_child(AstNode *);
 Build an unreachable statement.
 */
 Expr gen_stmt_unreachable(void) {
-	return (Expr){
-		.value = LLVMBuildUnreachable(SKULL_STATE.builder)
-	};
+	LLVMBuildUnreachable(SKULL_STATE.builder);
+
+	return (Expr){ .type = TYPE_VOID };
 }
 
 /*
