@@ -45,9 +45,10 @@ Expr gen_stmt_return(AstNode **node, bool *err) {
 	Expr expr = node_to_expr(NULL, node_val, err);
 
 	const bool is_main = SKULL_STATE.current_func == &SKULL_STATE.main_func;
+	const bool is_void_return = (*node)->is_void_return;
 	Type return_type = SKULL_STATE.current_func->return_type;
 
-	if (*err || (!expr.value && return_type != TYPE_VOID)) {
+	if (*err || (is_void_return && return_type != TYPE_VOID)) {
 		if (!*err) {
 			FMT_ERROR(ERR_RETURN_MISSING_EXPR, {
 				.loc = &node_val->token->location
@@ -80,7 +81,7 @@ Expr gen_stmt_return(AstNode **node, bool *err) {
 	}
 	else LLVMBuildRet(SKULL_STATE.builder, expr.value);
 
-	*node = node_val;
+	if (!is_void_return) *node = node_val;
 
 	return expr;
 }

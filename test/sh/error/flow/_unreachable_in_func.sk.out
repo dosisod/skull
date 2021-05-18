@@ -1,0 +1,1 @@
+./test/sh/error/flow/unreachable_in_func.sk: Compilation error: line 3 column 2: unreachable code

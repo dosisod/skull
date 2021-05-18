@@ -63,6 +63,7 @@ typedef struct AstNode {
 		AstNodeVarDef *var_def;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
+		_Bool is_void_return;
 	};
 } AstNode;
 

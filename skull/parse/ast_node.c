@@ -65,8 +65,12 @@ static bool parse_return(Token **token, AstNode **node) {
 	*token = (*token)->next; // NOLINT
 
 	bool err = false;
-	try_parse_expression(token, node, &err);
-	return err;
+	const bool added_expr = try_parse_expression(token, node, &err);
+	if (err) return true;
+
+	if (!added_expr) (*node)->last->is_void_return = true;
+
+	return false;
 }
 
 /*

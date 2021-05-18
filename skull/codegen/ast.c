@@ -52,7 +52,7 @@ Expr gen_node(AstNode *node, bool *err) {
 	Expr returned = (Expr){0};
 
 	while (node) {
-		if (returned.value && !(
+		if ((returned.value || returned.type) && !(
 			node->type == AST_NODE_COMMENT ||
 			node->type == AST_NODE_UNREACHABLE ||
 			node->type == AST_NODE_NOOP
