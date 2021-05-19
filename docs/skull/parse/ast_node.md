@@ -18,7 +18,7 @@ typedef struct AstNode {
 		AstNodeVarDef *var_def;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
-		bool is_void_return;
+		_Bool is_void_return;
 	};
 }
 ```
@@ -294,7 +294,7 @@ static void free_expr_node(AstNodeExpr *expr)
 static void free_ast_tree_(AstNode *node)
 ```
 
-> Internal AST freeing function, dont call directly.
+> Internal AST freeing function.
 
 ```c
 static __attribute__((pure)) bool is_value(TokenType token_type)

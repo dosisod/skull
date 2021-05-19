@@ -32,13 +32,12 @@ Makes an AST (abstract syntax tree) from a given string.
 */
 AstNode *parse_ast_tree(const char32_t *const code) {
 	Token *token = tokenize(code);
-	Token *head = token;
-
 	if (!token) return NULL;
 
 	classify_tokens(token);
 
 	bool err = false;
+	Token *head = token;
 	AstNode *const tree = parse_ast_tree_(&token, 0, &err);
 
 	if (!tree) free_tokens(head);
@@ -298,8 +297,6 @@ static bool try_parse_function_proto(
 
 	if (is_external || is_export) token = token->next;
 
-	const Token *const func_name_token = token;
-
 	if (!AST_TOKEN_CMP2(token,
 		TOKEN_IDENTIFIER,
 		TOKEN_PAREN_OPEN)
@@ -307,14 +304,11 @@ static bool try_parse_function_proto(
 		return false;
 	}
 
+	const Token *const func_name_token = token;
 	token = token->next->next;
 
 	Vector *param_names = make_vector();
 	Vector *param_type_names = make_vector();
-
-	const TokenType token_type = is_external ?
-		TOKEN_NEWLINE :
-		TOKEN_BRACKET_OPEN;
 
 	bool is_proto = false;
 
@@ -328,13 +322,15 @@ static bool try_parse_function_proto(
 		vector_push(param_type_names, token_mbs_str(token->next));
 
 		token = token->next->next;
-
 		if (token->type != TOKEN_COMMA) break;
-
 		token = token->next;
 	}
 
 	char *return_type_name = NULL;
+
+	const TokenType token_type = is_external ?
+		TOKEN_NEWLINE :
+		TOKEN_BRACKET_OPEN;
 
 	if (token->type == TOKEN_PAREN_CLOSE &&
 		token->next &&
@@ -365,25 +361,13 @@ static bool try_parse_function_proto(
 		return false;
 	}
 
-	*_token = token;
-
-	char32_t **tmp_names = NULL;
-	char **tmp_types = NULL;
 	const unsigned short num_params = (unsigned short)param_names->length;
-
-	if (param_names->length) {
-		tmp_names = vector_freeze(param_names);
-		tmp_types = vector_freeze(param_type_names);
-	}
-
-	free_vector(param_names, NULL);
-	free_vector(param_type_names, NULL);
 
 	(*node)->func_proto = Malloc(sizeof(AstNodeFunctionProto));
 	*(*node)->func_proto = (AstNodeFunctionProto){
 		.name_tok = func_name_token,
-		.param_type_names = tmp_types,
-		.param_names = tmp_names,
+		.param_type_names = num_params ? vector_freeze(param_type_names) : NULL,
+		.param_names = num_params ? vector_freeze(param_names) : NULL,
 		.return_type_name = return_type_name ?
 			return_type_name :
 			strdup(TYPE_VOID),
@@ -392,6 +376,10 @@ static bool try_parse_function_proto(
 		.num_params = num_params
 	};
 
+	free_vector(param_names, NULL);
+	free_vector(param_type_names, NULL);
+
+	*_token = token;
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
 	*_token = (*_token)->next;
 	return true;
@@ -655,9 +643,9 @@ static AstNode *try_parse_expression(
 Internal `try_parse_expression` function. Used for recursive expr parsing.
 */
 static AstNodeExpr *_try_parse_expression(Token **token, bool *err) {
-	AstNodeExpr *expr = NULL;
-
 	if (!*token) return NULL;
+
+	AstNodeExpr *expr = NULL;
 
 	if ((*token)->type == TOKEN_PAREN_OPEN) {
 		expr = parse_paren_expr(token, err);
@@ -844,7 +832,7 @@ static void free_expr_node(AstNodeExpr *expr) {
 }
 
 /*
-Internal AST freeing function, dont call directly.
+Internal AST freeing function.
 */
 static void free_ast_tree_(AstNode *node) {
 	AstNode *current = NULL;
