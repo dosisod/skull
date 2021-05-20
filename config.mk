@@ -5,6 +5,8 @@ MANPATH := $(shell manpath | cut -d : -f1)/man1/
 CC = $(shell readlink -f `which cc`)
 CXX ?= g++
 
+ECHO=printf
+
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
 	CFLAGS += -g3 -O0
