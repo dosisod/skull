@@ -22,6 +22,6 @@ typedef struct {
 	HashTable *template_types;
 } SkullState;
 
-SkullState SKULL_STATE;
+extern SkullState SKULL_STATE;
 
 void free_state(SkullState);

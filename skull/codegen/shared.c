@@ -2,6 +2,8 @@
 
 #include "skull/codegen/shared.h"
 
+SkullState SKULL_STATE;
+
 /*
 Free everything about a Skull compiler instance.
 */

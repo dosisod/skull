@@ -75,12 +75,14 @@ endif
 
 _OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|codegen"))
 _OBJS_TEST := $(patsubst %.c,%.o,$(shell find test/skull -name "*.c") test/testing.c)
-_OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/codegen -name "*.c") skull/main.c skull/setup_main.c)
+_OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/codegen -name "*.c"))
+_OBJS_MAIN := $(patsubst %.c,%.o,skull/main.c skull/setup_main.c)
 
 ODIR := build/objs
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 OBJS_TEST := $(addprefix $(ODIR)/,$(_OBJS_TEST))
 OBJS_LLVM := $(addprefix $(ODIR)/,$(_OBJS_LLVM))
+OBJS_MAIN:= $(addprefix $(ODIR)/,$(_OBJS_MAIN))
 
 DIRS := build/skull \
 	build/test \

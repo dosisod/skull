@@ -20,14 +20,14 @@ typedef struct TemplateType {
 	LLVMTypeRef *llvm_type;
 } TemplateType;
 
-Type TYPE_BOOL;
-Type TYPE_INT;
-Type TYPE_FLOAT;
-Type TYPE_RUNE;
-Type TYPE_STR;
-Type TYPE_VOID;
+extern Type TYPE_BOOL;
+extern Type TYPE_INT;
+extern Type TYPE_FLOAT;
+extern Type TYPE_RUNE;
+extern Type TYPE_STR;
+extern Type TYPE_VOID;
 
-Type **TYPES_BUILTIN;
+extern Type **TYPES_BUILTIN;
 
 Type find_type(const char *const);
 _Bool add_alias(Type, char *const);

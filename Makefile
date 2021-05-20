@@ -18,17 +18,17 @@ options:
 setup:
 	@mkdir $(DIRS) -p
 
-skull: setup | $(OBJS) $(OBJS_LLVM)
+skull: setup | $(OBJS) $(OBJS_LLVM) $(OBJS_MAIN)
 	@echo "\033[92mLink\033[0m Skull"
-	@$(CC) $(OBJS) $(OBJS_LLVM) -o build/skull/_skull $(CFLAGS) $(LLVM_LDFLAGS)
+	@$(CC) $(OBJS) $(OBJS_LLVM) $(OBJS_MAIN) -o build/skull/_skull $(CFLAGS) $(LLVM_LDFLAGS)
 
 $(ODIR)/%.o: %.c %.h
 	@echo "\033[92mCompile\033[0m $<"
 	@$(CC) $< -c -o "$@" $(CFLAGS) $(LLVM_CFLAGS)
 
-test: setup | $(OBJS) $(OBJS_TEST)
+test: setup | $(OBJS) $(OBJS_LLVM) $(OBJS_TEST)
 	@echo "\033[92mLink\033[0m test"
-	@$(CC) $(OBJS) $(OBJS_TEST) -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
+	@$(CC) $(OBJS) $(OBJS_LLVM) $(OBJS_TEST) -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
 docs:
 	@echo "\033[92mBuild\033[0m docs"
