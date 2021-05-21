@@ -59,11 +59,11 @@ inside-out (and then left-to-right for the `3`).
 
 | Language | Syntax |
 |:-------- |:------ |
-| Javascript`*` | `|>` |
-| Elixr | `|>` |
-| C#`*` | `|>` |
+| Javascript`*` | `\|>` |
+| Elixr | `\|>` |
+| C#`*` | `\|>` |
 | R | `%>%` |
-| Shell | `|` |
+| Shell | `\|` |
 | Haskell | `&` |
 
 `*` Experimental/in draft.
