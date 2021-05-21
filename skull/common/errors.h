@@ -73,6 +73,8 @@
 #define WARN_FILE_EMPTY "file is empty"
 #define WARN_NESTED_BLOCK_COMMENT \
 	"cannot put opening block comment in existing block comment"
+#define WARN_TRIVIAL_TYPE \
+	"explicit type \"%s\" can be trivialy deduced\n"
 
 typedef struct Variable Variable;
 typedef const char * Type;

@@ -25,6 +25,8 @@ module.
 `was_reassigned` stores whether a (mutable) variable was reassigned.
 
 `was_read` stores whether a variable was read from or not.
+
+`implicitly_typed` is true when variable type is auto-deduced.
 */
 typedef struct Variable {
 	Type type;
@@ -34,6 +36,7 @@ typedef struct Variable {
 	_Bool is_global : 1;
 	_Bool was_reassigned : 1;
 	_Bool was_read : 1;
+	_Bool implicitly_typed : 1;
 
 	LLVMValueRef ref;
 } Variable;

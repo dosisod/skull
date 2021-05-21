@@ -135,6 +135,9 @@ void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 				var->name
 			);
 		}
+		else if (is_const_literal && !var->implicitly_typed) {
+			FMT_WARN(WARN_TRIVIAL_TYPE, { .type = var->type });
+		}
 
 		var->is_global = is_global;
 		var->is_const_lit = is_const_literal;

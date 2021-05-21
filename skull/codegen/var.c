@@ -47,6 +47,7 @@ Variable *node_to_var(const AstNode *const node, bool *err) {
 		node->var_def->is_const
 	);
 	free(name);
+	var->implicitly_typed = node->var_def->is_implicit;
 
 	if (ht_get(SKULL_STATE.function_decls, var->name)) {
 		FMT_ERROR(ERR_NO_REDEFINE_FUNC_AS_VAR, {
