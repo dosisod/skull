@@ -5,10 +5,9 @@
 
 #include "skull/codegen/aliases.h"
 #include "skull/codegen/assign.h"
-#include "skull/codegen/oper.h"
+#include "skull/codegen/expr.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
-#include "skull/codegen/var.h"
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/compiler/scope.h"
@@ -44,7 +43,7 @@ Expr gen_stmt_return(AstNode **node, bool *err) {
 
 	Expr expr = node_to_expr(NULL, node_val, err);
 
-	const bool is_main = SKULL_STATE.current_func == &SKULL_STATE.main_func;
+	const bool is_main = SKULL_STATE.current_func == SKULL_STATE.main_func;
 	const bool is_void_return = (*node)->is_void_return;
 	Type return_type = SKULL_STATE.current_func->return_type;
 
@@ -100,17 +99,17 @@ Builds LLVM for a while loop from `node`.
 bool gen_control_while(AstNode **node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		SKULL_STATE.current_func->function,
+		SKULL_STATE.current_func->ref,
 		"while_cond"
 	);
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		SKULL_STATE.current_func->function,
+		SKULL_STATE.current_func->ref,
 		"while_loop"
 	);
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		SKULL_STATE.current_func->function,
+		SKULL_STATE.current_func->ref,
 		"while_end"
 	);
 
@@ -152,7 +151,7 @@ bool gen_control_if(AstNode **node) {
 		LLVMGetInsertBlock(SKULL_STATE.builder),
 		LLVMAppendBasicBlockInContext(
 			SKULL_STATE.ctx,
-			SKULL_STATE.current_func->function,
+			SKULL_STATE.current_func->ref,
 			"end"
 		)
 	);
@@ -180,7 +179,7 @@ bool gen_control_if_(
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		SKULL_STATE.current_func->function,
+		SKULL_STATE.current_func->ref,
 		"if_true"
 	);
 	LLVMBasicBlockRef if_false = NULL;
@@ -199,7 +198,7 @@ bool gen_control_if_(
 	) {
 		if_false = LLVMAppendBasicBlockInContext(
 			SKULL_STATE.ctx,
-			SKULL_STATE.current_func->function,
+			SKULL_STATE.current_func->ref,
 			"if_false"
 		);
 		LLVMMoveBasicBlockAfter(end, if_false);

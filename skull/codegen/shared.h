@@ -1,8 +1,7 @@
 #pragma once
 
-#include <llvm-c/Core.h>
-
 #include "skull/codegen/func.h"
+#include "skull/codegen/llvm_fwd_decl.h"
 #include "skull/common/hashtable.h"
 #include "skull/compiler/scope.h"
 
@@ -15,7 +14,7 @@ typedef struct {
 	const char *filename;
 	LLVMModuleRef module;
 	FunctionDeclaration *current_func;
-	FunctionDeclaration main_func;
+	FunctionDeclaration *main_func;
 	Scope *scope;
 	HashTable *function_decls;
 	HashTable *type_aliases;
@@ -24,4 +23,6 @@ typedef struct {
 
 extern SkullState SKULL_STATE;
 
-void free_state(SkullState);
+void free_state(SkullState *);
+
+void setup_state(SkullState *, const char *);

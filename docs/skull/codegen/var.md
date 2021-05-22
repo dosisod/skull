@@ -18,16 +18,3 @@ static Type var_def_node_to_type(const AstNode *node, bool *err)
 
 > Return a variable type based on `node`.
 
-```c
-typedef struct {
-	LLVMValueRef value;
-	Type type;
-}
-```
-
-> Expr stores all the data needed to do type comparisons with LLVMValueRef's.
-> \
-> `value` is the LLVM component.
-> \
-> `type` is the Skull usable which `value` evaluates to.
-

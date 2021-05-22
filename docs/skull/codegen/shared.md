@@ -7,7 +7,7 @@ typedef struct {
 	const char *filename;
 	LLVMModuleRef module;
 	FunctionDeclaration *current_func;
-	FunctionDeclaration main_func;
+	FunctionDeclaration *main_func;
 	Scope *scope;
 	HashTable *function_decls;
 	HashTable *type_aliases;
@@ -18,7 +18,13 @@ typedef struct {
 > Shared state for a given Skull program.
 
 ```c
-void free_state(SkullState state)
+static char *create_llvm_main_func(const char *filename)
+```
+
+> Convert/mangle `filename` into suitable name for "main" method for module.
+
+```c
+void free_state(SkullState *state)
 ```
 
 > Free everything about a Skull compiler instance.

@@ -1,7 +1,8 @@
 #pragma once
 
+#include "skull/codegen/llvm_fwd_decl.h"
 #include "skull/compiler/types/types.h"
 
-#include <llvm-c/Core.h>
-
 LLVMTypeRef gen_llvm_type(Type);
+
+LLVMTypeRef gen_llvm_func_type(Type, LLVMTypeRef *, unsigned);

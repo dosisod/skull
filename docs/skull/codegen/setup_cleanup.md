@@ -16,9 +16,3 @@ bool generate_llvm(const char *filename, char *file_contents)
 > \
 > Return `true` if errors occurred.
 
-```c
-char *create_llvm_main_func(const char *filename)
-```
-
-> Convert/mangle `filename` into suitable name for "main" method for module.
-

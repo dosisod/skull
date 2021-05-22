@@ -2,23 +2,12 @@
 
 #include <stddef.h>
 
-#include <llvm-c/Core.h>
-
 #include "skull/common/hashtable.h"
 
 /*
 Types are simply named strings.
 */
 typedef const char * Type;
-
-/*
-Similar to `Type` except that LLVM type is generated at runtime.
-*/
-typedef struct TemplateType {
-	char *name;
-
-	LLVMTypeRef *llvm_type;
-} TemplateType;
 
 extern Type TYPE_BOOL;
 extern Type TYPE_INT;

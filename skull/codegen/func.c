@@ -1,3 +1,5 @@
+#include <llvm-c/Core.h>
+
 #include <stddef.h>
 #include <string.h>
 
@@ -5,7 +7,6 @@
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/codegen/types.h"
-#include "skull/codegen/var.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
@@ -22,12 +23,6 @@ FunctionDeclaration *add_function(
 	const AstNode *const,
 	char *,
 	bool,
-	bool *
-);
-
-Expr node_to_expr(
-	Type type,
-	const AstNode *const,
 	bool *
 );
 
@@ -173,14 +168,14 @@ FunctionDeclaration *add_function(
 	);
 	free(params);
 
-	func->function = LLVMAddFunction(
+	func->ref = LLVMAddFunction(
 		SKULL_STATE.module,
 		name,
 		func->type
 	);
 
 	LLVMSetLinkage(
-		func->function,
+		func->ref,
 		is_private ?
 			LLVMExternalLinkage :
 			LLVMPrivateLinkage
@@ -276,7 +271,7 @@ Expr gen_expr_function_call(
 		.value = LLVMBuildCall2(
 			SKULL_STATE.builder,
 			function->type,
-			function->function,
+			function->ref,
 			params,
 			num_params,
 			""
@@ -304,7 +299,7 @@ Create a native LLVM function.
 */
 bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
-		SKULL_STATE.current_func->function
+		SKULL_STATE.current_func->ref
 	);
 
 	FunctionDeclaration *old_func = SKULL_STATE.current_func;
@@ -312,7 +307,7 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
-		func->function,
+		func->ref,
 		"entry"
 	);
 
@@ -322,7 +317,7 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
 
 	if (func->param_types) {
-		LLVMValueRef next_param = LLVMGetFirstParam(func->function);
+		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
 
 		for RANGE(i, func->num_params) {
 			Variable *const param_var = make_variable(

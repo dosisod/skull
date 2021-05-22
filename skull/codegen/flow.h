@@ -2,7 +2,7 @@
 
 #include <stdbool.h>
 
-#include "skull/codegen/var.h"
+#include "skull/codegen/expr.h"
 #include "skull/parse/ast_node.h"
 
 Expr gen_stmt_return(AstNode **, bool *);

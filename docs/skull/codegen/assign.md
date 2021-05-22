@@ -17,7 +17,7 @@ bool gen_stmt_var_assign(AstNode **node)
 > Return `true` if an error occurred.
 
 ```c
-bool _gen_stmt_var_assign(Variable *var, AstNode **node)
+static bool _gen_stmt_var_assign(Variable *var, AstNode **node)
 ```
 
 > Does the actual assignment of `node` to `var`.
@@ -25,17 +25,7 @@ bool _gen_stmt_var_assign(Variable *var, AstNode **node)
 > Return `true` if an error occurred.
 
 ```c
-Expr node_to_expr(Type type, const AstNode *const node, bool *err)
-```
-
-> Create an expression from `node` with type `type`.
-> \
-> Optionally pass `var` if expression is going to be assigned to a variable.
-> \
-> Set `err` if an error occurred.
-
-```c
-void assign_value_to_var(LLVMValueRef value, Variable *const var)
+static void assign_value_to_var(LLVMValueRef value, Variable *const var)
 ```
 
 > Assign `value` to `var`.

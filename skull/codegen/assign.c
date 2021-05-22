@@ -3,20 +3,21 @@
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/aliases.h"
+#include "skull/codegen/expr.h"
 #include "skull/codegen/func.h"
-#include "skull/codegen/oper.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/codegen/types.h"
+#include "skull/codegen/var.h"
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/compiler/scope.h"
 
 #include "skull/codegen/assign.h"
 
-void assign_value_to_var(LLVMValueRef, Variable *const);
+static void assign_value_to_var(LLVMValueRef, Variable *const);
 bool assert_sane_child(AstNode *);
-bool _gen_stmt_var_assign(Variable *, AstNode **);
+static bool _gen_stmt_var_assign(Variable *, AstNode **);
 
 /*
 Builds a variable definition from `node`.
@@ -58,7 +59,7 @@ Does the actual assignment of `node` to `var`.
 
 Return `true` if an error occurred.
 */
-bool _gen_stmt_var_assign(Variable *var, AstNode **node) {
+static bool _gen_stmt_var_assign(Variable *var, AstNode **node) {
 	bool err = false;
 
 	LLVMValueRef value = node_to_expr(
@@ -76,41 +77,14 @@ bool _gen_stmt_var_assign(Variable *var, AstNode **node) {
 }
 
 /*
-Create an expression from `node` with type `type`.
-
-Optionally pass `var` if expression is going to be assigned to a variable.
-
-Set `err` if an error occurred.
-*/
-Expr node_to_expr(
-	Type type,
-	const AstNode *const node,
-	bool *err
-) {
-	if (node && node->type == AST_NODE_EXPR) {
-		const Expr expr = gen_expr_oper(type, node->expr, err);
-
-		if (!expr.value && !*err) {
-			FMT_ERROR(ERR_INVALID_EXPR, { .tok = node->token });
-			*err = true;
-		}
-
-		return expr;
-	}
-
-	// node was not an expr, caller must handle this
-	return (Expr){0};
-}
-
-/*
 Assign `value` to `var`.
 */
-void assign_value_to_var(LLVMValueRef value, Variable *const var) {
+static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	const bool is_first_assign = !var->ref;
 	const bool is_const_literal = LLVMIsConstant(value);
 
 	const bool is_global = is_first_assign ?
-		SKULL_STATE.current_func == &SKULL_STATE.main_func :
+		SKULL_STATE.current_func == SKULL_STATE.main_func :
 		var->is_global;
 
 	if (is_first_assign) {

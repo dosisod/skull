@@ -1,4 +1,27 @@
-# skull/codegen/oper
+# skull/codegen/expr
+
+```c
+typedef struct {
+	LLVMValueRef value;
+	Type type;
+}
+```
+
+> Expr stores all the data needed to do type comparisons with LLVMValueRef's.
+> \
+> `value` is the LLVM component.
+> \
+> `type` is the Skull usable which `value` evaluates to.
+
+```c
+Expr node_to_expr(Type type, const AstNode *const node, bool *err)
+```
+
+> Create an expression from `node` with type `type`.
+> \
+> Optionally pass `var` if expression is going to be assigned to a variable.
+> \
+> Set `err` if an error occurred.
 
 ```c
 static Expr gen_expr_math_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX int_func, LLVMBuildX float_func)

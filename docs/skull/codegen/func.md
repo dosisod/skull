@@ -3,7 +3,7 @@
 ```c
 typedef struct FunctionDeclaration {
 	char *name;
-	LLVMValueRef function;
+	LLVMValueRef ref;
 	LLVMTypeRef type;
 
 	unsigned short num_params;
@@ -18,7 +18,7 @@ typedef struct FunctionDeclaration {
 > \
 > `name` is the name of the declared function.
 > \
-> `function` is the LLVM function handle.
+> `ref` is the LLVM function handle.
 > \
 > `type` is the LLVM function type.
 > \

@@ -7,16 +7,6 @@ typedef const char * Type
 > Types are simply named strings.
 
 ```c
-typedef struct TemplateType {
-	char *name;
-
-	LLVMTypeRef *llvm_type;
-}
-```
-
-> Similar to `Type` except that LLVM type is generated at runtime.
-
-```c
 Type __attribute__((pure)) find_type(const char *const name)
 ```
 

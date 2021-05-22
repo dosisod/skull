@@ -1,5 +1,7 @@
 #include <stdbool.h>
 
+#include <llvm-c/Core.h>
+
 #include "skull/codegen/aliases.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/types.h"
@@ -12,7 +14,7 @@
 #include "skull/compiler/types/str.h"
 #include "skull/parse/ast_node.h"
 
-#include "skull/codegen/oper.h"
+#include "skull/codegen/expr.h"
 
 typedef Expr (Operation)(Type, LLVMValueRef, LLVMValueRef);
 typedef Expr (OperationWithErr)(Type, LLVMValueRef, LLVMValueRef, bool *);
@@ -41,6 +43,34 @@ static Expr token_to_expr(const Token *const, Variable **, bool *);
 static Expr gen_expr_const(Type, const Token *const, bool *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr token_to_simple_expr(const Token *const, bool *err);
+
+/*
+Create an expression from `node` with type `type`.
+
+Optionally pass `var` if expression is going to be assigned to a variable.
+
+Set `err` if an error occurred.
+*/
+Expr node_to_expr(
+	Type type,
+	const AstNode *const node,
+	bool *err
+) {
+	if (node && node->type == AST_NODE_EXPR) {
+		const Expr expr = gen_expr_oper(type, node->expr, err);
+
+		if (!expr.value && !*err) {
+			FMT_ERROR(ERR_INVALID_EXPR, { .tok = node->token });
+			*err = true;
+		}
+
+		return expr;
+	}
+
+	// node was not an expr, caller must handle this
+	return (Expr){0};
+}
+
 
 static Expr gen_expr_identifier(
 	Type,
@@ -340,11 +370,10 @@ static Expr create_and_call_builtin_oper(
 ) {
 	LLVMValueRef func = LLVMGetNamedFunction(SKULL_STATE.module, name);
 
-	LLVMTypeRef func_type = LLVMFunctionType(
-		gen_llvm_type(rtype),
+	LLVMTypeRef func_type = gen_llvm_func_type(
+		rtype,
 		(LLVMTypeRef[]){ type, type },
-		2,
-		false
+		2
 	);
 
 	if (!func)

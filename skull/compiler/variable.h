@@ -2,8 +2,7 @@
 
 #include <uchar.h>
 
-#include <llvm-c/Core.h>
-
+#include "skull/codegen/llvm_fwd_decl.h"
 #include "skull/compiler/types/types.h"
 
 /*
