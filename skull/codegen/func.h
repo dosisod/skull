@@ -44,3 +44,5 @@ bool gen_stmt_func_decl(const AstNode *const);
 Expr gen_expr_function_call(const AstNodeExpr *const, Type, bool *);
 
 void free_function_declaration(HashItem *);
+
+FunctionDeclaration *find_func_by_name(const char *);

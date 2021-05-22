@@ -67,10 +67,7 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 		return true;
 	}
 
-	FunctionDeclaration *found_func = ht_get(
-		SKULL_STATE.function_decls,
-		func_name
-	);
+	FunctionDeclaration *found_func = find_func_by_name(func_name);
 
 	if (found_func) {
 		FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
@@ -89,11 +86,6 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 		&err
 	);
 	if (err) return true;
-
-	if (!SKULL_STATE.function_decls) {
-		SKULL_STATE.function_decls = ht_create();
-	}
-	ht_add(SKULL_STATE.function_decls, func_name, func);
 
 	if (!is_external)
 		return define_function(node, func);
@@ -194,6 +186,11 @@ FunctionDeclaration *add_function(
 			LLVMPrivateLinkage
 	);
 
+	if (!SKULL_STATE.function_decls) {
+		SKULL_STATE.function_decls = ht_create();
+	}
+	ht_add(SKULL_STATE.function_decls, func->name, func);
+
 	return func;
 }
 
@@ -211,7 +208,7 @@ Expr gen_expr_function_call(
 
 	char *const func_name = token_mbs_str(func_name_token);
 
-	FunctionDeclaration *function = ht_get(SKULL_STATE.function_decls, func_name);
+	FunctionDeclaration *function = find_func_by_name(func_name);
 	free(func_name);
 
 	if (!function) {
@@ -381,6 +378,13 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 	SKULL_STATE.current_func = old_func;
 
 	return false;
+}
+
+/*
+Return function declaration called `name`, or `NULL` if not found.
+*/
+FunctionDeclaration *find_func_by_name(const char *name) {
+	return ht_get(SKULL_STATE.function_decls, name);
 }
 
 void free_function_declaration(HashItem *item) {

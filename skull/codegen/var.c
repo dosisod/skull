@@ -49,7 +49,7 @@ Variable *node_to_var(const AstNode *const node, bool *err) {
 	free(name);
 	var->implicitly_typed = node->var_def->is_implicit;
 
-	if (ht_get(SKULL_STATE.function_decls, var->name)) {
+	if (find_func_by_name(var->name)) {
 		FMT_ERROR(ERR_NO_REDEFINE_FUNC_AS_VAR, {
 			.loc = &token->location,
 			.var = var
@@ -133,10 +133,9 @@ static Type var_def_node_to_type(const AstNode *node, bool *err) {
 
 			char *const func_name = token_mbs_str(func_name_token);
 
-			const FunctionDeclaration *const function = ht_get(
-				SKULL_STATE.function_decls,
-				func_name
-			);
+			const FunctionDeclaration *const function = \
+				find_func_by_name(func_name);
+
 			free(func_name);
 
 			if (!function) {

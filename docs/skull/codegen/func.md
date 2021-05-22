@@ -64,3 +64,9 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func)
 
 > Create a native LLVM function.
 
+```c
+FunctionDeclaration *find_func_by_name(const char *name)
+```
+
+> Return function declaration called `name`, or `NULL` if not found.
+
