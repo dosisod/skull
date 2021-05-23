@@ -56,10 +56,18 @@ int build_file(char *filename) {
 	FILE *const f = fopen(filename, "re");
 	if (!f) {
 		if (errno == EACCES)
-			fprintf(stderr, "skull: cannot open \"%s\", permission denied\n", filename);
+			fprintf(
+				stderr,
+				"skull: cannot open \"%s\", permission denied\n",
+				filename
+			);
 
 		else if (errno == ENOENT)
-			fprintf(stderr, "skull: \"%s\" was not found, exiting\n", filename);
+			fprintf(
+				stderr,
+				"skull: \"%s\" was not found, exiting\n",
+				filename
+			);
 
 		return 1;
 	}

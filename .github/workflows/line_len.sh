@@ -4,7 +4,7 @@ MAX_LEN=80
 pass=/bin/true
 
 check_len() {
-	len=$(awk '{print length}' "$1" | sort -nr | head -n 1)
+	len=$(sed "s/\t/    /g" "$1" | awk "{print length}" | sort -nr | head -n 1)
 
 	over=$(expr "$len" \> $MAX_LEN)
 

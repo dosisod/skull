@@ -20,7 +20,9 @@ char32_t *eval_str(const Token *const token, bool *err) {
 		copy[wrote] = c32sunescape(&str, &error);
 
 		if (error) {
-			FMT_ERROR(ERR_BAD_ESCAPE, { .loc = &token->location, .str = error });
+			FMT_ERROR(ERR_BAD_ESCAPE, {
+				.loc = &token->location, .str = error
+			});
 
 			free(copy);
 			*err = true;

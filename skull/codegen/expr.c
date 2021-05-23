@@ -610,8 +610,10 @@ Expr gen_expr_oper(
 		case EXPR_RSHIFT: func = &gen_expr_rshift; break;
 		case EXPR_IS: func = gen_expr_is; is_diff_type = true; break;
 		case EXPR_ISNT: func = gen_expr_is_not; is_diff_type = true; break;
-		case EXPR_LESS_THAN: func = gen_expr_less_than; is_diff_type = true; break;
-		case EXPR_GTR_THAN: func = gen_expr_gtr_than; is_diff_type = true; break;
+		case EXPR_LESS_THAN:
+			func = gen_expr_less_than; is_diff_type = true; break;
+		case EXPR_GTR_THAN:
+			func = gen_expr_gtr_than; is_diff_type = true; break;
 		case EXPR_LESS_THAN_EQ:
 			func = gen_expr_less_than_eq; is_diff_type = true; break;
 		case EXPR_GTR_THAN_EQ:

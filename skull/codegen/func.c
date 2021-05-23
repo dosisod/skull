@@ -218,7 +218,9 @@ Expr gen_expr_function_call(
 	unsigned short num_params = function->num_params;
 
 	if (num_params != expr->func_call->num_values) {
-		FMT_ERROR(ERR_INVALID_NUM_PARAMS, { .loc = &func_name_token->location });
+		FMT_ERROR(ERR_INVALID_NUM_PARAMS, {
+			.loc = &func_name_token->location
+		});
 
 		*err = true;
 		return (Expr){0};
