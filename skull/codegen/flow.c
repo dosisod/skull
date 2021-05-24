@@ -74,14 +74,10 @@ Expr gen_stmt_return(AstNode **node, bool *err) {
 		return (Expr){0};
 	}
 
-	if (return_type == TYPE_VOID) {
-		LLVMBuildRetVoid(SKULL_STATE.builder);
-		expr.type = TYPE_VOID;
-	}
-	else LLVMBuildRet(SKULL_STATE.builder, expr.value);
+	if (return_type == TYPE_VOID) expr.type = TYPE_VOID;
+	LLVMBuildRet(SKULL_STATE.builder, expr.value);
 
 	if (!is_void_return) *node = node_val;
-
 	return expr;
 }
 

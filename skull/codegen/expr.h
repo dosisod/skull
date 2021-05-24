@@ -21,5 +21,3 @@ Expr node_to_expr(
 	const AstNode *const,
 	_Bool *
 );
-
-Expr gen_expr_oper(Type, const AstNodeExpr *const, _Bool *);

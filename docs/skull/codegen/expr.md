@@ -196,7 +196,7 @@ static Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-Expr gen_expr_oper(Type type, const AstNodeExpr *const expr, bool *err)
+static Expr gen_expr(Type type, const AstNodeExpr *const expr, bool *err)
 ```
 
 > Return expression for operation `oper` for `expr`.

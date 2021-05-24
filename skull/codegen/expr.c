@@ -43,6 +43,7 @@ static Expr token_to_expr(const Token *const, Variable **, bool *);
 static Expr gen_expr_const(Type, const Token *const, bool *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr token_to_simple_expr(const Token *const, bool *err);
+static Expr gen_expr(Type, const AstNodeExpr *const, _Bool *);
 
 /*
 Create an expression from `node` with type `type`.
@@ -57,7 +58,7 @@ Expr node_to_expr(
 	bool *err
 ) {
 	if (node && node->type == AST_NODE_EXPR) {
-		const Expr expr = gen_expr_oper(type, node->expr, err);
+		const Expr expr = gen_expr(type, node->expr, err);
 
 		if (!expr.value && !*err) {
 			FMT_ERROR(ERR_INVALID_EXPR, { .tok = node->token });
@@ -586,7 +587,7 @@ Return expression for operation `oper` for `expr`.
 
 Set `err` if an error occurred.
 */
-Expr gen_expr_oper(
+static Expr gen_expr(
 	Type type,
 	const AstNodeExpr *const expr,
 	bool *err
@@ -637,14 +638,14 @@ Expr gen_expr_oper(
 			NULL;
 
 	const Expr lhs = lhs_token ?
-		gen_expr_oper(is_diff_type ? NULL : type, expr->lhs.expr, err) :
+		gen_expr(is_diff_type ? NULL : type, expr->lhs.expr, err) :
 		(Expr){0};
 
 	if (*err) return (Expr){0};
 
 	const Token *rhs_token = expr->rhs.expr->lhs.tok;
 
-	const Expr rhs = gen_expr_oper(
+	const Expr rhs = gen_expr(
 		is_diff_type ? lhs.type : type,
 		expr->rhs.expr,
 		err
