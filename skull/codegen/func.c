@@ -269,7 +269,21 @@ Expr gen_expr_function_call(
 		param = param->next;
 	}
 
-	Expr ret = (Expr){
+	if (type && function->return_type != type) {
+		FMT_ERROR(
+			ERR_ASSIGN_BAD_TYPE,
+			{
+				.loc = &func_name_token->location,
+				.type = function->return_type
+			},
+			{ .type = type }
+		);
+
+		*err = true;
+		return (Expr){0};
+	}
+
+	const Expr ret = (Expr){
 		.value = LLVMBuildCall2(
 			SKULL_STATE.builder,
 			function->type,
@@ -283,16 +297,6 @@ Expr gen_expr_function_call(
 
 	free(params);
 
-	if (type && ret.type != type) {
-		FMT_ERROR(ERR_ASSIGN_BAD_TYPE,
-			{ .loc = &func_name_token->location, .type = ret.type },
-			{ .type = type }
-		);
-
-		*err = true;
-		return (Expr){0};
-	}
-
 	return ret;
 }
 
@@ -300,24 +304,6 @@ Expr gen_expr_function_call(
 Create a native LLVM function.
 */
 bool define_function(const AstNode *const node, FunctionDeclaration *func) {
-	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
-		SKULL_STATE.current_func->ref
-	);
-
-	FunctionDeclaration *old_func = SKULL_STATE.current_func;
-	SKULL_STATE.current_func = func;
-
-	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
-		SKULL_STATE.ctx,
-		func->ref,
-		"entry"
-	);
-
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
-
-	Scope *scope_copy;
-	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
-
 	if (func->param_types) {
 		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
 
@@ -345,6 +331,24 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 			next_param = LLVMGetNextParam(next_param);
 		}
 	}
+
+	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
+		SKULL_STATE.current_func->ref
+	);
+
+	FunctionDeclaration *old_func = SKULL_STATE.current_func;
+	SKULL_STATE.current_func = func;
+
+	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
+		SKULL_STATE.ctx,
+		func->ref,
+		"entry"
+	);
+
+	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
+
+	Scope *scope_copy;
+	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
 
 	bool err = false;
 	const Expr returned = gen_node(node->child, &err);

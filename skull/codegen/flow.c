@@ -91,8 +91,16 @@ static bool gen_control_code_block(
 
 /*
 Builds LLVM for a while loop from `node`.
+
+Return `true` if an error occurred.
 */
 bool gen_control_while(AstNode **node) {
+	*node = (*node)->next;
+
+	bool err = false;
+	LLVMValueRef cond = node_to_bool(*node, &err);
+	if (err) return true;
+
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
 		SKULL_STATE.current_func->ref,
@@ -110,14 +118,7 @@ bool gen_control_while(AstNode **node) {
 	);
 
 	LLVMBuildBr(SKULL_STATE.builder, while_cond);
-
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_cond);
-
-	*node = (*node)->next;
-
-	bool err = false;
-	LLVMValueRef cond = node_to_bool(*node, &err);
-	if (err) return true;
 
 	LLVMBuildCondBr(
 		SKULL_STATE.builder,
@@ -155,6 +156,8 @@ bool gen_control_if(AstNode **node) {
 
 /*
 Internal function for building an `if` node.
+
+Return `true` if an error occurred.
 */
 bool gen_control_if_(
 	AstNode **node,
@@ -164,13 +167,12 @@ bool gen_control_if_(
 	AstNode *next_non_comment = (*node)->next;
 
 	while (next_non_comment) {
-		if (next_non_comment->type != AST_NODE_ELIF &&
-			next_non_comment->type != AST_NODE_ELSE
+		if (next_non_comment->type == AST_NODE_ELIF ||
+			next_non_comment->type == AST_NODE_ELSE
 		) {
-			next_non_comment = next_non_comment->next;
-			continue;
+			break;
 		}
-		break;
+		next_non_comment = next_non_comment->next;
 	}
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
@@ -183,8 +185,8 @@ bool gen_control_if_(
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_true);
 	*node = (*node)->next;
-	if (gen_control_code_block("if", *node, end))
-		return true;
+
+	if (gen_control_code_block("if", *node, end)) return true;
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
 
@@ -214,15 +216,14 @@ bool gen_control_if_(
 	}
 
 	// if there is an elif block following the current if block
-	if (next_non_comment && (next_non_comment->type == AST_NODE_ELIF)) {
+	if (next_non_comment && next_non_comment->type == AST_NODE_ELIF) {
 		gen_control_if_(node, if_false, end);
 	}
 	// if there is an else block following the current if block
-	else if (next_non_comment && (next_non_comment->type == AST_NODE_ELSE)) {
+	else if (next_non_comment && next_non_comment->type == AST_NODE_ELSE) {
 		LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_false);
 
-		if (gen_control_code_block("else", *node, end))
-			return true;
+		if (gen_control_code_block("else", *node, end)) return true;
 	}
 	// just a single if statement
 	else {
@@ -270,7 +271,7 @@ static LLVMValueRef node_to_bool(const AstNode *const node, bool *err) {
 }
 
 /*
-Parse `node` while in a new scope. Branch to `block` when done.
+Parse `node` while in a new scope. Branch to `block` if no return occurred.
 
 `name` is the type of block: if, else, while, etc.
 
@@ -293,19 +294,18 @@ static bool gen_control_code_block(
 	Scope *scope_copy;
 	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
 
+	Expr returned = (Expr){0};
+
 	if (node->child->token) {
 		bool err = false;
-		const Expr returned = gen_node(node->child, &err);
+		returned = gen_node(node->child, &err);
 		if (err) return true;
-
-		if (!returned.value)
-			LLVMBuildBr(SKULL_STATE.builder, block);
-	}
-	else {
-		LLVMBuildBr(SKULL_STATE.builder, block);
 	}
 
 	restore_sub_scope(&SKULL_STATE.scope, &scope_copy);
+
+	if (!returned.value || !node->child->token)
+		LLVMBuildBr(SKULL_STATE.builder, block);
 
 	return false;
 }
