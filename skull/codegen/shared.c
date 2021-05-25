@@ -11,10 +11,10 @@
 
 SkullState SKULL_STATE;
 
-static char *create_llvm_main_func(const char *);
+static char *create_main_func_name(const char *);
 
 void setup_state(SkullState *state, const char *filename) {
-	char *main_func_name = create_llvm_main_func(filename);
+	char *main_func_name = create_main_func_name(filename);
 
 	LLVMModuleRef main_module = LLVMModuleCreateWithName(filename);
 	LLVMContextRef ctx = LLVMContextCreate();
@@ -59,7 +59,7 @@ void setup_state(SkullState *state, const char *filename) {
 /*
 Convert/mangle `filename` into suitable name for "main" method for module.
 */
-static char *create_llvm_main_func(const char *filename) {
+static char *create_main_func_name(const char *filename) {
 	char *slash_pos = strrchr(filename, '/');
 
 	if (slash_pos) {

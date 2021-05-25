@@ -1,7 +1,7 @@
-#include <llvm-c/Core.h>
-
 #include <stddef.h>
 #include <string.h>
+
+#include <llvm-c/Core.h>
 
 #include "skull/codegen/aliases.h"
 #include "skull/codegen/scope.h"
@@ -116,7 +116,7 @@ FunctionDeclaration *add_function(
 	func->num_params = num_params;
 
 	if (param_type_names) {
-		params = Malloc(num_params * sizeof(LLVMValueRef));
+		params = Malloc(num_params * sizeof(LLVMTypeRef));
 		func->param_types = Calloc(num_params, sizeof(Type));
 
 		for RANGE(i, num_params) {
@@ -176,9 +176,7 @@ FunctionDeclaration *add_function(
 
 	LLVMSetLinkage(
 		func->ref,
-		is_private ?
-			LLVMExternalLinkage :
-			LLVMPrivateLinkage
+		is_private ? LLVMExternalLinkage : LLVMPrivateLinkage
 	);
 
 	if (!SKULL_STATE.function_decls) {

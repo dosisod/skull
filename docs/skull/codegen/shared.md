@@ -18,7 +18,7 @@ typedef struct {
 > Shared state for a given Skull program.
 
 ```c
-static char *create_llvm_main_func(const char *filename)
+static char *create_main_func_name(const char *filename)
 ```
 
 > Convert/mangle `filename` into suitable name for "main" method for module.

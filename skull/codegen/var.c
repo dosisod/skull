@@ -1,7 +1,5 @@
 #include <string.h>
 
-#include <llvm-c/Core.h>
-
 #include "skull/codegen/aliases.h"
 #include "skull/codegen/func.h"
 #include "skull/codegen/scope.h"
