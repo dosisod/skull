@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,33 +16,18 @@ Write LLVM code to `filename`, return whether error occured.
 Function takes control of `filename`.
 */
 bool write_file(char *filename) {
-	char *err = NULL;
-	LLVMBool status = LLVMPrintModuleToFile(
+	char *msg = NULL;
+	LLVMBool did_fail = LLVMPrintModuleToFile(
 		SKULL_STATE.module,
 		filename,
-		&err
+		&msg
 	);
 
 	free_state(&SKULL_STATE);
 	free(filename);
 
-	if (err || status) {
-		fprintf(stderr, "skull: error occurred: %s\n", err);
-		LLVMDisposeMessage(err);
-		return 1;
-	}
+	if (did_fail) fprintf(stderr, "skull: error occurred: %s\n", msg);
 
-	LLVMDisposeMessage(err);
-	return 0;
-}
-
-/*
-Create a module named `filename` from `file_contents`.
-
-Return `true` if errors occurred.
-*/
-bool generate_llvm(const char *filename, char *file_contents) {
-	setup_state(&SKULL_STATE, filename);
-
-	return codegen_str(file_contents);
+	LLVMDisposeMessage(msg);
+	return did_fail;
 }

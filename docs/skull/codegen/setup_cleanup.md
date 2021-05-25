@@ -8,11 +8,3 @@ bool write_file(char *filename)
 > \
 > Function takes control of `filename`.
 
-```c
-bool generate_llvm(const char *filename, char *file_contents)
-```
-
-> Create a module named `filename` from `file_contents`.
-> \
-> Return `true` if errors occurred.
-

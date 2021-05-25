@@ -82,7 +82,8 @@ int build_file(char *filename) {
 	}
 	fclose(f);
 
-	const bool failed = generate_llvm(filename, file_contents);
+	setup_state(&SKULL_STATE, filename);
+	const bool failed = codegen_str(file_contents);
 	free(file_contents);
 
 	if (failed) return failed;
