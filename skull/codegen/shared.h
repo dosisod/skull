@@ -1,7 +1,7 @@
 #pragma once
 
 #include "skull/codegen/func.h"
-#include "skull/codegen/llvm_fwd_decl.h"
+#include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/common/hashtable.h"
 #include "skull/compiler/scope.h"
 

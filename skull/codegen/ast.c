@@ -3,10 +3,10 @@
 #include <stddef.h>
 #include <string.h>
 
-#include "skull/codegen/aliases.h"
 #include "skull/codegen/assign.h"
 #include "skull/codegen/flow.h"
 #include "skull/codegen/func.h"
+#include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/str.h"

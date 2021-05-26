@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 #include "skull/codegen/expr.h"
-#include "skull/codegen/llvm_fwd_decl.h"
+#include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/compiler/types/types.h"
 #include "skull/parse/ast_node.h"
 

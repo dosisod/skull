@@ -3,9 +3,9 @@
 
 #include <llvm-c/Core.h>
 
-#include "skull/codegen/aliases.h"
 #include "skull/codegen/assign.h"
 #include "skull/codegen/expr.h"
+#include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
