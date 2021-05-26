@@ -19,8 +19,8 @@ Expr gen_node(AstNode *, bool *);
 
 bool define_function(const AstNode *const, FunctionDeclaration *);
 
-FunctionDeclaration *add_function(
-	const AstNode *const,
+static FunctionDeclaration *add_function(
+	const AstNodeFunctionProto *const,
 	char *,
 	bool,
 	bool *
@@ -75,7 +75,7 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 
 	bool err = false;
 	FunctionDeclaration *func = add_function(
-		node,
+		node->func_proto,
 		func_name,
 		is_export || is_external,
 		&err
@@ -89,7 +89,7 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 }
 
 /*
-Add new LLVM function named `name` from `node`.
+Add new LLVM function named `name` from `func_proto`.
 
 If `is_private` is true the function will be private (statically linked).
 
@@ -97,8 +97,8 @@ Else, the function will be globally available.
 
 Set `err` if an error occurred.
 */
-FunctionDeclaration *add_function(
-	const AstNode *const node,
+static FunctionDeclaration *add_function(
+	const AstNodeFunctionProto *const func_proto,
 	char *name,
 	bool is_private,
 	bool *err
@@ -108,11 +108,11 @@ FunctionDeclaration *add_function(
 
 	func->name = name;
 
-	char **param_type_names = node->func_proto->param_type_names;
-	func->param_names = node->func_proto->param_names;
+	char **param_type_names = func_proto->param_type_names;
+	func->param_names = func_proto->param_names;
 	LLVMTypeRef *params = NULL;
 
-	unsigned short num_params = node->func_proto->num_params;
+	unsigned short num_params = func_proto->num_params;
 	func->num_params = num_params;
 
 	if (param_type_names) {
@@ -141,7 +141,7 @@ FunctionDeclaration *add_function(
 		}
 	}
 
-	char *return_type_name = node->func_proto->return_type_name;
+	char *return_type_name = func_proto->return_type_name;
 	if (return_type_name)
 		func->return_type = find_type(return_type_name);
 

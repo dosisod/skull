@@ -39,10 +39,10 @@ bool gen_stmt_func_decl(const AstNode *const node)
 > Return `true` if an error occurred.
 
 ```c
-FunctionDeclaration *add_function(const AstNode *const node, char *name, bool is_private, bool *err)
+static FunctionDeclaration *add_function(const AstNodeFunctionProto *const func_proto, char *name, bool is_private, bool *err)
 ```
 
-> Add new LLVM function named `name` from `node`.
+> Add new LLVM function named `name` from `func_proto`.
 > \
 > If `is_private` is true the function will be private (statically linked).
 > \
