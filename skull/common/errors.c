@@ -21,7 +21,7 @@ char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 	fmt_error_stringify(msg);
 
 	size_t num_of_percents = 0;
-	while (msg->real) {
+	while (msg->real || msg->str) {
 		num_of_percents++;
 		msg++;
 		fmt_error_stringify(msg);
@@ -62,9 +62,16 @@ char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 	if (num_of_percents == 0)
 		error_msg = uvsnprintf("%s\n", fmt);
 	else if (num_of_percents == 1)
-		error_msg = uvsnprintf(fmt, msgs[0].real);
+		error_msg = uvsnprintf(
+			fmt,
+			msgs[0].real ? msgs[0].real : msgs[0].str
+		);
 	else if (num_of_percents == 2)
-		error_msg = uvsnprintf(fmt, msgs[0].real, msgs[1].real);
+		error_msg = uvsnprintf(
+			fmt,
+			msgs[0].real ? msgs[0].real : msgs[0].str,
+			msgs[1].real ? msgs[1].real : msgs[1].str
+		);
 
 #ifdef __clang__
 # pragma clang diagnostic pop
@@ -81,7 +88,7 @@ char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 	free(location_str);
 	free(error_msg);
 
-	while (msg->real) {
+	while (msg->real || msg->str) {
 		free(msg->real);
 		msg++;
 	}
@@ -103,10 +110,10 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 		msg->real = strdup(msg->var->name);
 	else if (msg->type)
 		msg->real = strdup(msg->type);
-	else if (msg->str)
-		msg->real = c32stombs(msg->str, NULL);
+	else if (msg->str32)
+		msg->real = c32stombs(msg->str32, NULL);
 	else if (msg->i)
 		msg->real = uvsnprintf("%zu", msg->i - 1);
-	else if (msg->tok && !msg->real)
+	else if (msg->tok && !msg->real && !msg->str)
 		msg->real = token_mbs_str(msg->tok);
 }

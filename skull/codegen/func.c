@@ -123,9 +123,7 @@ static FunctionDeclaration *add_function(
 			func->param_types[i] = find_type(param_type_names[i]);
 
 			if (!func->param_types[i]) {
-				FMT_ERROR(ERR_TYPE_NOT_FOUND, {
-					.real = strdup(param_type_names[i])
-				});
+				FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = param_type_names[i] });
 
 				// TODO(dosisod): merge with free_function_declaration
 				free(func->name);
@@ -146,9 +144,7 @@ static FunctionDeclaration *add_function(
 		func->return_type = find_type(return_type_name);
 
 	if (return_type_name && !func->return_type) {
-		FMT_ERROR(ERR_TYPE_NOT_FOUND, {
-			.real = strdup(return_type_name)
-		});
+		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = return_type_name });
 
 		// TODO(dosisod): merge with free_function_declaration
 		free(func->name);

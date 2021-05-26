@@ -38,7 +38,7 @@ bool test_fmt_error_stringify() {
 
 	const char32_t *str = U"some string";
 	ErrorMsg err_str = {
-		.str = str
+		.str32 = str
 	};
 
 	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_tok, "xxx"));

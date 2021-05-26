@@ -40,7 +40,7 @@ char32_t eval_rune(const Token *const token, bool *err) {
 	}
 
 	if (error) {
-		FMT_ERROR(ERR_BAD_ESCAPE, { .loc = &token->location, .str = error });
+		FMT_ERROR(ERR_BAD_ESCAPE, { .loc = &token->location, .str32 = error });
 
 		*err = true;
 		return '\0';

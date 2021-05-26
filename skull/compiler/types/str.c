@@ -21,7 +21,7 @@ char32_t *eval_str(const Token *const token, bool *err) {
 
 		if (error) {
 			FMT_ERROR(ERR_BAD_ESCAPE, {
-				.loc = &token->location, .str = error
+				.loc = &token->location, .str32 = error
 			});
 
 			free(copy);

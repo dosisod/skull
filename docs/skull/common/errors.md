@@ -2,15 +2,15 @@
 
 ```c
 typedef struct {
-	const char32_t *str;
+	const char *str;
+	const char32_t *str32;
 	const Token *tok;
 	const Location *loc;
 	const Variable *var;
 	Type type;
-	size_t i;
+	char *real; // copy of string that will be used in final error msg
 
-	// copy of string that will be used in final error msg
-	char *real;
+	size_t i;
 }
 ```
 

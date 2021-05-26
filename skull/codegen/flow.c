@@ -285,7 +285,7 @@ static bool gen_control_code_block(
 	if (!node->child) { // NOLINT
 		FMT_ERROR(ERR_MISSING_BLOCK, {
 			.loc = &node->token->location,
-			.real = strdup(name)
+			.str = name
 		});
 
 		return true;
