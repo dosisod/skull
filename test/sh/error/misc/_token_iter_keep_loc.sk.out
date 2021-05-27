@@ -1,2 +1,2 @@
 ./test/sh/error/misc/token_iter_keep_loc.sk: Compilation error: line 12 column 1: expression cannot be used on its own
-./test/sh/error/misc/token_iter_keep_loc.sk: Warning: variable "x" is unused
+./test/sh/error/misc/token_iter_keep_loc.sk: Warning: line 1 column 1: variable "x" is unused

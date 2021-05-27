@@ -1,2 +1,2 @@
 ./test/sh/error/oper/div_mismatched_consts.sk: Compilation error: line 3 column 9: expected type "Int", got "Str"
-./test/sh/error/oper/div_mismatched_consts.sk: Warning: variable "x" is unused
+./test/sh/error/oper/div_mismatched_consts.sk: Warning: line 1 column 5: variable "x" is unused

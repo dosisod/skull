@@ -11,6 +11,8 @@ typedef struct Variable {
 	_Bool was_read : 1;
 	_Bool implicitly_typed : 1;
 
+	Location location;
+
 	LLVMValueRef ref;
 }
 ```
@@ -28,13 +30,15 @@ typedef struct Variable {
 > `is_global` stores whether the variable was declared at the top level of a
 > module.
 > \
-> `ref` stores the actual LLVM alloca/constant/global.
-> \
 > `was_reassigned` stores whether a (mutable) variable was reassigned.
 > \
 > `was_read` stores whether a variable was read from or not.
 > \
 > `implicitly_typed` is true when variable type is auto-deduced.
+> \
+> `location` stores the location where the variable was first defined.
+> \
+> `ref` stores the actual LLVM alloca/constant/global.
 
 ```c
 Variable *make_variable(Type type, const char32_t *const name, bool is_const)

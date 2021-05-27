@@ -42,6 +42,9 @@ char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 			msg[0].loc :
 			NULL);
 
+	// if location is invalid, dont use it in error
+	if (location && !location->line) location = NULL;
+
 	char *location_str = NULL;
 	if (location) {
 		location_str = uvsnprintf("line %u column %u: ",

@@ -61,6 +61,7 @@ Variable *node_to_var(const AstNode *const node, bool *err) {
 	}
 
 	if (scope_add_var(&SKULL_STATE.scope, var)) {
+		var->location = token->location;
 		return var;
 	}
 	variable_no_warnings(var);

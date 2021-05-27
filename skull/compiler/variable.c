@@ -45,18 +45,22 @@ extern bool SKULL_TESTING;
 Free variable `var`.
 */
 void free_variable(Variable *var) {
-	if (var) {
-		if (!SKULL_TESTING) {
-			if (!var->is_const && !var->was_reassigned)
-				FMT_WARN(WARN_VAR_NOT_CONST, { .var = var });
+	if (!var) return;
 
-			if (!var->was_read)
-				FMT_WARN(WARN_VAR_UNUSED, { .var = var });
-		}
+	if (!SKULL_TESTING) {
+		if (!var->is_const && !var->was_reassigned)
+			FMT_WARN(WARN_VAR_NOT_CONST, {
+				.var = var, .loc = &var->location
+			});
 
-		free(var->name);
-		free(var);
+		if (!var->was_read)
+			FMT_WARN(WARN_VAR_UNUSED, {
+				.var = var, .loc = &var->location
+			});
 	}
+
+	free(var->name);
+	free(var);
 }
 
 /*

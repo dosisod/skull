@@ -1,4 +1,4 @@
-./test/sh/error/flow/if_var_out_of_scope.sk: Warning: variable "x" should be constant
-./test/sh/error/flow/if_var_out_of_scope.sk: Warning: variable "x" is unused
+./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 2 column 6: variable "x" should be constant
+./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 2 column 6: variable "x" is unused
 ./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 1 column 4: condition is always true
 ./test/sh/error/flow/if_var_out_of_scope.sk: Compilation error: line 5 column 8: variable "x" not found
