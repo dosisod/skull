@@ -311,11 +311,7 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 			if (!scope_add_var(&SKULL_STATE.scope, param_var)) {
 				FMT_ERROR(ERR_SHADOW_VAR, { .var = param_var });
 
-				// because we are "throwing" an error, this variable will not
-				// be able to be read/wrote to, so we manually disable the
-				// triggers so a warning is not displayed
-				param_var->was_reassigned = true;
-				param_var->was_read = true;
+				variable_no_warnings(param_var);
 				free_variable(param_var);
 
 				return true;

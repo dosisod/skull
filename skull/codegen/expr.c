@@ -575,8 +575,7 @@ static Expr gen_expr_identifier(
 			{ .type = var->type }
 		);
 
-		var->was_read = true;
-		var->was_reassigned = true;
+		variable_no_warnings(var);
 
 		*err = true;
 		return (Expr){0};

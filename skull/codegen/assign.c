@@ -30,11 +30,7 @@ bool gen_stmt_var_def(AstNode **node) {
 	if (err) return true;
 
 	err = _gen_stmt_var_assign(var, node);
-
-	if (err) {
-		var->was_reassigned = true;
-		var->was_read = true;
-	}
+	if (err) variable_no_warnings(var);
 
 	return err;
 }

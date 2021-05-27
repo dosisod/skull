@@ -53,8 +53,7 @@ Variable *node_to_var(const AstNode *const node, bool *err) {
 			.var = var
 		});
 
-		var->was_reassigned = true;
-		var->was_read = true;
+		variable_no_warnings(var);
 		free_variable(var);
 
 		*err = true;
@@ -64,8 +63,7 @@ Variable *node_to_var(const AstNode *const node, bool *err) {
 	if (scope_add_var(&SKULL_STATE.scope, var)) {
 		return var;
 	}
-	var->was_reassigned = true;
-	var->was_read = true;
+	variable_no_warnings(var);
 	free_variable(var);
 
 	FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .tok = token });
