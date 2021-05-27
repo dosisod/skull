@@ -1,2 +1,2 @@
-./test/sh/error/declare/var_already_defined.sk: Warning: variable "x" is unused
 ./test/sh/error/declare/var_already_defined.sk: Compilation error: line 2 column 1: variable "x" already defined
+./test/sh/error/declare/var_already_defined.sk: Warning: variable "x" is unused

@@ -355,6 +355,7 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 			.real = func->name
 		});
 
+		func->name = NULL;
 		return true;
 	}
 	if (returned.value && func->return_type == TYPE_VOID) {
@@ -362,6 +363,7 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 			.real = func->name
 		});
 
+		func->name = NULL;
 		return true;
 	}
 

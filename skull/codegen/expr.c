@@ -575,6 +575,9 @@ static Expr gen_expr_identifier(
 			{ .type = var->type }
 		);
 
+		var->was_read = true;
+		var->was_reassigned = true;
+
 		*err = true;
 		return (Expr){0};
 	}
@@ -630,6 +633,8 @@ static Expr gen_expr(
 			return gen_expr_function_call(expr, type, err);
 		default: return (Expr){0};
 	}
+
+	if (*err) return (Expr){0};
 
 	const Token *lhs_token = expr->lhs.expr ?
 		(expr->lhs.expr->func_call ?

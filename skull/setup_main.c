@@ -86,7 +86,10 @@ int build_file(char *filename) {
 	const bool failed = codegen_str(file_contents);
 	free(file_contents);
 
-	if (failed) return failed;
+	if (failed) {
+		free_state(&SKULL_STATE);
+		return failed;
+	}
 
 	return write_file(gen_filename(filename));
 }

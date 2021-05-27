@@ -1,1 +1,2 @@
 ./test/sh/error/func/shadowed_param.sk: Compilation error: variable "x" shadows existing variable
+./test/sh/error/func/shadowed_param.sk: Warning: variable "x" is unused

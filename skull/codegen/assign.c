@@ -29,7 +29,14 @@ bool gen_stmt_var_def(AstNode **node) {
 	Variable *var = node_to_var(*node, &err);
 	if (err) return true;
 
-	return _gen_stmt_var_assign(var, node);
+	err = _gen_stmt_var_assign(var, node);
+
+	if (err) {
+		var->was_reassigned = true;
+		var->was_read = true;
+	}
+
+	return err;
 }
 
 /*

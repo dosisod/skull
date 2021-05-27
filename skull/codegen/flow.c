@@ -296,13 +296,12 @@ static bool gen_control_code_block(
 
 	Expr returned = (Expr){0};
 
-	if (node->child->token) {
-		bool err = false;
-		returned = gen_node(node->child, &err);
-		if (err) return true;
-	}
+	bool err = false;
+	if (node->child->token) returned = gen_node(node->child, &err);
 
 	restore_sub_scope(&SKULL_STATE.scope, &scope_copy);
+
+	if (err) return true;
 
 	if (!returned.value || !node->child->token)
 		LLVMBuildBr(SKULL_STATE.builder, block);
