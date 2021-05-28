@@ -50,6 +50,8 @@
 #define ERR_DIV_BY_ZERO "division by zero"
 #define ERR_NO_NESTED \
 	"cannot declare nested function \"%s\" as external or exported\n"
+#define ERR_TOP_LVL_ALIAS_ONLY \
+	"type aliases must be defined at the top level"
 #define ERR_NOT_COMPARIBLE "cannot compare value near \"%s\"\n"
 #define ERR_EXPECTED_COMMA "expected comma"
 #define ERR_UNCLOSED_FUNC_CALL "function call missing closing parenthesis"

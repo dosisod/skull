@@ -1,0 +1,1 @@
+./test/sh/error/misc/not_top_lvl_alias.sk: Compilation error: line 2 column 2: type aliases must be defined at the top level

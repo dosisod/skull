@@ -140,6 +140,11 @@ Return `true` if an error occurred.
 bool create_type_alias(AstNode **node) {
 	const Token *const token = (*node)->token;
 
+	if (SKULL_STATE.scope && SKULL_STATE.scope->sub_scope) {
+		FMT_ERROR(ERR_TOP_LVL_ALIAS_ONLY, { .loc = &token->location });
+		return true;
+	}
+
 	char *type_name = token_mbs_str(token->next->next);
 
 	char *alias = token_mbs_str(token);
@@ -148,7 +153,6 @@ bool create_type_alias(AstNode **node) {
 		(Type)find_type(type_name),
 		alias
 	);
-
 	free(type_name);
 
 	if (added) return false;
