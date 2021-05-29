@@ -132,7 +132,7 @@ static Type var_def_node_to_type(const AstNode *node, bool *err) {
 
 			char *const func_name = token_mbs_str(func_name_token);
 
-			const FunctionDeclaration *const function = \
+			FunctionDeclaration *const function = \
 				find_func_by_name(func_name);
 
 			free(func_name);
@@ -151,6 +151,9 @@ static Type var_def_node_to_type(const AstNode *node, bool *err) {
 					.loc = &func_name_token->location,
 					.real = token_mbs_str(node->token)
 				});
+
+				// suppress errors
+				function->was_called = true;
 
 				*err = true;
 			}

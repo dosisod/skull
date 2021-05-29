@@ -70,6 +70,7 @@
 
 #define WARN_VAR_NOT_CONST "variable \"%s\" should be constant\n"
 #define WARN_VAR_UNUSED "variable \"%s\" is unused\n"
+#define WARN_FUNC_UNUSED "function \"%s\" is unused\n"
 #define WARN_COND_ALWAYS_TRUE "condition is always true"
 #define WARN_COND_ALWAYS_FALSE "condition is always false"
 #define WARN_FILE_EMPTY "file is empty"

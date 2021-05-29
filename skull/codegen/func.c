@@ -209,6 +209,8 @@ Expr gen_expr_function_call(
 		return (Expr){0};
 	}
 
+	function->was_called = true;
+
 	unsigned short num_params = function->num_params;
 
 	if (num_params != expr->func_call->num_values) {
@@ -347,19 +349,13 @@ bool define_function(const AstNode *const node, FunctionDeclaration *func) {
 	if (err) return true;
 
 	if (!returned.value && func->return_type != TYPE_VOID) {
-		FMT_ERROR(ERR_EXPECTED_RETURN, {
-			.real = func->name
-		});
+		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(func->name) });
 
-		func->name = NULL;
 		return true;
 	}
 	if (returned.value && func->return_type == TYPE_VOID) {
-		FMT_ERROR(ERR_NO_VOID_RETURN, {
-			.real = func->name
-		});
+		FMT_ERROR(ERR_NO_VOID_RETURN, { .real = strdup(func->name) });
 
-		func->name = NULL;
 		return true;
 	}
 
@@ -385,7 +381,11 @@ void free_function_declaration(HashItem *item) {
 
 	if (!func) return;
 
-	free(func->name);
+	if (!func->was_called) {
+		FMT_WARN(WARN_FUNC_UNUSED, { .real = func->name });
+	}
+	else free(func->name);
+
 	free(func->param_types);
 	free(func);
 }

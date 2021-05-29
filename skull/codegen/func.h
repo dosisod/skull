@@ -36,11 +36,13 @@ typedef struct FunctionDeclaration {
 	char32_t **param_names;
 
 	Type return_type;
+
+	_Bool was_called : 1;
 } FunctionDeclaration;
 
 bool gen_stmt_func_decl(const AstNode *const);
 
-Expr gen_expr_function_call(const AstNodeExpr *const, Type, bool *);
+Expr gen_expr_function_call(const AstNodeExpr *const, Type, _Bool *);
 
 void free_function_declaration(HashItem *);
 

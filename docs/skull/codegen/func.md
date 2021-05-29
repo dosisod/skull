@@ -11,6 +11,8 @@ typedef struct FunctionDeclaration {
 	char32_t **param_names;
 
 	Type return_type;
+
+	_Bool was_called : 1;
 }
 ```
 
