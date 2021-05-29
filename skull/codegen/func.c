@@ -26,6 +26,12 @@ static FunctionDeclaration *add_function(
 	bool *
 );
 
+static LLVMTypeRef *parse_func_param(
+	const AstNodeFunctionProto *const,
+	FunctionDeclaration *const,
+	bool *
+);
+
 /*
 Parse declaration (and potential definition) of function in `node`.
 
@@ -80,7 +86,10 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 		is_export || is_external,
 		&err
 	);
-	if (err) return true;
+	if (err) {
+		free(func_name);
+		return true;
+	}
 
 	if (!is_external)
 		return define_function(node, func);
@@ -106,39 +115,6 @@ static FunctionDeclaration *add_function(
 	FunctionDeclaration *func;
 	func = Calloc(1, sizeof *func);
 
-	func->name = name;
-
-	char **param_type_names = func_proto->param_type_names;
-	func->param_names = func_proto->param_names;
-	LLVMTypeRef *params = NULL;
-
-	unsigned short num_params = func_proto->num_params;
-	func->num_params = num_params;
-
-	if (param_type_names) {
-		params = Malloc(num_params * sizeof(LLVMTypeRef));
-		func->param_types = Calloc(num_params, sizeof(Type));
-
-		for RANGE(i, num_params) {
-			func->param_types[i] = find_type(param_type_names[i]);
-
-			if (!func->param_types[i]) {
-				FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = param_type_names[i] });
-
-				// TODO(dosisod): merge with free_function_declaration
-				free(func->name);
-				free(func->param_types);
-				free(func);
-				free(params);
-
-				*err = true;
-				return NULL;
-			}
-
-			params[i] = gen_llvm_type(func->param_types[i]);
-		}
-	}
-
 	char *return_type_name = func_proto->return_type_name;
 	if (return_type_name)
 		func->return_type = find_type(return_type_name);
@@ -146,20 +122,19 @@ static FunctionDeclaration *add_function(
 	if (return_type_name && !func->return_type) {
 		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = return_type_name });
 
-		// TODO(dosisod): merge with free_function_declaration
-		free(func->name);
-		free(func->param_types);
 		free(func);
-		free(params);
 
 		*err = true;
 		return NULL;
 	}
 
+	LLVMTypeRef *params = parse_func_param(func_proto, func, err);
+	if (*err) return NULL;
+
 	func->type = LLVMFunctionType(
 		gen_llvm_type(func->return_type),
 		params,
-		num_params,
+		func->num_params,
 		false
 	);
 	free(params);
@@ -178,9 +153,51 @@ static FunctionDeclaration *add_function(
 	if (!SKULL_STATE.function_decls) {
 		SKULL_STATE.function_decls = ht_create();
 	}
+	func->name = name;
 	ht_add(SKULL_STATE.function_decls, func->name, func);
 
 	return func;
+}
+
+/*
+Setup `func` params by parsing `func_proto`.
+
+Set `err` if an error occurred.
+*/
+static LLVMTypeRef *parse_func_param(
+	const AstNodeFunctionProto *const func_proto,
+	FunctionDeclaration *const func,
+	bool *err
+) {
+	char **param_type_names = func_proto->param_type_names;
+	func->param_names = func_proto->param_names;
+
+	unsigned short num_params = func_proto->num_params;
+	func->num_params = num_params;
+
+	if (!param_type_names) return NULL;
+
+	LLVMTypeRef *params = Calloc(num_params, sizeof(LLVMTypeRef));
+	func->param_types = Calloc(num_params, sizeof(Type));
+
+	for RANGE(i, num_params) {
+		func->param_types[i] = find_type(param_type_names[i]);
+
+		if (!func->param_types[i]) {
+			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = param_type_names[i] });
+
+			free(func->param_types);
+			free(func);
+			free(params);
+
+			*err = true;
+			return NULL;
+		}
+
+		params[i] = gen_llvm_type(func->param_types[i]);
+	}
+
+	return params;
 }
 
 /*

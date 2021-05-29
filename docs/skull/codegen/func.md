@@ -53,6 +53,14 @@ static FunctionDeclaration *add_function(const AstNodeFunctionProto *const func_
 > Set `err` if an error occurred.
 
 ```c
+static LLVMTypeRef *parse_func_param(const AstNodeFunctionProto *const func_proto, FunctionDeclaration *const func, bool *err)
+```
+
+> Setup `func` params by parsing `func_proto`.
+> \
+> Set `err` if an error occurred.
+
+```c
 Expr gen_expr_function_call(const AstNodeExpr *const expr, Type type, bool *err)
 ```
 
