@@ -8,14 +8,14 @@
 #include "skull/codegen/func.h"
 #include "skull/codegen/shared.h"
 
-#include "skull/codegen/setup_cleanup.h"
+#include "skull/codegen/llvm/write.h"
 
 /*
 Write LLVM code to `filename`, return whether error occured.
 
 Function takes control of `filename`.
 */
-bool write_file(char *filename) {
+bool write_file_llvm(char *filename) {
 	char *msg = NULL;
 	LLVMBool did_fail = LLVMPrintModuleToFile(
 		SKULL_STATE.module,

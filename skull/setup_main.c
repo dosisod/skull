@@ -6,7 +6,7 @@
 
 #include "skull/codegen/ast.h"
 #include "skull/codegen/func.h"
-#include "skull/codegen/setup_cleanup.h"
+#include "skull/codegen/llvm/write.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/io.h"
@@ -91,7 +91,7 @@ int build_file(char *filename) {
 		return failed;
 	}
 
-	return write_file(gen_filename(filename));
+	return write_file_llvm(gen_filename(filename));
 }
 
 /*
