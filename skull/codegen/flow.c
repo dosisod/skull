@@ -97,10 +97,6 @@ Return `true` if an error occurred.
 bool gen_control_while(AstNode **node) {
 	*node = (*node)->next;
 
-	bool err = false;
-	LLVMValueRef cond = node_to_bool(*node, &err);
-	if (err) return true;
-
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
 		SKULL_STATE.current_func->ref,
@@ -119,6 +115,10 @@ bool gen_control_while(AstNode **node) {
 
 	LLVMBuildBr(SKULL_STATE.builder, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_cond);
+
+	bool err = false;
+	LLVMValueRef cond = node_to_bool(*node, &err);
+	if (err) return true;
 
 	LLVMBuildCondBr(
 		SKULL_STATE.builder,
