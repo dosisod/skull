@@ -17,8 +17,8 @@
 
 #define DIE(x) fprintf(stderr, "skull: %s\n", x); return 1
 
-int build_file(char *);
-char *gen_filename(const char *);
+static int build_file(char *);
+static char *gen_filename(const char *);
 
 bool SKULL_TESTING = false;
 
@@ -43,7 +43,7 @@ int setup_main(int argc, char *argv[]) {
 /*
 Build a .ll file from a .sk file `filename`.
 */
-int build_file(char *filename) {
+static int build_file(char *filename) {
 	if (!strrstr(filename, ".sk")) {
 		DIE("missing required \".sk\" extension, exiting");
 	}
@@ -97,7 +97,7 @@ int build_file(char *filename) {
 /*
 Create Skull filename based on `filename`.
 */
-char *gen_filename(const char *filename) {
+static char *gen_filename(const char *filename) {
 	const size_t len = strlen(filename);
 	char *const new_filename = Malloc(len + 5);
 

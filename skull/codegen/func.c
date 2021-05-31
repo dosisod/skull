@@ -17,7 +17,7 @@
 
 Expr gen_node(AstNode *, bool *);
 
-bool define_function(const AstNode *const, FunctionDeclaration *);
+static bool define_function(const AstNode *const, FunctionDeclaration *);
 
 static FunctionDeclaration *add_function(
 	const AstNodeFunctionProto *const,
@@ -316,7 +316,10 @@ Expr gen_expr_function_call(
 /*
 Create a native LLVM function.
 */
-bool define_function(const AstNode *const node, FunctionDeclaration *func) {
+static bool define_function(
+	const AstNode *const node,
+	FunctionDeclaration *func
+) {
 	if (func->param_types) {
 		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
 

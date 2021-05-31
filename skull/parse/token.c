@@ -6,8 +6,8 @@
 
 #include "skull/parse/token.h"
 
-bool is_whitespace(char32_t);
-bool is_quote(char32_t);
+static bool is_whitespace(char32_t);
+static bool is_quote(char32_t);
 
 static bool iter_comment(Token *, const char32_t **, unsigned *, unsigned *);
 static bool iter_quote(Token *, const char32_t **, unsigned *, unsigned *);
@@ -21,7 +21,7 @@ typedef enum {
 /*
 Allocate and append next token, return newly created token.
 */
-Token *setup_next(Token *token) {
+static Token *setup_next(Token *token) {
 	return (token->next = make_token());
 }
 
@@ -255,14 +255,14 @@ Return true if `c` is whitespace.
 
 Whitespace is considered as indent/line related control characters.
 */
-__attribute__((const)) bool is_whitespace(char32_t c) {
+static __attribute__((const)) bool is_whitespace(char32_t c) {
 	return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
 
 /*
 Return true if `c` is a double or single quote.
 */
-__attribute__((const)) bool is_quote(char32_t c) {
+static __attribute__((const)) bool is_quote(char32_t c) {
 	return c == '\'' || c == '\"';
 }
 

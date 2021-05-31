@@ -1,7 +1,7 @@
 # skull/parse/token
 
 ```c
-Token *setup_next(Token *token)
+static Token *setup_next(Token *token)
 ```
 
 > Allocate and append next token, return newly created token.
@@ -29,7 +29,7 @@ static bool iter_quote(Token *token, const char32_t **_code, unsigned *line_num,
 > Return `true` if errors occurred.
 
 ```c
-__attribute__((const)) bool is_whitespace(char32_t c)
+static __attribute__((const)) bool is_whitespace(char32_t c)
 ```
 
 > Return true if `c` is whitespace.
@@ -37,7 +37,7 @@ __attribute__((const)) bool is_whitespace(char32_t c)
 > Whitespace is considered as indent/line related control characters.
 
 ```c
-__attribute__((const)) bool is_quote(char32_t c)
+static __attribute__((const)) bool is_quote(char32_t c)
 ```
 
 > Return true if `c` is a double or single quote.

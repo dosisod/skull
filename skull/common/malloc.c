@@ -40,3 +40,6 @@ void *Realloc(void *ptr, size_t size) {
 
 	return new_ptr;
 }
+
+#undef DIE_IF_MALLOC_FAILS
+

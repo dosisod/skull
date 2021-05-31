@@ -38,41 +38,6 @@ bool add_alias(Type type, char *const alias) {
 	return ht_add(SKULL_STATE.type_aliases, alias, (void *)type);
 }
 
-/*
-Return mangled type name which consists of `types`.
-
-Use `ident` as an identifer for what the mandled type is.
-*/
-char *mangle_types(Type *types, unsigned num_types, char ident) {
-	// mangled type is in form "_x<>" with the types being in the <>'s
-	size_t len = 4;
-
-	for RANGE(i, num_types) { // NOLINT
-		len += strlen(types[i]) + 1;
-	}
-
-	char *name = Malloc(len);
-	name[0] = '_';
-	name[1] = ident;
-	name[2] = '<';
-
-	size_t at = 3;
-
-	for RANGE(i, num_types) { // NOLINT
-		const size_t tmp_len = strlen(types[i]);
-		memcpy(name + at, types[i], tmp_len);
-
-		at += tmp_len;
-		name[at] = ',';
-		at++;
-	}
-
-	name[at - 1] = '>';
-	name[at] = '\0';
-
-	return name;
-}
-
 Type TYPE_BOOL = "Bool";
 Type TYPE_INT = "Int";
 Type TYPE_FLOAT = "Float";

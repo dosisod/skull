@@ -137,7 +137,7 @@ bool gen_control_while(AstNode **node) {
 	return false;
 }
 
-bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
+static bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
 
 /*
 Builds an if block from `node`.
@@ -159,7 +159,7 @@ Internal function for building an `if` node.
 
 Return `true` if an error occurred.
 */
-bool gen_control_if_(
+static bool gen_control_if_(
 	AstNode **node,
 	LLVMBasicBlockRef entry,
 	LLVMBasicBlockRef end

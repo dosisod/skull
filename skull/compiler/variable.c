@@ -10,6 +10,8 @@
 
 #include "skull/compiler/variable.h"
 
+extern bool SKULL_TESTING;
+
 /*
 Make a variable called `name` with type `type`, and make it const if
 `is_const` is true.
@@ -38,8 +40,6 @@ Variable *make_variable(
 
 	return var;
 }
-
-extern bool SKULL_TESTING;
 
 /*
 Free variable `var`.

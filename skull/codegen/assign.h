@@ -1,11 +1,9 @@
 #pragma once
 
-#include <stdbool.h>
-
 #include "skull/compiler/variable.h"
 #include "skull/parse/ast_node.h"
 
-bool create_type_alias(AstNode **);
+_Bool create_type_alias(AstNode **);
 
-bool gen_stmt_var_def(AstNode **);
-bool gen_stmt_var_assign(AstNode **);
+_Bool gen_stmt_var_def(AstNode **);
+_Bool gen_stmt_var_assign(AstNode **);

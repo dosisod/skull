@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <limits.h>
+#include <stdbool.h>
 
 #include "skull/common/errors.h"
 #include "skull/common/str.h"

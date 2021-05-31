@@ -20,6 +20,5 @@ extern Type **TYPES_BUILTIN;
 
 Type find_type(const char *const);
 _Bool add_alias(Type, char *const);
-char *mangle_types(Type *, unsigned, char);
 
 void free_ht_type_alias(HashItem *);

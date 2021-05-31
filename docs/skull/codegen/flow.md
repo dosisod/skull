@@ -29,7 +29,7 @@ bool gen_control_if(AstNode **node)
 > Builds an if block from `node`.
 
 ```c
-bool gen_control_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end)
+static bool gen_control_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end)
 ```
 
 > Internal function for building an `if` node.

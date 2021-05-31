@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <errno.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include "skull/common/errors.h"
