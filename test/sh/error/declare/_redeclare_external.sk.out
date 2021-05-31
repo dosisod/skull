@@ -1,2 +1,2 @@
 ./test/sh/error/declare/redeclare_external.sk: Compilation error: line 2 column 10: cannot redeclare function "x"
-./test/sh/error/declare/redeclare_external.sk: Warning: function "x" is unused
+./test/sh/error/declare/redeclare_external.sk: Warning: line 1 column 10: function "x" is unused

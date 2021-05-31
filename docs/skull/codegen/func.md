@@ -3,6 +3,8 @@
 ```c
 typedef struct FunctionDeclaration {
 	char *name;
+	Location location;
+
 	LLVMValueRef ref;
 	LLVMTypeRef type;
 
@@ -19,6 +21,8 @@ typedef struct FunctionDeclaration {
 > Stores a function declaration.
 > \
 > `name` is the name of the declared function.
+> \
+> `location` is the location of the function name.
 > \
 > `ref` is the LLVM function handle.
 > \

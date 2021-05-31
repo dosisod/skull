@@ -1,2 +1,2 @@
 ./test/sh/error/flow/unreachable_in_func.sk: Compilation error: line 3 column 2: unreachable code
-./test/sh/error/flow/unreachable_in_func.sk: Warning: function "f" is unused
+./test/sh/error/flow/unreachable_in_func.sk: Warning: line 1 column 1: function "f" is unused

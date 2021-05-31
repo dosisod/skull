@@ -1,2 +1,2 @@
 ./test/sh/error/func/unexpected_return.sk: Compilation error: unexpected return from void function "f"
-./test/sh/error/func/unexpected_return.sk: Warning: function "f" is unused
+./test/sh/error/func/unexpected_return.sk: Warning: line 1 column 1: function "f" is unused

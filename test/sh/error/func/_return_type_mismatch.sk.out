@@ -1,2 +1,2 @@
 ./test/sh/error/func/return_type_mismatch.sk: Compilation error: line 2 column 9: expected type "Int", got "Bool"
-./test/sh/error/func/return_type_mismatch.sk: Warning: function "f" is unused
+./test/sh/error/func/return_type_mismatch.sk: Warning: line 1 column 1: function "f" is unused

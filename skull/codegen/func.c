@@ -91,6 +91,8 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 		return true;
 	}
 
+	func->location = func_name_token->location;
+
 	if (!is_external)
 		return define_function(node, func);
 
@@ -402,7 +404,9 @@ void free_function_declaration(HashItem *item) {
 	if (!func) return;
 
 	if (!func->was_called) {
-		FMT_WARN(WARN_FUNC_UNUSED, { .real = func->name });
+		FMT_WARN(WARN_FUNC_UNUSED, {
+			.real = func->name, .loc = &func->location
+		});
 	}
 	else free(func->name);
 
