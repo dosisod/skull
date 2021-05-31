@@ -149,7 +149,7 @@ bool create_type_alias(AstNode **node) {
 
 	char *alias = token_mbs_str(token);
 
-	const bool added = add_alias(
+	const bool added = state_add_alias(
 		(Type)find_type(type_name),
 		alias
 	);

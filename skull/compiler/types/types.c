@@ -30,7 +30,7 @@ Add named `alias` for `type`.
 
 Return `true` if alias was added, `false` if it already exists.
 */
-bool add_alias(Type type, char *const alias) {
+bool state_add_alias(Type type, char *const alias) {
 	if (!SKULL_STATE.type_aliases) {
 		SKULL_STATE.type_aliases = ht_create();
 	}

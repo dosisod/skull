@@ -13,7 +13,7 @@ Type __attribute__((pure)) find_type(const char *const name)
 > Returns pointer to type with name `name`.
 
 ```c
-bool add_alias(Type type, char *const alias)
+bool state_add_alias(Type type, char *const alias)
 ```
 
 > Add named `alias` for `type`.

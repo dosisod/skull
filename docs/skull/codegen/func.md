@@ -45,7 +45,7 @@ bool gen_stmt_func_decl(const AstNode *const node)
 > Return `true` if an error occurred.
 
 ```c
-static FunctionDeclaration *add_function(const AstNodeFunctionProto *const func_proto, char *name, bool is_private, bool *err)
+static FunctionDeclaration *create_function(const AstNodeFunctionProto *const func_proto, char *name, bool is_private, bool *err)
 ```
 
 > Add new LLVM function named `name` from `func_proto`.
@@ -73,7 +73,7 @@ Expr gen_expr_function_call(const AstNodeExpr *const expr, Type type, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static bool define_function(const AstNode *const node, FunctionDeclaration *func)
+static bool gen_function(const AstNode *const node, FunctionDeclaration *func)
 ```
 
 > Create a native LLVM function.

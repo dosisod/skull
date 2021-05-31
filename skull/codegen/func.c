@@ -17,14 +17,16 @@
 
 Expr gen_node(AstNode *, bool *);
 
-static bool define_function(const AstNode *const, FunctionDeclaration *);
+static bool gen_function_def(const AstNode *const, FunctionDeclaration *);
 
-static FunctionDeclaration *add_function(
+static FunctionDeclaration *create_function(
 	const AstNodeFunctionProto *const,
 	char *,
 	bool,
 	bool *
 );
+
+void state_add_func(FunctionDeclaration *, char *);
 
 static LLVMTypeRef *parse_func_param(
 	const AstNodeFunctionProto *const,
@@ -80,7 +82,7 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 	}
 
 	bool err = false;
-	FunctionDeclaration *func = add_function(
+	FunctionDeclaration *func = create_function(
 		node->func_proto,
 		func_name,
 		is_export || is_external,
@@ -94,7 +96,7 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 	func->location = func_name_token->location;
 
 	if (!is_external)
-		return define_function(node, func);
+		return gen_function_def(node, func);
 
 	return false;
 }
@@ -108,7 +110,7 @@ Else, the function will be globally available.
 
 Set `err` if an error occurred.
 */
-static FunctionDeclaration *add_function(
+static FunctionDeclaration *create_function(
 	const AstNodeFunctionProto *const func_proto,
 	char *name,
 	bool is_private,
@@ -152,13 +154,17 @@ static FunctionDeclaration *add_function(
 		is_private ? LLVMExternalLinkage : LLVMPrivateLinkage
 	);
 
+	state_add_func(func, name);
+
+	return func;
+}
+
+void state_add_func(FunctionDeclaration *func, char *name) {
 	if (!SKULL_STATE.function_decls) {
 		SKULL_STATE.function_decls = ht_create();
 	}
 	func->name = name;
 	ht_add(SKULL_STATE.function_decls, func->name, func);
-
-	return func;
 }
 
 /*
@@ -318,7 +324,7 @@ Expr gen_expr_function_call(
 /*
 Create a native LLVM function.
 */
-static bool define_function(
+static bool gen_function_def(
 	const AstNode *const node,
 	FunctionDeclaration *func
 ) {
