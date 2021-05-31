@@ -73,7 +73,7 @@ Expr gen_expr_function_call(const AstNodeExpr *const expr, Type type, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static bool gen_function(const AstNode *const node, FunctionDeclaration *func)
+static bool gen_function_def(const AstNode *const node, FunctionDeclaration *func)
 ```
 
 > Create a native LLVM function.

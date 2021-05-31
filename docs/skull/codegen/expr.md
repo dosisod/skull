@@ -189,8 +189,6 @@ static Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
 
 > Return expression for identifier `token` with type `type`.
 > \
-> Optionally pass `var` if result is expected to be assigned to a variable.
-> \
 > If `type` is not set, the expression type will not be checked.
 > \
 > Set `err` if an error occurred.
@@ -204,12 +202,12 @@ static Expr gen_expr(Type type, const AstNodeExpr *const expr, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static Expr token_to_expr(const Token *const token, Variable **variable, bool *err)
+static Expr ident_to_expr(const Token *const token, Variable **variable, bool *err)
 ```
 
-> Convert `token` to an expression.
+> Convert identifier `token` to an expression.
 > \
-> If `variable` is and `token` is a variable, store the found variable there.
+> Store found variable (if found) in `variable`.
 
 ```c
 static Expr gen_expr_const(Type type, const Token *const token, bool *err)

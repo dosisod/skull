@@ -92,6 +92,7 @@ DIRS := build/skull \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common \
 	$(ODIR)/skull/codegen/llvm \
+	$(ODIR)/skull/codegen/c \
 	$(ODIR)/test/skull/compiler/types \
 	$(ODIR)/test/skull/parse/ast \
 	$(ODIR)/test/skull/common

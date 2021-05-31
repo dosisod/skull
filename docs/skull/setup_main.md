@@ -10,7 +10,7 @@ int setup_main(int argc, char *argv[])
 static int build_file(char *filename)
 ```
 
-> Build a .ll file from a .sk file `filename`.
+> Output compiled version of `filename` (file type depends on backend).
 
 ```c
 static char *gen_filename(const char *filename)

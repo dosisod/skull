@@ -12,8 +12,6 @@
 
 /*
 Write LLVM code to `filename`, return whether error occured.
-
-Function takes control of `filename`.
 */
 bool write_file_llvm(char *filename) {
 	char *msg = NULL;
@@ -22,9 +20,6 @@ bool write_file_llvm(char *filename) {
 		filename,
 		&msg
 	);
-
-	free_state(&SKULL_STATE);
-	free(filename);
 
 	if (did_fail) fprintf(stderr, "skull: error occurred: %s\n", msg);
 

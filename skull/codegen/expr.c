@@ -39,11 +39,16 @@ static Operation gen_expr_or;
 static Operation gen_expr_xor;
 static OperationWithErr gen_expr_pow;
 
-static Expr token_to_expr(const Token *const, Variable **, bool *);
 static Expr gen_expr_const(Type, const Token *const, bool *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
-static Expr token_to_simple_expr(const Token *const, bool *err);
-static Expr gen_expr(Type, const AstNodeExpr *const, _Bool *);
+static Expr token_to_simple_expr(const Token *const, bool *);
+static Expr gen_expr(Type, const AstNodeExpr *const, bool *);
+
+static Expr ident_to_expr(
+	const Token *const,
+	Variable **,
+	bool *
+);
 
 /*
 Create an expression from `node` with type `type`.
@@ -554,8 +559,6 @@ static Expr gen_expr_xor(
 /*
 Return expression for identifier `token` with type `type`.
 
-Optionally pass `var` if result is expected to be assigned to a variable.
-
 If `type` is not set, the expression type will not be checked.
 
 Set `err` if an error occurred.
@@ -566,7 +569,7 @@ static Expr gen_expr_identifier(
 	bool *err
 ) {
 	Variable *var = NULL;
-	const Expr expr = token_to_expr(token, &var, err);
+	const Expr expr = ident_to_expr(token, &var, err);
 	if (*err) return (Expr){0};
 
 	if (type && var && var->type != type) {
@@ -689,45 +692,41 @@ static Expr gen_expr(
 }
 
 /*
-Convert `token` to an expression.
+Convert identifier `token` to an expression.
 
-If `variable` is and `token` is a variable, store the found variable there.
+Store found variable (if found) in `variable`.
 */
-static Expr token_to_expr(
+static Expr ident_to_expr(
 	const Token *const token,
 	Variable **variable,
 	bool *err
 ) {
-	if (token->type == TOKEN_IDENTIFIER) {
-		Variable *const var_found = scope_find_var(token, err);
-		if (*err) return (Expr){0};
+	Variable *const var_found = scope_find_var(token, err);
+	if (*err) return (Expr){0};
 
-		var_found->was_read = true;
+	var_found->was_read = true;
 
-		if (variable) *variable = var_found;
+	if (variable) *variable = var_found;
 
-		if (var_found->is_const &&
-			!(var_found->is_global &&
-			!var_found->is_const_lit)
-		) {
-			return (Expr){
-				.value = var_found->ref,
-				.type = var_found->type
-			};
-		}
-
-		return (Expr) {
-			.value = LLVMBuildLoad2(
-				SKULL_STATE.builder,
-				gen_llvm_type(var_found->type),
-				var_found->ref,
-				""
-			),
+	if (var_found->is_const &&
+		!(var_found->is_global &&
+		!var_found->is_const_lit)
+	) {
+		return (Expr){
+			.value = var_found->ref,
 			.type = var_found->type
 		};
 	}
 
-	return token_to_simple_expr(token, err);
+	return (Expr) {
+		.value = LLVMBuildLoad2(
+			SKULL_STATE.builder,
+			gen_llvm_type(var_found->type),
+			var_found->ref,
+			""
+		),
+		.type = var_found->type
+	};
 }
 
 /*

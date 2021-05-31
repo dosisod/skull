@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "skull/codegen/ast.h"
+#include "skull/codegen/c/write.h"
 #include "skull/codegen/func.h"
 #include "skull/codegen/llvm/write.h"
 #include "skull/codegen/shared.h"
@@ -16,6 +17,10 @@
 #include "skull/setup_main.h"
 
 #define DIE(x) fprintf(stderr, "skull: %s\n", x); return 1
+
+#ifndef SKULL_C_BACKEND
+#define SKULL_C_BACKEND 0
+#endif
 
 static int build_file(char *);
 static char *gen_filename(const char *);
@@ -41,7 +46,7 @@ int setup_main(int argc, char *argv[]) {
 }
 
 /*
-Build a .ll file from a .sk file `filename`.
+Output compiled version of `filename` (file type depends on backend).
 */
 static int build_file(char *filename) {
 	if (!strrstr(filename, ".sk")) {
@@ -91,7 +96,21 @@ static int build_file(char *filename) {
 		return failed;
 	}
 
-	return write_file_llvm(gen_filename(filename));
+	char *llvm_filename = gen_filename(filename);
+
+#if SKULL_C_BACKEND
+	const size_t len = strlen(llvm_filename);
+	llvm_filename[len - 2] = 'c';
+	llvm_filename[len - 1] = '\0';
+	int err = write_file_c(llvm_filename);
+#else
+	int err = write_file_llvm(llvm_filename);
+#endif
+
+	free(llvm_filename);
+	free_state(&SKULL_STATE);
+
+	return err;
 }
 
 /*
