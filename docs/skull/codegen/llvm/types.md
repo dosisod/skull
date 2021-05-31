@@ -1,4 +1,4 @@
-# skull/codegen/types
+# skull/codegen/llvm/types
 
 ```c
 LLVMTypeRef gen_llvm_type(Type type)

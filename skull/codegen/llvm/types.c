@@ -5,7 +5,7 @@
 #include "skull/codegen/shared.h"
 #include "skull/compiler/types/types.h"
 
-#include "skull/codegen/types.h"
+#include "skull/codegen/llvm/types.h"
 
 /*
 Generate the LLVM type for `type`.

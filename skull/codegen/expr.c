@@ -3,8 +3,8 @@
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/llvm/aliases.h"
+#include "skull/codegen/llvm/types.h"
 #include "skull/codegen/scope.h"
-#include "skull/codegen/types.h"
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types/bool.h"
