@@ -32,6 +32,21 @@ test_normal() {
 	rm -f "./$dir/.$file.ll"
 }
 
+test_c_backend() {
+	dir=${1%/*}
+	file=${1##*/_}
+	file=${file%.*}
+
+	printf "%s" "$dir/$file "
+
+	rm -f "./$dir/.$file.ll"
+	C_BACKEND=1 ./build/skull/_skull "./$dir/$file" 2> /dev/null
+	[ "$?" = "0" ] || { fail; return; }
+
+	compare "./$dir/_$file.c" "./$dir/.$file.c"
+	rm -f "./$dir/.$file.c"
+}
+
 test_error() {
 	dir=${1%/*}
 	file=${1##*/_}
@@ -67,6 +82,10 @@ printf "\nRunning Skull unit tests\n\n"
 
 for file in $(find test/sh/ -name "_*.ll") ; do
 	test_normal "$file"
+done
+
+for file in $(find test/skull/codegen/c/ -name "_*.c") ; do
+	test_c_backend "$file"
 done
 
 for file in $(find test/sh/error/ -name "_*.out") ; do

@@ -1,4 +1,3 @@
-#include <errno.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,12 +17,9 @@
 
 #define DIE(x) fprintf(stderr, "skull: %s\n", x); return 1
 
-#ifndef SKULL_C_BACKEND
-#define SKULL_C_BACKEND 0
-#endif
-
 static int build_file(char *);
 static char *gen_filename(const char *);
+void setup_flags(void);
 
 bool SKULL_TESTING = false;
 
@@ -37,12 +33,19 @@ int setup_main(int argc, char *argv[]) {
 		DIE("unexpected number of parameters");
 	}
 
+	setup_flags();
+
 	for (int i = 0; i < argc - 1 ; i++) {
 		const int err = build_file(argv[i + 1]);
 		if (err) return err;
 	}
 
 	return 0;
+}
+
+void setup_flags(void) {
+	char *c_backend = getenv("C_BACKEND");
+	SKULL_STATE.c_backend = c_backend ? *c_backend == '1' : false;
 }
 
 /*
@@ -57,25 +60,8 @@ static int build_file(char *filename) {
 		DIE("\".sk\" is not a valid name, exiting");
 	}
 
-	errno = 0;
-	FILE *const f = fopen(filename, "re");
-	if (!f) {
-		if (errno == EACCES)
-			fprintf(
-				stderr,
-				"skull: cannot open \"%s\", permission denied\n",
-				filename
-			);
-
-		else if (errno == ENOENT)
-			fprintf(
-				stderr,
-				"skull: \"%s\" was not found, exiting\n",
-				filename
-			);
-
-		return 1;
-	}
+	FILE *const f = open_file(filename, true);
+	if (!f) return 1;
 
 	char *const file_contents = read_file(f);
 	if (!file_contents) {
@@ -97,15 +83,17 @@ static int build_file(char *filename) {
 	}
 
 	char *llvm_filename = gen_filename(filename);
+	int err = 0;
 
-#if SKULL_C_BACKEND
-	const size_t len = strlen(llvm_filename);
-	llvm_filename[len - 2] = 'c';
-	llvm_filename[len - 1] = '\0';
-	int err = write_file_c(llvm_filename);
-#else
-	int err = write_file_llvm(llvm_filename);
-#endif
+	if (SKULL_STATE.c_backend) {
+		const size_t len = strlen(llvm_filename);
+		llvm_filename[len - 2] = 'c';
+		llvm_filename[len - 1] = '\0';
+		err = write_file_c(llvm_filename);
+	}
+	else {
+		err = write_file_llvm(llvm_filename);
+	}
 
 	free(llvm_filename);
 	free_state(&SKULL_STATE);

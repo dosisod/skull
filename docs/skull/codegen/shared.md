@@ -12,6 +12,7 @@ typedef struct {
 	HashTable *function_decls;
 	HashTable *type_aliases;
 	HashTable *template_types;
+	_Bool c_backend : 1;
 }
 ```
 

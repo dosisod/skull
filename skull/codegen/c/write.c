@@ -7,6 +7,7 @@
 #include "skull/codegen/ast.h"
 #include "skull/codegen/func.h"
 #include "skull/codegen/shared.h"
+#include "skull/common/io.h"
 
 #include "skull/codegen/c/write.h"
 
@@ -31,6 +32,10 @@ static const char *data = \
 "	int64_t result = base;\n"
 "	for (int64_t i = 1; i < exp; i++) result *= base;\n"
 "	return result;\n"
+"}\n"
+"\n"
+"int main(void) {\n"
+"	int x(void) __asm__(\"%s\"); return x();\n"
 "}\n";
 
 
@@ -39,28 +44,24 @@ static const char *data = \
 Write c code to `filename`, return whether error occured.
 */
 bool write_file_c(char *filename) {
-	// TODO(dosisod): make this a function
-	errno = 0;
-	FILE *const f = fopen(filename, "we");
-	if (!f) {
-		if (errno == EACCES)
-			fprintf(
-				stderr,
-				"skull: cannot open \"%s\", permission denied\n",
-				filename
-			);
+	FILE *f = open_file(filename, false);
 
-		else if (errno == ENOENT)
-			fprintf(
-				stderr,
-				"skull: \"%s\" was not found, exiting\n",
-				filename
-			);
+	const size_t len = strlen(filename);
+	filename[len - 5] = '\0';
 
-		return 1;
-	}
-
-	fwrite(data, 1, strlen(data), f);
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wformat-nonliteral"
+#else
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+	fprintf(f, data, filename);
+#ifdef __clang__
+# pragma clang diagnostic pop
+#else
+# pragma GCC diagnostic pop
+#endif
 
 	return false;
 }

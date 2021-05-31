@@ -1,3 +1,5 @@
+#include <errno.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "skull/common/malloc.h"
@@ -25,4 +27,33 @@ char *read_file(FILE *const fd) {
 
 	str[len] = '\0';
 	return str;
+}
+
+/*
+Open `filename`, handle errors if any.
+
+Set `is_RO` to true if file should be opened as read-only.
+*/
+FILE *open_file(const char *filename, bool is_RO) {
+	errno = 0;
+	FILE *const f = fopen(filename, is_RO ? "re" : "we");
+	if (!f) {
+		if (errno == EACCES)
+			fprintf(
+				stderr,
+				"skull: cannot open \"%s\", permission denied\n",
+				filename
+			);
+
+		else if (errno == ENOENT)
+			fprintf(
+				stderr,
+				"skull: \"%s\" was not found, exiting\n",
+				filename
+			);
+
+		return NULL;
+	}
+
+	return f;
 }

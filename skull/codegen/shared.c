@@ -39,12 +39,16 @@ void setup_state(SkullState *state, const char *filename) {
 
 	LLVMPositionBuilderAtEnd(builder, entry);
 
+	const bool c_backend = SKULL_STATE.c_backend;
+
 	*state = (SkullState){
 		.builder = builder,
 		.ctx = ctx,
 		.module = main_module,
 		.filename = filename
 	};
+
+	SKULL_STATE.c_backend = c_backend;
 
 	state->main_func = Malloc(sizeof *state->main_func);
 	*state->main_func = (FunctionDeclaration){
