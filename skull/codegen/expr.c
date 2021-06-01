@@ -44,11 +44,7 @@ static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr token_to_simple_expr(const Token *const, bool *);
 static Expr gen_expr(Type, const AstNodeExpr *const, bool *);
 
-static Expr ident_to_expr(
-	const Token *const,
-	Variable **,
-	bool *
-);
+static Expr ident_to_expr(const Token *const, Variable **);
 
 /*
 Create an expression from `node` with type `type`.
@@ -569,8 +565,11 @@ static Expr gen_expr_identifier(
 	bool *err
 ) {
 	Variable *var = NULL;
-	const Expr expr = ident_to_expr(token, &var, err);
-	if (*err) return (Expr){0};
+	const Expr expr = ident_to_expr(token, &var);
+	if (!expr.value && !expr.type) {
+		*err = true;
+		return (Expr){0};
+	}
 
 	if (type && var && var->type != type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
@@ -698,11 +697,10 @@ Store found variable (if found) in `variable`.
 */
 static Expr ident_to_expr(
 	const Token *const token,
-	Variable **variable,
-	bool *err
+	Variable **variable
 ) {
-	Variable *const var_found = scope_find_var(token, err);
-	if (*err) return (Expr){0};
+	Variable *const var_found = scope_find_var(token);
+	if (!var_found) return (Expr){0};
 
 	var_found->was_read = true;
 

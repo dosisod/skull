@@ -81,7 +81,7 @@ Expr gen_stmt_return(AstNode **node, bool *err) {
 	return expr;
 }
 
-static LLVMValueRef node_to_bool(const AstNode *const, bool *);
+static LLVMValueRef node_to_bool(const AstNode *const);
 
 static bool gen_control_code_block(
 	const char *,
@@ -116,9 +116,8 @@ bool gen_control_while(AstNode **node) {
 	LLVMBuildBr(SKULL_STATE.builder, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_cond);
 
-	bool err = false;
-	LLVMValueRef cond = node_to_bool(*node, &err);
-	if (err) return true;
+	LLVMValueRef cond = node_to_bool(*node);
+	if (!cond) return true;
 
 	LLVMBuildCondBr(
 		SKULL_STATE.builder,
@@ -201,9 +200,8 @@ static bool gen_control_if_(
 		);
 		LLVMMoveBasicBlockAfter(end, if_false);
 
-		bool err = false;
-		LLVMValueRef cond = node_to_bool(*node, &err);
-		if (err) return true;
+		LLVMValueRef cond = node_to_bool(*node);
+		if (!cond) return true;
 
 		LLVMBuildCondBr(
 			SKULL_STATE.builder,
@@ -227,9 +225,8 @@ static bool gen_control_if_(
 	}
 	// just a single if statement
 	else {
-		bool err = false;
-		LLVMValueRef cond = node_to_bool(*node, &err);
-		if (err) return true;
+		LLVMValueRef cond = node_to_bool(*node);
+		if (!cond) return true;
 
 		LLVMBuildCondBr(
 			SKULL_STATE.builder,
@@ -247,16 +244,16 @@ static bool gen_control_if_(
 /*
 Try and parse a condition (something returning a bool) from `node`.
 
-Set `err` if an error occurred.
+Return `NULL` if an error occurred.
 */
-static LLVMValueRef node_to_bool(const AstNode *const node, bool *err) {
-	const Expr expr = node_to_expr(NULL, node, err);
-	if (*err) return NULL;
+static LLVMValueRef node_to_bool(const AstNode *const node) {
+	bool err = false;
+	const Expr expr = node_to_expr(NULL, node, &err);
+	if (err) return NULL;
 
 	if (expr.type != TYPE_BOOL) {
 		FMT_ERROR(ERR_NON_BOOL_EXPR, { .loc = &node->token->location });
 
-		*err = true;
 		return NULL;
 	}
 

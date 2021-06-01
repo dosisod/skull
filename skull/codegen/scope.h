@@ -7,4 +7,4 @@
 void make_sub_scope(Scope **, Scope **);
 void restore_sub_scope(Scope **, Scope **);
 
-Variable *scope_find_var(const Token *const, bool *);
+Variable *scope_find_var(const Token *const);

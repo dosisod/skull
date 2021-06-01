@@ -7,9 +7,9 @@
 /*
 Try and find a variable stored in `token`.
 
-Set `err` if an error occurred.
+Return `NULL` if variable was not found.
 */
-Variable *scope_find_var(const Token *const token, bool *err) {
+Variable *scope_find_var(const Token *const token) {
 	char *const var_name = token_mbs_str(token);
 	Variable *const var = scope_find_name(SKULL_STATE.scope, var_name);
 
@@ -18,7 +18,6 @@ Variable *scope_find_var(const Token *const token, bool *err) {
 			.loc = &token->location, .real = var_name
 		});
 
-		*err = true;
 		return NULL;
 	}
 	free(var_name);

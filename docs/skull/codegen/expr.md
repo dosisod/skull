@@ -202,7 +202,7 @@ static Expr gen_expr(Type type, const AstNodeExpr *const expr, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static Expr ident_to_expr(const Token *const token, Variable **variable, bool *err)
+static Expr ident_to_expr(const Token *const token, Variable **variable)
 ```
 
 > Convert identifier `token` to an expression.

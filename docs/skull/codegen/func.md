@@ -45,7 +45,7 @@ bool gen_stmt_func_decl(const AstNode *const node)
 > Return `true` if an error occurred.
 
 ```c
-static FunctionDeclaration *create_function(const AstNodeFunctionProto *const func_proto, char *name, bool is_private, bool *err)
+static FunctionDeclaration *create_function(const AstNodeFunctionProto *const func_proto, char *name, bool is_private)
 ```
 
 > Add new LLVM function named `name` from `func_proto`.
@@ -54,7 +54,7 @@ static FunctionDeclaration *create_function(const AstNodeFunctionProto *const fu
 > \
 > Else, the function will be globally available.
 > \
-> Set `err` if an error occurred.
+> Return `NULL` if an error occurred.
 
 ```c
 static LLVMTypeRef *parse_func_param(const AstNodeFunctionProto *const func_proto, FunctionDeclaration *const func, bool *err)

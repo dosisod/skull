@@ -39,9 +39,8 @@ Assign a to a variable from `node`.
 Return `true` if an error occurred.
 */
 bool gen_stmt_var_assign(AstNode **node) {
-	bool err = false;
-	Variable *var = scope_find_var((*node)->token, &err);
-	if (err) return true;
+	Variable *var = scope_find_var((*node)->token);
+	if (!var) return true;
 
 	if (var->is_const) {
 		FMT_ERROR(ERR_REASSIGN_CONST, {
@@ -275,8 +274,13 @@ static Type var_def_node_to_type(const AstNode *node, bool *err) {
 			token_type = expr->lhs.tok->type;
 		}
 		else if (expr->oper == EXPR_IDENTIFIER) {
-			const Variable *var = scope_find_var(expr->lhs.tok, err);
-			return *err ? NULL : var->type;
+			const Variable *var = scope_find_var(expr->lhs.tok);
+			if (!var) {
+				*err = true;
+				return NULL;
+			}
+
+			return var->type;
 		}
 		else if (expr->oper == EXPR_FUNC) {
 			const Token *func_name_token = expr->func_call->func_name_tok;

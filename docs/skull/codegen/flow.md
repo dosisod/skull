@@ -37,12 +37,12 @@ static bool gen_control_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBl
 > Return `true` if an error occurred.
 
 ```c
-static LLVMValueRef node_to_bool(const AstNode *const node, bool *err)
+static LLVMValueRef node_to_bool(const AstNode *const node)
 ```
 
 > Try and parse a condition (something returning a bool) from `node`.
 > \
-> Set `err` if an error occurred.
+> Return `NULL` if an error occurred.
 
 ```c
 static bool gen_control_code_block(const char *name, const AstNode *const node, LLVMBasicBlockRef block)

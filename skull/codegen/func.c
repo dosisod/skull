@@ -22,8 +22,7 @@ static bool gen_function_def(const AstNode *const, FunctionDeclaration *);
 static FunctionDeclaration *create_function(
 	const AstNodeFunctionProto *const,
 	char *,
-	bool,
-	bool *
+	bool
 );
 
 void state_add_func(FunctionDeclaration *, char *);
@@ -81,14 +80,12 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 		return true;
 	}
 
-	bool err = false;
 	FunctionDeclaration *func = create_function(
 		node->func_proto,
 		func_name,
-		is_export || is_external,
-		&err
+		is_export || is_external
 	);
-	if (err) {
+	if (!func) {
 		free(func_name);
 		return true;
 	}
@@ -108,13 +105,12 @@ If `is_private` is true the function will be private (statically linked).
 
 Else, the function will be globally available.
 
-Set `err` if an error occurred.
+Return `NULL` if an error occurred.
 */
 static FunctionDeclaration *create_function(
 	const AstNodeFunctionProto *const func_proto,
 	char *name,
-	bool is_private,
-	bool *err
+	bool is_private
 ) {
 	FunctionDeclaration *func;
 	func = Calloc(1, sizeof *func);
@@ -127,13 +123,12 @@ static FunctionDeclaration *create_function(
 		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = return_type_name });
 
 		free(func);
-
-		*err = true;
 		return NULL;
 	}
 
-	LLVMTypeRef *params = parse_func_param(func_proto, func, err);
-	if (*err) return NULL;
+	bool err = false;
+	LLVMTypeRef *params = parse_func_param(func_proto, func, &err);
+	if (err) return NULL;
 
 	func->type = LLVMFunctionType(
 		gen_llvm_type(func->return_type),
