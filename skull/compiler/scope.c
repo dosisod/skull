@@ -47,7 +47,7 @@ Scope *make_scope(void) {
 	return scope;
 }
 
-void free_ht_variable(HashItem *item) {
+static void free_ht_variable(HashItem *item) {
 	if (item->data) free_variable(item->data);
 }
 

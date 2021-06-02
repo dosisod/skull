@@ -19,7 +19,7 @@
 
 static int build_file(char *);
 static char *gen_filename(const char *);
-void setup_flags(void);
+static void setup_flags(void);
 
 bool SKULL_TESTING = false;
 
@@ -43,7 +43,7 @@ int setup_main(int argc, char *argv[]) {
 	return 0;
 }
 
-void setup_flags(void) {
+static void setup_flags(void) {
 	char *c_backend = getenv("C_BACKEND");
 	SKULL_STATE.c_backend = c_backend ? *c_backend == '1' : false;
 }

@@ -25,7 +25,7 @@ static FunctionDeclaration *create_function(
 	bool
 );
 
-void state_add_func(FunctionDeclaration *, char *);
+static void state_add_func(FunctionDeclaration *, char *);
 
 static LLVMTypeRef *parse_func_param(
 	const AstNodeFunctionProto *const,
@@ -154,7 +154,7 @@ static FunctionDeclaration *create_function(
 	return func;
 }
 
-void state_add_func(FunctionDeclaration *func, char *name) {
+static void state_add_func(FunctionDeclaration *func, char *name) {
 	if (!SKULL_STATE.function_decls) {
 		SKULL_STATE.function_decls = ht_create();
 	}
