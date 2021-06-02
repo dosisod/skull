@@ -53,13 +53,6 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 
 	char *func_name = token_mbs_str(func_name_token);
 
-	if (is_export && strcmp(func_name, "main") == 0) {
-		FMT_ERROR(ERR_MAIN_RESERVED, { .loc = &func_name_token->location });
-
-		free(func_name);
-		return true;
-	}
-
 	if (scope_find_name(SKULL_STATE.scope, func_name)) {
 		FMT_ERROR(ERR_NO_REDEFINE_VAR_AS_FUNC, {
 			.loc = &func_name_token->location,
@@ -351,9 +344,6 @@ static bool gen_function_def(
 		SKULL_STATE.current_func->ref
 	);
 
-	FunctionDeclaration *old_func = SKULL_STATE.current_func;
-	SKULL_STATE.current_func = func;
-
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
 		func->ref,
@@ -362,12 +352,17 @@ static bool gen_function_def(
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
 
+	FunctionDeclaration *old_func = SKULL_STATE.current_func;
+	SKULL_STATE.current_func = func;
+
 	Scope *scope_copy;
 	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
 
 	bool err = false;
 	const Expr returned = gen_node(node->child, &err);
+
 	restore_sub_scope(&SKULL_STATE.scope, &scope_copy);
+	SKULL_STATE.current_func = old_func;
 
 	if (err) return true;
 
@@ -386,8 +381,6 @@ static bool gen_function_def(
 		LLVMBuildRetVoid(SKULL_STATE.builder);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, current_block);
-
-	SKULL_STATE.current_func = old_func;
 
 	return false;
 }
