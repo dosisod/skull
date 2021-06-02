@@ -39,17 +39,7 @@ Parse declaration (and potential definition) of function in `node`.
 Return `true` if an error occurred.
 */
 bool gen_stmt_func_decl(const AstNode *const node) {
-	const bool is_external = node->func_proto->is_external;
-	const bool is_export = node->func_proto->is_export;
 	const Token *const func_name_token = node->func_proto->name_tok;
-
-	if ((is_export || is_external) &&
-		SKULL_STATE.scope &&
-		SKULL_STATE.scope->sub_scope
-	) {
-		FMT_ERROR(ERR_NO_NESTED, { .tok = func_name_token });
-		return true;
-	}
 
 	char *func_name = token_mbs_str(func_name_token);
 
@@ -72,6 +62,9 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 
 		return true;
 	}
+
+	const bool is_external = node->func_proto->is_external;
+	const bool is_export = node->func_proto->is_export;
 
 	FunctionDeclaration *func = create_function(
 		node->func_proto,
