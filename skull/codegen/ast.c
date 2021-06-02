@@ -11,6 +11,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/compiler/scope.h"
+#include "skull/semantic/entry.h"
 
 #include "skull/codegen/ast.h"
 
@@ -27,6 +28,12 @@ bool codegen_str(char *const str_) {
 
 	AstNode *const node = parse_ast_tree(str);
 	if (!node) {
+		free(str);
+		return true;
+	}
+
+	if (!validate_ast_tree(node)) {
+		free_ast_tree(node);
 		free(str);
 		return true;
 	}

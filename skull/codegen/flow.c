@@ -36,10 +36,6 @@ Set `err` if error occurrs.
 */
 Expr gen_stmt_return(AstNode **node, bool *err) {
 	AstNode *const node_val = (*node)->next;
-	if (!assert_sane_child(node_val)) {
-		*err = true;
-		return (Expr){0};
-	}
 
 	Expr expr = node_to_expr(NULL, node_val, err);
 
