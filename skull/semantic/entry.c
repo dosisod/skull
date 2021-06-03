@@ -9,6 +9,7 @@
 static bool validate_ast_node(AstNode *);
 static bool validate_stmt_return(AstNode *);
 static bool validate_stmt_func_decl(AstNode *);
+static bool validate_stmt_type_alias(AstNode *);
 bool assert_sane_child(AstNode *);
 
 /*
@@ -42,6 +43,9 @@ static bool validate_ast_node(AstNode *node) {
 	if (node->type == AST_NODE_FUNCTION_PROTO) {
 		return validate_stmt_func_decl(node);
 	}
+	if (node->type == AST_NODE_TYPE_ALIAS) {
+		return validate_stmt_type_alias(node);
+	}
 
 	return true;
 }
@@ -74,4 +78,28 @@ static bool validate_stmt_func_decl(AstNode *node) {
 
 	free(func_name);
 	return true;
+}
+
+static bool validate_stmt_type_alias(AstNode *node) {
+	const Token *const token = node->token;
+
+	if (SKULL_STATE.scope && SKULL_STATE.scope->sub_scope) {
+		FMT_ERROR(ERR_TOP_LVL_ALIAS_ONLY, { .loc = &token->location });
+		return false;
+	}
+
+	char *type_name = token_mbs_str(token->next->next);
+	char *alias = token_mbs_str(token);
+
+	const bool added = state_add_alias(find_type(type_name), alias);
+	free(type_name);
+
+	if (added) return true;
+
+	FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, {
+		.loc = &token->location,
+		.real = alias
+	});
+
+	return false;
 }

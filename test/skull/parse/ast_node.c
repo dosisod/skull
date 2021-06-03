@@ -103,8 +103,9 @@ bool test_parse_ast_tree_if() {
 	ASSERT_EQUAL(node->token->begin, code);
 	ASSERT_EQUAL(node->token_end->end, code + 2);
 	ASSERT_FALSEY(node->last);
-	ASSERT_TRUTHY(node->next);
-	ASSERT_TRUTHY(node->next->child);
+	ASSERT_FALSEY(node->next);
+	ASSERT_TRUTHY(node->expr_node);
+	ASSERT_TRUTHY(node->child);
 
 	free_ast_tree(node);
 
@@ -119,8 +120,9 @@ bool test_parse_ast_tree_if_with_var() {
 	ASSERT_EQUAL(node->token->begin, code);
 	ASSERT_EQUAL(node->token_end->end, code + 2);
 	ASSERT_FALSEY(node->last);
-	ASSERT_TRUTHY(node->next);
-	ASSERT_TRUTHY(node->next->child);
+	ASSERT_FALSEY(node->next);
+	ASSERT_TRUTHY(node->expr_node);
+	ASSERT_TRUTHY(node->child);
 
 	free_ast_tree(node);
 

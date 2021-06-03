@@ -34,27 +34,26 @@ Builds an return statement from `node`.
 
 Set `err` if error occurrs.
 */
-Expr gen_stmt_return(AstNode **node, bool *err) {
-	AstNode *const node_val = (*node)->next;
-
-	Expr expr = node_to_expr(NULL, node_val, err);
-
-	const bool is_main = SKULL_STATE.current_func == SKULL_STATE.main_func;
-	const bool is_void_return = (*node)->is_void_return;
+Expr gen_stmt_return(AstNode *node, bool *err) {
+	AstNode *const expr_node = node->expr_node;
 	Type return_type = SKULL_STATE.current_func->return_type;
 
-	if (*err || (is_void_return && return_type != TYPE_VOID)) {
+	Expr expr = node_to_expr(NULL, expr_node, err);
+
+	if (*err || (!expr_node && return_type != TYPE_VOID)) {
 		if (!*err) {
 			FMT_ERROR(ERR_RETURN_MISSING_EXPR, {
-				.loc = &node_val->token->location
+				.loc = &node->token->location
 			});
 			*err = true;
 		}
 		return (Expr){0};
 	}
 
+	const bool is_main = SKULL_STATE.current_func == SKULL_STATE.main_func;
+
 	if (is_main && expr.type != TYPE_INT) {
-		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = node_val->token });
+		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = expr_node->token }); // NOLINT
 
 		*err = true;
 		return (Expr){0};
@@ -62,7 +61,7 @@ Expr gen_stmt_return(AstNode **node, bool *err) {
 
 	if (return_type != TYPE_VOID && expr.type != return_type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
-			{ .loc = &node_val->token->location, .type = return_type },
+			{ .loc = &expr_node->token->location, .type = return_type },
 			{ .type = expr.type }
 		);
 
@@ -73,7 +72,6 @@ Expr gen_stmt_return(AstNode **node, bool *err) {
 	if (return_type == TYPE_VOID) expr.type = TYPE_VOID;
 	LLVMBuildRet(SKULL_STATE.builder, expr.value);
 
-	if (!is_void_return) *node = node_val;
 	return expr;
 }
 
@@ -90,9 +88,7 @@ Builds LLVM for a while loop from `node`.
 
 Return `true` if an error occurred.
 */
-bool gen_control_while(AstNode **node) {
-	*node = (*node)->next;
-
+bool gen_control_while(AstNode *node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		SKULL_STATE.ctx,
 		SKULL_STATE.current_func->ref,
@@ -112,7 +108,7 @@ bool gen_control_while(AstNode **node) {
 	LLVMBuildBr(SKULL_STATE.builder, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_cond);
 
-	LLVMValueRef cond = node_to_bool(*node);
+	LLVMValueRef cond = node_to_bool(node->expr_node);
 	if (!cond) return true;
 
 	LLVMBuildCondBr(
@@ -124,7 +120,7 @@ bool gen_control_while(AstNode **node) {
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_loop);
 
-	if (gen_control_code_block("while", *node, while_cond))
+	if (gen_control_code_block("while", node, while_cond))
 		return true;
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_end);
@@ -179,7 +175,6 @@ static bool gen_control_if_(
 	LLVMMoveBasicBlockBefore(if_true, end);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_true);
-	*node = (*node)->next;
 
 	if (gen_control_code_block("if", *node, end)) return true;
 
@@ -196,7 +191,7 @@ static bool gen_control_if_(
 		);
 		LLVMMoveBasicBlockAfter(end, if_false);
 
-		LLVMValueRef cond = node_to_bool(*node);
+		LLVMValueRef cond = node_to_bool((*node)->expr_node);
 		if (!cond) return true;
 
 		LLVMBuildCondBr(
@@ -221,7 +216,7 @@ static bool gen_control_if_(
 	}
 	// just a single if statement
 	else {
-		LLVMValueRef cond = node_to_bool(*node);
+		LLVMValueRef cond = node_to_bool((*node)->expr_node);
 		if (!cond) return true;
 
 		LLVMBuildCondBr(
