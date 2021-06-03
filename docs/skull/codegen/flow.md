@@ -7,7 +7,7 @@ Expr gen_stmt_unreachable(void)
 > Build an unreachable statement.
 
 ```c
-Expr gen_stmt_return(AstNode **node, bool *err)
+Expr gen_stmt_return(AstNode *node, bool *err)
 ```
 
 > Builds an return statement from `node`.
@@ -15,7 +15,7 @@ Expr gen_stmt_return(AstNode **node, bool *err)
 > Set `err` if error occurrs.
 
 ```c
-bool gen_control_while(AstNode **node)
+bool gen_control_while(AstNode *node)
 ```
 
 > Builds LLVM for a while loop from `node`.

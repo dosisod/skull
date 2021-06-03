@@ -18,6 +18,7 @@ static AstNode *parse_ast_tree_(Token **, unsigned, bool *);
 static void free_ast_tree_(AstNode *);
 static bool is_value(TokenType);
 static void free_expr_node(AstNodeExpr *);
+static void unsplice_expr_node(AstNode *);
 
 #define AST_TOKEN_CMP2(tok, type1, type2) \
 	((tok) && (tok)->type == (type1) && \
@@ -67,7 +68,7 @@ static bool parse_return(Token **token, AstNode **node) {
 	const bool added_expr = try_parse_expression(token, node, &err);
 	if (err) return true;
 
-	if (!added_expr) (*node)->last->is_void_return = true;
+	if (added_expr) unsplice_expr_node(*node);
 
 	return false;
 }
@@ -150,6 +151,15 @@ static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 		return false;
 	}
 
+	AstNode *cond_node = (*node)->last->last;
+	AstNode *expr_node = (*node)->last;
+
+	cond_node->var_def->expr_node = expr_node;
+	cond_node->next = *node;
+	(*node)->last = cond_node;
+	expr_node->next = NULL;
+	expr_node->last = NULL;
+
 	if (*_token && (*_token)->type != TOKEN_NEWLINE) {
 		FMT_ERROR(ERR_EXPECTED_NEWLINE, {
 			.loc = &(*_token)->location
@@ -184,6 +194,8 @@ static bool try_parse_var_assign(Token **token, AstNode **node, bool *err) {
 		*err = true;
 		return false;
 	}
+
+	unsplice_expr_node(*node);
 
 	return true;
 }
@@ -403,7 +415,11 @@ static bool parse_condition(
 	bool err = false;
 	const bool success = try_parse_expression(token, node, &err);
 
-	if (success && !err) return false;
+	if (success && !err) {
+		unsplice_expr_node(*node);
+
+		return false;
+	}
 
 	FMT_ERROR(ERR_INVALID_EXPR, { .tok = *token });
 	return true;
@@ -859,10 +875,27 @@ static void free_ast_tree_(AstNode *node) {
 			free(node->func_proto);
 		}
 		else if (node->type == AST_NODE_VAR_DEF) {
+			if (node->var_def) {
+				if (node->var_def->expr_node)
+					free_expr_node(node->var_def->expr_node->expr);
+
+				free(node->var_def->expr_node);
+			}
+
 			free(node->var_def);
 		}
 		else if (node->type == AST_NODE_EXPR) {
 			free_expr_node(node->expr);
+		}
+		else if (node->expr_node && (
+			node->type == AST_NODE_IF ||
+			node->type == AST_NODE_ELIF ||
+			node->type == AST_NODE_RETURN ||
+			node->type == AST_NODE_VAR_ASSIGN ||
+			node->type == AST_NODE_WHILE)
+		) {
+			free_expr_node(node->expr_node->expr);
+			free(node->expr_node);
 		}
 
 		if (node->child)
@@ -889,6 +922,21 @@ static __attribute__((pure)) bool is_value(TokenType token_type) {
 			return true;
 		default: return false;
 	}
+}
+
+/*
+Given `node`, take the last node (expr) and attach it to the node before
+that one.
+*/
+static void unsplice_expr_node(AstNode *node) {
+	AstNode *cond_node = node->last->last;
+	AstNode *expr_node = node->last;
+
+	cond_node->expr_node = expr_node;
+	cond_node->next = node;
+	node->last = cond_node;
+	expr_node->next = NULL;
+	expr_node->last = NULL;
 }
 
 static void print_ast_tree_(const AstNode *, unsigned);

@@ -18,6 +18,7 @@ typedef struct AstNode {
 		AstNodeVarDef *var_def;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
+		AstNode *expr_node;
 		_Bool is_void_return;
 	};
 }
@@ -40,6 +41,7 @@ typedef struct AstNodeVarDef {
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
 	const Token *name_tok;
+	AstNode *expr_node;
 }
 ```
 
@@ -301,6 +303,13 @@ static __attribute__((pure)) bool is_value(TokenType token_type)
 ```
 
 > Return whether `token_type` represents a constant literal, or an identifier.
+
+```c
+static void unsplice_expr_node(AstNode *node)
+```
+
+> Given `node`, take the last node (expr) and attach it to the node before
+> that one.
 
 ```c
 void print_ast_tree(const AstNode *node)

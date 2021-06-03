@@ -11,6 +11,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/compiler/scope.h"
+#include "skull/semantic/entry.h"
 
 #include "skull/codegen/ast.h"
 
@@ -27,6 +28,12 @@ bool codegen_str(char *const str_) {
 
 	AstNode *const node = parse_ast_tree(str);
 	if (!node) {
+		free(str);
+		return true;
+	}
+
+	if (!validate_ast_tree(node)) {
+		free_ast_tree(node);
 		free(str);
 		return true;
 	}
@@ -87,7 +94,10 @@ bool assert_sane_child(AstNode *node) {
 	const NodeType node_type = node->type;
 
 	if (node->child && !(
+		node_type == AST_NODE_IF ||
+		node_type == AST_NODE_ELIF ||
 		node_type == AST_NODE_ELSE ||
+		node_type == AST_NODE_WHILE ||
 		node_type == AST_NODE_FUNCTION_PROTO ||
 		(node_type == AST_NODE_EXPR && node->expr->oper == EXPR_FUNC)
 	)) {
@@ -120,16 +130,16 @@ static Expr _gen_node(AstNode **node, bool *err) {
 			*err = true;
 			break;
 		}
-		case AST_NODE_WHILE: *err |= gen_control_while(node); break;
-		case AST_NODE_RETURN: return gen_stmt_return(node, err);
+		case AST_NODE_WHILE: *err |= gen_control_while(*node); break;
+		case AST_NODE_RETURN: return gen_stmt_return(*node, err);
 		case AST_NODE_UNREACHABLE: return gen_stmt_unreachable();
-		case AST_NODE_TYPE_ALIAS: *err |= create_type_alias(node); break;
 		case AST_NODE_FUNCTION_PROTO: *err |= gen_stmt_func_decl(*node); break;
-		case AST_NODE_VAR_DEF: *err |= gen_stmt_var_def(node); break;
-		case AST_NODE_VAR_ASSIGN: *err |= gen_stmt_var_assign(node); break;
+		case AST_NODE_VAR_DEF: *err |= gen_stmt_var_def(*node); break;
+		case AST_NODE_VAR_ASSIGN: *err |= gen_stmt_var_assign(*node); break;
 		case AST_NODE_EXPR: *err |= gen_expr_node(*node); break;
 		case AST_NODE_COMMENT:
-		case AST_NODE_NOOP: break;
+		case AST_NODE_NOOP:
+		case AST_NODE_TYPE_ALIAS: break;
 		default: {
 			if ((*node)->token) {
 				FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = (*node)->token });

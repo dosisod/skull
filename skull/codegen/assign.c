@@ -13,7 +13,6 @@
 
 static void assign_value_to_var(LLVMValueRef, Variable *const);
 bool assert_sane_child(AstNode *);
-static bool _gen_stmt_var_assign(Variable *, AstNode **);
 static Type var_def_node_to_type(const AstNode *, bool *);
 static Variable *node_to_var(const AstNode *const, bool *);
 
@@ -22,15 +21,25 @@ Builds a variable definition from `node`.
 
 Return `true` if an error occurred.
 */
-bool gen_stmt_var_def(AstNode **node) {
+bool gen_stmt_var_def(AstNode *node) {
 	bool err = false;
-	Variable *var = node_to_var(*node, &err);
+	Variable *var = node_to_var(node, &err);
 	if (err) return true;
 
-	err = _gen_stmt_var_assign(var, node);
-	if (err) variable_no_warnings(var);
+	LLVMValueRef value = node_to_expr(
+		var->type,
+		node->var_def->expr_node,
+		&err
+	).value;
 
-	return err;
+	if (err) {
+		variable_no_warnings(var);
+		return true;
+	}
+
+	assign_value_to_var(value, var);
+
+	return false;
 }
 
 /*
@@ -38,33 +47,24 @@ Assign a to a variable from `node`.
 
 Return `true` if an error occurred.
 */
-bool gen_stmt_var_assign(AstNode **node) {
-	Variable *var = scope_find_var((*node)->token);
+bool gen_stmt_var_assign(AstNode *node) {
+	Variable *var = scope_find_var(node->token);
 	if (!var) return true;
 
 	if (var->is_const) {
 		FMT_ERROR(ERR_REASSIGN_CONST, {
-			.tok = (*node)->token
+			.tok = node->token
 		});
 
 		return true;
 	}
 	var->was_reassigned = true;
 
-	return _gen_stmt_var_assign(var, node);
-}
-
-/*
-Does the actual assignment of `node` to `var`.
-
-Return `true` if an error occurred.
-*/
-static bool _gen_stmt_var_assign(Variable *var, AstNode **node) {
 	bool err = false;
 
 	LLVMValueRef value = node_to_expr(
 		var->type,
-		(*node)->next,
+		node->expr_node,
 		&err
 	).value;
 
@@ -72,8 +72,7 @@ static bool _gen_stmt_var_assign(Variable *var, AstNode **node) {
 
 	assign_value_to_var(value, var);
 
-	*node = (*node)->next;
-	return !assert_sane_child(*node);
+	return false;
 }
 
 /*
@@ -127,39 +126,6 @@ static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 			var->ref
 		);
 	}
-}
-
-/*
-Create a type alias from `node`.
-
-Return `true` if an error occurred.
-*/
-bool create_type_alias(AstNode **node) {
-	const Token *const token = (*node)->token;
-
-	if (SKULL_STATE.scope && SKULL_STATE.scope->sub_scope) {
-		FMT_ERROR(ERR_TOP_LVL_ALIAS_ONLY, { .loc = &token->location });
-		return true;
-	}
-
-	char *type_name = token_mbs_str(token->next->next);
-
-	char *alias = token_mbs_str(token);
-
-	const bool added = state_add_alias(
-		(Type)find_type(type_name),
-		alias
-	);
-	free(type_name);
-
-	if (added) return false;
-
-	FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, {
-		.loc = &token->location,
-		.real = alias
-	});
-
-	return true;
 }
 
 /*
@@ -248,10 +214,11 @@ static __attribute__((pure)) const AstNodeExpr *leftmost_expr(
 Return a variable type based on `node`.
 */
 static Type var_def_node_to_type(const AstNode *node, bool *err) {
-	TokenType token_type = node->next->token->type;
+	AstNode *expr_node = node->var_def->expr_node;
+	TokenType token_type = expr_node->token->type;
 
-	if (node->next->type == AST_NODE_EXPR) {
-		const AstNodeExpr *expr = node->next->expr;
+	if (expr_node->type == AST_NODE_EXPR) {
+		const AstNodeExpr *expr = expr_node->expr;
 
 		switch (expr->oper) {
 			case EXPR_NOT:

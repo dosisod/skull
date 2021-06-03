@@ -63,6 +63,7 @@ typedef struct AstNode {
 		AstNodeVarDef *var_def;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
+		AstNode *expr_node;
 		_Bool is_void_return;
 	};
 } AstNode;
@@ -74,6 +75,7 @@ typedef struct AstNodeVarDef {
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
 	const Token *name_tok;
+	AstNode *expr_node;
 } AstNodeVarDef;
 
 /*
