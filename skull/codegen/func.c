@@ -19,19 +19,9 @@ Expr gen_node(AstNode *, bool *);
 
 static bool gen_function_def(const AstNode *const, FunctionDeclaration *);
 
-static FunctionDeclaration *create_function(
-	const AstNodeFunctionProto *const,
-	char *,
-	bool
-);
+static void create_function(FunctionDeclaration *);
 
-static void state_add_func(FunctionDeclaration *, char *);
-
-static LLVMTypeRef *parse_func_param(
-	const AstNodeFunctionProto *const,
-	FunctionDeclaration *const,
-	bool *
-);
+static LLVMTypeRef *parse_func_param(const FunctionDeclaration *);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
@@ -39,82 +29,22 @@ Parse declaration (and potential definition) of function in `node`.
 Return `true` if an error occurred.
 */
 bool gen_stmt_func_decl(const AstNode *const node) {
-	const Token *const func_name_token = node->func_proto->name_tok;
+	FunctionDeclaration *func = node->func_proto->func;
 
-	char *func_name = token_mbs_str(func_name_token);
+	create_function(node->func_proto->func);
 
-	if (scope_find_name(SKULL_STATE.scope, func_name)) {
-		FMT_ERROR(ERR_NO_REDEFINE_VAR_AS_FUNC, {
-			.loc = &func_name_token->location,
-			.real = func_name
-		});
-
-		return true;
-	}
-
-	FunctionDeclaration *found_func = find_func_by_name(func_name);
-
-	if (found_func) {
-		FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
-			.loc = &func_name_token->location,
-			.real = func_name
-		});
-
-		return true;
-	}
-
-	const bool is_external = node->func_proto->is_external;
-	const bool is_export = node->func_proto->is_export;
-
-	FunctionDeclaration *func = create_function(
-		node->func_proto,
-		func_name,
-		is_export || is_external
-	);
-	if (!func) {
-		free(func_name);
-		return true;
-	}
-
-	func->location = func_name_token->location;
-
-	if (!is_external)
-		return gen_function_def(node, func);
+	if (!func->is_external) return gen_function_def(node, func);
 
 	return false;
 }
 
 /*
-Add new LLVM function named `name` from `func_proto`.
-
-If `is_private` is true the function will be private (statically linked).
+Add new LLVM function from `func`.
 
 Else, the function will be globally available.
-
-Return `NULL` if an error occurred.
 */
-static FunctionDeclaration *create_function(
-	const AstNodeFunctionProto *const func_proto,
-	char *name,
-	bool is_private
-) {
-	FunctionDeclaration *func;
-	func = Calloc(1, sizeof *func);
-
-	char *return_type_name = func_proto->return_type_name;
-	if (return_type_name)
-		func->return_type = find_type(return_type_name);
-
-	if (return_type_name && !func->return_type) {
-		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = return_type_name });
-
-		free(func);
-		return NULL;
-	}
-
-	bool err = false;
-	LLVMTypeRef *params = parse_func_param(func_proto, func, &err);
-	if (err) return NULL;
+static void create_function(FunctionDeclaration *func) {
+	LLVMTypeRef *params = parse_func_param(func);
 
 	func->type = LLVMFunctionType(
 		gen_llvm_type(func->return_type),
@@ -126,63 +56,27 @@ static FunctionDeclaration *create_function(
 
 	func->ref = LLVMAddFunction(
 		SKULL_STATE.module,
-		name,
+		func->name,
 		func->type
 	);
 
 	LLVMSetLinkage(
 		func->ref,
-		is_private ? LLVMExternalLinkage : LLVMPrivateLinkage
+		(func->is_external || func->is_export) ?
+			LLVMExternalLinkage :
+			LLVMPrivateLinkage
 	);
-
-	state_add_func(func, name);
-
-	return func;
-}
-
-static void state_add_func(FunctionDeclaration *func, char *name) {
-	if (!SKULL_STATE.function_decls) {
-		SKULL_STATE.function_decls = ht_create();
-	}
-	func->name = name;
-	ht_add(SKULL_STATE.function_decls, func->name, func);
 }
 
 /*
-Setup `func` params by parsing `func_proto`.
-
-Set `err` if an error occurred.
+Setup function params of `func`.
 */
-static LLVMTypeRef *parse_func_param(
-	const AstNodeFunctionProto *const func_proto,
-	FunctionDeclaration *const func,
-	bool *err
-) {
-	char **param_type_names = func_proto->param_type_names;
-	func->param_names = func_proto->param_names;
-
-	unsigned short num_params = func_proto->num_params;
-	func->num_params = num_params;
-
-	if (!param_type_names) return NULL;
+static LLVMTypeRef *parse_func_param(const FunctionDeclaration *func) {
+	const unsigned num_params = func->num_params;
 
 	LLVMTypeRef *params = Calloc(num_params, sizeof(LLVMTypeRef));
-	func->param_types = Calloc(num_params, sizeof(Type));
 
-	for RANGE(i, num_params) {
-		func->param_types[i] = find_type(param_type_names[i]);
-
-		if (!func->param_types[i]) {
-			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = param_type_names[i] });
-
-			free(func->param_types);
-			free(func);
-			free(params);
-
-			*err = true;
-			return NULL;
-		}
-
+	for RANGE(i, num_params) { // NOLINT
 		params[i] = gen_llvm_type(func->param_types[i]);
 	}
 

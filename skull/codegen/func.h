@@ -42,6 +42,8 @@ typedef struct FunctionDeclaration {
 	Type return_type;
 
 	_Bool was_called : 1;
+	_Bool is_external : 1;
+	_Bool is_export : 1;
 } FunctionDeclaration;
 
 bool gen_stmt_func_decl(const AstNode *const);

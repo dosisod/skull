@@ -1,8 +1,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "skull/common/errors.h"
 #include "skull/codegen/scope.h"
+#include "skull/common/errors.h"
+#include "skull/common/malloc.h"
+#include "skull/common/range.h"
 
 #include "skull/semantic/entry.h"
 
@@ -11,6 +13,8 @@ static bool validate_stmt_return(AstNode *);
 static bool validate_stmt_func_decl(AstNode *);
 static bool validate_stmt_type_alias(AstNode *);
 bool assert_sane_child(AstNode *);
+static void state_add_func(FunctionDeclaration *);
+
 
 /*
 Validate an entire AST tree starting at `node`.
@@ -76,8 +80,75 @@ static bool validate_stmt_func_decl(AstNode *node) {
 		return false;
 	}
 
-	free(func_name);
+	if (scope_find_name(SKULL_STATE.scope, func_name)) {
+		FMT_ERROR(ERR_NO_REDEFINE_VAR_AS_FUNC, {
+			.loc = &func_name_token->location,
+			.real = func_name
+		});
+
+		return false;
+	}
+
+	FunctionDeclaration *found_func = find_func_by_name(func_name);
+
+	if (found_func) {
+		FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
+			.loc = &func_name_token->location,
+			.real = func_name
+		});
+
+		return false;
+	}
+
+	Type return_type = NULL;
+	char *return_type_name = node->func_proto->return_type_name;
+
+	if (return_type_name)
+		return_type = find_type(return_type_name);
+
+	if (return_type_name && !return_type) {
+		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = return_type_name });
+
+		free(func_name);
+		return false;
+	}
+
+	FunctionDeclaration *func;
+	func = Calloc(1, sizeof *func);
+	func->name = func_name;
+	func->location = func_name_token->location;
+	func->is_external = is_external;
+	func->is_export = is_export;
+	func->return_type = return_type;
+	func->param_names = node->func_proto->param_names;
+	func->num_params = node->func_proto->num_params;
+
+	node->func_proto->func = func;
+	state_add_func(func);
+
+	char **param_type_names = node->func_proto->param_type_names;
+	if (!param_type_names) return true;
+
+	func->param_types = Calloc(func->num_params, sizeof(Type));
+
+	for RANGE(i, func->num_params) {
+		func->param_types[i] = find_type(param_type_names[i]);
+
+		if (!func->param_types[i]) {
+			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = param_type_names[i] });
+
+			return false;
+		}
+	}
+
 	return true;
+}
+
+static void state_add_func(FunctionDeclaration *func) {
+	if (!SKULL_STATE.function_decls) {
+		SKULL_STATE.function_decls = ht_create();
+	}
+	ht_add(SKULL_STATE.function_decls, func->name, func);
 }
 
 static bool validate_stmt_type_alias(AstNode *node) {

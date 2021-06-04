@@ -1,3 +1,5 @@
+# TODO(dosisod): fix functions being hoisted
+
 x := 1
 
 x() { noop }
