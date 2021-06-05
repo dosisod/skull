@@ -20,6 +20,12 @@ typedef struct {
 > See `fmt_error_stringify` for uses of these fields.
 
 ```c
+static bool do_show_color(void)
+```
+
+> Return whether color output should be displayed.
+
+```c
 char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[])
 ```
 

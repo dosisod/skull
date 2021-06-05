@@ -1,14 +1,32 @@
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "skull/codegen/shared.h"
+#include "skull/common/color.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/compiler/variable.h"
 
 #include "skull/common/errors.h"
+
+/*
+Return whether color output should be displayed.
+*/
+static bool do_show_color(void) {
+	static int flag;
+
+	if (!flag) {
+		const char *use_color = getenv("COLOR");
+
+		flag = (use_color && *use_color == '1') ? 2 : 1;
+	}
+
+	return flag - 1;
+}
+
 
 /*
 Returns formatted error message.
@@ -30,10 +48,24 @@ char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[]) {
 
 	char *prefix = NULL;
 	if (type == ERROR_FATAL) {
-		prefix = uvsnprintf("%s: Compilation error: ", SKULL_STATE.filename);
+		prefix = uvsnprintf(
+			do_show_color() ? (
+					"%s: "
+					COLOR_BOLD COLOR_RED_FG
+					"Compilation error"
+					COLOR_RESET ": "
+				) :
+				"%s: Compilation error: ",
+			SKULL_STATE.filename
+		);
 	}
 	else if (type == ERROR_WARN) {
-		prefix = uvsnprintf("%s: Warning: ", SKULL_STATE.filename);
+		prefix = uvsnprintf(
+			do_show_color() ?
+				"%s: " COLOR_BOLD COLOR_YELLOW_FG "Warning" COLOR_RESET ": " :
+				"%s: Warning: ",
+			SKULL_STATE.filename
+		);
 	}
 
 	const Location *location = msg[0].tok ?
