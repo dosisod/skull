@@ -1,5 +1,5 @@
-#include "skull/setup_main.h"
+#include "skull/real_main.h"
 
 int main(int argc, char *argv[]) {
-	return setup_main(argc, argv);
+	return real_main(argc, argv);
 }

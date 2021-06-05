@@ -1,60 +1,26 @@
-#include <llvm-c/Core.h>
-
-#include <stddef.h>
-#include <string.h>
-
 #include "skull/codegen/assign.h"
 #include "skull/codegen/flow.h"
 #include "skull/codegen/func.h"
-#include "skull/codegen/llvm/aliases.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
-#include "skull/common/str.h"
-#include "skull/compiler/scope.h"
-#include "skull/semantic/entry.h"
 
 #include "skull/codegen/ast.h"
 
+static bool gen_expr_node(const AstNode *);
+static Expr _gen_node(AstNode **, bool *);
+
 /*
-Generate code from `str_`.
-
-Return `true` if errors occurred.
+Run code generator for tree starting at `node`.
 */
-bool codegen_str(char *const str_) {
-	char32_t *const str = mbstoc32s(str_);
-	if (!str) {
-		return true;
-	}
-
-	AstNode *const node = parse_ast_tree(str);
-	if (!node) {
-		free(str);
-		return true;
-	}
-
-	if (!validate_ast_tree(node)) {
-		free_ast_tree(node);
-		free(str);
-		return true;
-	}
-
+bool gen_tree(AstNode *node) {
 	bool err = false;
 	const Expr expr = gen_node(node, &err);
 
-	if (!expr.value && !err)
-		LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
-
-	free_ast_tree(node);
-	free(str);
+	if (!expr.value && !err) gen_stmt_implicit_main_return();
 
 	return err;
 }
 
-static Expr _gen_node(AstNode **, bool *);
-
 /*
-Internal LLVM parser.
-
 Return expr from an `AST_NODE_RETURN` if one was found.
 */
 Expr gen_node(AstNode *node, bool *err) {
@@ -80,8 +46,6 @@ Expr gen_node(AstNode *node, bool *err) {
 
 	return returned;
 }
-
-static bool gen_expr_node(const AstNode *);
 
 /*
 Verify that `node` doens't contain child node if it shouldn't.

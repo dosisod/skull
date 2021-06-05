@@ -1,19 +1,13 @@
 #include <stdbool.h>
-#include <string.h>
 
 #include <llvm-c/Core.h>
 
-#include "skull/codegen/assign.h"
 #include "skull/codegen/expr.h"
 #include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
-#include "skull/common/str.h"
 #include "skull/compiler/scope.h"
-#include "skull/compiler/types/bool.h"
-#include "skull/compiler/types/int.h"
-#include "skull/compiler/variable.h"
 
 #include "skull/codegen/flow.h"
 
@@ -27,6 +21,10 @@ Expr gen_stmt_unreachable(void) {
 	LLVMBuildUnreachable(SKULL_STATE.builder);
 
 	return (Expr){ .type = TYPE_VOID };
+}
+
+void gen_stmt_implicit_main_return(void) {
+	LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
 }
 
 /*

@@ -1,19 +1,15 @@
 # skull/codegen/ast
 
 ```c
-bool codegen_str(char *const str_)
+bool gen_tree(AstNode *node)
 ```
 
-> Generate code from `str_`.
-> \
-> Return `true` if errors occurred.
+> Run code generator for tree starting at `node`.
 
 ```c
 Expr gen_node(AstNode *node, bool *err)
 ```
 
-> Internal LLVM parser.
-> \
 > Return expr from an `AST_NODE_RETURN` if one was found.
 
 ```c
