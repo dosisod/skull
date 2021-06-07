@@ -2,4 +2,4 @@
 
 [ "$2" != "0" ]
 
-[ "$1" = "Unknown option \"-z\"" ]
+[ "$1" = "skull: unknown option \"-z\"" ]

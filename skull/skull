@@ -1,10 +1,10 @@
 #!/bin/sh
 
 usage() {
-	echo "skull -v
+	printf "skull -v
 skull file [ -S | -E | -c ]
            [ -o output ]
-           [ -- args]"
+           [ -- args]\n"
 	exit 0
 }
 
@@ -27,7 +27,7 @@ while getopts ":vhcSEo:m:" o; do
 		S) ASM=true ;;
 		E) PREPRO=true ;;
 		o) OUT_FILE=$OPTARG ;;
-		*) echo "Unknown option \"-$OPTARG\"" ; exit 1 ;;
+		*) printf "skull: unknown option \"-%s\"\n" "$OPTARG"; exit 1 ;;
 	esac
 done
 
@@ -63,8 +63,6 @@ $LLC "$base.ll" -filetype=$file_type -o "$OUT_FILE" || exit 1
 rm "$base.ll"
 
 [ -z "$ASM" ] || exit 0
-
-# mimic -c option in cc (compile, but dont link)
 [ -z "$COMPILE" ] || exit 0
 
 MODULE_NAME=$(basename "${filename%.*}")
@@ -93,9 +91,10 @@ int64_t _int_pow(int64_t base, int64_t exp) {
 
 int main(void) {
 	int x(void) __asm__(\".$MODULE_NAME\"); return x();
-}"
+}
+"
 
-echo "$SHIM" | cc "$OUT_FILE" \
+printf "%s" "$SHIM" | cc "$OUT_FILE" \
 	-o "${filename%.*}" "$@" \
 	-I/usr/include/skull \
 	-x c - \
