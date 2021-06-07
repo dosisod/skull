@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include "skull/codegen/assign.h"
 #include "skull/codegen/flow.h"
 #include "skull/codegen/func.h"

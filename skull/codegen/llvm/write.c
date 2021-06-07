@@ -4,8 +4,6 @@
 
 #include <llvm-c/Core.h>
 
-#include "skull/codegen/ast.h"
-#include "skull/codegen/func.h"
 #include "skull/codegen/shared.h"
 
 #include "skull/codegen/llvm/write.h"

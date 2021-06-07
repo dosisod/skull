@@ -1,10 +1,8 @@
 #include <stdbool.h>
-#include <stddef.h>
 #include <string.h>
 
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
-#include "skull/common/str.h"
 
 #include "skull/compiler/scope.h"
 

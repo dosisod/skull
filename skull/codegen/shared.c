@@ -1,9 +1,8 @@
-#include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 
 #include <llvm-c/Core.h>
 
-#include "skull/codegen/func.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/common/malloc.h"
 

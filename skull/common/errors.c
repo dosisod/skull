@@ -1,14 +1,11 @@
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "skull/codegen/shared.h"
 #include "skull/common/color.h"
-#include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/compiler/variable.h"
 
 #include "skull/common/errors.h"
 

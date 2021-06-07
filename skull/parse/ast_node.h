@@ -1,6 +1,5 @@
 #pragma once
 
-#include "skull/compiler/types/types.h"
 #include "skull/parse/token.h"
 
 typedef enum {

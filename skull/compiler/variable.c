@@ -1,7 +1,5 @@
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
-#include <string.h>
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"

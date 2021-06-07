@@ -1,6 +1,7 @@
-#include <llvm-c/Core.h>
-
+#include <stdbool.h>
 #include <stddef.h>
+
+#include <llvm-c/Core.h>
 
 #include "skull/codegen/shared.h"
 #include "skull/compiler/types/types.h"

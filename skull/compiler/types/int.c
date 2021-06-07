@@ -3,7 +3,6 @@
 #include <stdbool.h>
 
 #include "skull/common/errors.h"
-#include "skull/common/str.h"
 #include "skull/compiler/types/_underscore_num.h"
 
 #include "skull/compiler/types/int.h"
