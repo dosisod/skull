@@ -7,9 +7,9 @@
 #include "skull/compiler/types/str.h"
 
 /*
-Return string converted from `token`
+Return string converted from `token`, or `NULL` if an error occurred.
 */
-char32_t *eval_str(const Token *const token, bool *err) {
+char32_t *eval_str(const Token *const token) {
 	char32_t *copy;
 	copy = Malloc((token_len(token) - 1) * sizeof *copy);
 
@@ -26,7 +26,6 @@ char32_t *eval_str(const Token *const token, bool *err) {
 			});
 
 			free(copy);
-			*err = true;
 			return NULL;
 		}
 

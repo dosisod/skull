@@ -776,7 +776,7 @@ static Expr token_to_simple_expr(const Token *const token, bool *err) {
 		type = TYPE_RUNE;
 	}
 	else if (token->type == TOKEN_STR_CONST) {
-		char32_t *str = eval_str(token, err);
+		char32_t *str = eval_str(token);
 		if (!str) {
 			*err = true;
 			return (Expr){0};
