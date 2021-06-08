@@ -16,6 +16,7 @@ static void assign_value_to_var(LLVMValueRef, Variable *const);
 bool assert_sane_child(AstNode *);
 static Type var_def_node_to_type(const AstNode *, bool *);
 static Variable *node_to_var(const AstNode *const, bool *);
+static Type func_get_type(const AstNode *, const AstNodeExpr *);
 
 /*
 Builds a variable definition from `node`.
@@ -251,35 +252,8 @@ static Type var_def_node_to_type(const AstNode *node, bool *err) {
 			return var->type;
 		}
 		else if (expr->oper == EXPR_FUNC) {
-			const Token *func_name_token = expr->func_call->func_name_tok;
-
-			char *const func_name = token_mbs_str(func_name_token);
-
-			FunctionDeclaration *const function = \
-				find_func_by_name(func_name);
-
-			free(func_name);
-
-			if (!function) {
-				FMT_ERROR(ERR_MISSING_DECLARATION, { .tok = func_name_token });
-
-				*err = true;
-				return NULL;
-			}
-
-			Type type = function->return_type;
-
-			if (type == TYPE_VOID) {
-				FMT_ERROR(ERR_NO_VOID_ASSIGN, {
-					.loc = &func_name_token->location,
-					.real = token_mbs_str(node->token)
-				});
-
-				// suppress errors
-				function->was_called = true;
-
-				*err = true;
-			}
+			Type type = func_get_type(node, expr);
+			if (!type) *err = true;
 
 			return type;
 		}
@@ -297,4 +271,35 @@ static Type var_def_node_to_type(const AstNode *node, bool *err) {
 	FMT_ERROR(ERR_INVALID_INPUT, { .tok = node->next->token });
 
 	return NULL;
+}
+
+static Type func_get_type(const AstNode *node, const AstNodeExpr *expr) {
+	const Token *func_name_token = expr->func_call->func_name_tok;
+
+	char *const func_name = token_mbs_str(func_name_token);
+
+	FunctionDeclaration *const function = find_func_by_name(func_name);
+
+	free(func_name);
+
+	if (!function) {
+		FMT_ERROR(ERR_MISSING_DECLARATION, { .tok = func_name_token });
+
+		return NULL;
+	}
+
+	Type type = function->return_type;
+
+	if (type == TYPE_VOID) {
+		FMT_ERROR(ERR_NO_VOID_ASSIGN, {
+			.loc = &func_name_token->location,
+			.real = token_mbs_str(node->token)
+		});
+
+		// suppress errors
+		function->was_called = true;
+		return NULL;
+	}
+
+	return type;
 }
