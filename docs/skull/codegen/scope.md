@@ -1,6 +1,43 @@
 # skull/codegen/scope
 
 ```c
+typedef struct Scope {
+	HashTable *vars;
+
+	Scope *next;
+	Scope *last;
+	Scope *child;
+	Scope *parent;
+}
+```
+
+> `Scope` stores all of the variables declared in a specific scope.
+> \
+> `vars` is an array of all of the variables in a scope.
+> \
+> `child` stores a nested scope with more variables in it.
+
+```c
+bool scope_add_var(Scope **scope, Variable *const var)
+```
+
+> Add variable `var` to `scope`.
+> \
+> Returns `true` if `var` was added, else `false`
+
+```c
+Variable *scope_find_name(const Scope *const scope, const char *name)
+```
+
+> Returns pointer to variable with matching `name` if found, else `NULL`
+
+```c
+Scope *make_scope(void)
+```
+
+> Returns a new variable scope.
+
+```c
 Variable *scope_find_var(const Token *const token)
 ```
 
@@ -9,14 +46,20 @@ Variable *scope_find_var(const Token *const token)
 > Return `NULL` if variable was not found.
 
 ```c
-void make_sub_scope(Scope **old, Scope **new)
+void make_child_scope(void)
 ```
 
-> Make new scope and set the current scope to be a sub-scope of the new one.
+> Add a child scope to the current and replace current scope with new one.
 
 ```c
-void restore_sub_scope(Scope **old, Scope **new)
+void restore_parent_scope(void)
 ```
 
-> Free the new scope, set the current scope to the old sub-scope.
+> Free current scope, set current scope to parent scope.
+
+```c
+void free_scope(Scope *scope)
+```
+
+> Frees a `scope` and all the variables inside of it.
 

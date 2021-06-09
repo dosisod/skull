@@ -8,7 +8,6 @@
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
-#include "skull/compiler/scope.h"
 
 #include "skull/codegen/assign.h"
 

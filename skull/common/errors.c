@@ -6,6 +6,7 @@
 #include "skull/codegen/shared.h"
 #include "skull/common/color.h"
 #include "skull/common/str.h"
+#include "skull/compiler/variable.h"
 
 #include "skull/common/errors.h"
 

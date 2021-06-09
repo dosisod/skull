@@ -4,6 +4,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/llvm/types.h"
+#include "skull/codegen/scope.h"
 #include "skull/common/malloc.h"
 
 #include "skull/codegen/shared.h"

@@ -243,13 +243,12 @@ static bool gen_function_def(
 	FunctionDeclaration *old_func = SKULL_STATE.current_func;
 	SKULL_STATE.current_func = func;
 
-	Scope *scope_copy;
-	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
+	make_child_scope();
 
 	bool err = false;
 	const Expr returned = gen_node(node->child, &err);
 
-	restore_sub_scope(&SKULL_STATE.scope, &scope_copy);
+	restore_parent_scope();
 	SKULL_STATE.current_func = old_func;
 
 	if (err) return true;

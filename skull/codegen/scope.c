@@ -1,8 +1,46 @@
+#include <stdbool.h>
+
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
-#include "skull/compiler/scope.h"
+#include "skull/common/malloc.h"
 
 #include "skull/codegen/scope.h"
+
+/*
+Add variable `var` to `scope`.
+
+Returns `true` if `var` was added, else `false`
+*/
+bool scope_add_var(Scope **scope, Variable *const var) {
+	if (*scope && scope_find_name(*scope, var->name)) return false;
+
+	if (!*scope) *scope = make_scope();
+	if (!(*scope)->vars) (*scope)->vars = ht_create();
+
+	return ht_add((*scope)->vars, var->name, var);
+}
+
+/*
+Returns pointer to variable with matching `name` if found, else `NULL`
+*/
+Variable *scope_find_name(const Scope *const scope, const char *name) {
+	if (!scope || (!scope->vars && !scope->parent)) return NULL;
+
+	if (!scope->vars && scope->parent)
+		return scope_find_name(scope->parent, name);
+
+	Variable *var = ht_get(scope->vars, name);
+	if (var) return var;
+
+	return scope_find_name(scope->parent, name);
+}
+
+/*
+Returns a new variable scope.
+*/
+Scope *make_scope(void) {
+	return Calloc(1, sizeof(Scope));
+}
 
 /*
 Try and find a variable stored in `token`.
@@ -26,19 +64,42 @@ Variable *scope_find_var(const Token *const token) {
 }
 
 /*
-Make new scope and set the current scope to be a sub-scope of the new one.
+Add a child scope to the current and replace current scope with new one.
 */
-void make_sub_scope(Scope **old, Scope **new) {
-	*new = *old;
-	if (!*new) *new = make_scope();
-	*old = make_scope();
-	(*old)->sub_scope = *new;
+void make_child_scope(void) {
+	if (!SKULL_STATE.scope) SKULL_STATE.scope = make_scope();
+
+	Scope *child = make_scope();
+
+	SKULL_STATE.scope->child = child;
+	child->parent = SKULL_STATE.scope;
+	SKULL_STATE.scope = child;
 }
 
 /*
-Free the new scope, set the current scope to the old sub-scope.
+Free current scope, set current scope to parent scope.
 */
-void restore_sub_scope(Scope **old, Scope **new) {
-	free_scope(*old);
-	*old = *new;
+void restore_parent_scope(void) {
+	Scope *parent = SKULL_STATE.scope->parent;
+	parent->child = NULL;
+
+	free_scope(SKULL_STATE.scope);
+
+	SKULL_STATE.scope = parent;
+}
+
+static void free_ht_variable(HashItem *item) {
+	if (item->data) free_variable(item->data);
+}
+
+/*
+Frees a `scope` and all the variables inside of it.
+*/
+void free_scope(Scope *scope) {
+	if (scope) {
+		if (scope->vars)
+			free_ht(scope->vars, (void(*)(void *))free_ht_variable);
+
+		free(scope);
+	}
 }

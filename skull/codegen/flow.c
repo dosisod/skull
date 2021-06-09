@@ -7,7 +7,6 @@
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
-#include "skull/compiler/scope.h"
 
 #include "skull/codegen/flow.h"
 
@@ -277,15 +276,14 @@ static bool gen_control_code_block(
 		return true;
 	}
 
-	Scope *scope_copy;
-	make_sub_scope(&SKULL_STATE.scope, &scope_copy);
+	make_child_scope();
 
 	Expr returned = (Expr){0};
 
 	bool err = false;
 	if (node->child->token) returned = gen_node(node->child, &err);
 
-	restore_sub_scope(&SKULL_STATE.scope, &scope_copy);
+	restore_parent_scope();
 
 	if (err) return true;
 

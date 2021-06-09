@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "skull/compiler/scope.h"
+#include "skull/codegen/scope.h"
 
 #include "test/skull/compiler/scope.h"
 #include "test/testing.h"

@@ -3,7 +3,8 @@
 #include "skull/codegen/func.h"
 #include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/common/hashtable.h"
-#include "skull/compiler/scope.h"
+
+typedef struct Scope Scope;
 
 /*
 Shared state for a given Skull program.
