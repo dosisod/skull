@@ -4,7 +4,6 @@
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/shared.h"
-#include "skull/compiler/types/types.h"
 
 #include "skull/codegen/llvm/types.h"
 

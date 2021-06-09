@@ -88,7 +88,7 @@ OBJS_MAIN:= $(addprefix $(ODIR)/,$(_OBJS_MAIN))
 
 DIRS := build/skull \
 	build/test \
-	$(ODIR)/skull/compiler/types \
+	$(ODIR)/skull/compiler \
 	$(ODIR)/skull/parse/ast \
 	$(ODIR)/skull/common \
 	$(ODIR)/skull/codegen/llvm \

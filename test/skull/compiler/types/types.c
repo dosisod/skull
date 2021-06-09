@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/compiler/types/types.h"
+#include "skull/compiler/types.h"
 
 #include "test/skull/compiler/types/types.h"
 #include "test/testing.h"

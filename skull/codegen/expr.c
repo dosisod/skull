@@ -7,11 +7,7 @@
 #include "skull/codegen/scope.h"
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
-#include "skull/compiler/types/bool.h"
-#include "skull/compiler/types/float.h"
-#include "skull/compiler/types/int.h"
-#include "skull/compiler/types/rune.h"
-#include "skull/compiler/types/str.h"
+#include "skull/compiler/types.h"
 #include "skull/parse/ast_node.h"
 
 #include "skull/codegen/expr.h"

@@ -1,6 +1,16 @@
 #pragma once
 
+#include <stdint.h>
+#include <uchar.h>
+
 #include "skull/common/hashtable.h"
+#include "skull/parse/token.h"
+
+_Bool eval_bool(const Token *const);
+double eval_float(const Token *const, _Bool *);
+int64_t eval_integer(const Token *, _Bool *);
+char32_t eval_rune(const Token *const, _Bool *);
+char32_t *eval_str(const Token *const);
 
 /*
 Types are simply named strings.
@@ -20,3 +30,5 @@ Type find_type(const char *const);
 _Bool state_add_alias(Type, char *const);
 
 void free_ht_type_alias(HashItem *);
+
+void strip_underscore_num(char *, char);

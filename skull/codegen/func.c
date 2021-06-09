@@ -12,7 +12,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
-#include "skull/compiler/types/types.h"
+#include "skull/compiler/types.h"
 
 #include "skull/codegen/func.h"
 
