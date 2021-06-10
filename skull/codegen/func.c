@@ -243,7 +243,7 @@ static bool gen_function_def(
 	FunctionDeclaration *old_func = SKULL_STATE.current_func;
 	SKULL_STATE.current_func = func;
 
-	make_child_scope();
+	SKULL_STATE.scope = SKULL_STATE.scope->child;
 
 	bool err = false;
 	const Expr returned = gen_node(node->child, &err);
@@ -252,7 +252,7 @@ static bool gen_function_def(
 	SKULL_STATE.current_func = old_func;
 
 	if (err) return true;
-	make_adjacent_scope();
+	if (SKULL_STATE.scope) SKULL_STATE.scope = SKULL_STATE.scope->next;
 
 	if (!returned.value && func->return_type != TYPE_VOID) {
 		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(func->name) });

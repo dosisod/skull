@@ -131,8 +131,9 @@ void reset_scope_head(void) {
 Free current scope, set current scope to parent scope.
 */
 void restore_parent_scope(void) {
-	reset_scope_head();
+	if (!SKULL_STATE.scope) return;
 
+	reset_scope_head();
 	SKULL_STATE.scope = SKULL_STATE.scope->parent;
 }
 

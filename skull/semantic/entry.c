@@ -23,9 +23,6 @@ bool validate_ast_tree(AstNode *node) {
 	const bool pass = _validate_ast_tree(node);
 	reset_scope_head();
 
-	free_scope(SKULL_STATE.scope);
-	SKULL_STATE.scope = NULL;
-
 	return pass;
 }
 

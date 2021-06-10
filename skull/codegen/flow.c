@@ -276,7 +276,7 @@ static bool gen_control_code_block(
 		return true;
 	}
 
-	make_child_scope();
+	SKULL_STATE.scope = SKULL_STATE.scope->child;
 
 	Expr returned = (Expr){0};
 
@@ -286,7 +286,7 @@ static bool gen_control_code_block(
 	restore_parent_scope();
 
 	if (err) return true;
-	make_adjacent_scope();
+	if (SKULL_STATE.scope) SKULL_STATE.scope = SKULL_STATE.scope->next;
 
 	if (!returned.value || !node->child->token)
 		LLVMBuildBr(SKULL_STATE.builder, block);
