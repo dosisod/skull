@@ -52,6 +52,27 @@ void make_child_scope(void)
 > Add a child scope to the current and replace current scope with new one.
 
 ```c
+void make_adjacent_scope(void)
+```
+
+> Make a scope adjacent to the current scope.
+> \
+> An adjacent scope is one that is on the same level as the current scope and
+> after a child scope.
+
+```c
+Scope *find_scope_head(void)
+```
+
+> Find the head of the current scope (without going to the parent node).
+
+```c
+void reset_scope_head(void)
+```
+
+> Move the current scope to the scope head.
+
+```c
 void restore_parent_scope(void)
 ```
 

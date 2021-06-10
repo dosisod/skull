@@ -252,6 +252,7 @@ static bool gen_function_def(
 	SKULL_STATE.current_func = old_func;
 
 	if (err) return true;
+	make_adjacent_scope();
 
 	if (!returned.value && func->return_type != TYPE_VOID) {
 		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(func->name) });

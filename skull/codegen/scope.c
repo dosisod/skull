@@ -27,15 +27,17 @@ bool scope_add_var(Scope **scope, Variable *const var) {
 Returns pointer to variable with matching `name` if found, else `NULL`
 */
 Variable *scope_find_name(const Scope *const scope, const char *name) {
-	if (!scope || (!scope->vars && !scope->parent)) return NULL;
+	if (!scope || !(scope->vars || scope->parent || scope->last)) return NULL;
 
-	if (!scope->vars && scope->parent)
-		return scope_find_name(scope->parent, name);
+	if (scope->vars) {
+		Variable *var = ht_get(scope->vars, name);
+		if (var) return var;
+	}
 
-	Variable *var = ht_get(scope->vars, name);
-	if (var) return var;
+	if (scope->parent) return scope_find_name(scope->parent, name);
+	if (scope->last) return scope_find_name(scope->last, name);
 
-	return scope_find_name(scope->parent, name);
+	return NULL;
 }
 
 /*
@@ -75,19 +77,62 @@ void make_child_scope(void) {
 
 	Scope *child = make_scope();
 
-	if (scope->child) {
-		free_scope(scope->child);
-	}
-
 	scope->child = child;
 	child->parent = scope;
 	SKULL_STATE.scope = child;
 }
 
 /*
+Make a scope adjacent to the current scope.
+
+An adjacent scope is one that is on the same level as the current scope and
+after a child scope.
+*/
+void make_adjacent_scope(void) {
+	Scope *next = make_scope();
+	next->last = SKULL_STATE.scope;
+	SKULL_STATE.scope->next = next;
+
+	SKULL_STATE.scope = next;
+}
+
+/*
+Find the head of the current scope (without going to the parent node).
+*/
+Scope *find_scope_head(void) {
+	if (!SKULL_STATE.scope) return NULL;
+
+	Scope *last = SKULL_STATE.scope->last;
+	if (!last) return SKULL_STATE.scope;
+
+	while (last && last->last) {
+		last = last->last;
+	}
+
+	return last;
+}
+
+bool is_top_lvl_scope(void) {
+	Scope *head = find_scope_head();
+
+	return !head || !head->parent;
+}
+
+/*
+Move the current scope to the scope head.
+*/
+void reset_scope_head(void) {
+	if (!SKULL_STATE.scope) return;
+
+	SKULL_STATE.scope = find_scope_head();
+}
+
+/*
 Free current scope, set current scope to parent scope.
 */
 void restore_parent_scope(void) {
+	reset_scope_head();
+
 	SKULL_STATE.scope = SKULL_STATE.scope->parent;
 }
 

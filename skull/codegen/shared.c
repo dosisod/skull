@@ -92,6 +92,7 @@ void free_state(SkullState *state) {
 		state->function_decls,
 		(void(*)(void *))free_function_declaration
 	);
+	reset_scope_head();
 	free_scope(state->scope);
 
 	LLVMDisposeBuilder(state->builder);

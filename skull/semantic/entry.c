@@ -21,6 +21,8 @@ Validate an entire AST tree starting at `node`.
 */
 bool validate_ast_tree(AstNode *node) {
 	const bool pass = _validate_ast_tree(node);
+	reset_scope_head();
+
 	free_scope(SKULL_STATE.scope);
 	SKULL_STATE.scope = NULL;
 
@@ -38,12 +40,14 @@ static bool _validate_ast_tree(AstNode *node) {
 			restore_parent_scope();
 
 			if (!is_valid) return false;
+			make_adjacent_scope();
 		}
 
 		if (!validate_ast_node(node)) return false;
 		node = node->next;
 	}
 
+	reset_scope_head();
 	return true;
 }
 
@@ -73,10 +77,7 @@ static bool validate_stmt_func_decl(AstNode *node) {
 	const bool is_export = node->func_proto->is_export;
 	const Token *const func_name_token = node->func_proto->name_tok;
 
-	if ((is_export || is_external) &&
-		SKULL_STATE.scope &&
-		SKULL_STATE.scope->parent
-	) {
+	if ((is_export || is_external) && !is_top_lvl_scope()) {
 		FMT_ERROR(ERR_NO_NESTED, { .tok = func_name_token });
 		return false;
 	}
@@ -164,7 +165,7 @@ static void state_add_func(FunctionDeclaration *func) {
 static bool validate_stmt_type_alias(AstNode *node) {
 	const Token *const token = node->token;
 
-	if (SKULL_STATE.scope && SKULL_STATE.scope->parent) {
+	if (!is_top_lvl_scope()) {
 		FMT_ERROR(ERR_TOP_LVL_ALIAS_ONLY, { .loc = &token->location });
 		return false;
 	}

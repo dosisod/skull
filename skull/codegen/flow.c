@@ -286,6 +286,7 @@ static bool gen_control_code_block(
 	restore_parent_scope();
 
 	if (err) return true;
+	make_adjacent_scope();
 
 	if (!returned.value || !node->child->token)
 		LLVMBuildBr(SKULL_STATE.builder, block);

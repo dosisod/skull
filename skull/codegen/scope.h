@@ -34,5 +34,9 @@ void free_scope(Scope *);
 
 void make_child_scope(void);
 void restore_parent_scope(void);
+void make_adjacent_scope(void);
+Scope *find_scope_head(void);
+void reset_scope_head(void);
+_Bool is_top_lvl_scope(void);
 
 Variable *scope_find_var(const Token *const);
