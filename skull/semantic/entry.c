@@ -8,6 +8,7 @@
 
 #include "skull/semantic/entry.h"
 
+static bool _validate_ast_tree(AstNode *);
 static bool validate_ast_node(AstNode *);
 static bool validate_stmt_return(AstNode *);
 static bool validate_stmt_func_decl(AstNode *);
@@ -15,15 +16,25 @@ static bool validate_stmt_type_alias(AstNode *);
 bool assert_sane_child(AstNode *);
 static void state_add_func(FunctionDeclaration *);
 
-
 /*
 Validate an entire AST tree starting at `node`.
 */
 bool validate_ast_tree(AstNode *node) {
+	const bool pass = _validate_ast_tree(node);
+	free_scope(SKULL_STATE.scope);
+	SKULL_STATE.scope = NULL;
+
+	return pass;
+}
+
+/*
+Validate an entire AST tree starting at `node`.
+*/
+static bool _validate_ast_tree(AstNode *node) {
 	while (node) {
 		if (node->child) {
 			make_child_scope();
-			const bool is_valid = validate_ast_tree(node->child);
+			const bool is_valid = _validate_ast_tree(node->child);
 			restore_parent_scope();
 
 			if (!is_valid) return false;

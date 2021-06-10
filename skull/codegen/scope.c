@@ -6,6 +6,9 @@
 
 #include "skull/codegen/scope.h"
 
+
+static void free_ht_variable(HashItem *);
+
 /*
 Add variable `var` to `scope`.
 
@@ -67,12 +70,17 @@ Variable *scope_find_var(const Token *const token) {
 Add a child scope to the current and replace current scope with new one.
 */
 void make_child_scope(void) {
-	if (!SKULL_STATE.scope) SKULL_STATE.scope = make_scope();
+	Scope *scope = SKULL_STATE.scope;
+	if (!scope) scope = make_scope();
 
 	Scope *child = make_scope();
 
-	SKULL_STATE.scope->child = child;
-	child->parent = SKULL_STATE.scope;
+	if (scope->child) {
+		free_scope(scope->child);
+	}
+
+	scope->child = child;
+	child->parent = scope;
 	SKULL_STATE.scope = child;
 }
 
@@ -80,12 +88,7 @@ void make_child_scope(void) {
 Free current scope, set current scope to parent scope.
 */
 void restore_parent_scope(void) {
-	Scope *parent = SKULL_STATE.scope->parent;
-	parent->child = NULL;
-
-	free_scope(SKULL_STATE.scope);
-
-	SKULL_STATE.scope = parent;
+	SKULL_STATE.scope = SKULL_STATE.scope->parent;
 }
 
 static void free_ht_variable(HashItem *item) {
@@ -99,6 +102,9 @@ void free_scope(Scope *scope) {
 	if (scope) {
 		if (scope->vars)
 			free_ht(scope->vars, (void(*)(void *))free_ht_variable);
+
+		if (scope->child) free_scope(scope->child);
+		if (scope->next) free_scope(scope->next);
 
 		free(scope);
 	}
