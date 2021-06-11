@@ -208,20 +208,10 @@ static bool gen_function_def(
 		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
 
 		for RANGE(i, func->num_params) {
-			Variable *const param_var = make_variable(
-				func->param_types[i],
-				func->param_names[i],
-				true
-			);
-
-			if (!scope_add_var(&SKULL_STATE.scope, param_var)) {
-				FMT_ERROR(ERR_SHADOW_VAR, { .var = param_var });
-
-				variable_no_warnings(param_var);
-				free_variable(param_var);
-
-				return true;
-			}
+			// TODO(dosisod): store variable directly
+			char *tmp = c32stombs(func->param_names[i], NULL);
+			Variable *param_var = scope_find_name(SKULL_STATE.scope, tmp);
+			free(tmp);
 
 			param_var->ref = next_param;
 			next_param = LLVMGetNextParam(next_param);

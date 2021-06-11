@@ -36,6 +36,8 @@ Validate an entire AST tree starting at `node`.
 */
 static bool _validate_ast_tree(AstNode *node) {
 	while (node) {
+		if (!validate_ast_node(node)) return false;
+
 		if (node->child) {
 			make_child_scope();
 			const bool is_valid = _validate_ast_tree(node->child);
@@ -45,7 +47,6 @@ static bool _validate_ast_tree(AstNode *node) {
 			make_adjacent_scope();
 		}
 
-		if (!validate_ast_node(node)) return false;
 		node = node->next;
 	}
 
@@ -152,6 +153,21 @@ static bool validate_stmt_func_decl(AstNode *node) {
 
 		if (!func->param_types[i]) {
 			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = param_type_names[i] });
+
+			return false;
+		}
+
+		Variable *const param_var = make_variable(
+			func->param_types[i],
+			func->param_names[i],
+			true
+		);
+
+		if (!scope_add_var(&SKULL_STATE.scope, param_var)) {
+			FMT_ERROR(ERR_SHADOW_VAR, { .var = param_var });
+
+			variable_no_warnings(param_var);
+			free_variable(param_var);
 
 			return false;
 		}
