@@ -695,7 +695,7 @@ static Expr ident_to_expr(
 	const Token *const token,
 	Variable **variable
 ) {
-	Variable *const var_found = scope_find_var(token);
+	Variable *const var_found = scope_find_var(token, false);
 	if (!var_found) return (Expr){0};
 
 	var_found->was_read = true;

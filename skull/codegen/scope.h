@@ -39,4 +39,4 @@ Scope *find_scope_head(void);
 void reset_scope_head(void);
 _Bool is_top_lvl_scope(void);
 
-Variable *scope_find_var(const Token *const);
+Variable *scope_find_var(const Token *const, _Bool);

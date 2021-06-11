@@ -38,10 +38,12 @@ Scope *make_scope(void)
 > Returns a new variable scope.
 
 ```c
-Variable *scope_find_var(const Token *const token)
+Variable *scope_find_var(const Token *const token, bool allow_uninitialized)
 ```
 
 > Try and find a variable stored in `token`.
+> \
+> Allow for finding of uninitialized variables by setting `allow_uninitialized`.
 > \
 > Return `NULL` if variable was not found.
 

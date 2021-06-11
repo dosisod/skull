@@ -50,13 +50,15 @@ Scope *make_scope(void) {
 /*
 Try and find a variable stored in `token`.
 
+Allow for finding of uninitialized variables by setting `allow_uninitialized`.
+
 Return `NULL` if variable was not found.
 */
-Variable *scope_find_var(const Token *const token) {
+Variable *scope_find_var(const Token *const token, bool allow_uninitialized) {
 	char *const var_name = token_mbs_str(token);
 	Variable *const var = scope_find_name(SKULL_STATE.scope, var_name);
 
-	if (!var || !var->ref) {
+	if (!var || (!allow_uninitialized && !var->ref)) {
 		FMT_ERROR(ERR_VAR_NOT_FOUND, {
 			.loc = &token->location, .real = var_name
 		});
