@@ -13,8 +13,8 @@
 
 static void assign_value_to_var(LLVMValueRef, Variable *const);
 bool assert_sane_child(AstNode *);
-static Type var_def_node_to_type(const AstNode *, bool *);
-static Variable *node_to_var(const AstNode *const, bool *);
+static Type var_def_node_to_type(const AstNode *);
+static Variable *node_to_var(const AstNode *const);
 static Type func_get_type(const AstNode *, const AstNodeExpr *);
 
 /*
@@ -23,10 +23,10 @@ Builds a variable definition from `node`.
 Return `true` if an error occurred.
 */
 bool gen_stmt_var_def(AstNode *node) {
-	bool err = false;
-	Variable *var = node_to_var(node, &err);
-	if (err) return true;
+	Variable *var = node_to_var(node);
+	if (!var) return true;
 
+	bool err = false;
 	LLVMValueRef value = node_to_expr(
 		var->type,
 		node->var_def->expr_node,
@@ -131,14 +131,16 @@ static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 
 /*
 Make and add a variable from `node` to Skull state.
+
+Return `NULL` if an error occurred.
 */
-static Variable *node_to_var(const AstNode *const node, bool *err) {
+static Variable *node_to_var(const AstNode *const node) {
 	const Token *token = node->var_def->name_tok;
 	Type type = NULL;
 
 	if (node->var_def->is_implicit) {
-		type = var_def_node_to_type(node, err);
-		if (*err) return NULL;
+		type = var_def_node_to_type(node);
+		if (!type) return NULL;
 	}
 	else {
 		char *const type_name = token_mbs_str(token->next);
@@ -149,7 +151,6 @@ static Variable *node_to_var(const AstNode *const node, bool *err) {
 		if (!type) {
 			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = token->next });
 
-			*err = true;
 			return NULL;
 		}
 	}
@@ -173,7 +174,6 @@ static Variable *node_to_var(const AstNode *const node, bool *err) {
 		variable_no_warnings(var);
 		free_variable(var);
 
-		*err = true;
 		return NULL;
 	}
 
@@ -186,7 +186,6 @@ static Variable *node_to_var(const AstNode *const node, bool *err) {
 
 	FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .tok = token });
 
-	*err = true;
 	return NULL;
 }
 
@@ -212,9 +211,9 @@ static __attribute__((pure)) const AstNodeExpr *leftmost_expr(
 }
 
 /*
-Return a variable type based on `node`.
+Return a variable type based on `node`, `NULL` if an error occurred.
 */
-static Type var_def_node_to_type(const AstNode *node, bool *err) {
+static Type var_def_node_to_type(const AstNode *node) {
 	AstNode *expr_node = node->var_def->expr_node;
 	TokenType token_type = expr_node->token->type;
 
@@ -243,18 +242,12 @@ static Type var_def_node_to_type(const AstNode *node, bool *err) {
 		}
 		else if (expr->oper == EXPR_IDENTIFIER) {
 			const Variable *var = scope_find_var(expr->lhs.tok);
-			if (!var) {
-				*err = true;
-				return NULL;
-			}
+			if (!var) return NULL;
 
 			return var->type;
 		}
 		else if (expr->oper == EXPR_FUNC) {
-			Type type = func_get_type(node, expr);
-			if (!type) *err = true;
-
-			return type;
+			return func_get_type(node, expr);
 		}
 	}
 
