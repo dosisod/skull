@@ -1,4 +1,4 @@
 x: Int = 1
 
 # explicitly cause file to fail so CI passes
-error
+y := x + false

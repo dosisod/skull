@@ -95,46 +95,19 @@ Expr gen_expr_function_call(
 	bool *err
 ) {
 	const Token *func_name_token = expr->func_call->func_name_tok;
-
 	char *const func_name = token_mbs_str(func_name_token);
 
+	// TODO(dosisod): dont find func since we know it exists (store in node)
 	FunctionDeclaration *function = find_func_by_name(func_name);
 	free(func_name);
 
-	if (!function) {
-		FMT_ERROR(ERR_MISSING_DECLARATION, {
-			.tok = func_name_token
-		});
-
-		*err = true;
-		return (Expr){0};
-	}
-
-	function->was_called = true;
-
 	unsigned short num_params = function->num_params;
-
-	if (num_params != expr->func_call->num_values) {
-		FMT_ERROR(ERR_INVALID_NUM_PARAMS, {
-			.loc = &func_name_token->location
-		});
-
-		*err = true;
-		return (Expr){0};
-	}
 
 	LLVMValueRef *params = NULL;
 	if (num_params)
 		params = Calloc(num_params, sizeof(LLVMValueRef));
 
 	const AstNode *param = expr->func_call->params;
-
-	if (num_params == 0 && param->token) {
-		FMT_ERROR(ERR_ZERO_PARAM_FUNC, { .loc = &param->token->location });
-
-		*err = true;
-		return (Expr){0};
-	}
 
 	for RANGE(i, num_params) {
 		const Expr param_expr = node_to_expr(

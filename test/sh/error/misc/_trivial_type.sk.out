@@ -1,3 +1,2 @@
 ./test/sh/error/misc/trivial_type.sk: Warning: explicit type "Int" can be trivialy deduced
-./test/sh/error/misc/trivial_type.sk: Compilation error: line 4 column 1: expression cannot be used on its own
-./test/sh/error/misc/trivial_type.sk: Warning: line 1 column 1: variable "x" is unused
+./test/sh/error/misc/trivial_type.sk: Compilation error: line 4 column 10: expected type "Int", got "Bool"

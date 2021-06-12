@@ -12,7 +12,6 @@
 #include "skull/codegen/assign.h"
 
 static void assign_value_to_var(LLVMValueRef, Variable *const);
-bool assert_sane_child(AstNode *);
 
 /*
 Builds a variable definition from `node`.
@@ -46,19 +45,8 @@ Return `true` if an error occurred.
 */
 bool gen_stmt_var_assign(AstNode *node) {
 	Variable *var = scope_find_var(node->token, false);
-	if (!var) return true;
-
-	if (var->is_const) {
-		FMT_ERROR(ERR_REASSIGN_CONST, {
-			.tok = node->token
-		});
-
-		return true;
-	}
-	var->was_reassigned = true;
 
 	bool err = false;
-
 	LLVMValueRef value = node_to_expr(
 		var->type,
 		node->expr_node,

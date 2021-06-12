@@ -11,7 +11,6 @@
 #include "skull/codegen/flow.h"
 
 Expr gen_node(AstNode *, bool *);
-bool assert_sane_child(AstNode *);
 
 /*
 Build an unreachable statement.

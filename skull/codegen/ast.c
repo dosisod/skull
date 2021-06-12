@@ -88,14 +88,6 @@ static Expr _gen_node(AstNode **node, bool *err) {
 
 	switch ((*node)->type) {
 		case AST_NODE_IF: *err |= gen_control_if(node); break;
-		case AST_NODE_ELSE: {
-			FMT_ERROR(ERR_ELSE_MISSING_IF, {
-				.loc = &(*node)->token->location
-			});
-
-			*err = true;
-			break;
-		}
 		case AST_NODE_WHILE: *err |= gen_control_while(*node); break;
 		case AST_NODE_RETURN: return gen_stmt_return(*node, err);
 		case AST_NODE_UNREACHABLE: return gen_stmt_unreachable();
@@ -123,12 +115,6 @@ Generate a (function) expression from `node`.
 Return `true` if error occurred.
 */
 static bool gen_expr_node(const AstNode *node) {
-	if (node->expr->oper != EXPR_FUNC) {
-		FMT_ERROR(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });
-
-		return true;
-	}
-
 	bool err = false;
 	gen_expr_function_call(node->expr, NULL, &err);
 	return err;

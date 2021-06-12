@@ -1,3 +1,2 @@
 ./test/sh/error/misc/invalid_block_in_assign.sk: Compilation error: line 4 column 2: unexpected code block
-./test/sh/error/misc/invalid_block_in_assign.sk: Warning: line 1 column 5: variable "x" should be constant
 ./test/sh/error/misc/invalid_block_in_assign.sk: Warning: line 1 column 5: variable "x" is unused

@@ -9,7 +9,6 @@
 #include "skull/semantic/func.h"
 
 
-
 static Type var_def_node_to_type(const AstNode *);
 static Variable *node_to_var(const AstNode *const);
 static Type func_get_type(const AstNode *, const AstNodeExpr *);
@@ -17,6 +16,22 @@ static Type func_get_type(const AstNode *, const AstNodeExpr *);
 
 bool validate_stmt_var_def(AstNode *node) {
 	return !!node_to_var(node);
+}
+
+bool validate_stmt_var_assign(AstNode *node) {
+	Variable *var = scope_find_var(node->token, true);
+	if (!var) return false;
+
+	if (var->is_const) {
+		FMT_ERROR(ERR_REASSIGN_CONST, {
+			.tok = node->token
+		});
+
+		return false;
+	}
+
+	var->was_reassigned = true;
+	return true;
 }
 
 /*
