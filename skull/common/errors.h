@@ -6,78 +6,70 @@
 
 #include "skull/parse/token.h"
 
-#define ERR_UNEXPECTED_TOKEN "unexpected token: \"%s\"\n"
-#define ERR_EOF_NO_BRACKET "Reached EOF, expected closing bracket"
-#define ERR_TYPE_MISMATCH "type mismatch: expected type \"%s\"\n"
-#define ERR_FUNC_TYPE_MISMATCH "expected param of type \"%s\", got \"%s\"\n"
-#define ERR_EXPECTED_SAME_TYPE "expected type \"%s\", got \"%s\"\n"
-#define ERR_ASSIGN_BAD_TYPE "cannot assign type \"%s\" to type \"%s\"\n"
-#define ERR_BAD_ESCAPE "bad string escape: \"%s\"\n"
-#define ERR_VAR_NOT_FOUND "variable \"%s\" not found\n"
-#define ERR_OVERFLOW "overflow occurred while parsing \"%s\"\n"
-#define ERR_MISSING_OPEN_BRAK "missing opening bracket"
-#define ERR_MISSING_CLOSING_PAREN "missing closing parenthesis"
-#define ERR_MISSING_DECLARATION "function \"%s\" missing declaration\n"
-#define ERR_MISSING_BLOCK "%s statement must be followed by code block\n"
-#define ERR_NO_CLOSING_COMMENT "expected closing \"#}\" for block comment"
-#define ERR_NO_CLOSING_QUOTE "expected closing quote"
-#define ERR_NO_VOID_ASSIGN \
-	"function returning type void cannot be assigned to variable \"%s\"\n"
-#define ERR_INVALID_INPUT "invalid input: \"%s\"\n"
-#define ERR_VAR_ALREADY_DEFINED "variable \"%s\" already defined\n"
-#define ERR_NON_INT_MAIN "returning non-int expression \"%s\" from main\n"
-#define ERR_NON_BOOL_EXPR "expected boolean expression"
-#define ERR_MAIN_RESERVED "cannot export function \"main\""
-#define ERR_NO_REDEFINE_FUNC "cannot redeclare function \"%s\"\n"
-#define ERR_NO_REDEFINE_VAR_AS_FUNC \
-	"cannot redeclare variable \"%s\" as function\n"
-#define ERR_NO_REDEFINE_FUNC_AS_VAR \
-	"cannot redeclare function \"%s\" as variable\n"
-#define ERR_ZERO_PARAM_FUNC \
-	"passing parameter to function that takes zero parameters"
-#define ERR_SHADOW_VAR "variable \"%s\" shadows existing variable\n"
-#define ERR_EXPECTED_RETURN "expected return value in function \"%s\"\n"
-#define ERR_NO_VOID_RETURN "unexpected return from void function \"%s\"\n"
-#define ERR_ELSE_MISSING_IF "else statement missing preceding if statement"
-#define ERR_UNEXPECTED_CODE_BLOCK "unexpected code block"
-#define ERR_EMPTY_BLOCK "code block cannot be empty"
-#define ERR_UNREACHABLE_CODE "unreachable code"
-#define ERR_REASSIGN_CONST "cannot reassign const variable \"%s\"\n"
-#define ERR_INVALID_EXPR "invalid expression near \"%s\"\n"
-#define ERR_NO_DANGLING_EXPR "expression cannot be used on its own"
-#define ERR_REDUNDANT_REASSIGN \
-	"redundant assignment of variable \"%s\" to itself\n"
-#define ERR_DIV_BY_ZERO "division by zero"
-#define ERR_NO_NESTED \
-	"cannot declare nested function \"%s\" as external or exported\n"
-#define ERR_TOP_LVL_ALIAS_ONLY \
-	"type aliases must be defined at the top level"
-#define ERR_NOT_COMPARIBLE "cannot compare value near \"%s\"\n"
-#define ERR_EXPECTED_COMMA "expected comma"
-#define ERR_UNCLOSED_FUNC_CALL "function call missing closing parenthesis"
-#define ERR_TYPE_NOT_FOUND "type \"%s\" could not be found\n"
-#define ERR_ALIAS_ALREADY_DEFINED "alias \"%s\" is already defined\n"
-#define ERR_ASSIGN_MISSING_EXPR "expected expression in assignment variable"
-#define ERR_RETURN_MISSING_EXPR "expected expression in return"
-#define ERR_EXPECTED_EXPR "expected expression after \"%s\"\n"
-#define ERR_NO_CONTROL_CHAR "control character cannot be used in rune"
-#define ERR_INVALID_NUM_PARAMS "invalid number of parameters"
-#define ERR_INVALID_COMMENT_START "invalid start of comment"
-#define ERR_ILLEGAL_SEQ_AT "illegal UTF8 sequence at character offset %s\n"
-#define ERR_ILLEGAL_SEQ "illegal UTF8 sequence in this region"
-#define ERR_POW_BAD_TYPE "cannot use type \"%s\" for power operator\n"
-#define ERR_EXPECTED_NEWLINE "expected a newline"
-
-#define WARN_VAR_NOT_CONST "variable \"%s\" should be constant\n"
-#define WARN_VAR_UNUSED "variable \"%s\" is unused\n"
-#define WARN_FUNC_UNUSED "function \"%s\" is unused\n"
-#define WARN_COND_ALWAYS_TRUE "condition is always true"
-#define WARN_COND_ALWAYS_FALSE "condition is always false"
-#define WARN_FILE_EMPTY "file is empty"
-#define WARN_NESTED_BLOCK_COMMENT \
-	"cannot put opening block comment in existing block comment"
-#define WARN_TRIVIAL_TYPE \
-	"explicit type \"%s\" can be trivialy deduced\n"
+typedef enum {
+	ERR_UNEXPECTED_TOKEN = 1000,
+	ERR_EOF_NO_BRACKET = 1001,
+	ERR_TYPE_MISMATCH = 1002,
+	ERR_FUNC_TYPE_MISMATCH = 1003,
+	ERR_EXPECTED_SAME_TYPE = 1004,
+	ERR_ASSIGN_BAD_TYPE = 1005,
+	ERR_BAD_ESCAPE = 1006,
+	ERR_VAR_NOT_FOUND = 1007,
+	ERR_OVERFLOW = 1008,
+	ERR_MISSING_OPEN_BRAK = 1009,
+	ERR_MISSING_CLOSING_PAREN = 1010,
+	ERR_MISSING_DECLARATION = 1011,
+	ERR_MISSING_BLOCK = 1012,
+	ERR_NO_CLOSING_COMMENT = 1013,
+	ERR_NO_CLOSING_QUOTE = 1014,
+	ERR_NO_VOID_ASSIGN = 1015,
+	ERR_INVALID_INPUT = 1016,
+	ERR_VAR_ALREADY_DEFINED = 1017,
+	ERR_NON_INT_MAIN = 1018,
+	ERR_NON_BOOL_EXPR = 1019,
+	ERR_MAIN_RESERVED = 1020,
+	ERR_NO_REDEFINE_FUNC = 1021,
+	ERR_NO_REDEFINE_VAR_AS_FUNC = 1022,
+	ERR_NO_REDEFINE_FUNC_AS_VAR = 1023,
+	ERR_ZERO_PARAM_FUNC = 1024,
+	ERR_SHADOW_VAR = 1025,
+	ERR_EXPECTED_RETURN = 1026,
+	ERR_NO_VOID_RETURN = 1027,
+	ERR_ELSE_MISSING_IF = 1028,
+	ERR_UNEXPECTED_CODE_BLOCK = 1029,
+	ERR_EMPTY_BLOCK = 1030,
+	ERR_UNREACHABLE_CODE = 1031,
+	ERR_REASSIGN_CONST = 1032,
+	ERR_INVALID_EXPR = 1033,
+	ERR_NO_DANGLING_EXPR = 1034,
+	ERR_REDUNDANT_REASSIGN = 1035,
+	ERR_DIV_BY_ZERO = 1036,
+	ERR_NO_NESTED = 1037,
+	ERR_TOP_LVL_ALIAS_ONLY = 1038,
+	ERR_NOT_COMPARIBLE = 1039,
+	ERR_EXPECTED_COMMA = 1040,
+	ERR_UNCLOSED_FUNC_CALL = 1041,
+	ERR_TYPE_NOT_FOUND = 1042,
+	ERR_ALIAS_ALREADY_DEFINED = 1043,
+	ERR_ASSIGN_MISSING_EXPR = 1044,
+	ERR_RETURN_MISSING_EXPR = 1045,
+	ERR_EXPECTED_EXPR = 1046,
+	ERR_NO_CONTROL_CHAR = 1047,
+	ERR_INVALID_NUM_PARAMS = 1048,
+	ERR_INVALID_COMMENT_START = 1049,
+	ERR_ILLEGAL_SEQ_AT = 1050,
+	ERR_ILLEGAL_SEQ = 1051,
+	ERR_POW_BAD_TYPE = 1052,
+	ERR_EXPECTED_NEWLINE = 1053,
+	WARN_VAR_NOT_CONST = 1054,
+	WARN_VAR_UNUSED = 1055,
+	WARN_FUNC_UNUSED = 1056,
+	WARN_COND_ALWAYS_TRUE = 1057,
+	WARN_COND_ALWAYS_FALSE = 1058,
+	WARN_FILE_EMPTY = 1059,
+	WARN_NESTED_BLOCK_COMMENT = 1060,
+	WARN_TRIVIAL_TYPE = 1061
+} ErrorCode;
 
 typedef struct Variable Variable;
 typedef const char * Type;
@@ -123,6 +115,6 @@ typedef enum {
 	free(_fmt_error_str); \
 }
 
-char *fmt_error(ErrorType, const char *fmt, ErrorMsg []);
+char *fmt_error(ErrorType, ErrorCode, ErrorMsg []);
 
 void fmt_error_stringify(ErrorMsg *const);

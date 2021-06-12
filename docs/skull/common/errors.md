@@ -26,7 +26,7 @@ static bool do_show_color(void)
 > Return whether color output should be displayed.
 
 ```c
-char *fmt_error(ErrorType type, const char *const fmt, ErrorMsg msgs[])
+char *fmt_error(ErrorType type, ErrorCode error_code, ErrorMsg msgs[])
 ```
 
 > Returns formatted error message.
