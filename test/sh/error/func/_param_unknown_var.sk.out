@@ -1,2 +1,1 @@
 ./test/sh/error/func/param_unknown_var.sk: Compilation error: line 3 column 3: variable "fail" not found
-./test/sh/error/func/param_unknown_var.sk: Warning: variable "x" is unused

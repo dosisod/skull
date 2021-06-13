@@ -98,6 +98,8 @@ bool validate_stmt_func_decl(AstNode *node) {
 			true
 		);
 
+		if (func->is_external) variable_no_warnings(param_var);
+
 		if (!scope_add_var(&SKULL_STATE.scope, param_var)) {
 			FMT_ERROR(ERR_SHADOW_VAR, { .var = param_var });
 

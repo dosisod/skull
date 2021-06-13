@@ -1,2 +1,1 @@
 ./test/sh/error/func/bad_param_type.sk: Compilation error: line 3 column 3: expected param of type "Int", got "Bool"
-./test/sh/error/func/bad_param_type.sk: Warning: variable "num" is unused
