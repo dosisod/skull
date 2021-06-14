@@ -24,6 +24,46 @@ Expr node_to_expr(Type type, const AstNode *const node, bool *err)
 > Set `err` if an error occurred.
 
 ```c
+static Expr gen_expr(Type type, const AstNodeExpr *const expr, bool *err)
+```
+
+> Return expression for operation `oper` for `expr`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
+```
+
+> Return expression for identifier `token` with type `type`.
+> \
+> If `type` is not set, the expression type will not be checked.
+> \
+> Set `err` if an error occurred.
+
+```c
+static Expr ident_to_expr(const Token *const token, Variable **variable)
+```
+
+> Convert identifier `token` to an expression.
+> \
+> Store found variable (if found) in `variable`.
+
+```c
+static Expr gen_expr_const(Type type, const Token *const token, bool *err)
+```
+
+> Make an expression from `token`, checking for compatibility with `type`.
+> \
+> Set `err` if an error occurred.
+
+```c
+static Expr token_to_simple_expr(const Token *const token, bool *err)
+```
+
+> Make a simple expression (const literal) from `token`.
+
+```c
 static Expr gen_expr_math_oper(Type type, LLVMValueRef lhs, LLVMValueRef rhs, LLVMBuildX int_func, LLVMBuildX float_func)
 ```
 
@@ -182,44 +222,4 @@ static Expr gen_expr_xor(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return result of logical "xor" operation of `lhs` and `rhs`.
-
-```c
-static Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
-```
-
-> Return expression for identifier `token` with type `type`.
-> \
-> If `type` is not set, the expression type will not be checked.
-> \
-> Set `err` if an error occurred.
-
-```c
-static Expr gen_expr(Type type, const AstNodeExpr *const expr, bool *err)
-```
-
-> Return expression for operation `oper` for `expr`.
-> \
-> Set `err` if an error occurred.
-
-```c
-static Expr ident_to_expr(const Token *const token, Variable **variable)
-```
-
-> Convert identifier `token` to an expression.
-> \
-> Store found variable (if found) in `variable`.
-
-```c
-static Expr gen_expr_const(Type type, const Token *const token, bool *err)
-```
-
-> Make an expression from `token`, checking for compatibility with `type`.
-> \
-> Set `err` if an error occurred.
-
-```c
-static Expr token_to_simple_expr(const Token *const token, bool *err)
-```
-
-> Make a simple expression (const literal) from `token`.
 
