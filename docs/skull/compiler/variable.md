@@ -10,6 +10,7 @@ typedef struct Variable {
 	_Bool was_reassigned : 1;
 	_Bool was_read : 1;
 	_Bool implicitly_typed : 1;
+	_Bool is_exported : 1;
 
 	Location location;
 

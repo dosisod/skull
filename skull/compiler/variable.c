@@ -51,7 +51,7 @@ void free_variable(Variable *var) {
 				.var = var, .loc = &var->location
 			});
 
-		if (!var->was_read)
+		if (!var->was_read && !var->is_exported)
 			FMT_WARN(WARN_VAR_UNUSED, {
 				.var = var, .loc = &var->location
 			});

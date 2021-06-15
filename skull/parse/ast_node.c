@@ -102,6 +102,7 @@ Set `err` if an error occurred.
 static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 	bool is_const = true;
 	bool is_implicit = true;
+	bool is_exported = false;
 
 	// too lazy to dereference each `token`
 	Token *token = *_token;
@@ -110,9 +111,13 @@ static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 	if (token->type == TOKEN_KW_MUT) {
 		is_const = false;
 		token = token->next;
-
-		if (!token) return false;
 	}
+	else if (token->type == TOKEN_KW_EXPORT) {
+		is_exported = true;
+		token = token->next;
+	}
+
+	if (!token) return false;
 
 	if (token->type == TOKEN_NEW_IDENTIFIER &&
 		token->next &&
@@ -135,6 +140,7 @@ static bool try_parse_var_def(Token **_token, AstNode **node, bool *err) {
 	*(*node)->var_def = (AstNodeVarDef){
 		.is_const = is_const,
 		.is_implicit = is_implicit,
+		.is_exported = is_exported,
 		.name_tok = token
 	};
 

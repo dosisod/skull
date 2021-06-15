@@ -66,24 +66,28 @@ Assign `value` to `var`.
 static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	const bool is_first_assign = !var->ref;
 	const bool is_const_literal = LLVMIsConstant(value);
+	const bool is_export = var->is_exported;
 
 	const bool is_global = is_first_assign ?
 		SKULL_STATE.current_func == SKULL_STATE.main_func :
 		var->is_global;
 
 	if (is_first_assign) {
-		if (is_global && (!var->is_const || !is_const_literal)) {
+		if (is_global && (!var->is_const || !is_const_literal || is_export)) {
 			var->ref = LLVMAddGlobal(
 				SKULL_STATE.module,
 				gen_llvm_type(var->type),
 				var->name
 			);
 
-			LLVMSetLinkage(var->ref, LLVMPrivateLinkage);
+			LLVMSetLinkage(
+				var->ref,
+				is_export ? LLVMExternalLinkage : LLVMPrivateLinkage
+			);
 
 			LLVMSetInitializer(
 				var->ref,
-				LLVMConstNull(gen_llvm_type(var->type))
+				is_export ? value : LLVMConstNull(gen_llvm_type(var->type))
 			);
 		}
 		else if (!is_global && !var->is_const) {

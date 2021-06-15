@@ -69,6 +69,7 @@ static Variable *node_to_var(const AstNode *const node) {
 	);
 	free(name);
 	var->implicitly_typed = node->var_def->is_implicit;
+	var->is_exported = node->var_def->is_exported;
 
 	if (find_func_by_name(var->name)) {
 		FMT_ERROR(ERR_NO_REDEFINE_FUNC_AS_VAR, {

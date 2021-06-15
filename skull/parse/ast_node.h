@@ -74,6 +74,7 @@ Used to store special data about `AST_NODE_VAR_DEF` nodes.
 typedef struct AstNodeVarDef {
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
+	_Bool is_exported: 1;
 	const Token *name_tok;
 	AstNode *expr_node;
 } AstNodeVarDef;
