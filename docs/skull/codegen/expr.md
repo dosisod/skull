@@ -50,15 +50,7 @@ static Expr ident_to_expr(const Token *const token, Variable **variable)
 > Store found variable (if found) in `variable`.
 
 ```c
-static Expr gen_expr_const(Type type, const Token *const token, bool *err)
-```
-
-> Make an expression from `token`, checking for compatibility with `type`.
-> \
-> Set `err` if an error occurred.
-
-```c
-static Expr token_to_simple_expr(const Token *const token, bool *err)
+static Expr gen_expr_const(const Token *const token, bool *err)
 ```
 
 > Make a simple expression (const literal) from `token`.

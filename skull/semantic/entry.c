@@ -15,7 +15,7 @@ static bool validate_ast_node(AstNode *);
 static bool validate_stmt_return(AstNode *);
 static bool validate_stmt_type_alias(AstNode *);
 static bool validate_expr(AstNode *);
-static bool validate_stmt_func_call(AstNode *);
+static bool validate_stmt_func_call(AstNodeFunctionCall *);
 static bool validate_control_else(AstNode *);
 bool assert_sane_child(AstNode *);
 
@@ -97,14 +97,15 @@ static bool validate_stmt_type_alias(AstNode *node) {
 }
 
 static bool validate_expr(AstNode *node) {
-	if (node->expr->oper == EXPR_FUNC) return validate_stmt_func_call(node);
+	if (node->expr->oper == EXPR_FUNC)
+		return validate_stmt_func_call(node->expr->func_call);
 
 	FMT_ERROR(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });
 	return false;
 }
 
-static bool validate_stmt_func_call(AstNode *node) {
-	const Token *func_name_token = node->expr->func_call->func_name_tok;
+static bool validate_stmt_func_call(AstNodeFunctionCall *func_call) {
+	const Token *func_name_token = func_call->func_name_tok;
 	char *const func_name = token_mbs_str(func_name_token);
 
 	FunctionDeclaration *function = find_func_by_name(func_name);
@@ -122,7 +123,7 @@ static bool validate_stmt_func_call(AstNode *node) {
 
 	unsigned short num_params = function->num_params;
 
-	if (num_params != node->expr->func_call->num_values) {
+	if (num_params != func_call->num_values) {
 		FMT_ERROR(ERR_INVALID_NUM_PARAMS, {
 			.loc = &func_name_token->location
 		});
@@ -130,7 +131,7 @@ static bool validate_stmt_func_call(AstNode *node) {
 		return false;
 	}
 
-	const AstNode *param = node->expr->func_call->params;
+	const AstNode *param = func_call->params;
 
 	if (num_params == 0 && param->token) {
 		FMT_ERROR(ERR_ZERO_PARAM_FUNC, { .loc = &param->token->location });

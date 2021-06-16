@@ -30,9 +30,8 @@ static Operation gen_expr_add, gen_expr_sub, gen_expr_mult,
 
 static OperationWithErr gen_expr_div, gen_expr_mod, gen_expr_pow;
 
-static Expr gen_expr_const(Type, const Token *const, bool *);
+static Expr gen_expr_const(const Token *const, bool *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
-static Expr token_to_simple_expr(const Token *const, bool *);
 static Expr gen_expr(Type, const AstNodeExpr *const, bool *);
 static bool is_div_by_zero(LLVMValueRef);
 static Expr ident_to_expr(const Token *const, Variable **);
@@ -116,7 +115,7 @@ static Expr gen_expr(
 		case EXPR_IDENTIFIER:
 			return gen_expr_identifier(type, expr->lhs.tok, err);
 		case EXPR_CONST:
-			return gen_expr_const(type, expr->lhs.tok, err);
+			return gen_expr_const(expr->lhs.tok, err);
 		case EXPR_FUNC:
 			return gen_expr_function_call(expr, type, err);
 		default: return (Expr){0};
@@ -249,34 +248,9 @@ static Expr ident_to_expr(
 }
 
 /*
-Make an expression from `token`, checking for compatibility with `type`.
-
-Set `err` if an error occurred.
-*/
-static Expr gen_expr_const(
-	Type type,
-	const Token *const token,
-	bool *err
-) {
-	const Expr expr = token_to_simple_expr(token, err);
-
-	if (!expr.type && !*err) {
-		FMT_ERROR(ERR_TYPE_MISMATCH, {
-			.loc = &token->location,
-			.type = type
-		});
-
-		*err = true;
-		return (Expr){0};
-	}
-
-	return expr;
-}
-
-/*
 Make a simple expression (const literal) from `token`.
 */
-static Expr token_to_simple_expr(const Token *const token, bool *err) {
+static Expr gen_expr_const(const Token *const token, bool *err) {
 	LLVMValueRef value = NULL;
 	Type type = NULL;
 
