@@ -5,6 +5,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/assign.h"
+#include "skull/semantic/expr.h"
 #include "skull/semantic/func.h"
 
 #include "skull/semantic/entry.h"
@@ -14,8 +15,6 @@ static bool _validate_ast_tree(AstNode *);
 static bool validate_ast_node(AstNode *);
 static bool validate_stmt_return(AstNode *);
 static bool validate_stmt_type_alias(AstNode *);
-static bool validate_expr(AstNode *);
-static bool validate_stmt_func_call(AstNodeFunctionCall *);
 static bool validate_control_else(AstNode *);
 bool assert_sane_child(AstNode *);
 
@@ -94,52 +93,6 @@ static bool validate_stmt_type_alias(AstNode *node) {
 	});
 
 	return false;
-}
-
-static bool validate_expr(AstNode *node) {
-	if (node->expr->oper == EXPR_FUNC)
-		return validate_stmt_func_call(node->expr->func_call);
-
-	FMT_ERROR(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });
-	return false;
-}
-
-static bool validate_stmt_func_call(AstNodeFunctionCall *func_call) {
-	const Token *func_name_token = func_call->func_name_tok;
-	char *const func_name = token_mbs_str(func_name_token);
-
-	FunctionDeclaration *function = find_func_by_name(func_name);
-	free(func_name);
-
-	if (!function) {
-		FMT_ERROR(ERR_MISSING_DECLARATION, {
-			.tok = func_name_token
-		});
-
-		return false;
-	}
-
-	function->was_called = true;
-
-	unsigned short num_params = function->num_params;
-
-	if (num_params != func_call->num_values) {
-		FMT_ERROR(ERR_INVALID_NUM_PARAMS, {
-			.loc = &func_name_token->location
-		});
-
-		return false;
-	}
-
-	const AstNode *param = func_call->params;
-
-	if (num_params == 0 && param->token) {
-		FMT_ERROR(ERR_ZERO_PARAM_FUNC, { .loc = &param->token->location });
-
-		return false;
-	}
-
-	return true;
 }
 
 static bool validate_control_else(AstNode *node) {
