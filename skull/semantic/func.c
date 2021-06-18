@@ -72,31 +72,32 @@ bool validate_stmt_func_decl(AstNode *node) {
 	func->is_external = is_external;
 	func->is_export = is_export;
 	func->return_type = return_type;
-	func->param_names = node->func_proto->param_names;
 	func->num_params = node->func_proto->num_params;
+	func->params = node->func_proto->params;
 
 	node->func_proto->func = func;
 	state_add_func(func);
 
-	char **param_type_names = node->func_proto->param_type_names;
-	if (!param_type_names) return true;
+	AstNodeFunctionParam **params = node->func_proto->params;
+	if (!params) return true;
 
 	func->param_types = Calloc(func->num_params, sizeof(Type));
 
 	for RANGE(i, func->num_params) {
-		func->param_types[i] = find_type(param_type_names[i]);
+		func->param_types[i] = find_type(params[i]->type_name);
 
 		if (!func->param_types[i]) {
-			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = param_type_names[i] });
+			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = params[i]->type_name });
 
 			return false;
 		}
 
 		Variable *const param_var = make_variable(
 			func->param_types[i],
-			func->param_names[i],
+			node->func_proto->params[i]->param_name,
 			true
 		);
+		func->params[i]->var = param_var;
 
 		if (func->is_external) variable_no_warnings(param_var);
 

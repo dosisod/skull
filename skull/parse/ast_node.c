@@ -298,6 +298,14 @@ static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err) {
 	return build_rhs_expr(NULL, oper, token, err);
 }
 
+static void free_param(AstNodeFunctionParam *param) {
+	if (!param) return;
+
+	free(param->type_name);
+	free(param->param_name);
+	free(param);
+}
+
 /*
 Try to parse a function prototype from `_token`.
 */
@@ -324,8 +332,7 @@ static bool try_parse_function_proto(
 	const Token *const func_name_token = token;
 	token = token->next->next;
 
-	Vector *param_names = make_vector();
-	Vector *param_type_names = make_vector();
+	Vector *params = make_vector();
 
 	bool is_proto = false;
 
@@ -335,8 +342,12 @@ static bool try_parse_function_proto(
 	) {
 		is_proto = true;
 
-		vector_push(param_names, token_str(token));
-		vector_push(param_type_names, token_mbs_str(token->next));
+		AstNodeFunctionParam *param;
+		param = Malloc(sizeof *param);
+		param->type_name = token_mbs_str(token->next);
+		param->param_name = token_str(token);
+
+		vector_push(params, param);
 
 		token = token->next->next;
 		if (token->type != TOKEN_COMMA) break;
@@ -363,8 +374,7 @@ static bool try_parse_function_proto(
 		TOKEN_PAREN_CLOSE,
 		token_type)
 	) {
-		free_vector(param_names, free);
-		free_vector(param_type_names, free);
+		free_vector(params, (void(*)(void *))free_param);
 
 		if (is_proto) {
 			FMT_ERROR(ERR_EXPECTED_COMMA, {
@@ -378,13 +388,14 @@ static bool try_parse_function_proto(
 		return false;
 	}
 
-	const unsigned short num_params = (unsigned short)param_names->length;
+	const unsigned short num_params = (unsigned short)params->length;
 
-	(*node)->func_proto = Malloc(sizeof(AstNodeFunctionProto));
+	(*node)->func_proto = Malloc(
+		sizeof(AstNodeFunctionProto) +
+		(num_params * sizeof(AstNodeFunctionParam))
+	);
 	*(*node)->func_proto = (AstNodeFunctionProto){
 		.name_tok = func_name_token,
-		.param_type_names = num_params ? vector_freeze(param_type_names) : NULL,
-		.param_names = num_params ? vector_freeze(param_names) : NULL,
 		.return_type_name = return_type_name ?
 			return_type_name :
 			strdup(TYPE_VOID),
@@ -393,8 +404,19 @@ static bool try_parse_function_proto(
 		.num_params = num_params
 	};
 
-	free_vector(param_names, NULL);
-	free_vector(param_type_names, NULL);
+	if (num_params) {
+		memcpy(
+			&(*node)->func_proto->params,
+			vector_freeze(params),
+			(num_params * sizeof(AstNodeFunctionParam))
+		);
+
+		// since the array is frozen, the elements will not be allowed
+		// to be freed, so manually free them.
+		free(params->elements);
+	}
+
+	free_vector(params, NULL);
 
 	*_token = token;
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
@@ -862,20 +884,13 @@ static void free_ast_tree_(AstNode *node) {
 		if (node->type == AST_NODE_FUNCTION_PROTO) {
 			free(node->func_proto->return_type_name);
 
-			char **param_type_names = \
-				node->func_proto->param_type_names;
-
-			char32_t **param_names = node->func_proto->param_names;
-
 			unsigned num_params = node->func_proto->num_params;
 
-			for RANGE(i, num_params) { // NOLINT
-				free(param_type_names[i]);
-				free(param_names[i]);
-			}
+			AstNodeFunctionParam **params = node->func_proto->params;
 
-			free(param_type_names);
-			free(param_names);
+			for RANGE(i, num_params) { // NOLINT
+				free_param(params[i]);
+			}
 
 			free(node->func_proto);
 		}

@@ -181,10 +181,7 @@ static bool gen_function_def(
 		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
 
 		for RANGE(i, func->num_params) {
-			// TODO(dosisod): store variable directly
-			char *tmp = c32stombs(func->param_names[i], NULL);
-			Variable *param_var = scope_find_name(SKULL_STATE.scope, tmp);
-			free(tmp);
+			Variable *param_var = func->params[i]->var;
 
 			param_var->ref = next_param;
 			next_param = LLVMGetNextParam(next_param);

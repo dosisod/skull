@@ -17,6 +17,8 @@ typedef struct FunctionDeclaration {
 	_Bool was_called : 1;
 	_Bool is_external : 1;
 	_Bool is_export : 1;
+
+	AstNodeFunctionParam **params;
 }
 ```
 
@@ -35,8 +37,6 @@ typedef struct FunctionDeclaration {
 > `param_types` is the Skull type for each function param.
 > \
 > `return_type` is the Skull type that the function returns.
-> \
-> `next` stores the next function declaration.
 
 ```c
 bool gen_stmt_func_decl(const AstNode *const node)

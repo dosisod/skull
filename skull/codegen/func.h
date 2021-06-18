@@ -23,8 +23,6 @@ Stores a function declaration.
 `param_types` is the Skull type for each function param.
 
 `return_type` is the Skull type that the function returns.
-
-`next` stores the next function declaration.
 */
 typedef struct FunctionDeclaration {
 	char *name;
@@ -42,6 +40,8 @@ typedef struct FunctionDeclaration {
 	_Bool was_called : 1;
 	_Bool is_external : 1;
 	_Bool is_export : 1;
+
+	AstNodeFunctionParam **params;
 } FunctionDeclaration;
 
 _Bool gen_stmt_func_decl(const AstNode *const);

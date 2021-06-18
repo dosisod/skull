@@ -32,6 +32,7 @@ typedef struct AstNodeFunctionProto AstNodeFunctionProto;
 typedef struct AstNodeFunctionCall AstNodeFunctionCall;
 typedef struct AstNodeExpr AstNodeExpr;
 typedef struct FunctionDeclaration FunctionDeclaration;
+typedef struct Variable Variable;
 
 /*
 An `AstNode` abstractly stores data about parsed code.
@@ -80,13 +81,19 @@ typedef struct AstNodeVarDef {
 } AstNodeVarDef;
 
 /*
+Store information about a function's parameters (name, type, etc)
+*/
+typedef struct AstNodeFunctionParam {
+	char *type_name;
+	char32_t *param_name;
+	Variable *var;
+} AstNodeFunctionParam;
+
+/*
 Used to store special data about `AST_NODE_FUNCTION_PROTO` nodes.
 */
 typedef struct AstNodeFunctionProto {
 	const Token *name_tok;
-
-	char **param_type_names;
-	char32_t **param_names;
 
 	char *return_type_name;
 
@@ -96,6 +103,8 @@ typedef struct AstNodeFunctionProto {
 
 	_Bool is_external : 1;
 	_Bool is_export : 1;
+
+	AstNodeFunctionParam *params[];
 } AstNodeFunctionProto;
 
 /*

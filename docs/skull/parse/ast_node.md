@@ -49,11 +49,18 @@ typedef struct AstNodeVarDef {
 > Used to store special data about `AST_NODE_VAR_DEF` nodes.
 
 ```c
+typedef struct AstNodeFunctionParam {
+	char *type_name;
+	char32_t *param_name;
+	Variable *var;
+}
+```
+
+> Store information about a function's parameters (name, type, etc)
+
+```c
 typedef struct AstNodeFunctionProto {
 	const Token *name_tok;
-
-	char **param_type_names;
-	char32_t **param_names;
 
 	char *return_type_name;
 
@@ -63,6 +70,8 @@ typedef struct AstNodeFunctionProto {
 
 	_Bool is_external : 1;
 	_Bool is_export : 1;
+
+	AstNodeFunctionParam *params[];
 }
 ```
 
