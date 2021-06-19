@@ -68,7 +68,11 @@ static bool validate_ast_node(AstNode *node) {
 }
 
 static bool validate_stmt_return(AstNode *node) {
-	return assert_sane_child(node->next);
+	if (!assert_sane_child(node->next)) return false;
+
+	if (node->expr) return validate_expr(node->expr_node);
+
+	return true;
 }
 
 static bool validate_stmt_type_alias(AstNode *node) {

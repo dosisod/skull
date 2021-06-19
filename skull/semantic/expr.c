@@ -6,9 +6,9 @@
 #include "skull/semantic/expr.h"
 
 
-static bool validate_stmt_func_call(AstNodeFunctionCall *);
+static bool validate_stmt_func_call(const AstNodeFunctionCall *);
 
-bool validate_expr(AstNode *node) {
+bool validate_expr(const AstNode *node) {
 	if (node->expr->oper == EXPR_FUNC)
 		return validate_stmt_func_call(node->expr->func_call);
 
@@ -23,7 +23,7 @@ bool validate_expr_func(AstNode *node) {
 	return false;
 }
 
-static bool validate_stmt_func_call(AstNodeFunctionCall *func_call) {
+static bool validate_stmt_func_call(const AstNodeFunctionCall *func_call) {
 	const Token *func_name_token = func_call->func_name_tok;
 	char *const func_name = token_mbs_str(func_name_token);
 
@@ -56,6 +56,14 @@ static bool validate_stmt_func_call(AstNodeFunctionCall *func_call) {
 		FMT_ERROR(ERR_ZERO_PARAM_FUNC, { .loc = &param->token->location });
 
 		return false;
+	}
+
+	if (num_params) {
+		while (num_params) {
+			validate_expr(param);
+			param = param->next;
+			num_params--;
+		}
 	}
 
 	return true;
