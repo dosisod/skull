@@ -61,7 +61,7 @@ static bool validate_ast_node(AstNode *node) {
 		case AST_NODE_TYPE_ALIAS: return validate_stmt_type_alias(node);
 		case AST_NODE_VAR_DEF: return validate_stmt_var_def(node);
 		case AST_NODE_VAR_ASSIGN: return validate_stmt_var_assign(node);
-		case AST_NODE_EXPR: return validate_expr(node);
+		case AST_NODE_EXPR: return validate_expr_func(node);
 		case AST_NODE_ELSE: return validate_control_else(node);
 		default: return true;
 	}

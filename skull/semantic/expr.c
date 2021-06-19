@@ -12,6 +12,13 @@ bool validate_expr(AstNode *node) {
 	if (node->expr->oper == EXPR_FUNC)
 		return validate_stmt_func_call(node->expr->func_call);
 
+	return true;
+}
+
+bool validate_expr_func(AstNode *node) {
+	if (node->expr->oper == EXPR_FUNC)
+		return validate_stmt_func_call(node->expr->func_call);
+
 	FMT_ERROR(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });
 	return false;
 }

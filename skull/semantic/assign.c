@@ -12,10 +12,14 @@
 static Type var_def_node_to_type(const AstNode *);
 static Variable *node_to_var(const AstNode *const);
 static Type func_get_type(const AstNode *, const AstNodeExpr *);
+bool validate_expr(AstNode *);
 
 
 bool validate_stmt_var_def(AstNode *node) {
-	return !!node_to_var(node);
+	const bool added = !!node_to_var(node);
+	if (!added) return false;
+
+	return validate_expr(node->var_def->expr_node);
 }
 
 bool validate_stmt_var_assign(AstNode *node) {
@@ -31,7 +35,8 @@ bool validate_stmt_var_assign(AstNode *node) {
 	}
 
 	var->was_reassigned = true;
-	return true;
+
+	return validate_expr(node->expr_node);
 }
 
 /*
