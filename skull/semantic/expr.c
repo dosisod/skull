@@ -17,7 +17,7 @@ static bool _validate_expr(const AstNodeExpr *expr) {
 	const ExprType oper = expr->oper;
 
 	if (oper == EXPR_FUNC)
-		return validate_stmt_func_call(expr->func_call);
+		return validate_stmt_func_call(expr->lhs.func_call);
 
 	switch (oper) {
 		case EXPR_UNKNOWN:
@@ -45,7 +45,7 @@ static bool _validate_expr(const AstNodeExpr *expr) {
 
 bool validate_expr_func(AstNode *node) {
 	if (node->expr->oper == EXPR_FUNC)
-		return validate_stmt_func_call(node->expr->func_call);
+		return validate_stmt_func_call(node->expr->lhs.func_call);
 
 	FMT_ERROR(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });
 	return false;

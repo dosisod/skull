@@ -124,8 +124,8 @@ static Expr gen_expr(
 	if (*err) return (Expr){0};
 
 	const Token *lhs_token = expr->lhs.expr ?
-		(expr->lhs.expr->func_call ?
-			expr->lhs.expr->func_call->func_name_tok :
+		(expr->lhs.expr->oper == EXPR_FUNC ?
+			expr->lhs.expr->lhs.func_call->func_name_tok :
 			expr->lhs.expr->lhs.tok) :
 			NULL;
 

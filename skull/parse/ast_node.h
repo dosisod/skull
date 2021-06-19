@@ -149,6 +149,7 @@ typedef struct AstNodeExpr {
 	union {
 		const Token *tok;
 		const AstNodeExpr *expr;
+		AstNodeFunctionCall *func_call;
 	} lhs;
 
 	union {
@@ -157,9 +158,6 @@ typedef struct AstNodeExpr {
 	} rhs;
 
 	ExprType oper;
-
-	// only for use in function expressions
-	AstNodeFunctionCall *func_call;
 } AstNodeExpr;
 
 /*

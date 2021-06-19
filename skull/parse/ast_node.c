@@ -810,8 +810,8 @@ static AstNodeExpr *parse_func_call(Token **token, bool *err) {
 		.oper = EXPR_FUNC
 	};
 
-	expr_node->func_call = Malloc(sizeof(AstNodeFunctionCall));
-	*expr_node->func_call = (AstNodeFunctionCall){
+	expr_node->lhs.func_call = Malloc(sizeof(AstNodeFunctionCall));
+	*expr_node->lhs.func_call = (AstNodeFunctionCall){
 		.func_name_tok = func_name_token,
 		.params = child_copy,
 		.num_values = num_values
@@ -863,8 +863,8 @@ static void free_expr_node(AstNodeExpr *expr) {
 		return;
 	}
 	if (expr->oper == EXPR_FUNC) {
-		free_ast_tree_((void *)expr->func_call->params);
-		free(expr->func_call);
+		free_ast_tree_((void *)expr->lhs.func_call->params);
+		free(expr->lhs.func_call);
 		free(expr);
 		return;
 	}

@@ -177,7 +177,7 @@ static Type var_def_node_to_type(const AstNode *node) {
 }
 
 static Type func_get_type(const AstNode *node, const AstNodeExpr *expr) {
-	const Token *func_name_token = expr->func_call->func_name_tok;
+	const Token *func_name_token = expr->lhs.func_call->func_name_tok;
 
 	char *const func_name = token_mbs_str(func_name_token);
 
