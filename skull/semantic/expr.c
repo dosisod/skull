@@ -7,10 +7,38 @@
 
 
 static bool validate_stmt_func_call(const AstNodeFunctionCall *);
+static bool _validate_expr(const AstNodeExpr *);
 
 bool validate_expr(const AstNode *node) {
-	if (node->expr->oper == EXPR_FUNC)
-		return validate_stmt_func_call(node->expr->func_call);
+	return _validate_expr(node->expr);
+}
+
+static bool _validate_expr(const AstNodeExpr *expr) {
+	const ExprType oper = expr->oper;
+
+	if (oper == EXPR_FUNC)
+		return validate_stmt_func_call(expr->func_call);
+
+	switch (oper) {
+		case EXPR_UNKNOWN:
+		case EXPR_IDENTIFIER:
+		case EXPR_CONST:
+			// these are opers that cannot have a nested expr
+			return true;
+		default: break;
+	}
+
+	bool is_binary = true;
+
+	switch (oper) {
+		case EXPR_UNARY_NEG:
+		case EXPR_NOT:
+			is_binary = false; break;
+		default: break;
+	}
+
+	if (!_validate_expr(expr->rhs.expr)) return false;
+	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
 
 	return true;
 }
