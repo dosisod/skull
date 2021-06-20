@@ -157,12 +157,12 @@ static bool gen_control_if_(
 	AstNode *next_non_comment = (*node)->next;
 
 	while (next_non_comment) {
-		if (next_non_comment->type == AST_NODE_ELIF ||
-			next_non_comment->type == AST_NODE_ELSE
-		) {
-			break;
+		if (next_non_comment->type == AST_NODE_COMMENT) {
+			next_non_comment = next_non_comment->next;
+			continue;
 		}
-		next_non_comment = next_non_comment->next;
+
+		break;
 	}
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(

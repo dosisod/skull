@@ -1,0 +1,7 @@
+if true {
+	noop
+}
+x := 1
+elif true {
+	noop
+}
