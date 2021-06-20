@@ -15,7 +15,7 @@ static bool _validate_ast_tree(AstNode *);
 static bool validate_ast_node(AstNode *);
 static bool validate_stmt_return(AstNode *);
 static bool validate_stmt_type_alias(AstNode *);
-static bool validate_control_else(AstNode *);
+static bool validate_control_else(const AstNode *);
 static bool validate_control_while(AstNode *);
 bool assert_sane_child(AstNode *);
 
@@ -151,14 +151,18 @@ static bool validate_stmt_type_alias(AstNode *node) {
 	return false;
 }
 
-static bool validate_control_else(AstNode *node) {
+static bool validate_control_else(const AstNode *node) {
 	const AstNode *last = node->last;
 
-	if (last && (last->type == AST_NODE_IF ||
-		last->type == AST_NODE_ELIF ||
-		last->type == AST_NODE_ELSE ||
-		last->type == AST_NODE_COMMENT
-	)) return true;
+	if (last) {
+		switch (last->type) {
+			case AST_NODE_COMMENT: return validate_control_else(last);
+			case AST_NODE_IF:
+			case AST_NODE_ELIF:
+				return true;
+			default: break;
+		}
+	}
 
 	FMT_ERROR(ERR_ELSE_MISSING_IF, {
 		.loc = &node->token->location
