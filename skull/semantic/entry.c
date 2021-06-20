@@ -16,7 +16,9 @@ static bool validate_ast_node(const AstNode *);
 static bool validate_stmt_return(const AstNode *);
 static bool validate_stmt_type_alias(const AstNode *);
 static bool validate_control_else(const AstNode *);
+static bool validate_control_elif(const AstNode *);
 static bool validate_control_while(const AstNode *);
+static bool validate_control_not_missing_if(const AstNode *);
 bool assert_sane_child(const AstNode *);
 
 /*
@@ -64,6 +66,7 @@ static bool validate_ast_node(const AstNode *node) {
 		case AST_NODE_VAR_ASSIGN: return validate_stmt_var_assign(node);
 		case AST_NODE_EXPR: return validate_expr_func(node);
 		case AST_NODE_ELSE: return validate_control_else(node);
+		case AST_NODE_ELIF: return validate_control_elif(node);
 		case AST_NODE_WHILE: return validate_control_while(node);
 		default: return true;
 	}
@@ -152,6 +155,15 @@ static bool validate_stmt_type_alias(const AstNode *node) {
 }
 
 static bool validate_control_else(const AstNode *node) {
+	return validate_control_not_missing_if(node);
+}
+
+static bool validate_control_elif(const AstNode *node) {
+	// TODO(dosisod): check expression
+	return validate_control_not_missing_if(node);
+}
+
+static bool validate_control_not_missing_if(const AstNode *node) {
 	const AstNode *last = node->last;
 
 	if (last) {
@@ -164,7 +176,7 @@ static bool validate_control_else(const AstNode *node) {
 		}
 	}
 
-	FMT_ERROR(ERR_ELSE_MISSING_IF, {
+	FMT_ERROR(ERR_ELSE_ELIF_MISSING_IF, {
 		.loc = &node->token->location
 	});
 

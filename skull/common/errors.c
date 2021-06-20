@@ -43,7 +43,8 @@ const char *errors[] = {
 	[ERR_SHADOW_VAR] = "variable \"%s\" shadows existing variable\n",
 	[ERR_EXPECTED_RETURN] = "expected return value in function \"%s\"\n",
 	[ERR_NO_VOID_RETURN] = "unexpected return from void function \"%s\"\n",
-	[ERR_ELSE_MISSING_IF] = "else statement missing preceding if statement",
+	[ERR_ELSE_ELIF_MISSING_IF] = \
+		"else/elif statement missing preceding if statement",
 	[ERR_UNEXPECTED_CODE_BLOCK] = "unexpected code block",
 	[ERR_EMPTY_BLOCK] = "code block cannot be empty",
 	[ERR_UNREACHABLE_CODE] = "unreachable code",
