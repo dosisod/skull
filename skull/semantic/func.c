@@ -13,7 +13,7 @@
 static void state_add_func(FunctionDeclaration *);
 
 
-bool validate_stmt_func_decl(AstNode *node) {
+bool validate_stmt_func_decl(const AstNode *node) {
 	const bool is_external = node->func_proto->is_external;
 	const bool is_export = node->func_proto->is_export;
 	const Token *const func_name_token = node->func_proto->name_tok;

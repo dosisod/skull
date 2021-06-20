@@ -11,18 +11,18 @@
 #include "skull/semantic/entry.h"
 
 
-static bool _validate_ast_tree(AstNode *);
-static bool validate_ast_node(AstNode *);
-static bool validate_stmt_return(AstNode *);
-static bool validate_stmt_type_alias(AstNode *);
+static bool _validate_ast_tree(const AstNode *);
+static bool validate_ast_node(const AstNode *);
+static bool validate_stmt_return(const AstNode *);
+static bool validate_stmt_type_alias(const AstNode *);
 static bool validate_control_else(const AstNode *);
-static bool validate_control_while(AstNode *);
-bool assert_sane_child(AstNode *);
+static bool validate_control_while(const AstNode *);
+bool assert_sane_child(const AstNode *);
 
 /*
 Validate an entire AST tree starting at `node`.
 */
-bool validate_ast_tree(AstNode *node) {
+bool validate_ast_tree(const AstNode *node) {
 	const bool pass = _validate_ast_tree(node);
 	reset_scope_head();
 
@@ -32,7 +32,7 @@ bool validate_ast_tree(AstNode *node) {
 /*
 Validate an entire AST tree starting at `node`.
 */
-static bool _validate_ast_tree(AstNode *node) {
+static bool _validate_ast_tree(const AstNode *node) {
 	while (node) {
 		if (!validate_ast_node(node)) return false;
 
@@ -55,7 +55,7 @@ static bool _validate_ast_tree(AstNode *node) {
 /*
 Validate a single AST `node`.
 */
-static bool validate_ast_node(AstNode *node) {
+static bool validate_ast_node(const AstNode *node) {
 	switch (node->type) {
 		case AST_NODE_RETURN: return validate_stmt_return(node);
 		case AST_NODE_FUNCTION_PROTO: return validate_stmt_func_decl(node);
@@ -69,7 +69,7 @@ static bool validate_ast_node(AstNode *node) {
 	}
 }
 
-static bool validate_stmt_return(AstNode *node) {
+static bool validate_stmt_return(const AstNode *node) {
 	if (!assert_sane_child(node->next)) return false;
 
 	if (node->expr) return validate_expr(node->expr_node);
@@ -77,7 +77,7 @@ static bool validate_stmt_return(AstNode *node) {
 	return true;
 }
 
-static bool validate_control_while(AstNode *node) {
+static bool validate_control_while(const AstNode *node) {
 	const AstNodeExpr *expr = node->expr_node->expr;
 
 	switch (expr->oper) {
@@ -127,7 +127,7 @@ static bool validate_control_while(AstNode *node) {
 	return false;
 }
 
-static bool validate_stmt_type_alias(AstNode *node) {
+static bool validate_stmt_type_alias(const AstNode *node) {
 	const Token *const token = node->token;
 
 	if (!is_top_lvl_scope()) {

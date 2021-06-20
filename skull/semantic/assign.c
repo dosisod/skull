@@ -15,14 +15,14 @@ static Type func_get_type(const AstNode *, const AstNodeExpr *);
 bool validate_expr(AstNode *);
 
 
-bool validate_stmt_var_def(AstNode *node) {
+bool validate_stmt_var_def(const AstNode *node) {
 	const bool added = !!node_to_var(node);
 	if (!added) return false;
 
 	return validate_expr(node->var_def->expr_node);
 }
 
-bool validate_stmt_var_assign(AstNode *node) {
+bool validate_stmt_var_assign(const AstNode *node) {
 	Variable *var = scope_find_var(node->token, true);
 	if (!var) return false;
 

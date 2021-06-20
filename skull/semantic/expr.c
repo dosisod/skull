@@ -28,14 +28,7 @@ static bool _validate_expr(const AstNodeExpr *expr) {
 		default: break;
 	}
 
-	bool is_binary = true;
-
-	switch (oper) {
-		case EXPR_UNARY_NEG:
-		case EXPR_NOT:
-			is_binary = false; break;
-		default: break;
-	}
+	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
 
 	if (!_validate_expr(expr->rhs.expr)) return false;
 	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
@@ -43,7 +36,7 @@ static bool _validate_expr(const AstNodeExpr *expr) {
 	return true;
 }
 
-bool validate_expr_func(AstNode *node) {
+bool validate_expr_func(const AstNode *node) {
 	if (node->expr->oper == EXPR_FUNC)
 		return validate_stmt_func_call(node->expr->lhs.func_call);
 
