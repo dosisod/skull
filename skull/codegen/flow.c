@@ -11,6 +11,16 @@
 #include "skull/codegen/flow.h"
 
 Expr gen_node(AstNode *, bool *);
+static void warn_const_cond(LLVMValueRef, Location *);
+static LLVMValueRef node_to_bool(const AstNode *const);
+static bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
+
+static bool gen_control_code_block(
+	const char *,
+	const AstNode *const,
+	LLVMBasicBlockRef
+);
+
 
 /*
 Build an unreachable statement.
@@ -71,14 +81,6 @@ Expr gen_stmt_return(AstNode *node, bool *err) {
 	return expr;
 }
 
-static LLVMValueRef node_to_bool(const AstNode *const);
-
-static bool gen_control_code_block(
-	const char *,
-	const AstNode *const,
-	LLVMBasicBlockRef
-);
-
 /*
 Builds LLVM for a while loop from `node`.
 
@@ -104,12 +106,15 @@ bool gen_control_while(AstNode *node) {
 	LLVMBuildBr(SKULL_STATE.builder, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_cond);
 
-	LLVMValueRef cond = node_to_bool(node->expr_node);
-	if (!cond) return true;
+	bool err = false;
+	const Expr expr = node_to_expr(NULL, node->expr_node, &err);
+	if (err) return NULL;
+
+	warn_const_cond(expr.value, &node->expr_node->token->location);
 
 	LLVMBuildCondBr(
 		SKULL_STATE.builder,
-		cond,
+		expr.value,
 		while_loop,
 		while_end
 	);
@@ -123,8 +128,6 @@ bool gen_control_while(AstNode *node) {
 
 	return false;
 }
-
-static bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
 
 /*
 Builds an if block from `node`.
@@ -244,14 +247,19 @@ static LLVMValueRef node_to_bool(const AstNode *const node) {
 		return NULL;
 	}
 
-	if (LLVMIsConstant(expr.value))
-		FMT_WARN(LLVMConstIntGetSExtValue(expr.value) ?
-			WARN_COND_ALWAYS_TRUE :
-			WARN_COND_ALWAYS_FALSE,
-			{ .loc = &node->token->location }
-		);
+	warn_const_cond(expr.value, &node->token->location);
 
 	return expr.value;
+}
+
+
+static void warn_const_cond(LLVMValueRef value, Location *location) {
+	if (LLVMIsConstant(value))
+		FMT_WARN(LLVMConstIntGetSExtValue(value) ?
+			WARN_COND_ALWAYS_TRUE :
+			WARN_COND_ALWAYS_FALSE,
+			{ .loc = location }
+		);
 }
 
 /*
