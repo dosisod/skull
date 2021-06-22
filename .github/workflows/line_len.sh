@@ -3,22 +3,19 @@
 MAX_LEN=80
 pass=/bin/true
 
-check_len() {
-	len=$(sed "s/\t/    /g" "$1" | awk "{print length}" | sort -nr | head -n 1)
-
-	over=$(expr "$len" \> $MAX_LEN)
-
-	[ "$over" = "1" ] && {
-		echo "$1"
-		pass=/bin/false
-	}
-}
-
 echo "Files with lines over $MAX_LEN columns:"
 echo
 
+cmd='
+gsub("\t", "    ") {}
+length > MAX_LEN {
+	print FILENAME ":" NR
+	exit_code=1
+}
+END { exit exit_code }'
+
 for file in $(find skull -type f) ; do
-	check_len "$file"
+	awk -v MAX_LEN=$MAX_LEN "$cmd" "$file" || pass=/bin/false
 done
 
 echo
