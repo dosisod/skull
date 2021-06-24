@@ -1,0 +1,1 @@
+./test/sh/error/misc/alias_as_var.sk: Compilation error: line 2 column 1: cannot redeclare type alias "x" as variable

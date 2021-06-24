@@ -7,6 +7,7 @@
 #include "skull/semantic/assign.h"
 #include "skull/semantic/expr.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/semantic/entry.h"
 
@@ -20,6 +21,7 @@ static bool validate_control_elif(const AstNode *);
 static bool validate_control_while(const AstNode *);
 static bool validate_control_not_missing_if(const AstNode *);
 bool assert_sane_child(const AstNode *);
+static bool state_add_alias(Type, char *const);
 
 /*
 Validate an entire AST tree starting at `node`.
@@ -141,6 +143,15 @@ static bool validate_stmt_type_alias(const AstNode *node) {
 	char *type_name = token_mbs_str(token->next->next);
 	char *alias = token_mbs_str(token);
 
+	if (!is_valid_symbol(
+		&token->location,
+		alias,
+		SYMBOL_ALIAS
+	)) {
+		free(type_name);
+		return false;
+	}
+
 	const bool added = state_add_alias(find_type(type_name), alias);
 	free(type_name);
 
@@ -182,3 +193,17 @@ static bool validate_control_not_missing_if(const AstNode *node) {
 
 	return false;
 }
+
+/*
+Add named `alias` for `type`.
+
+Return `true` if alias was added, `false` if it already exists.
+*/
+static bool state_add_alias(Type type, char *const alias) {
+	if (!SKULL_STATE.type_aliases) {
+		SKULL_STATE.type_aliases = ht_create();
+	}
+
+	return ht_add(SKULL_STATE.type_aliases, alias, (void *)type);
+}
+

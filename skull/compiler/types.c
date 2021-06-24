@@ -189,19 +189,6 @@ Type __attribute__((pure)) find_type(const char *const name) {
 	return NULL;
 }
 
-/*
-Add named `alias` for `type`.
-
-Return `true` if alias was added, `false` if it already exists.
-*/
-bool state_add_alias(Type type, char *const alias) {
-	if (!SKULL_STATE.type_aliases) {
-		SKULL_STATE.type_aliases = ht_create();
-	}
-
-	return ht_add(SKULL_STATE.type_aliases, alias, (void *)type);
-}
-
 Type TYPE_BOOL = "Bool";
 Type TYPE_INT = "Int";
 Type TYPE_FLOAT = "Float";

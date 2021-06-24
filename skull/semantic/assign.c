@@ -5,6 +5,7 @@
 #include "skull/common/errors.h"
 #include "skull/compiler/types.h"
 #include "skull/compiler/variable.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/semantic/func.h"
 
@@ -76,11 +77,12 @@ static Variable *node_to_var(const AstNode *const node) {
 	var->implicitly_typed = node->var_def->is_implicit;
 	var->is_exported = node->var_def->is_exported;
 
-	if (find_func_by_name(var->name)) {
-		FMT_ERROR(ERR_NO_REDEFINE_FUNC_AS_VAR, {
-			.loc = &token->location,
-			.var = var
-		});
+	if (!is_valid_symbol(
+		&token->location,
+		var->name,
+		SYMBOL_VAR
+	)) {
+		var->name = NULL;
 
 		variable_no_warnings(var);
 		free_variable(var);

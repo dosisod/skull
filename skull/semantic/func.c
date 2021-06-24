@@ -7,6 +7,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/compiler/variable.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/semantic/func.h"
 
@@ -32,18 +33,15 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	if (scope_find_name(SKULL_STATE.scope, func_name)) {
-		FMT_ERROR(ERR_NO_REDEFINE_VAR_AS_FUNC, {
-			.loc = &func_name_token->location,
-			.real = func_name
-		});
-
+	if (!is_valid_symbol(
+		&func_name_token->location,
+		func_name,
+		SYMBOL_FUNC
+	)) {
 		return false;
 	}
 
-	FunctionDeclaration *found_func = find_func_by_name(func_name);
-
-	if (found_func) {
+	if (find_func_by_name(func_name)) {
 		FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
 			.loc = &func_name_token->location,
 			.real = func_name

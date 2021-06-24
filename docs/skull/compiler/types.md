@@ -43,14 +43,6 @@ Type __attribute__((pure)) find_type(const char *const name)
 > Returns pointer to type with name `name`.
 
 ```c
-bool state_add_alias(Type type, char *const alias)
-```
-
-> Add named `alias` for `type`.
-> \
-> Return `true` if alias was added, `false` if it already exists.
-
-```c
 void strip_underscore_num(char *str, char c)
 ```
 

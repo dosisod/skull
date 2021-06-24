@@ -80,7 +80,15 @@ const char *errors[] = {
 	[WARN_FILE_EMPTY] = "file is empty",
 	[WARN_NESTED_BLOCK_COMMENT] = \
 		"cannot put opening block comment in existing block comment",
-	[WARN_TRIVIAL_TYPE] = "explicit type \"%s\" can be trivialy deduced\n"
+	[WARN_TRIVIAL_TYPE] = "explicit type \"%s\" can be trivialy deduced\n",
+	[ERR_NO_REDEFINE_ALIAS_AS_VAR] = \
+		"cannot redeclare type alias \"%s\" as variable\n",
+	[ERR_NO_REDEFINE_ALIAS_AS_FUNC] = \
+		"cannot redeclare type alias \"%s\" as function\n",
+	[ERR_NO_REDEFINE_VAR_AS_ALIAS] = \
+		"cannot redeclare variable \"%s\" as type alias\n",
+	[ERR_NO_REDEFINE_FUNC_AS_ALIAS] = \
+		"cannot redeclare function \"%s\" as type alias\n"
 };
 
 const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);
