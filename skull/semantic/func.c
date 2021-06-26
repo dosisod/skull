@@ -95,18 +95,27 @@ bool validate_stmt_func_decl(const AstNode *node) {
 			node->func_proto->params[i]->param_name,
 			true
 		);
-		func->params[i]->var = param_var;
+
+		Location param_location = func->params[i]->var->location;
+		free(func->params[i]->var);
+		func->params[i]->var = NULL;
+		param_var->location = param_location;
 
 		if (func->is_external) variable_no_warnings(param_var);
 
 		if (!scope_add_var(&SKULL_STATE.scope, param_var)) {
-			FMT_ERROR(ERR_SHADOW_VAR, { .var = param_var });
+			FMT_ERROR(ERR_SHADOW_VAR, {
+				.var = param_var,
+				.loc = &param_var->location
+			});
 
 			variable_no_warnings(param_var);
 			free_variable(param_var);
 
 			return false;
 		}
+
+		func->params[i]->var = param_var;
 	}
 
 	return true;

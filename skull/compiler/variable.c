@@ -29,11 +29,7 @@ Variable *make_variable(
 	*var = (Variable){
 		.name = c32stombs(name, NULL),
 		.type = type,
-		.is_const = is_const,
-		.is_const_lit = false,
-		.is_global = false,
-		.implicitly_typed = false,
-		.ref = NULL
+		.is_const = is_const
 	};
 
 	return var;

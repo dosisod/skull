@@ -6,6 +6,7 @@
 #include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types.h"
+#include "skull/compiler/variable.h"
 #include "skull/parse/classify.h"
 
 #include "skull/parse/ast_node.h"
@@ -301,6 +302,7 @@ static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err) {
 static void free_param(AstNodeFunctionParam *param) {
 	if (!param) return;
 
+	if (param->var && !param->var->name) free(param->var);
 	free(param->type_name);
 	free(param->param_name);
 	free(param);
@@ -346,6 +348,10 @@ static bool try_parse_function_proto(
 		param = Malloc(sizeof *param);
 		param->type_name = token_mbs_str(token->next);
 		param->param_name = token_str(token);
+
+		// allocate a placeholder variable to store the location
+		param->var = Calloc(1, sizeof(Variable));
+		param->var->location = token->location;
 
 		vector_push(params, param);
 
