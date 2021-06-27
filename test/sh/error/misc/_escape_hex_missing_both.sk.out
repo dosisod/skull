@@ -1,1 +1,0 @@
-./test/sh/error/misc/escape_hex_missing_both.sk: Compilation error: line 1 column 6: bad string escape: "\x"

@@ -1,1 +1,2 @@
-x := "\r \n \t \x41 \xFf \x9 \xdhello \x1F480 \e \" \' \\"
+mut x := "\n"
+mut y := '\n'

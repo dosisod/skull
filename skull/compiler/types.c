@@ -100,7 +100,6 @@ Return "rune" converted from `token`.
 */
 char32_t eval_rune(const Token *const token, bool *err) {
 	const char32_t *start = token->begin + 1;
-	const char32_t *copy = start;
 
 	if (iscntrl((int)*start)) {
 		FMT_ERROR(ERR_NO_CONTROL_CHAR, { .loc = &token->location });
@@ -133,8 +132,6 @@ char32_t eval_rune(const Token *const token, bool *err) {
 		return '\0';
 	}
 
-	if (start == copy) ret = *start;
-
 	return ret;
 }
 
@@ -148,7 +145,6 @@ char32_t *eval_str(const Token *const token) {
 	const char32_t *str = token->begin + 1;
 	size_t wrote = 0;
 	while (*str && str < token->end - 1) {
-		const char32_t *original = str;
 		const char32_t *error = NULL;
 		copy[wrote] = c32sunescape(&str, &error);
 
@@ -160,8 +156,6 @@ char32_t *eval_str(const Token *const token) {
 			free(copy);
 			return NULL;
 		}
-
-		if (str == original) copy[wrote] = *str;
 
 		str++;
 		wrote++;

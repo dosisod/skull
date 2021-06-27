@@ -161,6 +161,45 @@ bool test_uvsnsprintf() {
 	PASS
 }
 
+static bool c32sunescape_fixture(
+	const char32_t *str,
+	const char32_t char_expected,
+	unsigned offset,
+	const char32_t *err_expected
+) {
+	const char32_t *err = NULL;
+	const char32_t *copy = str;
+
+	const char32_t c = c32sunescape(&str, &err);
+
+	ASSERT_EQUAL(c, char_expected);
+	ASSERT_EQUAL(copy + offset, str);
+	ASSERT_TRUTHY(c32scmp(
+		err ? err : U"",
+		err_expected ? err_expected : U""
+	));
+
+	PASS
+}
+
+bool test_c32sunescape() {
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\e", '\033', 1, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"x", 'x', 0, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x41", U'\x41', 3, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xFF", U'\xFF', 3, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x9", '\x09', 2, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xdhello", '\x0d', 2, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x1F480", U'\x1F480', 6, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\\'", '\'', 1, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\\"", '\"', 1, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\\\", '\\', 1, NULL));
+
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x", '\0', 0, U"\\x"));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xz", '\0', 0, U"\\xz"));
+
+	PASS
+}
+
 void str_test_self(bool *pass) {
 	RUN_ALL(
 		test_strrstr,
@@ -175,6 +214,7 @@ void str_test_self(bool *pass) {
 		test_c32isalnum,
 		test_c32isdigit,
 		test_c32isxdigit,
-		test_uvsnsprintf
+		test_uvsnsprintf,
+		test_c32sunescape
 	)
 }

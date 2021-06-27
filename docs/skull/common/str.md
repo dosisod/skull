@@ -83,7 +83,7 @@ const char __attribute__((pure)) *strrstr(const char *const str, const char *con
 > `NULL` is returned if no such string is found.
 
 ```c
-__attribute__((const)) char32_t c32unhex(char32_t c)
+static __attribute__((const)) char32_t c32unhex(char32_t c)
 ```
 
 > Convert `c` as an ASCII hex value to an integer.
@@ -96,7 +96,7 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error)
 > NULL character.
 
 ```c
-__attribute__ ((format(printf, 1, 2))) char *uvsnprintf(const char *const fmt, ...)
+__attribute__((format(printf, 1, 2))) char *uvsnprintf(const char *const fmt, ...)
 ```
 
 > Useful `vsnprintf` function (formats `...` based on `fmt`).

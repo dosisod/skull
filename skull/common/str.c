@@ -222,7 +222,7 @@ const char __attribute__((pure)) *strrstr(
 /*
 Convert `c` as an ASCII hex value to an integer.
 */
-__attribute__((const)) char32_t c32unhex(char32_t c) {
+static __attribute__((const)) char32_t c32unhex(char32_t c) {
 	switch (c) {
 		case '0': return 0;
 		case '1': return 1;
@@ -256,25 +256,26 @@ NULL character.
 */
 char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 	const char32_t *str = *str_;
+	const char32_t *copy = str;
 
-	if (*str != '\\') return '\0';
+	if (*str != '\\') return *str;
 
 	char32_t escape = str[1];
 	char32_t option[8] = {0};
 
 	(*str_)++;
 
-switch (escape) {
-	case '\\': return '\\';
-	case '\"': return '\"';
-	case '\'': return '\'';
-	case '0': return '\0';
-	case 'e': return '\033';
-	case 't': return '\t';
-	case 'r': return '\r';
-	case 'n': return '\n';
-	default: break;
-}
+	switch (escape) {
+		case '\\': return '\\';
+		case '\"': return '\"';
+		case '\'': return '\'';
+		case '0': return '\0';
+		case 'e': return '\033';
+		case 't': return '\t';
+		case 'r': return '\r';
+		case 'n': return '\n';
+		default: break;
+	}
 
 	if (escape == 'x') {
 		char32_t value = 0;
@@ -308,6 +309,7 @@ switch (escape) {
 	bad_escape[1] = escape;
 	bad_escape[2] = option[0];
 	*error = bad_escape;
+	*str_ = copy;
 
 	return '\0';
 }
@@ -326,7 +328,7 @@ Result of function must be freed.
 
 `fmt` MUST be a constant, non-user supplied string (ie, printf safe).
 */
-__attribute__ (( format(printf, 1, 2))) char *uvsnprintf(
+__attribute__((format(printf, 1, 2))) char *uvsnprintf(
 	const char *const fmt, ...
 ) {
 	// Modified from: https://stackoverflow.com/a/10627731
