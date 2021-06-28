@@ -1,4 +1,0 @@
-mut d := 123_456_789
-mut x := 0xABC_DEF
-mut b := 0b1010_1100
-mut o := 0o777_777
