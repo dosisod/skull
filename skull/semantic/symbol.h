@@ -1,6 +1,6 @@
 #pragma once
 
-#include "skull/parse/token.h"
+typedef struct Location Location;
 
 typedef enum {
 	SYMBOL_VAR,

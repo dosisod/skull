@@ -2,7 +2,8 @@
 
 #include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/compiler/types.h"
-#include "skull/parse/ast_node.h"
+
+typedef struct AstNode AstNode;
 
 /*
 Expr stores all the data needed to do type comparisons with LLVMValueRef's.

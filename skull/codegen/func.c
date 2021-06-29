@@ -13,6 +13,7 @@
 #include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types.h"
+#include "skull/parse/ast_node.h"
 
 #include "skull/codegen/func.h"
 

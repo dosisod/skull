@@ -6,6 +6,8 @@
 #include "skull/common/hashtable.h"
 #include "skull/parse/token.h"
 
+typedef struct Token Token;
+
 _Bool eval_bool(const Token *const);
 double eval_float(const Token *const, _Bool *);
 int64_t eval_integer(const Token *, _Bool *);

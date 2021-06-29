@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include <uchar.h>
 
-#include "skull/parse/token.h"
+typedef struct Token Token;
+typedef struct Location Location;
 
 typedef enum {
 	ERR_UNEXPECTED_TOKEN = 0,

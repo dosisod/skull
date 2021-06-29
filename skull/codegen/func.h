@@ -3,9 +3,11 @@
 #include "skull/codegen/expr.h"
 #include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/compiler/types.h"
-#include "skull/parse/ast_node.h"
 
 typedef struct FunctionDeclaration FunctionDeclaration;
+typedef struct AstNodeFunctionParam AstNodeFunctionParam;
+typedef struct AstNode AstNode;
+typedef struct AstNodeExpr AstNodeExpr;
 
 /*
 Stores a function declaration.

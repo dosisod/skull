@@ -7,6 +7,7 @@
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
+#include "skull/parse/ast_node.h"
 
 #include "skull/codegen/flow.h"
 

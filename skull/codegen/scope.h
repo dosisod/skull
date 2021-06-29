@@ -3,11 +3,11 @@
 #include "skull/codegen/shared.h"
 #include "skull/common/hashtable.h"
 #include "skull/compiler/variable.h"
-#include "skull/parse/token.h"
 
 #include "skull/compiler/variable.h"
 
 typedef struct Scope Scope;
+typedef struct Token Token;
 
 /*
 `Scope` stores all of the variables declared in a specific scope.
