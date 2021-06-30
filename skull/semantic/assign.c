@@ -4,8 +4,8 @@
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/compiler/types.h"
-#include "skull/compiler/variable.h"
 #include "skull/semantic/symbol.h"
+#include "skull/semantic/variable.h"
 
 #include "skull/semantic/func.h"
 

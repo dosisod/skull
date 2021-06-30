@@ -8,8 +8,8 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/compiler/types.h"
-#include "skull/compiler/variable.h"
 #include "skull/semantic/symbol.h"
+#include "skull/semantic/variable.h"
 
 #include "skull/semantic/func.h"
 

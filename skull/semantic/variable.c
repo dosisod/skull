@@ -6,7 +6,7 @@
 #include "skull/common/str.h"
 #include "skull/parse/classify.h"
 
-#include "skull/compiler/variable.h"
+#include "skull/semantic/variable.h"
 
 extern bool SKULL_TESTING;
 

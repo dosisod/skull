@@ -1,9 +1,7 @@
 #pragma once
 
 #include "skull/common/hashtable.h"
-#include "skull/compiler/variable.h"
-
-#include "skull/compiler/variable.h"
+#include "skull/semantic/variable.h"
 
 typedef struct Scope Scope;
 typedef struct Token Token;

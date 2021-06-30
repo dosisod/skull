@@ -6,8 +6,8 @@
 #include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/compiler/types.h"
-#include "skull/compiler/variable.h"
 #include "skull/parse/classify.h"
+#include "skull/semantic/variable.h"
 
 #include "skull/parse/ast_node.h"
 

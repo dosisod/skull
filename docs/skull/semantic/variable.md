@@ -1,4 +1,4 @@
-# skull/compiler/variable
+# skull/semantic/variable
 
 ```c
 typedef struct Variable {
