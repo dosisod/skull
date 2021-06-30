@@ -7,8 +7,8 @@
 #include "skull/common/hashtable.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
-#include "skull/compiler/types.h"
 #include "skull/semantic/symbol.h"
+#include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/semantic/func.h"
@@ -52,11 +52,10 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	Type return_type = NULL;
 	char *return_type_name = node->func_proto->return_type_name;
-
-	if (return_type_name)
-		return_type = find_type(return_type_name);
+	Type return_type = return_type_name ?
+		find_type(return_type_name) :
+		TYPE_VOID;
 
 	if (return_type_name && !return_type) {
 		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = return_type_name });

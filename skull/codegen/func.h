@@ -2,7 +2,6 @@
 
 #include "skull/codegen/expr.h"
 #include "skull/codegen/llvm/fwd_decl.h"
-#include "skull/compiler/types.h"
 
 typedef struct FunctionDeclaration FunctionDeclaration;
 typedef struct AstNodeFunctionParam AstNodeFunctionParam;

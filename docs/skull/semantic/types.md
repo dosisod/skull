@@ -1,4 +1,4 @@
-# skull/compiler/types
+# skull/semantic/types
 
 ```c
 typedef const char * Type

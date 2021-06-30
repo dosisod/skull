@@ -9,7 +9,6 @@
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
-#include "skull/compiler/types.h"
 #include "skull/parse/ast_node.h"
 
 #include "skull/codegen/expr.h"

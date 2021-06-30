@@ -3,8 +3,8 @@
 #include <uchar.h>
 
 #include "skull/codegen/llvm/fwd_decl.h"
-#include "skull/compiler/types.h"
 #include "skull/parse/token.h"
+#include "skull/semantic/types.h"
 
 /*
 `Variable` acts as a more strict abstraction on top of LLVM.

@@ -10,7 +10,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 
-#include "skull/compiler/types.h"
+#include "skull/semantic/types.h"
 
 
 /*

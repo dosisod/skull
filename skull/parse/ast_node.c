@@ -5,7 +5,6 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
-#include "skull/compiler/types.h"
 #include "skull/parse/classify.h"
 #include "skull/semantic/variable.h"
 
@@ -402,9 +401,7 @@ static bool try_parse_function_proto(
 	);
 	*(*node)->func_proto = (AstNodeFunctionProto){
 		.name_tok = func_name_token,
-		.return_type_name = return_type_name ?
-			return_type_name :
-			strdup(TYPE_VOID),
+		.return_type_name = return_type_name,
 		.is_external = is_external,
 		.is_export = is_export,
 		.num_params = num_params

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/compiler/types.h"
+#include "skull/semantic/types.h"
 #include "skull/common/str.h"
 
 #include "test/skull/compiler/types/types.h"

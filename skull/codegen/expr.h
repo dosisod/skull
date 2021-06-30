@@ -1,7 +1,7 @@
 #pragma once
 
 #include "skull/codegen/llvm/fwd_decl.h"
-#include "skull/compiler/types.h"
+#include "skull/semantic/types.h"
 
 typedef struct AstNode AstNode;
 
