@@ -2,6 +2,7 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/codegen/func.h"
 #include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/codegen/scope.h"

@@ -7,6 +7,7 @@
 #include "skull/codegen/llvm/types.h"
 #include "skull/codegen/scope.h"
 #include "skull/common/malloc.h"
+#include "skull/semantic/func.h"
 
 #include "skull/codegen/shared.h"
 

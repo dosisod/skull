@@ -1,7 +1,9 @@
 #include <stdbool.h>
 
+#include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/common/errors.h"
-#include "skull/codegen/func.h"
+#include "skull/common/hashtable.h"
+#include "skull/semantic/func.h"
 
 #include "skull/semantic/expr.h"
 

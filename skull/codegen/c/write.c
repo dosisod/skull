@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/codegen/ast.h"
-#include "skull/codegen/func.h"
 #include "skull/common/io.h"
 
 #include "skull/codegen/c/write.h"

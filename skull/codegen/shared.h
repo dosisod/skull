@@ -1,10 +1,10 @@
 #pragma once
 
-#include "skull/codegen/func.h"
 #include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/common/hashtable.h"
 
 typedef struct Scope Scope;
+typedef struct FunctionDeclaration FunctionDeclaration;
 
 /*
 Shared state for a given Skull program.

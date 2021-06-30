@@ -4,8 +4,10 @@
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
+#include "skull/common/hashtable.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
+#include "skull/compiler/types.h"
 #include "skull/compiler/variable.h"
 #include "skull/semantic/symbol.h"
 
@@ -126,4 +128,27 @@ static void state_add_func(FunctionDeclaration *func) {
 		SKULL_STATE.function_decls = ht_create();
 	}
 	ht_add(SKULL_STATE.function_decls, func->name, func);
+}
+
+/*
+Return function declaration called `name`, or `NULL` if not found.
+*/
+FunctionDeclaration *find_func_by_name(const char *name) {
+	return ht_get(SKULL_STATE.function_decls, name);
+}
+
+void free_function_declaration(HashItem *item) {
+	FunctionDeclaration *func = item->data;
+
+	if (!func) return;
+
+	if (!func->was_called) {
+		FMT_WARN(WARN_FUNC_UNUSED, {
+			.real = func->name, .loc = &func->location
+		});
+	}
+	else free(func->name);
+
+	free(func->param_types);
+	free(func);
 }

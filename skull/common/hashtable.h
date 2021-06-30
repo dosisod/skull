@@ -4,7 +4,7 @@
 
 #define MAX_SLOTS 1024
 
-typedef struct {
+typedef struct HashItem {
 	const char *key;
 	void *data;
 } HashItem;

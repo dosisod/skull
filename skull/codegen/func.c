@@ -14,6 +14,7 @@
 #include "skull/common/str.h"
 #include "skull/compiler/types.h"
 #include "skull/parse/ast_node.h"
+#include "skull/semantic/func.h"
 
 #include "skull/codegen/func.h"
 
@@ -232,27 +233,4 @@ static bool gen_function_def(
 	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, current_block);
 
 	return false;
-}
-
-/*
-Return function declaration called `name`, or `NULL` if not found.
-*/
-FunctionDeclaration *find_func_by_name(const char *name) {
-	return ht_get(SKULL_STATE.function_decls, name);
-}
-
-void free_function_declaration(HashItem *item) {
-	FunctionDeclaration *func = item->data;
-
-	if (!func) return;
-
-	if (!func->was_called) {
-		FMT_WARN(WARN_FUNC_UNUSED, {
-			.real = func->name, .loc = &func->location
-		});
-	}
-	else free(func->name);
-
-	free(func->param_types);
-	free(func);
 }
