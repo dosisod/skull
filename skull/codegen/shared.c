@@ -3,6 +3,7 @@
 
 #include <llvm-c/Core.h>
 
+#include "skull/build_data.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/codegen/scope.h"
 #include "skull/common/malloc.h"
@@ -13,7 +14,10 @@ SkullState SKULL_STATE;
 
 static char *create_main_func_name(const char *);
 
-void setup_state(SkullState *state, const char *filename) {
+void setup_state(void) {
+	SkullState *state = &SKULL_STATE;
+
+	const char *filename = BUILD_DATA.filename;
 	char *main_func_name = create_main_func_name(filename);
 
 	LLVMModuleRef main_module = LLVMModuleCreateWithName(filename);
@@ -39,16 +43,11 @@ void setup_state(SkullState *state, const char *filename) {
 
 	LLVMPositionBuilderAtEnd(builder, entry);
 
-	const bool c_backend = SKULL_STATE.c_backend;
-
 	*state = (SkullState){
 		.builder = builder,
 		.ctx = ctx,
-		.module = main_module,
-		.filename = filename
+		.module = main_module
 	};
-
-	SKULL_STATE.c_backend = c_backend;
 
 	state->main_func = Malloc(sizeof *state->main_func);
 	*state->main_func = (FunctionDeclaration){
@@ -83,7 +82,9 @@ static char *create_main_func_name(const char *filename) {
 /*
 Free everything about a Skull compiler instance.
 */
-void free_state(SkullState *state) {
+void free_state(void) {
+	SkullState *state = &SKULL_STATE;
+
 	free_ht(
 		state->type_aliases,
 		(void(*)(void *))free_ht_type_alias

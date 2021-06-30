@@ -78,7 +78,7 @@ endif
 _OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|codegen"))
 _OBJS_TEST := $(patsubst %.c,%.o,$(shell find test/skull -name "*.c" | grep -v ".sk.c") test/testing.c)
 _OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/codegen -name "*.c"))
-_OBJS_MAIN := $(patsubst %.c,%.o,skull/main.c skull/real_main.c)
+_OBJS_MAIN := $(patsubst %.c,%.o,skull/main.c skull/real_main.c skull/build_data.c)
 
 ODIR := build/objs
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))

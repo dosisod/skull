@@ -12,7 +12,6 @@ Shared state for a given Skull program.
 typedef struct {
 	LLVMBuilderRef builder;
 	LLVMContextRef ctx;
-	const char *filename;
 	LLVMModuleRef module;
 	FunctionDeclaration *current_func;
 	FunctionDeclaration *main_func;
@@ -20,11 +19,10 @@ typedef struct {
 	HashTable *function_decls;
 	HashTable *type_aliases;
 	HashTable *template_types;
-	_Bool c_backend : 1;
 } SkullState;
 
 extern SkullState SKULL_STATE;
 
-void free_state(SkullState *);
+void free_state(void);
 
-void setup_state(SkullState *, const char *);
+void setup_state(void);

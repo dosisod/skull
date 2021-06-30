@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "skull/codegen/scope.h"
+#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/assign.h"

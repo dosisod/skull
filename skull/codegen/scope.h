@@ -1,6 +1,5 @@
 #pragma once
 
-#include "skull/codegen/shared.h"
 #include "skull/common/hashtable.h"
 #include "skull/compiler/variable.h"
 

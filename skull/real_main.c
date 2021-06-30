@@ -1,8 +1,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "skull/build_data.h"
 #include "skull/codegen/entry.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/io.h"
 #include "skull/common/local.h"
@@ -39,7 +39,7 @@ int real_main(int argc, char *argv[]) {
 
 static void setup_flags(void) {
 	char *c_backend = getenv("C_BACKEND");
-	SKULL_STATE.c_backend = c_backend ? *c_backend == '1' : false;
+	BUILD_DATA.c_backend = c_backend ? *c_backend == '1' : false;
 }
 
 /*
@@ -59,7 +59,7 @@ static int compile_file(char *filename) {
 
 	char *const file_contents = read_file(f);
 	if (!file_contents) {
-		SKULL_STATE.filename = filename;
+		BUILD_DATA.filename = filename;
 
 		FMT_WARN(WARN_FILE_EMPTY, {0});
 		fclose(f);

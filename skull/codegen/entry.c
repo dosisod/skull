@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/build_data.h"
 #include "skull/codegen/ast.h"
 #include "skull/codegen/c/write.h"
 #include "skull/codegen/llvm/write.h"
@@ -21,19 +22,21 @@ Setup codegen pipeline, including exporting of file.
 Function takes ownership of `file_contents`.
 */
 int init_codegen_pipeline(const char *filename, char *file_contents) {
-	setup_state(&SKULL_STATE, filename);
+	BUILD_DATA.filename = filename;
+	setup_state();
+
 	const bool failed = codegen_pipeline(file_contents);
 	free(file_contents);
 
 	if (failed) {
-		free_state(&SKULL_STATE);
+		free_state();
 		return failed;
 	}
 
 	int err = 0;
 	char *new_filename = NULL;
 
-	if (SKULL_STATE.c_backend) {
+	if (BUILD_DATA.c_backend) {
 		new_filename = gen_filename(filename, "c");
 		err = write_file_c(new_filename);
 	}
@@ -43,7 +46,7 @@ int init_codegen_pipeline(const char *filename, char *file_contents) {
 	}
 
 	free(new_filename);
-	free_state(&SKULL_STATE);
+	free_state();
 
 	return err;
 }

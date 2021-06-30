@@ -3,14 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/codegen/shared.h"
+#include "skull/build_data.h"
 #include "skull/common/color.h"
 #include "skull/common/str.h"
 #include "skull/compiler/variable.h"
 
 #include "skull/common/errors.h"
 
-const char *errors[] = {
+static const char *errors[] = {
 	[ERR_UNEXPECTED_TOKEN] = "unexpected token: \"%s\"\n",
 	[ERR_EOF_NO_BRACKET] = "Reached EOF, expected closing bracket",
 	[ERR_TYPE_MISMATCH] = "type mismatch: expected type \"%s\"\n",
@@ -91,7 +91,7 @@ const char *errors[] = {
 		"cannot redeclare function \"%s\" as type alias\n"
 };
 
-const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);
+static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);
 
 /*
 Return whether color output should be displayed.
@@ -137,7 +137,7 @@ char *fmt_error(ErrorType type, ErrorCode error_code, ErrorMsg msgs[]) {
 					COLOR_RESET ": "
 				) :
 				"%s: Compilation error: ",
-			SKULL_STATE.filename
+			BUILD_DATA.filename
 		);
 	}
 	else if (type == ERROR_WARN) {
@@ -145,7 +145,7 @@ char *fmt_error(ErrorType type, ErrorCode error_code, ErrorMsg msgs[]) {
 			do_show_color() ?
 				"%s: " COLOR_BOLD COLOR_YELLOW_FG "Warning" COLOR_RESET ": " :
 				"%s: Warning: ",
-			SKULL_STATE.filename
+			BUILD_DATA.filename
 		);
 	}
 

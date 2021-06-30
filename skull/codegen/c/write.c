@@ -6,7 +6,6 @@
 
 #include "skull/codegen/ast.h"
 #include "skull/codegen/func.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/io.h"
 
 #include "skull/codegen/c/write.h"
