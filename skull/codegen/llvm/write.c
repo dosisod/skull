@@ -4,7 +4,7 @@
 
 #include <llvm-c/Core.h>
 
-#include "skull/codegen/shared.h"
+#include "skull/codegen/llvm/shared.h"
 
 #include "skull/codegen/llvm/write.h"
 
@@ -14,7 +14,7 @@ Write LLVM code to `filename`, return whether error occured.
 bool write_file_llvm(char *filename) {
 	char *msg = NULL;
 	LLVMBool did_fail = LLVMPrintModuleToFile(
-		SKULL_STATE.module,
+		SKULL_STATE_LLVM.module,
 		filename,
 		&msg
 	);

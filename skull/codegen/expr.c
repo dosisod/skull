@@ -4,9 +4,9 @@
 
 #include "skull/codegen/func.h"
 #include "skull/codegen/llvm/aliases.h"
+#include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/codegen/scope.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/parse/ast_node.h"
@@ -239,7 +239,7 @@ static Expr ident_to_expr(
 
 	return (Expr) {
 		.value = LLVMBuildLoad2(
-			SKULL_STATE.builder,
+			SKULL_STATE_LLVM.builder,
 			gen_llvm_type(var_found->type),
 			var_found->ref,
 			""
@@ -286,8 +286,8 @@ static Expr gen_expr_const(const Token *const token, bool *err) {
 		}
 
 		value = LLVMBuildBitCast(
-			SKULL_STATE.builder,
-			LLVMBuildGlobalString(SKULL_STATE.builder, mbs, ""),
+			SKULL_STATE_LLVM.builder,
+			LLVMBuildGlobalString(SKULL_STATE_LLVM.builder, mbs, ""),
 			gen_llvm_type(TYPE_STR),
 			""
 		);
@@ -319,13 +319,13 @@ static Expr gen_expr_math_oper(
 ) {
 	if (type == TYPE_INT)
 		return (Expr){
-			.value = int_func(SKULL_STATE.builder, lhs, rhs, ""),
+			.value = int_func(SKULL_STATE_LLVM.builder, lhs, rhs, ""),
 			.type = type
 		};
 
 	if (type == TYPE_FLOAT)
 		return (Expr){
-			.value = float_func(SKULL_STATE.builder, lhs, rhs, ""),
+			.value = float_func(SKULL_STATE_LLVM.builder, lhs, rhs, ""),
 			.type = type
 		};
 
@@ -435,7 +435,7 @@ static Expr gen_expr_lshift(
 ) {
 	if (type == TYPE_INT)
 		return (Expr){
-			.value = LLVMBuildShl(SKULL_STATE.builder, lhs, rhs, ""),
+			.value = LLVMBuildShl(SKULL_STATE_LLVM.builder, lhs, rhs, ""),
 			.type = TYPE_INT
 		};
 
@@ -452,7 +452,7 @@ static Expr gen_expr_rshift(
 ) {
 	if (type == TYPE_INT)
 		return (Expr){
-			.value = LLVMBuildLShr(SKULL_STATE.builder, lhs, rhs, ""),
+			.value = LLVMBuildLShr(SKULL_STATE_LLVM.builder, lhs, rhs, ""),
 			.type = TYPE_INT
 		};
 
@@ -502,7 +502,7 @@ static Expr gen_expr_not(Type type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	(void)lhs;
 
 	return (Expr){
-		.value = LLVMBuildNot(SKULL_STATE.builder, rhs, ""),
+		.value = LLVMBuildNot(SKULL_STATE_LLVM.builder, rhs, ""),
 		.type = TYPE_BOOL
 	};
 }
@@ -529,7 +529,7 @@ static Expr gen_expr_is(Type type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == TYPE_INT || type == TYPE_RUNE || type == TYPE_BOOL)
 		return (Expr){
 			.value = LLVMBuildICmp(
-				SKULL_STATE.builder,
+				SKULL_STATE_LLVM.builder,
 				LLVMIntEQ,
 				lhs,
 				rhs,
@@ -541,7 +541,7 @@ static Expr gen_expr_is(Type type, LLVMValueRef lhs, LLVMValueRef rhs) {
 	if (type == TYPE_FLOAT)
 		return (Expr){
 			.value = LLVMBuildFCmp(
-				SKULL_STATE.builder,
+				SKULL_STATE_LLVM.builder,
 				LLVMRealOEQ,
 				lhs,
 				rhs,
@@ -581,7 +581,7 @@ static Expr create_and_call_builtin_oper(
 	LLVMValueRef lhs,
 	LLVMValueRef rhs
 ) {
-	LLVMValueRef func = LLVMGetNamedFunction(SKULL_STATE.module, name);
+	LLVMValueRef func = LLVMGetNamedFunction(SKULL_STATE_LLVM.module, name);
 
 	LLVMTypeRef func_type = gen_llvm_func_type(
 		rtype,
@@ -591,14 +591,14 @@ static Expr create_and_call_builtin_oper(
 
 	if (!func)
 		func = LLVMAddFunction(
-			SKULL_STATE.module,
+			SKULL_STATE_LLVM.module,
 			name,
 			func_type
 		);
 
 	return (Expr){
 		.value = LLVMBuildCall2(
-			SKULL_STATE.builder,
+			SKULL_STATE_LLVM.builder,
 			func_type,
 			func,
 			(LLVMValueRef[]){ lhs, rhs },
@@ -620,7 +620,7 @@ static Expr gen_expr_is_not(
 	Expr expr = gen_expr_is(type, lhs, rhs);
 
 	expr.value = LLVMBuildNot(
-		SKULL_STATE.builder,
+		SKULL_STATE_LLVM.builder,
 		expr.value,
 		""
 	);
@@ -644,7 +644,7 @@ static Expr gen_expr_relational_oper(
 	if (type == TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildICmp(
-				SKULL_STATE.builder,
+				SKULL_STATE_LLVM.builder,
 				int_pred,
 				lhs,
 				rhs,
@@ -656,7 +656,7 @@ static Expr gen_expr_relational_oper(
 	if (type == TYPE_FLOAT)
 		return (Expr){
 			.value = LLVMBuildFCmp(
-				SKULL_STATE.builder,
+				SKULL_STATE_LLVM.builder,
 				float_pred,
 				lhs,
 				rhs,
@@ -725,7 +725,7 @@ static Expr gen_expr_logical_oper(
 ) {
 	return (Expr){
 		.value = func(
-			SKULL_STATE.builder,
+			SKULL_STATE_LLVM.builder,
 			lhs,
 			rhs,
 			""

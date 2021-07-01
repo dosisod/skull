@@ -5,6 +5,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/llvm/aliases.h"
+#include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
@@ -58,7 +59,7 @@ static void create_function(FunctionDeclaration *func) {
 	free(params);
 
 	func->ref = LLVMAddFunction(
-		SKULL_STATE.module,
+		SKULL_STATE_LLVM.module,
 		func->name,
 		func->type
 	);
@@ -157,7 +158,7 @@ Expr gen_expr_function_call(
 
 	const Expr ret = (Expr){
 		.value = LLVMBuildCall2(
-			SKULL_STATE.builder,
+			SKULL_STATE_LLVM.builder,
 			function->type,
 			function->ref,
 			params,
@@ -191,19 +192,19 @@ static bool gen_function_def(
 	}
 
 	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
-		SKULL_STATE.current_func->ref
+		SKULL_STATE_LLVM.current_func->ref
 	);
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
-		SKULL_STATE.ctx,
+		SKULL_STATE_LLVM.ctx,
 		func->ref,
 		"entry"
 	);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, entry);
 
-	FunctionDeclaration *old_func = SKULL_STATE.current_func;
-	SKULL_STATE.current_func = func;
+	FunctionDeclaration *old_func = SKULL_STATE_LLVM.current_func;
+	SKULL_STATE_LLVM.current_func = func;
 
 	SKULL_STATE.scope = SKULL_STATE.scope->child;
 
@@ -211,7 +212,7 @@ static bool gen_function_def(
 	const Expr returned = gen_node(node->child, &err);
 
 	restore_parent_scope();
-	SKULL_STATE.current_func = old_func;
+	SKULL_STATE_LLVM.current_func = old_func;
 
 	if (err) return true;
 	if (SKULL_STATE.scope) SKULL_STATE.scope = SKULL_STATE.scope->next;
@@ -228,9 +229,9 @@ static bool gen_function_def(
 	}
 
 	if (func->return_type == TYPE_VOID && returned.type != TYPE_VOID)
-		LLVMBuildRetVoid(SKULL_STATE.builder);
+		LLVMBuildRetVoid(SKULL_STATE_LLVM.builder);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, current_block);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, current_block);
 
 	return false;
 }

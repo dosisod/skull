@@ -3,6 +3,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/llvm/aliases.h"
+#include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/scope.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
@@ -27,13 +28,13 @@ static bool gen_control_code_block(
 Build an unreachable statement.
 */
 Expr gen_stmt_unreachable(void) {
-	LLVMBuildUnreachable(SKULL_STATE.builder);
+	LLVMBuildUnreachable(SKULL_STATE_LLVM.builder);
 
 	return (Expr){ .type = TYPE_VOID };
 }
 
 void gen_stmt_implicit_main_return(void) {
-	LLVMBuildRet(SKULL_STATE.builder, LLVM_INT(0));
+	LLVMBuildRet(SKULL_STATE_LLVM.builder, LLVM_INT(0));
 }
 
 /*
@@ -43,7 +44,7 @@ Set `err` if error occurrs.
 */
 Expr gen_stmt_return(AstNode *node, bool *err) {
 	AstNode *const expr_node = node->expr_node;
-	Type return_type = SKULL_STATE.current_func->return_type;
+	Type return_type = SKULL_STATE_LLVM.current_func->return_type;
 
 	Expr expr = node_to_expr(NULL, expr_node, err);
 
@@ -57,7 +58,7 @@ Expr gen_stmt_return(AstNode *node, bool *err) {
 		return (Expr){0};
 	}
 
-	const bool is_main = SKULL_STATE.current_func == SKULL_STATE.main_func;
+	const bool is_main = SKULL_STATE_LLVM.current_func == SKULL_STATE_LLVM.main_func;
 
 	if (is_main && expr.type != TYPE_INT) {
 		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = expr_node->token }); // NOLINT
@@ -77,7 +78,7 @@ Expr gen_stmt_return(AstNode *node, bool *err) {
 	}
 
 	if (return_type == TYPE_VOID) expr.type = TYPE_VOID;
-	LLVMBuildRet(SKULL_STATE.builder, expr.value);
+	LLVMBuildRet(SKULL_STATE_LLVM.builder, expr.value);
 
 	return expr;
 }
@@ -89,23 +90,23 @@ Return `true` if an error occurred.
 */
 bool gen_control_while(AstNode *node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
-		SKULL_STATE.ctx,
-		SKULL_STATE.current_func->ref,
+		SKULL_STATE_LLVM.ctx,
+		SKULL_STATE_LLVM.current_func->ref,
 		"while_cond"
 	);
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlockInContext(
-		SKULL_STATE.ctx,
-		SKULL_STATE.current_func->ref,
+		SKULL_STATE_LLVM.ctx,
+		SKULL_STATE_LLVM.current_func->ref,
 		"while_loop"
 	);
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlockInContext(
-		SKULL_STATE.ctx,
-		SKULL_STATE.current_func->ref,
+		SKULL_STATE_LLVM.ctx,
+		SKULL_STATE_LLVM.current_func->ref,
 		"while_end"
 	);
 
-	LLVMBuildBr(SKULL_STATE.builder, while_cond);
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_cond);
+	LLVMBuildBr(SKULL_STATE_LLVM.builder, while_cond);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_cond);
 
 	bool err = false;
 	const Expr expr = node_to_expr(NULL, node->expr_node, &err);
@@ -114,18 +115,18 @@ bool gen_control_while(AstNode *node) {
 	warn_const_cond(expr.value, &node->expr_node->token->location);
 
 	LLVMBuildCondBr(
-		SKULL_STATE.builder,
+		SKULL_STATE_LLVM.builder,
 		expr.value,
 		while_loop,
 		while_end
 	);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_loop);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_loop);
 
 	if (gen_control_code_block("while", node, while_cond))
 		return true;
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, while_end);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_end);
 
 	return false;
 }
@@ -136,10 +137,10 @@ Builds an if block from `node`.
 bool gen_control_if(AstNode **node) {
 	return gen_control_if_(
 		node,
-		LLVMGetInsertBlock(SKULL_STATE.builder),
+		LLVMGetInsertBlock(SKULL_STATE_LLVM.builder),
 		LLVMAppendBasicBlockInContext(
-			SKULL_STATE.ctx,
-			SKULL_STATE.current_func->ref,
+			SKULL_STATE_LLVM.ctx,
+			SKULL_STATE_LLVM.current_func->ref,
 			"end"
 		)
 	);
@@ -167,26 +168,26 @@ static bool gen_control_if_(
 	}
 
 	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
-		SKULL_STATE.ctx,
-		SKULL_STATE.current_func->ref,
+		SKULL_STATE_LLVM.ctx,
+		SKULL_STATE_LLVM.current_func->ref,
 		"if_true"
 	);
 	LLVMBasicBlockRef if_false = NULL;
 	LLVMMoveBasicBlockBefore(if_true, end);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_true);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_true);
 
 	if (gen_control_code_block("if", *node, end)) return true;
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, entry);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, entry);
 
 	if (next_non_comment && (
 		next_non_comment->type == AST_NODE_ELIF ||
 		next_non_comment->type == AST_NODE_ELSE)
 	) {
 		if_false = LLVMAppendBasicBlockInContext(
-			SKULL_STATE.ctx,
-			SKULL_STATE.current_func->ref,
+			SKULL_STATE_LLVM.ctx,
+			SKULL_STATE_LLVM.current_func->ref,
 			"if_false"
 		);
 		LLVMMoveBasicBlockAfter(end, if_false);
@@ -195,7 +196,7 @@ static bool gen_control_if_(
 		if (!cond) return true;
 
 		LLVMBuildCondBr(
-			SKULL_STATE.builder,
+			SKULL_STATE_LLVM.builder,
 			cond,
 			if_true,
 			if_false
@@ -210,7 +211,7 @@ static bool gen_control_if_(
 	}
 	// if there is an else block following the current if block
 	else if (next_non_comment && next_non_comment->type == AST_NODE_ELSE) {
-		LLVMPositionBuilderAtEnd(SKULL_STATE.builder, if_false);
+		LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_false);
 
 		if (gen_control_code_block("else", *node, end)) return true;
 	}
@@ -220,14 +221,14 @@ static bool gen_control_if_(
 		if (!cond) return true;
 
 		LLVMBuildCondBr(
-			SKULL_STATE.builder,
+			SKULL_STATE_LLVM.builder,
 			cond,
 			if_true,
 			end
 		);
 	}
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE.builder, end);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, end);
 
 	return false;
 }
@@ -297,7 +298,7 @@ static bool gen_control_code_block(
 	if (SKULL_STATE.scope) SKULL_STATE.scope = SKULL_STATE.scope->next;
 
 	if (!returned.value || !node->child->token)
-		LLVMBuildBr(SKULL_STATE.builder, block);
+		LLVMBuildBr(SKULL_STATE_LLVM.builder, block);
 
 	return false;
 }

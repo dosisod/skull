@@ -4,9 +4,9 @@
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/expr.h"
+#include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/codegen/scope.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
@@ -71,13 +71,13 @@ static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	const bool is_export = var->is_exported;
 
 	const bool is_global = is_first_assign ?
-		SKULL_STATE.current_func == SKULL_STATE.main_func :
+		SKULL_STATE_LLVM.current_func == SKULL_STATE_LLVM.main_func :
 		var->is_global;
 
 	if (is_first_assign) {
 		if (is_global && (!var->is_const || !is_const_literal || is_export)) {
 			var->ref = LLVMAddGlobal(
-				SKULL_STATE.module,
+				SKULL_STATE_LLVM.module,
 				gen_llvm_type(var->type),
 				var->name
 			);
@@ -94,7 +94,7 @@ static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 		}
 		else if (!is_global && !var->is_const) {
 			var->ref = LLVMBuildAlloca(
-				SKULL_STATE.builder,
+				SKULL_STATE_LLVM.builder,
 				gen_llvm_type(var->type),
 				var->name
 			);
@@ -112,7 +112,7 @@ static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	}
 	else {
 		LLVMBuildStore(
-			SKULL_STATE.builder,
+			SKULL_STATE_LLVM.builder,
 			value,
 			var->ref
 		);
