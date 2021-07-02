@@ -2,11 +2,11 @@
 #include <string.h>
 
 #include "skull/codegen/scope.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
+#include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
@@ -104,7 +104,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 
 		if (func->is_external) variable_no_warnings(param_var);
 
-		if (!scope_add_var(&SKULL_STATE.scope, param_var)) {
+		if (!scope_add_var(&SEMANTIC_STATE.scope, param_var)) {
 			FMT_ERROR(ERR_SHADOW_VAR, {
 				.var = param_var,
 				.loc = &param_var->location
@@ -123,17 +123,17 @@ bool validate_stmt_func_decl(const AstNode *node) {
 }
 
 static void state_add_func(FunctionDeclaration *func) {
-	if (!SKULL_STATE.function_decls) {
-		SKULL_STATE.function_decls = ht_create();
+	if (!SEMANTIC_STATE.function_decls) {
+		SEMANTIC_STATE.function_decls = ht_create();
 	}
-	ht_add(SKULL_STATE.function_decls, func->name, func);
+	ht_add(SEMANTIC_STATE.function_decls, func->name, func);
 }
 
 /*
 Return function declaration called `name`, or `NULL` if not found.
 */
 FunctionDeclaration *find_func_by_name(const char *name) {
-	return ht_get(SKULL_STATE.function_decls, name);
+	return ht_get(SEMANTIC_STATE.function_decls, name);
 }
 
 void free_function_declaration(HashItem *item) {

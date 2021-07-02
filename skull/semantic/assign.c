@@ -1,8 +1,8 @@
 #include <stdbool.h>
 
 #include "skull/codegen/scope.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
+#include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
@@ -90,7 +90,7 @@ static Variable *node_to_var(const AstNode *const node) {
 		return NULL;
 	}
 
-	if (scope_add_var(&SKULL_STATE.scope, var)) {
+	if (scope_add_var(&SEMANTIC_STATE.scope, var)) {
 		var->location = token->location;
 		return var;
 	}

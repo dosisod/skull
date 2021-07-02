@@ -1,4 +1,4 @@
-# skull/codegen/shared
+# skull/semantic/shared
 
 ```c
 typedef struct {
@@ -8,10 +8,10 @@ typedef struct {
 }
 ```
 
-> Shared state for a given Skull program.
+> Stores semantic analyzer global state.
 
 ```c
-void free_state(void)
+void free_state_semantic(void)
 ```
 
 > Free everything about a Skull compiler instance.

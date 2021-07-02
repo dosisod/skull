@@ -5,10 +5,10 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/semantic/shared.h"
 
 #include "skull/semantic/types.h"
 
@@ -169,7 +169,7 @@ char32_t *eval_str(const Token *const token) {
 Returns pointer to type with name `name`.
 */
 Type __attribute__((pure)) find_type(const char *const name) {
-	Type alias = ht_get(SKULL_STATE.type_aliases, name);
+	Type alias = ht_get(SEMANTIC_STATE.type_aliases, name);
 	if (alias) return alias;
 
 	Type **type = TYPES_BUILTIN;

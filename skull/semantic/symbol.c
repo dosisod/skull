@@ -2,9 +2,9 @@
 
 #include "skull/common/errors.h"
 #include "skull/codegen/scope.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/shared.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
 
@@ -15,7 +15,7 @@ bool is_valid_symbol(
 	char *name,
 	SymbolType type
 ) {
-	if (type != SYMBOL_VAR && scope_find_name(SKULL_STATE.scope, name)) {
+	if (type != SYMBOL_VAR && scope_find_name(SEMANTIC_STATE.scope, name)) {
 		FMT_ERROR(
 			type == SYMBOL_FUNC ?
 				ERR_NO_REDEFINE_VAR_AS_FUNC :

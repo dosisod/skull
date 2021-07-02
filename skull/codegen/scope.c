@@ -1,8 +1,8 @@
 #include <stdbool.h>
 
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/semantic/shared.h"
 
 #include "skull/codegen/scope.h"
 
@@ -56,7 +56,7 @@ Return `NULL` if variable was not found.
 */
 Variable *scope_find_var(const Token *const token, bool allow_uninitialized) {
 	char *const var_name = token_mbs_str(token);
-	Variable *const var = scope_find_name(SKULL_STATE.scope, var_name);
+	Variable *const var = scope_find_name(SEMANTIC_STATE.scope, var_name);
 
 	if (!var || (!allow_uninitialized && !var->ref)) {
 		FMT_ERROR(ERR_VAR_NOT_FOUND, {
@@ -74,14 +74,14 @@ Variable *scope_find_var(const Token *const token, bool allow_uninitialized) {
 Add a child scope to the current and replace current scope with new one.
 */
 void make_child_scope(void) {
-	Scope *scope = SKULL_STATE.scope;
+	Scope *scope = SEMANTIC_STATE.scope;
 	if (!scope) scope = make_scope();
 
 	Scope *child = make_scope();
 
 	scope->child = child;
 	child->parent = scope;
-	SKULL_STATE.scope = child;
+	SEMANTIC_STATE.scope = child;
 }
 
 /*
@@ -92,20 +92,20 @@ after a child scope.
 */
 void make_adjacent_scope(void) {
 	Scope *next = make_scope();
-	next->last = SKULL_STATE.scope;
-	SKULL_STATE.scope->next = next;
+	next->last = SEMANTIC_STATE.scope;
+	SEMANTIC_STATE.scope->next = next;
 
-	SKULL_STATE.scope = next;
+	SEMANTIC_STATE.scope = next;
 }
 
 /*
 Find the head of the current scope (without going to the parent node).
 */
 Scope *find_scope_head(void) {
-	if (!SKULL_STATE.scope) return NULL;
+	if (!SEMANTIC_STATE.scope) return NULL;
 
-	Scope *last = SKULL_STATE.scope->last;
-	if (!last) return SKULL_STATE.scope;
+	Scope *last = SEMANTIC_STATE.scope->last;
+	if (!last) return SEMANTIC_STATE.scope;
 
 	while (last && last->last) {
 		last = last->last;
@@ -124,19 +124,19 @@ bool is_top_lvl_scope(void) {
 Move the current scope to the scope head.
 */
 void reset_scope_head(void) {
-	if (!SKULL_STATE.scope) return;
+	if (!SEMANTIC_STATE.scope) return;
 
-	SKULL_STATE.scope = find_scope_head();
+	SEMANTIC_STATE.scope = find_scope_head();
 }
 
 /*
 Free current scope, set current scope to parent scope.
 */
 void restore_parent_scope(void) {
-	if (!SKULL_STATE.scope) return;
+	if (!SEMANTIC_STATE.scope) return;
 
 	reset_scope_head();
-	SKULL_STATE.scope = SKULL_STATE.scope->parent;
+	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->parent;
 }
 
 static void free_ht_variable(HashItem *item) {

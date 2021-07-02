@@ -5,10 +5,10 @@
 #include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/scope.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/shared.h"
 
 #include "skull/codegen/flow.h"
 
@@ -58,7 +58,8 @@ Expr gen_stmt_return(AstNode *node, bool *err) {
 		return (Expr){0};
 	}
 
-	const bool is_main = SKULL_STATE_LLVM.current_func == SKULL_STATE_LLVM.main_func;
+	const bool is_main = \
+		SKULL_STATE_LLVM.current_func == SKULL_STATE_LLVM.main_func;
 
 	if (is_main && expr.type != TYPE_INT) {
 		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = expr_node->token }); // NOLINT
@@ -285,7 +286,7 @@ static bool gen_control_code_block(
 		return true;
 	}
 
-	SKULL_STATE.scope = SKULL_STATE.scope->child;
+	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
 
 	Expr returned = (Expr){0};
 
@@ -295,7 +296,7 @@ static bool gen_control_code_block(
 	restore_parent_scope();
 
 	if (err) return true;
-	if (SKULL_STATE.scope) SKULL_STATE.scope = SKULL_STATE.scope->next;
+	if (SEMANTIC_STATE.scope) SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
 	if (!returned.value || !node->child->token)
 		LLVMBuildBr(SKULL_STATE_LLVM.builder, block);

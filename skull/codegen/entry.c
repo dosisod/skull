@@ -7,10 +7,10 @@
 #include "skull/codegen/c/write.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/write.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/semantic/entry.h"
+#include "skull/semantic/shared.h"
 
 #include "skull/codegen/entry.h"
 
@@ -30,7 +30,7 @@ int init_codegen_pipeline(const char *filename, char *file_contents) {
 	free(file_contents);
 
 	if (failed) {
-		free_state();
+		free_state_semantic();
 		return failed;
 	}
 
@@ -48,7 +48,7 @@ int init_codegen_pipeline(const char *filename, char *file_contents) {
 
 	free(new_filename);
 	free_state_llvm();
-	free_state();
+	free_state_semantic();
 
 	return err;
 }

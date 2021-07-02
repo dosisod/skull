@@ -2,12 +2,12 @@
 #include <string.h>
 
 #include "skull/codegen/scope.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/assign.h"
 #include "skull/semantic/expr.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 
 #include "skull/semantic/entry.h"
@@ -201,10 +201,10 @@ Add named `alias` for `type`.
 Return `true` if alias was added, `false` if it already exists.
 */
 static bool state_add_alias(Type type, char *const alias) {
-	if (!SKULL_STATE.type_aliases) {
-		SKULL_STATE.type_aliases = ht_create();
+	if (!SEMANTIC_STATE.type_aliases) {
+		SEMANTIC_STATE.type_aliases = ht_create();
 	}
 
-	return ht_add(SKULL_STATE.type_aliases, alias, (void *)type);
+	return ht_add(SEMANTIC_STATE.type_aliases, alias, (void *)type);
 }
 

@@ -8,13 +8,13 @@
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/codegen/scope.h"
-#include "skull/codegen/shared.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/shared.h"
 #include "skull/semantic/types.h"
 
 #include "skull/codegen/func.h"
@@ -206,7 +206,7 @@ static bool gen_function_def(
 	FunctionDeclaration *old_func = SKULL_STATE_LLVM.current_func;
 	SKULL_STATE_LLVM.current_func = func;
 
-	SKULL_STATE.scope = SKULL_STATE.scope->child;
+	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
 
 	bool err = false;
 	const Expr returned = gen_node(node->child, &err);
@@ -215,7 +215,8 @@ static bool gen_function_def(
 	SKULL_STATE_LLVM.current_func = old_func;
 
 	if (err) return true;
-	if (SKULL_STATE.scope) SKULL_STATE.scope = SKULL_STATE.scope->next;
+	if (SEMANTIC_STATE.scope)
+		SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
 	if (!returned.value && func->return_type != TYPE_VOID) {
 		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(func->name) });
