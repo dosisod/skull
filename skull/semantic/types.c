@@ -12,6 +12,8 @@
 
 #include "skull/semantic/types.h"
 
+static void strip_underscore_num(char *, char);
+
 
 /*
 Return bool converted from `token`
@@ -211,7 +213,7 @@ This function modifies the contents at `str`.
 
 If `c` is defined, stop iterating when `c` is found.
 */
-void strip_underscore_num(char *str, char c) {
+static void strip_underscore_num(char *str, char c) {
 	char *probe = str;
 
 	while (*probe && *probe != c) {

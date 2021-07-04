@@ -7,7 +7,7 @@ HashTable *ht_create(void)
 > Create a new hashtable.
 
 ```c
-__attribute__((pure)) unsigned ht_hash_key(const char *const key)
+static __attribute__((pure)) unsigned ht_hash_key(const char *const key)
 ```
 
 > Return hashed key for a given key.
@@ -27,7 +27,7 @@ void *ht_get(const HashTable *const ht, const char *const key)
 > Return `NULL` if key does not exist.
 
 ```c
-void free_ht_item(void (*free_func)(void *), void *item)
+static void free_ht_item(void (*free_func)(void *), void *item)
 ```
 
 > Free `item` using `free_func` (if passed).

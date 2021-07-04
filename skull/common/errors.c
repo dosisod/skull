@@ -10,6 +10,8 @@
 
 #include "skull/common/errors.h"
 
+static void fmt_error_stringify(ErrorMsg *const);
+
 static const char *errors[] = {
 	[ERR_UNEXPECTED_TOKEN] = "unexpected token: \"%s\"\n",
 	[ERR_EOF_NO_BRACKET] = "Reached EOF, expected closing bracket",
@@ -107,7 +109,6 @@ static bool do_show_color(void) {
 
 	return flag - 1;
 }
-
 
 /*
 Returns formatted error message.

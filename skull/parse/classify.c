@@ -8,6 +8,14 @@
 
 #include "skull/parse/classify.h"
 
+static bool is_type_str(const char32_t *const);
+static bool is_reserved_str(const char32_t *const);
+static bool is_constant_integer_str(const char32_t *const);
+static bool is_constant_float_str(const char32_t *const);
+static bool is_constant_bool_str(const char32_t *const);
+static bool is_constant_rune_str(const char32_t *const);
+static bool is_constant_str_str(const char32_t *const);
+
 #define TOKEN_TRY_STR(str, token_type) \
 	else if (token_cmp(U##str, token)) { \
 		token->type = (token_type); \
@@ -21,7 +29,7 @@
 /*
 Classify the token `token`.
 */
-void classify_token(Token *const token) {
+static void classify_token(Token *const token) {
 	if (token->type) return;
 
 	const size_t len = token_len(token);
@@ -108,7 +116,7 @@ void classify_tokens(Token *head) {
 /*
 Returns true if `name` is a type string.
 */
-bool is_type_str(const char32_t *const name) {
+static bool is_type_str(const char32_t *const name) {
 	char *const type_name = c32stombs(name, NULL);
 
 	const bool is_type = find_type(type_name);
@@ -120,7 +128,7 @@ bool is_type_str(const char32_t *const name) {
 /*
 Returns true if a `str` is a reserved.
 */
-bool is_reserved_str(const char32_t *const str) {
+static bool is_reserved_str(const char32_t *const str) {
 	return c32scmp(U"return", str) ||
 		c32scmp(U"mut", str) ||
 		c32scmp(U"not", str) ||
@@ -163,7 +171,7 @@ of an integer.
 
 Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 */
-bool is_constant_integer_str(const char32_t *str) {
+static bool is_constant_integer_str(const char32_t *str) {
 	if (*str == '0' && str[1] && str[2]) {
 		str += 2;
 
@@ -196,7 +204,7 @@ Returns true if `str` is a valid float (with decimal).
 
 Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
-bool is_constant_float_str(const char32_t *str) {
+static bool is_constant_float_str(const char32_t *str) {
 	if (c32scmp(U"NaN", str)) return true;
 	if (*str == '-') str++;
 	if (c32scmp(U"Infinity", str)) return true;
@@ -229,7 +237,7 @@ bool is_constant_float_str(const char32_t *str) {
 /*
 Returns true if `str` is a valid bool (`true` or `false`).
 */
-bool is_constant_bool_str(const char32_t *const str) {
+static bool is_constant_bool_str(const char32_t *const str) {
 	return c32scmp(U"false", str) || c32scmp(U"true", str);
 }
 
@@ -239,7 +247,7 @@ Returns true if `str` is a valid rune.
 Examples: `'x'`, `'\n'`, `'\xFF'`, and `' '`.
 Won't work: `''`, `'\'`, `'x '`, or `' x'`.
 */
-bool is_constant_rune_str(const char32_t *const str) {
+static bool is_constant_rune_str(const char32_t *const str) {
 	const size_t len = c32slen(str);
 
 	if (*str != '\'' || str[len - 1] != '\'')
@@ -256,7 +264,7 @@ Returns true if `str` is a valid string constant.
 
 Examples: `""` and `"hello"`.
 */
-bool is_constant_str_str(const char32_t *const str) {
+static bool is_constant_str_str(const char32_t *const str) {
 	const size_t len = c32slen(str);
 
 	return len >= 2 &&

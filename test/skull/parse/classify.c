@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "skull/parse/classify.h"
+#include "skull/parse/classify.c"
 
 #include "test/skull/parse/classify.h"
 #include "test/testing.h"

@@ -31,5 +31,3 @@ extern Type **TYPES_BUILTIN;
 Type find_type(const char *const);
 
 void free_ht_type_alias(HashItem *);
-
-void strip_underscore_num(char *, char);

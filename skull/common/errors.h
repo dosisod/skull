@@ -111,7 +111,7 @@ typedef enum {
 	free(_fmt_error_str); \
 }
 
-#define FMT_ERROR(fmt, ...) {\
+#define FMT_ERROR(fmt, ...) { \
 	char *_fmt_error_str = fmt_error(ERROR_FATAL, fmt, (ErrorMsg[]){ \
 		__VA_ARGS__, \
 		{0} \
@@ -121,5 +121,3 @@ typedef enum {
 }
 
 char *fmt_error(ErrorType, ErrorCode, ErrorMsg []);
-
-void fmt_error_stringify(ErrorMsg *const);

@@ -27,9 +27,9 @@ $(ODIR)/%.o: %.c %.h
 	@$(ECHO) "\033[92mCompile\033[0m $<\n"
 	@$(CC) $< -c -o "$@" $(CFLAGS) $(LLVM_CFLAGS)
 
-test: setup | $(OBJS) $(OBJS_LLVM) $(OBJS_TEST)
+test: setup | $(OBJS_LLVM) $(OBJS_TEST)
 	@$(ECHO) "\033[92mLink\033[0m test\n"
-	@$(CC) $(OBJS) $(OBJS_LLVM) $(OBJS_TEST) -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
+	@$(CC) $(OBJS_LLVM) $(OBJS_TEST) -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
 docs:
 	@$(ECHO) "\033[92mBuild\033[0m docs\n"

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/common/hashtable.h"
+#include "skull/common/hashtable.c"
 
 #include "test/skull/common/hashtable.h"
 #include "test/testing.h"

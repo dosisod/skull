@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "skull/common/str.h"
-#include "skull/common/errors.h"
+#include "skull/common/errors.c"
 #include "skull/semantic/variable.h"
 
 #include "test/skull/common/errors.h"

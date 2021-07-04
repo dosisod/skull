@@ -18,6 +18,7 @@ static void free_ast_tree_(AstNode *);
 static bool is_value(TokenType);
 static void free_expr_node(AstNodeExpr *);
 static void unsplice_expr_node(AstNode *);
+static void push_ast_node(Token *const, Token *, NodeType, AstNode **);
 
 #define AST_TOKEN_CMP2(tok, type1, type2) \
 	((tok) && (tok)->type == (type1) && \
@@ -828,7 +829,7 @@ static AstNodeExpr *parse_func_call(Token **token, bool *err) {
 /*
 Push a new AST node to `node` with type `node_type`
 */
-void push_ast_node(
+static void push_ast_node(
 	Token *const token,
 	Token *last,
 	NodeType node_type,

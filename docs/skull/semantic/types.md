@@ -43,7 +43,7 @@ Type __attribute__((pure)) find_type(const char *const name)
 > Returns pointer to type with name `name`.
 
 ```c
-void strip_underscore_num(char *str, char c)
+static void strip_underscore_num(char *str, char c)
 ```
 
 > Strip underscores from `str`.
