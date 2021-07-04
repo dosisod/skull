@@ -14,6 +14,7 @@
 #include "skull/codegen/assign.h"
 
 static void assign_value_to_var(LLVMValueRef, Variable *const);
+static void setup_var_llvm(LLVMValueRef, Variable *);
 
 /*
 Builds a variable definition from `node`.
@@ -35,6 +36,7 @@ bool gen_stmt_var_def(AstNode *node) {
 		return true;
 	}
 
+	setup_var_llvm(value, var);
 	assign_value_to_var(value, var);
 
 	return false;
@@ -62,50 +64,55 @@ bool gen_stmt_var_assign(AstNode *node) {
 	return false;
 }
 
+static void setup_var_llvm(LLVMValueRef value, Variable *var) {
+	const bool is_const_literal = LLVMIsConstant(value);
+	const bool is_export = var->is_exported;
+
+	const bool is_global = \
+		SKULL_STATE_LLVM.current_func == SKULL_STATE_LLVM.main_func;
+
+	if (is_global && (!var->is_const || !is_const_literal || is_export)) {
+		var->ref = LLVMAddGlobal(
+			SKULL_STATE_LLVM.module,
+			gen_llvm_type(var->type),
+			var->name
+		);
+
+		LLVMSetLinkage(
+			var->ref,
+			is_export ? LLVMExternalLinkage : LLVMPrivateLinkage
+		);
+
+		LLVMSetInitializer(
+			var->ref,
+			is_export ? value : LLVMConstNull(gen_llvm_type(var->type))
+		);
+	}
+	else if (!is_global && !var->is_const) {
+		var->ref = LLVMBuildAlloca(
+			SKULL_STATE_LLVM.builder,
+			gen_llvm_type(var->type),
+			var->name
+		);
+	}
+	else if (is_const_literal && !var->implicitly_typed) {
+		FMT_WARN(WARN_TRIVIAL_TYPE, { .type = var->type });
+	}
+
+	var->is_global = is_global;
+	var->is_const_lit = is_const_literal;
+}
+
 /*
 Assign `value` to `var`.
 */
 static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	const bool is_first_assign = !var->ref;
 	const bool is_const_literal = LLVMIsConstant(value);
-	const bool is_export = var->is_exported;
 
 	const bool is_global = is_first_assign ?
 		SKULL_STATE_LLVM.current_func == SKULL_STATE_LLVM.main_func :
 		var->is_global;
-
-	if (is_first_assign) {
-		if (is_global && (!var->is_const || !is_const_literal || is_export)) {
-			var->ref = LLVMAddGlobal(
-				SKULL_STATE_LLVM.module,
-				gen_llvm_type(var->type),
-				var->name
-			);
-
-			LLVMSetLinkage(
-				var->ref,
-				is_export ? LLVMExternalLinkage : LLVMPrivateLinkage
-			);
-
-			LLVMSetInitializer(
-				var->ref,
-				is_export ? value : LLVMConstNull(gen_llvm_type(var->type))
-			);
-		}
-		else if (!is_global && !var->is_const) {
-			var->ref = LLVMBuildAlloca(
-				SKULL_STATE_LLVM.builder,
-				gen_llvm_type(var->type),
-				var->name
-			);
-		}
-		else if (is_const_literal && !var->implicitly_typed) {
-			FMT_WARN(WARN_TRIVIAL_TYPE, { .type = var->type });
-		}
-
-		var->is_global = is_global;
-		var->is_const_lit = is_const_literal;
-	}
 
 	if (var->is_const && !(is_global && !is_const_literal)) {
 		var->ref = value;
