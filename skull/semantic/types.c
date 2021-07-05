@@ -8,7 +8,9 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/semantic/types.h"
 
@@ -171,8 +173,9 @@ char32_t *eval_str(const Token *const token) {
 Returns pointer to type with name `name`.
 */
 Type __attribute__((pure)) find_type(const char *const name) {
-	Type alias = ht_get(SEMANTIC_STATE.type_aliases, name);
-	if (alias) return alias;
+	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
+
+	if (symbol && symbol->type == SYMBOL_ALIAS) return symbol->expr_type;
 
 	Type **type = TYPES_BUILTIN;
 
@@ -203,7 +206,10 @@ Type **TYPES_BUILTIN = (Type *[]){
 };
 
 void free_ht_type_alias(HashItem *item) {
-	free((char *)item->key);
+	Symbol *symbol = item->data;
+
+	free(symbol->name);
+	free(symbol);
 }
 
 /*

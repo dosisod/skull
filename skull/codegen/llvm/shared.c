@@ -5,9 +5,9 @@
 
 #include "skull/build_data.h"
 #include "skull/codegen/llvm/types.h"
-#include "skull/codegen/scope.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/scope.h"
 
 #include "skull/codegen/llvm/shared.h"
 

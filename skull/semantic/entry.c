@@ -1,12 +1,12 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "skull/codegen/scope.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/assign.h"
 #include "skull/semantic/expr.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 
@@ -22,7 +22,6 @@ static bool validate_control_elif(const AstNode *);
 static bool validate_control_while(const AstNode *);
 static bool validate_control_not_missing_if(const AstNode *);
 bool assert_sane_child(const AstNode *);
-static bool state_add_alias(Type, char *const);
 
 /*
 Validate an entire AST tree starting at `node`.
@@ -153,7 +152,15 @@ static bool validate_stmt_type_alias(const AstNode *node) {
 		return false;
 	}
 
-	const bool added = state_add_alias(find_type(type_name), alias);
+	Symbol *symbol;
+	symbol = Calloc(1, sizeof *symbol);
+	*symbol = (Symbol){
+		.name = alias,
+		.expr_type = find_type(type_name),
+		.type = SYMBOL_ALIAS,
+	};
+
+	const bool added = scope_add_symbol(symbol);
 	free(type_name);
 
 	if (added) return true;
@@ -163,6 +170,7 @@ static bool validate_stmt_type_alias(const AstNode *node) {
 		.real = alias
 	});
 
+	free(symbol);
 	return false;
 }
 
@@ -194,17 +202,3 @@ static bool validate_control_not_missing_if(const AstNode *node) {
 
 	return false;
 }
-
-/*
-Add named `alias` for `type`.
-
-Return `true` if alias was added, `false` if it already exists.
-*/
-static bool state_add_alias(Type type, char *const alias) {
-	if (!SEMANTIC_STATE.type_aliases) {
-		SEMANTIC_STATE.type_aliases = ht_create();
-	}
-
-	return ht_add(SEMANTIC_STATE.type_aliases, alias, (void *)type);
-}
-

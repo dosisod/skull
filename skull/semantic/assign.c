@@ -1,7 +1,8 @@
 #include <stdbool.h>
 
-#include "skull/codegen/scope.h"
 #include "skull/common/errors.h"
+#include "skull/common/malloc.h"
+#include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
@@ -90,12 +91,24 @@ static Variable *node_to_var(const AstNode *const node) {
 		return NULL;
 	}
 
-	if (scope_add_var(&SEMANTIC_STATE.scope, var)) {
+	Symbol *symbol;
+	symbol = Calloc(1, sizeof *symbol);
+
+	*symbol = (Symbol){
+		.name = var->name,
+		.expr_type = var->type,
+		.location = &var->location,
+		.type = SYMBOL_VAR,
+		.var = var
+	};
+
+	if (scope_add_var(symbol)) {
 		var->location = token->location;
 		return var;
 	}
 	variable_no_warnings(var);
 	free_variable(var);
+	free(symbol);
 
 	FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .tok = token });
 

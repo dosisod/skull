@@ -1,8 +1,8 @@
-# skull/codegen/scope
+# skull/semantic/scope
 
 ```c
 typedef struct Scope {
-	HashTable *vars;
+	HashTable *symbols;
 
 	Scope *next;
 	Scope *last;
@@ -13,20 +13,20 @@ typedef struct Scope {
 
 > `Scope` stores all of the variables declared in a specific scope.
 > \
-> `vars` is an array of all of the variables in a scope.
+> `symbols` is a hashtable of the symbols declared in the current scope.
 > \
 > `child` stores a nested scope with more variables in it.
 
 ```c
-bool scope_add_var(Scope **scope, Variable *const var)
+bool scope_add_var(Symbol *symbol)
 ```
 
-> Add variable `var` to `scope`.
+> Add `symbol` (as variable) to current scope.
 > \
 > Returns `true` if `var` was added, else `false`
 
 ```c
-Variable *scope_find_name(const Scope *const scope, const char *name)
+Symbol *scope_find_name(const Scope *const scope, const char *name)
 ```
 
 > Returns pointer to variable with matching `name` if found, else `NULL`

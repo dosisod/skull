@@ -3,8 +3,6 @@
 ```c
 typedef struct {
 	Scope *scope;
-	HashTable *function_decls;
-	HashTable *type_aliases;
 }
 ```
 

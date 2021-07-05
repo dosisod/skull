@@ -3,35 +3,38 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/shared.h"
+#include "skull/semantic/symbol.h"
 
-#include "skull/codegen/scope.h"
+#include "skull/semantic/scope.h"
 
 
 static void free_ht_variable(HashItem *);
+void free_function_declaration(HashItem *item);
 
 /*
-Add variable `var` to `scope`.
+Add `symbol` (as variable) to current scope.
 
 Returns `true` if `var` was added, else `false`
 */
-bool scope_add_var(Scope **scope, Variable *const var) {
-	if (*scope && scope_find_name(*scope, var->name)) return false;
+bool scope_add_var(Symbol *symbol) {
+	if (SEMANTIC_STATE.scope &&
+		scope_find_name(SEMANTIC_STATE.scope, symbol->name)
+	) return false;
 
-	if (!*scope) *scope = make_scope();
-	if (!(*scope)->vars) (*scope)->vars = ht_create();
-
-	return ht_add((*scope)->vars, var->name, var);
+	return scope_add_symbol(symbol);
 }
 
 /*
 Returns pointer to variable with matching `name` if found, else `NULL`
 */
-Variable *scope_find_name(const Scope *const scope, const char *name) {
-	if (!scope || !(scope->vars || scope->parent || scope->last)) return NULL;
+Symbol *scope_find_name(const Scope *const scope, const char *name) {
+	if (!scope ||
+		!(scope->symbols || scope->parent || scope->last)
+	) return NULL;
 
-	if (scope->vars) {
-		Variable *var = ht_get(scope->vars, name);
-		if (var) return var;
+	if (scope->symbols) {
+		Symbol *symbol = ht_get(scope->symbols, name);
+		if (symbol) return symbol;
 	}
 
 	if (scope->parent) return scope_find_name(scope->parent, name);
@@ -56,9 +59,12 @@ Return `NULL` if variable was not found.
 */
 Variable *scope_find_var(const Token *const token, bool allow_uninitialized) {
 	char *const var_name = token_mbs_str(token);
-	Variable *const var = scope_find_name(SEMANTIC_STATE.scope, var_name);
+	Symbol *const symbol = scope_find_name(SEMANTIC_STATE.scope, var_name);
 
-	if (!var || (!allow_uninitialized && !var->ref)) {
+	if (!symbol ||
+		!symbol->var ||
+		(!allow_uninitialized && !symbol->var->ref)
+	) {
 		FMT_ERROR(ERR_VAR_NOT_FOUND, {
 			.loc = &token->location, .real = var_name
 		});
@@ -67,7 +73,7 @@ Variable *scope_find_var(const Token *const token, bool allow_uninitialized) {
 	}
 	free(var_name);
 
-	return var;
+	return symbol->var;
 }
 
 /*
@@ -140,7 +146,23 @@ void restore_parent_scope(void) {
 }
 
 static void free_ht_variable(HashItem *item) {
-	if (item->data) free_variable(item->data);
+	if (item->data) {
+		Symbol *symbol = item->data;
+
+		if (symbol->type == SYMBOL_VAR) {
+			free_variable(symbol->var);
+			free(item->data);
+		}
+		else if (symbol->type == SYMBOL_FUNC) {
+			free_function_declaration(item);
+		}
+		else if (symbol->type == SYMBOL_ALIAS) {
+			free_ht_type_alias(item);
+		}
+		else {
+			free(item->data);
+		}
+	}
 }
 
 /*
@@ -148,8 +170,8 @@ Frees a `scope` and all the variables inside of it.
 */
 void free_scope(Scope *scope) {
 	if (scope) {
-		if (scope->vars)
-			free_ht(scope->vars, (void(*)(void *))free_ht_variable);
+		if (scope->symbols)
+			free_ht(scope->symbols, (void(*)(void *))free_ht_variable);
 
 		if (scope->child) free_scope(scope->child);
 		if (scope->next) free_scope(scope->next);

@@ -1,19 +1,17 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "skull/codegen/scope.h"
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
+#include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/semantic/func.h"
-
-static void state_add_func(FunctionDeclaration *);
 
 
 bool validate_stmt_func_decl(const AstNode *node) {
@@ -66,16 +64,29 @@ bool validate_stmt_func_decl(const AstNode *node) {
 
 	FunctionDeclaration *func;
 	func = Calloc(1, sizeof *func);
-	func->name = func_name;
-	func->location = func_name_token->location;
-	func->is_external = is_external;
-	func->is_export = is_export;
-	func->return_type = return_type;
-	func->num_params = node->func_proto->num_params;
-	func->params = node->func_proto->params;
+	*func = (FunctionDeclaration){
+		.name = func_name,
+		.location = func_name_token->location,
+		.is_external = is_external,
+		.is_export = is_export,
+		.return_type = return_type,
+		.num_params = node->func_proto->num_params,
+		.params = node->func_proto->params
+	};
 
 	node->func_proto->func = func;
-	state_add_func(func);
+
+	Symbol *symbol;
+	symbol = Calloc(1, sizeof *symbol);
+	*symbol = (Symbol){
+		.name = func->name,
+		.expr_type = func->return_type,
+		.location = &func->location,
+		.type = SYMBOL_FUNC,
+		.func = func
+	};
+
+	scope_add_symbol(symbol);
 
 	AstNodeFunctionParam **params = node->func_proto->params;
 	if (!params) return true;
@@ -104,7 +115,17 @@ bool validate_stmt_func_decl(const AstNode *node) {
 
 		if (func->is_external) variable_no_warnings(param_var);
 
-		if (!scope_add_var(&SEMANTIC_STATE.scope, param_var)) {
+		symbol = Calloc(1, sizeof *symbol);
+
+		*symbol = (Symbol){
+			.name = param_var->name,
+			.expr_type = param_var->type,
+			.location = &param_var->location,
+			.type = SYMBOL_VAR,
+			.var = param_var
+		};
+
+		if (!scope_add_var(symbol)) {
 			FMT_ERROR(ERR_SHADOW_VAR, {
 				.var = param_var,
 				.loc = &param_var->location
@@ -112,6 +133,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 
 			variable_no_warnings(param_var);
 			free_variable(param_var);
+			free(symbol);
 
 			return false;
 		}
@@ -122,32 +144,29 @@ bool validate_stmt_func_decl(const AstNode *node) {
 	return true;
 }
 
-static void state_add_func(FunctionDeclaration *func) {
-	if (!SEMANTIC_STATE.function_decls) {
-		SEMANTIC_STATE.function_decls = ht_create();
-	}
-	ht_add(SEMANTIC_STATE.function_decls, func->name, func);
-}
-
 /*
 Return function declaration called `name`, or `NULL` if not found.
 */
 FunctionDeclaration *find_func_by_name(const char *name) {
-	return ht_get(SEMANTIC_STATE.function_decls, name);
+	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
+	if (symbol) return symbol->func;
+
+	return NULL;
 }
 
 void free_function_declaration(HashItem *item) {
-	FunctionDeclaration *func = item->data;
+	Symbol *sym = item->data;
 
-	if (!func) return;
+	if (!sym || !sym->func) return;
 
-	if (!func->was_called) {
+	if (!sym->func->was_called) {
 		FMT_WARN(WARN_FUNC_UNUSED, {
-			.real = func->name, .loc = &func->location
+			.real = sym->func->name, .loc = &sym->func->location
 		});
 	}
-	else free(func->name);
+	else free(sym->func->name);
 
-	free(func->param_types);
-	free(func);
+	free(sym->func->param_types);
+	free(sym->func);
+	free(sym);
 }

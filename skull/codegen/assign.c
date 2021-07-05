@@ -6,10 +6,10 @@
 #include "skull/codegen/expr.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
-#include "skull/codegen/scope.h"
 #include "skull/common/errors.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/scope.h"
 
 #include "skull/codegen/assign.h"
 
