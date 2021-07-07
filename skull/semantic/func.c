@@ -33,14 +33,6 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	if (!is_valid_symbol(
-		&func_name_token->location,
-		func_name,
-		SYMBOL_FUNC
-	)) {
-		return false;
-	}
-
 	char *return_type_name = node->func_proto->return_type_name;
 	Type return_type = return_type_name ?
 		find_type(return_type_name) :
@@ -77,7 +69,11 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		.func = func
 	};
 
-	scope_add_symbol(symbol);
+	if (!scope_add_symbol(symbol)) {
+		free(func);
+		free(symbol);
+		return false;
+	}
 
 	AstNodeFunctionParam **params = node->func_proto->params;
 	if (!params) return true;

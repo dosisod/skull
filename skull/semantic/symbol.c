@@ -12,67 +12,66 @@
 
 static Symbol find_symbol(char *);
 
-bool is_valid_symbol(
-	const Location *location,
-	char *name,
-	SymbolType type
-) {
-	Symbol symbol = find_symbol(name);
+static bool symbol_already_exists(Symbol *new_symbol) {
+	Symbol symbol = find_symbol(new_symbol->name);
+
+	const Location *location = new_symbol->location;
+	char *name = new_symbol->name;
 
 	if (symbol.type == SYMBOL_VAR) {
-		if (type == SYMBOL_VAR) {
+		if (new_symbol->type == SYMBOL_VAR) {
 			FMT_ERROR(ERR_VAR_ALREADY_DEFINED, {
 				.loc = location,
 				.real = name
 			});
 
-			return false;
+			return true;
 		}
 
 		FMT_ERROR(
-			type == SYMBOL_FUNC ?
+			new_symbol->type == SYMBOL_FUNC ?
 				ERR_NO_REDEFINE_VAR_AS_FUNC :
 				ERR_NO_REDEFINE_VAR_AS_ALIAS,
 			{ .loc = location, .real = name }
 		);
 	}
 	else if (symbol.type == SYMBOL_ALIAS) {
-		if (type == SYMBOL_ALIAS) {
+		if (new_symbol->type == SYMBOL_ALIAS) {
 			FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, {
 				.loc = location,
 				.real = name
 			});
 
-			return false;
+			return true;
 		}
 
 		FMT_ERROR(
-			type == SYMBOL_VAR ?
+			new_symbol->type == SYMBOL_VAR ?
 				ERR_NO_REDEFINE_ALIAS_AS_VAR :
 				ERR_NO_REDEFINE_ALIAS_AS_FUNC,
 			{ .loc = location, .real = name }
 		);
 	}
 	else if (symbol.type == SYMBOL_FUNC) {
-		if (type == SYMBOL_FUNC) {
+		if (new_symbol->type == SYMBOL_FUNC) {
 			FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
 				.loc = location,
 				.real = name
 			});
 
-			return false;
+			return true;
 		}
 
 		FMT_ERROR(
-			type == SYMBOL_ALIAS ?
+			new_symbol->type == SYMBOL_ALIAS ?
 				ERR_NO_REDEFINE_FUNC_AS_ALIAS :
 				ERR_NO_REDEFINE_FUNC_AS_VAR,
 			{ .loc = location, .real = name }
 		);
 	}
-	else return true;
+	else return false;
 
-	return false;
+	return true;
 }
 
 static Symbol find_symbol(char *name) {
@@ -109,6 +108,10 @@ static Symbol find_symbol(char *name) {
 }
 
 bool scope_add_symbol(Symbol *symbol) {
+	if (symbol_already_exists(symbol)) {
+		return false;
+	}
+
 	if (!SEMANTIC_STATE.scope) SEMANTIC_STATE.scope = make_scope();
 	if (!SEMANTIC_STATE.scope->symbols)
 		SEMANTIC_STATE.scope->symbols = ht_create();

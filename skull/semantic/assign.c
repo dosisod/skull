@@ -77,19 +77,7 @@ static Variable *node_to_var(const AstNode *const node) {
 	free(name);
 	var->implicitly_typed = node->var_def->is_implicit;
 	var->is_exported = node->var_def->is_exported;
-
-	if (!is_valid_symbol(
-		&token->location,
-		var->name,
-		SYMBOL_VAR
-	)) {
-		var->name = NULL;
-
-		variable_no_warnings(var);
-		free_variable(var);
-
-		return NULL;
-	}
+	var->location = token->location;
 
 	Symbol *symbol;
 	symbol = Calloc(1, sizeof *symbol);
@@ -102,9 +90,16 @@ static Variable *node_to_var(const AstNode *const node) {
 		.var = var
 	};
 
-	scope_add_var(symbol);
-	var->location = token->location;
-	return var;
+	if (scope_add_symbol(symbol)) {
+		return var;
+	}
+
+	var->name = NULL;
+	variable_no_warnings(var);
+	free_variable(var);
+	free(symbol);
+
+	return NULL;
 }
 
 /*

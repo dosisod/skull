@@ -143,27 +143,23 @@ static bool validate_stmt_type_alias(const AstNode *node) {
 	char *type_name = token_mbs_str(token->next->next);
 	char *alias = token_mbs_str(token);
 
-	if (!is_valid_symbol(
-		&token->location,
-		alias,
-		SYMBOL_ALIAS
-	)) {
-		free(type_name);
-		return false;
-	}
-
 	Symbol *symbol;
 	symbol = Calloc(1, sizeof *symbol);
 	*symbol = (Symbol){
 		.name = alias,
+		.location = &token->location,
 		.expr_type = find_type(type_name),
 		.type = SYMBOL_ALIAS,
 	};
 
-	scope_add_symbol(symbol);
-	free(type_name);
+	if (scope_add_symbol(symbol)) {
+		free(type_name);
+		return true;
+	}
 
-	return true;
+	free(type_name);
+	free(symbol);
+	return false;
 }
 
 static bool validate_control_else(const AstNode *node) {

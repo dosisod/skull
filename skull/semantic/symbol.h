@@ -15,7 +15,7 @@ typedef enum {
 typedef struct Symbol {
 	char *name;
 	Type expr_type;
-	Location *location;
+	const Location *location;
 	SymbolType type;
 	union {
 		FunctionDeclaration *func;
@@ -23,5 +23,4 @@ typedef struct Symbol {
 	};
 } Symbol;
 
-_Bool is_valid_symbol(const Location *, char *, SymbolType);
 _Bool scope_add_symbol(Symbol *);
