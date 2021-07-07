@@ -160,18 +160,10 @@ static bool validate_stmt_type_alias(const AstNode *node) {
 		.type = SYMBOL_ALIAS,
 	};
 
-	const bool added = scope_add_symbol(symbol);
+	scope_add_symbol(symbol);
 	free(type_name);
 
-	if (added) return true;
-
-	FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, {
-		.loc = &token->location,
-		.real = alias
-	});
-
-	free(symbol);
-	return false;
+	return true;
 }
 
 static bool validate_control_else(const AstNode *node) {

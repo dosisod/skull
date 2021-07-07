@@ -102,17 +102,9 @@ static Variable *node_to_var(const AstNode *const node) {
 		.var = var
 	};
 
-	if (scope_add_var(symbol)) {
-		var->location = token->location;
-		return var;
-	}
-	variable_no_warnings(var);
-	free_variable(var);
-	free(symbol);
-
-	FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .tok = token });
-
-	return NULL;
+	scope_add_var(symbol);
+	var->location = token->location;
+	return var;
 }
 
 /*

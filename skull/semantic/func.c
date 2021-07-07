@@ -41,15 +41,6 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	if (find_func_by_name(func_name)) {
-		FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
-			.loc = &func_name_token->location,
-			.real = func_name
-		});
-
-		return false;
-	}
-
 	char *return_type_name = node->func_proto->return_type_name;
 	Type return_type = return_type_name ?
 		find_type(return_type_name) :

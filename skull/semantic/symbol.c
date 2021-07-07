@@ -19,7 +19,16 @@ bool is_valid_symbol(
 ) {
 	Symbol symbol = find_symbol(name);
 
-	if (type != SYMBOL_VAR && symbol.type == SYMBOL_VAR) {
+	if (symbol.type == SYMBOL_VAR) {
+		if (type == SYMBOL_VAR) {
+			FMT_ERROR(ERR_VAR_ALREADY_DEFINED, {
+				.loc = location,
+				.real = name
+			});
+
+			return false;
+		}
+
 		FMT_ERROR(
 			type == SYMBOL_FUNC ?
 				ERR_NO_REDEFINE_VAR_AS_FUNC :
@@ -27,7 +36,16 @@ bool is_valid_symbol(
 			{ .loc = location, .real = name }
 		);
 	}
-	else if (type != SYMBOL_ALIAS && symbol.type == SYMBOL_ALIAS) {
+	else if (symbol.type == SYMBOL_ALIAS) {
+		if (type == SYMBOL_ALIAS) {
+			FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, {
+				.loc = location,
+				.real = name
+			});
+
+			return false;
+		}
+
 		FMT_ERROR(
 			type == SYMBOL_VAR ?
 				ERR_NO_REDEFINE_ALIAS_AS_VAR :
@@ -35,7 +53,16 @@ bool is_valid_symbol(
 			{ .loc = location, .real = name }
 		);
 	}
-	else if (type != SYMBOL_FUNC && symbol.type == SYMBOL_FUNC) {
+	else if (symbol.type == SYMBOL_FUNC) {
+		if (type == SYMBOL_FUNC) {
+			FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
+				.loc = location,
+				.real = name
+			});
+
+			return false;
+		}
+
 		FMT_ERROR(
 			type == SYMBOL_ALIAS ?
 				ERR_NO_REDEFINE_FUNC_AS_ALIAS :
