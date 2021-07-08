@@ -135,11 +135,6 @@ static bool validate_control_while(const AstNode *node) {
 static bool validate_stmt_type_alias(const AstNode *node) {
 	const Token *const token = node->token;
 
-	if (!is_top_lvl_scope()) {
-		FMT_ERROR(ERR_TOP_LVL_ALIAS_ONLY, { .loc = &token->location });
-		return false;
-	}
-
 	char *type_name = token_mbs_str(token->next->next);
 	char *alias = token_mbs_str(token);
 
