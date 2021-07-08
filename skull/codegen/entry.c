@@ -5,6 +5,7 @@
 #include "skull/build_data.h"
 #include "skull/codegen/ast.h"
 #include "skull/codegen/c/write.h"
+#include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/write.h"
 #include "skull/common/malloc.h"
@@ -25,6 +26,10 @@ Function takes ownership of `file_contents`.
 int init_codegen_pipeline(const char *filename, char *file_contents) {
 	BUILD_DATA.filename = filename;
 	setup_state_llvm();
+
+	if (BUILD_DATA.debug) {
+		setup_debug_info(filename, SKULL_STATE_LLVM.module);
+	}
 
 	const bool failed = codegen_pipeline(file_contents);
 	free(file_contents);

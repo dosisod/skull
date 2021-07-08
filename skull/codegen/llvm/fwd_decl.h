@@ -14,3 +14,9 @@ typedef struct LLVMOpaqueType *LLVMTypeRef;
 
 struct LLVMOpaqueValue;
 typedef struct LLVMOpaqueValue *LLVMValueRef;
+
+struct LLVMOpaqueMetadata;
+typedef struct LLVMOpaqueMetadata *LLVMMetadataRef;
+
+struct LLVMOpaqueDIBuilder;
+typedef struct LLVMOpaqueDIBuilder *LLVMDIBuilderRef;

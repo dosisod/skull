@@ -47,6 +47,21 @@ test_c_backend() {
 	rm -f "./$dir/.$file.c"
 }
 
+test_llvm_debug() {
+	dir=${1%/*}
+	file=${1##*/_}
+	file=${file%.*}
+
+	printf "%s" "$dir/$file "
+
+	rm -f "./$dir/.$file.ll"
+	DEBUG=1 ./build/skull/_skull "./$dir/$file" 2> /dev/null
+	[ "$?" = "0" ] || { fail; return; }
+
+	compare "./$dir/_$file.ll" "./$dir/.$file.ll"
+	rm -f "./$dir/.$file.ll"
+}
+
 test_error() {
 	dir=${1%/*}
 	file=${1##*/_}
@@ -86,6 +101,10 @@ done
 
 for file in $(find test/skull/codegen/c/ -name "_*.c") ; do
 	test_c_backend "$file"
+done
+
+for file in $(find test/skull/codegen/llvm/ -name "_*.ll") ; do
+	test_llvm_debug "$file"
 done
 
 for file in $(find test/sh/error/ -name "_*.out") ; do
