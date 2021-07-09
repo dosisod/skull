@@ -9,6 +9,16 @@ Convert `num` to an `i64` LLVM value.
 	)
 
 /*
+Convert `num` to an `i32` LLVM value.
+*/
+#define LLVM_INT32(num) \
+	LLVMConstInt( \
+		LLVMInt32TypeInContext(SKULL_STATE_LLVM.ctx), \
+		(unsigned long long)(num), \
+		true \
+	)
+
+/*
 Convert `val` to an `i1` LLVM value.
 */
 #define LLVM_BOOL(val) \

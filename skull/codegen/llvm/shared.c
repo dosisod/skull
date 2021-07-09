@@ -13,8 +13,6 @@
 
 SkullStateLLVM SKULL_STATE_LLVM;
 
-static char *create_main_func_name(const char *);
-
 void setup_state_llvm(void) {
 	SkullStateLLVM *state = &SKULL_STATE_LLVM;
 
@@ -63,7 +61,7 @@ void setup_state_llvm(void) {
 /*
 Convert/mangle `filename` into suitable name for "main" method for module.
 */
-static char *create_main_func_name(const char *filename) {
+char *create_main_func_name(const char *filename) {
 	char *slash_pos = strrchr(filename, '/');
 
 	if (slash_pos) {

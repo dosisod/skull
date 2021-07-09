@@ -16,3 +16,5 @@ extern SkullStateLLVM SKULL_STATE_LLVM;
 
 void free_state_llvm(void);
 void setup_state_llvm(void);
+
+char *create_main_func_name(const char *);

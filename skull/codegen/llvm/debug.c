@@ -3,9 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <llvm-c/DebugInfo.h>
 
+#include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/func.h"
@@ -36,16 +38,25 @@ LLVMDIBuilderRef setup_debug_info(
 	DI_TYPE_RUNE = gen_llvm_di_type(TYPE_RUNE);
 	DI_TYPE_STR = gen_llvm_di_type(TYPE_STR);
 
-	LLVMMetadataRef file = LLVMDIBuilderCreateFile(
+	char cwd[256];
+	errno = 0;
+	getcwd(cwd, 256);
+
+	if (errno) {
+		perror("getcwd");
+		return NULL;
+	}
+
+	LLVMMetadataRef di_file = LLVMDIBuilderCreateFile(
 		di_builder,
 		filename, strlen(filename),
-		".", 1
+		cwd, strlen(cwd)
 	);
 
 	LLVMDIBuilderCreateCompileUnit(
 		di_builder,
 		LLVMDWARFSourceLanguageC,
-		file,
+		di_file,
 		"skull", 5,
 		false,
 		"", 0,
@@ -57,28 +68,24 @@ LLVMDIBuilderRef setup_debug_info(
 		false
 	);
 
-	LLVMMetadataRef type = LLVMDIBuilderCreateBasicType(
-		di_builder,
-		"main_func_type", 14,
-		sizeof(void *),
-		0, // DWARF encoding
-		LLVMDIFlagZero
-	);
-
 	LLVMMetadataRef sub_type = LLVMDIBuilderCreateSubroutineType(
 		di_builder,
-		file,
-		&type,
+		di_file,
+		&DI_TYPE_INT,
 		1,
 		LLVMDIFlagZero
 	);
 
+	// TODO(dosisod): this is already calculated when setting up main func,
+	// figure out how to re-use it
+	char *main_func_name = create_main_func_name(filename);
+
 	DEBUG_INFO.scope = LLVMDIBuilderCreateFunction(
 		di_builder,
-		file,
-		"main", 4,
+		di_file,
+		main_func_name, strlen(main_func_name),
 		"", 0,
-		file,
+		di_file,
 		1,
 		sub_type,
 		false,
@@ -87,6 +94,7 @@ LLVMDIBuilderRef setup_debug_info(
 		LLVMDIFlagZero,
 		false
 	);
+	free(main_func_name);
 
 	LLVMSetSubprogram(SKULL_STATE_LLVM.main_func->ref, DEBUG_INFO.scope);
 
@@ -96,22 +104,14 @@ LLVMDIBuilderRef setup_debug_info(
 		module,
 		LLVMModuleFlagBehaviorOverride,
 		"Dwarf Version", 13,
-		LLVMValueAsMetadata(LLVMConstInt(
-			LLVMInt32Type(),
-			(unsigned long long)(4),
-			true
-		))
+		LLVMValueAsMetadata(LLVM_INT32(4))
 	);
 
 	LLVMAddModuleFlag(
 		module,
 		LLVMModuleFlagBehaviorOverride,
 		"Debug Info Version", 18,
-		LLVMValueAsMetadata(LLVMConstInt(
-			LLVMInt32Type(),
-			(unsigned long long)(3),
-			true
-		))
+		LLVMValueAsMetadata(LLVM_INT32(3))
 	);
 
 	return di_builder;

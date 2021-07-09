@@ -58,6 +58,7 @@ test_llvm_debug() {
 	DEBUG=1 ./build/skull/_skull "./$dir/$file" 2> /dev/null
 	[ "$?" = "0" ] || { fail; return; }
 
+	sed -i "s/directory: \"\(.*\)\"/directory: \".\"/" "./$dir/.$file.ll"
 	compare "./$dir/_$file.ll" "./$dir/.$file.ll"
 	rm -f "./$dir/.$file.ll"
 }
