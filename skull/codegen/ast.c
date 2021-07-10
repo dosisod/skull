@@ -17,7 +17,9 @@ bool gen_tree(AstNode *node) {
 	bool err = false;
 	const Expr expr = gen_node(node, &err);
 
-	if (!expr.value && !err) gen_stmt_implicit_main_return();
+	if (!expr.value && !err) {
+		gen_stmt_implicit_main_return(&node->token->location);
+	}
 
 	return err;
 }

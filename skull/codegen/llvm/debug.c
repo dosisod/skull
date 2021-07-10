@@ -7,6 +7,7 @@
 
 #include <llvm-c/DebugInfo.h>
 
+#include "skull/build_data.h"
 #include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/common/malloc.h"
@@ -146,3 +147,17 @@ LLVMMetadataRef gen_llvm_di_type(const Type type) {
 	);
 }
 
+void add_llvm_debug_info(LLVMValueRef value, Location *location) {
+	if (BUILD_DATA.debug) {
+		LLVMInstructionSetDebugLoc(
+			value,
+			LLVMDIBuilderCreateDebugLocation(
+				SKULL_STATE_LLVM.ctx,
+				location->line,
+				location->column,
+				DEBUG_INFO.scope,
+				NULL
+			)
+		);
+	}
+}

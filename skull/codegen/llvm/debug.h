@@ -2,6 +2,8 @@
 
 #include "skull/codegen/llvm/fwd_decl.h"
 
+typedef struct Location Location;
+
 typedef struct {
 	LLVMDIBuilderRef builder;
 	LLVMMetadataRef file;
@@ -20,3 +22,5 @@ LLVMDIBuilderRef setup_debug_info(
 	const char *,
 	LLVMModuleRef
 );
+
+void add_llvm_debug_info(LLVMValueRef, Location *);

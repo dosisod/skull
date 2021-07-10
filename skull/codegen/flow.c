@@ -3,6 +3,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/codegen/llvm/aliases.h"
+#include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/common/errors.h"
 #include "skull/parse/ast_node.h"
@@ -33,8 +34,10 @@ Expr gen_stmt_unreachable(void) {
 	return (Expr){ .type = TYPE_VOID };
 }
 
-void gen_stmt_implicit_main_return(void) {
-	LLVMBuildRet(SKULL_STATE_LLVM.builder, LLVM_INT(0));
+void gen_stmt_implicit_main_return(Location *location) {
+	LLVMValueRef ret = LLVMBuildRet(SKULL_STATE_LLVM.builder, LLVM_INT(0));
+
+	add_llvm_debug_info(ret, location);
 }
 
 /*

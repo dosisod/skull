@@ -3,7 +3,7 @@ source_filename = "./test/skull/codegen/llvm/first.sk"
 
 define i64 @.first() !dbg !5 {
 entry:
-  ret i64 0
+  ret i64 0, !dbg !9
 }
 
 !llvm.dbg.cu = !{!0}
@@ -18,3 +18,4 @@ entry:
 !6 = !DISubroutineType(types: !7)
 !7 = !{!8}
 !8 = !DIBasicType(name: "Int", size: 64)
+!9 = !DILocation(line: 1, column: 1, scope: !5)
