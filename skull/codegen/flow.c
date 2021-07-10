@@ -82,7 +82,9 @@ Expr gen_stmt_return(AstNode *node, bool *err) {
 	}
 
 	if (return_type == TYPE_VOID) expr.type = TYPE_VOID;
-	LLVMBuildRet(SKULL_STATE_LLVM.builder, expr.value);
+	LLVMValueRef ret = LLVMBuildRet(SKULL_STATE_LLVM.builder, expr.value);
+
+	add_llvm_debug_info(ret, &node->token->location);
 
 	return expr;
 }
