@@ -169,6 +169,7 @@ Expr gen_expr_function_call(
 		),
 		.type = function->return_type
 	};
+	add_llvm_debug_info(ret.value, &func_name_token->location);
 
 	free(params);
 
