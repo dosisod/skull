@@ -73,8 +73,7 @@ LLVMDIBuilderRef setup_debug_info(
 	LLVMMetadataRef sub_type = LLVMDIBuilderCreateSubroutineType(
 		di_builder,
 		di_file,
-		&DI_TYPE_INT,
-		1,
+		NULL, 0,
 		LLVMDIFlagZero
 	);
 

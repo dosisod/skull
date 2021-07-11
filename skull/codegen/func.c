@@ -223,8 +223,7 @@ static bool gen_function_def(
 			LLVMDIBuilderCreateSubroutineType(
 				DEBUG_INFO.builder,
 				DEBUG_INFO.file,
-				&DI_TYPE_INT,
-				1,
+				NULL, 0,
 				LLVMDIFlagZero
 			),
 			true,
