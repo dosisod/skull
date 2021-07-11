@@ -25,10 +25,9 @@
 Expr gen_node(AstNode *, bool *);
 
 static bool gen_function_def(const AstNode *const, FunctionDeclaration *);
-
 static void create_function(FunctionDeclaration *);
-
 static LLVMTypeRef *parse_func_param(const FunctionDeclaration *);
+static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
@@ -210,33 +209,7 @@ static bool gen_function_def(
 	SKULL_STATE_LLVM.current_func = func;
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
 
-	LLVMMetadataRef old_di_scope = NULL;
-	if (BUILD_DATA.debug) {
-		LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
-			DEBUG_INFO.builder,
-			DEBUG_INFO.scope,
-			func->name, strlen(func->name),
-			"", 0,
-			DEBUG_INFO.file,
-			func->location.line,
-			// TODO(dosisod): this subroutine type creation logic is redundant
-			LLVMDIBuilderCreateSubroutineType(
-				DEBUG_INFO.builder,
-				DEBUG_INFO.file,
-				NULL, 0,
-				LLVMDIFlagZero
-			),
-			true,
-			!func->is_export,
-			func->location.line,
-			LLVMDIFlagZero,
-			false
-		);
-		old_di_scope = DEBUG_INFO.scope;
-		DEBUG_INFO.scope = new_di_scope;
-		LLVMSetSubprogram(func->ref, DEBUG_INFO.scope);
-		LLVMDIBuilderFinalize(DEBUG_INFO.builder);
-	}
+	LLVMMetadataRef old_di_scope = add_llvm_func_debug_info(func);
 
 	bool err = false;
 	const Expr returned = gen_node(node->child, &err);
@@ -267,4 +240,49 @@ static bool gen_function_def(
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, current_block);
 
 	return false;
+}
+
+static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
+	if (!BUILD_DATA.debug) return NULL;
+
+	LLVMMetadataRef *di_param_types = NULL;
+	// using VLA since number of params should be a reasonable amount
+
+	if (func->num_params) {
+		di_param_types = alloca(
+			func->num_params * sizeof(LLVMMetadataRef)
+		);
+
+		for RANGE(i, func->num_params) {
+			di_param_types[i] = type_to_di_type(func->param_types[i]);
+		}
+	}
+
+	LLVMMetadataRef di_type = LLVMDIBuilderCreateSubroutineType(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.file,
+		di_param_types, func->num_params,
+		LLVMDIFlagZero
+	);
+
+	LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.scope,
+		func->name, strlen(func->name),
+		"", 0,
+		DEBUG_INFO.file,
+		func->location.line,
+		di_type,
+		true,
+		!func->is_export,
+		func->location.line,
+		LLVMDIFlagZero,
+		false
+	);
+	LLVMMetadataRef old_di_scope = DEBUG_INFO.scope;
+	DEBUG_INFO.scope = new_di_scope;
+	LLVMSetSubprogram(func->ref, DEBUG_INFO.scope);
+	LLVMDIBuilderFinalize(DEBUG_INFO.builder);
+
+	return old_di_scope;
 }

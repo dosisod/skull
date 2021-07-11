@@ -161,3 +161,13 @@ void add_llvm_debug_info(LLVMValueRef value, Location *location) {
 		);
 	}
 }
+
+LLVMMetadataRef type_to_di_type(Type type) {
+	if (type == TYPE_BOOL) return DI_TYPE_BOOL;
+	if (type == TYPE_INT) return DI_TYPE_INT;
+	if (type == TYPE_FLOAT) return DI_TYPE_FLOAT;
+	if (type == TYPE_RUNE) return DI_TYPE_RUNE;
+	if (type == TYPE_STR) return DI_TYPE_STR;
+
+	return NULL;
+}
