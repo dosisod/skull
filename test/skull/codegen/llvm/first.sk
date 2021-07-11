@@ -11,3 +11,10 @@ f2(x: Int) {
 f3(y: Int, z: Int) {
 	noop
 }
+
+f4() {
+	# wrapping this in a function, since variable declarations inside functions
+	# are different then those outside functions (basically globals)
+
+	mut local_var := 1
+}

@@ -2,8 +2,11 @@
 #include <string.h>
 
 #include <llvm-c/Core.h>
+#include <llvm-c/DebugInfo.h>
 
+#include "skull/build_data.h"
 #include "skull/codegen/expr.h"
+#include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/common/errors.h"
@@ -15,6 +18,7 @@
 
 static void assign_value_to_var(LLVMValueRef, Variable *const);
 static void setup_var_llvm(LLVMValueRef, Variable *);
+static void add_llvm_var_def_debug_info(const Variable *);
 
 /*
 Builds a variable definition from `node`.
@@ -38,8 +42,40 @@ bool gen_stmt_var_def(AstNode *node) {
 
 	setup_var_llvm(value, var);
 	assign_value_to_var(value, var);
+	add_llvm_var_def_debug_info(var);
 
 	return false;
+}
+
+static void add_llvm_var_def_debug_info(const Variable *var) {
+	if (!BUILD_DATA.debug) return;
+
+	LLVMMetadataRef di_var = LLVMDIBuilderCreateAutoVariable(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.scope,
+		var->name, strlen(var->name),
+		DEBUG_INFO.file,
+		var->location.line,
+		type_to_di_type(var->type),
+		true,
+		LLVMDIFlagZero,
+		8
+	);
+
+	LLVMDIBuilderInsertDeclareAtEnd(
+		DEBUG_INFO.builder,
+		var->ref,
+		di_var,
+		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
+		LLVMDIBuilderCreateDebugLocation(
+			SKULL_STATE_LLVM.ctx,
+			var->location.line,
+			var->location.column,
+			DEBUG_INFO.scope,
+			NULL
+		),
+		LLVMGetLastBasicBlock(SKULL_STATE_LLVM.current_func->ref)
+	);
 }
 
 /*

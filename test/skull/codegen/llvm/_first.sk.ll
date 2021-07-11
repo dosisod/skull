@@ -22,6 +22,19 @@ entry:
   ret void
 }
 
+define private void @f4() !dbg !18 {
+entry:
+  %local_var = alloca i64
+  store i64 1, i64* %local_var
+  call void @llvm.dbg.declare(metadata i64* %local_var, metadata !19, metadata !DIExpression()), !dbg !20
+  ret void
+}
+
+; Function Attrs: nounwind readnone speculatable willreturn
+declare void @llvm.dbg.declare(metadata, metadata, metadata) #0
+
+attributes #0 = { nounwind readnone speculatable willreturn }
+
 !llvm.dbg.cu = !{!0}
 !llvm.module.flags = !{!3, !4}
 
@@ -43,3 +56,6 @@ entry:
 !15 = distinct !DISubprogram(name: "f3", scope: !5, file: !1, line: 11, type: !16, scopeLine: 11, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !0, retainedNodes: !2)
 !16 = !DISubroutineType(types: !17)
 !17 = !{!14, !14}
+!18 = distinct !DISubprogram(name: "f4", scope: !5, file: !1, line: 15, type: !6, scopeLine: 15, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !0, retainedNodes: !2)
+!19 = !DILocalVariable(name: "local_var", scope: !18, file: !1, line: 19, type: !14, align: 8)
+!20 = !DILocation(line: 19, column: 6, scope: !18)
