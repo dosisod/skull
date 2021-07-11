@@ -398,7 +398,7 @@ static bool try_parse_function_proto(
 
 	(*node)->func_proto = Malloc(
 		sizeof(AstNodeFunctionProto) +
-		(num_params * sizeof(AstNodeFunctionParam))
+		(num_params * sizeof(AstNodeFunctionParam *))
 	);
 	*(*node)->func_proto = (AstNodeFunctionProto){
 		.name_tok = func_name_token,
@@ -412,7 +412,7 @@ static bool try_parse_function_proto(
 		memcpy(
 			&(*node)->func_proto->params,
 			vector_freeze(params),
-			(num_params * sizeof(AstNodeFunctionParam))
+			(num_params * sizeof(AstNodeFunctionParam *))
 		);
 
 		// since the array is frozen, the elements will not be allowed
