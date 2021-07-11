@@ -3,8 +3,11 @@
 #include <string.h>
 
 #include <llvm-c/Core.h>
+#include <llvm-c/DebugInfo.h>
 
+#include "skull/build_data.h"
 #include "skull/codegen/llvm/aliases.h"
+#include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/common/errors.h"
@@ -205,14 +208,44 @@ static bool gen_function_def(
 
 	FunctionDeclaration *old_func = SKULL_STATE_LLVM.current_func;
 	SKULL_STATE_LLVM.current_func = func;
-
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
+
+	LLVMMetadataRef old_di_scope = NULL;
+	if (BUILD_DATA.debug) {
+		LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
+			DEBUG_INFO.builder,
+			DEBUG_INFO.scope,
+			func->name, strlen(func->name),
+			"", 0,
+			DEBUG_INFO.file,
+			func->location.line,
+			// TODO(dosisod): this subroutine type creation logic is redundant
+			LLVMDIBuilderCreateSubroutineType(
+				DEBUG_INFO.builder,
+				DEBUG_INFO.file,
+				&DI_TYPE_INT,
+				1,
+				LLVMDIFlagZero
+			),
+			true,
+			!func->is_export,
+			func->location.line,
+			LLVMDIFlagZero,
+			false
+		);
+		old_di_scope = DEBUG_INFO.scope;
+		DEBUG_INFO.scope = new_di_scope;
+		LLVMSetSubprogram(func->ref, DEBUG_INFO.scope);
+		LLVMDIBuilderFinalize(DEBUG_INFO.builder);
+	}
 
 	bool err = false;
 	const Expr returned = gen_node(node->child, &err);
 
 	restore_parent_scope();
 	SKULL_STATE_LLVM.current_func = old_func;
+
+	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 
 	if (err) return true;
 	if (SEMANTIC_STATE.scope)

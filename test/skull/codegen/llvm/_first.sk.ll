@@ -6,6 +6,11 @@ entry:
   ret i64 0, !dbg !9
 }
 
+define private i64 @f() !dbg !10 {
+entry:
+  ret i64 1, !dbg !11
+}
+
 !llvm.dbg.cu = !{!0}
 !llvm.module.flags = !{!3, !4}
 
@@ -19,3 +24,5 @@ entry:
 !7 = !{!8}
 !8 = !DIBasicType(name: "Int", size: 64)
 !9 = !DILocation(line: 1, column: 1, scope: !5)
+!10 = distinct !DISubprogram(name: "f", scope: !5, file: !1, line: 1, type: !6, scopeLine: 1, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !0, retainedNodes: !2)
+!11 = !DILocation(line: 2, column: 2, scope: !10)

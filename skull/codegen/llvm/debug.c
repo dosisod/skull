@@ -53,6 +53,7 @@ LLVMDIBuilderRef setup_debug_info(
 		filename, strlen(filename),
 		cwd, strlen(cwd)
 	);
+	DEBUG_INFO.file = di_file;
 
 	LLVMDIBuilderCreateCompileUnit(
 		di_builder,
