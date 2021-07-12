@@ -274,8 +274,8 @@ static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 		DEBUG_INFO.file,
 		func->location.line,
 		di_type,
-		true,
-		!func->is_export,
+		false,
+		!func->is_external,
 		func->location.line,
 		LLVMDIFlagZero,
 		false
