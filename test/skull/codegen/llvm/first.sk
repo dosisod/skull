@@ -17,4 +17,8 @@ f4() {
 	# are different then those outside functions (basically globals)
 
 	mut local_var := 1
+
+	if true {
+		mut if_test := 1
+	}
 }

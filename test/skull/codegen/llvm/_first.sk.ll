@@ -27,6 +27,15 @@ entry:
   %local_var = alloca i64
   store i64 1, i64* %local_var
   call void @llvm.dbg.declare(metadata i64* %local_var, metadata !19, metadata !DIExpression()), !dbg !20
+  br i1 true, label %if_true, label %end
+
+if_true:                                          ; preds = %entry
+  %if_test = alloca i64
+  store i64 1, i64* %if_test
+  br label %end
+
+end:                                              ; preds = %entry, %if_true
+  call void @llvm.dbg.declare(metadata i64* %if_test, metadata !21, metadata !DIExpression()), !dbg !23
   ret void
 }
 
@@ -59,3 +68,6 @@ attributes #0 = { nounwind readnone speculatable willreturn }
 !18 = distinct !DISubprogram(name: "f4", scope: !5, file: !1, line: 15, type: !6, scopeLine: 15, spFlags: DISPFlagLocalToUnit | DISPFlagDefinition, unit: !0, retainedNodes: !2)
 !19 = !DILocalVariable(name: "local_var", scope: !18, file: !1, line: 19, type: !14, align: 8)
 !20 = !DILocation(line: 19, column: 6, scope: !18)
+!21 = !DILocalVariable(name: "if_test", scope: !22, file: !1, line: 22, type: !14, align: 8)
+!22 = distinct !DILexicalBlock(scope: !18, file: !1, line: 21, column: 2)
+!23 = !DILocation(line: 22, column: 7, scope: !22)

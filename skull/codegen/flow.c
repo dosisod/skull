@@ -1,7 +1,9 @@
 #include <stdbool.h>
 
 #include <llvm-c/Core.h>
+#include <llvm-c/DebugInfo.h>
 
+#include "skull/build_data.h"
 #include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
@@ -17,6 +19,7 @@ Expr gen_node(AstNode *, bool *);
 static void warn_const_cond(LLVMValueRef, Location *);
 static LLVMValueRef node_to_bool(const AstNode *const);
 static bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
+static LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *);
 
 static bool gen_control_code_block(
 	const char *,
@@ -293,10 +296,16 @@ static bool gen_control_code_block(
 
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
 
+	LLVMMetadataRef old_di_scope = add_llvm_control_flow_debug_info(
+		&node->token->location
+	);
+
 	Expr returned = (Expr){0};
 
 	bool err = false;
 	if (node->child->token) returned = gen_node(node->child, &err);
+
+	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 
 	restore_parent_scope();
 
@@ -307,4 +316,22 @@ static bool gen_control_code_block(
 		LLVMBuildBr(SKULL_STATE_LLVM.builder, block);
 
 	return false;
+}
+
+static LLVMMetadataRef add_llvm_control_flow_debug_info(
+	const Location *location
+) {
+	if (!BUILD_DATA.debug) return NULL;
+
+	LLVMMetadataRef old_di_scope = DEBUG_INFO.scope;
+
+	DEBUG_INFO.scope = LLVMDIBuilderCreateLexicalBlock(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.scope,
+		DEBUG_INFO.file,
+		location->line,
+		location->column
+	);
+
+	return old_di_scope;
 }
