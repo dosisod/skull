@@ -21,4 +21,10 @@ f4() {
 	if true {
 		mut if_test := 1
 	}
+
+	mut int := 1234
+	mut float := 3.1415
+	mut rune := 'x'
+	mut bool := false
+	mut str := "some string"
 }

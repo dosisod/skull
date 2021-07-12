@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,21 +121,26 @@ LLVMDIBuilderRef setup_debug_info(
 
 LLVMMetadataRef gen_llvm_di_type(const Type type) {
 	unsigned size = 0;
+	DW_ATE encoding = DW_ATE_unsigned;
 
 	if (type == TYPE_BOOL) {
 		size = 1;
+		encoding = DW_ATE_boolean;
 	}
 	else if (type == TYPE_INT) {
 		size = 64;
 	}
 	else if (type == TYPE_FLOAT) {
-		size = sizeof(double);
+		size = sizeof(double) * CHAR_BIT;
+		encoding = DW_ATE_float;
 	}
 	else if (type == TYPE_RUNE) {
 		size = 32;
+		encoding = DW_ATE_signed_char;
 	}
 	else if (type == TYPE_STR) {
-		size = sizeof(char *);
+		size = sizeof(char *) * CHAR_BIT;
+		encoding = DW_ATE_address;
 	}
 
 	return LLVMDIBuilderCreateBasicType(
@@ -142,7 +148,7 @@ LLVMMetadataRef gen_llvm_di_type(const Type type) {
 		type,
 		strlen(type),
 		size,
-		0,
+		encoding,
 		LLVMDIFlagZero
 	);
 }

@@ -1,6 +1,8 @@
 ; ModuleID = './test/skull/codegen/llvm/first.sk'
 source_filename = "./test/skull/codegen/llvm/first.sk"
 
+@0 = private unnamed_addr constant [12 x i8] c"some string\00", align 1
+
 define i64 @.first() !dbg !5 {
 entry:
   %0 = call i64 @f(), !dbg !7
@@ -36,6 +38,21 @@ if_true:                                          ; preds = %entry
 
 end:                                              ; preds = %entry, %if_true
   call void @llvm.dbg.declare(metadata i64* %if_test, metadata !23, metadata !DIExpression()), !dbg !21
+  %int = alloca i64
+  store i64 1234, i64* %int, !dbg !24
+  call void @llvm.dbg.declare(metadata i64* %int, metadata !25, metadata !DIExpression()), !dbg !24
+  %float = alloca double
+  store double 3.141500e+00, double* %float, !dbg !26
+  call void @llvm.dbg.declare(metadata double* %float, metadata !27, metadata !DIExpression()), !dbg !26
+  %rune = alloca i32
+  store i32 120, i32* %rune, !dbg !29
+  call void @llvm.dbg.declare(metadata i32* %rune, metadata !30, metadata !DIExpression()), !dbg !29
+  %bool = alloca i1
+  store i1 false, i1* %bool, !dbg !32
+  call void @llvm.dbg.declare(metadata i1* %bool, metadata !33, metadata !DIExpression()), !dbg !32
+  %str = alloca i8*
+  store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** %str, !dbg !35
+  call void @llvm.dbg.declare(metadata i8** %str, metadata !36, metadata !DIExpression()), !dbg !35
   ret void
 }
 
@@ -61,7 +78,7 @@ attributes #0 = { nounwind readnone speculatable willreturn }
 !11 = distinct !DISubprogram(name: "f2", scope: !5, file: !1, line: 7, type: !12, scopeLine: 7, spFlags: DISPFlagDefinition, unit: !0, retainedNodes: !2)
 !12 = !DISubroutineType(types: !13)
 !13 = !{!14}
-!14 = !DIBasicType(name: "Int", size: 64)
+!14 = !DIBasicType(name: "Int", size: 64, encoding: DW_ATE_unsigned)
 !15 = distinct !DISubprogram(name: "f3", scope: !5, file: !1, line: 11, type: !16, scopeLine: 11, spFlags: DISPFlagDefinition, unit: !0, retainedNodes: !2)
 !16 = !DISubroutineType(types: !17)
 !17 = !{!14, !14}
@@ -71,3 +88,17 @@ attributes #0 = { nounwind readnone speculatable willreturn }
 !21 = !DILocation(line: 22, column: 7, scope: !22)
 !22 = distinct !DILexicalBlock(scope: !18, file: !1, line: 21, column: 2)
 !23 = !DILocalVariable(name: "if_test", scope: !22, file: !1, line: 22, type: !14, align: 8)
+!24 = !DILocation(line: 25, column: 6, scope: !18)
+!25 = !DILocalVariable(name: "int", scope: !18, file: !1, line: 25, type: !14, align: 8)
+!26 = !DILocation(line: 26, column: 6, scope: !18)
+!27 = !DILocalVariable(name: "float", scope: !18, file: !1, line: 26, type: !28, align: 8)
+!28 = !DIBasicType(name: "Float", size: 64, encoding: DW_ATE_float)
+!29 = !DILocation(line: 27, column: 6, scope: !18)
+!30 = !DILocalVariable(name: "rune", scope: !18, file: !1, line: 27, type: !31, align: 8)
+!31 = !DIBasicType(name: "Rune", size: 32, encoding: DW_ATE_signed_char)
+!32 = !DILocation(line: 28, column: 6, scope: !18)
+!33 = !DILocalVariable(name: "bool", scope: !18, file: !1, line: 28, type: !34, align: 8)
+!34 = !DIBasicType(name: "Bool", size: 1, encoding: DW_ATE_boolean)
+!35 = !DILocation(line: 29, column: 6, scope: !18)
+!36 = !DILocalVariable(name: "str", scope: !18, file: !1, line: 29, type: !37, align: 8)
+!37 = !DIBasicType(name: "Str", size: 64, encoding: DW_ATE_address)
