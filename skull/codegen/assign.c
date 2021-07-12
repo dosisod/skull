@@ -154,10 +154,12 @@ static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 		var->ref = value;
 	}
 	else {
-		LLVMBuildStore(
+		LLVMValueRef store = LLVMBuildStore(
 			SKULL_STATE_LLVM.builder,
 			value,
 			var->ref
 		);
+
+		add_llvm_debug_info(store, &var->location);
 	}
 }
