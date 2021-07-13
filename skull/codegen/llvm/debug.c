@@ -58,7 +58,7 @@ LLVMDIBuilderRef setup_debug_info(
 
 	LLVMDIBuilderCreateCompileUnit(
 		di_builder,
-		LLVMDWARFSourceLanguageC,
+		LLVMDWARFSourceLanguageC99,
 		di_file,
 		"skull", 5,
 		false,
@@ -120,6 +120,23 @@ LLVMDIBuilderRef setup_debug_info(
 }
 
 LLVMMetadataRef gen_llvm_di_type(const Type type) {
+	if (type == TYPE_STR) {
+		return LLVMDIBuilderCreatePointerType(
+			DEBUG_INFO.builder,
+			LLVMDIBuilderCreateBasicType(
+				DEBUG_INFO.builder,
+				"char", 4,
+				CHAR_BIT,
+				DW_ATE_signed_char,
+				LLVMDIFlagZero
+			),
+			64,
+			0,
+			0,
+			"Str", 3
+		);
+	}
+
 	unsigned size = 0;
 	DW_ATE encoding = DW_ATE_unsigned;
 
@@ -136,17 +153,12 @@ LLVMMetadataRef gen_llvm_di_type(const Type type) {
 	}
 	else if (type == TYPE_RUNE) {
 		size = 32;
-		encoding = DW_ATE_signed_char;
-	}
-	else if (type == TYPE_STR) {
-		size = sizeof(char *) * CHAR_BIT;
-		encoding = DW_ATE_address;
+		encoding = DW_ATE_UTF;
 	}
 
 	return LLVMDIBuilderCreateBasicType(
 		DEBUG_INFO.builder,
-		type,
-		strlen(type),
+		type, strlen(type),
 		size,
 		encoding,
 		LLVMDIFlagZero
