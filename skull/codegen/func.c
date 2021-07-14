@@ -283,7 +283,6 @@ static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 	LLVMMetadataRef old_di_scope = DEBUG_INFO.scope;
 	DEBUG_INFO.scope = new_di_scope;
 	LLVMSetSubprogram(func->ref, DEBUG_INFO.scope);
-	LLVMDIBuilderFinalize(DEBUG_INFO.builder);
 
 	return old_di_scope;
 }

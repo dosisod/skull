@@ -100,8 +100,6 @@ LLVMDIBuilderRef setup_debug_info(
 
 	LLVMSetSubprogram(SKULL_STATE_LLVM.main_func->ref, DEBUG_INFO.scope);
 
-	LLVMDIBuilderFinalize(di_builder);
-
 	LLVMAddModuleFlag(
 		module,
 		LLVMModuleFlagBehaviorOverride,
@@ -166,18 +164,18 @@ LLVMMetadataRef gen_llvm_di_type(const Type type) {
 }
 
 void add_llvm_debug_info(LLVMValueRef value, const Location *location) {
-	if (BUILD_DATA.debug) {
-		LLVMInstructionSetDebugLoc(
-			value,
-			LLVMDIBuilderCreateDebugLocation(
-				SKULL_STATE_LLVM.ctx,
-				location->line,
-				location->column,
-				DEBUG_INFO.scope,
-				NULL
-			)
-		);
-	}
+	if (BUILD_DATA.debug)
+		LLVMInstructionSetDebugLoc(value, make_llvm_debug_location(location));
+}
+
+LLVMMetadataRef make_llvm_debug_location(const Location *location) {
+	return LLVMDIBuilderCreateDebugLocation(
+		SKULL_STATE_LLVM.ctx,
+		location->line,
+		location->column,
+		DEBUG_INFO.scope,
+		NULL
+	);
 }
 
 LLVMMetadataRef type_to_di_type(Type type) {

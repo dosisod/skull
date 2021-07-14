@@ -46,5 +46,6 @@ LLVMDIBuilderRef setup_debug_info(
 );
 
 void add_llvm_debug_info(LLVMValueRef, const Location *);
+LLVMMetadataRef make_llvm_debug_location(const Location *);
 
 LLVMMetadataRef type_to_di_type(Type);

@@ -27,32 +27,32 @@ entry:
 define private void @f4() !dbg !18 {
 entry:
   %local_var = alloca i64
-  store i64 1, i64* %local_var, !dbg !19
-  call void @llvm.dbg.declare(metadata i64* %local_var, metadata !20, metadata !DIExpression()), !dbg !19
+  store i64 1, i64* %local_var, !dbg !33
+  call void @llvm.dbg.declare(metadata i64* %local_var, metadata !20, metadata !DIExpression()), !dbg !33
   br i1 true, label %if_true, label %end
 
 if_true:                                          ; preds = %entry
   %if_test = alloca i64
-  store i64 1, i64* %if_test, !dbg !21
+  store i64 1, i64* %if_test, !dbg !34
   br label %end
 
 end:                                              ; preds = %entry, %if_true
-  call void @llvm.dbg.declare(metadata i64* %if_test, metadata !23, metadata !DIExpression()), !dbg !21
+  call void @llvm.dbg.declare(metadata i64* %if_test, metadata !21, metadata !DIExpression()), !dbg !34
   %int = alloca i64
-  store i64 1234, i64* %int, !dbg !24
-  call void @llvm.dbg.declare(metadata i64* %int, metadata !25, metadata !DIExpression()), !dbg !24
+  store i64 1234, i64* %int, !dbg !35
+  call void @llvm.dbg.declare(metadata i64* %int, metadata !23, metadata !DIExpression()), !dbg !35
   %float = alloca double
-  store double 3.141500e+00, double* %float, !dbg !26
-  call void @llvm.dbg.declare(metadata double* %float, metadata !27, metadata !DIExpression()), !dbg !26
+  store double 3.141500e+00, double* %float, !dbg !36
+  call void @llvm.dbg.declare(metadata double* %float, metadata !24, metadata !DIExpression()), !dbg !36
   %rune = alloca i32
-  store i32 120, i32* %rune, !dbg !29
-  call void @llvm.dbg.declare(metadata i32* %rune, metadata !30, metadata !DIExpression()), !dbg !29
+  store i32 120, i32* %rune, !dbg !37
+  call void @llvm.dbg.declare(metadata i32* %rune, metadata !26, metadata !DIExpression()), !dbg !37
   %bool = alloca i1
-  store i1 false, i1* %bool, !dbg !32
-  call void @llvm.dbg.declare(metadata i1* %bool, metadata !33, metadata !DIExpression()), !dbg !32
+  store i1 false, i1* %bool, !dbg !38
+  call void @llvm.dbg.declare(metadata i1* %bool, metadata !28, metadata !DIExpression()), !dbg !38
   %str = alloca i8*
-  store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** %str, !dbg !35
-  call void @llvm.dbg.declare(metadata i8** %str, metadata !36, metadata !DIExpression()), !dbg !35
+  store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** %str, !dbg !39
+  call void @llvm.dbg.declare(metadata i8** %str, metadata !30, metadata !DIExpression()), !dbg !39
   ret void
 }
 
@@ -82,24 +82,25 @@ attributes #0 = { nounwind readnone speculatable willreturn }
 !15 = distinct !DISubprogram(name: "f3", scope: !5, file: !1, line: 11, type: !16, scopeLine: 11, spFlags: DISPFlagDefinition, unit: !0, retainedNodes: !2)
 !16 = !DISubroutineType(types: !17)
 !17 = !{!14, !14}
-!18 = distinct !DISubprogram(name: "f4", scope: !5, file: !1, line: 15, type: !6, scopeLine: 15, spFlags: DISPFlagDefinition, unit: !0, retainedNodes: !2)
-!19 = !DILocation(line: 19, column: 6, scope: !18)
+!18 = distinct !DISubprogram(name: "f4", scope: !5, file: !1, line: 15, type: !6, scopeLine: 15, spFlags: DISPFlagDefinition, unit: !0, retainedNodes: !19)
+!19 = !{!20, !21, !23, !24, !26, !28, !30}
 !20 = !DILocalVariable(name: "local_var", scope: !18, file: !1, line: 19, type: !14, align: 8)
-!21 = !DILocation(line: 22, column: 7, scope: !22)
+!21 = !DILocalVariable(name: "if_test", scope: !22, file: !1, line: 22, type: !14, align: 8)
 !22 = distinct !DILexicalBlock(scope: !18, file: !1, line: 21, column: 2)
-!23 = !DILocalVariable(name: "if_test", scope: !22, file: !1, line: 22, type: !14, align: 8)
-!24 = !DILocation(line: 25, column: 6, scope: !18)
-!25 = !DILocalVariable(name: "int", scope: !18, file: !1, line: 25, type: !14, align: 8)
-!26 = !DILocation(line: 26, column: 6, scope: !18)
-!27 = !DILocalVariable(name: "float", scope: !18, file: !1, line: 26, type: !28, align: 8)
-!28 = !DIBasicType(name: "Float", size: 64, encoding: DW_ATE_float)
-!29 = !DILocation(line: 27, column: 6, scope: !18)
-!30 = !DILocalVariable(name: "rune", scope: !18, file: !1, line: 27, type: !31, align: 8)
-!31 = !DIBasicType(name: "Rune", size: 32, encoding: DW_ATE_UTF)
-!32 = !DILocation(line: 28, column: 6, scope: !18)
-!33 = !DILocalVariable(name: "bool", scope: !18, file: !1, line: 28, type: !34, align: 8)
-!34 = !DIBasicType(name: "Bool", size: 1, encoding: DW_ATE_boolean)
-!35 = !DILocation(line: 29, column: 6, scope: !18)
-!36 = !DILocalVariable(name: "str", scope: !18, file: !1, line: 29, type: !37, align: 8)
-!37 = !DIDerivedType(tag: DW_TAG_pointer_type, name: "Str", baseType: !38, size: 64, dwarfAddressSpace: 0)
-!38 = !DIBasicType(name: "char", size: 8, encoding: DW_ATE_signed_char)
+!23 = !DILocalVariable(name: "int", scope: !18, file: !1, line: 25, type: !14, align: 8)
+!24 = !DILocalVariable(name: "float", scope: !18, file: !1, line: 26, type: !25, align: 8)
+!25 = !DIBasicType(name: "Float", size: 64, encoding: DW_ATE_float)
+!26 = !DILocalVariable(name: "rune", scope: !18, file: !1, line: 27, type: !27, align: 8)
+!27 = !DIBasicType(name: "Rune", size: 32, encoding: DW_ATE_UTF)
+!28 = !DILocalVariable(name: "bool", scope: !18, file: !1, line: 28, type: !29, align: 8)
+!29 = !DIBasicType(name: "Bool", size: 1, encoding: DW_ATE_boolean)
+!30 = !DILocalVariable(name: "str", scope: !18, file: !1, line: 29, type: !31, align: 8)
+!31 = !DIDerivedType(tag: DW_TAG_pointer_type, name: "Str", baseType: !32, size: 64, dwarfAddressSpace: 0)
+!32 = !DIBasicType(name: "char", size: 8, encoding: DW_ATE_signed_char)
+!33 = !DILocation(line: 19, column: 6, scope: !18)
+!34 = !DILocation(line: 22, column: 7, scope: !22)
+!35 = !DILocation(line: 25, column: 6, scope: !18)
+!36 = !DILocation(line: 26, column: 6, scope: !18)
+!37 = !DILocation(line: 27, column: 6, scope: !18)
+!38 = !DILocation(line: 28, column: 6, scope: !18)
+!39 = !DILocation(line: 29, column: 6, scope: !18)

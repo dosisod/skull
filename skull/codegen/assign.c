@@ -67,13 +67,7 @@ static void add_llvm_var_def_debug_info(const Variable *var) {
 		var->ref,
 		di_var,
 		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
-		LLVMDIBuilderCreateDebugLocation(
-			SKULL_STATE_LLVM.ctx,
-			var->location.line,
-			var->location.column,
-			DEBUG_INFO.scope,
-			NULL
-		),
+		make_llvm_debug_location(&var->location),
 		LLVMGetLastBasicBlock(SKULL_STATE_LLVM.current_func->ref)
 	);
 }
