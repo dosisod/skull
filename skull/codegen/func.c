@@ -268,7 +268,7 @@ static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 
 	LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
 		DEBUG_INFO.builder,
-		DEBUG_INFO.scope,
+		DEBUG_INFO.file,
 		func->name, strlen(func->name),
 		"", 0,
 		DEBUG_INFO.file,
