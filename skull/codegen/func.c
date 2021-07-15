@@ -256,6 +256,33 @@ static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 
 		for RANGE(i, func->num_params) {
 			di_param_types[i] = type_to_di_type(func->param_types[i]);
+
+			char *param_name = c32stombs(
+				func->params[i]->param_name,
+				&func->location
+			);
+
+			LLVMMetadataRef di_var = LLVMDIBuilderCreateParameterVariable(
+				DEBUG_INFO.builder,
+				DEBUG_INFO.scope,
+				param_name, strlen(param_name),
+				i + 1,
+				DEBUG_INFO.file,
+				func->location.line,
+				di_param_types[i],
+				true,
+				LLVMDIFlagZero
+			);
+			free(param_name);
+
+			LLVMDIBuilderInsertDeclareAtEnd(
+				DEBUG_INFO.builder,
+				func->params[i]->var->ref,
+				di_var,
+				LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
+				make_llvm_debug_location(&func->location),
+				LLVMGetLastBasicBlock(func->ref)
+			);
 		}
 	}
 

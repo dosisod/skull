@@ -136,7 +136,7 @@ LLVMMetadataRef gen_llvm_di_type(const Type type) {
 	}
 
 	unsigned size = 0;
-	DW_ATE encoding = DW_ATE_unsigned;
+	DW_ATE encoding = DW_ATE_signed;
 
 	if (type == TYPE_BOOL) {
 		size = 1;
