@@ -139,7 +139,7 @@ static bool iter_comment(
 
 	CommentState comment = NO_COMMENT;
 
-	if (code[1] == ' ')
+	if (code[1] == ' ' || code[1] == '\t')
 		comment = LINE_COMMENT;
 
 	else if (code[1] == '{')

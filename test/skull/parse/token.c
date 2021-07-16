@@ -180,16 +180,25 @@ bool test_token_str() {
 }
 
 bool test_tokenize_comment() {
-	const char32_t *code = U"# this is a comment";
+	#define comment1 U"# this is a comment"
+	#define comment2 U"#\talso a comment"
+	const char32_t *code = comment1 U"\n" comment2;
+
 	Token *token = tokenize(code);
 	char32_t *buf = token_str(token);
+	char32_t *buf2 = token_str(token->next->next);
 
-	ASSERT_TRUTHY(c32scmp(buf, code));
+	ASSERT_TRUTHY(c32scmp(buf, comment1));
+	ASSERT_TRUTHY(c32scmp(buf2, comment2));
 
 	free(buf);
+	free(buf2);
 	free_tokens(token);
 
 	PASS
+
+	#undef comment1
+	#undef comment2
 }
 
 bool test_tokenize_trailing_comment() {
