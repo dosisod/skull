@@ -97,8 +97,8 @@ static Expr _gen_node(AstNode **node, bool *err) {
 		case AST_NODE_VAR_DEF: *err |= gen_stmt_var_def(*node); break;
 		case AST_NODE_VAR_ASSIGN: *err |= gen_stmt_var_assign(*node); break;
 		case AST_NODE_EXPR: *err |= gen_expr_node(*node); break;
+		case AST_NODE_NOOP: gen_stmt_noop(&(*node)->token->location); break;
 		case AST_NODE_COMMENT:
-		case AST_NODE_NOOP:
 		case AST_NODE_TYPE_ALIAS: break;
 		default: {
 			if ((*node)->token) {
