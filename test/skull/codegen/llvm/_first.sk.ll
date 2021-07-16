@@ -16,7 +16,9 @@ entry:
 
 define private void @f2(i64 %0) !dbg !11 {
 entry:
-  call void @llvm.dbg.declare(metadata i64 %0, metadata !16, metadata !DIExpression()), !dbg !17
+  %x = alloca i64
+  store i64 %0, i64* %x
+  call void @llvm.dbg.declare(metadata i64* %x, metadata !16, metadata !DIExpression()), !dbg !17
   ret void
 }
 
@@ -25,8 +27,12 @@ declare void @llvm.dbg.declare(metadata, metadata, metadata) #0
 
 define private void @f3(i64 %0, i64 %1) !dbg !18 {
 entry:
-  call void @llvm.dbg.declare(metadata i64 %0, metadata !22, metadata !DIExpression()), !dbg !24
-  call void @llvm.dbg.declare(metadata i64 %1, metadata !23, metadata !DIExpression()), !dbg !24
+  %y = alloca i64
+  store i64 %0, i64* %y
+  call void @llvm.dbg.declare(metadata i64* %y, metadata !22, metadata !DIExpression()), !dbg !24
+  %z = alloca i64
+  store i64 %1, i64* %z
+  call void @llvm.dbg.declare(metadata i64* %z, metadata !23, metadata !DIExpression()), !dbg !24
   ret void
 }
 

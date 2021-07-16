@@ -28,6 +28,7 @@ static bool gen_function_def(const AstNode *const, FunctionDeclaration *);
 static void create_function(FunctionDeclaration *);
 static LLVMTypeRef *parse_func_param(const FunctionDeclaration *);
 static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *);
+static void alloc_debug_function_param(Variable **);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
@@ -304,6 +305,8 @@ static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 			);
 			free(param_name);
 
+			alloc_debug_function_param(&func->params[i]->var);
+
 			LLVMDIBuilderInsertDeclareAtEnd(
 				DEBUG_INFO.builder,
 				func->params[i]->var->ref,
@@ -316,4 +319,24 @@ static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 	}
 
 	return old_di_scope;
+}
+
+static void alloc_debug_function_param(Variable **var) {
+	LLVMValueRef old_ref = (*var)->ref;
+	Variable *func_var = *var;
+
+	func_var->ref = LLVMBuildAlloca(
+		SKULL_STATE_LLVM.builder,
+		gen_llvm_type(func_var->type),
+		func_var->name
+	);
+
+	LLVMBuildStore(
+		SKULL_STATE_LLVM.builder,
+		old_ref,
+		func_var->ref
+	);
+
+	(*var)->ref = func_var->ref;
+	(*var)->is_const = false;
 }
