@@ -27,4 +27,8 @@ f4() {
 	mut rune := 'x'
 	mut bool := false
 	mut str := "some string"
+
+	if bool {
+		noop
+	}
 }

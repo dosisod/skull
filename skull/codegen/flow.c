@@ -134,15 +134,12 @@ bool gen_control_while(AstNode *node) {
 	LLVMBuildBr(SKULL_STATE_LLVM.builder, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_cond);
 
-	bool err = false;
-	const Expr expr = node_to_expr(NULL, node->expr_node, &err);
-	if (err) return NULL;
-
-	warn_const_cond(expr.value, &node->expr_node->token->location);
+	LLVMValueRef cond = node_to_bool(node->expr_node);
+	if (!cond) return true;
 
 	LLVMBuildCondBr(
 		SKULL_STATE_LLVM.builder,
-		expr.value,
+		cond,
 		while_loop,
 		while_end
 	);
@@ -276,6 +273,7 @@ static LLVMValueRef node_to_bool(const AstNode *const node) {
 	}
 
 	warn_const_cond(expr.value, &node->token->location);
+	add_llvm_debug_info(expr.value, &node->token->location);
 
 	return expr.value;
 }

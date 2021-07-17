@@ -164,7 +164,7 @@ LLVMMetadataRef gen_llvm_di_type(const Type type) {
 }
 
 void add_llvm_debug_info(LLVMValueRef value, const Location *location) {
-	if (BUILD_DATA.debug)
+	if (BUILD_DATA.debug && !LLVMIsConstant(value))
 		LLVMInstructionSetDebugLoc(value, make_llvm_debug_location(location));
 }
 

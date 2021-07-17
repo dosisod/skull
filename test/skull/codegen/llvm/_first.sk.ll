@@ -69,6 +69,15 @@ end:                                              ; preds = %entry, %if_true
   %str = alloca i8*
   store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** %str, !dbg !48
   call void @llvm.dbg.declare(metadata i8** %str, metadata !39, metadata !DIExpression()), !dbg !48
+  %0 = load i1, i1* %bool, !dbg !49
+  br i1 %0, label %if_true2, label %end1
+
+if_true2:                                         ; preds = %end
+  %noop = alloca i64
+  store i64 0, i64* %noop, !dbg !50
+  br label %end1
+
+end1:                                             ; preds = %end, %if_true2
   ret void
 }
 
@@ -126,3 +135,6 @@ attributes #0 = { nounwind readnone speculatable willreturn }
 !46 = !DILocation(line: 27, column: 6, scope: !27)
 !47 = !DILocation(line: 28, column: 6, scope: !27)
 !48 = !DILocation(line: 29, column: 6, scope: !27)
+!49 = !DILocation(line: 31, column: 5, scope: !27)
+!50 = !DILocation(line: 32, column: 3, scope: !51)
+!51 = distinct !DILexicalBlock(scope: !27, file: !1, line: 31, column: 2)
