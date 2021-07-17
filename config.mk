@@ -5,7 +5,7 @@ MANPATH := $(shell manpath | cut -d : -f1)/man1/
 CC = $(shell readlink -f `which cc`)
 CXX ?= g++
 
-SKULL_VERSION=$(shell git describe)
+SKULL_VERSION=$(shell git describe --always)
 
 ECHO=printf
 

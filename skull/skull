@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SKULL_VERSION=$(git describe)
+SKULL_VERSION=$(git describe --always)
 
 usage() {
 	printf "skull -v
