@@ -59,6 +59,7 @@ test_llvm_debug() {
 	[ "$?" = "0" ] || { fail; return; }
 
 	sed -i "s/directory: \"\(.*\)\"/directory: \".\"/" "./$dir/.$file.ll"
+	sed -i "s/producer: \"\(.*\)\"/producer: \"skull\"/" "./$dir/.$file.ll"
 	compare "./$dir/_$file.ll" "./$dir/.$file.ll"
 	rm -f "./$dir/.$file.ll"
 }

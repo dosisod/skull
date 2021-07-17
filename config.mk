@@ -1,9 +1,11 @@
-BIN := /usr/local/bin/
+BIN := /usr/local/bin
 HEADER := /usr/include
 MANPATH := $(shell manpath | cut -d : -f1)/man1/
 
 CC = $(shell readlink -f `which cc`)
 CXX ?= g++
+
+SKULL_VERSION=$(shell git describe)
 
 ECHO=printf
 
@@ -44,7 +46,8 @@ CFLAGS += -std=c18 \
 	-Wwrite-strings \
 	-Wdouble-promotion \
 	-fno-common \
-	-I.
+	-I. \
+	-DSKULL_VERSION="\"$(SKULL_VERSION)\""
 
 LLVM_CONFIG = $(shell command -v llvm-config-10 || command -v llvm-config)
 

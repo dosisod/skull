@@ -1,5 +1,7 @@
 #!/bin/sh
 
+SKULL_VERSION=$(git describe)
+
 usage() {
 	printf "skull -v
 skull file [ -S | -E | -c ]
@@ -19,7 +21,7 @@ esac
 while getopts ":vhcSEo:m:" o; do
 	case "$o" in
 		v)
-			printf "\033[92mSkull\033[0m v0.6.0\n"
+			printf "%b" "\033[92mSkull\033[0m $SKULL_VERSION\n"
 			exit 0
 			;;
 		h) usage; exit 0 ;;

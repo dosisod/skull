@@ -20,6 +20,10 @@
 
 static LLVMMetadataRef gen_llvm_di_type(const Type);
 
+#ifndef SKULL_VERSION
+#define SKULL_VERSION "<unknown>"
+#endif
+
 DebugInfo DEBUG_INFO;
 LLVMMetadataRef DI_TYPE_BOOL;
 LLVMMetadataRef DI_TYPE_INT;
@@ -60,7 +64,7 @@ LLVMDIBuilderRef setup_debug_info(
 		di_builder,
 		LLVMDWARFSourceLanguageC99,
 		di_file,
-		"skull", 5,
+		"skull "SKULL_VERSION, strlen("skull "SKULL_VERSION),
 		false,
 		"", 0,
 		0,

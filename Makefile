@@ -44,6 +44,7 @@ install: clean | skull
 	@install -m 644 docs/skull/skull.1 $(MANPATH)
 	@$(ECHO) "\033[92mInstall\033[0m Skull\n"
 	@install skull/skull $(BIN)
+	@sed -i 's/SKULL_VERSION=.*$$/SKULL_VERSION='$(SKULL_VERSION)'/' $(BIN)/skull
 	@install build/skull/_skull $(BIN)
 	@make clean
 
@@ -54,8 +55,8 @@ install-dev:
 
 uninstall:
 	@$(ECHO) "\033[92mUninstall\033[0m Skull\n"
-	@rm -f $(BIN)skull
-	@rm -f $(BIN)_skull
+	@rm -f $(BIN)/skull
+	@rm -f $(BIN)/_skull
 	@$(ECHO) "\033[92mUninstall\033[0m Skull docs\n"
 	@rm -f $(MANPATH)skull.1
 	@$(ECHO) "\033[92mUninstall\033[0m Skull headers\n"
