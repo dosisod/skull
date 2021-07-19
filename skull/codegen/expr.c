@@ -14,7 +14,6 @@
 #include "skull/codegen/expr.h"
 
 typedef Expr (Operation)(Type, LLVMValueRef, LLVMValueRef);
-typedef Expr (OperationWithErr)(Type, LLVMValueRef, LLVMValueRef, bool *);
 
 typedef LLVMValueRef (LLVMBuildX)(
 	LLVMBuilderRef,
@@ -27,16 +26,22 @@ static Operation gen_expr_add, gen_expr_sub, gen_expr_mult,
 	gen_expr_not, gen_expr_unary_neg, gen_expr_is, gen_expr_is_not,
 	gen_expr_less_than, gen_expr_gtr_than, gen_expr_less_than_eq,
 	gen_expr_gtr_than_eq, gen_expr_lshift, gen_expr_rshift,
-	gen_expr_and, gen_expr_or, gen_expr_xor;
+	gen_expr_and, gen_expr_or, gen_expr_xor, gen_expr_div, gen_expr_mod;
 
-static OperationWithErr gen_expr_div, gen_expr_mod, gen_expr_pow;
+static Expr gen_expr_pow(
+	Type,
+	LLVMValueRef,
+	LLVMValueRef,
+	bool *
+);
 
 static Expr gen_expr_const(const Token *const, bool *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr gen_expr(Type, const AstNodeExpr *const, bool *);
-static bool is_div_by_zero(LLVMValueRef);
 static Expr ident_to_expr(const Token *const, Variable **);
 static Expr gen_expr_identifier(Type, const Token *const, bool *);
+static Operation *expr_type_to_func(ExprType);
+static bool is_bool_expr(ExprType);
 
 static Expr create_and_call_builtin_oper(
 	Type,
@@ -83,46 +88,15 @@ static Expr gen_expr(
 	const AstNodeExpr *const expr,
 	bool *err
 ) {
-	Operation *func = NULL;
-	OperationWithErr *func_with_err = NULL;
-
-	// true if expr results in different type then its operands
-	bool is_diff_type = false;
-
 	switch (expr->oper) {
-		case EXPR_ADD: func = &gen_expr_add; break;
-		case EXPR_SUB: func = &gen_expr_sub; break;
-		case EXPR_UNARY_NEG: func = &gen_expr_unary_neg; break;
-		case EXPR_MULT: func = &gen_expr_mult; break;
-		case EXPR_DIV: func_with_err = &gen_expr_div; break;
-		case EXPR_MOD: func_with_err = &gen_expr_mod; break;
-		case EXPR_NOT: func = &gen_expr_not; break;
-		case EXPR_LSHIFT: func = &gen_expr_lshift; break;
-		case EXPR_POW: func_with_err = &gen_expr_pow; break;
-		case EXPR_RSHIFT: func = &gen_expr_rshift; break;
-		case EXPR_IS: func = gen_expr_is; is_diff_type = true; break;
-		case EXPR_ISNT: func = gen_expr_is_not; is_diff_type = true; break;
-		case EXPR_LESS_THAN:
-			func = gen_expr_less_than; is_diff_type = true; break;
-		case EXPR_GTR_THAN:
-			func = gen_expr_gtr_than; is_diff_type = true; break;
-		case EXPR_LESS_THAN_EQ:
-			func = gen_expr_less_than_eq; is_diff_type = true; break;
-		case EXPR_GTR_THAN_EQ:
-			func = gen_expr_gtr_than_eq; is_diff_type = true; break;
-		case EXPR_AND: func = gen_expr_and; is_diff_type = true; break;
-		case EXPR_OR: func = gen_expr_or; is_diff_type = true; break;
-		case EXPR_XOR: func = gen_expr_xor; is_diff_type = true; break;
 		case EXPR_IDENTIFIER:
 			return gen_expr_identifier(type, expr->lhs.tok, err);
 		case EXPR_CONST:
 			return gen_expr_const(expr->lhs.tok, err);
 		case EXPR_FUNC:
-			return gen_expr_function_call(expr, type, err);
-		default: return (Expr){0};
+			return gen_expr_function_call(expr->lhs.func_call, type, err);
+		default: break;
 	}
-
-	if (*err) return (Expr){0};
 
 	const Token *lhs_token = expr->lhs.expr ?
 		(expr->lhs.expr->oper == EXPR_FUNC ?
@@ -130,21 +104,22 @@ static Expr gen_expr(
 			expr->lhs.expr->lhs.tok) :
 			NULL;
 
+	const bool is_bool_return = is_bool_expr(expr->oper);
+
 	const Expr lhs = lhs_token ?
-		gen_expr(is_diff_type ? NULL : type, expr->lhs.expr, err) :
+		gen_expr(is_bool_return ? NULL : type, expr->lhs.expr, err) :
 		(Expr){0};
 
 	if (*err) return (Expr){0};
 
-	const Token *rhs_token = expr->rhs.expr->lhs.tok;
-
 	const Expr rhs = gen_expr(
-		is_diff_type ? lhs.type : type,
+		is_bool_return ? lhs.type : type,
 		expr->rhs.expr,
 		err
 	);
-
 	if (*err) return (Expr){0};
+
+	const Token *rhs_token = expr->rhs.expr->lhs.tok;
 
 	if (lhs.value && lhs.type != rhs.type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
@@ -156,9 +131,15 @@ static Expr gen_expr(
 		return (Expr){0};
 	}
 
-	const Expr result = func ?
-			func(rhs.type, lhs.value, rhs.value) :
-			func_with_err(rhs.type, lhs.value, rhs.value, err);
+	Expr result = (Expr){0};
+
+	Operation *func = expr_type_to_func(expr->oper);
+	if (func) {
+		result = func(rhs.type, lhs.value, rhs.value);
+	}
+	else if (expr->oper == EXPR_POW) {
+		result = gen_expr_pow(rhs.type, lhs.value, rhs.value, err);
+	}
 
 	if ((!result.type && !result.value) || *err) return (Expr){0};
 
@@ -367,20 +348,12 @@ static Expr gen_expr_mult(
 
 /*
 Return expression for division of `lhs` and `rhs`.
-
-Set `err` if an error occurred.
 */
 static Expr gen_expr_div(
 	Type type,
 	LLVMValueRef lhs,
-	LLVMValueRef rhs,
-	bool *err
+	LLVMValueRef rhs
 ) {
-	if (type == TYPE_INT && is_div_by_zero(rhs)) {
-		*err = true;
-		return (Expr){0};
-	}
-
 	return gen_expr_math_oper(
 		type,
 		lhs,
@@ -390,32 +363,14 @@ static Expr gen_expr_div(
 	);
 }
 
-static bool is_div_by_zero(LLVMValueRef value) {
-	if (LLVMConstIntGetSExtValue(value) == 0) {
-		FMT_ERROR(ERR_DIV_BY_ZERO, {0});
-
-		return true;
-	}
-
-	return false;
-}
-
 /*
 Return expression for modulus of `lhs` and `rhs`.
-
-Set `err` if an error occurred.
 */
 static Expr gen_expr_mod(
 	Type type,
 	LLVMValueRef lhs,
-	LLVMValueRef rhs,
-	bool *err
+	LLVMValueRef rhs
 ) {
-	if (type == TYPE_INT && is_div_by_zero(rhs)) {
-		*err = true;
-		return (Expr){0};
-	}
-
 	return gen_expr_math_oper(
 		type,
 		lhs,
@@ -761,4 +716,44 @@ static Expr gen_expr_xor(
 	LLVMValueRef rhs
 ) {
 	return gen_expr_logical_oper(type, lhs, rhs, LLVMBuildXor);
+}
+
+static Operation *expr_type_to_func(ExprType oper) {
+	switch (oper) {
+		case EXPR_ADD: return gen_expr_add;
+		case EXPR_SUB: return gen_expr_sub;
+		case EXPR_UNARY_NEG: return gen_expr_unary_neg;
+		case EXPR_MULT: return gen_expr_mult;
+		case EXPR_NOT: return gen_expr_not;
+		case EXPR_LSHIFT: return gen_expr_lshift;
+		case EXPR_RSHIFT: return gen_expr_rshift;
+		case EXPR_IS: return gen_expr_is;
+		case EXPR_ISNT: return gen_expr_is_not;
+		case EXPR_LESS_THAN: return gen_expr_less_than;
+		case EXPR_GTR_THAN: return gen_expr_gtr_than;
+		case EXPR_LESS_THAN_EQ: return gen_expr_less_than_eq;
+		case EXPR_GTR_THAN_EQ: return gen_expr_gtr_than_eq;
+		case EXPR_AND: return gen_expr_and;
+		case EXPR_OR: return gen_expr_or;
+		case EXPR_XOR: return gen_expr_xor;
+		case EXPR_MOD: return gen_expr_mod;
+		case EXPR_DIV: return gen_expr_div;
+		default: return NULL;
+	}
+}
+
+static bool is_bool_expr(ExprType oper) {
+	switch (oper) {
+		case EXPR_IS:
+		case EXPR_ISNT:
+		case EXPR_LESS_THAN:
+		case EXPR_GTR_THAN:
+		case EXPR_LESS_THAN_EQ:
+		case EXPR_GTR_THAN_EQ:
+		case EXPR_AND:
+		case EXPR_OR:
+		case EXPR_XOR:
+			return true;
+		default: return false;
+	}
 }

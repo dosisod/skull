@@ -96,11 +96,11 @@ Builds a function call from `expr`.
 Set `err` if an error occurred.
 */
 Expr gen_expr_function_call(
-	const AstNodeExpr *const expr,
+	const AstNodeFunctionCall *const func_call,
 	Type type,
 	bool *err
 ) {
-	const Token *func_name_token = expr->lhs.func_call->func_name_tok;
+	const Token *func_name_token = func_call->func_name_tok;
 	char *const func_name = token_mbs_str(func_name_token);
 
 	// TODO(dosisod): dont find func since we know it exists (store in node)
@@ -113,7 +113,7 @@ Expr gen_expr_function_call(
 	if (num_params)
 		params = Calloc(num_params, sizeof(LLVMValueRef));
 
-	const AstNode *param = expr->lhs.func_call->params;
+	const AstNode *param = func_call->params;
 
 	for RANGE(i, num_params) {
 		const Expr param_expr = node_to_expr(

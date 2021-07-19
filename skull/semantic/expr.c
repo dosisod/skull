@@ -4,12 +4,16 @@
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/scope.h"
+#include "skull/semantic/shared.h"
 
 #include "skull/semantic/expr.h"
 
 
 static bool validate_stmt_func_call(const AstNodeFunctionCall *);
 static bool _validate_expr(const AstNodeExpr *);
+static bool does_identifier_exist(const Token *);
+static bool is_div_by_zero(const AstNodeExpr *);
 
 bool validate_expr(const AstNode *node) {
 	return _validate_expr(node->expr);
@@ -18,24 +22,52 @@ bool validate_expr(const AstNode *node) {
 static bool _validate_expr(const AstNodeExpr *expr) {
 	const ExprType oper = expr->oper;
 
-	if (oper == EXPR_FUNC)
-		return validate_stmt_func_call(expr->lhs.func_call);
-
 	switch (oper) {
-		case EXPR_UNKNOWN:
+		case EXPR_FUNC:
+			return validate_stmt_func_call(expr->lhs.func_call);
 		case EXPR_IDENTIFIER:
-		case EXPR_CONST:
-			// these are opers that cannot have a nested expr
-			return true;
+			return does_identifier_exist(expr->lhs.tok);
+		case EXPR_DIV:
+		case EXPR_MOD: {
+			return !is_div_by_zero(expr);
+		}
+		case EXPR_CONST: return true;
 		default: break;
 	}
 
-	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
-
 	if (!_validate_expr(expr->rhs.expr)) return false;
+
+	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
 	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
 
 	return true;
+}
+
+static bool does_identifier_exist(const Token *token) {
+	char *name = token_mbs_str(token);
+	const bool exists = scope_find_var(token, true);
+	free(name);
+
+	return exists;
+}
+
+static bool is_div_by_zero(const AstNodeExpr *expr) {
+	if (expr->rhs.expr->oper != EXPR_CONST) return false;
+
+	const Token *token = expr->rhs.expr->lhs.tok;
+	if (token->type != TOKEN_INT_CONST) return false;
+
+	bool err = false;
+	const int64_t i = eval_integer(token, &err);
+	if (err) return false;
+
+	if (i == 0) {
+		FMT_ERROR(ERR_DIV_BY_ZERO, { .loc = &token->location });
+
+		return true;
+	}
+
+	return false;
 }
 
 bool validate_expr_func(const AstNode *node) {
@@ -83,7 +115,7 @@ static bool validate_stmt_func_call(const AstNodeFunctionCall *func_call) {
 
 	if (num_params) {
 		while (num_params) {
-			validate_expr(param);
+			if (!validate_expr(param)) return false;
 			param = param->next;
 			num_params--;
 		}

@@ -83,20 +83,16 @@ static Expr gen_expr_mult(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for multiplication of `lhs` and `rhs`.
 
 ```c
-static Expr gen_expr_div(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
+static Expr gen_expr_div(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for division of `lhs` and `rhs`.
-> \
-> Set `err` if an error occurred.
 
 ```c
-static Expr gen_expr_mod(Type type, LLVMValueRef lhs, LLVMValueRef rhs, bool *err)
+static Expr gen_expr_mod(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for modulus of `lhs` and `rhs`.
-> \
-> Set `err` if an error occurred.
 
 ```c
 static Expr gen_expr_lshift(Type type, LLVMValueRef lhs, LLVMValueRef rhs)
