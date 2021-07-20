@@ -455,7 +455,12 @@ Return expression for result of unary negation operator for `rhs`.
 */
 static Expr gen_expr_unary_neg(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_math_oper(
-		&(Expr){ .type = lhs->type, .value = LLVM_INT(0) },
+		&(Expr){
+			.type = lhs->type,
+			.value = lhs->type == TYPE_INT ?
+				LLVM_INT(0) :
+				LLVM_FLOAT(0)
+		},
 		rhs,
 		LLVMBuildNSWSub,
 		LLVMBuildFSub
