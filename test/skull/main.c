@@ -6,9 +6,9 @@
 #include "parse/classify.h"
 #include "parse/token.h"
 
-#include "compiler/scope.h"
-#include "compiler/types/types.h"
-#include "compiler/variable.h"
+#include "semantic/scope.h"
+#include "semantic/types.h"
+#include "semantic/variable.h"
 
 #include "common/errors.h"
 #include "common/hashtable.h"

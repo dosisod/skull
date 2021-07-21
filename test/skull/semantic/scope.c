@@ -6,7 +6,7 @@
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 
-#include "test/skull/compiler/scope.h"
+#include "test/skull/semantic/scope.h"
 #include "test/testing.h"
 
 Symbol *symbol_wrapper(Variable *var) {

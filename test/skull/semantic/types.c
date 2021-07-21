@@ -6,7 +6,7 @@
 #include "skull/semantic/types.h"
 #include "skull/common/str.h"
 
-#include "test/skull/compiler/types/types.h"
+#include "test/skull/semantic/types.h"
 #include "test/testing.h"
 
 bool test_find_type() {

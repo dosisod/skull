@@ -5,7 +5,7 @@
 #include "skull/common/errors.h"
 #include "skull/semantic/variable.h"
 
-#include "test/skull/compiler/variable.h"
+#include "test/skull/semantic/variable.h"
 #include "test/testing.h"
 
 bool test_create_variable() {
