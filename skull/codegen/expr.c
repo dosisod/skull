@@ -442,7 +442,7 @@ static Expr gen_expr_pow(
 Return expression for result of not operator for `rhs`.
 */
 static Expr gen_expr_not(const Expr *lhs, LLVMValueRef rhs) {
-	(void)lhs;
+	if (lhs->type != TYPE_BOOL) return (Expr){0};
 
 	return (Expr){
 		.value = LLVMBuildNot(SKULL_STATE_LLVM.builder, rhs, ""),

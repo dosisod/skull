@@ -1,0 +1,1 @@
+./test/sh/error/oper/using_non_bool_with_not.sk: Compilation error: line 1 column 10: invalid expression near "not"
