@@ -35,7 +35,7 @@ static bool _validate_expr(const AstNodeExpr *expr) {
 		default: break;
 	}
 
-	if (!_validate_expr(expr->rhs.expr)) return false;
+	if (!_validate_expr(expr->rhs)) return false;
 
 	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
 	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
@@ -52,9 +52,9 @@ static bool does_identifier_exist(const Token *token) {
 }
 
 static bool is_div_by_zero(const AstNodeExpr *expr) {
-	if (expr->rhs.expr->oper != EXPR_CONST) return false;
+	if (expr->rhs->oper != EXPR_CONST) return false;
 
-	const Token *token = expr->rhs.expr->lhs.tok;
+	const Token *token = expr->rhs->lhs.tok;
 	if (token->type != TOKEN_INT_CONST) return false;
 
 	bool err = false;

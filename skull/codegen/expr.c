@@ -105,12 +105,12 @@ static Expr gen_expr(
 
 	const Expr rhs = gen_expr(
 		is_bool_expr(expr->oper) ? lhs.type : type,
-		expr->rhs.expr,
+		expr->rhs,
 		err
 	);
 	if (*err) return (Expr){0};
 
-	const Token *rhs_token = expr->rhs.expr->lhs.tok;
+	const Token *rhs_token = expr->rhs->lhs.tok;
 
 	if (lhs.value && lhs.type != rhs.type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,

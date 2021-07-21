@@ -259,7 +259,7 @@ static AstNodeExpr *build_rhs_expr(
 	*new_expr = (AstNodeExpr){
 		.lhs = { .expr = lhs },
 		.oper = oper,
-		.rhs = { .expr = rhs }
+		.rhs = rhs
 	};
 
 	return new_expr;
@@ -874,7 +874,7 @@ static void free_expr_node(AstNodeExpr *expr) {
 	}
 
 	free_expr_node((void *)expr->lhs.expr);
-	free_expr_node((void *)expr->rhs.expr);
+	free_expr_node((void *)expr->rhs);
 	free(expr);
 }
 

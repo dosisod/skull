@@ -113,7 +113,7 @@ static __attribute__((pure)) const AstNodeExpr *leftmost_expr(
 		expr->oper != EXPR_FUNC
 	) {
 		if (expr->oper == EXPR_UNARY_NEG) {
-			expr = expr->rhs.expr;
+			expr = expr->rhs;
 		}
 		else {
 			expr = expr->lhs.expr;
