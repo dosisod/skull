@@ -26,7 +26,7 @@ Builds a variable definition from `node`.
 Return `true` if an error occurred.
 */
 bool gen_stmt_var_def(AstNode *node) {
-	Variable *var = scope_find_var(node->var_def->name_tok, true);
+	Variable *var = scope_find_var(node->var_def->name_tok);
 
 	bool err = false;
 	LLVMValueRef value = node_to_expr(
@@ -78,7 +78,7 @@ Assign a to a variable from `node`.
 Return `true` if an error occurred.
 */
 bool gen_stmt_var_assign(AstNode *node) {
-	Variable *var = scope_find_var(node->token, false);
+	Variable *var = scope_find_var(node->token);
 
 	bool err = false;
 	LLVMValueRef value = node_to_expr(

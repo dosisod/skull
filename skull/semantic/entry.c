@@ -91,7 +91,7 @@ static bool validate_control_while(const AstNode *node) {
 			break;
 		}
 		case EXPR_IDENTIFIER: {
-			Variable *var = scope_find_var(expr->lhs.tok, false);
+			Variable *var = scope_find_var(expr->lhs.tok);
 			if (!var) return false;
 
 			if (var->type == TYPE_BOOL) return true;

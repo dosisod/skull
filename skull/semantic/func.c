@@ -99,6 +99,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		free(func->params[i]->var);
 		func->params[i]->var = NULL;
 		param_var->location = param_location;
+		param_var->is_defined = true;
 
 		if (func->is_external) variable_no_warnings(param_var);
 

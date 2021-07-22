@@ -18,14 +18,17 @@ bool validate_expr(AstNode *);
 
 
 bool validate_stmt_var_def(const AstNode *node) {
-	const bool added = !!node_to_var(node);
-	if (!added) return false;
+	Variable *var = node_to_var(node);
+	if (!var) return false;
 
-	return validate_expr(node->var_def->expr_node);
+	const bool ok = validate_expr(node->var_def->expr_node);
+	var->is_defined = true;
+
+	return ok;
 }
 
 bool validate_stmt_var_assign(const AstNode *node) {
-	Variable *var = scope_find_var(node->token, true);
+	Variable *var = scope_find_var(node->token);
 	if (!var) return false;
 
 	if (var->is_const) {
@@ -154,7 +157,7 @@ static Type var_def_node_to_type(const AstNode *node) {
 			token_type = expr->lhs.tok->type;
 		}
 		else if (expr->oper == EXPR_IDENTIFIER) {
-			const Variable *var = scope_find_var(expr->lhs.tok, true);
+			const Variable *var = scope_find_var(expr->lhs.tok);
 			if (!var) return NULL;
 
 			return var->type;

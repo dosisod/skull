@@ -12,7 +12,6 @@
 
 static bool validate_stmt_func_call(const AstNodeFunctionCall *);
 static bool _validate_expr(const AstNodeExpr *);
-static bool does_identifier_exist(const Token *);
 static bool is_div_by_zero(const AstNodeExpr *);
 
 bool validate_expr(const AstNode *node) {
@@ -26,7 +25,7 @@ static bool _validate_expr(const AstNodeExpr *expr) {
 		case EXPR_FUNC:
 			return validate_stmt_func_call(expr->lhs.func_call);
 		case EXPR_IDENTIFIER:
-			return does_identifier_exist(expr->lhs.tok);
+			return !!scope_find_var(expr->lhs.tok);
 		case EXPR_DIV:
 		case EXPR_MOD: {
 			return !is_div_by_zero(expr);
@@ -41,14 +40,6 @@ static bool _validate_expr(const AstNodeExpr *expr) {
 	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
 
 	return true;
-}
-
-static bool does_identifier_exist(const Token *token) {
-	char *name = token_mbs_str(token);
-	const bool exists = scope_find_var(token, true);
-	free(name);
-
-	return exists;
 }
 
 static bool is_div_by_zero(const AstNodeExpr *expr) {
