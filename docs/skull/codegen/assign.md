@@ -1,18 +1,18 @@
 # skull/codegen/assign
 
 ```c
-bool gen_stmt_var_def(AstNode *node)
+bool gen_stmt_var_def(AstNode *expr_node)
 ```
 
-> Builds a variable definition from `node`.
+> Builds a variable definition from `expr_node`.
 > \
 > Return `true` if an error occurred.
 
 ```c
-bool gen_stmt_var_assign(AstNode *node)
+bool gen_stmt_var_assign(AstNode *expr_node)
 ```
 
-> Assign a to a variable from `node`.
+> Assign a to a variable from `expr_node`.
 > \
 > Return `true` if an error occurred.
 

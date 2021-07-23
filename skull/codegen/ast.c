@@ -94,8 +94,10 @@ static Expr _gen_node(AstNode **node, bool *err) {
 		case AST_NODE_RETURN: return gen_stmt_return(*node, err);
 		case AST_NODE_UNREACHABLE: return gen_stmt_unreachable();
 		case AST_NODE_FUNCTION_PROTO: *err |= gen_stmt_func_decl(*node); break;
-		case AST_NODE_VAR_DEF: *err |= gen_stmt_var_def(*node); break;
-		case AST_NODE_VAR_ASSIGN: *err |= gen_stmt_var_assign(*node); break;
+		case AST_NODE_VAR_DEF:
+			*err |= gen_stmt_var_def((*node)->var_def->expr_node); break;
+		case AST_NODE_VAR_ASSIGN:
+			*err |= gen_stmt_var_assign((*node)->expr_node); break;
 		case AST_NODE_EXPR: *err |= gen_expr_node(*node); break;
 		case AST_NODE_NOOP: gen_stmt_noop(&(*node)->token->location); break;
 		case AST_NODE_COMMENT:

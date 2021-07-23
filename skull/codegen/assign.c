@@ -21,17 +21,17 @@ static void setup_var_llvm(LLVMValueRef, Variable *);
 static void add_llvm_var_def_debug_info(const Variable *);
 
 /*
-Builds a variable definition from `node`.
+Builds a variable definition from `expr_node`.
 
 Return `true` if an error occurred.
 */
-bool gen_stmt_var_def(AstNode *node) {
-	Variable *var = scope_find_var(node->var_def->name_tok);
+bool gen_stmt_var_def(AstNode *expr_node) {
+	Variable *var = expr_node->expr->var;
 
 	bool err = false;
 	LLVMValueRef value = node_to_expr(
 		var->type,
-		node->var_def->expr_node,
+		expr_node,
 		&err
 	).value;
 
@@ -73,17 +73,17 @@ static void add_llvm_var_def_debug_info(const Variable *var) {
 }
 
 /*
-Assign a to a variable from `node`.
+Assign a to a variable from `expr_node`.
 
 Return `true` if an error occurred.
 */
-bool gen_stmt_var_assign(AstNode *node) {
-	Variable *var = scope_find_var(node->token);
+bool gen_stmt_var_assign(AstNode *expr_node) {
+	Variable *var = expr_node->expr->var;
 
 	bool err = false;
 	LLVMValueRef value = node_to_expr(
 		var->type,
-		node->expr_node,
+		expr_node,
 		&err
 	).value;
 

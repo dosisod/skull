@@ -148,11 +148,13 @@ Store special data about operator related nodes.
 typedef struct AstNodeExpr {
 	union {
 		const Token *tok;
-		const AstNodeExpr *expr;
+		AstNodeExpr *expr;
 		AstNodeFunctionCall *func_call;
 	} lhs;
 
-	const AstNodeExpr *rhs;
+	Variable *var;
+
+	AstNodeExpr *rhs;
 
 	ExprType oper;
 } AstNodeExpr;
