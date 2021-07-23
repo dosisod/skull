@@ -100,12 +100,7 @@ Expr gen_expr_function_call(
 	Type type,
 	bool *err
 ) {
-	const Token *func_name_token = func_call->func_name_tok;
-	char *const func_name = token_mbs_str(func_name_token);
-
-	// TODO(dosisod): dont find func since we know it exists (store in node)
-	FunctionDeclaration *function = find_func_by_name(func_name);
-	free(func_name);
+	FunctionDeclaration *function = func_call->func_decl;
 
 	unsigned short num_params = function->num_params;
 
@@ -149,7 +144,7 @@ Expr gen_expr_function_call(
 		FMT_ERROR(
 			ERR_ASSIGN_BAD_TYPE,
 			{
-				.loc = &func_name_token->location,
+				.loc = &func_call->func_name_tok->location,
 				.type = function->return_type
 			},
 			{ .type = type }
@@ -170,7 +165,7 @@ Expr gen_expr_function_call(
 		),
 		.type = function->return_type
 	};
-	add_llvm_debug_info(ret.value, &func_name_token->location);
+	add_llvm_debug_info(ret.value, &func_call->func_name_tok->location);
 
 	free(params);
 

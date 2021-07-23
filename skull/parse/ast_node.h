@@ -33,6 +33,7 @@ typedef struct AstNodeFunctionCall AstNodeFunctionCall;
 typedef struct AstNodeExpr AstNodeExpr;
 typedef struct FunctionDeclaration FunctionDeclaration;
 typedef struct Variable Variable;
+typedef struct FunctionDeclaration FunctionDeclaration;
 
 /*
 An `AstNode` abstractly stores data about parsed code.
@@ -114,6 +115,7 @@ typedef struct AstNodeFunctionCall {
 	const Token *func_name_tok;
 	const AstNode *params;
 	unsigned short num_values;
+	FunctionDeclaration *func_decl;
 } AstNodeFunctionCall;
 
 typedef enum {

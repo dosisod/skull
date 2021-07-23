@@ -10,7 +10,7 @@
 #include "skull/semantic/expr.h"
 
 
-static bool validate_stmt_func_call(const AstNodeFunctionCall *);
+static bool validate_stmt_func_call(AstNodeFunctionCall *);
 static bool _validate_expr(const AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
 
@@ -69,7 +69,7 @@ bool validate_expr_func(const AstNode *node) {
 	return false;
 }
 
-static bool validate_stmt_func_call(const AstNodeFunctionCall *func_call) {
+static bool validate_stmt_func_call(AstNodeFunctionCall *func_call) {
 	const Token *func_name_token = func_call->func_name_tok;
 	char *const func_name = token_mbs_str(func_name_token);
 
@@ -84,6 +84,7 @@ static bool validate_stmt_func_call(const AstNodeFunctionCall *func_call) {
 		return false;
 	}
 
+	func_call->func_decl = function;
 	function->was_called = true;
 
 	unsigned short num_params = function->num_params;
