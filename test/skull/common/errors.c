@@ -9,8 +9,8 @@
 #include "test/skull/common/errors.h"
 #include "test/testing.h"
 
-bool fmt_error_stringify_wrapper(ErrorMsg *error, const char *expected) {
-	fmt_error_stringify(error);
+static bool message_stringify_wrapper(Message *error, const char *expected) {
+	message_stringify(error);
 
 	if (!error->real) {
 		return !expected;
@@ -23,28 +23,28 @@ bool fmt_error_stringify_wrapper(ErrorMsg *error, const char *expected) {
 
 bool test_fmt_error_stringify() {
 	Token *tok = tokenize(U"xxx");
-	ErrorMsg err_tok = {
+	Message err_tok = {
 		.tok = tok
 	};
 
 	Variable *var = make_variable(TYPE_INT, U"var_name", true);
-	ErrorMsg err_var = {
+	Message err_var = {
 		.var = var
 	};
 
-	ErrorMsg err_type = {
+	Message err_type = {
 		.type = TYPE_INT
 	};
 
 	const char32_t *str = U"some string";
-	ErrorMsg err_str = {
+	Message err_str = {
 		.str32 = str
 	};
 
-	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_tok, "xxx"));
-	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_var, "var_name"));
-	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_str, "some string"));
-	ASSERT_TRUTHY(fmt_error_stringify_wrapper(&err_type, "Int"));
+	ASSERT_TRUTHY(message_stringify_wrapper(&err_tok, "xxx"));
+	ASSERT_TRUTHY(message_stringify_wrapper(&err_var, "var_name"));
+	ASSERT_TRUTHY(message_stringify_wrapper(&err_str, "some string"));
+	ASSERT_TRUTHY(message_stringify_wrapper(&err_type, "Int"));
 
 	free_tokens(tok);
 	free_variable(var);

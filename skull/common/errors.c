@@ -10,7 +10,8 @@
 
 #include "skull/common/errors.h"
 
-static void fmt_error_stringify(ErrorMsg *const);
+static void message_stringify(Message *const);
+static bool do_show_color(void);
 
 static const char *errors[] = {
 	[ERR_UNEXPECTED_TOKEN] = "unexpected token: \"%s\"\n",
@@ -111,20 +112,20 @@ static bool do_show_color(void) {
 }
 
 /*
-Returns formatted error message.
+Returns formatted message.
 
-Every `%s` in the string is expanded according to the corresponding `ErrorMsg`
+Every `%s` in the string is expanded according to the corresponding `Message`
 in `msgs`.
 */
-char *fmt_error(ErrorType type, ErrorCode error_code, ErrorMsg msgs[]) {
-	ErrorMsg *msg = msgs;
-	fmt_error_stringify(msg);
+char *fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
+	Message *msg = msgs;
+	message_stringify(msg);
 
 	size_t num_of_percents = 0;
 	while (msg->real || msg->str) {
 		num_of_percents++;
 		msg++;
-		fmt_error_stringify(msg);
+		message_stringify(msg);
 	}
 	msg = msgs;
 
@@ -167,8 +168,8 @@ char *fmt_error(ErrorType type, ErrorCode error_code, ErrorMsg msgs[]) {
 		);
 	}
 
-	if (error_code >= MAX_ERRORS) return NULL;
-	const char *fmt = errors[error_code];
+	if (id >= MAX_ERRORS) return NULL;
+	const char *fmt = errors[id];
 
 	char *error_msg = NULL;
 	if (num_of_percents == 0)
@@ -203,7 +204,7 @@ char *fmt_error(ErrorType type, ErrorCode error_code, ErrorMsg msgs[]) {
 }
 
 /*
-Convert error msg `msg` for use in `fmt_error`.
+Convert error msg `msg` for use in `fmt_message`.
 
 Depending on whether `msg` is a token, a variable, or a string, the resulting
 feild `real` will be created differently.
@@ -211,7 +212,7 @@ feild `real` will be created differently.
 If `i` (integer) is specified for `msg`, it must be one more then the actual
 value. This is due to `0` being falsey, and thus not being able to be checked.
 */
-void fmt_error_stringify(ErrorMsg *const msg) {
+void message_stringify(Message *const msg) {
 	if (msg->var)
 		msg->real = strdup(msg->var->name);
 	else if (msg->type)
@@ -221,5 +222,5 @@ void fmt_error_stringify(ErrorMsg *const msg) {
 	else if (msg->i)
 		msg->real = uvsnprintf("%zu", msg->i - 1);
 	else if (msg->tok && !msg->real && !msg->str)
-		msg->real = token_mbs_str(msg->tok);
+		msg->real = token_to_mbs_str(msg->tok);
 }

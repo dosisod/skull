@@ -24,7 +24,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	char *func_name = token_mbs_str(func_name_token);
+	char *func_name = token_to_mbs_str(func_name_token);
 
 	if (is_export && strcmp(func_name, "main") == 0) {
 		FMT_ERROR(ERR_MAIN_RESERVED, { .loc = &func_name_token->location });

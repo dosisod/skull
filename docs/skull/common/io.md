@@ -1,7 +1,7 @@
 # skull/common/io
 
 ```c
-char *read_file(FILE *const fd)
+char *file_to_string(FILE *const fd)
 ```
 
 > Return string read from file descriptor `fd`.

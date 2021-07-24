@@ -80,10 +80,10 @@ typedef struct Variable Variable;
 typedef const char * Type;
 
 /*
-`ErrorMsg` stores a reference to a given object, generating an error msg based
-on which one is set.
+`Message` allows for passing different objects (strings, types, variables),
+and have the proper string representations generated automatically.
 
-See `fmt_error_stringify` for uses of these fields.
+See `message_stringify` for uses of these fields.
 */
 typedef struct {
 	const char *str;
@@ -95,7 +95,7 @@ typedef struct {
 	char *real; // copy of string that will be used in final error msg
 
 	size_t i;
-} ErrorMsg;
+} Message;
 
 typedef enum {
 	ERROR_FATAL,
@@ -103,7 +103,7 @@ typedef enum {
 } ErrorType;
 
 #define FMT_WARN(fmt, ...) { \
-	char *_fmt_error_str = fmt_error(ERROR_WARN, fmt, (ErrorMsg[]){ \
+	char *_fmt_error_str = fmt_message(ERROR_WARN, fmt, (Message[]){ \
 		__VA_ARGS__, \
 		{0} \
 	}); \
@@ -112,7 +112,7 @@ typedef enum {
 }
 
 #define FMT_ERROR(fmt, ...) { \
-	char *_fmt_error_str = fmt_error(ERROR_FATAL, fmt, (ErrorMsg[]){ \
+	char *_fmt_error_str = fmt_message(ERROR_FATAL, fmt, (Message[]){ \
 		__VA_ARGS__, \
 		{0} \
 	}); \
@@ -120,4 +120,4 @@ typedef enum {
 	free(_fmt_error_str); \
 }
 
-char *fmt_error(ErrorType, ErrorCode, ErrorMsg []);
+char *fmt_message(ErrorType, ErrorCode, Message []);

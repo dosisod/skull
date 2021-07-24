@@ -60,7 +60,7 @@ static int compile_file(char *filename) {
 	FILE *const f = open_file(filename, true);
 	if (!f) return 1;
 
-	char *const file_contents = read_file(f);
+	char *const file_contents = file_to_string(f);
 	if (!file_contents) {
 		BUILD_DATA.filename = filename;
 

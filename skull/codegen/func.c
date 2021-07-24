@@ -25,7 +25,7 @@
 Expr gen_node(AstNode *, bool *);
 
 static bool gen_function_def(const AstNode *const, FunctionDeclaration *);
-static void create_function(FunctionDeclaration *);
+static void add_func(FunctionDeclaration *);
 static LLVMTypeRef *parse_func_param(const FunctionDeclaration *);
 static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *);
 static void alloc_debug_function_param(Variable **);
@@ -38,7 +38,7 @@ Return `true` if an error occurred.
 bool gen_stmt_func_decl(const AstNode *const node) {
 	FunctionDeclaration *func = node->func_proto->func;
 
-	create_function(node->func_proto->func);
+	add_func(node->func_proto->func);
 
 	if (!func->is_external) return gen_function_def(node, func);
 
@@ -47,10 +47,8 @@ bool gen_stmt_func_decl(const AstNode *const node) {
 
 /*
 Add new LLVM function from `func`.
-
-Else, the function will be globally available.
 */
-static void create_function(FunctionDeclaration *func) {
+static void add_func(FunctionDeclaration *func) {
 	LLVMTypeRef *params = parse_func_param(func);
 
 	func->type = LLVMFunctionType(

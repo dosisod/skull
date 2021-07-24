@@ -9,8 +9,8 @@
 bool test_is_type_str() {
 	Token *token = tokenize(U"Int not_a_type");
 
-	char32_t *buf = token_str(token);
-	char32_t *buf_next = token_str(token->next);
+	char32_t *buf = token_to_string(token);
+	char32_t *buf_next = token_to_string(token->next);
 
 	ASSERT_TRUTHY(is_type_str(buf));
 	ASSERT_FALSEY(is_type_str(buf_next));
@@ -242,7 +242,7 @@ bool test_token_rune_constant_hex_escape() {
 	PASS
 }
 
-bool test_token_str_constant() {
+bool test_token_to_string_constant() {
 	TEST_CLASSIFY_TOKEN_WITH_LEN(U"\"xyz\"", TOKEN_STR_CONST, 0, 5);
 
 	PASS
@@ -351,7 +351,7 @@ void classifier_test_self(bool *pass) {
 		test_token_rune_constant,
 		test_token_rune_constant_simple_escape,
 		test_token_rune_constant_hex_escape,
-		test_token_str_constant,
+		test_token_to_string_constant,
 		test_token_type,
 		test_token_comment,
 		test_token_comment_empty,

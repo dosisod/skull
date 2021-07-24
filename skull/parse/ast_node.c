@@ -346,8 +346,8 @@ static bool parse_function_proto(
 
 		AstNodeFunctionParam *param;
 		param = Malloc(sizeof *param);
-		param->type_name = token_mbs_str(token->next);
-		param->param_name = token_str(token);
+		param->type_name = token_to_mbs_str(token->next);
+		param->param_name = token_to_string(token);
 
 		// allocate a placeholder variable to store the location
 		param->var = Calloc(1, sizeof(Variable));
@@ -372,7 +372,7 @@ static bool parse_function_proto(
 		token->next->next &&
 		token->next->next->type == token_type
 	) {
-		return_type_name = token_mbs_str(token->next);
+		return_type_name = token_to_mbs_str(token->next);
 		token = token->next;
 	}
 
@@ -995,7 +995,7 @@ static void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 		const Token *token_end = node->token_end->next;
 
 		while (token != token_end) {
-			char *str = token_mbs_str(token);
+			char *str = token_to_mbs_str(token);
 
 			for RANGE(_, indent_lvl) { // NOLINT
 				putchar(' ');

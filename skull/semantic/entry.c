@@ -99,7 +99,7 @@ static bool validate_control_while(const AstNode *node) {
 		}
 		case EXPR_FUNC: {
 			const Token *token = expr->lhs.func_call->func_name_tok;
-			char *name = token_mbs_str(token);
+			char *name = token_to_mbs_str(token);
 			FunctionDeclaration *func = find_func_by_name(name);
 			free(name);
 
@@ -135,8 +135,8 @@ static bool validate_control_while(const AstNode *node) {
 static bool validate_stmt_type_alias(const AstNode *node) {
 	const Token *const token = node->token;
 
-	char *type_name = token_mbs_str(token->next->next);
-	char *alias = token_mbs_str(token);
+	char *type_name = token_to_mbs_str(token->next->next);
+	char *alias = token_to_mbs_str(token);
 
 	Symbol *symbol;
 	symbol = Calloc(1, sizeof *symbol);

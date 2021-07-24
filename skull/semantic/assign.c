@@ -62,7 +62,7 @@ static Variable *node_to_var(const AstNode *const node) {
 		if (!type) return NULL;
 	}
 	else {
-		char *const type_name = token_mbs_str(token->next);
+		char *const type_name = token_to_mbs_str(token->next);
 
 		type = find_type(type_name);
 		free(type_name);
@@ -74,7 +74,7 @@ static Variable *node_to_var(const AstNode *const node) {
 		}
 	}
 
-	char32_t *const name = token_str(token);
+	char32_t *const name = token_to_string(token);
 
 	Variable *var = make_variable(
 		type,
@@ -188,7 +188,7 @@ static Type var_def_node_to_type(const AstNode *node) {
 static Type func_get_type(const AstNode *node, const AstNodeExpr *expr) {
 	const Token *func_name_token = expr->lhs.func_call->func_name_tok;
 
-	char *const func_name = token_mbs_str(func_name_token);
+	char *const func_name = token_to_mbs_str(func_name_token);
 
 	FunctionDeclaration *const function = find_func_by_name(func_name);
 
@@ -205,7 +205,7 @@ static Type func_get_type(const AstNode *node, const AstNodeExpr *expr) {
 	if (type == TYPE_VOID) {
 		FMT_ERROR(ERR_NO_VOID_ASSIGN, {
 			.loc = &func_name_token->location,
-			.real = token_mbs_str(node->token)
+			.real = token_to_mbs_str(node->token)
 		});
 
 		// suppress errors

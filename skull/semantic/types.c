@@ -29,7 +29,7 @@ bool eval_bool(const Token *const token) {
 Returns a float (actually a double) parsed from `token`.
 */
 double eval_float(const Token *const token, bool *err) {
-	char *const float_str = token_mbs_str(token);
+	char *const float_str = token_to_mbs_str(token);
 
 	if (strcmp("Infinity", float_str) == 0) {
 		free(float_str);
@@ -79,7 +79,7 @@ int64_t eval_integer(const Token *const token, bool *err) {
 
 	// create a dummy token since we cannot modify `token`
 	// but still need to advance the `begin` field
-	char *num_str = token_mbs_str(&(Token){
+	char *num_str = token_to_mbs_str(&(Token){
 		.begin = begin, .end = token->end
 	});
 

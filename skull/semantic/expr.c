@@ -71,7 +71,7 @@ bool validate_expr_func(const AstNode *node) {
 
 static bool validate_stmt_func_call(AstNodeFunctionCall *func_call) {
 	const Token *func_name_token = func_call->func_name_tok;
-	char *const func_name = token_mbs_str(func_name_token);
+	char *const func_name = token_to_mbs_str(func_name_token);
 
 	FunctionDeclaration *function = find_func_by_name(func_name);
 	free(func_name);

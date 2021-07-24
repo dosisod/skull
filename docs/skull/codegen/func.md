@@ -9,12 +9,10 @@ bool gen_stmt_func_decl(const AstNode *const node)
 > Return `true` if an error occurred.
 
 ```c
-static void create_function(FunctionDeclaration *func)
+static void add_func(FunctionDeclaration *func)
 ```
 
 > Add new LLVM function from `func`.
-> \
-> Else, the function will be globally available.
 
 ```c
 static LLVMTypeRef *parse_func_param(const FunctionDeclaration *func)

@@ -14,10 +14,10 @@ typedef struct {
 }
 ```
 
-> `ErrorMsg` stores a reference to a given object, generating an error msg based
-> on which one is set.
+> `Message` allows for passing different objects (strings, types, variables),
+> and have the proper string representations generated automatically.
 > \
-> See `fmt_error_stringify` for uses of these fields.
+> See `message_stringify` for uses of these fields.
 
 ```c
 static bool do_show_color(void)
@@ -26,19 +26,19 @@ static bool do_show_color(void)
 > Return whether color output should be displayed.
 
 ```c
-char *fmt_error(ErrorType type, ErrorCode error_code, ErrorMsg msgs[])
+char *fmt_message(ErrorType type, ErrorCode id, Message msgs[])
 ```
 
-> Returns formatted error message.
+> Returns formatted message.
 > \
-> Every `%s` in the string is expanded according to the corresponding `ErrorMsg`
+> Every `%s` in the string is expanded according to the corresponding `Message`
 > in `msgs`.
 
 ```c
-void fmt_error_stringify(ErrorMsg *const msg)
+void message_stringify(Message *const msg)
 ```
 
-> Convert error msg `msg` for use in `fmt_error`.
+> Convert error msg `msg` for use in `fmt_message`.
 > \
 > Depending on whether `msg` is a token, a variable, or a string, the resulting
 > feild `real` will be created differently.

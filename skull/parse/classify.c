@@ -48,7 +48,7 @@ static void classify_token(Token *const token) {
 		}
 	}
 
-	char32_t *const str = token_str(token);
+	char32_t *const str = token_to_string(token);
 
 	if (false) {}
 

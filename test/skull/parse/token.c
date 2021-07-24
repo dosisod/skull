@@ -167,9 +167,9 @@ bool test_token_cmp_match_exact_strings_only() {
 	PASS
 }
 
-bool test_token_str() {
+bool test_token_to_string() {
 	Token *token = tokenize(U"left right");
-	char32_t *buf = token_str(token);
+	char32_t *buf = token_to_string(token);
 
 	ASSERT_TRUTHY(c32scmp(buf, U"left"));
 
@@ -185,8 +185,8 @@ bool test_tokenize_comment() {
 	const char32_t *code = comment1 U"\n" comment2;
 
 	Token *token = tokenize(code);
-	char32_t *buf = token_str(token);
-	char32_t *buf2 = token_str(token->next->next);
+	char32_t *buf = token_to_string(token);
+	char32_t *buf2 = token_to_string(token->next->next);
 
 	ASSERT_TRUTHY(c32scmp(buf, comment1));
 	ASSERT_TRUTHY(c32scmp(buf2, comment2));
@@ -203,8 +203,8 @@ bool test_tokenize_comment() {
 
 bool test_tokenize_trailing_comment() {
 	Token *token = tokenize(U"stuff # this is a comment");
-	char32_t *buf1 = token_str(token);
-	char32_t *buf2 = token_str(token->next);
+	char32_t *buf1 = token_to_string(token);
+	char32_t *buf2 = token_to_string(token->next);
 
 	ASSERT_TRUTHY(c32scmp(buf1, U"stuff"));
 	ASSERT_TRUTHY(c32scmp(buf2, U"# this is a comment"));
@@ -258,7 +258,7 @@ void tokenizer_test_self(bool *pass) {
 		test_token_len,
 		test_token_cmp,
 		test_token_cmp_match_exact_strings_only,
-		test_token_str,
+		test_token_to_string,
 		test_tokenize_comment,
 		test_tokenize_trailing_comment,
 		test_make_token,

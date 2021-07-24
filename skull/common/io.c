@@ -9,7 +9,7 @@
 /*
 Return string read from file descriptor `fd`.
 */
-char *read_file(FILE *const fd) {
+char *file_to_string(FILE *const fd) {
 	fseek(fd, 0, SEEK_END);
 
 	const long len = ftell(fd);

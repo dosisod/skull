@@ -2,5 +2,5 @@
 
 #include <stdio.h>
 
-char *read_file(FILE *const);
+char *file_to_string(FILE *const);
 FILE *open_file(const char *, _Bool);
