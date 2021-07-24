@@ -101,7 +101,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		param_var->location = param_location;
 		param_var->is_defined = true;
 
-		if (func->is_external) variable_no_warnings(param_var);
+		if (func->is_external) variable_disable_warnings(param_var);
 
 		symbol = Calloc(1, sizeof *symbol);
 
@@ -119,7 +119,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 				.loc = &param_var->location
 			});
 
-			variable_no_warnings(param_var);
+			variable_disable_warnings(param_var);
 			free_variable(param_var);
 			free(symbol);
 

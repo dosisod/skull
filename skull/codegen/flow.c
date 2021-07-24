@@ -52,7 +52,7 @@ void gen_stmt_noop(const Location *location) {
 		LLVM_INT(0),
 		LLVMBuildAlloca(
 			SKULL_STATE_LLVM.builder,
-			gen_llvm_type(TYPE_INT),
+			type_to_llvm_type(TYPE_INT),
 			"noop"
 		)
 	);

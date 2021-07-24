@@ -10,7 +10,7 @@
 /*
 Generate the LLVM type for `type`.
 */
-LLVMTypeRef gen_llvm_type(Type type) {
+LLVMTypeRef type_to_llvm_type(Type type) {
 	if (type == TYPE_BOOL) {
 		return LLVMInt1TypeInContext(SKULL_STATE_LLVM.ctx);
 	}
@@ -36,13 +36,13 @@ LLVMTypeRef gen_llvm_type(Type type) {
 	return NULL;
 }
 
-LLVMTypeRef gen_llvm_func_type(
+LLVMTypeRef type_to_llvm_func_type(
 	Type type,
 	LLVMTypeRef *param_types,
 	unsigned num_params
 ) {
 	return LLVMFunctionType(
-		gen_llvm_type(type),
+		type_to_llvm_type(type),
 		param_types,
 		num_params,
 		false

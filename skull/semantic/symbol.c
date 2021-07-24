@@ -114,7 +114,7 @@ bool scope_add_symbol(Symbol *symbol) {
 
 	if (!SEMANTIC_STATE.scope) SEMANTIC_STATE.scope = make_scope();
 	if (!SEMANTIC_STATE.scope->symbols)
-		SEMANTIC_STATE.scope->symbols = ht_create();
+		SEMANTIC_STATE.scope->symbols = make_ht();
 
 	return ht_add(SEMANTIC_STATE.scope->symbols, symbol->name, symbol);
 }

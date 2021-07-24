@@ -1,7 +1,7 @@
 # skull/common/hashtable
 
 ```c
-HashTable *ht_create(void)
+HashTable *make_ht(void)
 ```
 
 > Create a new hashtable.

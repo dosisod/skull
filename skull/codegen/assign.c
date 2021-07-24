@@ -36,7 +36,7 @@ bool gen_stmt_var_def(AstNode *expr_node) {
 	).value;
 
 	if (err) {
-		variable_no_warnings(var);
+		variable_disable_warnings(var);
 		return true;
 	}
 
@@ -104,7 +104,7 @@ static void setup_var_llvm(LLVMValueRef value, Variable *var) {
 	if (is_global && (!var->is_const || !is_const_literal || is_export)) {
 		var->ref = LLVMAddGlobal(
 			SKULL_STATE_LLVM.module,
-			gen_llvm_type(var->type),
+			type_to_llvm_type(var->type),
 			var->name
 		);
 
@@ -115,13 +115,13 @@ static void setup_var_llvm(LLVMValueRef value, Variable *var) {
 
 		LLVMSetInitializer(
 			var->ref,
-			is_export ? value : LLVMConstNull(gen_llvm_type(var->type))
+			is_export ? value : LLVMConstNull(type_to_llvm_type(var->type))
 		);
 	}
 	else if (!is_global && !var->is_const) {
 		var->ref = LLVMBuildAlloca(
 			SKULL_STATE_LLVM.builder,
-			gen_llvm_type(var->type),
+			type_to_llvm_type(var->type),
 			var->name
 		);
 	}

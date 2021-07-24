@@ -11,4 +11,4 @@ typedef struct AstNodeExpr AstNodeExpr;
 
 _Bool gen_stmt_func_decl(const AstNode *const);
 
-Expr gen_expr_function_call(const AstNodeFunctionCall *const, Type, _Bool *);
+Expr gen_expr_func_call(const AstNodeFunctionCall *const, Type, _Bool *);

@@ -63,7 +63,7 @@ void free_variable(Variable *var)
 > Free variable `var`.
 
 ```c
-void variable_no_warnings(Variable *var)
+void variable_disable_warnings(Variable *var)
 ```
 
 > Disable warnings on variable `var`.

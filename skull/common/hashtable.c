@@ -13,7 +13,7 @@ static unsigned ht_hash_key(const char *const);
 /*
 Create a new hashtable.
 */
-HashTable *ht_create(void) {
+HashTable *make_ht(void) {
 	return Calloc(1, sizeof(HashTable));
 }
 

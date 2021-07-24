@@ -93,7 +93,7 @@ static Expr gen_expr(
 		case EXPR_CONST:
 			return gen_expr_const(expr->lhs.tok, err);
 		case EXPR_FUNC:
-			return gen_expr_function_call(expr->lhs.func_call, type, err);
+			return gen_expr_func_call(expr->lhs.func_call, type, err);
 		default: break;
 	}
 
@@ -183,7 +183,7 @@ static Expr gen_expr_identifier(
 			{ .type = var->type }
 		);
 
-		variable_no_warnings(var);
+		variable_disable_warnings(var);
 
 		*err = true;
 		return (Expr){0};
@@ -221,7 +221,7 @@ static Expr ident_to_expr(
 	return (Expr) {
 		.value = LLVMBuildLoad2(
 			SKULL_STATE_LLVM.builder,
-			gen_llvm_type(var_found->type),
+			type_to_llvm_type(var_found->type),
 			var_found->ref,
 			""
 		),
@@ -269,7 +269,7 @@ static Expr gen_expr_const(const Token *const token, bool *err) {
 		value = LLVMBuildBitCast(
 			SKULL_STATE_LLVM.builder,
 			LLVMBuildGlobalString(SKULL_STATE_LLVM.builder, mbs, ""),
-			gen_llvm_type(TYPE_STR),
+			type_to_llvm_type(TYPE_STR),
 			""
 		);
 
@@ -431,7 +431,7 @@ static Expr gen_expr_pow(
 
 	return create_and_call_builtin_oper(
 		lhs->type,
-		gen_llvm_type(lhs->type),
+		type_to_llvm_type(lhs->type),
 		func_name,
 		lhs->value,
 		rhs
@@ -509,7 +509,7 @@ Return expression for string-is operator against `lhs` and `rhs`.
 static Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs) {
 	return create_and_call_builtin_oper(
 		TYPE_BOOL,
-		gen_llvm_type(TYPE_STR),
+		type_to_llvm_type(TYPE_STR),
 		"_strcmp",
 		lhs,
 		rhs
@@ -530,7 +530,7 @@ static Expr create_and_call_builtin_oper(
 ) {
 	LLVMValueRef func = LLVMGetNamedFunction(SKULL_STATE_LLVM.module, name);
 
-	LLVMTypeRef func_type = gen_llvm_func_type(
+	LLVMTypeRef func_type = type_to_llvm_func_type(
 		rtype,
 		(LLVMTypeRef[]){ type, type },
 		2

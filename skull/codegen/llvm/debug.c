@@ -18,7 +18,7 @@
 #include "skull/codegen/llvm/debug.h"
 
 
-static LLVMMetadataRef gen_llvm_di_type(const Type);
+static LLVMMetadataRef type_to_llvm_di_type(const Type);
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<unknown>"
@@ -38,11 +38,11 @@ LLVMDIBuilderRef setup_debug_info(
 	LLVMDIBuilderRef di_builder = LLVMCreateDIBuilder(module);
 	DEBUG_INFO.builder = di_builder;
 
-	DI_TYPE_BOOL = gen_llvm_di_type(TYPE_BOOL);
-	DI_TYPE_INT = gen_llvm_di_type(TYPE_INT);
-	DI_TYPE_FLOAT = gen_llvm_di_type(TYPE_FLOAT);
-	DI_TYPE_RUNE = gen_llvm_di_type(TYPE_RUNE);
-	DI_TYPE_STR = gen_llvm_di_type(TYPE_STR);
+	DI_TYPE_BOOL = type_to_llvm_di_type(TYPE_BOOL);
+	DI_TYPE_INT = type_to_llvm_di_type(TYPE_INT);
+	DI_TYPE_FLOAT = type_to_llvm_di_type(TYPE_FLOAT);
+	DI_TYPE_RUNE = type_to_llvm_di_type(TYPE_RUNE);
+	DI_TYPE_STR = type_to_llvm_di_type(TYPE_STR);
 
 	char cwd[256];
 	errno = 0;
@@ -121,7 +121,7 @@ LLVMDIBuilderRef setup_debug_info(
 	return di_builder;
 }
 
-LLVMMetadataRef gen_llvm_di_type(const Type type) {
+LLVMMetadataRef type_to_llvm_di_type(const Type type) {
 	if (type == TYPE_STR) {
 		return LLVMDIBuilderCreatePointerType(
 			DEBUG_INFO.builder,

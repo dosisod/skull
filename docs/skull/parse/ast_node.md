@@ -127,13 +127,13 @@ static bool parse_return(Token **token, AstNode **node)
 > Return `true` if error occurred.
 
 ```c
-static bool try_parse_type_alias(Token **token, AstNode **node)
+static bool parse_type_alias(Token **token, AstNode **node)
 ```
 
 > Try and generate a type alias node from `token`.
 
 ```c
-static bool try_parse_var_def(Token **_token, AstNode **node, bool *err)
+static bool parse_var_def(Token **_token, AstNode **node, bool *err)
 ```
 
 > Try and generate a variable definition node from `token`.
@@ -141,7 +141,7 @@ static bool try_parse_var_def(Token **_token, AstNode **node, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static bool try_parse_var_assign(Token **token, AstNode **node, bool *err)
+static bool parse_var_assign(Token **token, AstNode **node, bool *err)
 ```
 
 > Try and generate a variable assignment node from `token`.
@@ -163,7 +163,7 @@ static AstNodeExpr *build_rhs_expr(AstNodeExpr *lhs, ExprType oper, Token **toke
 > Set `err` if an error occurred.
 
 ```c
-static AstNodeExpr *try_parse_binary_oper(AstNodeExpr *expr, Token **token, bool *err)
+static AstNodeExpr *parse_binary_oper(AstNodeExpr *expr, Token **token, bool *err)
 ```
 
 > Try to parse a binary operator from `expr`.
@@ -171,7 +171,7 @@ static AstNodeExpr *try_parse_binary_oper(AstNodeExpr *expr, Token **token, bool
 > Set `err` if an error occurred.
 
 ```c
-static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err)
+static AstNodeExpr *parse_unary_oper(Token **token, bool *err)
 ```
 
 > Try to parse a unary operator from `expr`.
@@ -179,7 +179,7 @@ static AstNodeExpr *try_parse_unary_oper(Token **token, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static bool try_parse_function_proto(Token **_token, AstNode **node, bool *err)
+static bool parse_function_proto(Token **_token, AstNode **node, bool *err)
 ```
 
 > Try to parse a function prototype from `_token`.
@@ -249,7 +249,7 @@ static bool parse_ast_sub_tree_(Token **token, unsigned indent_lvl, AstNode *nod
 > Return `true` if an error occurred.
 
 ```c
-static AstNode *try_parse_expression(Token **token, AstNode **node, bool *err)
+static AstNode *parse_expression(Token **token, AstNode **node, bool *err)
 ```
 
 > Try and generate AST node for expression.
@@ -257,10 +257,10 @@ static AstNode *try_parse_expression(Token **token, AstNode **node, bool *err)
 > Returns node if one was added, NULL otherwise.
 
 ```c
-static AstNodeExpr *_try_parse_expression(Token **token, bool *err)
+static AstNodeExpr *_parse_expression(Token **token, bool *err)
 ```
 
-> Internal `try_parse_expression` function. Used for recursive expr parsing.
+> Internal `parse_expression` function. Used for recursive expr parsing.
 
 ```c
 static AstNodeExpr *parse_paren_expr(Token **token, bool *err)
@@ -309,13 +309,13 @@ static void free_ast_tree_(AstNode *node)
 > Internal AST freeing function.
 
 ```c
-static __attribute__((pure)) bool is_value(TokenType token_type)
+static __attribute__((pure)) bool is_single_token_expr(TokenType token_type)
 ```
 
 > Return whether `token_type` represents a constant literal, or an identifier.
 
 ```c
-static void unsplice_expr_node(AstNode *node)
+static void splice_expr_node(AstNode *node)
 ```
 
 > Given `node`, take the last node (expr) and attach it to the node before

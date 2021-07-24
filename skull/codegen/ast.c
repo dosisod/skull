@@ -120,6 +120,6 @@ Return `true` if error occurred.
 */
 static bool gen_expr_node(const AstNode *node) {
 	bool err = false;
-	gen_expr_function_call(node->expr->lhs.func_call, NULL, &err);
+	gen_expr_func_call(node->expr->lhs.func_call, NULL, &err);
 	return err;
 }

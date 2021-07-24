@@ -13,7 +13,7 @@
 
 SkullStateLLVM SKULL_STATE_LLVM;
 
-void setup_state_llvm(void) {
+void setup_llvm_state(void) {
 	SkullStateLLVM *state = &SKULL_STATE_LLVM;
 
 	const char *filename = BUILD_DATA.filename;
@@ -23,7 +23,7 @@ void setup_state_llvm(void) {
 	LLVMContextRef ctx = LLVMContextCreate();
 	state->ctx = ctx;
 
-	LLVMTypeRef main_func_type = gen_llvm_func_type(TYPE_INT, NULL, 0);
+	LLVMTypeRef main_func_type = type_to_llvm_func_type(TYPE_INT, NULL, 0);
 
 	LLVMValueRef main_func = LLVMAddFunction(
 		main_module,
@@ -81,7 +81,7 @@ char *create_main_func_name(const char *filename) {
 /*
 Free everything about a Skull LLVM compiler instance.
 */
-void free_state_llvm(void) {
+void free_llvm_state(void) {
 	SkullStateLLVM *state = &SKULL_STATE_LLVM;
 
 	LLVMDisposeBuilder(state->builder);

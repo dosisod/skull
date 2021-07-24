@@ -102,7 +102,7 @@ static Variable *node_to_var(const AstNode *const node) {
 	}
 
 	var->name = NULL;
-	variable_no_warnings(var);
+	variable_disable_warnings(var);
 	free_variable(var);
 	free(symbol);
 

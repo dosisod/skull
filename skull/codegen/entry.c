@@ -25,7 +25,7 @@ Function takes ownership of `file_contents`.
 */
 int init_codegen_pipeline(const char *filename, char *file_contents) {
 	BUILD_DATA.filename = filename;
-	setup_state_llvm();
+	setup_llvm_state();
 
 	if (BUILD_DATA.debug) {
 		setup_debug_info(filename, SKULL_STATE_LLVM.module);
@@ -35,7 +35,7 @@ int init_codegen_pipeline(const char *filename, char *file_contents) {
 	free(file_contents);
 
 	if (failed) {
-		free_state_semantic();
+		free_semantic_state();
 		return failed;
 	}
 
@@ -52,8 +52,8 @@ int init_codegen_pipeline(const char *filename, char *file_contents) {
 	}
 
 	free(new_filename);
-	free_state_llvm();
-	free_state_semantic();
+	free_llvm_state();
+	free_semantic_state();
 
 	return err;
 }

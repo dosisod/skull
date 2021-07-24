@@ -60,7 +60,7 @@ void free_variable(Variable *var) {
 /*
 Disable warnings on variable `var`.
 */
-void variable_no_warnings(Variable *var) {
+void variable_disable_warnings(Variable *var) {
 	var->was_reassigned = true;
 	var->was_read = true;
 }

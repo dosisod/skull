@@ -54,7 +54,7 @@ static void create_function(FunctionDeclaration *func) {
 	LLVMTypeRef *params = parse_func_param(func);
 
 	func->type = LLVMFunctionType(
-		gen_llvm_type(func->return_type),
+		type_to_llvm_type(func->return_type),
 		params,
 		func->num_params,
 		false
@@ -84,7 +84,7 @@ static LLVMTypeRef *parse_func_param(const FunctionDeclaration *func) {
 	LLVMTypeRef *params = Calloc(num_params, sizeof(LLVMTypeRef));
 
 	for RANGE(i, num_params) { // NOLINT
-		params[i] = gen_llvm_type(func->param_types[i]);
+		params[i] = type_to_llvm_type(func->param_types[i]);
 	}
 
 	return params;
@@ -95,7 +95,7 @@ Builds a function call from `expr`.
 
 Set `err` if an error occurred.
 */
-Expr gen_expr_function_call(
+Expr gen_expr_func_call(
 	const AstNodeFunctionCall *const func_call,
 	Type type,
 	bool *err
@@ -322,7 +322,7 @@ static void alloc_debug_function_param(Variable **var) {
 
 	func_var->ref = LLVMBuildAlloca(
 		SKULL_STATE_LLVM.builder,
-		gen_llvm_type(func_var->type),
+		type_to_llvm_type(func_var->type),
 		func_var->name
 	);
 

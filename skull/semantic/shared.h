@@ -13,4 +13,4 @@ typedef struct {
 
 extern SemanticState SEMANTIC_STATE;
 
-void free_state_semantic(void);
+void free_semantic_state(void);

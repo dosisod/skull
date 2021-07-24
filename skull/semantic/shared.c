@@ -9,7 +9,7 @@ SemanticState SEMANTIC_STATE;
 /*
 Free everything about a Skull compiler instance.
 */
-void free_state_semantic(void) {
+void free_semantic_state(void) {
 	SemanticState *state = &SEMANTIC_STATE;
 
 	reset_scope_head();
