@@ -9,7 +9,7 @@
 Push pointer `ptr` to vector `v`. Scale vector if needed.
 */
 void vector_push(Vector *v, void *ptr) {
-	if (v->is_array) return;
+	if (v->is_frozen) return;
 
 	if (!v->elements) {
 		v->elements = Calloc(VECTOR_START_MAX, sizeof(void *));
@@ -28,7 +28,7 @@ void vector_push(Vector *v, void *ptr) {
 Pop and return last element from vector `v`.
 */
 void *vector_pop(Vector *v) {
-	if (!v->elements || !v->length || v->is_array) return NULL;
+	if (!v->elements || !v->length || v->is_frozen) return NULL;
 
 	v->length--;
 	return v->elements[v->length];
@@ -49,7 +49,7 @@ Vector *make_vector(void) {
 "Freeze" vector `v` into an array, making it immutable.
 */
 void *vector_freeze(Vector *v) {
-	v->is_array = true;
+	v->is_frozen = true;
 
 	return v->elements;
 }
@@ -87,7 +87,7 @@ void free_vector2(
 			free_func2(v->elements[i]);
 	}
 
-	if (!v->is_array && v->elements) {
+	if (!v->is_frozen && v->elements) {
 		free(v->elements);
 		v->elements = NULL;
 	}
