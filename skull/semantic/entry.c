@@ -17,8 +17,9 @@ static bool _validate_ast_tree(const AstNode *);
 static bool validate_ast_node(const AstNode *);
 static bool validate_stmt_return(const AstNode *);
 static bool validate_stmt_type_alias(const AstNode *);
-static bool validate_control_else(const AstNode *);
+static bool validate_control_if(const AstNode *);
 static bool validate_control_elif(const AstNode *);
+static bool validate_control_else(const AstNode *);
 static bool validate_control_while(const AstNode *);
 static bool validate_control_not_missing_if(const AstNode *);
 bool assert_sane_child(const AstNode *);
@@ -67,6 +68,7 @@ static bool validate_ast_node(const AstNode *node) {
 		case AST_NODE_VAR_DEF: return validate_stmt_var_def(node);
 		case AST_NODE_VAR_ASSIGN: return validate_stmt_var_assign(node);
 		case AST_NODE_EXPR: return validate_expr_func(node);
+		case AST_NODE_IF: return validate_control_if(node);
 		case AST_NODE_ELSE: return validate_control_else(node);
 		case AST_NODE_ELIF: return validate_control_elif(node);
 		case AST_NODE_WHILE: return validate_control_while(node);
@@ -83,6 +85,8 @@ static bool validate_stmt_return(const AstNode *node) {
 }
 
 static bool validate_control_while(const AstNode *node) {
+	if (!validate_expr(node->expr_node)) return false;
+
 	const AstNodeExpr *expr = node->expr_node->expr;
 
 	switch (expr->oper) {
@@ -161,9 +165,13 @@ static bool validate_control_else(const AstNode *node) {
 	return validate_control_not_missing_if(node);
 }
 
+static bool validate_control_if(const AstNode *node) {
+	return validate_expr(node->expr_node);
+}
+
 static bool validate_control_elif(const AstNode *node) {
-	// TODO(dosisod): check expression
-	return validate_control_not_missing_if(node);
+	return validate_control_not_missing_if(node) &&
+		validate_expr(node->expr_node);
 }
 
 static bool validate_control_not_missing_if(const AstNode *node) {

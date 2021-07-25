@@ -1,9 +1,18 @@
 if false {
-	# do nothing
+	noop
 }
 elif true {
-	# do nothing
+	noop
 }
 else {
-	# do nothing
+	noop
+}
+
+f() Bool { return false }
+
+if f() {
+	noop
+}
+elif f() {
+	noop
 }

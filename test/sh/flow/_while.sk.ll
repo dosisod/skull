@@ -21,5 +21,20 @@ while_loop2:                                      ; preds = %while_cond1
   br label %while_cond1
 
 while_end3:                                       ; preds = %while_cond1
+  br label %while_cond4
+
+while_cond4:                                      ; preds = %while_loop5, %while_end3
+  %0 = call i1 @f()
+  br i1 %0, label %while_loop5, label %while_end6
+
+while_loop5:                                      ; preds = %while_cond4
+  br label %while_cond4
+
+while_end6:                                       ; preds = %while_cond4
   ret i64 0
+}
+
+define private i1 @f() {
+entry:
+  ret i1 true
 }
