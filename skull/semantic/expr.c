@@ -11,21 +11,24 @@
 
 
 static bool validate_stmt_func_call(AstNodeFunctionCall *);
-static bool _validate_expr(const AstNodeExpr *);
+static bool _validate_expr(AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
 
 bool validate_expr(const AstNode *node) {
 	return _validate_expr(node->expr);
 }
 
-static bool _validate_expr(const AstNodeExpr *expr) {
+static bool _validate_expr(AstNodeExpr *expr) {
 	const ExprType oper = expr->oper;
 
 	switch (oper) {
 		case EXPR_FUNC:
 			return validate_stmt_func_call(expr->lhs.func_call);
-		case EXPR_IDENTIFIER:
-			return !!scope_find_var(expr->lhs.tok);
+		case EXPR_IDENTIFIER: {
+			Variable *var = scope_find_var(expr->lhs.tok);
+			expr->var = var;
+			return !!var;
+		}
 		case EXPR_DIV:
 		case EXPR_MOD: {
 			return !is_div_by_zero(expr);

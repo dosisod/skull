@@ -21,7 +21,7 @@ bool validate_stmt_var_def(const AstNode *node) {
 	Variable *var = node_to_var(node);
 	if (!var) return false;
 
-	node->var_def->expr_node->expr->var = var;
+	node->var_def->var = var;
 
 	const bool ok = validate_expr(node->var_def->expr_node);
 	var->is_defined = true;
@@ -33,7 +33,7 @@ bool validate_stmt_var_assign(const AstNode *node) {
 	Variable *var = scope_find_var(node->token);
 	if (!var) return false;
 
-	node->expr_node->expr->var = var;
+	node->var_assign->var = var;
 
 	if (var->is_const) {
 		FMT_ERROR(ERR_REASSIGN_CONST, {
@@ -45,7 +45,7 @@ bool validate_stmt_var_assign(const AstNode *node) {
 
 	var->was_reassigned = true;
 
-	return validate_expr(node->expr_node);
+	return validate_expr(node->var_assign->expr_node);
 }
 
 /*

@@ -36,9 +36,9 @@ static Expr gen_expr_pow(
 
 static Expr gen_expr_const(const Token *const, bool *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
-static Expr gen_expr(Type, const AstNodeExpr *const, bool *);
-static Expr ident_to_expr(const Token *const, Variable **);
-static Expr gen_expr_identifier(Type, const Token *const, bool *);
+static Expr gen_expr(Type, AstNodeExpr *const, bool *);
+static Expr ident_to_expr(AstNodeExpr *, Variable **);
+static Expr gen_expr_identifier(Type, AstNodeExpr *, bool *);
 static Operation *expr_type_to_func(ExprType);
 static bool is_bool_expr(ExprType);
 
@@ -78,18 +78,18 @@ Expr node_to_expr(
 }
 
 /*
-Return expression for operation `oper` for `expr`.
+Return expression for `expr`, checking if resulting type matches `type`.
 
 Set `err` if an error occurred.
 */
 static Expr gen_expr(
 	Type type,
-	const AstNodeExpr *const expr,
+	AstNodeExpr *const expr,
 	bool *err
 ) {
 	switch (expr->oper) {
 		case EXPR_IDENTIFIER:
-			return gen_expr_identifier(type, expr->lhs.tok, err);
+			return gen_expr_identifier(type, expr, err);
 		case EXPR_CONST:
 			return gen_expr_const(expr->lhs.tok, err);
 		case EXPR_FUNC:
@@ -167,11 +167,11 @@ Set `err` if an error occurred.
 */
 static Expr gen_expr_identifier(
 	Type type,
-	const Token *const token,
+	AstNodeExpr *expr_node,
 	bool *err
 ) {
 	Variable *var = NULL;
-	const Expr expr = ident_to_expr(token, &var);
+	const Expr expr = ident_to_expr(expr_node, &var);
 	if (!expr.value && !expr.type) {
 		*err = true;
 		return (Expr){0};
@@ -179,7 +179,7 @@ static Expr gen_expr_identifier(
 
 	if (type && var && var->type != type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
-			{ .loc = &token->location, .type = type },
+			{ .loc = &expr_node->lhs.tok->location, .type = type },
 			{ .type = var->type }
 		);
 
@@ -193,17 +193,15 @@ static Expr gen_expr_identifier(
 }
 
 /*
-Convert identifier `token` to an expression.
+Convert identifier node `expr` to an expression.
 
 Store found variable (if found) in `variable`.
 */
 static Expr ident_to_expr(
-	const Token *const token,
+	AstNodeExpr *expr,
 	Variable **variable
 ) {
-	Variable *const var_found = scope_find_var(token);
-	if (!var_found) return (Expr){0};
-
+	Variable *var_found = expr->var;
 	var_found->was_read = true;
 
 	if (variable) *variable = var_found;

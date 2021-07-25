@@ -28,6 +28,7 @@ typedef enum {
 
 typedef struct AstNode AstNode;
 typedef struct AstNodeVarDef AstNodeVarDef;
+typedef struct AstNodeVarAssign AstNodeVarAssign;
 typedef struct AstNodeFunctionProto AstNodeFunctionProto;
 typedef struct AstNodeFunctionCall AstNodeFunctionCall;
 typedef struct AstNodeExpr AstNodeExpr;
@@ -63,6 +64,7 @@ typedef struct AstNode {
 	// used to store arbitrary data associated with a certain node type
 	union {
 		AstNodeVarDef *var_def;
+		AstNodeVarAssign *var_assign;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
 		AstNode *expr_node;
@@ -74,12 +76,21 @@ typedef struct AstNode {
 Used to store special data about `AST_NODE_VAR_DEF` nodes.
 */
 typedef struct AstNodeVarDef {
+	const Token *name_tok;
+	AstNode *expr_node;
+	Variable *var;
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
 	_Bool is_exported: 1;
-	const Token *name_tok;
-	AstNode *expr_node;
 } AstNodeVarDef;
+
+/*
+Used to store special data about `AST_NODE_VAR_ASSIGN` nodes.
+*/
+typedef struct AstNodeVarAssign {
+	AstNode *expr_node;
+	Variable *var;
+} AstNodeVarAssign;
 
 /*
 Store information about a function's parameters (name, type, etc)

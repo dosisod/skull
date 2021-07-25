@@ -16,6 +16,7 @@ typedef struct AstNode {
 	// used to store arbitrary data associated with a certain node type
 	union {
 		AstNodeVarDef *var_def;
+		AstNodeVarAssign *var_assign;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
 		AstNode *expr_node;
@@ -38,15 +39,25 @@ typedef struct AstNode {
 
 ```c
 typedef struct AstNodeVarDef {
+	const Token *name_tok;
+	AstNode *expr_node;
+	Variable *var;
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
 	_Bool is_exported: 1;
-	const Token *name_tok;
-	AstNode *expr_node;
 }
 ```
 
 > Used to store special data about `AST_NODE_VAR_DEF` nodes.
+
+```c
+typedef struct AstNodeVarAssign {
+	AstNode *expr_node;
+	Variable *var;
+}
+```
+
+> Used to store special data about `AST_NODE_VAR_ASSIGN` nodes.
 
 ```c
 typedef struct AstNodeFunctionParam {

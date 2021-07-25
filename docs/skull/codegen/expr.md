@@ -24,15 +24,15 @@ Expr node_to_expr(Type type, const AstNode *const node, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static Expr gen_expr(Type type, const AstNodeExpr *const expr, bool *err)
+static Expr gen_expr(Type type, AstNodeExpr *const expr, bool *err)
 ```
 
-> Return expression for operation `oper` for `expr`.
+> Return expression for `expr`, checking if resulting type matches `type`.
 > \
 > Set `err` if an error occurred.
 
 ```c
-static Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
+static Expr gen_expr_identifier(Type type, AstNodeExpr *expr_node, bool *err)
 ```
 
 > Return expression for identifier `token` with type `type`.
@@ -42,10 +42,10 @@ static Expr gen_expr_identifier(Type type, const Token *const token, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static Expr ident_to_expr(const Token *const token, Variable **variable)
+static Expr ident_to_expr(AstNodeExpr *expr, Variable **variable)
 ```
 
-> Convert identifier `token` to an expression.
+> Convert identifier node `expr` to an expression.
 > \
 > Store found variable (if found) in `variable`.
 

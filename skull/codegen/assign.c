@@ -25,13 +25,13 @@ Builds a variable definition from `expr_node`.
 
 Return `true` if an error occurred.
 */
-bool gen_stmt_var_def(AstNode *expr_node) {
-	Variable *var = expr_node->expr->var;
+bool gen_stmt_var_def(AstNodeVarDef *var_def) {
+	Variable *var = var_def->var;
 
 	bool err = false;
 	LLVMValueRef value = node_to_expr(
 		var->type,
-		expr_node,
+		var_def->expr_node,
 		&err
 	).value;
 
@@ -73,17 +73,17 @@ static void add_llvm_var_def_debug_info(const Variable *var) {
 }
 
 /*
-Assign a to a variable from `expr_node`.
+Assign a to a variable from `var_assign`.
 
 Return `true` if an error occurred.
 */
-bool gen_stmt_var_assign(AstNode *expr_node) {
-	Variable *var = expr_node->expr->var;
+bool gen_stmt_var_assign(AstNodeVarAssign *var_assign) {
+	Variable *var = var_assign->var;
 
 	bool err = false;
 	LLVMValueRef value = node_to_expr(
 		var->type,
-		expr_node,
+		var_assign->expr_node,
 		&err
 	).value;
 

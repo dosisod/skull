@@ -189,19 +189,35 @@ static bool parse_var_assign(Token **token, AstNode **node, bool *err) {
 		return false;
 	}
 
+	AstNodeVarAssign *var_assign;
+	var_assign = Calloc(1, sizeof *var_assign);
+
 	push_ast_node((*token)->next, *token, AST_NODE_VAR_ASSIGN, node);
 	*token = (*token)->next->next;
 
 	const bool success = parse_expression(token, node, err);
-	if (*err) return false;
+	if (*err) {
+		free(var_assign);
+		return false;
+	}
 
 	if (!success) {
 		FMT_ERROR(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*token)->location });
 		*err = true;
+
+		free(var_assign);
 		return false;
 	}
 
-	splice_expr_node(*node);
+	(*node)->last->last->var_assign = var_assign;
+	AstNode *cond_node = (*node)->last->last;
+	AstNode *expr_node = (*node)->last;
+
+	cond_node->var_assign->expr_node = expr_node;
+	cond_node->next = *node;
+	(*node)->last = cond_node;
+	expr_node->next = NULL;
+	expr_node->last = NULL;
 
 	return true;
 }
@@ -911,11 +927,17 @@ static void free_ast_tree_(AstNode *node) {
 		else if (node->type == AST_NODE_EXPR) {
 			free_expr_node(node->expr);
 		}
+		else if (node->type == AST_NODE_VAR_ASSIGN) {
+			if (node->var_assign && node->var_assign->expr_node) {
+				free_expr_node(node->var_assign->expr_node->expr);
+				free(node->var_assign->expr_node);
+				free(node->var_assign);
+			}
+		}
 		else if (node->expr_node && (
 			node->type == AST_NODE_IF ||
 			node->type == AST_NODE_ELIF ||
 			node->type == AST_NODE_RETURN ||
-			node->type == AST_NODE_VAR_ASSIGN ||
 			node->type == AST_NODE_WHILE)
 		) {
 			free_expr_node(node->expr_node->expr);
