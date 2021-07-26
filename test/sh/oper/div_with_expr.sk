@@ -1,0 +1,3 @@
+external f() Int
+
+x := f() / f()

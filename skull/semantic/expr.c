@@ -31,7 +31,8 @@ static bool _validate_expr(AstNodeExpr *expr) {
 		}
 		case EXPR_DIV:
 		case EXPR_MOD: {
-			return !is_div_by_zero(expr);
+			if (is_div_by_zero(expr)) return false;
+			break;
 		}
 		case EXPR_CONST: return true;
 		default: break;
