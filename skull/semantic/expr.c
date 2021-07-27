@@ -56,18 +56,22 @@ static bool validate_const_expr(AstNodeExpr *expr) {
 	switch (token->type) {
 		case TOKEN_INT_CONST: {
 			expr->value._int = eval_integer(token, &err);
+			expr->type = TYPE_INT;
 			break;
 		}
 		case TOKEN_FLOAT_CONST: {
 			expr->value._float = eval_float(token, &err);
+			expr->type = TYPE_FLOAT;
 			break;
 		}
 		case TOKEN_BOOL_CONST: {
 			expr->value._bool = eval_bool(token);
+			expr->type = TYPE_BOOL;
 			break;
 		}
 		case TOKEN_RUNE_CONST: {
 			expr->value.rune = eval_rune(token, &err);
+			expr->type = TYPE_RUNE;
 			break;
 		}
 		case TOKEN_STR_CONST: {
@@ -80,6 +84,7 @@ static bool validate_const_expr(AstNodeExpr *expr) {
 			if (!mbs) return false;
 
 			expr->value.str = mbs;
+			expr->type = TYPE_STR;
 			break;
 		}
 		default: return false;

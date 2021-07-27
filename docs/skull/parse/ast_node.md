@@ -116,6 +116,7 @@ typedef struct AstNodeExpr {
 		char32_t rune;
 		char *str;
 	} value;
+	Type type;
 
 	AstNodeExpr *rhs;
 

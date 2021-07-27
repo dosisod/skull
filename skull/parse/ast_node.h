@@ -37,6 +37,7 @@ typedef struct AstNodeExpr AstNodeExpr;
 typedef struct FunctionDeclaration FunctionDeclaration;
 typedef struct Variable Variable;
 typedef struct FunctionDeclaration FunctionDeclaration;
+typedef const char * Type;
 
 /*
 An `AstNode` abstractly stores data about parsed code.
@@ -176,6 +177,7 @@ typedef struct AstNodeExpr {
 		char32_t rune;
 		char *str;
 	} value;
+	Type type;
 
 	AstNodeExpr *rhs;
 

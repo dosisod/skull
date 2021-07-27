@@ -232,26 +232,20 @@ Make a simple expression (const literal) from `expr`.
 */
 static Expr gen_expr_const(const AstNodeExpr *expr) {
 	LLVMValueRef value = NULL;
-	Type type = NULL;
-	const Token *token = expr->lhs.tok;
 
-	if (token->type == TOKEN_INT_CONST) {
+	if (expr->type == TYPE_INT) {
 		value = LLVM_INT(expr->value._int);
-		type = TYPE_INT;
 	}
-	else if (token->type == TOKEN_FLOAT_CONST) {
+	else if (expr->type == TYPE_FLOAT) {
 		value = LLVM_FLOAT(expr->value._float);
-		type = TYPE_FLOAT;
 	}
-	else if (token->type == TOKEN_BOOL_CONST) {
+	else if (expr->type == TYPE_BOOL) {
 		value = LLVM_BOOL(expr->value._bool);
-		type = TYPE_BOOL;
 	}
-	else if (token->type == TOKEN_RUNE_CONST) {
+	else if (expr->type == TYPE_RUNE) {
 		value = LLVM_RUNE(expr->value.rune);
-		type = TYPE_RUNE;
 	}
-	else if (token->type == TOKEN_STR_CONST) {
+	else if (expr->type == TYPE_STR) {
 		value = LLVMBuildBitCast(
 			SKULL_STATE_LLVM.builder,
 			LLVMBuildGlobalString(
@@ -262,13 +256,11 @@ static Expr gen_expr_const(const AstNodeExpr *expr) {
 			type_to_llvm_type(TYPE_STR),
 			""
 		);
-
-		type = TYPE_STR;
 	}
 
 	return (Expr){
 		.value = value,
-		.type = type
+		.type = expr->type
 	};
 }
 
