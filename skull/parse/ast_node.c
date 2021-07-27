@@ -867,8 +867,10 @@ Frees an AST tree.
 */
 void free_ast_tree(AstNode *node) {
 	if (node) {
-		free_tokens(node->token);
+		Token *token = node->token;
+
 		free_ast_tree_(node);
+		free_tokens(token);
 	};
 }
 
@@ -878,7 +880,14 @@ Free an expression nodes and all its sub-expressions.
 static void free_expr_node(AstNodeExpr *expr) {
 	if (!expr) return;
 
-	if (expr->oper == EXPR_IDENTIFIER || expr->oper == EXPR_CONST) {
+	if (expr->oper == EXPR_CONST) {
+		if (expr->lhs.tok->type == TOKEN_STR_CONST)
+			free(expr->value.str);
+
+		free(expr);
+		return;
+	}
+	if (expr->oper == EXPR_IDENTIFIER) {
 		free(expr);
 		return;
 	}

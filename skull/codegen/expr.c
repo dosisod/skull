@@ -34,7 +34,7 @@ static Expr gen_expr_pow(
 	bool *
 );
 
-static Expr gen_expr_const(const Token *const, bool *);
+static Expr gen_expr_const(const AstNodeExpr *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr gen_expr(Type, AstNodeExpr *const, bool *);
 static Expr ident_to_expr(AstNodeExpr *, Variable **);
@@ -91,7 +91,7 @@ static Expr gen_expr(
 		case EXPR_IDENTIFIER:
 			return gen_expr_identifier(type, expr, err);
 		case EXPR_CONST:
-			return gen_expr_const(expr->lhs.tok, err);
+			return gen_expr_const(expr);
 		case EXPR_FUNC:
 			return gen_expr_func_call(expr->lhs.func_call, type, err);
 		default: break;
@@ -228,51 +228,40 @@ static Expr ident_to_expr(
 }
 
 /*
-Make a simple expression (const literal) from `token`.
+Make a simple expression (const literal) from `expr`.
 */
-static Expr gen_expr_const(const Token *const token, bool *err) {
+static Expr gen_expr_const(const AstNodeExpr *expr) {
 	LLVMValueRef value = NULL;
 	Type type = NULL;
+	const Token *token = expr->lhs.tok;
 
 	if (token->type == TOKEN_INT_CONST) {
-		value = LLVM_INT(eval_integer(token, err));
+		value = LLVM_INT(expr->value._int);
 		type = TYPE_INT;
 	}
 	else if (token->type == TOKEN_FLOAT_CONST) {
-		value = LLVM_FLOAT(eval_float(token, err));
+		value = LLVM_FLOAT(expr->value._float);
 		type = TYPE_FLOAT;
 	}
 	else if (token->type == TOKEN_BOOL_CONST) {
-		value = LLVM_BOOL(eval_bool(token));
+		value = LLVM_BOOL(expr->value._bool);
 		type = TYPE_BOOL;
 	}
 	else if (token->type == TOKEN_RUNE_CONST) {
-		value = LLVM_RUNE(eval_rune(token, err));
+		value = LLVM_RUNE(expr->value.rune);
 		type = TYPE_RUNE;
 	}
 	else if (token->type == TOKEN_STR_CONST) {
-		char32_t *str = eval_str(token);
-		if (!str) {
-			*err = true;
-			return (Expr){0};
-		}
-
-		char *const mbs = c32stombs(str, &token->location);
-		if (!mbs) {
-			free(str);
-			*err = true;
-			return (Expr){0};
-		}
-
 		value = LLVMBuildBitCast(
 			SKULL_STATE_LLVM.builder,
-			LLVMBuildGlobalString(SKULL_STATE_LLVM.builder, mbs, ""),
+			LLVMBuildGlobalString(
+				SKULL_STATE_LLVM.builder,
+				expr->value.str,
+				""
+			),
 			type_to_llvm_type(TYPE_STR),
 			""
 		);
-
-		free(mbs);
-		free(str);
 
 		type = TYPE_STR;
 	}

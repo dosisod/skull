@@ -50,10 +50,10 @@ static Expr ident_to_expr(AstNodeExpr *expr, Variable **variable)
 > Store found variable (if found) in `variable`.
 
 ```c
-static Expr gen_expr_const(const Token *const token, bool *err)
+static Expr gen_expr_const(const AstNodeExpr *expr)
 ```
 
-> Make a simple expression (const literal) from `token`.
+> Make a simple expression (const literal) from `expr`.
 
 ```c
 static Expr gen_expr_math_oper(const Expr *lhs, LLVMValueRef rhs, LLVMBuildX int_func, LLVMBuildX float_func)

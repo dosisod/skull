@@ -3,6 +3,7 @@
 #include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
+#include "skull/common/str.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
@@ -13,6 +14,8 @@
 static bool validate_stmt_func_call(AstNodeFunctionCall *);
 static bool _validate_expr(AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
+static bool validate_const_expr(AstNodeExpr *);
+
 
 bool validate_expr(const AstNode *node) {
 	return _validate_expr(node->expr);
@@ -34,7 +37,7 @@ static bool _validate_expr(AstNodeExpr *expr) {
 			if (is_div_by_zero(expr)) return false;
 			break;
 		}
-		case EXPR_CONST: return true;
+		case EXPR_CONST: return validate_const_expr(expr);
 		default: break;
 	}
 
@@ -44,6 +47,45 @@ static bool _validate_expr(AstNodeExpr *expr) {
 	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
 
 	return true;
+}
+
+static bool validate_const_expr(AstNodeExpr *expr) {
+	const Token *token = expr->lhs.tok;
+	bool err = false;
+
+	switch (token->type) {
+		case TOKEN_INT_CONST: {
+			expr->value._int = eval_integer(token, &err);
+			break;
+		}
+		case TOKEN_FLOAT_CONST: {
+			expr->value._float = eval_float(token, &err);
+			break;
+		}
+		case TOKEN_BOOL_CONST: {
+			expr->value._bool = eval_bool(token);
+			break;
+		}
+		case TOKEN_RUNE_CONST: {
+			expr->value.rune = eval_rune(token, &err);
+			break;
+		}
+		case TOKEN_STR_CONST: {
+			char32_t *str = eval_str(token);
+			if (!str) return false;
+
+			char *const mbs = c32stombs(str, &token->location);
+
+			free(str);
+			if (!mbs) return false;
+
+			expr->value.str = mbs;
+			break;
+		}
+		default: return false;
+	}
+
+	return !err;
 }
 
 static bool is_div_by_zero(const AstNodeExpr *expr) {

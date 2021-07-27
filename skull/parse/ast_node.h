@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 #include "skull/parse/token.h"
 
 typedef enum {
@@ -166,6 +168,14 @@ typedef struct AstNodeExpr {
 	} lhs;
 
 	Variable *var;
+
+	union {
+		int64_t _int;
+		double _float;
+		_Bool _bool;
+		char32_t rune;
+		char *str;
+	} value;
 
 	AstNodeExpr *rhs;
 
