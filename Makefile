@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# shellcheck disable=SC2046
+# shellcheck disable=SC2046,SC2215
 
 include config.mk
 
@@ -21,7 +21,7 @@ setup:
 
 skull: setup | $(OBJS) $(OBJS_LLVM) $(OBJS_MAIN)
 	@$(ECHO) "\033[92mLink\033[0m Skull\n"
-	@$(CC) $(OBJS) $(OBJS_LLVM) $(OBJS_MAIN) -o build/skull/_skull $(CFLAGS) $(LLVM_LDFLAGS)
+	@$(CC) $| -o build/skull/_skull $(CFLAGS) $(LLVM_LDFLAGS)
 
 $(ODIR)/%.o: %.c %.h
 	@$(ECHO) "\033[92mCompile\033[0m $<\n"
@@ -29,7 +29,7 @@ $(ODIR)/%.o: %.c %.h
 
 test: setup | $(OBJS_LLVM) $(OBJS_TEST)
 	@$(ECHO) "\033[92mLink\033[0m test\n"
-	@$(CC) $(OBJS_LLVM) $(OBJS_TEST) -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
+	@$(CC) $| -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
 docs:
 	@$(ECHO) "\033[92mBuild\033[0m docs\n"
