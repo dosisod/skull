@@ -11,7 +11,7 @@
 #include "skull/semantic/expr.h"
 
 
-static bool validate_stmt_func_call(AstNodeFunctionCall *);
+static bool validate_stmt_func_call(AstNodeExpr *);
 static bool _validate_expr(AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
 static bool validate_const_expr(AstNodeExpr *);
@@ -26,10 +26,13 @@ static bool _validate_expr(AstNodeExpr *expr) {
 
 	switch (oper) {
 		case EXPR_FUNC:
-			return validate_stmt_func_call(expr->lhs.func_call);
+			return validate_stmt_func_call(expr);
 		case EXPR_IDENTIFIER: {
 			Variable *var = scope_find_var(expr->lhs.tok);
-			expr->var = var;
+			if (var) {
+				expr->var = var;
+				expr->type = var->type;
+			}
 			return !!var;
 		}
 		case EXPR_CONST: return validate_const_expr(expr);
@@ -50,6 +53,7 @@ static bool _validate_expr(AstNodeExpr *expr) {
 	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
 	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
 
+	expr->type = expr->rhs->type;
 	return true;
 }
 
@@ -118,13 +122,15 @@ static bool is_div_by_zero(const AstNodeExpr *expr) {
 
 bool validate_expr_func(const AstNode *node) {
 	if (node->expr->oper == EXPR_FUNC)
-		return validate_stmt_func_call(node->expr->lhs.func_call);
+		return validate_stmt_func_call(node->expr);
 
 	FMT_ERROR(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });
 	return false;
 }
 
-static bool validate_stmt_func_call(AstNodeFunctionCall *func_call) {
+static bool validate_stmt_func_call(AstNodeExpr *expr) {
+	AstNodeFunctionCall *func_call = expr->lhs.func_call;
+
 	const Token *func_name_token = func_call->func_name_tok;
 	char *const func_name = token_to_mbs_str(func_name_token);
 
@@ -141,6 +147,7 @@ static bool validate_stmt_func_call(AstNodeFunctionCall *func_call) {
 
 	func_call->func_decl = function;
 	function->was_called = true;
+	expr->type = function->return_type;
 
 	unsigned short num_params = function->num_params;
 
