@@ -32,12 +32,16 @@ static bool _validate_expr(AstNodeExpr *expr) {
 			expr->var = var;
 			return !!var;
 		}
+		case EXPR_CONST: return validate_const_expr(expr);
+		default: break;
+	}
+
+	switch (oper) {
 		case EXPR_DIV:
 		case EXPR_MOD: {
 			if (is_div_by_zero(expr)) return false;
 			break;
 		}
-		case EXPR_CONST: return validate_const_expr(expr);
 		default: break;
 	}
 
