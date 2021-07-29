@@ -193,7 +193,7 @@ Type TYPE_INT = "Int";
 Type TYPE_FLOAT = "Float";
 Type TYPE_RUNE = "Rune";
 Type TYPE_STR = "Str";
-Type TYPE_VOID = "Void";
+Type TYPE_VOID = "";
 
 Type **TYPES_BUILTIN = (Type *[]){
 	&TYPE_BOOL,
