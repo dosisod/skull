@@ -1053,3 +1053,17 @@ static void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 		node = node->next;
 	}
 }
+
+const Location *find_expr_node_location(const AstNodeExpr *expr) {
+	switch (expr->oper) {
+		case EXPR_IDENTIFIER:
+		case EXPR_CONST:
+			return &expr->lhs.tok->location;
+		case EXPR_FUNC:
+			return &expr->lhs.func_call->func_name_tok->location;
+		case EXPR_UNARY_NEG:
+		case EXPR_NOT:
+			return find_expr_node_location(expr->rhs);
+		default: return find_expr_node_location(expr->lhs.expr);
+	}
+}

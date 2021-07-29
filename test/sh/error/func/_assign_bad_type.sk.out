@@ -1,1 +1,2 @@
-./test/sh/error/func/assign_bad_type.sk: Compilation error: line 5 column 12: cannot assign type "Int" to type "Float"
+./test/sh/error/func/assign_bad_type.sk: Compilation error: line 7 column 12: expected type "Float", got "Int"
+./test/sh/error/func/assign_bad_type.sk: Warning: line 7 column 1: variable "x" is unused

@@ -1,0 +1,2 @@
+./test/sh/error/oper/assign_bad_type.sk: Compilation error: line 1 column 12: expected type "Float", got "Int"
+./test/sh/error/oper/assign_bad_type.sk: Warning: line 1 column 1: variable "x" is unused

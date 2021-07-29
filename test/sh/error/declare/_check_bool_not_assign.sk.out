@@ -1,1 +1,3 @@
 ./test/sh/error/declare/check_bool_not_assign.sk: Compilation error: line 1 column 18: expected type "Int", got "Bool"
+./test/sh/error/declare/check_bool_not_assign.sk: Warning: line 1 column 5: variable "x" should be constant
+./test/sh/error/declare/check_bool_not_assign.sk: Warning: line 1 column 5: variable "x" is unused

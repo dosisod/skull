@@ -15,6 +15,7 @@ static bool validate_stmt_func_call(AstNodeExpr *);
 static bool _validate_expr(AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
 static bool validate_const_expr(AstNodeExpr *);
+static bool validate_pow_expr(const AstNodeExpr *);
 
 
 bool validate_expr(const AstNode *node) {
@@ -39,21 +40,50 @@ static bool _validate_expr(AstNodeExpr *expr) {
 		default: break;
 	}
 
+	if (!_validate_expr(expr->rhs)) return false;
+
+	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
+	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
+
+	if (is_binary && expr->lhs.expr->type != expr->rhs->type) {
+		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
+			{
+				.loc = find_expr_node_location(expr->rhs),
+				.type = expr->lhs.expr->type
+			},
+			{ .type = expr->rhs->type }
+		);
+		return false;
+	}
+
 	switch (oper) {
 		case EXPR_DIV:
 		case EXPR_MOD: {
 			if (is_div_by_zero(expr)) return false;
 			break;
 		}
+		case EXPR_POW: {
+			if (!validate_pow_expr(expr)) return false;
+			break;
+		}
 		default: break;
 	}
 
-	if (!_validate_expr(expr->rhs)) return false;
+	switch (oper) {
+		case EXPR_NOT:
+		case EXPR_IS:
+		case EXPR_ISNT:
+		case EXPR_LESS_THAN:
+		case EXPR_GTR_THAN:
+		case EXPR_LESS_THAN_EQ:
+		case EXPR_GTR_THAN_EQ:
+		case EXPR_AND:
+		case EXPR_OR:
+		case EXPR_XOR:
+			expr->type = TYPE_BOOL; break;
+		default: expr->type = expr->rhs->type; break;
+	}
 
-	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
-	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
-
-	expr->type = expr->rhs->type;
 	return true;
 }
 
@@ -118,6 +148,18 @@ static bool is_div_by_zero(const AstNodeExpr *expr) {
 	}
 
 	return false;
+}
+
+static bool validate_pow_expr(const AstNodeExpr *expr) {
+	Type type = expr->rhs->type;
+
+	if (type != TYPE_INT && type != TYPE_FLOAT) {
+		FMT_ERROR(ERR_POW_BAD_TYPE, { .type = expr->rhs->type });
+
+		return false;
+	}
+
+	return true;
 }
 
 bool validate_expr_func(const AstNode *node) {

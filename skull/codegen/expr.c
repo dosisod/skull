@@ -26,13 +26,8 @@ static Operation gen_expr_add, gen_expr_sub, gen_expr_mult,
 	gen_expr_not, gen_expr_unary_neg, gen_expr_is, gen_expr_is_not,
 	gen_expr_less_than, gen_expr_gtr_than, gen_expr_less_than_eq,
 	gen_expr_gtr_than_eq, gen_expr_lshift, gen_expr_rshift,
-	gen_expr_and, gen_expr_or, gen_expr_xor, gen_expr_div, gen_expr_mod;
-
-static Expr gen_expr_pow(
-	const Expr *,
-	LLVMValueRef,
-	bool *
-);
+	gen_expr_and, gen_expr_or, gen_expr_xor, gen_expr_div, gen_expr_mod,
+	gen_expr_pow;
 
 static Expr gen_expr_const(const AstNodeExpr *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
@@ -110,18 +105,6 @@ static Expr gen_expr(
 	);
 	if (*err) return (Expr){0};
 
-	const Token *rhs_token = expr->rhs->lhs.tok;
-
-	if (lhs.value && lhs.type != rhs.type) {
-		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
-			{ .loc = &rhs_token->location, .type = lhs.type },
-			{ .type = rhs.type }
-		);
-
-		*err = true;
-		return (Expr){0};
-	}
-
 	Expr result = (Expr){0};
 
 	Operation *func = expr_type_to_func(expr->oper);
@@ -132,7 +115,7 @@ static Expr gen_expr(
 		);
 	}
 	else if (expr->oper == EXPR_POW) {
-		result = gen_expr_pow(&lhs, rhs.value, err);
+		result = gen_expr_pow(&lhs, rhs.value);
 	}
 
 	if ((!result.type && !result.value) || *err) return (Expr){0};
@@ -144,7 +127,8 @@ static Expr gen_expr(
 				expr->lhs.expr->lhs.tok) :
 				NULL;
 
-		const Token *tok = lhs_token ? lhs_token : rhs_token;
+		const Token *tok = lhs_token ? lhs_token : expr->rhs->lhs.tok;
+
 
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{ .loc = &tok->location, .type = type },
@@ -390,8 +374,7 @@ Set `err` if an error occurred.
 */
 static Expr gen_expr_pow(
 	const Expr *lhs,
-	LLVMValueRef rhs,
-	bool *err
+	LLVMValueRef rhs
 ) {
 	const char *func_name = NULL;
 
@@ -400,13 +383,6 @@ static Expr gen_expr_pow(
 
 	else if (lhs->type == TYPE_FLOAT)
 		func_name = "_float_pow";
-
-	else {
-		FMT_ERROR(ERR_POW_BAD_TYPE, { .type = lhs->type });
-
-		*err = true;
-		return (Expr){0};
-	}
 
 	return create_and_call_builtin_oper(
 		lhs->type,

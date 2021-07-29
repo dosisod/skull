@@ -191,3 +191,5 @@ Makes an empty AstNode.
 
 AstNode *parse_ast_tree(const char32_t *const);
 void free_ast_tree(AstNode *);
+
+const Location *find_expr_node_location(const AstNodeExpr *);

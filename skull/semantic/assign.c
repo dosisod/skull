@@ -14,6 +14,7 @@
 static Type var_def_node_to_type(const AstNode *);
 static Variable *node_to_var(const AstNode *const);
 static Type func_get_type(const AstNode *, const AstNodeExpr *);
+static bool is_expr_compatible_with_var(const AstNodeExpr *, const Variable *);
 bool validate_expr(AstNode *);
 
 
@@ -26,7 +27,9 @@ bool validate_stmt_var_def(const AstNode *node) {
 	const bool ok = validate_expr(node->var_def->expr_node);
 	var->is_defined = true;
 
-	return ok;
+	if (!ok) return false;
+
+	return is_expr_compatible_with_var(node->var_def->expr_node->expr, var);
 }
 
 bool validate_stmt_var_assign(const AstNode *node) {
@@ -45,7 +48,9 @@ bool validate_stmt_var_assign(const AstNode *node) {
 
 	var->was_reassigned = true;
 
-	return validate_expr(node->var_assign->expr_node);
+	if (!validate_expr(node->var_assign->expr_node)) return false;
+
+	return is_expr_compatible_with_var(node->var_assign->expr_node->expr, var);
 }
 
 /*
@@ -214,4 +219,22 @@ static Type func_get_type(const AstNode *node, const AstNodeExpr *expr) {
 	}
 
 	return type;
+}
+
+static bool is_expr_compatible_with_var(
+	const AstNodeExpr *expr,
+	const Variable *var
+) {
+	if (expr->type != var->type) {
+		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
+			{
+				.loc = find_expr_node_location(expr),
+				.type = var->type
+			},
+			{ .type = expr->type }
+		);
+		return false;
+	}
+
+	return true;
 }

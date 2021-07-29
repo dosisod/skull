@@ -107,7 +107,7 @@ static Expr gen_expr_rshift(const Expr *lhs, LLVMValueRef rhs)
 > Return expression for logical right shift of `lhs` and `rhs`.
 
 ```c
-static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs, bool *err)
+static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for taking `lhs` to the power of `rhs`.

@@ -1,3 +1,5 @@
+# TODO: fix semantic layer not checking for trivial types
+
 x: Int = 1
 
 # explicitly cause file to fail so CI passes

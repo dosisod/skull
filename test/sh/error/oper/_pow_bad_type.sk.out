@@ -1,1 +1,2 @@
 ./test/sh/error/oper/pow_bad_type.sk: Compilation error: cannot use type "Str" for power operator
+./test/sh/error/oper/pow_bad_type.sk: Warning: line 1 column 1: variable "x" is unused
