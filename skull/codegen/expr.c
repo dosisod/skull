@@ -33,7 +33,7 @@ static Expr gen_expr_const(const AstNodeExpr *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr gen_expr(Type, AstNodeExpr *const, bool *);
 static Expr ident_to_expr(AstNodeExpr *, Variable **);
-static Expr gen_expr_identifier(Type, AstNodeExpr *, bool *);
+static Expr gen_expr_identifier(AstNodeExpr *, bool *);
 static Operation *expr_type_to_func(ExprType);
 static bool is_bool_expr(ExprType);
 
@@ -84,7 +84,7 @@ static Expr gen_expr(
 ) {
 	switch (expr->oper) {
 		case EXPR_IDENTIFIER:
-			return gen_expr_identifier(type, expr, err);
+			return gen_expr_identifier(expr, err);
 		case EXPR_CONST:
 			return gen_expr_const(expr);
 		case EXPR_FUNC:
@@ -150,25 +150,12 @@ If `type` is not set, the expression type will not be checked.
 Set `err` if an error occurred.
 */
 static Expr gen_expr_identifier(
-	Type type,
 	AstNodeExpr *expr_node,
 	bool *err
 ) {
 	Variable *var = NULL;
 	const Expr expr = ident_to_expr(expr_node, &var);
 	if (!expr.value && !expr.type) {
-		*err = true;
-		return (Expr){0};
-	}
-
-	if (type && var && var->type != type) {
-		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
-			{ .loc = &expr_node->lhs.tok->location, .type = type },
-			{ .type = var->type }
-		);
-
-		variable_disable_warnings(var);
-
 		*err = true;
 		return (Expr){0};
 	}

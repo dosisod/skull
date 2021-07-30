@@ -32,7 +32,7 @@ static Expr gen_expr(Type type, AstNodeExpr *const expr, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static Expr gen_expr_identifier(Type type, AstNodeExpr *expr_node, bool *err)
+static Expr gen_expr_identifier(AstNodeExpr *expr_node, bool *err)
 ```
 
 > Return expression for identifier `token` with type `type`.
