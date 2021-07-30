@@ -120,25 +120,6 @@ static Expr gen_expr(
 
 	if ((!result.type && !result.value) || *err) return (Expr){0};
 
-	if (type && result.type != type) {
-		const Token *lhs_token = expr->lhs.expr ?
-			(expr->lhs.expr->oper == EXPR_FUNC ?
-				expr->lhs.expr->lhs.func_call->func_name_tok :
-				expr->lhs.expr->lhs.tok) :
-				NULL;
-
-		const Token *tok = lhs_token ? lhs_token : expr->rhs->lhs.tok;
-
-
-		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
-			{ .loc = &tok->location, .type = type },
-			{ .type = result.type }
-		);
-
-		*err = true;
-		return (Expr){0};
-	}
-
 	return result;
 }
 

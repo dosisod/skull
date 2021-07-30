@@ -16,6 +16,7 @@ static bool _validate_expr(AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
 static bool validate_const_expr(AstNodeExpr *);
 static bool validate_pow_expr(const AstNodeExpr *);
+static bool validate_bool_expr(const AstNodeExpr *);
 
 
 bool validate_expr(const AstNode *node) {
@@ -64,6 +65,13 @@ static bool _validate_expr(AstNodeExpr *expr) {
 		}
 		case EXPR_POW: {
 			if (!validate_pow_expr(expr)) return false;
+			break;
+		}
+		case EXPR_NOT:
+		case EXPR_AND:
+		case EXPR_OR:
+		case EXPR_XOR: {
+			if (!validate_bool_expr(expr)) return false;
 			break;
 		}
 		default: break;
@@ -159,6 +167,21 @@ static bool validate_pow_expr(const AstNodeExpr *expr) {
 		return false;
 	}
 
+	return true;
+}
+
+static bool validate_bool_expr(const AstNodeExpr *expr) {
+	if (expr->rhs->type != TYPE_BOOL) {
+		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
+			{
+				.loc = find_expr_node_location(expr),
+				.type = TYPE_BOOL
+			},
+			{ .type = expr->rhs->type }
+		);
+
+		return false;
+	}
 	return true;
 }
 

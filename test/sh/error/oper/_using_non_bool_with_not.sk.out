@@ -1,1 +1,3 @@
-./test/sh/error/oper/using_non_bool_with_not.sk: Compilation error: line 1 column 10: invalid expression near "not"
+./test/sh/error/oper/using_non_bool_with_not.sk: Compilation error: line 1 column 14: expected type "Bool", got "Int"
+./test/sh/error/oper/using_non_bool_with_not.sk: Warning: line 1 column 5: variable "x" should be constant
+./test/sh/error/oper/using_non_bool_with_not.sk: Warning: line 1 column 5: variable "x" is unused
