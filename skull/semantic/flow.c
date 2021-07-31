@@ -12,6 +12,7 @@
 
 static bool validate_control_not_missing_if(const AstNode *);
 static bool is_missing_block(const AstNode *, const char *);
+static bool validate_bool_expr(const AstNodeExpr *);
 
 bool validate_stmt_return(const AstNode *node) {
 	if (!assert_sane_child(node->next)) return false;
@@ -28,18 +29,24 @@ bool validate_control_else(const AstNode *node) {
 
 bool validate_control_if(const AstNode *node) {
 	return !is_missing_block(node, "if") &&
-		validate_expr(node->expr_node);
+		validate_expr(node->expr_node) &&
+		validate_bool_expr(node->expr_node->expr);
 }
 
 bool validate_control_elif(const AstNode *node) {
 	return !is_missing_block(node, "elif") &&
 		validate_control_not_missing_if(node) &&
-		validate_expr(node->expr_node);
+		validate_expr(node->expr_node) &&
+		validate_bool_expr(node->expr_node->expr);
 }
 
 bool validate_control_while(const AstNode *node) {
-	if (is_missing_block(node, "while")) return false;
-	if (!validate_expr(node->expr_node)) return false;
+	if (is_missing_block(node, "while") ||
+		!validate_expr(node->expr_node) ||
+		!validate_bool_expr(node->expr_node->expr)
+	) {
+		return false;
+	}
 
 	const AstNodeExpr *expr = node->expr_node->expr;
 
@@ -118,6 +125,14 @@ bool validate_control_not_missing_if(const AstNode *node) {
 	FMT_ERROR(ERR_ELSE_ELIF_MISSING_IF, {
 		.loc = &node->token->location
 	});
+
+	return false;
+}
+
+static bool validate_bool_expr(const AstNodeExpr *expr) {
+	if (expr->type == TYPE_BOOL) return true;
+
+	FMT_ERROR(ERR_NON_BOOL_EXPR, { .loc = find_expr_node_location(expr) });
 
 	return false;
 }

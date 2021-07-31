@@ -265,12 +265,6 @@ static LLVMValueRef node_to_bool(const AstNode *const node) {
 	const Expr expr = node_to_expr(NULL, node, &err);
 	if (err) return NULL;
 
-	if (expr.type != TYPE_BOOL) {
-		FMT_ERROR(ERR_NON_BOOL_EXPR, { .loc = &node->token->location });
-
-		return NULL;
-	}
-
 	warn_const_cond(expr.value, &node->token->location);
 	add_llvm_debug_info(expr.value, &node->token->location);
 
