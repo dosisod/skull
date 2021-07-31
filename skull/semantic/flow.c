@@ -11,6 +11,7 @@
 
 
 static bool validate_control_not_missing_if(const AstNode *);
+static bool is_missing_block(const AstNode *, const char *);
 bool assert_sane_child(const AstNode *);
 
 bool validate_stmt_return(const AstNode *node) {
@@ -22,19 +23,23 @@ bool validate_stmt_return(const AstNode *node) {
 }
 
 bool validate_control_else(const AstNode *node) {
-	return validate_control_not_missing_if(node);
+	return validate_control_not_missing_if(node) &&
+		!is_missing_block(node, "else");
 }
 
 bool validate_control_if(const AstNode *node) {
-	return validate_expr(node->expr_node);
+	return !is_missing_block(node, "if") &&
+		validate_expr(node->expr_node);
 }
 
 bool validate_control_elif(const AstNode *node) {
-	return validate_control_not_missing_if(node) &&
+	return !is_missing_block(node, "elif") &&
+		validate_control_not_missing_if(node) &&
 		validate_expr(node->expr_node);
 }
 
 bool validate_control_while(const AstNode *node) {
+	if (is_missing_block(node, "while")) return false;
 	if (!validate_expr(node->expr_node)) return false;
 
 	const AstNodeExpr *expr = node->expr_node->expr;
@@ -86,12 +91,24 @@ bool validate_control_while(const AstNode *node) {
 	return false;
 }
 
+static bool is_missing_block(const AstNode *node, const char *name) {
+	if (node->child) return false;
+
+	FMT_ERROR(ERR_MISSING_BLOCK, {
+		.loc = &node->token->location,
+		.str = name
+	});
+
+	return true;
+}
+
 bool validate_control_not_missing_if(const AstNode *node) {
 	const AstNode *last = node->last;
 
 	if (last) {
 		switch (last->type) {
-			case AST_NODE_COMMENT: return validate_control_else(last);
+			case AST_NODE_COMMENT:
+				return validate_control_not_missing_if(last);
 			case AST_NODE_IF:
 			case AST_NODE_ELIF:
 				return true;

@@ -45,7 +45,7 @@ static LLVMValueRef node_to_bool(const AstNode *const node)
 > Return `NULL` if an error occurred.
 
 ```c
-static bool gen_control_code_block(const char *name, const AstNode *const node, LLVMBasicBlockRef block)
+static bool gen_control_code_block(const AstNode *const node, LLVMBasicBlockRef block)
 ```
 
 > Parse `node` while in a new scope. Branch to `block` if no return occurred.

@@ -23,7 +23,6 @@ static bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
 static LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *);
 
 static bool gen_control_code_block(
-	const char *,
 	const AstNode *const,
 	LLVMBasicBlockRef
 );
@@ -146,7 +145,7 @@ bool gen_control_while(AstNode *node) {
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_loop);
 
-	if (gen_control_code_block("while", node, while_cond))
+	if (gen_control_code_block(node, while_cond))
 		return true;
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_end);
@@ -200,7 +199,7 @@ static bool gen_control_if_(
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_true);
 
-	if (gen_control_code_block("if", *node, end)) return true;
+	if (gen_control_code_block(*node, end)) return true;
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, entry);
 
@@ -236,7 +235,7 @@ static bool gen_control_if_(
 	else if (next_non_comment && next_non_comment->type == AST_NODE_ELSE) {
 		LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_false);
 
-		if (gen_control_code_block("else", *node, end)) return true;
+		if (gen_control_code_block(*node, end)) return true;
 	}
 	// just a single if statement
 	else {
@@ -296,19 +295,9 @@ Parse `node` while in a new scope. Branch to `block` if no return occurred.
 Return `true` if error occurred.
 */
 static bool gen_control_code_block(
-	const char *name,
 	const AstNode *const node,
 	LLVMBasicBlockRef block
 ) {
-	if (!node->child) { // NOLINT
-		FMT_ERROR(ERR_MISSING_BLOCK, {
-			.loc = &node->token->location,
-			.str = name
-		});
-
-		return true;
-	}
-
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
 
 	LLVMMetadataRef old_di_scope = add_llvm_control_flow_debug_info(
