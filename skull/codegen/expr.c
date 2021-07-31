@@ -58,14 +58,7 @@ Expr node_to_expr(
 	bool *err
 ) {
 	if (node && node->type == AST_NODE_EXPR) {
-		const Expr expr = gen_expr(type, node->expr, err);
-
-		if (!expr.value && !*err) {
-			FMT_ERROR(ERR_INVALID_EXPR, { .tok = node->token });
-			*err = true;
-		}
-
-		return expr;
+		return gen_expr(type, node->expr, err);
 	}
 
 	// node was not an expr, caller must handle this

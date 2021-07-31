@@ -60,7 +60,6 @@ static const char *errors[] = {
 	[ERR_NO_NESTED] = \
 		"cannot declare nested function \"%s\" as external or exported\n",
 	[ERR_TOP_LVL_ALIAS_ONLY] = "type aliases must be defined at the top level",
-	[ERR_NOT_COMPARIBLE] = "cannot compare value near \"%s\"\n",
 	[ERR_EXPECTED_COMMA] = "expected comma",
 	[ERR_UNCLOSED_FUNC_CALL] = "function call missing closing parenthesis",
 	[ERR_TYPE_NOT_FOUND] = "type \"%s\" could not be found\n",
@@ -91,7 +90,8 @@ static const char *errors[] = {
 	[ERR_NO_REDEFINE_VAR_AS_ALIAS] = \
 		"cannot redeclare variable \"%s\" as type alias\n",
 	[ERR_NO_REDEFINE_FUNC_AS_ALIAS] = \
-		"cannot redeclare function \"%s\" as type alias\n"
+		"cannot redeclare function \"%s\" as type alias\n",
+	[ERR_NOT_NUMERIC] = "expected a numeric value"
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);

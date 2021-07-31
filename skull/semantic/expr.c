@@ -17,6 +17,7 @@ static bool is_div_by_zero(const AstNodeExpr *);
 static bool validate_const_expr(AstNodeExpr *);
 static bool validate_pow_expr(const AstNodeExpr *);
 static bool validate_bool_expr(const AstNodeExpr *);
+static bool is_numeric(const AstNodeExpr *);
 
 
 bool validate_expr(const AstNode *node) {
@@ -58,13 +59,24 @@ static bool _validate_expr(AstNodeExpr *expr) {
 	}
 
 	switch (oper) {
+		case EXPR_ADD:
+		case EXPR_SUB:
+		case EXPR_MULT:
+		case EXPR_UNARY_NEG:
+		case EXPR_LESS_THAN:
+		case EXPR_GTR_THAN:
+		case EXPR_LESS_THAN_EQ:
+		case EXPR_GTR_THAN_EQ: {
+			if (!is_numeric(expr)) return false;
+			break;
+		}
 		case EXPR_DIV:
 		case EXPR_MOD: {
-			if (is_div_by_zero(expr)) return false;
+			if (is_div_by_zero(expr) || !is_numeric(expr)) return false;
 			break;
 		}
 		case EXPR_POW: {
-			if (!validate_pow_expr(expr)) return false;
+			if (!validate_pow_expr(expr) || !is_numeric(expr)) return false;
 			break;
 		}
 		case EXPR_NOT:
@@ -137,6 +149,19 @@ static bool validate_const_expr(AstNodeExpr *expr) {
 	}
 
 	return !err;
+}
+
+static bool is_numeric(const AstNodeExpr *expr) {
+	const bool ok = expr->rhs->type == TYPE_INT ||
+		expr->rhs->type == TYPE_FLOAT;
+
+	if (!ok) {
+		FMT_ERROR(ERR_NOT_NUMERIC, { .loc = find_expr_node_location(expr) });
+
+		return false;
+	}
+
+	return true;
 }
 
 static bool is_div_by_zero(const AstNodeExpr *expr) {
