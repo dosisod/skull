@@ -52,42 +52,9 @@ Expr gen_node(AstNode *node, bool *err) {
 }
 
 /*
-Verify that `node` doens't contain child node if it shouldn't.
-
-Return `true` if node is "sane".
-*/
-bool assert_sane_child(AstNode *node) {
-	if (!node) return true;
-
-	const NodeType node_type = node->type;
-
-	if (node->child && !(
-		node_type == AST_NODE_IF ||
-		node_type == AST_NODE_ELIF ||
-		node_type == AST_NODE_ELSE ||
-		node_type == AST_NODE_WHILE ||
-		node_type == AST_NODE_FUNCTION_PROTO ||
-		(node_type == AST_NODE_EXPR && node->expr->oper == EXPR_FUNC)
-	)) {
-		FMT_ERROR(ERR_UNEXPECTED_CODE_BLOCK, {
-			.loc = &node->child->token->location
-		});
-
-		return false;
-	}
-
-	return true;
-}
-
-/*
 Internal `gen_node` function.
 */
 static Expr _gen_node(AstNode **node, bool *err) {
-	if (!assert_sane_child(*node)) {
-		*err = true;
-		return (Expr){0};
-	}
-
 	switch ((*node)->type) {
 		case AST_NODE_IF: *err |= gen_control_if(node); break;
 		case AST_NODE_WHILE: *err |= gen_control_while(*node); break;

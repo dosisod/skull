@@ -55,6 +55,8 @@ static bool _validate_ast_tree(const AstNode *node) {
 Validate a single AST `node`.
 */
 static bool validate_ast_node(const AstNode *node) {
+	if (!assert_sane_child(node)) return false;
+
 	switch (node->type) {
 		case AST_NODE_RETURN: return validate_stmt_return(node);
 		case AST_NODE_FUNCTION_PROTO: return validate_stmt_func_decl(node);

@@ -5,6 +5,5 @@
 
 typedef struct AstNode AstNode;
 
-_Bool assert_sane_child(AstNode *);
 Expr gen_node(AstNode *, _Bool *);
 _Bool gen_tree(AstNode *);

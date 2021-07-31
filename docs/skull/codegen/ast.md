@@ -13,14 +13,6 @@ Expr gen_node(AstNode *node, bool *err)
 > Return expr from an `AST_NODE_RETURN` if one was found.
 
 ```c
-bool assert_sane_child(AstNode *node)
-```
-
-> Verify that `node` doens't contain child node if it shouldn't.
-> \
-> Return `true` if node is "sane".
-
-```c
 static Expr _gen_node(AstNode **node, bool *err)
 ```
 

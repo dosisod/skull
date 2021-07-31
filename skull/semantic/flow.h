@@ -7,3 +7,4 @@ _Bool validate_control_if(const AstNode *);
 _Bool validate_control_elif(const AstNode *);
 _Bool validate_control_else(const AstNode *);
 _Bool validate_control_while(const AstNode *);
+_Bool assert_sane_child(const AstNode *);

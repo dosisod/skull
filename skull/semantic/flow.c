@@ -12,7 +12,6 @@
 
 static bool validate_control_not_missing_if(const AstNode *);
 static bool is_missing_block(const AstNode *, const char *);
-bool assert_sane_child(const AstNode *);
 
 bool validate_stmt_return(const AstNode *node) {
 	if (!assert_sane_child(node->next)) return false;
@@ -121,4 +120,32 @@ bool validate_control_not_missing_if(const AstNode *node) {
 	});
 
 	return false;
+}
+
+/*
+Verify that `node` doens't contain child node if it shouldn't.
+
+Return `true` if node is "sane".
+*/
+bool assert_sane_child(const AstNode *node) {
+	if (!node) return true;
+
+	const NodeType node_type = node->type;
+
+	if (node->child && !(
+		node_type == AST_NODE_IF ||
+		node_type == AST_NODE_ELIF ||
+		node_type == AST_NODE_ELSE ||
+		node_type == AST_NODE_WHILE ||
+		node_type == AST_NODE_FUNCTION_PROTO ||
+		(node_type == AST_NODE_EXPR && node->expr->oper == EXPR_FUNC)
+	)) {
+		FMT_ERROR(ERR_UNEXPECTED_CODE_BLOCK, {
+			.loc = &node->child->token->location
+		});
+
+		return false;
+	}
+
+	return true;
 }
