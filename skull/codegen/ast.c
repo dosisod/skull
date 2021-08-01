@@ -67,14 +67,7 @@ static Expr _gen_node(AstNode **node, bool *err) {
 			*err |= gen_stmt_var_assign((*node)->var_assign); break;
 		case AST_NODE_EXPR: *err |= gen_expr_node(*node); break;
 		case AST_NODE_NOOP: gen_stmt_noop(&(*node)->token->location); break;
-		case AST_NODE_COMMENT:
-		case AST_NODE_TYPE_ALIAS: break;
-		default: {
-			if ((*node)->token) {
-				FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = (*node)->token });
-				*err = true;
-			}
-		}
+		default: break;
 	}
 
 	return (Expr){0};
