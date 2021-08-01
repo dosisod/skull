@@ -109,9 +109,9 @@ Expr gen_expr_func_call(
 	const AstNode *param = func_call->params;
 
 	for RANGE(i, num_params) {
-		const Expr param_expr = node_to_expr(
+		const Expr param_expr = gen_expr(
 			function->param_types[i],
-			param,
+			param->expr,
 			err
 		);
 

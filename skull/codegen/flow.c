@@ -68,7 +68,11 @@ Expr gen_stmt_return(AstNode *node, bool *err) {
 	AstNode *const expr_node = node->expr_node;
 	Type return_type = SKULL_STATE_LLVM.current_func->return_type;
 
-	Expr expr = node_to_expr(NULL, expr_node, err);
+	Expr expr = (Expr){0};
+
+	if (expr_node && expr_node->type == AST_NODE_EXPR) {
+		expr = gen_expr(NULL, expr_node->expr, err);
+	}
 
 	if (*err || (!expr_node && return_type != TYPE_VOID)) {
 		if (!*err) {
@@ -262,7 +266,7 @@ Return `NULL` if an error occurred.
 */
 static LLVMValueRef node_to_bool(const AstNode *const node) {
 	bool err = false;
-	const Expr expr = node_to_expr(NULL, node, &err);
+	const Expr expr = gen_expr(NULL, node->expr, &err);
 	if (err) return NULL;
 
 	warn_const_cond(expr.value, &node->token->location);

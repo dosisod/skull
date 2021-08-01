@@ -29,9 +29,9 @@ bool gen_stmt_var_def(AstNodeVarDef *var_def) {
 	Variable *var = var_def->var;
 
 	bool err = false;
-	LLVMValueRef value = node_to_expr(
+	LLVMValueRef value = gen_expr(
 		var->type,
-		var_def->expr_node,
+		var_def->expr_node->expr,
 		&err
 	).value;
 
@@ -81,9 +81,9 @@ bool gen_stmt_var_assign(AstNodeVarAssign *var_assign) {
 	Variable *var = var_assign->var;
 
 	bool err = false;
-	LLVMValueRef value = node_to_expr(
+	LLVMValueRef value = gen_expr(
 		var->type,
-		var_assign->expr_node,
+		var_assign->expr_node->expr,
 		&err
 	).value;
 

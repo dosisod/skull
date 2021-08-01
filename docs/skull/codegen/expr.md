@@ -14,17 +14,7 @@ typedef struct {
 > `type` is the Skull usable which `value` evaluates to.
 
 ```c
-Expr node_to_expr(Type type, const AstNode *const node, bool *err)
-```
-
-> Create an expression from `node` with type `type`.
-> \
-> Optionally pass `var` if expression is going to be assigned to a variable.
-> \
-> Set `err` if an error occurred.
-
-```c
-static Expr gen_expr(Type type, AstNodeExpr *const expr, bool *err)
+Expr gen_expr(Type type, const AstNodeExpr *const expr, bool *err)
 ```
 
 > Return expression for `expr`, checking if resulting type matches `type`.
@@ -32,7 +22,7 @@ static Expr gen_expr(Type type, AstNodeExpr *const expr, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static Expr gen_expr_identifier(AstNodeExpr *expr_node, bool *err)
+static Expr gen_expr_identifier(const AstNodeExpr *expr_node, bool *err)
 ```
 
 > Return expression for identifier `token` with type `type`.
@@ -42,7 +32,7 @@ static Expr gen_expr_identifier(AstNodeExpr *expr_node, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static Expr ident_to_expr(AstNodeExpr *expr, Variable **variable)
+static Expr ident_to_expr(const AstNodeExpr *expr, Variable **variable)
 ```
 
 > Convert identifier node `expr` to an expression.

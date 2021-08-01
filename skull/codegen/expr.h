@@ -4,6 +4,7 @@
 #include "skull/semantic/types.h"
 
 typedef struct AstNode AstNode;
+typedef struct AstNodeExpr AstNodeExpr;
 
 /*
 Expr stores all the data needed to do type comparisons with LLVMValueRef's.
@@ -17,8 +18,4 @@ typedef struct {
 	Type type;
 } Expr;
 
-Expr node_to_expr(
-	Type,
-	const AstNode *const,
-	_Bool *
-);
+Expr gen_expr(Type, const AstNodeExpr *const, _Bool *);

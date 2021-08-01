@@ -31,9 +31,8 @@ static Operation gen_expr_add, gen_expr_sub, gen_expr_mult,
 
 static Expr gen_expr_const(const AstNodeExpr *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
-static Expr gen_expr(Type, AstNodeExpr *const, bool *);
-static Expr ident_to_expr(AstNodeExpr *, Variable **);
-static Expr gen_expr_identifier(AstNodeExpr *, bool *);
+static Expr ident_to_expr(const AstNodeExpr *, Variable **);
+static Expr gen_expr_identifier(const AstNodeExpr *, bool *);
 static Operation *expr_type_to_func(ExprType);
 static bool is_bool_expr(ExprType);
 
@@ -46,33 +45,13 @@ static Expr create_and_call_builtin_oper(
 );
 
 /*
-Create an expression from `node` with type `type`.
-
-Optionally pass `var` if expression is going to be assigned to a variable.
-
-Set `err` if an error occurred.
-*/
-Expr node_to_expr(
-	Type type,
-	const AstNode *const node,
-	bool *err
-) {
-	if (node && node->type == AST_NODE_EXPR) {
-		return gen_expr(type, node->expr, err);
-	}
-
-	// node was not an expr, caller must handle this
-	return (Expr){0};
-}
-
-/*
 Return expression for `expr`, checking if resulting type matches `type`.
 
 Set `err` if an error occurred.
 */
-static Expr gen_expr(
+Expr gen_expr(
 	Type type,
-	AstNodeExpr *const expr,
+	const AstNodeExpr *const expr,
 	bool *err
 ) {
 	switch (expr->oper) {
@@ -124,7 +103,7 @@ If `type` is not set, the expression type will not be checked.
 Set `err` if an error occurred.
 */
 static Expr gen_expr_identifier(
-	AstNodeExpr *expr_node,
+	const AstNodeExpr *expr_node,
 	bool *err
 ) {
 	Variable *var = NULL;
@@ -143,7 +122,7 @@ Convert identifier node `expr` to an expression.
 Store found variable (if found) in `variable`.
 */
 static Expr ident_to_expr(
-	AstNodeExpr *expr,
+	const AstNodeExpr *expr,
 	Variable **variable
 ) {
 	Variable *var_found = expr->var;
