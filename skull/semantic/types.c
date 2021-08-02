@@ -8,6 +8,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/parse/ast_node.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
@@ -29,28 +30,18 @@ bool eval_bool(const Token *const token) {
 Returns a float (actually a double) parsed from `token`.
 */
 double eval_float(const Token *const token, bool *err) {
-	char *const float_str = token_to_mbs_str(token);
+	if (token_cmp(U"Infinity", token)) return (double)INFINITY;
+	if (token_cmp(U"-Infinity", token)) return (double)-INFINITY;
+	if (token_cmp(U"NaN", token)) return (double)NAN;
 
-	if (strcmp("Infinity", float_str) == 0) {
-		free(float_str);
-		return (double)INFINITY;
-	}
-	if (strcmp("-Infinity", float_str) == 0) {
-		free(float_str);
-		return (double)-INFINITY;
-	}
-	if (strcmp("NaN", float_str) == 0) {
-		free(float_str);
-		return (double)NAN;
-	}
-
+	char *float_str = token_to_mbs_str(token);
 	strip_underscore_num(float_str, '.');
 
 	errno = 0;
-	double ret = strtod(float_str, NULL);
+	const double ret = strtod(float_str, NULL);
 	free(float_str);
 
-	if (isinf(ret) && errno == ERANGE) {
+	if (errno == ERANGE) {
 		FMT_ERROR(ERR_OVERFLOW, { .tok = token });
 
 		*err = true;
@@ -86,7 +77,7 @@ int64_t eval_integer(const Token *const token, bool *err) {
 	strip_underscore_num(num_str, 0);
 
 	errno = 0;
-	int64_t ret = strtoll(num_str, NULL, base);
+	const int64_t ret = strtoll(num_str, NULL, base);
 	free(num_str);
 
 	if ((ret == LLONG_MAX || ret == LLONG_MIN) && errno == ERANGE) {
@@ -113,7 +104,7 @@ char32_t eval_rune(const Token *const token, bool *err) {
 	}
 
 	const char32_t *error = NULL;
-	char32_t ret = c32sunescape(&start, &error);
+	const char32_t ret = c32sunescape(&start, &error);
 
 	mbstate_t mbs;
 	memset(&mbs, 0, sizeof mbs);
@@ -237,4 +228,29 @@ static void strip_underscore_num(char *str, char c) {
 		probe++;
 	}
 	*str = '\0';
+}
+
+bool validate_stmt_type_alias(const AstNode *node) {
+	const Token *const token = node->token;
+
+	char *type_name = token_to_mbs_str(token->next->next);
+	char *alias = token_to_mbs_str(token);
+
+	Symbol *symbol;
+	symbol = Calloc(1, sizeof *symbol);
+	*symbol = (Symbol){
+		.name = alias,
+		.location = &token->location,
+		.expr_type = find_type(type_name),
+		.type = SYMBOL_ALIAS,
+	};
+
+	if (scope_add_symbol(symbol)) {
+		free(type_name);
+		return true;
+	}
+
+	free(type_name);
+	free(symbol);
+	return false;
 }

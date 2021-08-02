@@ -16,7 +16,6 @@
 
 static bool _validate_ast_tree(const AstNode *);
 static bool validate_ast_node(const AstNode *);
-static bool validate_stmt_type_alias(const AstNode *);
 
 /*
 Validate an entire AST tree starting at `node`.
@@ -71,29 +70,3 @@ static bool validate_ast_node(const AstNode *node) {
 		default: return true;
 	}
 }
-
-static bool validate_stmt_type_alias(const AstNode *node) {
-	const Token *const token = node->token;
-
-	char *type_name = token_to_mbs_str(token->next->next);
-	char *alias = token_to_mbs_str(token);
-
-	Symbol *symbol;
-	symbol = Calloc(1, sizeof *symbol);
-	*symbol = (Symbol){
-		.name = alias,
-		.location = &token->location,
-		.expr_type = find_type(type_name),
-		.type = SYMBOL_ALIAS,
-	};
-
-	if (scope_add_symbol(symbol)) {
-		free(type_name);
-		return true;
-	}
-
-	free(type_name);
-	free(symbol);
-	return false;
-}
-

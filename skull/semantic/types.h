@@ -7,12 +7,14 @@
 #include "skull/parse/token.h"
 
 typedef struct Token Token;
+typedef struct AstNode AstNode;
 
 _Bool eval_bool(const Token *const);
 double eval_float(const Token *const, _Bool *);
 int64_t eval_integer(const Token *, _Bool *);
 char32_t eval_rune(const Token *const, _Bool *);
 char32_t *eval_str(const Token *const);
+_Bool validate_stmt_type_alias(const AstNode *);
 
 /*
 Types are simply named strings.
