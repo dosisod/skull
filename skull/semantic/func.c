@@ -13,6 +13,8 @@
 
 #include "skull/semantic/func.h"
 
+static Type validate_return_type(char *);
+static bool validate_func_params(const AstNode *, FunctionDeclaration *);
 
 bool validate_stmt_func_decl(const AstNode *node) {
 	const bool is_external = node->func_proto->is_external;
@@ -24,31 +26,17 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	char *func_name = token_to_mbs_str(func_name_token);
-
-	if (is_export && strcmp(func_name, "main") == 0) {
+	if (is_export && token_cmp(U"main", func_name_token)) {
 		FMT_ERROR(ERR_MAIN_RESERVED, { .loc = &func_name_token->location });
-
-		free(func_name);
 		return false;
 	}
 
-	char *return_type_name = node->func_proto->return_type_name;
-	Type return_type = return_type_name ?
-		find_type(return_type_name) :
-		TYPE_VOID;
+	Type return_type = validate_return_type(node->func_proto->return_type_name);
+	if (!return_type) return false;
 
-	if (return_type_name && !return_type) {
-		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = return_type_name });
-
-		free(func_name);
-		return false;
-	}
-
-	FunctionDeclaration *func;
-	func = Calloc(1, sizeof *func);
+	FunctionDeclaration *func = Calloc(1, sizeof(FunctionDeclaration));
 	*func = (FunctionDeclaration){
-		.name = func_name,
+		.name = token_to_mbs_str(func_name_token),
 		.location = func_name_token->location,
 		.is_external = is_external,
 		.is_export = is_export,
@@ -59,8 +47,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 
 	node->func_proto->func = func;
 
-	Symbol *symbol;
-	symbol = Calloc(1, sizeof *symbol);
+	Symbol *symbol = Calloc(1, sizeof(Symbol));
 	*symbol = (Symbol){
 		.name = func->name,
 		.expr_type = func->return_type,
@@ -75,35 +62,42 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
+	return validate_func_params(node, func);
+}
+
+static bool validate_func_params(
+	const AstNode *node,
+	FunctionDeclaration *function
+) {
 	AstNodeFunctionParam **params = node->func_proto->params;
 	if (!params) return true;
 
-	func->param_types = Calloc(func->num_params, sizeof(Type));
+	function->param_types = Calloc(function->num_params, sizeof(Type));
 
-	for RANGE(i, func->num_params) {
-		func->param_types[i] = find_type(params[i]->type_name);
+	for RANGE(i, function->num_params) {
+		function->param_types[i] = find_type(params[i]->type_name);
 
-		if (!func->param_types[i]) {
+		if (!function->param_types[i]) {
 			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = params[i]->type_name });
 
 			return false;
 		}
 
 		Variable *const param_var = make_variable(
-			func->param_types[i],
+			function->param_types[i],
 			node->func_proto->params[i]->param_name,
 			true
 		);
 
-		Location param_location = func->params[i]->var->location;
-		free(func->params[i]->var);
-		func->params[i]->var = NULL;
+		Location param_location = function->params[i]->var->location;
+		free(function->params[i]->var);
+		function->params[i]->var = NULL;
 		param_var->location = param_location;
 		param_var->is_defined = true;
 
-		if (func->is_external) variable_disable_warnings(param_var);
+		if (function->is_external) variable_disable_warnings(param_var);
 
-		symbol = Calloc(1, sizeof *symbol);
+		Symbol *symbol = Calloc(1, sizeof *symbol);
 
 		*symbol = (Symbol){
 			.name = param_var->name,
@@ -126,10 +120,22 @@ bool validate_stmt_func_decl(const AstNode *node) {
 			return false;
 		}
 
-		func->params[i]->var = param_var;
+		function->params[i]->var = param_var;
 	}
 
 	return true;
+}
+
+static Type validate_return_type(char *type_name) {
+	Type type = type_name ? find_type(type_name) : TYPE_VOID;
+
+	if (type_name && !type) {
+		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = type_name });
+
+		return NULL;
+	}
+
+	return type;
 }
 
 /*
