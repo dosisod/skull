@@ -4,7 +4,7 @@
 
 include config.mk
 
-all: skull test docs
+all: skull test docs e2e
 
 .PHONY: skull test docs
 
@@ -61,3 +61,6 @@ uninstall:
 	@rm -f $(MANPATH)skull.1
 	@$(ECHO) "\033[92mUninstall\033[0m Skull headers\n"
 	@rm -rf $(HEADER)/skull
+
+e2e: setup | $(OBJS) $(OBJS_LLVM)
+	@$(CC) $| test/skull/e2e.c -o build/test/e2e $(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)

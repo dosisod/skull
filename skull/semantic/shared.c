@@ -14,4 +14,6 @@ void free_semantic_state(void) {
 
 	reset_scope_head();
 	free_scope(state->scope);
+
+	state->scope = NULL;
 }

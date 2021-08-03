@@ -24,10 +24,6 @@ test_normal() {
 
 	printf "%s" "$dir/$file "
 
-	rm -f "./$dir/.$file.ll"
-	./build/skull/_skull "./$dir/$file" 2> /dev/null
-	[ "$?" = "0" ] || { fail; return; }
-
 	compare "./$dir/_$file.ll" "./$dir/.$file.ll"
 	rm -f "./$dir/.$file.ll"
 }
@@ -96,6 +92,11 @@ test_skull() {
 }
 
 printf "\nRunning Skull unit tests\n\n"
+
+
+
+find test/sh/ -name ".*.ll" | xargs -I{} rm {}
+./build/test/e2e > /dev/null 2>&1
 
 for file in $(find test/sh/ -name "_*.ll") ; do
 	test_normal "$file"

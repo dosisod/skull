@@ -19,8 +19,11 @@ void setup_llvm_state(void) {
 	const char *filename = BUILD_DATA.filename;
 	char *main_func_name = create_main_func_name(filename);
 
-	LLVMModuleRef main_module = LLVMModuleCreateWithName(filename);
 	LLVMContextRef ctx = LLVMContextCreate();
+	LLVMModuleRef main_module = LLVMModuleCreateWithNameInContext(
+		filename,
+		ctx
+	);
 	state->ctx = ctx;
 
 	LLVMTypeRef main_func_type = type_to_llvm_func_type(TYPE_INT, NULL, 0);
