@@ -95,7 +95,7 @@ printf "\nRunning Skull unit tests\n\n"
 
 
 
-find test/sh/ -name ".*.ll" | xargs -I{} rm {}
+find test/sh/ -name ".*.ll" -print0 | xargs -0 -I{} rm {}
 ./build/test/e2e > /dev/null 2>&1
 
 for file in $(find test/sh/ -name "_*.ll") ; do
