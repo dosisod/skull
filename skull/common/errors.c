@@ -10,6 +10,8 @@
 
 #include "skull/common/errors.h"
 
+
+static char *_fmt_message(ErrorType, ErrorCode, Message []);
 static void message_stringify(Message *const);
 static bool do_show_color(void);
 
@@ -111,13 +113,20 @@ static bool do_show_color(void) {
 	return flag - 1;
 }
 
+void fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
+	char *msg = _fmt_message(type, id, msgs);
+
+	fprintf(stderr, "%s", msg);
+	free(msg);
+}
+
 /*
 Returns formatted message.
 
 Every `%s` in the string is expanded according to the corresponding `Message`
 in `msgs`.
 */
-char *fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
+char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 	Message *msg = msgs;
 	message_stringify(msg);
 
