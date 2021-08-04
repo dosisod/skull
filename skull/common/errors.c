@@ -119,15 +119,17 @@ void fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 
 	if (BUILD_DATA.error_file) {
 		errno = 0;
-		FILE *f = fopen(BUILD_DATA.error_file, "w+e");
+		FILE *f = fopen(BUILD_DATA.error_file, "a+e");
 
 		if (!errno) {
 			fprintf(f, "%s", msg);
 			free(msg);
+			fclose(f);
 			return;
 		}
 
 		perror("skull");
+		fclose(f);
 	}
 
 	fprintf(stderr, "%s", msg);

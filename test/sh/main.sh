@@ -67,9 +67,6 @@ test_error() {
 
 	printf "%s" "$dir/$file "
 
-	./build/skull/_skull "./$dir/$file" 2> "./$dir/.$file.out"
-	[ "$?" = "1" ] || { fail; return; }
-
 	compare "./$dir/.$file.out" "./$dir/_$file.out"
 	rm -f "./$dir/.$file.out"
 }
@@ -96,6 +93,7 @@ printf "\nRunning Skull unit tests\n\n"
 
 
 find test/sh/ -name ".*.ll" -print0 | xargs -0 -I{} rm {}
+find test/sh/ -name ".*.out" -print0 | xargs -0 -I{} rm {}
 ./build/test/e2e > /dev/null 2>&1
 
 for file in $(find test/sh/ -name "_*.ll") ; do
@@ -117,7 +115,15 @@ done
 touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
 printf "skull: cannot open \"./test/sh/error/read_protected.sk\", permission denied\n" > test/sh/error/_read_protected.sk.out
-test_error "test/sh/error/_read_protected.sk.out"
+
+./build/skull/_skull "./test/sh/error/read_protected.sk" 2> "./test/sh/error/.read_protected.sk.out"
+[ "$?" = "1" ] || { fail; return; }
+printf "%s" "test/sh/error/read_protected.sk"
+
+compare "./test/sh/error/.read_protected.sk.out" "./test/sh/error/_read_protected.sk.out"
+rm -f "./test/sh/error/.read_protected.out"
+
+rm test/sh/error/.read_protected.sk.out
 rm test/sh/error/_read_protected.sk.out
 rm test/sh/error/read_protected.sk
 

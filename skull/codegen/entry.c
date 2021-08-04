@@ -35,6 +35,7 @@ int init_codegen_pipeline(const char *filename, char *file_contents) {
 	free(file_contents);
 
 	if (failed) {
+		free_llvm_state();
 		free_semantic_state();
 		return failed;
 	}
