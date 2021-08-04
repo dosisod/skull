@@ -12,6 +12,7 @@ int main(void) {
 setup_locale();
 
 bool pass = false;
+BUILD_DATA.error_file = "/dev/null";
 
 char *code = strdup(
 "	mut bool := true\n" \

@@ -1,5 +1,0 @@
-if true {
-	mut x := 0
-}
-
-return x

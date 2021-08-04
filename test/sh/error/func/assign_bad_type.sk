@@ -1,7 +1,0 @@
-# TODO: fix incorrect error (should be cannot assign type)
-
-func() Int {
-	return 1
-}
-
-x: Float = func()

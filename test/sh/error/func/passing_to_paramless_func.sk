@@ -1,5 +1,0 @@
-f() {
-	# do nothing
-}
-
-f(x)

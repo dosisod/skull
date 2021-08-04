@@ -1,3 +1,0 @@
-external f()
-
-x := f(1)

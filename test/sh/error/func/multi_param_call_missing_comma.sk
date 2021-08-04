@@ -1,3 +1,0 @@
-external f(a: Int, b: Int)
-
-f(1 2)

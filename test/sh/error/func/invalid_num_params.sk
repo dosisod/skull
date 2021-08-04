@@ -1,5 +1,0 @@
-f(x: Int) {
-	# do nothing
-}
-
-f(1, 2, 3)

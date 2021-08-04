@@ -1,5 +1,0 @@
-f() {
-	# do nothing
-}
-
-x := f()

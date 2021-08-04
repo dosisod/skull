@@ -1,5 +1,0 @@
-external f(x: Int)
-
-x := false
-
-f(x)

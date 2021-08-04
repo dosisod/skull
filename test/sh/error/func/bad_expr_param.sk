@@ -1,5 +1,0 @@
-f(b: Bool) {
-	# do nothing
-}
-
-f(1 + 2)
