@@ -1,2 +1,0 @@
-mut x := "abc"
-x = "defg"

@@ -1,3 +1,0 @@
-external f() Int
-
-mut x := 1 + f()

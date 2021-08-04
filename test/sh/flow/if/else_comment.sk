@@ -1,7 +1,0 @@
-if true {
-	return 1
-}
-# comment
-else {
-	return 2
-}

@@ -1,5 +1,0 @@
-f(num: Int) Int {
-	return num
-}
-
-f(1)

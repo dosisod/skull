@@ -1,7 +1,0 @@
-int_alias := Int
-
-mut x: int_alias = 1234
-
-f(num: int_alias) int_alias {
-	return num
-}

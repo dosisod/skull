@@ -1,4 +1,0 @@
-mut w := - 1.0
-mut x := not not false
-mut y := - 1
-mut z := - y

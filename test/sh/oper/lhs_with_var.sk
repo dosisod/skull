@@ -1,3 +1,0 @@
-mut x := 1
-mut y := x + 2
-mut z := x < 1

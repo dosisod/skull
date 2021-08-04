@@ -1,5 +1,0 @@
-f(x: Int) Int {
-	return x
-}
-
-f(f(1))

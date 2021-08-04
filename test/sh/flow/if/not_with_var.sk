@@ -1,5 +1,0 @@
-mut x := true
-
-if not x {
-	# do nothing
-}

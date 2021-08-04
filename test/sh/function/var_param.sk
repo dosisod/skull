@@ -1,5 +1,0 @@
-external f(x: Int)
-
-mut num := 1234
-
-f(num)

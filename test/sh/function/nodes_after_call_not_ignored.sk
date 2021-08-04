@@ -1,5 +1,0 @@
-external x()
-
-x()
-
-return 1

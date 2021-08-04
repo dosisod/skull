@@ -1,4 +1,0 @@
-mut x := 0
-mut z := x
-
-return z

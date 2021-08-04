@@ -1,4 +1,0 @@
-mut x := 1 is 1
-mut y := 1.0 is 1.0
-mut z := 'x' is 'x'
-mut q := true is true
