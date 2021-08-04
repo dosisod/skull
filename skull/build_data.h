@@ -2,6 +2,7 @@
 
 typedef struct {
 	const char *filename;
+	const char *error_file;
 	_Bool c_backend : 1;
 	_Bool debug : 1;
 } BuildData;

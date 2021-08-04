@@ -43,6 +43,8 @@ static void setup_flags(void) {
 
 	char *debug = getenv("DEBUG");
 	BUILD_DATA.debug = debug ? *debug == '1' : false;
+
+	BUILD_DATA.error_file = getenv("ERROR_FILE");
 }
 
 /*

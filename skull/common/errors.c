@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -115,6 +116,19 @@ static bool do_show_color(void) {
 
 void fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 	char *msg = _fmt_message(type, id, msgs);
+
+	if (BUILD_DATA.error_file) {
+		errno = 0;
+		FILE *f = fopen(BUILD_DATA.error_file, "w+e");
+
+		if (!errno) {
+			fprintf(f, "%s", msg);
+			free(msg);
+			return;
+		}
+
+		perror("skull");
+	}
 
 	fprintf(stderr, "%s", msg);
 	free(msg);
