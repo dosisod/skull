@@ -1,1 +1,0 @@
-./test/sh/error/flow/if_with_nonexisting_var.sk: Compilation error: line 1 column 4: variable "x" not found

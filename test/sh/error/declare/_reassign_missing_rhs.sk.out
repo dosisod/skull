@@ -1,1 +1,0 @@
-./test/sh/error/declare/reassign_missing_rhs.sk: Compilation error: line 2 column 4: expected expression in assignment variable

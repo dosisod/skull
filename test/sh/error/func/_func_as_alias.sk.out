@@ -1,2 +1,0 @@
-./test/sh/error/func/func_as_alias.sk: Compilation error: line 2 column 1: cannot redeclare function "x" as type alias
-./test/sh/error/func/func_as_alias.sk: Warning: line 1 column 1: function "x" is unused

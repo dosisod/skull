@@ -1,3 +1,0 @@
-./test/sh/error/flow/if_var_out_of_scope.sk: Compilation error: line 5 column 8: variable "x" not found
-./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 2 column 6: variable "x" should be constant
-./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 2 column 6: variable "x" is unused

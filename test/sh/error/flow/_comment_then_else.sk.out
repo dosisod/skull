@@ -1,1 +1,0 @@
-./test/sh/error/flow/comment_then_else.sk: Compilation error: line 1 column 1: else/elif statement missing preceding if statement

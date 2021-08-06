@@ -1,2 +1,0 @@
-./test/sh/error/misc/invalid_utf_rune.sk: Compilation error: line 1 column 6: illegal UTF8 sequence in this region
-./test/sh/error/misc/invalid_utf_rune.sk: Warning: line 1 column 1: variable "x" is unused

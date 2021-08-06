@@ -1,2 +1,0 @@
-./test/sh/error/declare/var_as_alias.sk: Compilation error: line 2 column 1: cannot redeclare variable "x" as type alias
-./test/sh/error/declare/var_as_alias.sk: Warning: line 1 column 1: variable "x" is unused

@@ -1,1 +1,0 @@
-./test/sh/error/flow/non_int_return.sk: Compilation error: line 1 column 8: returning non-int expression "1.0" from main

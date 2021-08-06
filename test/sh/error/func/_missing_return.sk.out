@@ -1,2 +1,0 @@
-./test/sh/error/func/missing_return.sk: Compilation error: expected return value in function "f"
-./test/sh/error/func/missing_return.sk: Warning: line 1 column 1: function "f" is unused

@@ -1,1 +1,0 @@
-./test/sh/error/misc/closing_block_comment_missing.sk: Compilation error: line 1 column 1: expected closing "#}" for block comment

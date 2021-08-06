@@ -1,3 +1,0 @@
-./test/sh/error/oper/bool_expr_xor_not_bool.sk: Compilation error: line 1 column 10: expected type "Bool", got "Int"
-./test/sh/error/oper/bool_expr_xor_not_bool.sk: Warning: line 1 column 5: variable "x" should be constant
-./test/sh/error/oper/bool_expr_xor_not_bool.sk: Warning: line 1 column 5: variable "x" is unused

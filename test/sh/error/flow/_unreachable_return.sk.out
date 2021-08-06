@@ -1,2 +1,0 @@
-./test/sh/error/flow/unreachable_return.sk: Compilation error: line 3 column 1: unreachable code
-./test/sh/error/flow/unreachable_return.sk: Warning: line 3 column 1: variable "x" is unused

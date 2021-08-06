@@ -1,1 +1,0 @@
-./test/sh/error/func/missing_declaration.sk: Compilation error: line 1 column 6: function "f" missing declaration

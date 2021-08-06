@@ -1,2 +1,0 @@
-./test/sh/error/oper/div_by_zero.sk: Compilation error: line 1 column 10: division by zero
-./test/sh/error/oper/div_by_zero.sk: Warning: line 1 column 1: variable "x" is unused

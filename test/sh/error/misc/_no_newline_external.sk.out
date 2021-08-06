@@ -1,1 +1,0 @@
-./test/sh/error/misc/no_newline_external.sk: Compilation error: line 1 column 1: unexpected token: "external"

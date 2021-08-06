@@ -1,1 +1,0 @@
-./test/sh/error/declare/reassign_non_existet_var.sk: Compilation error: line 1 column 1: variable "x" not found

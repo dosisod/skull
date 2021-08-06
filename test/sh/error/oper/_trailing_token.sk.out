@@ -1,2 +1,0 @@
-./test/sh/error/oper/trailing_token.sk: Compilation error: line 2 column 1: expression cannot be used on its own
-./test/sh/error/oper/trailing_token.sk: Warning: line 1 column 1: variable "x" is unused

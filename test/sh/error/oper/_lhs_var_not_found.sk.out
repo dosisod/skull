@@ -1,1 +1,0 @@
-./test/sh/error/oper/lhs_var_not_found.sk: Compilation error: line 1 column 6: variable "fail" not found

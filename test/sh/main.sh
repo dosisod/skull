@@ -17,17 +17,6 @@ compare() {
 	cmp "$1" "$2" > /dev/null 2>&1 && pass || fail
 }
 
-test_normal() {
-	dir=${1%/*}
-	file=${1##*/_}
-	file=${file%.*}
-
-	printf "%s" "$dir/$file "
-
-	compare "./$dir/_$file.ll" "./$dir/.$file.ll"
-	rm -f "./$dir/.$file.ll"
-}
-
 test_c_backend() {
 	dir=${1%/*}
 	file=${1##*/_}
@@ -60,17 +49,6 @@ test_llvm_debug() {
 	rm -f "./$dir/.$file.ll"
 }
 
-test_error() {
-	dir=${1%/*}
-	file=${1##*/_}
-	file=${file%.*}
-
-	printf "%s" "$dir/$file "
-
-	compare "./$dir/.$file.out" "./$dir/_$file.out"
-	rm -f "./$dir/.$file.out"
-}
-
 test_option() {
 	printf "%s" "$1 "
 
@@ -94,11 +72,9 @@ printf "\nRunning Skull unit tests\n\n"
 
 find test/sh/ -name ".*.ll" -print0 | xargs -0 -I{} rm {}
 find test/sh/ -name ".*.out" -print0 | xargs -0 -I{} rm {}
-./build/test/e2e > /dev/null 2>&1
-
-for file in $(find test/sh/ -name "_*.ll") ; do
-	test_normal "$file"
-done
+./build/test/e2e || passed=false
+find test/sh/ -name ".*.ll" -print0 | xargs -0 -I{} rm {}
+find test/sh/ -name ".*.out" -print0 | xargs -0 -I{} rm {}
 
 for file in $(find test/skull/codegen/c/ -name "_*.c") ; do
 	test_c_backend "$file"
@@ -106,10 +82,6 @@ done
 
 for file in $(find test/skull/codegen/llvm/ -name "_*.ll") ; do
 	test_llvm_debug "$file"
-done
-
-for file in $(find test/sh/error/ -name "_*.out") ; do
-	test_error "$file"
 done
 
 touch test/sh/error/read_protected.sk

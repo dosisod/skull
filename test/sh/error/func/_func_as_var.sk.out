@@ -1,2 +1,0 @@
-./test/sh/error/func/func_as_var.sk: Compilation error: line 3 column 1: cannot redeclare function "x" as variable
-./test/sh/error/func/func_as_var.sk: Warning: line 1 column 1: function "x" is unused

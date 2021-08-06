@@ -1,2 +1,0 @@
-./test/sh/error/oper/reassign_different_type.sk: Compilation error: line 3 column 5: expected type "Int", got "Float"
-./test/sh/error/oper/reassign_different_type.sk: Warning: line 1 column 5: variable "x" is unused

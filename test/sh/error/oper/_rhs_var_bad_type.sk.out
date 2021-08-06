@@ -1,3 +1,0 @@
-./test/sh/error/oper/rhs_var_bad_type.sk: Compilation error: line 3 column 12: expected type "Float", got "Int"
-./test/sh/error/oper/rhs_var_bad_type.sk: Warning: line 1 column 1: variable "x" is unused
-./test/sh/error/oper/rhs_var_bad_type.sk: Warning: line 3 column 1: variable "z" is unused

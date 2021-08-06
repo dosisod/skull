@@ -63,4 +63,5 @@ uninstall:
 	@rm -rf $(HEADER)/skull
 
 e2e: setup | $(OBJS) $(OBJS_LLVM)
+	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
 	@$(CC) $| test/skull/e2e.c -o build/test/e2e $(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)

@@ -1,2 +1,0 @@
-./test/sh/error/oper/lhs_var_self_ref.sk: Compilation error: line 1 column 6: variable "x" not found
-./test/sh/error/oper/lhs_var_self_ref.sk: Warning: line 1 column 1: variable "x" is unused
