@@ -3781,7 +3781,7 @@ static bool compare_compiler_output(const char *filename, const char *expected) 
 
 	if (errno) {
 		perror("fopen");
-		return false;
+		return true;
 	}
 
 	while (*expected) {

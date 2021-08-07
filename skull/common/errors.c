@@ -129,7 +129,6 @@ void fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 		}
 
 		perror("skull");
-		fclose(f);
 	}
 
 	fprintf(stderr, "%s", msg);
