@@ -67,6 +67,12 @@ rm "$base.ll"
 [ -z "$ASM" ] || exit 0
 [ -z "$COMPILE" ] || exit 0
 
+[ ! -d "${filename%.*}" ] || {
+	printf "skull: \"%b\" is a directory not a file\n" "${filename%.*}"
+	rm "$OUT_FILE"
+	exit 1
+}
+
 MODULE_NAME=$(basename "${filename%.*}")
 SHIM="
 _Bool _strcmp(const char *a, const char *b) {
