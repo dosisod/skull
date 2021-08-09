@@ -66,6 +66,151 @@ bool test_parse_ast_tree_auto_mutable_variable_def() {
 	PASS
 }
 
+bool test_parse_ast_tree_bool_expr() {
+	TEST_AST_TREE(U"true", AST_NODE_EXPR, 0, 4);
+
+	PASS
+}
+
+bool test_parse_ast_tree_float_expr() {
+	TEST_AST_TREE(U"3.14", AST_NODE_EXPR, 0, 4);
+
+	PASS
+}
+
+bool test_parse_ast_tree_str_expr() {
+	TEST_AST_TREE(U"\"asdf\"", AST_NODE_EXPR, 0, 6);
+
+	PASS
+}
+
+bool test_parse_ast_tree_rune_expr() {
+	TEST_AST_TREE(U"'x'", AST_NODE_EXPR, 0, 3);
+
+	PASS
+}
+
+bool test_parse_ast_tree_and_expr() {
+	TEST_AST_TREE(U"true and false", AST_NODE_EXPR, 0, 14);
+
+	PASS
+}
+
+bool test_parse_ast_tree_greater_then_or_equal_expr() {
+	TEST_AST_TREE(U"1 >= 0", AST_NODE_EXPR, 0, 5);
+
+	PASS
+}
+
+bool test_parse_ast_tree_greater_then_expr() {
+	TEST_AST_TREE(U"1 > 0", AST_NODE_EXPR, 0, 5);
+
+	PASS
+}
+
+bool test_parse_ast_tree_isnt_expr() {
+	TEST_AST_TREE(U"1 isnt 2", AST_NODE_EXPR, 0, 8);
+
+	PASS
+}
+
+bool test_parse_ast_tree_is_expr() {
+	TEST_AST_TREE(U"1 is 2", AST_NODE_EXPR, 0, 6);
+
+	PASS
+}
+
+bool test_parse_ast_tree_less_then_or_equal_expr() {
+	TEST_AST_TREE(U"1 <= 0", AST_NODE_EXPR, 0, 5);
+
+	PASS
+}
+
+bool test_parse_ast_tree_less_then_expr() {
+	TEST_AST_TREE(U"1 < 0", AST_NODE_EXPR, 0, 5);
+
+	PASS
+}
+
+
+bool test_parse_ast_tree_not_expr() {
+	TEST_AST_TREE(U"not false", AST_NODE_EXPR, 0, 9);
+
+	PASS
+}
+
+bool test_parse_ast_tree_or_expr() {
+	TEST_AST_TREE(U"true or false", AST_NODE_EXPR, 0, 13);
+
+	PASS
+}
+
+bool test_parse_ast_tree_xor_expr() {
+	TEST_AST_TREE(U"true xor false", AST_NODE_EXPR, 0, 14);
+
+	PASS
+}
+
+bool test_parse_ast_tree_export_var() {
+	TEST_AST_TREE(U"export x := 1", AST_NODE_VAR_DEF, 0, 11);
+
+	PASS
+}
+
+bool test_parse_ast_tree_str_with_comment() {
+	TEST_AST_TREE(U"\"$ \"", AST_NODE_EXPR, 0, 4);
+
+	PASS
+}
+
+bool test_parse_ast_tree_block_comment() {
+	TEST_AST_TREE(U"#{ #}", AST_NODE_COMMENT, 0, 5);
+
+	PASS
+}
+
+bool test_parse_ast_tree_lshift_expr() {
+	TEST_AST_TREE(U"1 << 2", AST_NODE_EXPR, 0, 6);
+
+	PASS
+}
+
+bool test_parse_ast_tree_rshift_expr() {
+	TEST_AST_TREE(U"1 >> 2", AST_NODE_EXPR, 0, 6);
+
+	PASS
+}
+
+bool test_parse_ast_tree_mod_expr() {
+	TEST_AST_TREE(U"1 mod 2", AST_NODE_EXPR, 0, 7);
+
+	PASS
+}
+
+bool test_parse_ast_tree_mult_expr() {
+	TEST_AST_TREE(U"1 * 2", AST_NODE_EXPR, 0, 5);
+
+	PASS
+}
+
+bool test_parse_ast_tree_negative_unary_expr() {
+	TEST_AST_TREE(U"- 1", AST_NODE_EXPR, 0, 3);
+
+	PASS
+}
+
+bool test_parse_ast_tree_paren_expr() {
+	TEST_AST_TREE(U"(1)", AST_NODE_EXPR, 0, 3);
+
+	PASS
+}
+
+bool test_parse_ast_tree_sub_expr() {
+	TEST_AST_TREE(U"1 - 2", AST_NODE_EXPR, 0, 5);
+
+	PASS
+}
+
 bool test_parse_ast_tree_var_assign() {
 	TEST_AST_TREE(U"x = 0", AST_NODE_VAR_ASSIGN, 0, 3);
 
@@ -149,6 +294,30 @@ void ast_node_test_self(bool *pass) {
 		test_parse_ast_tree_mutable_variable_def,
 		test_parse_ast_tree_auto_variable_def,
 		test_parse_ast_tree_auto_mutable_variable_def,
+		test_parse_ast_tree_bool_expr,
+		test_parse_ast_tree_float_expr,
+		test_parse_ast_tree_str_expr,
+		test_parse_ast_tree_rune_expr,
+		test_parse_ast_tree_and_expr,
+		test_parse_ast_tree_greater_then_or_equal_expr,
+		test_parse_ast_tree_greater_then_expr,
+		test_parse_ast_tree_isnt_expr,
+		test_parse_ast_tree_is_expr,
+		test_parse_ast_tree_less_then_or_equal_expr,
+		test_parse_ast_tree_less_then_expr,
+		test_parse_ast_tree_not_expr,
+		test_parse_ast_tree_or_expr,
+		test_parse_ast_tree_xor_expr,
+		test_parse_ast_tree_export_var,
+		test_parse_ast_tree_str_with_comment,
+		test_parse_ast_tree_block_comment,
+		test_parse_ast_tree_lshift_expr,
+		test_parse_ast_tree_rshift_expr,
+		test_parse_ast_tree_mod_expr,
+		test_parse_ast_tree_mult_expr,
+		test_parse_ast_tree_negative_unary_expr,
+		test_parse_ast_tree_paren_expr,
+		test_parse_ast_tree_sub_expr,
 		test_parse_ast_tree_var_assign,
 		test_parse_ast_tree_external,
 		test_parse_ast_tree_function,

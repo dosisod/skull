@@ -581,58 +581,6 @@ false,
 
 
 pass |= e2e_wrapper(
-"	if false {\n" \
-	  "return 0\n" \
-"	}\n" \
-"	\n" \
-"	return 1\n",
-
-TEST_DIR"/flow/if/false.sk",
-
-false,
-
-"; ModuleID = './test/sh/flow/if/false.sk'\n" \
-"source_filename = \"./test/sh/flow/if/false.sk\"\n" \
-"\n" \
-"define i64 @.false() {\n" \
-"entry:\n" \
-"  br i1 false, label %if_true, label %end\n" \
-"\n" \
-"if_true:                                          ; preds = %entry\n" \
-"  ret i64 0\n" \
-"\n" \
-"end:                                              ; preds = %entry\n" \
-"  ret i64 1\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
-"	if not true {\n" \
-		"# do nothing\n" \
-"	}\n",
-
-TEST_DIR"/flow/if/not_with_const.sk",
-
-false,
-
-"; ModuleID = './test/sh/flow/if/not_with_const.sk'\n" \
-"source_filename = \"./test/sh/flow/if/not_with_const.sk\"\n" \
-"\n" \
-"define i64 @.not_with_const() {\n" \
-"entry:\n" \
-"  br i1 false, label %if_true, label %end\n" \
-"\n" \
-"if_true:                                          ; preds = %entry\n" \
-"  br label %end\n" \
-"\n" \
-"end:                                              ; preds = %entry, %if_true\n" \
-"  ret i64 0\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
 "	mut x := true\n" \
 "	\n" \
 "	if not x {\n" \
@@ -659,66 +607,6 @@ false,
 "  br label %end\n" \
 "\n" \
 "end:                                              ; preds = %entry, %if_true\n" \
-"  ret i64 0\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
-"	if true {\n" \
-	  "return 0\n" \
-"	}\n" \
-"	\n" \
-"	return 1\n",
-
-TEST_DIR"/flow/if/true.sk",
-
-false,
-
-"; ModuleID = './test/sh/flow/if/true.sk'\n" \
-"source_filename = \"./test/sh/flow/if/true.sk\"\n" \
-"\n" \
-"define i64 @.true() {\n" \
-"entry:\n" \
-"  br i1 true, label %if_true, label %end\n" \
-"\n" \
-"if_true:                                          ; preds = %entry\n" \
-"  ret i64 0\n" \
-"\n" \
-"end:                                              ; preds = %entry\n" \
-"  ret i64 1\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := false\n" \
-"	\n" \
-"	if x {\n" \
-		"return 1\n" \
-"	}\n" \
-"	\n" \
-"	return 0\n",
-
-TEST_DIR"/flow/if/with_var_false.sk",
-
-false,
-
-"; ModuleID = './test/sh/flow/if/with_var_false.sk'\n" \
-"source_filename = \"./test/sh/flow/if/with_var_false.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.with_var_false() {\n" \
-"entry:\n" \
-"  store i1 false, i1* @x\n" \
-"  %0 = load i1, i1* @x\n" \
-"  br i1 %0, label %if_true, label %end\n" \
-"\n" \
-"if_true:                                          ; preds = %entry\n" \
-"  ret i64 1\n" \
-"\n" \
-"end:                                              ; preds = %entry\n" \
 "  ret i64 0\n" \
 "}\n"
 );
@@ -792,22 +680,6 @@ false,
 );
 
 
-pass |= e2e_wrapper(
-"	return 0\n",
-
-TEST_DIR"/flow/return_0.sk",
-
-false,
-
-"; ModuleID = './test/sh/flow/return_0.sk'\n" \
-"source_filename = \"./test/sh/flow/return_0.sk\"\n" \
-"\n" \
-"define i64 @.return_0() {\n" \
-"entry:\n" \
-"  ret i64 0\n" \
-"}\n"
-);
-
 
 pass |= e2e_wrapper(
 "	return 1 + 2\n",
@@ -822,51 +694,6 @@ false,
 "define i64 @.return_expr() {\n" \
 "entry:\n" \
 "  ret i64 3\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
-"	external f() Int\n" \
-"	\n" \
-"	return f()\n",
-
-TEST_DIR"/flow/return_func_value.sk",
-
-false,
-
-"; ModuleID = './test/sh/flow/return_func_value.sk'\n" \
-"source_filename = \"./test/sh/flow/return_func_value.sk\"\n" \
-"\n" \
-"define i64 @.return_func_value() {\n" \
-"entry:\n" \
-"  %0 = call i64 @f()\n" \
-"  ret i64 %0\n" \
-"}\n" \
-"\n" \
-"declare i64 @f()\n"
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1\n" \
-"	\n" \
-"	return x\n",
-
-TEST_DIR"/flow/return_var.sk",
-
-false,
-
-"; ModuleID = './test/sh/flow/return_var.sk'\n" \
-"source_filename = \"./test/sh/flow/return_var.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.return_var() {\n" \
-"entry:\n" \
-"  store i64 1, i64* @x\n" \
-"  %0 = load i64, i64* @x\n" \
-"  ret i64 %0\n" \
 "}\n"
 );
 
@@ -1087,28 +914,6 @@ false,
 
 
 pass |= e2e_wrapper(
-"	x() { noop }\n",
-
-TEST_DIR"/function/empty_func_no_err.sk",
-
-false,
-
-"; ModuleID = './test/sh/function/empty_func_no_err.sk'\n" \
-"source_filename = \"./test/sh/function/empty_func_no_err.sk\"\n" \
-"\n" \
-"define i64 @.empty_func_no_err() {\n" \
-"entry:\n" \
-"  ret i64 0\n" \
-"}\n" \
-"\n" \
-"define private void @x() {\n" \
-"entry:\n" \
-"  ret void\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
 "	export f() {\n" \
 		"# do nothing\n" \
 "	}\n",
@@ -1177,53 +982,6 @@ false,
 "declare i64 @x()\n" \
 "\n" \
 "declare i64 @y(i64)\n"
-);
-
-
-pass |= e2e_wrapper(
-"	external x(a: Int)\n",
-
-TEST_DIR"/function/external_with_param.sk",
-
-false,
-
-"; ModuleID = './test/sh/function/external_with_param.sk'\n" \
-"source_filename = \"./test/sh/function/external_with_param.sk\"\n" \
-"\n" \
-"define i64 @.external_with_param() {\n" \
-"entry:\n" \
-"  ret i64 0\n" \
-"}\n" \
-"\n" \
-"declare void @x(i64)\n"
-);
-
-
-pass |= e2e_wrapper(
-"	f(x: Int) Int {\n" \
-		"return x\n" \
-"	}\n" \
-"	\n" \
-"	f(f(1))\n",
-
-TEST_DIR"/function/func_expr_param.sk",
-
-false,
-
-"; ModuleID = './test/sh/function/func_expr_param.sk'\n" \
-"source_filename = \"./test/sh/function/func_expr_param.sk\"\n" \
-"\n" \
-"define i64 @.func_expr_param() {\n" \
-"entry:\n" \
-"  %0 = call i64 @f(i64 1)\n" \
-"  %1 = call i64 @f(i64 %0)\n" \
-"  ret i64 0\n" \
-"}\n" \
-"\n" \
-"define private i64 @f(i64 %0) {\n" \
-"entry:\n" \
-"  ret i64 %0\n" \
-"}\n"
 );
 
 
@@ -1334,33 +1092,6 @@ false,
 "declare void @a()\n" \
 "\n" \
 "declare void @b()\n"
-);
-
-
-pass |= e2e_wrapper(
-"	f(num: Int) Int {\n" \
-		"return num\n" \
-"	}\n" \
-"	\n" \
-"	f(1)\n",
-
-TEST_DIR"/function/multi_var_func.sk",
-
-false,
-
-"; ModuleID = './test/sh/function/multi_var_func.sk'\n" \
-"source_filename = \"./test/sh/function/multi_var_func.sk\"\n" \
-"\n" \
-"define i64 @.multi_var_func() {\n" \
-"entry:\n" \
-"  %0 = call i64 @f(i64 1)\n" \
-"  ret i64 0\n" \
-"}\n" \
-"\n" \
-"define private i64 @f(i64 %0) {\n" \
-"entry:\n" \
-"  ret i64 %0\n" \
-"}\n"
 );
 
 
@@ -1502,34 +1233,6 @@ false,
 
 
 pass |= e2e_wrapper(
-"	external f(x: Int)\n" \
-"	\n" \
-"	mut num := 1234\n" \
-"	\n" \
-"	f(num)\n",
-
-TEST_DIR"/function/var_param.sk",
-
-false,
-
-"; ModuleID = './test/sh/function/var_param.sk'\n" \
-"source_filename = \"./test/sh/function/var_param.sk\"\n" \
-"\n" \
-"@num = private global i64 0\n" \
-"\n" \
-"define i64 @.var_param() {\n" \
-"entry:\n" \
-"  store i64 1234, i64* @num\n" \
-"  %0 = load i64, i64* @num\n" \
-"  call void @f(i64 %0)\n" \
-"  ret i64 0\n" \
-"}\n" \
-"\n" \
-"declare void @f(i64)\n"
-);
-
-
-pass |= e2e_wrapper(
 "	f() {\n" \
 		"return\n" \
 "	}\n",
@@ -1613,51 +1316,6 @@ false,
 "entry:\n" \
 "  store i8* getelementptr inbounds ([2 x i8], [2 x i8]* @0, i32 0, i32 0), i8** @x\n" \
 "  store i32 10, i32* @y\n" \
-"  ret i64 0\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
-"	mut is_this_kept := true\n" \
-"	#{\n" \
-"	mut and_this := false\n" \
-"	#}\n" \
-"	mut what_about_this := true\n",
-
-TEST_DIR"/misc/ignore_block_comments.sk",
-
-false,
-
-"; ModuleID = './test/sh/misc/ignore_block_comments.sk'\n" \
-"source_filename = \"./test/sh/misc/ignore_block_comments.sk\"\n" \
-"\n" \
-"@is_this_kept = private global i1 false\n" \
-"@what_about_this = private global i1 false\n" \
-"\n" \
-"define i64 @.ignore_block_comments() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @is_this_kept\n" \
-"  store i1 true, i1* @what_about_this\n" \
-"  ret i64 0\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
-"	# comment will not cause any issues\n" \
-"	\n" \
-"	return 0\n",
-
-TEST_DIR"/misc/ignore_comments.sk",
-
-false,
-
-"; ModuleID = './test/sh/misc/ignore_comments.sk'\n" \
-"source_filename = \"./test/sh/misc/ignore_comments.sk\"\n" \
-"\n" \
-"define i64 @.ignore_comments() {\n" \
-"entry:\n" \
 "  ret i64 0\n" \
 "}\n"
 );
@@ -1941,33 +1599,6 @@ false,
 
 
 pass |= e2e_wrapper(
-"	external f() Int\n" \
-"	\n" \
-"	x := f() / f()\n",
-
-TEST_DIR"/oper/div_with_expr.sk",
-
-false,
-
-"; ModuleID = './test/sh/oper/div_with_expr.sk'\n" \
-"source_filename = \"./test/sh/oper/div_with_expr.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.div_with_expr() {\n" \
-"entry:\n" \
-"  %0 = call i64 @f()\n" \
-"  %1 = call i64 @f()\n" \
-"  %2 = sdiv exact i64 %0, %1\n" \
-"  store i64 %2, i64* @x\n" \
-"  ret i64 0\n" \
-"}\n" \
-"\n" \
-"declare i64 @f()\n"
-);
-
-
-pass |= e2e_wrapper(
 "	mut x := 2.0 ^ 3.0\n",
 
 TEST_DIR"/oper/float_pow.sk",
@@ -1987,58 +1618,6 @@ false,
 "}\n" \
 "\n" \
 "declare double @_float_pow(double, double)\n"
-);
-
-
-pass |= e2e_wrapper(
-"	external f() Int\n" \
-"	\n" \
-"	mut x := f() + 1\n",
-
-TEST_DIR"/oper/func_lhs.sk",
-
-false,
-
-"; ModuleID = './test/sh/oper/func_lhs.sk'\n" \
-"source_filename = \"./test/sh/oper/func_lhs.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.func_lhs() {\n" \
-"entry:\n" \
-"  %0 = call i64 @f()\n" \
-"  %1 = add nsw i64 %0, 1\n" \
-"  store i64 %1, i64* @x\n" \
-"  ret i64 0\n" \
-"}\n" \
-"\n" \
-"declare i64 @f()\n"
-);
-
-
-pass |= e2e_wrapper(
-"	external f() Int\n" \
-"	\n" \
-"	mut x := 1 + f()\n",
-
-TEST_DIR"/oper/func_rhs.sk",
-
-false,
-
-"; ModuleID = './test/sh/oper/func_rhs.sk'\n" \
-"source_filename = \"./test/sh/oper/func_rhs.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.func_rhs() {\n" \
-"entry:\n" \
-"  %0 = call i64 @f()\n" \
-"  %1 = add nsw i64 1, %0\n" \
-"  store i64 %1, i64* @x\n" \
-"  ret i64 0\n" \
-"}\n" \
-"\n" \
-"declare i64 @f()\n"
 );
 
 
@@ -2262,25 +1841,6 @@ false,
 "entry:\n" \
 "  store i64 6, i64* @x\n" \
 "  ret i64 0\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
-"	x := 1\n" \
-"	\n" \
-"	return - x\n",
-
-TEST_DIR"/oper/negative_unary.sk",
-
-false,
-
-"; ModuleID = './test/sh/oper/negative_unary.sk'\n" \
-"source_filename = \"./test/sh/oper/negative_unary.sk\"\n" \
-"\n" \
-"define i64 @.negative_unary() {\n" \
-"entry:\n" \
-"  ret i64 -1\n" \
 "}\n"
 );
 
