@@ -92,4 +92,6 @@ void free_llvm_state(void) {
 	LLVMContextDispose(state->ctx);
 
 	free(state->main_func);
+
+	*state = (SkullStateLLVM){0};
 }

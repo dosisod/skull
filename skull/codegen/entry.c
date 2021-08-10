@@ -16,31 +16,52 @@
 #include "skull/codegen/entry.h"
 
 static char *gen_filename(const char *, const char *);
-static bool codegen_pipeline(char *const);
 
 /*
-Setup codegen pipeline, including exporting of file.
+Run "parse" > "validate" > "codegen" pipeline on file contents `file_contents`.
 
 Function takes ownership of `file_contents`.
+
+Return `true` if errors occurred.
 */
 int init_codegen_pipeline(const char *filename, char *file_contents) {
 	BUILD_DATA.filename = filename;
-	setup_llvm_state();
 
-	if (BUILD_DATA.debug) {
-		setup_debug_info(filename, SKULL_STATE_LLVM.module);
+	char32_t *const _file_contents = mbstoc32s(file_contents);
+	if (!_file_contents) {
+		free(file_contents);
+		return true;
 	}
 
-	const bool failed = codegen_pipeline(file_contents);
+	AstNode *node = parse_ast_tree(_file_contents);
+	if (!node) {
+		free(_file_contents);
+		free(file_contents);
+		return true;
+	}
+
+	bool err = true;
+
+	if (validate_ast_tree(node)) {
+		setup_llvm_state();
+
+		if (BUILD_DATA.debug) {
+			setup_debug_info(filename, SKULL_STATE_LLVM.module);
+		}
+
+		err = gen_tree(node);
+	}
+
+	free_ast_tree(node);
+	free(_file_contents);
 	free(file_contents);
 
-	if (failed) {
+	if (err) {
 		free_llvm_state();
 		free_semantic_state();
-		return failed;
+		return err;
 	}
 
-	int err = 0;
 	char *new_filename = NULL;
 
 	if (BUILD_DATA.c_backend) {
@@ -88,29 +109,3 @@ static char *gen_filename(const char *filename, const char *ext) {
 
 	return new_filename;
 }
-
-/*
-Run "parse" > "validate" > "codegen" pipeline on file contents `str_`.
-
-Return `true` if errors occurred.
-*/
-static bool codegen_pipeline(char *const str_) {
-	char32_t *const str = mbstoc32s(str_);
-	if (!str) return true;
-
-	AstNode *const node = parse_ast_tree(str);
-	if (!node) {
-		free(str);
-		return true;
-	}
-
-	bool err = true;
-
-	if (validate_ast_tree(node)) err = gen_tree(node);
-
-	free_ast_tree(node);
-	free(str);
-
-	return err;
-}
-
