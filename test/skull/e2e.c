@@ -5,9 +5,9 @@
 #include <string.h>
 
 #include "skull/build_data.h"
-#include "skull/codegen/entry.h"
 #include "skull/common/color.h"
 #include "skull/common/local.h"
+#include "skull/pipeline.h"
 
 bool SKULL_TESTING = 0;
 #define TEST_DIR "./test/sh"
@@ -3315,7 +3315,7 @@ static int e2e_wrapper(const char *code, const char *mock_file, bool error_expec
 	else BUILD_DATA.error_file = "/dev/null";
 
 	char *tmp = strdup(code);
-	bool err = init_codegen_pipeline(mock_file, tmp);
+	bool err = run_pipeline(mock_file, tmp);
 
 	if (error_expected) {
 		err = !err;

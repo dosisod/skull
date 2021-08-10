@@ -1,68 +1,19 @@
 #include <stdbool.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "skull/build_data.h"
-#include "skull/codegen/ast.h"
 #include "skull/codegen/c/write.h"
-#include "skull/codegen/llvm/debug.h"
-#include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/write.h"
 #include "skull/common/malloc.h"
-#include "skull/common/str.h"
-#include "skull/semantic/entry.h"
-#include "skull/semantic/shared.h"
 
-#include "skull/codegen/entry.h"
+#include "skull/codegen/write.h"
 
 static char *gen_filename(const char *, const char *);
 
-/*
-Run "parse" > "validate" > "codegen" pipeline on file contents `file_contents`.
 
-Function takes ownership of `file_contents`.
-
-Return `true` if errors occurred.
-*/
-int init_codegen_pipeline(const char *filename, char *file_contents) {
-	BUILD_DATA.filename = filename;
-
-	char32_t *const _file_contents = mbstoc32s(file_contents);
-	if (!_file_contents) {
-		free(file_contents);
-		return true;
-	}
-
-	AstNode *node = parse_ast_tree(_file_contents);
-	if (!node) {
-		free(_file_contents);
-		free(file_contents);
-		return true;
-	}
-
-	bool err = true;
-
-	if (validate_ast_tree(node)) {
-		setup_llvm_state();
-
-		if (BUILD_DATA.debug) {
-			setup_debug_info(filename, SKULL_STATE_LLVM.module);
-		}
-
-		err = gen_tree(node);
-	}
-
-	free_ast_tree(node);
-	free(_file_contents);
-	free(file_contents);
-
-	if (err) {
-		free_llvm_state();
-		free_semantic_state();
-		return err;
-	}
-
+bool write_file(const char *filename) {
 	char *new_filename = NULL;
+	bool err = false;
 
 	if (BUILD_DATA.c_backend) {
 		new_filename = gen_filename(filename, "c");
@@ -74,8 +25,6 @@ int init_codegen_pipeline(const char *filename, char *file_contents) {
 	}
 
 	free(new_filename);
-	free_llvm_state();
-	free_semantic_state();
 
 	return err;
 }

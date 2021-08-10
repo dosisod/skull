@@ -2,11 +2,11 @@
 #include <stdio.h>
 
 #include "skull/build_data.h"
-#include "skull/codegen/entry.h"
 #include "skull/common/errors.h"
 #include "skull/common/io.h"
 #include "skull/common/local.h"
 #include "skull/common/str.h"
+#include "skull/pipeline.h"
 
 #include "skull/real_main.h"
 
@@ -21,12 +21,11 @@ bool SKULL_TESTING = false;
 Actual `main` function, can be called by external programs.
 */
 int real_main(int argc, char *argv[]) {
-	setup_locale();
-
 	if (argc < 2) {
 		DIE("unexpected number of parameters");
 	}
 
+	setup_locale();
 	setup_flags();
 
 	for (int i = 0; i < argc - 1 ; i++) {
@@ -72,5 +71,5 @@ static int compile_file(char *filename) {
 	}
 	fclose(f);
 
-	return init_codegen_pipeline(filename, file_contents);
+	return run_pipeline(filename, file_contents);
 }
