@@ -13,7 +13,6 @@
 #define DIE(x) fprintf(stderr, "skull: %s\n", x); return 1
 
 static int compile_file(char *);
-static void setup_flags(void);
 
 bool SKULL_TESTING = false;
 
@@ -34,16 +33,6 @@ int real_main(int argc, char *argv[]) {
 	}
 
 	return 0;
-}
-
-static void setup_flags(void) {
-	char *c_backend = getenv("C_BACKEND");
-	BUILD_DATA.c_backend = c_backend ? *c_backend == '1' : false;
-
-	char *debug = getenv("DEBUG");
-	BUILD_DATA.debug = debug ? *debug == '1' : false;
-
-	BUILD_DATA.error_file = getenv("ERROR_FILE");
 }
 
 /*
