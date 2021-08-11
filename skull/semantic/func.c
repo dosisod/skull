@@ -148,19 +148,16 @@ FunctionDeclaration *find_func_by_name(const char *name) {
 	return NULL;
 }
 
-void free_function_declaration(HashItem *item) {
-	Symbol *sym = item->data;
+void free_function_declaration(FunctionDeclaration *func) {
+	if (!func) return;
 
-	if (!sym || !sym->func) return;
-
-	if (!sym->func->was_called) {
+	if (!func->was_called) {
 		FMT_WARN(WARN_FUNC_UNUSED, {
-			.real = sym->func->name, .loc = &sym->func->location
+			.real = func->name, .loc = &func->location
 		});
 	}
-	else free(sym->func->name);
+	else free(func->name);
 
-	free(sym->func->param_types);
-	free(sym->func);
-	free(sym);
+	free(func->param_types);
+	free(func);
 }

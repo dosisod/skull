@@ -84,5 +84,5 @@ void restore_parent_scope(void)
 void free_scope(Scope *scope)
 ```
 
-> Frees a `scope` and all the variables inside of it.
+> Frees a `scope` and all the symbols inside of it.
 

@@ -2,14 +2,14 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/semantic/func.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 
 #include "skull/semantic/scope.h"
 
 
-static void free_ht_variable(HashItem *);
-void free_function_declaration(HashItem *item);
+static void free_ht_symbol(HashItem *);
 
 /*
 Add `symbol` (as variable) to current scope.
@@ -145,33 +145,31 @@ void restore_parent_scope(void) {
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->parent;
 }
 
-static void free_ht_variable(HashItem *item) {
-	if (item->data) {
-		Symbol *symbol = item->data;
+static void free_ht_symbol(HashItem *item) {
+	Symbol *symbol = item->data;
 
-		if (symbol->type == SYMBOL_VAR) {
-			free_variable(symbol->var);
-			free(item->data);
-		}
-		else if (symbol->type == SYMBOL_FUNC) {
-			free_function_declaration(item);
-		}
-		else if (symbol->type == SYMBOL_ALIAS) {
-			free_ht_type_alias(item);
-		}
-		else {
-			free(item->data);
-		}
+	if (!symbol) return;
+
+	if (symbol->type == SYMBOL_VAR) {
+		free_variable(symbol->var);
 	}
+	else if (symbol->type == SYMBOL_FUNC) {
+		free_function_declaration(symbol->func);
+	}
+	else if (symbol->type == SYMBOL_ALIAS) {
+		free(symbol->name);
+	}
+
+	free(symbol);
 }
 
 /*
-Frees a `scope` and all the variables inside of it.
+Frees a `scope` and all the symbols inside of it.
 */
 void free_scope(Scope *scope) {
 	if (scope) {
 		if (scope->symbols)
-			free_ht(scope->symbols, (void(*)(void *))free_ht_variable);
+			free_ht(scope->symbols, (void(*)(void *))free_ht_symbol);
 
 		if (scope->child) free_scope(scope->child);
 		if (scope->next) free_scope(scope->next);

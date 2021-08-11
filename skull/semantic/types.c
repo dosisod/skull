@@ -196,13 +196,6 @@ Type **TYPES_BUILTIN = (Type *[]){
 	NULL
 };
 
-void free_ht_type_alias(HashItem *item) {
-	Symbol *symbol = item->data;
-
-	free(symbol->name);
-	free(symbol);
-}
-
 /*
 Strip underscores from `str`.
 

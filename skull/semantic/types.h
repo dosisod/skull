@@ -31,5 +31,3 @@ extern Type TYPE_VOID;
 extern Type **TYPES_BUILTIN;
 
 Type find_type(const char *const);
-
-void free_ht_type_alias(HashItem *);

@@ -4,7 +4,6 @@
 #include "skull/parse/ast_node.h"
 
 typedef const char * Type;
-typedef struct HashItem HashItem;
 
 /*
 Stores a function declaration.
@@ -45,6 +44,6 @@ typedef struct FunctionDeclaration {
 
 _Bool validate_stmt_func_decl(const AstNode *);
 
-void free_function_declaration(HashItem *);
+void free_function_declaration(FunctionDeclaration *);
 
 FunctionDeclaration *find_func_by_name(const char *);
