@@ -8,6 +8,9 @@
 #include "test/skull/parse/ast_node.h"
 #include "test/testing.h"
 
+static bool ast_tree_expr_fixture(const char32_t *, ExprType, unsigned, unsigned);
+static bool ast_tree_fixture(const char32_t *, NodeType, unsigned, unsigned);
+
 bool test_make_ast_node() {
 	AstNode *node = make_ast_node();
 
@@ -43,214 +46,145 @@ bool test_push_ast_node() {
 }
 
 bool test_parse_ast_tree_variable_def() {
-	TEST_AST_TREE(U"x: Int = 0", AST_NODE_VAR_DEF, 0, 8);
-
-	PASS
+	return ast_tree_fixture(U"x: Int = 0", AST_NODE_VAR_DEF, 0, 8);
 }
 
 bool test_parse_ast_tree_mutable_variable_def() {
-	TEST_AST_TREE(U"mut x: Int = 0", AST_NODE_VAR_DEF, 0, 12);
-
-	PASS
+	return ast_tree_fixture(U"mut x: Int = 0", AST_NODE_VAR_DEF, 0, 12);
 }
 
 bool test_parse_ast_tree_auto_variable_def() {
-	TEST_AST_TREE(U"x := 0", AST_NODE_VAR_DEF, 0, 4);
-
-	PASS
+	return ast_tree_fixture(U"x := 0", AST_NODE_VAR_DEF, 0, 4);
 }
 
 bool test_parse_ast_tree_auto_mutable_variable_def() {
-	TEST_AST_TREE(U"mut x := 0", AST_NODE_VAR_DEF, 0, 8);
-
-	PASS
+	return ast_tree_fixture(U"mut x := 0", AST_NODE_VAR_DEF, 0, 8);
 }
 
 bool test_parse_ast_tree_bool_expr() {
-	TEST_AST_TREE_EXPR(U"true", EXPR_CONST, 0, 4);
-
-	PASS
+	return ast_tree_expr_fixture(U"true", EXPR_CONST, 0, 4);
 }
 
 bool test_parse_ast_tree_float_expr() {
-	TEST_AST_TREE_EXPR(U"3.14", EXPR_CONST, 0, 4);
-
-	PASS
+	return ast_tree_expr_fixture(U"3.14", EXPR_CONST, 0, 4);
 }
 
 bool test_parse_ast_tree_str_expr() {
-	TEST_AST_TREE_EXPR(U"\"asdf\"", EXPR_CONST, 0, 6);
-
-	PASS
+	return ast_tree_expr_fixture(U"\"asdf\"", EXPR_CONST, 0, 6);
 }
 
 bool test_parse_ast_tree_rune_expr() {
-	TEST_AST_TREE_EXPR(U"'x'", EXPR_CONST, 0, 3);
-
-	PASS
+	return ast_tree_expr_fixture(U"'x'", EXPR_CONST, 0, 3);
 }
 
 bool test_parse_ast_tree_and_expr() {
-	TEST_AST_TREE_EXPR(U"true and false", EXPR_AND, 0, 14);
-
-	PASS
+	return ast_tree_expr_fixture(U"true and false", EXPR_AND, 0, 14);
 }
 
 bool test_parse_ast_tree_greater_then_or_equal_expr() {
-	TEST_AST_TREE_EXPR(U"1 >= 0", EXPR_GTR_THAN_EQ, 0, 5);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 >= 0", EXPR_GTR_THAN_EQ, 0, 5);
 }
 
 bool test_parse_ast_tree_greater_then_expr() {
-	TEST_AST_TREE_EXPR(U"1 > 0", EXPR_GTR_THAN, 0, 5);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 > 0", EXPR_GTR_THAN, 0, 5);
 }
 
 bool test_parse_ast_tree_isnt_expr() {
-	TEST_AST_TREE_EXPR(U"1 isnt 2", EXPR_ISNT, 0, 8);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 isnt 2", EXPR_ISNT, 0, 8);
 }
 
 bool test_parse_ast_tree_is_expr() {
-	TEST_AST_TREE_EXPR(U"1 is 2", EXPR_IS, 0, 6);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 is 2", EXPR_IS, 0, 6);
 }
 
 bool test_parse_ast_tree_less_then_or_equal_expr() {
-	TEST_AST_TREE_EXPR(U"1 <= 0", EXPR_LESS_THAN_EQ, 0, 5);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 <= 0", EXPR_LESS_THAN_EQ, 0, 5);
 }
 
 bool test_parse_ast_tree_less_then_expr() {
-	TEST_AST_TREE_EXPR(U"1 < 0", EXPR_LESS_THAN, 0, 5);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 < 0", EXPR_LESS_THAN, 0, 5);
 }
 
 
 bool test_parse_ast_tree_not_expr() {
-	TEST_AST_TREE_EXPR(U"not false", EXPR_NOT, 0, 9);
-
-	PASS
+	return ast_tree_expr_fixture(U"not false", EXPR_NOT, 0, 9);
 }
 
 bool test_parse_ast_tree_or_expr() {
-	TEST_AST_TREE_EXPR(U"true or false", EXPR_OR, 0, 13);
-
-	PASS
+	return ast_tree_expr_fixture(U"true or false", EXPR_OR, 0, 13);
 }
 
 bool test_parse_ast_tree_xor_expr() {
-	TEST_AST_TREE_EXPR(U"true xor false", EXPR_XOR, 0, 14);
-
-	PASS
+	return ast_tree_expr_fixture(U"true xor false", EXPR_XOR, 0, 14);
 }
 
 bool test_parse_ast_tree_export_var() {
-	TEST_AST_TREE(U"export x := 1", AST_NODE_VAR_DEF, 0, 11);
-
-	PASS
+	return ast_tree_fixture(U"export x := 1", AST_NODE_VAR_DEF, 0, 11);
 }
 
 bool test_parse_ast_tree_str_with_comment() {
-	TEST_AST_TREE_EXPR(U"\"$ \"", EXPR_CONST, 0, 4);
-
-	PASS
+	return ast_tree_expr_fixture(U"\"$ \"", EXPR_CONST, 0, 4);
 }
 
 bool test_parse_ast_tree_block_comment() {
-	TEST_AST_TREE(U"#{ #}", AST_NODE_COMMENT, 0, 5);
-
-	PASS
+	return ast_tree_fixture(U"#{ #}", AST_NODE_COMMENT, 0, 5);
 }
 
 bool test_parse_ast_tree_lshift_expr() {
-	TEST_AST_TREE_EXPR(U"1 << 2", EXPR_LSHIFT, 0, 6);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 << 2", EXPR_LSHIFT, 0, 6);
 }
 
 bool test_parse_ast_tree_rshift_expr() {
-	TEST_AST_TREE_EXPR(U"1 >> 2", EXPR_RSHIFT, 0, 6);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 >> 2", EXPR_RSHIFT, 0, 6);
 }
 
 bool test_parse_ast_tree_mod_expr() {
-	TEST_AST_TREE_EXPR(U"1 mod 2", EXPR_MOD, 0, 7);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 mod 2", EXPR_MOD, 0, 7);
 }
 
 bool test_parse_ast_tree_mult_expr() {
-	TEST_AST_TREE_EXPR(U"1 * 2", EXPR_MULT, 0, 5);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 * 2", EXPR_MULT, 0, 5);
 }
 
 bool test_parse_ast_tree_div_expr() {
-	TEST_AST_TREE_EXPR(U"1 / 2", EXPR_DIV, 0, 5);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 / 2", EXPR_DIV, 0, 5);
 }
 
 bool test_parse_ast_tree_pow_expr() {
-	TEST_AST_TREE_EXPR(U"1 ^ 2", EXPR_POW, 0, 5);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 ^ 2", EXPR_POW, 0, 5);
 }
 
 bool test_parse_ast_tree_negative_unary_expr() {
-	TEST_AST_TREE_EXPR(U"- 1", EXPR_UNARY_NEG, 0, 3);
-
-	PASS
+	return ast_tree_expr_fixture(U"- 1", EXPR_UNARY_NEG, 0, 3);
 }
 
 bool test_parse_ast_tree_paren_expr() {
-	TEST_AST_TREE_EXPR(U"(1)", EXPR_CONST, 0, 3);
-
-	PASS
+	return ast_tree_expr_fixture(U"(1)", EXPR_CONST, 0, 3);
 }
 
 bool test_parse_ast_tree_sub_expr() {
-	TEST_AST_TREE_EXPR(U"1 - 2", EXPR_SUB, 0, 5);
-
-	PASS
+	return ast_tree_expr_fixture(U"1 - 2", EXPR_SUB, 0, 5);
 }
 
 bool test_parse_ast_tree_var_assign() {
-	TEST_AST_TREE(U"x = 0", AST_NODE_VAR_ASSIGN, 0, 3);
-
-	PASS
+	return ast_tree_fixture(U"x = 0", AST_NODE_VAR_ASSIGN, 0, 3);
 }
 
 bool test_parse_ast_tree_external() {
-	TEST_AST_TREE(U"external x()\n", AST_NODE_FUNCTION_PROTO, 0, 12);
-
-	PASS
+	return ast_tree_fixture(U"external x()\n", AST_NODE_FUNCTION_PROTO, 0, 12);
 }
 
 bool test_parse_ast_tree_function() {
-	{
-		TEST_AST_TREE(U"x()", AST_NODE_EXPR, 0, 3);
-	}
-	{
-		// TODO(dosisod): fix newline being added
-		TEST_AST_TREE(U"x()\n", AST_NODE_EXPR, 0, 4);
-	}
+	return ast_tree_fixture(U"x()", AST_NODE_EXPR, 0, 3);
+}
 
-	PASS
+bool test_parse_ast_tree_function_newline() {
+	// TODO(dosisod): fix newline being added
+	return ast_tree_fixture(U"x()\n", AST_NODE_EXPR, 0, 4);
 }
 
 bool test_parse_ast_tree_return() {
-	TEST_AST_TREE(U"return 0", AST_NODE_RETURN, 0, 6);
-
-	PASS
+	return ast_tree_fixture(U"return 0", AST_NODE_RETURN, 0, 6);
 }
 bool test_parse_ast_tree_if() {
 	const char32_t *const code = U"if true { noop }";
@@ -287,15 +221,11 @@ bool test_parse_ast_tree_if_with_var() {
 }
 
 bool test_parse_ast_tree_comment() {
-	TEST_AST_TREE(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
-
-	PASS
+	return ast_tree_fixture(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
 }
 
 bool test_parse_ast_tree_noop() {
-	TEST_AST_TREE(U"noop", AST_NODE_NOOP, 0, 4);
-
-	PASS
+	return ast_tree_fixture(U"noop", AST_NODE_NOOP, 0, 4);
 }
 
 bool test_free_ast_tree() {
@@ -348,4 +278,41 @@ void ast_node_test_self(bool *pass) {
 		test_parse_ast_tree_noop,
 		test_free_ast_tree
 	)
+}
+
+static bool ast_tree_fixture(const char32_t *code, NodeType node_type, unsigned begin_offset, unsigned end_offset) {
+	AstNode *node = parse_ast_tree(code);
+	if (!node->type && !node_type) {
+		return true;
+	}
+
+	ASSERT_EQUAL(node->type, node_type);
+	ASSERT_EQUAL(node->token->begin, code + begin_offset);
+
+	if (node->token_end) {
+		ASSERT_EQUAL(node->token_end->end, code + end_offset);
+	}
+
+	ASSERT_FALSEY(node->last);
+	free_ast_tree(node);
+
+	PASS
+}
+
+static bool ast_tree_expr_fixture(const char32_t *code, ExprType expr_type, unsigned begin_offset, unsigned end_offset) {
+	AstNode *node = parse_ast_tree(code);
+
+	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
+	ASSERT_TRUTHY(node->expr);
+	ASSERT_EQUAL(node->expr->oper, expr_type);
+	ASSERT_EQUAL(node->token->begin, code + begin_offset);
+
+	if (node->token_end) {
+		ASSERT_EQUAL(node->token_end->end, code + end_offset);
+	}
+
+	ASSERT_FALSEY(node->last);
+	free_ast_tree(node);
+
+	PASS
 }

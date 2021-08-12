@@ -696,7 +696,6 @@ static AstNode *parse_expression(
 
 	push_ast_node(NULL, last, AST_NODE_EXPR, node);
 
-	(*node)->last->token_end = *token;
 	(*node)->last->expr = expr_node;
 
 	return (*node)->last;
