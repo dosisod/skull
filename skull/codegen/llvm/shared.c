@@ -8,6 +8,7 @@
 #include "skull/common/malloc.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
+#include "skull/semantic/shared.h"
 
 #include "skull/codegen/llvm/shared.h"
 
@@ -51,13 +52,10 @@ void setup_llvm_state(void) {
 		.module = main_module
 	};
 
-	state->main_func = Malloc(sizeof *state->main_func);
-	*state->main_func = (FunctionDeclaration){
-		.name = main_func_name,
-		.ref = main_func,
-		.type = main_func_type,
-		.return_type = TYPE_INT
-	};
+	state->main_func = SEMANTIC_STATE.main_func;
+	state->main_func->ref = main_func;
+	state->main_func->type = main_func_type;
+
 	state->current_func = state->main_func;
 }
 
@@ -90,8 +88,6 @@ void free_llvm_state(void) {
 	LLVMDisposeBuilder(state->builder);
 	LLVMDisposeModule(state->module);
 	LLVMContextDispose(state->ctx);
-
-	free(state->main_func);
 
 	*state = (SkullStateLLVM){0};
 }

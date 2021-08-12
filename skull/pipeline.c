@@ -40,6 +40,8 @@ int run_pipeline(const char *filename, char *file_contents) {
 
 	bool err = true;
 
+	setup_semantic_state();
+
 	if (validate_ast_tree(node)) {
 		setup_llvm_state();
 
