@@ -1345,25 +1345,6 @@ false,
 
 
 pass |= e2e_wrapper(
-"	#{\n" \
-"	#{\n" \
-"	#}\n",
-
-TEST_DIR"/misc/nested_block_comment.sk",
-
-false,
-
-"; ModuleID = './test/sh/misc/nested_block_comment.sk'\n" \
-"source_filename = \"./test/sh/misc/nested_block_comment.sk\"\n" \
-"\n" \
-"define i64 @.nested_block_comment() {\n" \
-"entry:\n" \
-"  ret i64 0\n" \
-"}\n"
-);
-
-
-pass |= e2e_wrapper(
 "	return 0",
 
 TEST_DIR"/misc/no_eol_works.sk",
@@ -2008,6 +1989,19 @@ false,
 
 
 // error tests
+
+pass |= e2e_wrapper(
+"	#{\n" \
+"	#{\n" \
+"	#}\n",
+
+TEST_DIR"/error/misc/nested_block_comment.sk",
+
+true,
+
+"./test/sh/error/misc/nested_block_comment.sk: Compilation error: line 2 column 3: cannot put opening block comment in existing block comment\n"
+);
+
 
 pass |= e2e_wrapper(
 "x := 0\n" \

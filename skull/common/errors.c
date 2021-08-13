@@ -83,7 +83,7 @@ static const char *errors[] = {
 	[WARN_COND_ALWAYS_TRUE] = "condition is always true",
 	[WARN_COND_ALWAYS_FALSE] = "condition is always false",
 	[WARN_FILE_EMPTY] = "file is empty",
-	[WARN_NESTED_BLOCK_COMMENT] = \
+	[ERR_NESTED_BLOCK_COMMENT] = \
 		"cannot put opening block comment in existing block comment",
 	[WARN_TRIVIAL_TYPE] = "explicit type \"%s\" can be trivialy deduced\n",
 	[ERR_NO_REDEFINE_ALIAS_AS_VAR] = \
