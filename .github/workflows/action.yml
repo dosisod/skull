@@ -36,9 +36,7 @@ jobs:
       run: ./build/test/test
 
     - name: Run Skull unit tests
-      run: |
-        cp skull/skull build/skull/skull
-        ./test/sh/main.sh
+      run: ./test/sh/main.sh
 
   test-clang:
     runs-on: ubuntu-latest
@@ -55,9 +53,7 @@ jobs:
       run: ./build/test/test
 
     - name: Run Skull unit tests
-      run: |
-        cp skull/skull build/skull/skull
-        ./test/sh/main.sh
+      run: ./test/sh/main.sh
 
   tests-with-skull-installed:
     runs-on: ubuntu-latest
