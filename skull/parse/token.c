@@ -37,6 +37,11 @@ Token *tokenize(const char32_t *code) {
 	unsigned line_num = 1;
 	unsigned column = 0;
 
+	if (*code == U'\xFEFF') {
+		FMT_WARN(WARN_NO_BOM, {0});
+		code++;
+	}
+
 	while (*code) {
 		column++;
 

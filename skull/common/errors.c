@@ -94,7 +94,8 @@ static const char *errors[] = {
 		"cannot redeclare variable \"%s\" as type alias\n",
 	[ERR_NO_REDEFINE_FUNC_AS_ALIAS] = \
 		"cannot redeclare function \"%s\" as type alias\n",
-	[ERR_NOT_NUMERIC] = "expected a numeric value"
+	[ERR_NOT_NUMERIC] = "expected a numeric value",
+	[WARN_NO_BOM] = "BOM found"
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);

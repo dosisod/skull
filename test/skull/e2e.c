@@ -2004,6 +2004,18 @@ true,
 
 
 pass |= e2e_wrapper(
+"\xEF\xBB\xBF""fail",
+
+TEST_DIR"/error/misc/no_bom.sk",
+
+true,
+
+"./test/sh/error/misc/no_bom.sk: Warning: BOM found\n" \
+"./test/sh/error/misc/no_bom.sk: Compilation error: line 1 column 1: expression cannot be used on its own\n"
+);
+
+
+pass |= e2e_wrapper(
 "x := 0\n" \
 "\n" \
 "z: Bool = x\n",
