@@ -188,7 +188,12 @@ bool test_parse_ast_tree_return() {
 }
 bool test_parse_ast_tree_if() {
 	const char32_t *const code = U"if true { noop }";
-	AstNode *node = parse_ast_tree(code);
+	Token *token = tokenize(code);
+	if (!token) return true;
+
+	classify_tokens(token);
+
+	AstNode *node = parse_ast_tree(token);
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
@@ -205,7 +210,12 @@ bool test_parse_ast_tree_if() {
 
 bool test_parse_ast_tree_if_with_var() {
 	const char32_t *const code = U"if x { noop }";
-	AstNode *node = parse_ast_tree(code);
+	Token *token = tokenize(code);
+	if (!token) return true;
+
+	classify_tokens(token);
+
+	AstNode *node = parse_ast_tree(token);
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
@@ -229,7 +239,7 @@ bool test_parse_ast_tree_noop() {
 }
 
 bool test_free_ast_tree() {
-	free_ast_tree(parse_ast_tree(U"# whatever"));
+	free_ast_tree(parse_ast_tree(tokenize(U"noop")));
 
 	PASS
 }
@@ -281,7 +291,12 @@ void ast_node_test_self(bool *pass) {
 }
 
 static bool ast_tree_fixture(const char32_t *code, NodeType node_type, unsigned begin_offset, unsigned end_offset) {
-	AstNode *node = parse_ast_tree(code);
+	Token *token = tokenize(code);
+	if (!token) return true;
+
+	classify_tokens(token);
+
+	AstNode *node = parse_ast_tree(token);
 	if (!node->type && !node_type) {
 		return true;
 	}
@@ -300,8 +315,12 @@ static bool ast_tree_fixture(const char32_t *code, NodeType node_type, unsigned 
 }
 
 static bool ast_tree_expr_fixture(const char32_t *code, ExprType expr_type, unsigned begin_offset, unsigned end_offset) {
-	AstNode *node = parse_ast_tree(code);
+	Token *token = tokenize(code);
+	if (!token) return true;
 
+	classify_tokens(token);
+
+	AstNode *node = parse_ast_tree(token);
 	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
 	ASSERT_TRUTHY(node->expr);
 	ASSERT_EQUAL(node->expr->oper, expr_type);

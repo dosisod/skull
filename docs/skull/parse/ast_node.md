@@ -133,7 +133,7 @@ typedef struct AstNodeExpr {
 > Makes an empty AstNode.
 
 ```c
-AstNode *parse_ast_tree(const char32_t *const code)
+AstNode *parse_ast_tree(Token *token)
 ```
 
 > Makes an AST (abstract syntax tree) from a given string.

@@ -5,7 +5,6 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
-#include "skull/parse/classify.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/parse/ast_node.h"
@@ -31,12 +30,7 @@ static void push_ast_node(Token *const, Token *, NodeType, AstNode **);
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-AstNode *parse_ast_tree(const char32_t *const code) {
-	Token *token = tokenize(code);
-	if (!token) return NULL;
-
-	classify_tokens(token);
-
+AstNode *parse_ast_tree(Token *token) {
 	bool err = false;
 	Token *head = token;
 	AstNode *const tree = parse_ast_tree_(&token, 0, &err);
