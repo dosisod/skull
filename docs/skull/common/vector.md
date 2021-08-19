@@ -1,7 +1,7 @@
 # skull/common/vector
 
 ```c
-typedef struct {
+typedef struct Vector {
 	size_t length;
 	size_t max;
 	void **elements;

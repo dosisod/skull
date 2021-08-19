@@ -7,6 +7,7 @@
 #include "skull/build_data.h"
 #include "skull/common/color.h"
 #include "skull/common/str.h"
+#include "skull/common/vector.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/common/errors.h"
@@ -15,6 +16,9 @@
 static char *_fmt_message(ErrorType, ErrorCode, Message []);
 static void message_stringify(Message *const);
 static bool do_show_color(void);
+static void write_error_msg(char *);
+
+Vector *error_msgs;
 
 static const char *errors[] = {
 	[ERR_UNEXPECTED_TOKEN] = "unexpected token: \"%s\"\n",
@@ -118,22 +122,8 @@ static bool do_show_color(void) {
 void fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 	char *msg = _fmt_message(type, id, msgs);
 
-	if (BUILD_DATA.error_file) {
-		errno = 0;
-		FILE *f = fopen(BUILD_DATA.error_file, "a+e");
-
-		if (!errno) {
-			fprintf(f, "%s", msg);
-			free(msg);
-			fclose(f);
-			return;
-		}
-
-		perror("skull");
-	}
-
-	fprintf(stderr, "%s", msg);
-	free(msg);
+	if (!error_msgs) error_msgs = make_vector();
+	vector_push(error_msgs, msg);
 }
 
 /*
@@ -142,7 +132,7 @@ Returns formatted message.
 Every `%s` in the string is expanded according to the corresponding `Message`
 in `msgs`.
 */
-char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
+static char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 	Message *msg = msgs;
 	message_stringify(msg);
 
@@ -248,4 +238,16 @@ void message_stringify(Message *const msg) {
 		msg->real = uvsnprintf("%zu", msg->i - 1);
 	else if (msg->tok && !msg->real && !msg->str)
 		msg->real = token_to_mbs_str(msg->tok);
+}
+
+void write_and_free_errors(void) {
+	if (error_msgs) {
+		free_vector(error_msgs, (void(*)(void *))write_error_msg);
+		error_msgs = NULL;
+	}
+}
+
+static void write_error_msg(char *msg) {
+	if (!BUILD_DATA.quiet) fprintf(stderr, "%s", msg);
+	free(msg);
 }

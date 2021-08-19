@@ -6,6 +6,7 @@
 
 typedef struct Token Token;
 typedef struct Location Location;
+typedef struct Vector Vector;
 
 typedef enum {
 	ERR_UNEXPECTED_TOKEN = 0,
@@ -104,6 +105,8 @@ typedef enum {
 	ERROR_WARN
 } ErrorType;
 
+extern Vector *error_msgs;
+
 #define FMT_WARN(id, ...) \
 	fmt_message(ERROR_WARN, (id), (Message[]){ __VA_ARGS__, {0} })
 
@@ -111,3 +114,5 @@ typedef enum {
 	fmt_message(ERROR_FATAL, (id), (Message[]){ __VA_ARGS__, {0} })
 
 void fmt_message(ErrorType, ErrorCode, Message []);
+
+void write_and_free_errors(void);

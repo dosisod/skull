@@ -6,7 +6,9 @@
 
 #include "skull/build_data.h"
 #include "skull/common/color.h"
+#include "skull/common/errors.h"
 #include "skull/common/local.h"
+#include "skull/common/vector.h"
 #include "skull/pipeline.h"
 
 #ifndef __ANDROID_API__
@@ -19,6 +21,7 @@ bool SKULL_TESTING = 0;
 static int e2e_wrapper(const char *, const char *, bool, const char *);
 static char *mock_file_to_output_file(const char *, const char *);
 static bool compare_compiler_output(const char *, const char *);
+static int compare_errors(const char *);
 
 int main(void) {
 	setup_locale();
@@ -3321,19 +3324,14 @@ true,
 static int e2e_wrapper(const char *code, const char *mock_file, bool error_expected, const char *expected) {
 	char *output_file = NULL;
 
-	if (error_expected) {
-		output_file = mock_file_to_output_file(mock_file, ".out");
-		BUILD_DATA.error_file = output_file;
-	}
-	else BUILD_DATA.error_file = "/dev/null";
+	if (!error_expected) BUILD_DATA.quiet = true;
 
 	char *tmp = strdup(code);
 	bool err = run_pipeline(mock_file, tmp);
 
 	if (error_expected) {
 		err = !err;
-		err |= compare_compiler_output(output_file, expected);
-		free(output_file);
+		err |= compare_errors(expected);
 	}
 	else {
 		output_file = mock_file_to_output_file(mock_file, ".ll");
@@ -3341,11 +3339,49 @@ static int e2e_wrapper(const char *code, const char *mock_file, bool error_expec
 		free(output_file);
 	}
 
+	if (error_msgs) {
+		free_vector(error_msgs, free);
+		error_msgs = NULL;
+	}
+
 	if (err) {
 		// TODO(dosisod) give better error on why it failed
 		printf("%s " COLOR_BOLD COLOR_RED_FG "FAIL" COLOR_RESET "\n", mock_file);
 	}
 	return err;
+}
+
+static int compare_errors(const char *expected) {
+	if (!error_msgs || error_msgs->length == 0) {
+		return true;
+	}
+
+	bool fail = false;
+
+	const char *current_line = expected;
+	const char *newline;
+
+	for (size_t i = 0 ; i < error_msgs->length ; i++) {
+		newline = strchr(current_line, '\n');
+
+		if (!newline || strncmp(
+			current_line,
+			error_msgs->elements[i],
+			(size_t)(newline - current_line)) != 0
+		) {
+			fail = true;
+			break;
+		}
+
+		current_line = newline + 1;
+	}
+
+	if (strchr(current_line, '\n')) fail = true;
+
+	free_vector(error_msgs, free);
+	error_msgs = NULL;
+
+	return fail;
 }
 
 static bool compare_compiler_output(const char *filename, const char *expected) {
