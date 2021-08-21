@@ -189,7 +189,7 @@ Makes an empty AstNode.
 */
 #define make_ast_node() Calloc(1, sizeof(AstNode))
 
-AstNode *parse_ast_tree(const char32_t *const);
+AstNode *parse_ast_tree(Token *);
 void free_ast_tree(AstNode *);
 
 const Location *find_expr_node_location(const AstNodeExpr *);

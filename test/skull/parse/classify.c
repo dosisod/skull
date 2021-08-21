@@ -6,6 +6,9 @@
 #include "test/skull/parse/classify.h"
 #include "test/testing.h"
 
+static bool classify_token_fixture(const char32_t *, TokenType);
+static bool classify_token_with_len_fixture(const char32_t *, TokenType, unsigned, unsigned);
+
 bool test_is_type_str() {
 	Token *token = tokenize(U"Int not_a_type");
 
@@ -18,8 +21,6 @@ bool test_is_type_str() {
 	free_tokens(token);
 	free(buf);
 	free(buf_next);
-
-	PASS;
 
 	PASS
 }
@@ -117,153 +118,103 @@ bool test_is_constant_str() {
 }
 
 bool test_token_newline() {
-	TEST_CLASSIFY_TOKEN(U"\n", TOKEN_NEWLINE);
-
-	PASS
+	return classify_token_fixture(U"\n", TOKEN_NEWLINE);
 }
 
 bool test_bracket_token_open() {
-	TEST_CLASSIFY_TOKEN(U"{", TOKEN_BRACKET_OPEN);
-
-	PASS
+	return classify_token_fixture(U"{", TOKEN_BRACKET_OPEN);
 }
 
 bool test_bracket_token_close() {
-	TEST_CLASSIFY_TOKEN(U"}", TOKEN_BRACKET_CLOSE);
-
-	PASS
+	return classify_token_fixture(U"}", TOKEN_BRACKET_CLOSE);
 }
 
 bool test_paren_token_open() {
-	TEST_CLASSIFY_TOKEN(U"(", TOKEN_PAREN_OPEN);
-
-	PASS
+	return classify_token_fixture(U"(", TOKEN_PAREN_OPEN);
 }
 
 bool test_paren_token_close() {
-	TEST_CLASSIFY_TOKEN(U")", TOKEN_PAREN_CLOSE);
-
-	PASS
+	return classify_token_fixture(U")", TOKEN_PAREN_CLOSE);
 }
 
 bool test_token_mut_kw() {
-	TEST_CLASSIFY_TOKEN(U"mut", TOKEN_KW_MUT);
-
-	PASS
+	return classify_token_fixture(U"mut", TOKEN_KW_MUT);
 }
 
 bool test_token_return_kw() {
-	TEST_CLASSIFY_TOKEN(U"return", TOKEN_KW_RETURN);
-
-	PASS
+	return classify_token_fixture(U"return", TOKEN_KW_RETURN);
 }
 
 bool test_token_if_kw() {
-	TEST_CLASSIFY_TOKEN(U"if", TOKEN_KW_IF);
-
-	PASS
+	return classify_token_fixture(U"if", TOKEN_KW_IF);
 }
 
 bool test_token_equal_oper() {
-	TEST_CLASSIFY_TOKEN(U"=", TOKEN_OPER_EQUAL);
-
-	PASS
+	return classify_token_fixture(U"=", TOKEN_OPER_EQUAL);
 }
 
 bool test_token_auto_equal_oper() {
-	TEST_CLASSIFY_TOKEN(U":=", TOKEN_OPER_AUTO_EQUAL);
-
-	PASS
+	return classify_token_fixture(U":=", TOKEN_OPER_AUTO_EQUAL);
 }
 
 bool test_token_plus_oper() {
-	TEST_CLASSIFY_TOKEN(U"+", TOKEN_OPER_PLUS);
-
-	PASS
+	return classify_token_fixture(U"+", TOKEN_OPER_PLUS);
 }
 
 bool test_token_minus_oper() {
-	TEST_CLASSIFY_TOKEN(U"-", TOKEN_OPER_MINUS);
-
-	PASS
+	return classify_token_fixture(U"-", TOKEN_OPER_MINUS);
 }
 
 bool test_token_mult_oper() {
-	TEST_CLASSIFY_TOKEN(U"*", TOKEN_OPER_MULT);
-
-	PASS
+	return classify_token_fixture(U"*", TOKEN_OPER_MULT);
 }
 
 bool test_token_div_oper() {
-	TEST_CLASSIFY_TOKEN(U"/", TOKEN_OPER_DIV);
-
-	PASS
+	return classify_token_fixture(U"/", TOKEN_OPER_DIV);
 }
 
 bool test_token_unknown() {
-	TEST_CLASSIFY_TOKEN(U"123garbage_value", TOKEN_UNKNOWN);
-
-	PASS
+	return classify_token_fixture(U"123garbage_value", TOKEN_UNKNOWN);
 }
 
 bool test_token_integer_constant() {
-	TEST_CLASSIFY_TOKEN(U"1234", TOKEN_INT_CONST);
-
-	PASS
+	return classify_token_fixture(U"1234", TOKEN_INT_CONST);
 }
 
 bool test_token_float_constant() {
-	TEST_CLASSIFY_TOKEN(U"1234.0", TOKEN_FLOAT_CONST);
-
-	PASS
+	return classify_token_fixture(U"1234.0", TOKEN_FLOAT_CONST);
 }
 
 bool test_token_bool_constant() {
-	TEST_CLASSIFY_TOKEN(U"true", TOKEN_BOOL_CONST);
-
-	PASS
+	return classify_token_fixture(U"true", TOKEN_BOOL_CONST);
 }
 
 bool test_token_rune_constant() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'x'", TOKEN_RUNE_CONST, 0, 3);
-
-	PASS
+	return classify_token_with_len_fixture(U"'x'", TOKEN_RUNE_CONST, 0, 3);
 }
 
 bool test_token_rune_constant_simple_escape() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'\\r'", TOKEN_RUNE_CONST, 0, 4);
-
-	PASS
+	return classify_token_with_len_fixture(U"'\\r'", TOKEN_RUNE_CONST, 0, 4);
 }
 
 bool test_token_rune_constant_hex_escape() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"'\\xFF'", TOKEN_RUNE_CONST, 0, 6);
-
-	PASS
+	return classify_token_with_len_fixture(U"'\\xFF'", TOKEN_RUNE_CONST, 0, 6);
 }
 
 bool test_token_to_string_constant() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"\"xyz\"", TOKEN_STR_CONST, 0, 5);
-
-	PASS
+	return classify_token_with_len_fixture(U"\"xyz\"", TOKEN_STR_CONST, 0, 5);
 }
 
 bool test_token_type() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"Int", TOKEN_TYPE, 0, 3);
-
-	PASS
+	return classify_token_with_len_fixture(U"Int", TOKEN_TYPE, 0, 3);
 }
 
 bool test_token_comment() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"# this is a comment", TOKEN_COMMENT, 0, 19);
-
-	PASS
+	return classify_token_with_len_fixture(U"# this is a comment", TOKEN_COMMENT, 0, 19);
 }
 
 bool test_token_comment_empty() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"# ", TOKEN_COMMENT, 0, 2);
-
-	PASS
+	return classify_token_with_len_fixture(U"# ", TOKEN_COMMENT, 0, 2);
 }
 
 bool test_is_valid_identifier() {
@@ -286,27 +237,19 @@ bool test_is_valid_identifier() {
 }
 
 bool test_is_valid_identifier_token() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"x", TOKEN_IDENTIFIER, 0, 1);
-
-	PASS
+	return classify_token_with_len_fixture(U"x", TOKEN_IDENTIFIER, 0, 1);
 }
 
 bool test_new_identifier_clip_trailing_colon() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"x: Int = 0", TOKEN_NEW_IDENTIFIER, 0, 1);
-
-	PASS
+	return classify_token_with_len_fixture(U"x: Int = 0", TOKEN_NEW_IDENTIFIER, 0, 1);
 }
 
 bool test_identifier_cannot_be_type() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"Int: Int = 0", TOKEN_UNKNOWN, 0, 4);
-
-	PASS
+	return classify_token_with_len_fixture(U"Int: Int = 0", TOKEN_UNKNOWN, 0, 4);
 }
 
 bool test_identifier_cannot_be_reserved() {
-	TEST_CLASSIFY_TOKEN_WITH_LEN(U"mut: Int = 0", TOKEN_UNKNOWN, 0, 4);
-
-	PASS
+	return classify_token_with_len_fixture(U"mut: Int = 0", TOKEN_UNKNOWN, 0, 4);
 }
 
 bool test_classify_tokens() {
@@ -362,4 +305,24 @@ void classifier_test_self(bool *pass) {
 		test_identifier_cannot_be_reserved,
 		test_classify_tokens
 	)
+}
+
+static bool classify_token_fixture(const char32_t *code, TokenType expected) {
+	Token *token = tokenize(code);
+	classify_token(token);
+	ASSERT_EQUAL(token->type, expected);
+	free_tokens(token);
+
+	PASS
+}
+
+static bool classify_token_with_len_fixture(const char32_t *code, TokenType tok_type, unsigned start_at, unsigned end_at) {
+	Token *token = tokenize(code);
+	classify_tokens(token);
+	ASSERT_EQUAL(token->type, tok_type);
+	ASSERT_EQUAL(token->begin, code + start_at);
+	ASSERT_EQUAL(token->end, code + end_at);
+	free_tokens(token);
+
+	PASS
 }

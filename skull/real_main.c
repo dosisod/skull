@@ -6,6 +6,7 @@
 #include "skull/common/io.h"
 #include "skull/common/local.h"
 #include "skull/common/str.h"
+#include "skull/common/vector.h"
 #include "skull/pipeline.h"
 
 #include "skull/real_main.h"
@@ -29,6 +30,8 @@ int real_main(int argc, char *argv[]) {
 
 	for (int i = 0; i < argc - 1 ; i++) {
 		const int err = compile_file(argv[i + 1]);
+		write_and_free_errors();
+
 		if (err) return err;
 	}
 

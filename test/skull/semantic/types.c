@@ -103,7 +103,6 @@ char32_t eval_rune_fixture(const char32_t *str) {
 	return rune;
 }
 
-
 bool test_eval_rune() {
 	ASSERT_EQUAL(eval_rune_fixture(U"'A'"), 'A');
 	ASSERT_EQUAL(eval_rune_fixture(U"'\\0'"), '\0');

@@ -8,6 +8,7 @@
 #include "skull/codegen/llvm/write.h"
 #include "skull/codegen/write.h"
 #include "skull/common/str.h"
+#include "skull/parse/classify.h"
 #include "skull/pipeline.h"
 #include "skull/semantic/entry.h"
 #include "skull/semantic/shared.h"
@@ -31,7 +32,16 @@ int run_pipeline(const char *filename, char *file_contents) {
 		return true;
 	}
 
-	AstNode *node = parse_ast_tree(_file_contents);
+	Token *token = tokenize(_file_contents);
+	if (!token) {
+		free(_file_contents);
+		free(file_contents);
+		return true;
+	}
+
+	classify_tokens(token);
+
+	AstNode *node = parse_ast_tree(token);
 	if (!node) {
 		free(_file_contents);
 		free(file_contents);

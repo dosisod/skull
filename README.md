@@ -61,7 +61,9 @@ $ ln -sf $(pwd)/pre-commit .git/hooks/pre-commit
 Tests may also be ran manually:
 
 ```
-$ make test && ./build/test/test
+$ make test e2e
+$ ./build/test/test
+$ ./test/sh/main.sh
 ```
 
 ## Todo

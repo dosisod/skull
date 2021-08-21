@@ -31,6 +31,11 @@ test: setup | $(OBJS_LLVM) $(OBJS_TEST)
 	@$(ECHO) "\033[92mLink\033[0m test\n"
 	@$(CC) $| -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
+e2e: setup skull/skull | $(OBJS) $(OBJS_LLVM)
+	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
+	@$(CC) $| test/skull/e2e.c -o build/test/e2e $(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
+	@cp skull/skull build/skull/skull
+
 docs:
 	@$(ECHO) "\033[92mBuild\033[0m docs\n"
 	@python3 docs/make_docs.py
@@ -61,7 +66,3 @@ uninstall:
 	@rm -f $(MANPATH)skull.1
 	@$(ECHO) "\033[92mUninstall\033[0m Skull headers\n"
 	@rm -rf $(HEADER)/skull
-
-e2e: setup | $(OBJS) $(OBJS_LLVM)
-	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
-	@$(CC) $| test/skull/e2e.c -o build/test/e2e $(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)

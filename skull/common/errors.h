@@ -6,6 +6,7 @@
 
 typedef struct Token Token;
 typedef struct Location Location;
+typedef struct Vector Vector;
 
 typedef enum {
 	ERR_UNEXPECTED_TOKEN = 0,
@@ -68,13 +69,14 @@ typedef enum {
 	WARN_COND_ALWAYS_TRUE = 57,
 	WARN_COND_ALWAYS_FALSE = 58,
 	WARN_FILE_EMPTY = 59,
-	WARN_NESTED_BLOCK_COMMENT = 60,
+	ERR_NESTED_BLOCK_COMMENT = 60,
 	WARN_TRIVIAL_TYPE = 61,
 	ERR_NO_REDEFINE_ALIAS_AS_VAR = 62,
 	ERR_NO_REDEFINE_ALIAS_AS_FUNC = 63,
 	ERR_NO_REDEFINE_VAR_AS_ALIAS = 64,
 	ERR_NO_REDEFINE_FUNC_AS_ALIAS = 65,
-	ERR_NOT_NUMERIC = 66
+	ERR_NOT_NUMERIC = 66,
+	WARN_NO_BOM = 67
 } ErrorCode;
 
 typedef struct Variable Variable;
@@ -103,6 +105,8 @@ typedef enum {
 	ERROR_WARN
 } ErrorType;
 
+extern Vector *error_msgs;
+
 #define FMT_WARN(id, ...) \
 	fmt_message(ERROR_WARN, (id), (Message[]){ __VA_ARGS__, {0} })
 
@@ -110,3 +114,5 @@ typedef enum {
 	fmt_message(ERROR_FATAL, (id), (Message[]){ __VA_ARGS__, {0} })
 
 void fmt_message(ErrorType, ErrorCode, Message []);
+
+void write_and_free_errors(void);

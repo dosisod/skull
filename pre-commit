@@ -9,7 +9,6 @@ make TRACE=1 clean all || stop
 
 ./build/test/test || stop
 
-cp ./skull/skull ./build/skull/skull
 ./test/sh/main.sh || stop
 
 ./.github/workflows/clang_tidy.sh || stop

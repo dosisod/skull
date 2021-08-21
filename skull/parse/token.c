@@ -37,6 +37,11 @@ Token *tokenize(const char32_t *code) {
 	unsigned line_num = 1;
 	unsigned column = 0;
 
+	if (*code == U'\xFEFF') {
+		FMT_WARN(WARN_NO_BOM, {0});
+		code++;
+	}
+
 	while (*code) {
 		column++;
 
@@ -184,7 +189,8 @@ static bool iter_comment(
 					.line = *line_num,
 					.column = *column
 				};
-				FMT_WARN(WARN_NESTED_BLOCK_COMMENT, { .loc = &location });
+				FMT_ERROR(ERR_NESTED_BLOCK_COMMENT, { .loc = &location });
+				return true;
 			}
 		}
 		else if (*code == '\n') {

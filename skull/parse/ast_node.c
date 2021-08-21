@@ -5,7 +5,6 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
-#include "skull/parse/classify.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/parse/ast_node.h"
@@ -31,12 +30,7 @@ static void push_ast_node(Token *const, Token *, NodeType, AstNode **);
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
-AstNode *parse_ast_tree(const char32_t *const code) {
-	Token *token = tokenize(code);
-	if (!token) return NULL;
-
-	classify_tokens(token);
-
+AstNode *parse_ast_tree(Token *token) {
 	bool err = false;
 	Token *head = token;
 	AstNode *const tree = parse_ast_tree_(&token, 0, &err);
@@ -157,14 +151,7 @@ static bool parse_var_def(Token **_token, AstNode **node, bool *err) {
 		return false;
 	}
 
-	AstNode *cond_node = (*node)->last->last;
-	AstNode *expr_node = (*node)->last;
-
-	cond_node->var_def->expr_node = expr_node;
-	cond_node->next = *node;
-	(*node)->last = cond_node;
-	expr_node->next = NULL;
-	expr_node->last = NULL;
+	splice_expr_node(*node);
 
 	if (*_token && (*_token)->type != TOKEN_NEWLINE) {
 		FMT_ERROR(ERR_EXPECTED_NEWLINE, {
@@ -210,14 +197,7 @@ static bool parse_var_assign(Token **token, AstNode **node, bool *err) {
 	}
 
 	(*node)->last->last->var_assign = var_assign;
-	AstNode *cond_node = (*node)->last->last;
-	AstNode *expr_node = (*node)->last;
-
-	cond_node->var_assign->expr_node = expr_node;
-	cond_node->next = *node;
-	(*node)->last = cond_node;
-	expr_node->next = NULL;
-	expr_node->last = NULL;
+	splice_expr_node(*node);
 
 	return true;
 }
@@ -696,7 +676,6 @@ static AstNode *parse_expression(
 
 	push_ast_node(NULL, last, AST_NODE_EXPR, node);
 
-	(*node)->last->token_end = *token;
 	(*node)->last->expr = expr_node;
 
 	return (*node)->last;
@@ -987,7 +966,15 @@ static void splice_expr_node(AstNode *node) {
 	AstNode *cond_node = node->last->last;
 	AstNode *expr_node = node->last;
 
-	cond_node->expr_node = expr_node;
+	if (cond_node->type == AST_NODE_VAR_DEF) {
+		cond_node->var_def->expr_node = expr_node;
+	}
+	else if (cond_node->type == AST_NODE_VAR_ASSIGN) {
+		cond_node->var_assign->expr_node = expr_node;
+	}
+	else {
+		cond_node->expr_node = expr_node;
+	}
 	cond_node->next = node;
 	node->last = cond_node;
 	expr_node->next = NULL;

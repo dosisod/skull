@@ -28,27 +28,15 @@ bool gen_tree(AstNode *node) {
 Return expr from an `AST_NODE_RETURN` if one was found.
 */
 Expr gen_node(AstNode *node, bool *err) {
-	Expr returned = (Expr){0};
-
 	while (node) {
-		if ((returned.value || returned.type) && !(
-			node->type == AST_NODE_COMMENT ||
-			node->type == AST_NODE_UNREACHABLE ||
-			node->type == AST_NODE_NOOP
-		)) {
-			FMT_ERROR(ERR_UNREACHABLE_CODE, { .loc = &node->token->location });
-			*err = true;
-			break;
-		}
-
 		Expr parsed = _gen_node(&node, err);
 		if (*err) break;
 
-		if (!returned.value) returned = parsed;
+		if (parsed.value || parsed.type) return parsed;
 		if (node) node = node->next;
 	}
 
-	return returned;
+	return (Expr){0};
 }
 
 /*

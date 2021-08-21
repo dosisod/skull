@@ -15,6 +15,8 @@
 #include "common/str.h"
 #include "common/vector.h"
 
+#include "../testing.h"
+
 #include "skull/common/local.h"
 
 _Bool SKULL_TESTING = 1;

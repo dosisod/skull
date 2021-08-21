@@ -4,6 +4,7 @@
 
 case "$(file ./test/sh/skull/alt_name)" in
 	*ELF*shared\ object*) ;;
+	*ELF*executable*) ;;
 	*) exit 1 ;;
 esac
 

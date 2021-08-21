@@ -27,7 +27,7 @@ Simple Vector implementation.
 `is_frozen` indicates that the vector has been converted into an array, and
 should not be used further.
 */
-typedef struct {
+typedef struct Vector {
 	size_t length;
 	size_t max;
 	void **elements;
