@@ -749,7 +749,6 @@ TEST_DIR"/flow/unreachable_ignored.sk",
 "define i64 @.unreachable_ignored() {\n" \
 "entry:\n" \
 "  ret i64 0\n" \
-"  unreachable\n" \
 "}\n",
 
 NULL
@@ -2399,8 +2398,7 @@ TEST_DIR"/error/flow/unreachable_in_func.sk",
 NULL,
 
 "./test/sh/error/flow/unreachable_in_func.sk: Compilation error: line 3 column 2: unreachable code\n" \
-"./test/sh/error/flow/unreachable_in_func.sk: Warning: line 1 column 1: function \"f\" is unused\n" \
-"./test/sh/error/flow/unreachable_in_func.sk: Warning: line 3 column 2: variable \"x\" is unused\n"
+"./test/sh/error/flow/unreachable_in_func.sk: Warning: line 1 column 1: function \"f\" is unused\n"
 );
 
 
@@ -2413,7 +2411,6 @@ TEST_DIR"/error/flow/unreachable_return.sk",
 NULL,
 
 "./test/sh/error/flow/unreachable_return.sk: Compilation error: line 3 column 1: unreachable code\n" \
-"./test/sh/error/flow/unreachable_return.sk: Warning: line 3 column 1: variable \"x\" is unused\n"
 );
 
 

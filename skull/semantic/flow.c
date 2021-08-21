@@ -13,11 +13,38 @@
 static bool validate_control_not_missing_if(const AstNode *);
 static bool is_missing_block(const AstNode *, const char *);
 static bool validate_bool_expr(const AstNodeExpr *);
+static bool no_dead_code_below(const AstNode *);
 
 bool validate_stmt_return(const AstNode *node) {
 	if (!assert_sane_child(node->next)) return false;
 
-	if (node->expr) return validate_expr(node->expr_node);
+	if (node->expr && !validate_expr(node->expr_node)) return false;
+
+	return no_dead_code_below(node->next);
+}
+
+bool validate_stmt_unreachable(const AstNode *node) {
+	return no_dead_code_below(node->next);
+}
+
+static bool no_dead_code_below(const AstNode *node) {
+	while (node) {
+		switch (node->type) {
+			case AST_NODE_COMMENT:
+			case AST_NODE_UNREACHABLE:
+			case AST_NODE_NOOP:
+				break;
+			default: {
+				FMT_ERROR(ERR_UNREACHABLE_CODE, {
+					.loc = &node->token->location
+				});
+
+				return false;
+			}
+		}
+
+		node = node->next;
+	}
 
 	return true;
 }
