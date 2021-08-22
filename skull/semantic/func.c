@@ -44,6 +44,8 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		.num_params = node->func_proto->num_params,
 		.params = node->func_proto->params
 	};
+	SEMANTIC_STATE.last_func = SEMANTIC_STATE.current_func;
+	SEMANTIC_STATE.current_func = func;
 
 	node->func_proto->func = func;
 

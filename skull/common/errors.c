@@ -26,7 +26,6 @@ static const char *errors[] = {
 	[ERR_TYPE_MISMATCH] = "type mismatch: expected type \"%s\"\n",
 	[ERR_FUNC_TYPE_MISMATCH] = "expected param of type \"%s\", got \"%s\"\n",
 	[ERR_EXPECTED_SAME_TYPE] = "expected type \"%s\", got \"%s\"\n",
-	[ERR_ASSIGN_BAD_TYPE] = "cannot assign type \"%s\" to type \"%s\"\n",
 	[ERR_BAD_ESCAPE] = "bad string escape: \"%s\"\n",
 	[ERR_VAR_NOT_FOUND] = "variable \"%s\" not found\n",
 	[ERR_OVERFLOW] = "overflow occurred while parsing \"%s\"\n",

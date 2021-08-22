@@ -3,6 +3,7 @@
 #include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
+#include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
@@ -258,10 +259,22 @@ static bool validate_stmt_func_call(AstNodeExpr *expr) {
 	}
 
 	if (num_params) {
-		while (num_params) {
+		for RANGE(i, num_params) {
 			if (!validate_expr(param)) return false;
+
+			if (param->expr->type != function->param_types[i]) {
+				FMT_ERROR(ERR_FUNC_TYPE_MISMATCH,
+					{
+						.loc = &param->token->location,
+						.type = function->param_types[i]
+					},
+					{ .type = param->expr->type }
+				);
+
+				return false;
+			}
+
 			param = param->next;
-			num_params--;
 		}
 	}
 

@@ -95,7 +95,6 @@ Set `err` if an error occurred.
 */
 Expr gen_expr_func_call(
 	const AstNodeFunctionCall *const func_call,
-	Type type,
 	bool *err
 ) {
 	FunctionDeclaration *function = func_call->func_decl;
@@ -120,36 +119,8 @@ Expr gen_expr_func_call(
 			return (Expr){0};
 		}
 
-		if (param_expr.type != function->param_types[i]) {
-			FMT_ERROR(ERR_FUNC_TYPE_MISMATCH,
-				{
-					.loc = &param->token->location,
-					.type = function->param_types[i]
-				},
-				{ .type = param_expr.type }
-			);
-
-			free(params);
-			*err = true;
-			return (Expr){0};
-		}
-
 		params[i] = param_expr.value;
 		param = param->next;
-	}
-
-	if (type && function->return_type != type) {
-		FMT_ERROR(
-			ERR_ASSIGN_BAD_TYPE,
-			{
-				.loc = &func_call->func_name_tok->location,
-				.type = function->return_type
-			},
-			{ .type = type }
-		);
-
-		*err = true;
-		return (Expr){0};
 	}
 
 	const Expr ret = (Expr){

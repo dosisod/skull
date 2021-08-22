@@ -5,6 +5,7 @@
 #include "skull/semantic/expr.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
+#include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
 
 #include "skull/semantic/flow.h"
@@ -14,13 +15,52 @@ static bool validate_control_not_missing_if(const AstNode *);
 static bool is_missing_block(const AstNode *, const char *);
 static bool validate_bool_expr(const AstNodeExpr *);
 static bool no_dead_code_below(const AstNode *);
+static bool is_valid_return_expr(const AstNode *);
 
 bool validate_stmt_return(const AstNode *node) {
 	if (!assert_sane_child(node->next)) return false;
 
 	if (node->expr && !validate_expr(node->expr_node)) return false;
 
+	Type return_type = SEMANTIC_STATE.current_func->return_type;
+
+	if (!node->expr_node && return_type != TYPE_VOID) {
+		FMT_ERROR(ERR_RETURN_MISSING_EXPR, {
+			.loc = &node->token->location
+		});
+
+		return false;
+	}
+
+	if (node->expr_node && !is_valid_return_expr(node)) return false;
+
 	return no_dead_code_below(node->next);
+}
+
+static bool is_valid_return_expr(const AstNode *node) {
+	const bool is_main = \
+		SEMANTIC_STATE.current_func == SEMANTIC_STATE.main_func;
+
+	const AstNodeExpr *expr = node->expr_node->expr;
+
+	if (is_main && expr->type != TYPE_INT) {
+		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = node->expr_node->token });
+
+		return false;
+	}
+
+	Type return_type = SEMANTIC_STATE.current_func->return_type;
+
+	if (return_type != TYPE_VOID && expr->type != return_type) {
+		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
+			{ .loc = &node->expr_node->token->location, .type = return_type },
+			{ .type = expr->type }
+		);
+
+		return false;
+	}
+
+	return true;
 }
 
 bool validate_stmt_unreachable(const AstNode *node) {

@@ -60,7 +60,7 @@ Expr gen_expr(
 		case EXPR_CONST:
 			return gen_expr_const(expr);
 		case EXPR_FUNC:
-			return gen_expr_func_call(expr->lhs.func_call, type, err);
+			return gen_expr_func_call(expr->lhs.func_call, err);
 		default: break;
 	}
 

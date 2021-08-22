@@ -16,6 +16,7 @@
 
 static bool _validate_ast_tree(const AstNode *);
 static bool validate_ast_node(const AstNode *);
+static void post_validate_ast_node(const AstNode *);
 
 /*
 Validate an entire AST tree starting at `node`.
@@ -43,11 +44,19 @@ static bool _validate_ast_tree(const AstNode *node) {
 			make_adjacent_scope();
 		}
 
+		post_validate_ast_node(node);
+
 		node = node->next;
 	}
 
 	reset_scope_head();
 	return true;
+}
+
+static void post_validate_ast_node(const AstNode *node) {
+	if (node->type == AST_NODE_FUNCTION_PROTO) {
+		SEMANTIC_STATE.current_func = SEMANTIC_STATE.last_func;
+	}
 }
 
 /*

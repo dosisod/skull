@@ -20,6 +20,7 @@ void setup_semantic_state(void) {
 	};
 
 	SEMANTIC_STATE.current_func = SEMANTIC_STATE.main_func;
+	SEMANTIC_STATE.last_func = NULL;
 }
 
 /*
