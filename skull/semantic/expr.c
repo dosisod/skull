@@ -19,6 +19,8 @@ static bool validate_const_expr(AstNodeExpr *);
 static bool validate_pow_expr(const AstNodeExpr *);
 static bool validate_bool_expr(const AstNodeExpr *);
 static bool is_numeric(const AstNodeExpr *);
+static FunctionDeclaration *find_func_by_token(const Token *);
+static bool validate_func_call_params(AstNodeFunctionCall *);
 
 
 bool validate_expr(const AstNode *node) {
@@ -221,20 +223,10 @@ bool validate_expr_func(const AstNode *node) {
 
 static bool validate_stmt_func_call(AstNodeExpr *expr) {
 	AstNodeFunctionCall *func_call = expr->lhs.func_call;
-
 	const Token *func_name_token = func_call->func_name_tok;
-	char *const func_name = token_to_mbs_str(func_name_token);
 
-	FunctionDeclaration *function = find_func_by_name(func_name);
-	free(func_name);
-
-	if (!function) {
-		FMT_ERROR(ERR_MISSING_DECLARATION, {
-			.tok = func_name_token
-		});
-
-		return false;
-	}
+	FunctionDeclaration *function = find_func_by_token(func_name_token);
+	if (!function) return false;
 
 	func_call->func_decl = function;
 	function->was_called = true;
@@ -258,24 +250,43 @@ static bool validate_stmt_func_call(AstNodeExpr *expr) {
 		return false;
 	}
 
-	if (num_params) {
-		for RANGE(i, num_params) {
-			if (!validate_expr(param)) return false;
+	if (num_params) return validate_func_call_params(func_call);
 
-			if (param->expr->type != function->param_types[i]) {
-				FMT_ERROR(ERR_FUNC_TYPE_MISMATCH,
-					{
-						.loc = &param->token->location,
-						.type = function->param_types[i]
-					},
-					{ .type = param->expr->type }
-				);
+	return true;
+}
 
-				return false;
-			}
+static FunctionDeclaration *find_func_by_token(const Token *token) {
+	char *const func_name = token_to_mbs_str(token);
 
-			param = param->next;
+	FunctionDeclaration *function = find_func_by_name(func_name);
+	free(func_name);
+
+	if (function) return function;
+
+	FMT_ERROR(ERR_MISSING_DECLARATION, { .tok = token });
+	return NULL;
+}
+
+static bool validate_func_call_params(AstNodeFunctionCall *func_call) {
+	const FunctionDeclaration *function = func_call->func_decl;
+	const AstNode *param = func_call->params;
+
+	for RANGE(i, function->num_params) {
+		if (!validate_expr(param)) return false;
+
+		if (param->expr->type != function->param_types[i]) {
+			FMT_ERROR(ERR_FUNC_TYPE_MISMATCH,
+				{
+					.loc = &param->token->location,
+					.type = function->param_types[i]
+				},
+				{ .type = param->expr->type }
+			);
+
+			return false;
 		}
+
+		param = param->next;
 	}
 
 	return true;
