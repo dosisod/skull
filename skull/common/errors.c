@@ -23,7 +23,6 @@ Vector *error_msgs;
 static const char *errors[] = {
 	[ERR_UNEXPECTED_TOKEN] = "unexpected token: \"%s\"\n",
 	[ERR_EOF_NO_BRACKET] = "Reached EOF, expected closing bracket",
-	[ERR_TYPE_MISMATCH] = "type mismatch: expected type \"%s\"\n",
 	[ERR_FUNC_TYPE_MISMATCH] = "expected param of type \"%s\", got \"%s\"\n",
 	[ERR_EXPECTED_SAME_TYPE] = "expected type \"%s\", got \"%s\"\n",
 	[ERR_BAD_ESCAPE] = "bad string escape: \"%s\"\n",
@@ -65,7 +64,6 @@ static const char *errors[] = {
 	[ERR_DIV_BY_ZERO] = "division by zero",
 	[ERR_NO_NESTED] = \
 		"cannot declare nested function \"%s\" as external or exported\n",
-	[ERR_TOP_LVL_ALIAS_ONLY] = "type aliases must be defined at the top level",
 	[ERR_EXPECTED_COMMA] = "expected comma",
 	[ERR_UNCLOSED_FUNC_CALL] = "function call missing closing parenthesis",
 	[ERR_TYPE_NOT_FOUND] = "type \"%s\" could not be found\n",
