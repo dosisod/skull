@@ -2287,6 +2287,7 @@ TEST_DIR"/error/flow/if_var_out_of_scope.sk",
 
 NULL,
 
+"./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 1 column 4: condition is always true\n" \
 "./test/sh/error/flow/if_var_out_of_scope.sk: Compilation error: line 5 column 8: variable \"x\" not found\n" \
 "./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 2 column 6: variable \"x\" should be constant\n" \
 "./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 2 column 6: variable \"x\" is unused\n"
@@ -2317,6 +2318,7 @@ TEST_DIR"/error/flow/invalid_return_in_if.sk",
 
 NULL,
 
+"./test/sh/error/flow/invalid_return_in_if.sk: Warning: line 1 column 4: condition is always true\n" \
 "./test/sh/error/flow/invalid_return_in_if.sk: Compilation error: line 2 column 2: expression cannot be used on its own\n"
 );
 
@@ -2383,6 +2385,7 @@ TEST_DIR"/error/flow/stmt_between_elif.sk",
 
 NULL,
 
+"./test/sh/error/flow/stmt_between_elif.sk: Warning: line 1 column 4: condition is always true\n" \
 "./test/sh/error/flow/stmt_between_elif.sk: Compilation error: line 5 column 1: else/elif statement missing preceding if statement\n" \
 "./test/sh/error/flow/stmt_between_elif.sk: Warning: line 4 column 1: variable \"x\" is unused\n"
 );
@@ -2935,6 +2938,7 @@ TEST_DIR"/error/misc/no_nested_func.sk",
 
 NULL,
 
+"./test/sh/error/misc/no_nested_func.sk: Warning: line 1 column 4: condition is always false\n" \
 "./test/sh/error/misc/no_nested_func.sk: Compilation error: line 2 column 9: cannot declare nested function \"func\" as external or exported\n"
 );
 

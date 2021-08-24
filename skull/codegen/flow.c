@@ -17,7 +17,6 @@
 #include "skull/codegen/flow.h"
 
 Expr gen_node(AstNode *, bool *);
-static void warn_const_cond(LLVMValueRef, Location *);
 static LLVMValueRef node_to_bool(const AstNode *const);
 static bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
 static LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *);
@@ -241,21 +240,11 @@ static LLVMValueRef node_to_bool(const AstNode *const node) {
 	const Expr expr = gen_expr(NULL, node->expr, &err);
 	if (err) return NULL;
 
-	warn_const_cond(expr.value, &node->token->location);
 	add_llvm_debug_info(expr.value, &node->token->location);
 
 	return expr.value;
 }
 
-
-static void warn_const_cond(LLVMValueRef value, Location *location) {
-	if (LLVMIsConstant(value))
-		FMT_WARN(LLVMConstIntGetSExtValue(value) ?
-			WARN_COND_ALWAYS_TRUE :
-			WARN_COND_ALWAYS_FALSE,
-			{ .loc = location }
-		);
-}
 
 /*
 Parse `node` while in a new scope. Branch to `block` if no return occurred.

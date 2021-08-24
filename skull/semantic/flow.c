@@ -197,11 +197,21 @@ bool validate_control_not_missing_if(const AstNode *node) {
 }
 
 static bool validate_bool_expr(const AstNodeExpr *expr) {
-	if (expr->type == TYPE_BOOL) return true;
+	if (expr->type != TYPE_BOOL) {
+		FMT_ERROR(ERR_NON_BOOL_EXPR, { .loc = find_expr_node_location(expr) });
 
-	FMT_ERROR(ERR_NON_BOOL_EXPR, { .loc = find_expr_node_location(expr) });
+		return false;
+	}
 
-	return false;
+	if (expr->oper == EXPR_CONST) {
+		FMT_WARN(expr->value._bool ?
+			WARN_COND_ALWAYS_TRUE :
+			WARN_COND_ALWAYS_FALSE,
+			{ .loc = find_expr_node_location(expr) }
+		);
+	}
+
+	return true;
 }
 
 /*
