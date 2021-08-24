@@ -21,12 +21,10 @@ static LLVMTypeRef *parse_func_param(const FunctionDeclaration *func)
 > Setup function params of `func`.
 
 ```c
-Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call, bool *err)
+Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call)
 ```
 
-> Builds a function call from `expr`.
-> \
-> Set `err` if an error occurred.
+> Builds a function call from `func_call`.
 
 ```c
 static bool gen_function_def(const AstNode *const node, FunctionDeclaration *func)

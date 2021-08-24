@@ -7,12 +7,10 @@ Expr gen_stmt_unreachable(void)
 > Build an unreachable statement.
 
 ```c
-Expr gen_stmt_return(AstNode *node, bool *err)
+Expr gen_stmt_return(AstNode *node)
 ```
 
 > Builds an return statement from `node`.
-> \
-> Set `err` if error occurrs.
 
 ```c
 bool gen_control_while(AstNode *node)

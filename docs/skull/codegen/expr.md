@@ -14,30 +14,16 @@ typedef struct {
 > `type` is the Skull usable which `value` evaluates to.
 
 ```c
-Expr gen_expr(Type type, const AstNodeExpr *const expr, bool *err)
+Expr gen_expr(Type type, const AstNodeExpr *const expr)
 ```
 
 > Return expression for `expr`, checking if resulting type matches `type`.
-> \
-> Set `err` if an error occurred.
 
 ```c
-static Expr gen_expr_identifier(const AstNodeExpr *expr_node, bool *err)
+static Expr gen_expr_identifier(const AstNodeExpr *expr)
 ```
 
 > Return expression for identifier `token` with type `type`.
-> \
-> If `type` is not set, the expression type will not be checked.
-> \
-> Set `err` if an error occurred.
-
-```c
-static Expr ident_to_expr(const AstNodeExpr *expr, Variable **variable)
-```
-
-> Convert identifier node `expr` to an expression.
-> \
-> Store found variable (if found) in `variable`.
 
 ```c
 static Expr gen_expr_const(const AstNodeExpr *expr)

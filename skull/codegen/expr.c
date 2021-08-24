@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdbool.h>
 
 #include <llvm-c/Core.h>
@@ -31,8 +32,7 @@ static Operation gen_expr_add, gen_expr_sub, gen_expr_mult,
 
 static Expr gen_expr_const(const AstNodeExpr *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
-static Expr ident_to_expr(const AstNodeExpr *, Variable **);
-static Expr gen_expr_identifier(const AstNodeExpr *, bool *);
+static Expr gen_expr_identifier(const AstNodeExpr *);
 static Operation *expr_type_to_func(ExprType);
 static bool is_bool_expr(ExprType);
 
@@ -46,93 +46,47 @@ static Expr create_and_call_builtin_oper(
 
 /*
 Return expression for `expr`, checking if resulting type matches `type`.
-
-Set `err` if an error occurred.
 */
 Expr gen_expr(
 	Type type,
-	const AstNodeExpr *const expr,
-	bool *err
+	const AstNodeExpr *const expr
 ) {
 	switch (expr->oper) {
 		case EXPR_IDENTIFIER:
-			return gen_expr_identifier(expr, err);
+			return gen_expr_identifier(expr);
 		case EXPR_CONST:
 			return gen_expr_const(expr);
 		case EXPR_FUNC:
-			return gen_expr_func_call(expr->lhs.func_call, err);
+			return gen_expr_func_call(expr->lhs.func_call);
 		default: break;
 	}
 
 	const Expr lhs = expr->lhs.expr ?
-		gen_expr(is_bool_expr(expr->oper) ? NULL : type, expr->lhs.expr, err) :
+		gen_expr(is_bool_expr(expr->oper) ? NULL : type, expr->lhs.expr) :
 		(Expr){0};
-
-	if (*err) return (Expr){0};
 
 	const Expr rhs = gen_expr(
 		is_bool_expr(expr->oper) ? lhs.type : type,
-		expr->rhs,
-		err
+		expr->rhs
 	);
-	if (*err) return (Expr){0};
-
-	Expr result = (Expr){0};
 
 	Operation *func = expr_type_to_func(expr->oper);
-	if (func) {
-		result = func(
-			&(Expr){ .type = rhs.type, .value = lhs.value },
-			rhs.value
-		);
-	}
-	else if (expr->oper == EXPR_POW) {
-		result = gen_expr_pow(&lhs, rhs.value);
-	}
 
-	if ((!result.type && !result.value) || *err) return (Expr){0};
-
-	return result;
+	return func(
+		&(Expr){ .type = rhs.type, .value = lhs.value },
+		rhs.value
+	);
 }
 
 /*
 Return expression for identifier `token` with type `type`.
-
-If `type` is not set, the expression type will not be checked.
-
-Set `err` if an error occurred.
 */
-static Expr gen_expr_identifier(
-	const AstNodeExpr *expr_node,
-	bool *err
-) {
-	Variable *var = NULL;
-	const Expr expr = ident_to_expr(expr_node, &var);
-	if (!expr.value && !expr.type) {
-		*err = true;
-		return (Expr){0};
-	}
-
-	return expr;
-}
-
-/*
-Convert identifier node `expr` to an expression.
-
-Store found variable (if found) in `variable`.
-*/
-static Expr ident_to_expr(
-	const AstNodeExpr *expr,
-	Variable **variable
-) {
+static Expr gen_expr_identifier(const AstNodeExpr *expr) {
 	Variable *var_found = expr->var;
 	var_found->was_read = true;
 
-	if (variable) *variable = var_found;
-
 	if (var_found->is_const &&
-		!(var_found->is_global &&
-		!var_found->is_const_lit)
+		!(var_found->is_global && !var_found->is_const_lit)
 	) {
 		return (Expr){
 			.value = var_found->ref,
@@ -616,6 +570,7 @@ static Operation *expr_type_to_func(ExprType oper) {
 		case EXPR_XOR: return gen_expr_xor;
 		case EXPR_MOD: return gen_expr_mod;
 		case EXPR_DIV: return gen_expr_div;
+		case EXPR_POW: return gen_expr_pow;
 		default: return NULL;
 	}
 }

@@ -8,7 +8,6 @@
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
-#include "skull/common/errors.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
@@ -60,20 +59,18 @@ void gen_stmt_noop(const Location *location) {
 
 /*
 Builds an return statement from `node`.
-
-Set `err` if error occurrs.
 */
-Expr gen_stmt_return(AstNode *node, bool *err) {
+Expr gen_stmt_return(AstNode *node) {
 	AstNode *const expr_node = node->expr_node;
 	Type return_type = SKULL_STATE_LLVM.current_func->return_type;
 
 	Expr expr = (Expr){0};
 
 	if (expr_node && expr_node->type == AST_NODE_EXPR) {
-		expr = gen_expr(NULL, expr_node->expr, err);
+		expr = gen_expr(NULL, expr_node->expr);
 	}
 
-	if (*err) return (Expr){0};
+	if (!expr.value && !expr.type) return (Expr){0};
 
 	if (return_type == TYPE_VOID) expr.type = TYPE_VOID;
 	LLVMValueRef ret = LLVMBuildRet(SKULL_STATE_LLVM.builder, expr.value);
@@ -236,9 +233,8 @@ Try and parse a condition (something returning a bool) from `node`.
 Return `NULL` if an error occurred.
 */
 static LLVMValueRef node_to_bool(const AstNode *const node) {
-	bool err = false;
-	const Expr expr = gen_expr(NULL, node->expr, &err);
-	if (err) return NULL;
+	const Expr expr = gen_expr(NULL, node->expr);
+	if (!expr.value && !expr.type) return NULL;
 
 	add_llvm_debug_info(expr.value, &node->token->location);
 

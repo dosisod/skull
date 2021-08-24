@@ -89,14 +89,9 @@ static LLVMTypeRef *parse_func_param(const FunctionDeclaration *func) {
 }
 
 /*
-Builds a function call from `expr`.
-
-Set `err` if an error occurred.
+Builds a function call from `func_call`.
 */
-Expr gen_expr_func_call(
-	const AstNodeFunctionCall *const func_call,
-	bool *err
-) {
+Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call) {
 	FunctionDeclaration *function = func_call->func_decl;
 
 	unsigned short num_params = function->num_params;
@@ -110,11 +105,10 @@ Expr gen_expr_func_call(
 	for RANGE(i, num_params) {
 		const Expr param_expr = gen_expr(
 			function->param_types[i],
-			param->expr,
-			err
+			param->expr
 		);
 
-		if (*err) {
+		if (!param_expr.value && !param_expr.type) {
 			free(params);
 			return (Expr){0};
 		}

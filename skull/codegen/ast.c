@@ -3,7 +3,6 @@
 #include "skull/codegen/assign.h"
 #include "skull/codegen/flow.h"
 #include "skull/codegen/func.h"
-#include "skull/common/errors.h"
 
 #include "skull/codegen/ast.h"
 
@@ -46,7 +45,7 @@ static Expr _gen_node(AstNode **node, bool *err) {
 	switch ((*node)->type) {
 		case AST_NODE_IF: *err |= gen_control_if(node); break;
 		case AST_NODE_WHILE: *err |= gen_control_while(*node); break;
-		case AST_NODE_RETURN: return gen_stmt_return(*node, err);
+		case AST_NODE_RETURN: return gen_stmt_return(*node);
 		case AST_NODE_UNREACHABLE: return gen_stmt_unreachable();
 		case AST_NODE_FUNCTION_PROTO: *err |= gen_stmt_func_decl(*node); break;
 		case AST_NODE_VAR_DEF:
@@ -67,7 +66,7 @@ Generate a (function) expression from `node`.
 Return `true` if error occurred.
 */
 static bool gen_expr_node(const AstNode *node) {
-	bool err = false;
-	gen_expr_func_call(node->expr->lhs.func_call, &err);
-	return err;
+	Expr expr = gen_expr_func_call(node->expr->lhs.func_call);
+
+	return !expr.value && !expr.type;
 }

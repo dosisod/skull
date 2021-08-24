@@ -28,14 +28,12 @@ Return `true` if an error occurred.
 bool gen_stmt_var_def(AstNodeVarDef *var_def) {
 	Variable *var = var_def->var;
 
-	bool err = false;
 	LLVMValueRef value = gen_expr(
 		var->type,
-		var_def->expr_node->expr,
-		&err
+		var_def->expr_node->expr
 	).value;
 
-	if (err) {
+	if (!value) {
 		variable_disable_warnings(var);
 		return true;
 	}
@@ -80,14 +78,12 @@ Return `true` if an error occurred.
 bool gen_stmt_var_assign(AstNodeVarAssign *var_assign) {
 	Variable *var = var_assign->var;
 
-	bool err = false;
 	LLVMValueRef value = gen_expr(
 		var->type,
-		var_assign->expr_node->expr,
-		&err
+		var_assign->expr_node->expr
 	).value;
 
-	if (err) return true;
+	if (!value) return true;
 
 	assign_value_to_var(value, var);
 
