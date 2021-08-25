@@ -3321,6 +3321,18 @@ NULL,
 "./test/sh/error/oper/using_non_bool_with_not.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
 );
 
+
+pass |= e2e_wrapper(
+"mut x := 1.0 << 2.0\n",
+TEST_DIR"/error/oper/shift_not_int.sk",
+
+NULL,
+
+"./test/sh/error/oper/shift_not_int.sk: Compilation error: line 1 column 10: expected an integer\n" \
+"./test/sh/error/oper/shift_not_int.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
+"./test/sh/error/oper/shift_not_int.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
+);
+
 	return pass;
 }
 

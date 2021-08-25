@@ -23,6 +23,7 @@ Vector *error_msgs;
 static const char *errors[] = {
 	[ERR_UNEXPECTED_TOKEN] = "unexpected token: \"%s\"\n",
 	[ERR_EOF_NO_BRACKET] = "Reached EOF, expected closing bracket",
+	[ERR_NOT_INT] = "expected an integer",
 	[ERR_FUNC_TYPE_MISMATCH] = "expected param of type \"%s\", got \"%s\"\n",
 	[ERR_EXPECTED_SAME_TYPE] = "expected type \"%s\", got \"%s\"\n",
 	[ERR_BAD_ESCAPE] = "bad string escape: \"%s\"\n",

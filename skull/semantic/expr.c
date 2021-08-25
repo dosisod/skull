@@ -19,6 +19,7 @@ static bool validate_const_expr(AstNodeExpr *);
 static bool validate_pow_expr(const AstNodeExpr *);
 static bool validate_bool_expr(const AstNodeExpr *);
 static bool is_numeric(const AstNodeExpr *);
+static bool validate_shift_expr(const AstNodeExpr *);
 static FunctionDeclaration *find_func_by_token(const Token *);
 static bool validate_func_call_params(AstNodeFunctionCall *);
 
@@ -80,6 +81,11 @@ static bool _validate_expr(AstNodeExpr *expr) {
 		}
 		case EXPR_POW: {
 			if (!validate_pow_expr(expr) || !is_numeric(expr)) return false;
+			break;
+		}
+		case EXPR_LSHIFT:
+		case EXPR_RSHIFT: {
+			if (!validate_shift_expr(expr)) return false;
 			break;
 		}
 		case EXPR_NOT:
@@ -152,6 +158,16 @@ static bool validate_const_expr(AstNodeExpr *expr) {
 	}
 
 	return !err;
+}
+
+static bool validate_shift_expr(const AstNodeExpr *expr) {
+	if (expr->rhs->type != TYPE_INT) {
+		FMT_ERROR(ERR_NOT_INT, { .loc = find_expr_node_location(expr) });
+
+		return false;
+	}
+
+	return true;
 }
 
 static bool is_numeric(const AstNodeExpr *expr) {

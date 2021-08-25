@@ -8,11 +8,12 @@ typedef struct Token Token;
 typedef struct Location Location;
 typedef struct Vector Vector;
 
-// unused error codes: 2, 5, 38, 39
+// unused error codes: 5, 38, 39
 
 typedef enum {
 	ERR_UNEXPECTED_TOKEN = 0,
 	ERR_EOF_NO_BRACKET = 1,
+	ERR_NOT_INT = 2,
 	ERR_FUNC_TYPE_MISMATCH = 3,
 	ERR_EXPECTED_SAME_TYPE = 4,
 	ERR_BAD_ESCAPE = 6,
