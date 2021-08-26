@@ -34,7 +34,6 @@ static Expr gen_expr_const(const AstNodeExpr *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr gen_expr_identifier(const AstNodeExpr *);
 static Operation *expr_type_to_func(ExprType);
-static bool is_bool_expr(ExprType);
 
 static Expr create_and_call_builtin_oper(
 	Type,
@@ -45,12 +44,9 @@ static Expr create_and_call_builtin_oper(
 );
 
 /*
-Return expression for `expr`, checking if resulting type matches `type`.
+Return expression for `expr`.
 */
-Expr gen_expr(
-	Type type,
-	const AstNodeExpr *const expr
-) {
+Expr gen_expr(const AstNodeExpr *const expr) {
 	switch (expr->oper) {
 		case EXPR_IDENTIFIER:
 			return gen_expr_identifier(expr);
@@ -62,13 +58,10 @@ Expr gen_expr(
 	}
 
 	const Expr lhs = expr->lhs.expr ?
-		gen_expr(is_bool_expr(expr->oper) ? NULL : type, expr->lhs.expr) :
+		gen_expr(expr->lhs.expr) :
 		(Expr){0};
 
-	const Expr rhs = gen_expr(
-		is_bool_expr(expr->oper) ? lhs.type : type,
-		expr->rhs
-	);
+	const Expr rhs = gen_expr(expr->rhs);
 
 	Operation *func = expr_type_to_func(expr->oper);
 
@@ -572,21 +565,5 @@ static Operation *expr_type_to_func(ExprType oper) {
 		case EXPR_DIV: return gen_expr_div;
 		case EXPR_POW: return gen_expr_pow;
 		default: return NULL;
-	}
-}
-
-static bool is_bool_expr(ExprType oper) {
-	switch (oper) {
-		case EXPR_IS:
-		case EXPR_ISNT:
-		case EXPR_LESS_THAN:
-		case EXPR_GTR_THAN:
-		case EXPR_LESS_THAN_EQ:
-		case EXPR_GTR_THAN_EQ:
-		case EXPR_AND:
-		case EXPR_OR:
-		case EXPR_XOR:
-			return true;
-		default: return false;
 	}
 }

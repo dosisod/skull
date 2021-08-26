@@ -67,7 +67,7 @@ Expr gen_stmt_return(AstNode *node) {
 	Expr expr = (Expr){0};
 
 	if (expr_node && expr_node->type == AST_NODE_EXPR) {
-		expr = gen_expr(NULL, expr_node->expr);
+		expr = gen_expr(expr_node->expr);
 	}
 
 	if (!expr.value && !expr.type) return (Expr){0};
@@ -233,7 +233,7 @@ Try and parse a condition (something returning a bool) from `node`.
 Return `NULL` if an error occurred.
 */
 static LLVMValueRef node_to_bool(const AstNode *const node) {
-	const Expr expr = gen_expr(NULL, node->expr);
+	const Expr expr = gen_expr(node->expr);
 	if (!expr.value && !expr.type) return NULL;
 
 	add_llvm_debug_info(expr.value, &node->token->location);

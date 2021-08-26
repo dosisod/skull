@@ -103,10 +103,7 @@ Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call) {
 	const AstNode *param = func_call->params;
 
 	for RANGE(i, num_params) {
-		const Expr param_expr = gen_expr(
-			function->param_types[i],
-			param->expr
-		);
+		const Expr param_expr = gen_expr(param->expr);
 
 		if (!param_expr.value && !param_expr.type) {
 			free(params);

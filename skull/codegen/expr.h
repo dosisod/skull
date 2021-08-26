@@ -18,4 +18,4 @@ typedef struct {
 	Type type;
 } Expr;
 
-Expr gen_expr(Type, const AstNodeExpr *const);
+Expr gen_expr(const AstNodeExpr *const);

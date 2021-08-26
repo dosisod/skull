@@ -14,10 +14,10 @@ typedef struct {
 > `type` is the Skull usable which `value` evaluates to.
 
 ```c
-Expr gen_expr(Type type, const AstNodeExpr *const expr)
+Expr gen_expr(const AstNodeExpr *const expr)
 ```
 
-> Return expression for `expr`, checking if resulting type matches `type`.
+> Return expression for `expr`.
 
 ```c
 static Expr gen_expr_identifier(const AstNodeExpr *expr)
