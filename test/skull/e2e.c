@@ -3027,8 +3027,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"# TODO: fix semantic layer not checking for trivial types\n" \
-"\n" \
 "x: Int = 1\n",
 TEST_DIR"/error/misc/trivial_type.sk",
 
@@ -3041,7 +3039,7 @@ TEST_DIR"/error/misc/trivial_type.sk",
 "}\n",
 
 "./test/sh/error/misc/trivial_type.sk: Warning: explicit type \"Int\" can be trivialy deduced\n" \
-"./test/sh/error/misc/trivial_type.sk: Warning: line 3 column 1: variable \"x\" is unused\n"
+"./test/sh/error/misc/trivial_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
 );
 
 

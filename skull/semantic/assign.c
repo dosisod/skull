@@ -24,12 +24,20 @@ bool validate_stmt_var_def(const AstNode *node) {
 
 	node->var_def->var = var;
 
-	const bool ok = validate_expr(node->var_def->expr_node);
+	bool ok = validate_expr(node->var_def->expr_node);
 	var->is_defined = true;
 
 	if (!ok) return false;
 
-	return is_expr_compatible_with_var(node->var_def->expr_node->expr, var);
+	AstNodeExpr *expr = node->var_def->expr_node->expr;
+	ok = is_expr_compatible_with_var(expr, var);
+	if (!ok) return false;
+
+	if (expr->oper == EXPR_CONST && !var->implicitly_typed) {
+		FMT_WARN(WARN_TRIVIAL_TYPE, { .type = var->type });
+	}
+
+	return true;
 }
 
 bool validate_stmt_var_assign(const AstNode *node) {
