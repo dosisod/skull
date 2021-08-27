@@ -67,6 +67,41 @@ bool validate_stmt_func_decl(const AstNode *node) {
 	return validate_func_params(node, func);
 }
 
+bool post_validate_stmt_func_decl(const AstNode *node) {
+	const FunctionDeclaration *func = SEMANTIC_STATE.current_func;
+
+	if (func->is_external) return true;
+
+	const AstNode *terminal_node = node->child;
+
+	while (
+		terminal_node &&
+		terminal_node->type != AST_NODE_RETURN &&
+		terminal_node->type != AST_NODE_UNREACHABLE
+	) {
+		terminal_node = terminal_node->next;
+	}
+
+	const bool returned_value = terminal_node &&
+		terminal_node->type == AST_NODE_RETURN &&
+		!!terminal_node->expr;
+
+	if (!returned_value && func->return_type != TYPE_VOID) {
+		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(func->name) });
+
+		return false;
+	}
+	if (returned_value && func->return_type == TYPE_VOID) {
+		FMT_ERROR(ERR_NO_VOID_RETURN, { .real = strdup(func->name) });
+
+		return false;
+	}
+
+	SEMANTIC_STATE.current_func = SEMANTIC_STATE.last_func;
+
+	return true;
+}
+
 static bool validate_func_params(
 	const AstNode *node,
 	FunctionDeclaration *function

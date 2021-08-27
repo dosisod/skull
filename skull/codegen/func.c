@@ -180,17 +180,6 @@ static bool gen_function_def(
 	if (SEMANTIC_STATE.scope)
 		SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
-	if (!returned.value && func->return_type != TYPE_VOID) {
-		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(func->name) });
-
-		return true;
-	}
-	if (returned.value && func->return_type == TYPE_VOID) {
-		FMT_ERROR(ERR_NO_VOID_RETURN, { .real = strdup(func->name) });
-
-		return true;
-	}
-
 	if (func->return_type == TYPE_VOID && returned.type != TYPE_VOID)
 		LLVMBuildRetVoid(SKULL_STATE_LLVM.builder);
 

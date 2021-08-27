@@ -43,6 +43,7 @@ typedef struct FunctionDeclaration {
 } FunctionDeclaration;
 
 _Bool validate_stmt_func_decl(const AstNode *);
+_Bool post_validate_stmt_func_decl(const AstNode *);
 
 void free_function_declaration(FunctionDeclaration *);
 

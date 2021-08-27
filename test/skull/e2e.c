@@ -2689,6 +2689,7 @@ TEST_DIR"/error/func/unexpected_return.sk",
 NULL,
 
 "./test/sh/error/func/unexpected_return.sk: Compilation error: unexpected return from void function \"f\"\n"
+"./test/sh/error/func/unexpected_return.sk: Warning: line 1 column 1: function \"f\" is unused\n"
 );
 
 
