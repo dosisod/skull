@@ -87,8 +87,6 @@ static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs)
 ```
 
 > Return expression for taking `lhs` to the power of `rhs`.
-> \
-> Set `err` if an error occurred.
 
 ```c
 static Expr gen_expr_not(const Expr *lhs, LLVMValueRef rhs)

@@ -5,7 +5,7 @@
 	LLVMConstInt( \
 		LLVMInt64TypeInContext(SKULL_STATE_LLVM.ctx), \
 		(unsigned long long)(num), \
-		true \
+		1 \
 	)
 ```
 
@@ -16,7 +16,7 @@
 	LLVMConstInt( \
 		LLVMInt32TypeInContext(SKULL_STATE_LLVM.ctx), \
 		(unsigned long long)(num), \
-		true \
+		1 \
 	)
 ```
 
@@ -27,7 +27,7 @@
 	LLVMConstInt( \
 		LLVMInt1TypeInContext(SKULL_STATE_LLVM.ctx), \
 		val, \
-		true \
+		1 \
 	)
 ```
 
@@ -38,7 +38,7 @@
 	LLVMConstInt( \
 		LLVMInt32TypeInContext(SKULL_STATE_LLVM.ctx), \
 		c, \
-		true \
+		1 \
 	)
 ```
 

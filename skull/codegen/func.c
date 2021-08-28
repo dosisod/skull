@@ -10,7 +10,6 @@
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
-#include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
@@ -22,9 +21,9 @@
 
 #include "skull/codegen/func.h"
 
-Expr gen_node(AstNode *, bool *);
+Expr gen_tree(AstNode *);
 
-static bool gen_function_def(const AstNode *const, FunctionDeclaration *);
+static void gen_function_def(const AstNode *const, FunctionDeclaration *);
 static void add_func(FunctionDeclaration *);
 static LLVMTypeRef *parse_func_param(const FunctionDeclaration *);
 static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *);
@@ -32,17 +31,13 @@ static void alloc_debug_function_param(Variable **);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
-
-Return `true` if an error occurred.
 */
-bool gen_stmt_func_decl(const AstNode *const node) {
+void gen_stmt_func_decl(const AstNode *const node) {
 	FunctionDeclaration *func = node->func_proto->func;
 
 	add_func(node->func_proto->func);
 
-	if (!func->is_external) return gen_function_def(node, func);
-
-	return false;
+	if (!func->is_external) gen_function_def(node, func);
 }
 
 /*
@@ -102,15 +97,8 @@ Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call) {
 
 	const AstNode *param = func_call->params;
 
-	for RANGE(i, num_params) {
-		const Expr param_expr = gen_expr(param->expr);
-
-		if (!param_expr.value && !param_expr.type) {
-			free(params);
-			return (Expr){0};
-		}
-
-		params[i] = param_expr.value;
+	for RANGE(i, num_params) { // NOLINT
+		params[i] = gen_expr(param->expr).value;
 		param = param->next;
 	}
 
@@ -135,7 +123,7 @@ Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call) {
 /*
 Create a native LLVM function.
 */
-static bool gen_function_def(
+static void gen_function_def(
 	const AstNode *const node,
 	FunctionDeclaration *func
 ) {
@@ -168,15 +156,13 @@ static bool gen_function_def(
 
 	LLVMMetadataRef old_di_scope = add_llvm_func_debug_info(func);
 
-	bool err = false;
-	const Expr returned = gen_node(node->child, &err);
+	const Expr returned = gen_tree(node->child);
 
 	restore_parent_scope();
 	SKULL_STATE_LLVM.current_func = old_func;
 
 	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 
-	if (err) return true;
 	if (SEMANTIC_STATE.scope)
 		SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
@@ -184,8 +170,6 @@ static bool gen_function_def(
 		LLVMBuildRetVoid(SKULL_STATE_LLVM.builder);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, current_block);
-
-	return false;
 }
 
 static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {

@@ -48,18 +48,20 @@ int run_pipeline(const char *filename, char *file_contents) {
 		return true;
 	}
 
-	bool err = true;
-
 	setup_semantic_state();
 
+	bool err = true;
+
 	if (validate_ast_tree(node)) {
+		err = false;
+
 		setup_llvm_state();
 
 		if (BUILD_DATA.debug) {
 			setup_debug_info(filename, SKULL_STATE_LLVM.module);
 		}
 
-		err = gen_tree(node);
+		gen_module(node);
 	}
 
 	free_ast_tree(node);

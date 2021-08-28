@@ -9,7 +9,6 @@
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
-#include "skull/common/errors.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
@@ -22,24 +21,15 @@ static void add_llvm_var_def_debug_info(const Variable *);
 
 /*
 Builds a variable definition from `expr_node`.
-
-Return `true` if an error occurred.
 */
-bool gen_stmt_var_def(AstNodeVarDef *var_def) {
+void gen_stmt_var_def(AstNodeVarDef *var_def) {
 	Variable *var = var_def->var;
 
 	LLVMValueRef value = gen_expr(var_def->expr_node->expr).value;
 
-	if (!value) {
-		variable_disable_warnings(var);
-		return true;
-	}
-
 	setup_var_llvm(value, var);
 	assign_value_to_var(value, var);
 	add_llvm_var_def_debug_info(var);
-
-	return false;
 }
 
 static void add_llvm_var_def_debug_info(const Variable *var) {
@@ -69,19 +59,11 @@ static void add_llvm_var_def_debug_info(const Variable *var) {
 
 /*
 Assign a to a variable from `var_assign`.
-
-Return `true` if an error occurred.
 */
-bool gen_stmt_var_assign(AstNodeVarAssign *var_assign) {
-	Variable *var = var_assign->var;
-
+void gen_stmt_var_assign(AstNodeVarAssign *var_assign) {
 	LLVMValueRef value = gen_expr(var_assign->expr_node->expr).value;
 
-	if (!value) return true;
-
-	assign_value_to_var(value, var);
-
-	return false;
+	assign_value_to_var(value, var_assign->var);
 }
 
 static void setup_var_llvm(LLVMValueRef value, Variable *var) {

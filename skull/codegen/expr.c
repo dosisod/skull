@@ -7,7 +7,6 @@
 #include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
-#include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/scope.h"
@@ -159,7 +158,7 @@ static Expr gen_expr_math_oper(
 			.type = lhs->type
 		};
 
-	return (Expr){0};
+	assert(false);
 }
 
 /*
@@ -230,7 +229,7 @@ static Expr gen_expr_lshift(
 			.type = TYPE_INT
 		};
 
-	return (Expr){0};
+	assert(false);
 }
 
 /*
@@ -251,13 +250,11 @@ static Expr gen_expr_rshift(
 			.type = TYPE_INT
 		};
 
-	return (Expr){0};
+	assert(false);
 }
 
 /*
 Return expression for taking `lhs` to the power of `rhs`.
-
-Set `err` if an error occurred.
 */
 static Expr gen_expr_pow(
 	const Expr *lhs,
@@ -284,7 +281,7 @@ static Expr gen_expr_pow(
 Return expression for result of not operator for `rhs`.
 */
 static Expr gen_expr_not(const Expr *lhs, LLVMValueRef rhs) {
-	if (lhs->type != TYPE_BOOL) return (Expr){0};
+	(void)lhs;
 
 	return (Expr){
 		.value = LLVMBuildNot(SKULL_STATE_LLVM.builder, rhs, ""),
@@ -342,7 +339,7 @@ static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
 	if (type == TYPE_STR)
 		return gen_expr_is_str(lhs->value, rhs);
 
-	return (Expr){0};
+	assert(false);
 }
 
 /*
@@ -452,7 +449,7 @@ static Expr gen_expr_relational_oper(
 			.type = TYPE_BOOL
 		};
 
-	return (Expr){0};
+	assert(false);
 }
 
 /*

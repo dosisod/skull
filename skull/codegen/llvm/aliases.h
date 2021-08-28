@@ -5,7 +5,7 @@ Convert `num` to an `i64` LLVM value.
 	LLVMConstInt( \
 		LLVMInt64TypeInContext(SKULL_STATE_LLVM.ctx), \
 		(unsigned long long)(num), \
-		true \
+		1 \
 	)
 
 /*
@@ -15,7 +15,7 @@ Convert `num` to an `i32` LLVM value.
 	LLVMConstInt( \
 		LLVMInt32TypeInContext(SKULL_STATE_LLVM.ctx), \
 		(unsigned long long)(num), \
-		true \
+		1 \
 	)
 
 /*
@@ -25,7 +25,7 @@ Convert `val` to an `i1` LLVM value.
 	LLVMConstInt( \
 		LLVMInt1TypeInContext(SKULL_STATE_LLVM.ctx), \
 		val, \
-		true \
+		1 \
 	)
 
 /*
@@ -35,7 +35,7 @@ Convert `c` to an `i32` (rune) LLVM value.
 	LLVMConstInt( \
 		LLVMInt32TypeInContext(SKULL_STATE_LLVM.ctx), \
 		c, \
-		true \
+		1 \
 	)
 
 /*

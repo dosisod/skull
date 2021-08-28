@@ -9,6 +9,5 @@ typedef struct AstNodeFunctionCall AstNodeFunctionCall;
 typedef struct AstNode AstNode;
 typedef struct AstNodeExpr AstNodeExpr;
 
-_Bool gen_stmt_func_decl(const AstNode *const);
-
+void gen_stmt_func_decl(const AstNode *const);
 Expr gen_expr_func_call(const AstNodeFunctionCall *const);

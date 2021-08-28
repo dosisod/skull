@@ -1,5 +1,3 @@
-#include <stdbool.h>
-
 #include <llvm-c/Core.h>
 #include <llvm-c/DebugInfo.h>
 
@@ -15,12 +13,11 @@
 
 #include "skull/codegen/flow.h"
 
-Expr gen_node(AstNode *, bool *);
-static LLVMValueRef node_to_bool(const AstNode *const);
-static bool gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
+Expr gen_tree(AstNode *);
+static void gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
 static LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *);
 
-static bool gen_control_code_block(
+static void gen_control_code_block(
 	const AstNode *const,
 	LLVMBasicBlockRef
 );
@@ -30,9 +27,10 @@ static bool gen_control_code_block(
 Build an unreachable statement.
 */
 Expr gen_stmt_unreachable(void) {
-	LLVMBuildUnreachable(SKULL_STATE_LLVM.builder);
-
-	return (Expr){ .type = TYPE_VOID };
+	return (Expr){
+		.value = LLVMBuildUnreachable(SKULL_STATE_LLVM.builder),
+		.type = TYPE_VOID
+	};
 }
 
 void gen_stmt_implicit_main_return(const Location *location) {
@@ -61,18 +59,15 @@ void gen_stmt_noop(const Location *location) {
 Builds an return statement from `node`.
 */
 Expr gen_stmt_return(AstNode *node) {
-	AstNode *const expr_node = node->expr_node;
-	Type return_type = SKULL_STATE_LLVM.current_func->return_type;
-
-	Expr expr = (Expr){0};
-
-	if (expr_node && expr_node->type == AST_NODE_EXPR) {
-		expr = gen_expr(expr_node->expr);
+	if (!node->expr_node) {
+		return (Expr){
+			.value = LLVMBuildRetVoid(SKULL_STATE_LLVM.builder),
+			.type = TYPE_VOID
+		};
 	}
 
-	if (!expr.value && !expr.type) return (Expr){0};
+	const Expr expr = gen_expr(node->expr_node->expr);
 
-	if (return_type == TYPE_VOID) expr.type = TYPE_VOID;
 	LLVMValueRef ret = LLVMBuildRet(SKULL_STATE_LLVM.builder, expr.value);
 
 	add_llvm_debug_info(ret, &node->token->location);
@@ -82,10 +77,8 @@ Expr gen_stmt_return(AstNode *node) {
 
 /*
 Builds LLVM for a while loop from `node`.
-
-Return `true` if an error occurred.
 */
-bool gen_control_while(AstNode *node) {
+void gen_control_while(AstNode *node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		SKULL_STATE_LLVM.ctx,
 		SKULL_STATE_LLVM.current_func->ref,
@@ -105,8 +98,8 @@ bool gen_control_while(AstNode *node) {
 	LLVMBuildBr(SKULL_STATE_LLVM.builder, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_cond);
 
-	LLVMValueRef cond = node_to_bool(node->expr_node);
-	if (!cond) return true;
+	LLVMValueRef cond = gen_expr(node->expr_node->expr).value;
+	add_llvm_debug_info(cond, &node->expr_node->token->location);
 
 	LLVMBuildCondBr(
 		SKULL_STATE_LLVM.builder,
@@ -116,20 +109,15 @@ bool gen_control_while(AstNode *node) {
 	);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_loop);
-
-	if (gen_control_code_block(node, while_cond))
-		return true;
-
+	gen_control_code_block(node, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_end);
-
-	return false;
 }
 
 /*
 Builds an if block from `node`.
 */
-bool gen_control_if(AstNode **node) {
-	return gen_control_if_(
+void gen_control_if(AstNode **node) {
+	gen_control_if_(
 		node,
 		LLVMGetInsertBlock(SKULL_STATE_LLVM.builder),
 		LLVMAppendBasicBlockInContext(
@@ -142,10 +130,8 @@ bool gen_control_if(AstNode **node) {
 
 /*
 Internal function for building an `if` node.
-
-Return `true` if an error occurred.
 */
-static bool gen_control_if_(
+static void gen_control_if_(
 	AstNode **node,
 	LLVMBasicBlockRef entry,
 	LLVMBasicBlockRef end
@@ -170,9 +156,7 @@ static bool gen_control_if_(
 	LLVMMoveBasicBlockBefore(if_true, end);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_true);
-
-	if (gen_control_code_block(*node, end)) return true;
-
+	gen_control_code_block(*node, end);
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, entry);
 
 	if (next_non_comment && (
@@ -186,8 +170,8 @@ static bool gen_control_if_(
 		);
 		LLVMMoveBasicBlockAfter(end, if_false);
 
-		LLVMValueRef cond = node_to_bool((*node)->expr_node);
-		if (!cond) return true;
+		LLVMValueRef cond = gen_expr((*node)->expr_node->expr).value;
+		add_llvm_debug_info(cond, &(*node)->expr_node->token->location);
 
 		LLVMBuildCondBr(
 			SKULL_STATE_LLVM.builder,
@@ -206,13 +190,12 @@ static bool gen_control_if_(
 	// if there is an else block following the current if block
 	else if (next_non_comment && next_non_comment->type == AST_NODE_ELSE) {
 		LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_false);
-
-		if (gen_control_code_block(*node, end)) return true;
+		gen_control_code_block(*node, end);
 	}
 	// just a single if statement
 	else {
-		LLVMValueRef cond = node_to_bool((*node)->expr_node);
-		if (!cond) return true;
+		LLVMValueRef cond = gen_expr((*node)->expr_node->expr).value;
+		add_llvm_debug_info(cond, &(*node)->expr_node->token->location);
 
 		LLVMBuildCondBr(
 			SKULL_STATE_LLVM.builder,
@@ -223,33 +206,12 @@ static bool gen_control_if_(
 	}
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, end);
-
-	return false;
 }
-
-/*
-Try and parse a condition (something returning a bool) from `node`.
-
-Return `NULL` if an error occurred.
-*/
-static LLVMValueRef node_to_bool(const AstNode *const node) {
-	const Expr expr = gen_expr(node->expr);
-	if (!expr.value && !expr.type) return NULL;
-
-	add_llvm_debug_info(expr.value, &node->token->location);
-
-	return expr.value;
-}
-
 
 /*
 Parse `node` while in a new scope. Branch to `block` if no return occurred.
-
-`name` is the type of block: if, else, while, etc.
-
-Return `true` if error occurred.
 */
-static bool gen_control_code_block(
+static void gen_control_code_block(
 	const AstNode *const node,
 	LLVMBasicBlockRef block
 ) {
@@ -259,22 +221,15 @@ static bool gen_control_code_block(
 		&node->token->location
 	);
 
-	Expr returned = (Expr){0};
-
-	bool err = false;
-	if (node->child->token) returned = gen_node(node->child, &err);
+	const Expr returned = gen_tree(node->child);
 
 	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 
 	restore_parent_scope();
 
-	if (err) return true;
 	if (SEMANTIC_STATE.scope) SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
-	if (!returned.value || !node->child->token)
-		LLVMBuildBr(SKULL_STATE_LLVM.builder, block);
-
-	return false;
+	if (!returned.value) LLVMBuildBr(SKULL_STATE_LLVM.builder, block);
 }
 
 static LLVMMetadataRef add_llvm_control_flow_debug_info(

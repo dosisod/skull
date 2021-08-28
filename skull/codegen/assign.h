@@ -3,5 +3,5 @@
 typedef struct AstNodeVarAssign AstNodeVarAssign;
 typedef struct AstNodeVarDef AstNodeVarDef;
 
-_Bool gen_stmt_var_def(AstNodeVarDef *);
-_Bool gen_stmt_var_assign(AstNodeVarAssign *);
+void gen_stmt_var_def(AstNodeVarDef *);
+void gen_stmt_var_assign(AstNodeVarAssign *);
