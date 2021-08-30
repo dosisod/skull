@@ -19,7 +19,7 @@ jobs:
     - name: Run Shellcheck
       run: |
         shellcheck --version
-        shellcheck skull/skull test/sh/main.sh Makefile
+        shellcheck test/sh/main.sh Makefile
 
   test-gcc:
     runs-on: ubuntu-latest
