@@ -17,6 +17,14 @@ Write LLVM code to `filename`, return whether error occured.
 bool write_file_llvm(char *filename) {
 	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
 
+	if (BUILD_DATA.preprocess) {
+		char *msg = LLVMPrintModuleToString(SKULL_STATE_LLVM.module);
+		printf("%s", msg);
+
+		LLVMDisposeMessage(msg);
+		return false;
+	}
+
 	char *msg = NULL;
 	LLVMBool did_fail = LLVMPrintModuleToFile(
 		SKULL_STATE_LLVM.module,

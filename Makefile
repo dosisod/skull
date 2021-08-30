@@ -4,7 +4,7 @@
 
 include config.mk
 
-all: skull test docs e2e
+all: skull test docs e2e cli
 
 .PHONY: skull test docs
 
@@ -31,10 +31,15 @@ test: setup | $(OBJS_LLVM) $(OBJS_TEST)
 	@$(ECHO) "\033[92mLink\033[0m test\n"
 	@$(CC) $| -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
-e2e: setup skull/skull | $(OBJS) $(OBJS_LLVM)
+cli: setup | $(OBJS) $(OBJS_LLVM) build/objs/skull/real_main.o
+	@$(ECHO) "\033[92mLink\033[0m cli\n"
+	@$(CC) $| -DRELEASE=$(RELEASE) -DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
+		skull/cli.c -o build/skull/skull \
+		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
+
+e2e: setup | $(OBJS) $(OBJS_LLVM)
 	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
 	@$(CC) $| test/skull/e2e.c -o build/test/e2e $(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
-	@cp skull/skull build/skull/skull
 
 docs:
 	@$(ECHO) "\033[92mBuild\033[0m docs\n"
@@ -44,13 +49,11 @@ clean:
 	@$(ECHO) "\033[92mCleaning\033[0m\n"
 	@rm -rf build/*
 
-install: clean | skull
+install: clean | skull cli
 	@mkdir -p $(MANPATH)
 	@install -m 644 docs/skull/skull.1 $(MANPATH)
 	@$(ECHO) "\033[92mInstall\033[0m Skull\n"
-	@install skull/skull $(BIN)
-	@sed -i 's/SKULL_VERSION=.*$$/SKULL_VERSION='$(SKULL_VERSION)'/' $(BIN)/skull
-	@install build/skull/_skull $(BIN)
+	@install build/skull/skull $(BIN)
 	@make clean
 
 install-dev:

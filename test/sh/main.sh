@@ -115,6 +115,7 @@ test_skull "compile_with_args.sh" "./test/sh/skull/dummy.sk -- -o ./test/sh/skul
 test_skull "output_asm.sh" "./test/sh/skull/dummy.sk -S -o test/sh/skull/alt_name"
 test_skull "output_obj.sh" "./test/sh/skull/dummy.sk -c -o test/sh/skull/alt_name"
 test_skull "directory_exists.sh" "./test/sh/skull/dir.sk"
+test_skull "no_file_passed.sh" "-E"
 
 printf "\n"
 $passed || (printf "1 or more tests failed\n" && exit 1)

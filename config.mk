@@ -79,9 +79,9 @@ else
 	CFLAGS += -Wno-newline-eof
 endif
 
-_OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|codegen"))
+_OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|codegen\|cli"))
 _OBJS_TEST := $(patsubst %.c,%.o,$(shell find test/skull -name "*.c" | grep -v ".sk.c\|e2e") \
-	$(shell find skull -name "*.c" | grep -v "main\|errors\|ast_node\|hashtable\|classify\|codegen") test/testing.c)
+	$(shell find skull -name "*.c" | grep -v "main\|errors\|ast_node\|hashtable\|classify\|codegen\|cli") test/testing.c)
 _OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/codegen -name "*.c"))
 
 ODIR := build/objs

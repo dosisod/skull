@@ -5,7 +5,7 @@ stop() {
 	exit 1
 }
 
-make TRACE=1 clean all || stop
+make DEBUG=1 TRACE=1 clean all || stop
 
 ./build/test/test || stop
 
@@ -25,4 +25,4 @@ printf "\nRunning shellcheck\n"
 SUDO=$(command -v doas || command -v sudo)
 
 $SUDO docker run --rm -v "$PWD:/mnt" koalaman/shellcheck:stable \
-	skull/skull test/sh/main.sh Makefile || stop
+	test/sh/main.sh Makefile || stop
