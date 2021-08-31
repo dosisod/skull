@@ -116,6 +116,10 @@ test_skull "output_asm.sh" "./test/sh/skull/dummy.sk -S -o test/sh/skull/alt_nam
 test_skull "output_obj.sh" "./test/sh/skull/dummy.sk -c -o test/sh/skull/alt_name"
 test_skull "directory_exists.sh" "./test/sh/skull/dir.sk"
 test_skull "no_file_passed.sh" "-E"
+test_skull "multiple_dash_e.sh" "-E -E"
+test_skull "multiple_dash_c.sh" "-c -c"
+test_skull "multiple_dash_s.sh" "-S -S"
+test_skull "dash_dash_no_file_no_memory_leak.sh" "--"
 
 printf "\n"
 $passed || (printf "1 or more tests failed\n" && exit 1)

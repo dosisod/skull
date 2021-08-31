@@ -45,12 +45,33 @@ int main(int argc, char *argv[]) {
 			switch (argv[arg][1]) {
 				case 'h': return usage();
 				case 'v': return version();
-				case 'c': BUILD_DATA.compile_only = true; break;
-				case 'S': BUILD_DATA.asm_backend = true; break;
-				case 'E': BUILD_DATA.preprocess = true; break;
+				case 'c': {
+					if (BUILD_DATA.compile_only) {
+						puts("skull: -c cannot be used more then once");
+						return 1;
+					}
+					BUILD_DATA.compile_only = true;
+					break;
+				}
+				case 'S': {
+					if (BUILD_DATA.asm_backend) {
+						puts("skull: -S cannot be used more then once");
+						return 1;
+					}
+					BUILD_DATA.asm_backend = true;
+					break;
+				}
+				case 'E': {
+					if (BUILD_DATA.preprocess) {
+						puts("skull: -E cannot be used more then once");
+						return 1;
+					}
+					BUILD_DATA.preprocess = true;
+					break;
+				}
 				case 'o': BUILD_DATA.out_filename = strdup(argv[++arg]); break;
 				case '-': {
-					args = squash_argv(argv + arg + 1);
+					if (argc != 2) args = squash_argv(argv + arg + 1);
 					arg = argc;
 					break;
 				}
@@ -66,6 +87,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (!filename) {
+		if (*args) free(args); // NOLINT
 		puts("skull: expected filename");
 		return 1;
 	}
