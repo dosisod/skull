@@ -4,7 +4,7 @@
 
 include config.mk
 
-all: skull test docs e2e cli
+all: skull test docs e2e
 
 .PHONY: skull test docs
 
@@ -19,10 +19,6 @@ options:
 setup:
 	@mkdir $(DIRS) -p
 
-skull: setup | $(OBJS) $(OBJS_LLVM) $(OBJS_MAIN)
-	@$(ECHO) "\033[92mLink\033[0m Skull\n"
-	@$(CC) $| -o build/skull/_skull $(CFLAGS) $(LLVM_LDFLAGS)
-
 $(ODIR)/%.o: %.c %.h
 	@$(ECHO) "\033[92mCompile\033[0m $<\n"
 	@$(CC) $< -c -o "$@" $(CFLAGS) $(LLVM_CFLAGS)
@@ -31,8 +27,8 @@ test: setup | $(OBJS_LLVM) $(OBJS_TEST)
 	@$(ECHO) "\033[92mLink\033[0m test\n"
 	@$(CC) $| -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
-cli: setup | $(OBJS) $(OBJS_LLVM) build/objs/skull/real_main.o
-	@$(ECHO) "\033[92mLink\033[0m cli\n"
+skull: setup | $(OBJS) $(OBJS_LLVM) build/objs/skull/real_main.o
+	@$(ECHO) "\033[92mLink\033[0m skull\n"
 	@$(CC) $| -DRELEASE=$(RELEASE) -DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
 		skull/cli.c -o build/skull/skull \
 		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
@@ -49,7 +45,7 @@ clean:
 	@$(ECHO) "\033[92mCleaning\033[0m\n"
 	@rm -rf build/*
 
-install: clean | skull cli
+install: clean | skull
 	@mkdir -p $(MANPATH)
 	@install -m 644 docs/skull/skull.1 $(MANPATH)
 	@$(ECHO) "\033[92mInstall\033[0m Skull\n"
@@ -64,7 +60,6 @@ install-dev:
 uninstall:
 	@$(ECHO) "\033[92mUninstall\033[0m Skull\n"
 	@rm -f $(BIN)/skull
-	@rm -f $(BIN)/_skull
 	@$(ECHO) "\033[92mUninstall\033[0m Skull docs\n"
 	@rm -f $(MANPATH)skull.1
 	@$(ECHO) "\033[92mUninstall\033[0m Skull headers\n"

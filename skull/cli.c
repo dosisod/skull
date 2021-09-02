@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdnoreturn.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -26,77 +27,98 @@
 
 static int usage(void);
 static int version(void);
-static int handle_file(char *, char *);
-static int run_llc(char *);
-static int run_cc(char *, char *, char *);
+static int handle_file(void);
+static int run_llc(void);
+static int run_cc(char *);
 static bool is_directory(const char *);
 static const char *module_shim;
 static char *squash_argv(char *[]);
 static int sh(char *[]);
+static int handle_args(int, char *[]);
+static void cleanup(void);
+static noreturn void bail(int);
+
+char *filename = NULL;
+char *args = (char[]){0};
+char *out_filename = NULL;
 
 int main(int argc, char *argv[]) {
 	if (argc == 1) return usage();
 
-	char *filename = NULL;
-	char *args = (char[]){0};
-
-	for (int arg = 1; arg < argc; arg++) {
-		if (*argv[arg] == '-') {
-			switch (argv[arg][1]) {
-				case 'h': return usage();
-				case 'v': return version();
-				case 'c': {
-					if (BUILD_DATA.compile_only) {
-						puts("skull: -c cannot be used more then once");
-						return 1;
-					}
-					BUILD_DATA.compile_only = true;
-					break;
-				}
-				case 'S': {
-					if (BUILD_DATA.asm_backend) {
-						puts("skull: -S cannot be used more then once");
-						return 1;
-					}
-					BUILD_DATA.asm_backend = true;
-					break;
-				}
-				case 'E': {
-					if (BUILD_DATA.preprocess) {
-						puts("skull: -E cannot be used more then once");
-						return 1;
-					}
-					BUILD_DATA.preprocess = true;
-					break;
-				}
-				case 'o': BUILD_DATA.out_filename = strdup(argv[++arg]); break;
-				case '-': {
-					if (argc != 2) args = squash_argv(argv + arg + 1);
-					arg = argc;
-					break;
-				}
-				default: {
-					printf("skull: unknown option \"%s\"\n", argv[arg]);
-					return 1;
-				}
-			}
-		}
-		else {
-			filename = argv[arg];
-		}
-	}
+	const int exit_code = handle_args(argc - 1, argv + 1);
+	if (exit_code) return exit_code;
 
 	if (!filename) {
-		if (*args) free(args); // NOLINT
 		puts("skull: expected filename");
 		return 1;
 	}
 
-	return handle_file(filename, args);
+	if (!strrstr(filename, ".sk")) {
+		printf("skull: missing required \".sk\" extension, exiting");
+		free(out_filename);
+		return 1;
+	}
+
+	return handle_file();
 }
 
-static int handle_file(char *filename, char *args) {
-	char *binary_name = strdup(filename);
+static int handle_args(int argc, char *argv[]) {
+	if (argc == 0) return 0;
+
+	if (**argv != '-') {
+		filename = argv[0];
+		return handle_args(--argc, ++argv);
+	}
+
+	switch (argv[0][1]) {
+		case 'h': bail(usage());
+		case 'v': bail(version());
+		case 'c': {
+			if (BUILD_DATA.compile_only) {
+				puts("skull: -c cannot be used more then once");
+				bail(1);
+			}
+			BUILD_DATA.compile_only = true;
+			break;
+		}
+		case 'S': {
+			if (BUILD_DATA.asm_backend) {
+				puts("skull: -S cannot be used more then once");
+				bail(1);
+			}
+			BUILD_DATA.asm_backend = true;
+			break;
+		}
+		case 'E': {
+			if (BUILD_DATA.preprocess) {
+				puts("skull: -E cannot be used more then once");
+				bail(1);
+			}
+			BUILD_DATA.preprocess = true;
+			break;
+		}
+		case 'o': {
+			free(out_filename);
+			out_filename = strdup(argv[1]);
+			BUILD_DATA.out_file = out_filename;
+			argc--;
+			break;
+		}
+		case '-': {
+			if (argc != 1) args = squash_argv(argv + 1);
+			return 0; // might not work
+		}
+		default: {
+			printf("skull: unknown option \"%s\"\n", *argv);
+			bail(1);
+		}
+	}
+
+	return handle_args(--argc, ++argv);
+}
+
+static int handle_file(void) {
+	char *binary_name = strdup(filename); // NOLINT
 	char *last_dot = strrchr(binary_name, '.');
 	binary_name[last_dot - binary_name] = '\0';
 
@@ -107,8 +129,9 @@ static int handle_file(char *filename, char *args) {
 	}
 
 	const int err = real_main(2, (char *[]){ NULL, filename, NULL });
-	if (err) {
+	if (err || BUILD_DATA.preprocess || BUILD_DATA.c_backend) {
 		free(binary_name);
+		free(out_filename);
 		return err;
 	}
 
@@ -117,23 +140,25 @@ static int handle_file(char *filename, char *args) {
 		return 0;
 	}
 
-	const int exit_code = run_llc(filename);
+	const int exit_code = run_llc();
 	if (exit_code) {
 		free(binary_name);
+		free(out_filename);
 		return exit_code;
 	}
 
 	if (BUILD_DATA.asm_backend || BUILD_DATA.compile_only) {
 		free(binary_name);
+		free(out_filename);
 		return 0;
 	}
 
-	return run_cc(filename, binary_name, args);
+	return run_cc(binary_name);
 }
 
-static int run_llc(char *filename) {
-	if (!BUILD_DATA.out_filename) {
-		BUILD_DATA.out_filename = gen_filename(
+static int run_llc(void) {
+	if (!out_filename) {
+		out_filename = gen_filename(
 			filename,
 			BUILD_DATA.asm_backend ? "s" : "o"
 		);
@@ -149,16 +174,16 @@ static int run_llc(char *filename) {
 
 	static char dash_o[] = "-o";
 
-	char *args[] = {
+	char *_args[] = {
 		llc_cmd,
 		llvm_file,
 		filetype,
 		dash_o,
-		BUILD_DATA.out_filename,
+		out_filename,
 		NULL
 	};
 
-	const int exit_code = sh(args);
+	const int exit_code = sh(_args);
 
 	errno = 0;
 	remove(llvm_file);
@@ -175,13 +200,13 @@ static int run_llc(char *filename) {
 	return exit_code;
 }
 
-static int run_cc(char *filename, char *binary_name, char *args) {
+static int run_cc(char *binary_name) {
 	char *module_name = create_main_func_name(filename);
 
 	char *shim = uvsnprintf(
 		module_shim,
 		module_name,
-		BUILD_DATA.out_filename,
+		out_filename,
 		binary_name,
 		args
 	);
@@ -193,8 +218,8 @@ static int run_cc(char *filename, char *binary_name, char *args) {
 
 	const int exit_code = sh((char *[]){ shell, dash_c, shim, NULL });
 
-	remove(BUILD_DATA.out_filename);
-	free(BUILD_DATA.out_filename);
+	remove(out_filename);
+	free(out_filename);
 	free(shim);
 	if (*args) free(args); // NOLINT
 
@@ -300,6 +325,17 @@ static int sh(char *argv[]) {
 	wait(&status);
 
 	return WEXITSTATUS(status);
+}
+
+static void bail(int exit_code) {
+	cleanup();
+	exit(exit_code);
+}
+
+static void cleanup(void) {
+	free(filename);
+	free(out_filename);
+	if (*args) free(args); // NOLINT
 }
 
 static const char *module_shim = \

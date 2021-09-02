@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <llvm-c/Core.h>
 #include <llvm-c/DebugInfo.h>
@@ -17,7 +18,7 @@ Write LLVM code to `filename`, return whether error occured.
 bool write_file_llvm(char *filename) {
 	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
 
-	if (BUILD_DATA.preprocess) {
+	if (strcmp(filename, "-") == 0) {
 		char *msg = LLVMPrintModuleToString(SKULL_STATE_LLVM.module);
 		printf("%s", msg);
 

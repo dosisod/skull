@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <string.h>
 
 #include "skull/build_data.h"
 #include "skull/codegen/c/write.h"
@@ -18,7 +19,16 @@ bool write_file(const char *filename) {
 		err = write_file_c(new_filename);
 	}
 	else {
-		new_filename = gen_filename(filename, "ll");
+		if (BUILD_DATA.out_file && BUILD_DATA.preprocess) {
+			new_filename = strdup(BUILD_DATA.out_file);
+		}
+		else if (BUILD_DATA.preprocess) {
+			new_filename = strdup("-");
+		}
+		else {
+			new_filename = gen_filename(filename, "ll");
+		}
+
 		err = write_file_llvm(new_filename);
 	}
 

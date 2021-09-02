@@ -2,7 +2,7 @@
 
 typedef struct {
 	const char *filename;
-	char *out_filename;
+	char *out_file;
 	_Bool quiet : 1;
 	_Bool c_backend : 1;
 	_Bool asm_backend : 1;

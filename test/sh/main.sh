@@ -25,7 +25,7 @@ test_c_backend() {
 	printf "%s" "$dir/$file "
 
 	rm -f "./$dir/.$file.ll"
-	C_BACKEND=1 ./build/skull/_skull "./$dir/$file" 2> /dev/null
+	C_BACKEND=1 ./build/skull/skull "./$dir/$file" 2> /dev/null
 	[ "$?" = "0" ] || { fail; return; }
 
 	compare "./$dir/_$file.c" "./$dir/.$file.c"
@@ -40,7 +40,7 @@ test_llvm_debug() {
 	printf "%s" "$dir/$file "
 
 	rm -f "./$dir/.$file.ll"
-	DEBUG=1 ./build/skull/_skull "./$dir/$file" 2> /dev/null
+	DEBUG=1 ./build/skull/skull "./$dir/$file" -E -o "./$dir/.$file.ll" 2> /dev/null
 	[ "$?" = "0" ] || { fail; return; }
 
 	sed -i "s/directory: \"\(.*\)\"/directory: \".\"/" "./$dir/.$file.ll"
@@ -52,7 +52,7 @@ test_llvm_debug() {
 test_option() {
 	printf "%s" "$1 "
 
-	[ "$(./build/skull/_skull "./test/sh/$1" 2>&1)" = "$2" ] && pass || fail
+	[ "$(./build/skull/skull "$1" 2>&1)" = "$2" ] && pass || fail
 }
 
 test_skull() {
@@ -88,7 +88,7 @@ touch test/sh/error/read_protected.sk
 chmod 200 test/sh/error/read_protected.sk
 printf "skull: cannot open \"./test/sh/error/read_protected.sk\", permission denied\n" > test/sh/error/_read_protected.sk.out
 
-./build/skull/_skull "./test/sh/error/read_protected.sk" 2> "./test/sh/error/.read_protected.sk.out"
+./build/skull/skull "./test/sh/error/read_protected.sk" 2> "./test/sh/error/.read_protected.sk.out"
 [ "$?" = "1" ] || { fail; passed=false; }
 printf "%s" "test/sh/error/read_protected.sk"
 
@@ -101,7 +101,7 @@ rm test/sh/error/read_protected.sk
 
 test_option "missing_file_extension_fails" "skull: missing required \".sk\" extension, exiting"
 test_option ".sk" "skull: \".sk\" is not a valid name, exiting"
-test_option "not_a_file.sk" "skull: \"./test/sh/not_a_file.sk\" was not found, exiting"
+test_option "not_a_file.sk" "skull: \"not_a_file.sk\" was not found, exiting"
 
 test_skull "version.sh" "-v"
 test_skull "help.sh" "-h"
