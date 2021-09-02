@@ -3,7 +3,7 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-  clang-tidy-and-shellcheck:
+  lint-and-semantics:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -14,12 +14,15 @@ jobs:
     - name: Run clang-tidy-10
       run: |
         clang-tidy-10 --version
-        ./.github/workflows/clang_tidy.sh
+        ./test/clang_tidy.sh
 
     - name: Run Shellcheck
       run: |
         shellcheck --version
         shellcheck test/sh/main.sh Makefile
+
+    - name: Check line length
+      run: ./test/line_len.sh
 
   test-gcc:
     runs-on: ubuntu-latest

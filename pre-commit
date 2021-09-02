@@ -10,10 +10,8 @@ make DEBUG=1 TRACE=1 clean all || stop
 ./build/test/test || stop
 
 ./test/sh/main.sh || stop
-
-./.github/workflows/clang_tidy.sh || stop
-
-./.github/workflows/line_len.sh || stop
+./test/clang_tidy.sh || stop
+./test/line_len.sh || stop
 
 cd test/docs/c-integration/
 make SKULL=../../../build/skull/skull || stop
