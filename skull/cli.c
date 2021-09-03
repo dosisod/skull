@@ -98,6 +98,11 @@ static int handle_args(int argc, char *argv[]) {
 			break;
 		}
 		case 'o': {
+			if (argc == 1) {
+				puts("skull: expected filename after -o");
+				bail(1);
+			}
+
 			free(out_filename);
 			out_filename = strdup(argv[1]);
 			BUILD_DATA.out_file = out_filename;
