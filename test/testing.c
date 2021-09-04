@@ -18,7 +18,7 @@ void run_many_tests(Test tests[], bool *pass) {
 	}
 }
 
-bool test_pass_macro() {
+bool __attribute__((const)) test_pass_macro() {
 	PASS;
 }
 

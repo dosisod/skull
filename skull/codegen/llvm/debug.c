@@ -44,11 +44,10 @@ LLVMDIBuilderRef setup_debug_info(
 	DI_TYPE_RUNE = type_to_llvm_di_type(TYPE_RUNE);
 	DI_TYPE_STR = type_to_llvm_di_type(TYPE_STR);
 
-	char cwd[256];
-	errno = 0;
-	getcwd(cwd, 256);
+	char cwd[PATH_MAX];
 
-	if (errno) {
+	errno = 0;
+	if (!getcwd(cwd, PATH_MAX)) {
 		perror("getcwd");
 		return NULL;
 	}
@@ -182,7 +181,7 @@ LLVMMetadataRef make_llvm_debug_location(const Location *location) {
 	);
 }
 
-LLVMMetadataRef type_to_di_type(Type type) {
+LLVMMetadataRef __attribute__((pure)) type_to_di_type(Type type) {
 	if (type == TYPE_BOOL) return DI_TYPE_BOOL;
 	if (type == TYPE_INT) return DI_TYPE_INT;
 	if (type == TYPE_FLOAT) return DI_TYPE_FLOAT;

@@ -260,7 +260,10 @@ static int version(void) {
 		return 1;
 	}
 
-	fgets(version_buf, VERSION_MAX, f);
+	errno = 0;
+	if (!fgets(version_buf, VERSION_MAX, f)) {
+		perror("fgets");
+	}
 
 	char *newline = strchr(version_buf, '\n');
 	if (newline) version_buf[newline - version_buf] = '\0';
@@ -297,9 +300,9 @@ static char *squash_argv(char *argv[]) {
 	size_t wrote = 0;
 
 	while (*argv) {
-		const size_t current_len = strlen(*argv);
-		strncpy(out + wrote, *argv, current_len);
-		wrote += current_len + 1;
+		const size_t current_len = strlen(*argv) + 1;
+		memcpy(out + wrote, *argv, current_len);
+		wrote += current_len;
 		out[wrote - 1] = ' ';
 		argv++;
 	}
