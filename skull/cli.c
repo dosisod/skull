@@ -343,31 +343,6 @@ static void cleanup(void) {
 	if (*args) free(args); // NOLINT
 }
 
-static const char *module_shim = \
-"echo \'_Bool _strcmp(const char *a, const char *b) {\n" \
-"	while (*a && *b) {\n" \
-"		if (*a != *b) {\n" \
-"			return 0;\n" \
-"		}\n" \
-"		a++;\n" \
-"		b++;\n" \
-"	}\n" \
-"\n" \
-"	return !*a && !*b;\n" \
-"}\n" \
-"\n" \
-"#include <math.h>\n" \
-"double _float_pow(double base, double exp) {\n" \
-"	return pow(base, exp);\n" \
-"}\n" \
-"\n" \
-"#include <stdint.h>\n" \
-"int64_t _int_pow(int64_t base, int64_t exp) {\n" \
-"	int64_t result = base;\n" \
-"	for (int64_t i = 1; i < exp; i++) result *= base;\n" \
-"	return result;\n" \
-"}\n" \
-"\n" \
-"int main(void) {\n" \
-"	int x(void) __asm__(\"%s\"); return x();\n" \
-"}\n\' | cc \"%s\" -o \"%s\" %s -I/usr/include/skull -x c - -lm";
+
+#include "skull/cc_shim.h"
+static const char *module_shim = SHIM;
