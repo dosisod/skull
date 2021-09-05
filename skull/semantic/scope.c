@@ -83,7 +83,7 @@ void make_child_scope(void) {
 	Scope *scope = SEMANTIC_STATE.scope;
 	if (!scope) scope = make_scope();
 
-	Scope *child = make_scope();
+	Scope *child = scope->child ? scope->child : make_scope();
 
 	scope->child = child;
 	child->parent = scope;

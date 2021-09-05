@@ -70,7 +70,10 @@ bool validate_stmt_func_decl(const AstNode *node) {
 bool post_validate_stmt_func_decl(const AstNode *node) {
 	const FunctionDeclaration *func = SEMANTIC_STATE.current_func;
 
-	if (func->is_external) return true;
+	if (func->is_external) {
+		make_adjacent_scope();
+		return true;
+	}
 
 	const AstNode *terminal_node = node->child;
 
@@ -111,12 +114,15 @@ static bool validate_func_params(
 
 	function->param_types = Calloc(function->num_params, sizeof(Type));
 
+	make_child_scope();
+
 	for RANGE(i, function->num_params) {
 		function->param_types[i] = find_type(params[i]->type_name);
 
 		if (!function->param_types[i]) {
 			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = params[i]->type_name });
 
+			restore_parent_scope();
 			return false;
 		}
 
@@ -154,11 +160,13 @@ static bool validate_func_params(
 			free_variable(param_var);
 			free(symbol);
 
+			restore_parent_scope();
 			return false;
 		}
 
 		function->params[i]->var = param_var;
 	}
+	restore_parent_scope();
 
 	return true;
 }

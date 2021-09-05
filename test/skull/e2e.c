@@ -1990,6 +1990,42 @@ NULL
 );
 
 
+/*
+pass |= e2e_wrapper(
+"a(x: Int) { noop }\n" \
+"b(x: Int) { noop }\n" \
+"external c(x: Int)\n" \
+"external d(x: Int)\n",
+
+TEST_DIR"/func/per_scope_params.sk",
+
+"; ModuleID = 'tmp.sk'\n" \
+"source_filename = \"tmp.sk\"\n" \
+"\n" \
+"define i64 @.tmp() {\n" \
+"entry:\n" \
+"  ret i64 0\n" \
+"}\n" \
+"\n" \
+"define private void @a(i64 %0) {\n" \
+"entry:\n" \
+"  ret void\n" \
+"}\n" \
+"\n" \
+"define private void @b(i64 %0) {\n" \
+"entry:\n" \
+"  ret void\n" \
+"}\n" \
+"\n" \
+"declare void @c(i64)\n" \
+"\n" \
+"declare void @d(i64)\n",
+
+NULL
+);
+*/
+
+
 // error tests
 
 pass |= e2e_wrapper(
@@ -2593,8 +2629,8 @@ TEST_DIR"/error/func/param_bad_type.sk",
 
 NULL,
 
-"./test/sh/error/func/param_bad_type.sk: Compilation error: line 3 column 1: variable \"x\" already defined\n" \
-"./test/sh/error/func/param_bad_type.sk: Warning: line 1 column 10: function \"f\" is unused\n"
+"./test/sh/error/func/param_bad_type.sk: Compilation error: line 5 column 3: expected param of type \"Int\", got \"Bool\"\n" \
+"./test/sh/error/func/param_bad_type.sk: Warning: line 3 column 1: variable \"x\" is unused\n"
 );
 
 
