@@ -110,6 +110,10 @@ static int handle_args(int argc, char *argv[]) {
 			break;
 		}
 		case '-': {
+			if (argv[0][2]) {
+				puts("skull: long options not supported");
+				bail(1);
+			}
 			if (argc != 1) args = squash_argv(argv + 1);
 			return 0; // might not work
 		}
