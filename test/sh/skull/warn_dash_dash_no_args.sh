@@ -1,6 +1,6 @@
 #!/bin/sh
 
 case "$@" in
-	*"expected filename"*) ;;
+	*"expected arguments after --"*) ;;
 	*) exit 1 ;;
 esac

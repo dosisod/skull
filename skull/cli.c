@@ -114,8 +114,13 @@ static int handle_args(int argc, char *argv[]) {
 				puts("skull: long options not supported");
 				bail(1);
 			}
-			if (argc != 1) args = squash_argv(argv + 1);
-			return 0; // might not work
+			if (argc == 1) {
+				puts("skull: expected arguments after --");
+				bail(1);
+			}
+
+			args = squash_argv(argv + 1);
+			return 0;
 		}
 		default: {
 			printf("skull: unknown option \"%s\"\n", *argv);
@@ -345,7 +350,6 @@ static void bail(int exit_code) {
 }
 
 static void cleanup(void) {
-	free(filename);
 	free(out_filename);
 	if (*args) free(args); // NOLINT
 }

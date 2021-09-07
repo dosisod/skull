@@ -119,7 +119,7 @@ test_skull "no_file_passed.sh" "-E"
 test_skull "multiple_dash_e.sh" "-E -E"
 test_skull "multiple_dash_c.sh" "-c -c"
 test_skull "multiple_dash_s.sh" "-S -S"
-test_skull "dash_dash_no_file_no_memory_leak.sh" "--"
+test_skull "warn_dash_dash_no_args.sh" "--"
 test_skull "dash_o_expect_filename.sh" "-o"
 test_skull "no_long_option.sh" "--version"
 
