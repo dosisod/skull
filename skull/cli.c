@@ -235,7 +235,7 @@ static int run_cc(char *binary_name) {
 	remove(out_filename);
 	free(out_filename);
 	free(shim);
-	if (*args) free(args); // NOLINT
+	if (*args) free(args);
 
 	return exit_code;
 }
@@ -351,7 +351,7 @@ static void bail(int exit_code) {
 
 static void cleanup(void) {
 	free(out_filename);
-	if (*args) free(args); // NOLINT
+	if (*args) free(args);
 }
 
 
