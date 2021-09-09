@@ -177,6 +177,10 @@ static int run_llc(void) {
 			BUILD_DATA.asm_backend ? "s" : "o"
 		);
 	}
+	if (!BUILD_DATA.asm_backend && strcmp(out_filename, "-") == 0) {
+		puts("skull: cannot print binary file to stdout");
+		return 1;
+	}
 
 	// TODO(dosisod): autodetect which llc to use
 	char *llc_cmd = strdup("llc-10");

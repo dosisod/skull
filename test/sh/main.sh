@@ -122,6 +122,7 @@ test_skull "multiple_dash_s.sh" "-S -S"
 test_skull "warn_dash_dash_no_args.sh" "--"
 test_skull "dash_o_expect_filename.sh" "-o"
 test_skull "no_long_option.sh" "--version"
+test_skull "dash_o_no_binary.sh" "./test/sh/skull/dummy.sk -o -"
 
 printf "\n"
 $passed || (printf "1 or more tests failed\n" && exit 1)
