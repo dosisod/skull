@@ -32,6 +32,7 @@ static int run_llc(void);
 static int run_cc(char *);
 static bool is_directory(const char *);
 static const char *module_shim;
+static bool parse_long_option(const char *);
 static char *squash_argv(char *[]);
 static int sh(char *[]);
 static int handle_args(int, char *[]);
@@ -111,8 +112,10 @@ static int handle_args(int argc, char *argv[]) {
 		}
 		case '-': {
 			if (argv[0][2]) {
-				puts("skull: long options not supported");
-				bail(1);
+				const bool fail = parse_long_option(argv[0] + 2);
+				if (fail) bail(1);
+
+				break;
 			}
 			if (argc == 1) {
 				puts("skull: expected arguments after --");
@@ -296,6 +299,15 @@ static bool is_directory(const char *path) {
 	 if (stat(path, &statbuf) != 0) return false;
 
 	 return S_ISDIR(statbuf.st_mode);
+}
+
+// return true if an error occurs
+static bool parse_long_option(const char *arg) {
+	if (strcmp(arg, "version") == 0) bail(version());
+	if (strcmp(arg, "help") == 0) bail(usage());
+
+	printf("skull: unknown option \"--%s\"\n", arg);
+	return true;
 }
 
 static char *squash_argv(char *argv[]) {
