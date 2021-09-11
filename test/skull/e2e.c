@@ -2026,6 +2026,25 @@ NULL
 */
 
 
+pass |= e2e_wrapper(
+"a := Int\n" \
+"b := a\n" \
+"c: b = 1\n",
+
+TEST_DIR"/misc/alias_type_alias.sk",
+
+"; ModuleID = './test/sh/misc/alias_type_alias.sk'\n" \
+"source_filename = \"./test/sh/misc/alias_type_alias.sk\"\n" \
+"\n" \
+"define i64 @.alias_type_alias() {\n" \
+"entry:\n" \
+"  ret i64 0\n" \
+"}\n",
+
+NULL
+);
+
+
 // error tests
 
 pass |= e2e_wrapper(

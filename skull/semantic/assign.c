@@ -19,6 +19,12 @@ bool validate_expr(AstNode *);
 
 
 bool validate_stmt_var_def(const AstNode *node) {
+	char *name = token_to_mbs_str(node->var_def->expr_node->token);
+	Type type = find_type(name);
+	free(name);
+
+	if (type) return validate_stmt_type_alias(node);
+
 	Variable *var = node_to_var(node);
 	if (!var) return false;
 

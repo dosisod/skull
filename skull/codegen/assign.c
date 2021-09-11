@@ -25,6 +25,9 @@ Builds a variable definition from `expr_node`.
 void gen_stmt_var_def(AstNodeVarDef *var_def) {
 	Variable *var = var_def->var;
 
+	// this is actually a type alias, nothing to generate
+	if (!var) return;
+
 	LLVMValueRef value = gen_expr(var_def->expr_node->expr).value;
 
 	setup_var_llvm(value, var);
