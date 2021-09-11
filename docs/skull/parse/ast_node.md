@@ -147,12 +147,6 @@ static bool parse_return(Token **token, AstNode **node)
 > Return `true` if error occurred.
 
 ```c
-static bool parse_type_alias(Token **token, AstNode **node)
-```
-
-> Try and generate a type alias node from `token`.
-
-```c
 static bool parse_var_def(Token **_token, AstNode **node, bool *err)
 ```
 

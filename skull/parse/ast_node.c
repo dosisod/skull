@@ -23,10 +23,6 @@ static void push_ast_node(Token *const, Token *, NodeType, AstNode **);
 	((tok) && (tok)->type == (type1) && \
 	(tok)->next && (tok)->next->type == (type2))
 
-#define AST_TOKEN_CMP3(tok, type1, type2, type3) \
-	(AST_TOKEN_CMP2(tok, type1, type2) && \
-	(tok)->next->next && (tok)->next->next->type == (type3))
-
 /*
 Makes an AST (abstract syntax tree) from a given string.
 */
@@ -65,25 +61,6 @@ static bool parse_return(Token **token, AstNode **node) {
 	if (added_expr) splice_expr_node(*node);
 
 	return false;
-}
-
-/*
-Try and generate a type alias node from `token`.
-*/
-static bool parse_type_alias(Token **token, AstNode **node) {
-	if (!AST_TOKEN_CMP3(*token,
-		TOKEN_IDENTIFIER,
-		TOKEN_OPER_AUTO_EQUAL,
-		TOKEN_TYPE)
-	) {
-		return false;
-	}
-
-	Token *next = (*token)->next->next->next;
-	push_ast_node(next, *token, AST_NODE_TYPE_ALIAS, node);
-
-	*token = next->next;
-	return true;
 }
 
 #define IS_TYPE_LIKE(token) \
@@ -141,6 +118,11 @@ static bool parse_var_def(Token **_token, AstNode **node, bool *err) {
 
 	push_ast_node(*_token, last, AST_NODE_VAR_DEF, node);
 	*_token = (*_token)->next;
+
+	if ((*_token)->type == TOKEN_TYPE) {
+		*_token = (*_token)->next;
+		return true;
+	}
 
 	const bool success = parse_expression(_token, node, err);
 	if (*err) return false;
@@ -597,7 +579,6 @@ static bool parse_ast_node(
 		*token = (*token)->next;
 	}
 	else if (
-		parse_type_alias(token, node) ||
 		parse_function_proto(token, node, err) ||
 		(!*err && parse_var_def(token, node, err)) ||
 		(!*err && parse_var_assign(token, node, err)) ||

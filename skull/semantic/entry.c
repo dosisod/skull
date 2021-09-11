@@ -71,7 +71,6 @@ static bool validate_ast_node(const AstNode *node) {
 		case AST_NODE_RETURN: return validate_stmt_return(node);
 		case AST_NODE_UNREACHABLE: return validate_stmt_unreachable(node);
 		case AST_NODE_FUNCTION_PROTO: return validate_stmt_func_decl(node);
-		case AST_NODE_TYPE_ALIAS: return validate_stmt_type_alias(node);
 		case AST_NODE_VAR_DEF: return validate_stmt_var_def(node);
 		case AST_NODE_VAR_ASSIGN: return validate_stmt_var_assign(node);
 		case AST_NODE_EXPR: return validate_expr_func(node);
