@@ -81,8 +81,10 @@ void restore_parent_scope(void)
 > Free current scope, set current scope to parent scope.
 
 ```c
-void free_scope(Scope *scope)
+bool free_scope(Scope *scope)
 ```
 
 > Frees a `scope` and all the symbols inside of it.
+> \
+> Return `true` if an error occurred.
 

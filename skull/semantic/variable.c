@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "skull/build_data.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
@@ -37,24 +38,31 @@ Variable *make_variable(
 
 /*
 Free variable `var`.
+
+Return `true` if an error occurred.
 */
-void free_variable(Variable *var) {
-	if (!var) return;
+bool free_variable(Variable *var) {
+	if (!var) return false;
+
+	bool err = false;
 
 	if (!SKULL_TESTING) {
-		if (!var->is_const && !var->was_reassigned)
-			FMT_WARN(WARN_VAR_NOT_CONST, {
+		if (!var->is_const && !var->was_reassigned) {
+			FMT_WARN(err, WARN_VAR_NOT_CONST, {
 				.var = var, .loc = &var->location
 			});
-
-		if (!var->was_read && !var->is_exported)
-			FMT_WARN(WARN_VAR_UNUSED, {
+		}
+		if (!var->was_read && !var->is_exported) {
+			FMT_WARN(err, WARN_VAR_UNUSED, {
 				.var = var, .loc = &var->location
 			});
+		}
 	}
 
 	free(var->name);
 	free(var);
+
+	return err;
 }
 
 /*

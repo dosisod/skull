@@ -145,16 +145,18 @@ void restore_parent_scope(void) {
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->parent;
 }
 
+static bool FREE_SYMBOL_ERRORED;
+
 static void free_ht_symbol(HashItem *item) {
 	Symbol *symbol = item->data;
 
 	if (!symbol) return;
 
 	if (symbol->type == SYMBOL_VAR) {
-		free_variable(symbol->var);
+		FREE_SYMBOL_ERRORED |= free_variable(symbol->var);
 	}
 	else if (symbol->type == SYMBOL_FUNC) {
-		free_function_declaration(symbol->func);
+		FREE_SYMBOL_ERRORED |= free_function_declaration(symbol->func);
 	}
 	else if (symbol->type == SYMBOL_ALIAS) {
 		free(symbol->name);
@@ -165,15 +167,24 @@ static void free_ht_symbol(HashItem *item) {
 
 /*
 Frees a `scope` and all the symbols inside of it.
+
+Return `true` if an error occurred.
 */
-void free_scope(Scope *scope) {
+bool free_scope(Scope *scope) {
 	if (scope) {
 		if (scope->symbols)
 			free_ht(scope->symbols, (void(*)(void *))free_ht_symbol);
 
-		if (scope->child) free_scope(scope->child);
-		if (scope->next) free_scope(scope->next);
+		bool fail = FREE_SYMBOL_ERRORED;
+		FREE_SYMBOL_ERRORED = false;
+
+		if (scope->child) fail |= free_scope(scope->child);
+		if (scope->next) fail |= free_scope(scope->next);
 
 		free(scope);
+
+		return fail;
 	}
+
+	return false;
 }

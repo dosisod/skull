@@ -50,8 +50,8 @@ int run_pipeline(const char *filename, char *file_contents) {
 
 	setup_semantic_state();
 
-	bool ok = validate_ast_tree(node);
-	if (ok) {
+	bool err = !validate_ast_tree(node);
+	if (!err) {
 		setup_llvm_state();
 
 		if (BUILD_DATA.debug) {
@@ -59,14 +59,14 @@ int run_pipeline(const char *filename, char *file_contents) {
 		}
 
 		gen_module(node);
-		ok = !write_file(filename);
+		err = write_file(filename);
 	}
 
 	free_ast_tree(node);
 	free(_file_contents);
 	free(file_contents);
 	free_llvm_state();
-	free_semantic_state();
+	err |= free_semantic_state();
 
-	return !ok;
+	return err;
 }

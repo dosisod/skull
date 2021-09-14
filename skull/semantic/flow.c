@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "skull/build_data.h"
 #include "skull/common/errors.h"
 #include "skull/semantic/expr.h"
 #include "skull/semantic/func.h"
@@ -203,15 +204,17 @@ static bool validate_bool_expr(const AstNodeExpr *expr) {
 		return false;
 	}
 
+	bool err = false;
+
 	if (expr->oper == EXPR_CONST) {
-		FMT_WARN(expr->value._bool ?
+		FMT_WARN(err, expr->value._bool ?
 			WARN_COND_ALWAYS_TRUE :
 			WARN_COND_ALWAYS_FALSE,
 			{ .loc = find_expr_node_location(expr) }
 		);
 	}
 
-	return true;
+	return !err;
 }
 
 /*

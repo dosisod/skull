@@ -57,9 +57,11 @@ static int compile_file(char *filename) {
 	if (!file_contents) {
 		BUILD_DATA.filename = filename;
 
-		FMT_WARN(WARN_FILE_EMPTY, {0});
+		bool err = false;
+		FMT_WARN(err, WARN_FILE_EMPTY, {0});
+
 		fclose(f);
-		return 0;
+		return err;
 	}
 	fclose(f);
 

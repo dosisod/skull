@@ -9,6 +9,7 @@ typedef struct {
 	_Bool debug : 1;
 	_Bool preprocess : 1;
 	_Bool compile_only : 1;
+	_Bool werror : 1;
 } BuildData;
 
 extern BuildData BUILD_DATA;

@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#include "skull/build_data.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
@@ -38,7 +39,10 @@ Token *tokenize(const char32_t *code) {
 	unsigned column = 0;
 
 	if (*code == U'\xFEFF') {
-		FMT_WARN(WARN_NO_BOM, {0});
+		bool err = false;
+		FMT_WARN(err, WARN_NO_BOM, {0});
+		if (err) return NULL;
+
 		code++;
 	}
 

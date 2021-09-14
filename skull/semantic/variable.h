@@ -54,6 +54,6 @@ typedef struct Variable {
 
 Variable *make_variable(Type, const char32_t *const, _Bool);
 
-void free_variable(Variable *);
+_Bool free_variable(Variable *);
 
 void variable_disable_warnings(Variable *);

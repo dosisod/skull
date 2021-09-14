@@ -106,8 +106,10 @@ typedef enum {
 
 extern Vector *error_msgs;
 
-#define FMT_WARN(id, ...) \
-	fmt_message(ERROR_WARN, (id), (Message[]){ __VA_ARGS__, {0} })
+#define FMT_WARN(err, id, ...) { \
+	fmt_message(ERROR_WARN, (id), (Message[]){ __VA_ARGS__, {0} }); \
+	if (BUILD_DATA.werror) (err) = true; \
+}
 
 #define FMT_ERROR(id, ...) \
 	fmt_message(ERROR_FATAL, (id), (Message[]){ __VA_ARGS__, {0} })

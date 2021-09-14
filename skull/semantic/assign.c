@@ -1,5 +1,6 @@
 #include <stdbool.h>
 
+#include "skull/build_data.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/scope.h"
@@ -40,7 +41,9 @@ bool validate_stmt_var_def(const AstNode *node) {
 	if (!ok) return false;
 
 	if (expr->oper == EXPR_CONST && !var->implicitly_typed) {
-		FMT_WARN(WARN_TRIVIAL_TYPE, { .type = var->type });
+		bool err = false;
+		FMT_WARN(err, WARN_TRIVIAL_TYPE, { .type = var->type });
+		if (err) return false;
 	}
 
 	return true;

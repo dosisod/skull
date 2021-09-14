@@ -28,7 +28,7 @@ Scope *make_scope(void);
 Symbol *scope_find_name(const Scope *const, const char *);
 _Bool scope_add_var(Symbol *);
 
-void free_scope(Scope *);
+_Bool free_scope(Scope *);
 
 void make_child_scope(void);
 void restore_parent_scope(void);

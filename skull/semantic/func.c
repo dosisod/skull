@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "skull/build_data.h"
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
 #include "skull/common/malloc.h"
@@ -193,11 +194,13 @@ FunctionDeclaration *find_func_by_name(const char *name) {
 	return NULL;
 }
 
-void free_function_declaration(FunctionDeclaration *func) {
-	if (!func) return;
+bool free_function_declaration(FunctionDeclaration *func) {
+	if (!func) return false;
+
+	bool err = false;
 
 	if (!func->was_called) {
-		FMT_WARN(WARN_FUNC_UNUSED, {
+		FMT_WARN(err, WARN_FUNC_UNUSED, {
 			.real = func->name, .loc = &func->location
 		});
 	}
@@ -205,4 +208,6 @@ void free_function_declaration(FunctionDeclaration *func) {
 
 	free(func->param_types);
 	free(func);
+
+	return err;
 }

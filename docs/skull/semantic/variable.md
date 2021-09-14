@@ -57,10 +57,12 @@ Variable *make_variable(Type type, const char32_t *const name, bool is_const)
 > Returns `NULL` if var cannot be created, else pointer to created var.
 
 ```c
-void free_variable(Variable *var)
+bool free_variable(Variable *var)
 ```
 
 > Free variable `var`.
+> \
+> Return `true` if an error occurred.
 
 ```c
 void variable_disable_warnings(Variable *var)

@@ -305,6 +305,10 @@ static bool is_directory(const char *path) {
 static bool parse_long_option(const char *arg) {
 	if (strcmp(arg, "version") == 0) bail(version());
 	if (strcmp(arg, "help") == 0) bail(usage());
+	if (strcmp(arg, "werror") == 0) {
+		BUILD_DATA.werror = true;
+		return false;
+	}
 
 	printf("skull: unknown option \"--%s\"\n", arg);
 	return true;
