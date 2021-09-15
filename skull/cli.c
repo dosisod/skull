@@ -98,6 +98,22 @@ static int handle_args(int argc, char *argv[]) {
 			BUILD_DATA.preprocess = true;
 			break;
 		}
+		case 'g': {
+			if (BUILD_DATA.debug) {
+				puts("skull: -g cannot be used more then once");
+				bail(1);
+			}
+			BUILD_DATA.debug = true;
+			break;
+		}
+		case 'q': {
+			if (BUILD_DATA.quiet) {
+				puts("skull: -q cannot be used more then once");
+				bail(1);
+			}
+			BUILD_DATA.quiet = true;
+			break;
+		}
 		case 'o': {
 			if (argc == 1) {
 				puts("skull: expected filename after -o");
@@ -305,6 +321,10 @@ static bool is_directory(const char *path) {
 static bool parse_long_option(const char *arg) {
 	if (strcmp(arg, "version") == 0) bail(version());
 	if (strcmp(arg, "help") == 0) bail(usage());
+	if (strcmp(arg, "c-backend") == 0) {
+		BUILD_DATA.c_backend = true;
+		return false;
+	}
 	if (strcmp(arg, "werror") == 0) {
 		BUILD_DATA.werror = true;
 		return false;

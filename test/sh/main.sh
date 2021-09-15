@@ -25,7 +25,7 @@ test_c_backend() {
 	printf "%s" "$dir/$file "
 
 	rm -f "./$dir/.$file.ll"
-	C_BACKEND=1 ./build/skull/skull "./$dir/$file" 2> /dev/null
+	./build/skull/skull --c-backend "./$dir/$file" 2> /dev/null
 	[ "$?" = "0" ] || { fail; return; }
 
 	compare "./$dir/_$file.c" "./$dir/.$file.c"
@@ -40,7 +40,7 @@ test_llvm_debug() {
 	printf "%s" "$dir/$file "
 
 	rm -f "./$dir/.$file.ll"
-	DEBUG=1 ./build/skull/skull "./$dir/$file" -E -o "./$dir/.$file.ll" 2> /dev/null
+	./build/skull/skull "./$dir/$file" -g -E -o "./$dir/.$file.ll" 2> /dev/null
 	[ "$?" = "0" ] || { fail; return; }
 
 	sed -i "s/directory: \"\(.*\)\"/directory: \".\"/" "./$dir/.$file.ll"
@@ -122,6 +122,7 @@ test_skull "no_file_passed.sh" "-E"
 test_skull "multiple_dash_e.sh" "-E -E"
 test_skull "multiple_dash_c.sh" "-c -c"
 test_skull "multiple_dash_s.sh" "-S -S"
+test_skull "multiple_dash_g.sh" "-g -g"
 test_skull "warn_dash_dash_no_args.sh" "--"
 test_skull "dash_o_expect_filename.sh" "-o"
 test_skull "dash_o_no_binary.sh" "./test/sh/skull/dummy.sk -o -"

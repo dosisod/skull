@@ -13,5 +13,3 @@ typedef struct {
 } BuildData;
 
 extern BuildData BUILD_DATA;
-
-void setup_flags(void);

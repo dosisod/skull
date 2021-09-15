@@ -26,7 +26,6 @@ int real_main(int argc, char *argv[]) {
 	}
 
 	setup_locale();
-	setup_flags();
 
 	for (int i = 0; i < argc - 1 ; i++) {
 		const int err = compile_file(argv[i + 1]);
