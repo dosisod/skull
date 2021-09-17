@@ -41,9 +41,10 @@ int main(void) {
 	scope_test_self(&passed);
 	variable_test_self(&passed);
 
-	putchar('\n');
-
-	if (!passed) {
+	if (passed) {
+		puts("All tests passed!");
+	}
+	else {
 		puts("\n1 or more errors occurred.");
 	}
 	return !passed;
