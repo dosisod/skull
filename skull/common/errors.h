@@ -117,3 +117,4 @@ extern Vector *error_msgs;
 void fmt_message(ErrorType, ErrorCode, Message []);
 
 void write_and_free_errors(void);
+void free_errors(void);

@@ -245,6 +245,13 @@ void write_and_free_errors(void) {
 	}
 }
 
+void free_errors(void) {
+	if (error_msgs) {
+		free_vector(error_msgs, free);
+		error_msgs = NULL;
+	}
+}
+
 static void write_error_msg(char *msg) {
 	if (!BUILD_DATA.quiet) fprintf(stderr, "%s", msg);
 	free(msg);

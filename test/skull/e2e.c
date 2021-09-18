@@ -3408,10 +3408,7 @@ static int e2e_wrapper(const char *code, const char *mock_file, const char *llvm
 		free(output_file);
 	}
 
-	if (error_msgs) {
-		free_vector(error_msgs, free);
-		error_msgs = NULL;
-	}
+	free_errors();
 
 	if (err) {
 		// TODO(dosisod) give better error on why it failed
@@ -3447,8 +3444,7 @@ static int compare_errors(const char *expected) {
 
 	if (strchr(current_line, '\n')) fail = true;
 
-	free_vector(error_msgs, free);
-	error_msgs = NULL;
+	free_errors();
 
 	return fail;
 }
