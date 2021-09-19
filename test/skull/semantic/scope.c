@@ -41,7 +41,7 @@ bool test_scope_find_name() {
 	ASSERT_EQUAL(scope_find_name(SEMANTIC_STATE.scope, "x")->var, var);
 	ASSERT_FALSEY(scope_find_name(SEMANTIC_STATE.scope, "y"));
 
-	free_scope(SEMANTIC_STATE.scope);
+	free_semantic_state();
 
 	PASS
 }
@@ -54,7 +54,7 @@ bool test_add_vars_to_scope() {
 
 	ASSERT_EQUAL(((Symbol *)ht_get(SEMANTIC_STATE.scope->symbols, "x"))->var, var);
 
-	free_scope(SEMANTIC_STATE.scope);
+	free_semantic_state();
 
 	PASS
 }
@@ -73,18 +73,7 @@ bool test_cannot_add_same_varname_to_scope() {
 	ASSERT_EQUAL(((Symbol *)ht_get(SEMANTIC_STATE.scope->symbols, "x"))->var, var1);
 
 	free_variable(var2);
-	free_scope(SEMANTIC_STATE.scope);
-
-	PASS
-}
-
-bool test_free_scope() {
-	SEMANTIC_STATE.scope = make_scope();
-	Variable *var = make_variable(TYPE_INT, U"x", true);
-
-	scope_add_var(symbol_wrapper(var));
-
-	free_scope(SEMANTIC_STATE.scope);
+	free_semantic_state();
 
 	PASS
 }
@@ -101,7 +90,6 @@ void scope_test_self(bool *pass) {
 		test_scope_find_name,
 		test_add_vars_to_scope,
 		test_cannot_add_same_varname_to_scope,
-		test_free_scope,
 		test_scope_find_name_when_null
 	)
 }

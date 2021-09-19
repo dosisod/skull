@@ -9,6 +9,7 @@
 #include "semantic/scope.h"
 #include "semantic/types.h"
 #include "semantic/variable.h"
+#include "semantic/verify.h"
 
 #include "common/errors.h"
 #include "common/hashtable.h"
@@ -40,6 +41,7 @@ int main(void) {
 
 	scope_test_self(&passed);
 	variable_test_self(&passed);
+	semantic_verify_test_self(&passed);
 
 	if (passed) {
 		puts("All tests passed!");

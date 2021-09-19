@@ -10,6 +10,7 @@
 #include "skull/common/local.h"
 #include "skull/common/vector.h"
 #include "skull/pipeline.h"
+#include "test/testing.h"
 
 #ifndef __ANDROID_API__
 #define __ANDROID_API__ 0
@@ -21,7 +22,6 @@ bool SKULL_TESTING = 0;
 static int e2e_wrapper(const char *, const char *, const char *, const char *);
 static char *mock_file_to_output_file(const char *, const char *);
 static bool compare_compiler_output(const char *, const char *);
-static int compare_errors(const char *);
 
 int main(void) {
 	setup_locale();
@@ -2186,39 +2186,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0\n",
-TEST_DIR"/error/declare/float_overflow.sk",
-
-NULL,
-
-"./test/sh/error/declare/float_overflow.sk: Compilation error: line 1 column 6: overflow occurred while parsing \"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0\"\n" \
-"./test/sh/error/declare/float_overflow.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 99999999999999999999999999999999\n",
-TEST_DIR"/error/declare/int_overflow.sk",
-
-NULL,
-
-"./test/sh/error/declare/int_overflow.sk: Compilation error: line 1 column 6: overflow occurred while parsing \"99999999999999999999999999999999\"\n" \
-"./test/sh/error/declare/int_overflow.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := -99999999999999999999999999999999\n",
-TEST_DIR"/error/declare/int_underflow.sk",
-
-NULL,
-
-"./test/sh/error/declare/int_underflow.sk: Compilation error: line 1 column 6: overflow occurred while parsing \"-99999999999999999999999999999999\"\n" \
-"./test/sh/error/declare/int_underflow.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "x := 0\n" \
 "x = 1\n",
 TEST_DIR"/error/declare/reassign_const.sk",
@@ -2395,16 +2362,6 @@ TEST_DIR"/error/flow/non_int_return.sk",
 NULL,
 
 "./test/sh/error/flow/non_int_return.sk: Compilation error: line 1 column 8: returning non-int expression \"1.0\" from main\n"
-);
-
-
-pass |= e2e_wrapper(
-"return 0xffffffffffffffff\n",
-TEST_DIR"/error/flow/return_int_overflow.sk",
-
-NULL,
-
-"./test/sh/error/flow/return_int_overflow.sk: Compilation error: line 1 column 8: overflow occurred while parsing \"0xffffffffffffffff\"\n"
 );
 
 
@@ -2953,16 +2910,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x()\n",
-TEST_DIR"/error/misc/missing_external.sk",
-
-NULL,
-
-"./test/sh/error/misc/missing_external.sk: Compilation error: line 1 column 1: function \"x\" missing declaration\n"
-);
-
-
-pass |= e2e_wrapper(
 "x := \"\n",
 TEST_DIR"/error/misc/missing_quote.sk",
 
@@ -3114,16 +3061,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"\"this will fail\"\n",
-TEST_DIR"/error/misc/unexpected_str_fails.sk",
-
-NULL,
-
-"./test/sh/error/misc/unexpected_str_fails.sk: Compilation error: line 1 column 1: expression cannot be used on its own\n"
-);
-
-
-pass |= e2e_wrapper(
 "this_will_fail\n",
 TEST_DIR"/error/misc/unexpected_token_fails.sk",
 
@@ -3158,53 +3095,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"mut x := 1 and 1\n",
-TEST_DIR"/error/oper/bool_expr_and_not_bool.sk",
-
-NULL,
-
-"./test/sh/error/oper/bool_expr_and_not_bool.sk: Compilation error: line 1 column 10: expected type \"Bool\", got \"Int\"\n" \
-"./test/sh/error/oper/bool_expr_and_not_bool.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/oper/bool_expr_and_not_bool.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"mut x := 1 or 1\n",
-TEST_DIR"/error/oper/bool_expr_or_not_bool.sk",
-
-NULL,
-
-"./test/sh/error/oper/bool_expr_or_not_bool.sk: Compilation error: line 1 column 10: expected type \"Bool\", got \"Int\"\n" \
-"./test/sh/error/oper/bool_expr_or_not_bool.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/oper/bool_expr_or_not_bool.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"mut x := 1 xor 1\n",
-TEST_DIR"/error/oper/bool_expr_xor_not_bool.sk",
-
-NULL,
-
-"./test/sh/error/oper/bool_expr_xor_not_bool.sk: Compilation error: line 1 column 10: expected type \"Bool\", got \"Int\"\n" \
-"./test/sh/error/oper/bool_expr_xor_not_bool.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/oper/bool_expr_xor_not_bool.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 1 / 0\n",
-TEST_DIR"/error/oper/div_by_zero.sk",
-
-NULL,
-
-"./test/sh/error/oper/div_by_zero.sk: Compilation error: line 1 column 10: division by zero\n" \
-"./test/sh/error/oper/div_by_zero.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "mut x := 0\n" \
 "\n" \
 "x = 1 / \"fail\"\n",
@@ -3228,16 +3118,6 @@ NULL,
 "./test/sh/error/oper/lhs_var_bad_type.sk: Compilation error: line 3 column 10: expected type \"Int\", got \"Float\"\n" \
 "./test/sh/error/oper/lhs_var_bad_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n" \
 "./test/sh/error/oper/lhs_var_bad_type.sk: Warning: line 3 column 1: variable \"z\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := fail + 1\n",
-TEST_DIR"/error/oper/lhs_var_not_found.sk",
-
-NULL,
-
-"./test/sh/error/oper/lhs_var_not_found.sk: Compilation error: line 1 column 6: variable \"fail\" not found\n"
 );
 
 
@@ -3291,17 +3171,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := \"123\" ^ \"123\"\n",
-TEST_DIR"/error/oper/pow_bad_type.sk",
-
-NULL,
-
-"./test/sh/error/oper/pow_bad_type.sk: Compilation error: cannot use type \"Str\" for power operator\n" \
-"./test/sh/error/oper/pow_bad_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "mut x := 1\n" \
 "\n" \
 "x = 1.0\n",
@@ -3325,17 +3194,6 @@ NULL,
 "./test/sh/error/oper/rhs_var_bad_type.sk: Compilation error: line 3 column 12: expected type \"Float\", got \"Int\"\n" \
 "./test/sh/error/oper/rhs_var_bad_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n" \
 "./test/sh/error/oper/rhs_var_bad_type.sk: Warning: line 3 column 1: variable \"z\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 1 + fail\n",
-TEST_DIR"/error/oper/rhs_var_not_found.sk",
-
-NULL,
-
-"./test/sh/error/oper/rhs_var_not_found.sk: Compilation error: line 1 column 10: variable \"fail\" not found\n" \
-"./test/sh/error/oper/rhs_var_not_found.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
 );
 
 
@@ -3376,19 +3234,9 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
-"mut x := 1.0 << 2.0\n",
-TEST_DIR"/error/oper/shift_not_int.sk",
-
-NULL,
-
-"./test/sh/error/oper/shift_not_int.sk: Compilation error: line 1 column 10: expected an integer\n" \
-"./test/sh/error/oper/shift_not_int.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/oper/shift_not_int.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
 	return pass;
 }
+
 
 static int e2e_wrapper(const char *code, const char *mock_file, const char *llvm_expected, const char *err_expected) {
 	char *output_file = NULL;
@@ -3415,38 +3263,6 @@ static int e2e_wrapper(const char *code, const char *mock_file, const char *llvm
 		printf("%s " COLOR_BOLD COLOR_RED_FG "FAIL" COLOR_RESET "\n", mock_file);
 	}
 	return err;
-}
-
-static int compare_errors(const char *expected) {
-	if (!error_msgs || error_msgs->length == 0) {
-		return true;
-	}
-
-	bool fail = false;
-
-	const char *current_line = expected;
-	const char *newline;
-
-	for (size_t i = 0 ; i < error_msgs->length ; i++) {
-		newline = strchr(current_line, '\n');
-
-		if (!newline || strncmp(
-			current_line,
-			error_msgs->elements[i],
-			(size_t)(newline - current_line)) != 0
-		) {
-			fail = true;
-			break;
-		}
-
-		current_line = newline + 1;
-	}
-
-	if (strchr(current_line, '\n')) fail = true;
-
-	free_errors();
-
-	return fail;
 }
 
 static bool compare_compiler_output(const char *filename, const char *expected) {

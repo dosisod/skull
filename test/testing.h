@@ -52,3 +52,4 @@ typedef _Bool (*Test)();
 void run_many_tests(Test [], _Bool *);
 
 void testing_test_self(_Bool *);
+_Bool compare_errors(const char *);

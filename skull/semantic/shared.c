@@ -34,8 +34,10 @@ _Bool free_semantic_state(void) {
 	reset_scope_head();
 	const bool failed = free_scope(state->scope);
 
-	state->main_func->was_called = true;
-	free_function_declaration(state->main_func);
+	if (state->main_func) {
+		state->main_func->was_called = true;
+		free_function_declaration(state->main_func);
+	}
 
 	state->scope = NULL;
 

@@ -35,7 +35,8 @@ skull: setup | $(OBJS) $(OBJS_LLVM) build/objs/skull/real_main.o
 
 e2e: setup | $(OBJS) $(OBJS_LLVM)
 	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
-	@$(CC) $| test/skull/e2e.c -o build/test/e2e $(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
+	@$(CC) $| test/skull/e2e.c $(ODIR)/test/testing.o -o build/test/e2e \
+		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
 
 docs:
 	@$(ECHO) "\033[92mBuild\033[0m docs\n"

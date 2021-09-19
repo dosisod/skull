@@ -172,8 +172,10 @@ Return `true` if an error occurred.
 */
 bool free_scope(Scope *scope) {
 	if (scope) {
-		if (scope->symbols)
+		if (scope->symbols) {
 			free_ht(scope->symbols, (void(*)(void *))free_ht_symbol);
+			scope->symbols = NULL;
+		}
 
 		bool fail = FREE_SYMBOL_ERRORED;
 		FREE_SYMBOL_ERRORED = false;
