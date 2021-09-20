@@ -12,12 +12,11 @@
 
 #include "test/testing.h"
 
-#define AST_CONST_EXPR(expr_type, token) \
+#define AST_CONST_EXPR(token) \
 	&(AstNodeExpr){ \
 		.lhs = { \
 			.tok = (token) \
 		}, \
-		.type = (expr_type), \
 		.oper = EXPR_CONST \
 	}
 
@@ -37,7 +36,7 @@ bool test_validate_int_expr() {
 	AstNode *node = &(AstNode){
 		.type = AST_NODE_EXPR,
 		.token = token,
-		.expr = AST_CONST_EXPR(TYPE_INT, token)
+		.expr = AST_CONST_EXPR(token)
 	};
 
 	const bool pass = validate_expr(node);
@@ -52,7 +51,7 @@ bool test_validate_int_overflow() {
 	AstNode *node = &(AstNode){
 		.type = AST_NODE_EXPR,
 		.token = token,
-		.expr = AST_CONST_EXPR(TYPE_INT, token)
+		.expr = AST_CONST_EXPR(token)
 	};
 
 	ASSERT_FALSEY(validate_expr(node));
@@ -70,7 +69,7 @@ bool test_validate_int_underflow() {
 	AstNode *node = &(AstNode){
 		.type = AST_NODE_EXPR,
 		.token = token,
-		.expr = AST_CONST_EXPR(TYPE_FLOAT, token)
+		.expr = AST_CONST_EXPR(token)
 	};
 
 	ASSERT_FALSEY(validate_expr(node));
@@ -88,7 +87,7 @@ bool test_validate_float_overflow() {
 	AstNode *node = &(AstNode){
 		.type = AST_NODE_EXPR,
 		.token = token,
-		.expr = AST_CONST_EXPR(TYPE_FLOAT, token)
+		.expr = AST_CONST_EXPR(token)
 	};
 
 	ASSERT_FALSEY(validate_expr(node));
@@ -127,12 +126,12 @@ bool test_validate_missing_function_decl() {
 }
 
 bool test_validate_trailing_expr() {
-	Token *token = tokenize_fixture(U"\"this_will_fail\"");
+	Token *token = tokenize_fixture(U"1");
 
 	AstNode *node = &(AstNode){
 		.type = AST_NODE_EXPR,
 		.token = token,
-		.expr = AST_CONST_EXPR(TYPE_STR, token)
+		.expr = AST_CONST_EXPR(token)
 	};
 
 	ASSERT_FALSEY(validate_ast_tree(node));
@@ -153,9 +152,9 @@ bool test_validate_invalid_and() {
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(TYPE_INT, token),
+			AST_CONST_EXPR(token),
 			EXPR_AND,
-			AST_CONST_EXPR(TYPE_INT, token->next->next)
+			AST_CONST_EXPR(token->next->next)
 		)
 	};
 
@@ -172,9 +171,9 @@ bool test_validate_invalid_or() {
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(TYPE_INT, token),
+			AST_CONST_EXPR(token),
 			EXPR_OR,
-			AST_CONST_EXPR(TYPE_INT, token->next->next)
+			AST_CONST_EXPR(token->next->next)
 		)
 	};
 
@@ -191,9 +190,9 @@ bool test_validate_invalid_xor() {
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(TYPE_INT, token),
+			AST_CONST_EXPR(token),
 			EXPR_XOR,
-			AST_CONST_EXPR(TYPE_INT, token->next->next)
+			AST_CONST_EXPR(token->next->next)
 		)
 	};
 
@@ -210,9 +209,9 @@ bool test_validate_div_by_zero() {
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(TYPE_INT, token),
+			AST_CONST_EXPR(token),
 			EXPR_DIV,
-			AST_CONST_EXPR(TYPE_INT, token->next->next)
+			AST_CONST_EXPR(token->next->next)
 		)
 	};
 
@@ -236,7 +235,7 @@ bool test_validate_lhs_var_missing() {
 		.expr = AST_BINARY_EXPR(
 			lhs,
 			EXPR_ADD,
-			AST_CONST_EXPR(TYPE_INT, token->next->next)
+			AST_CONST_EXPR(token->next->next)
 		)
 	};
 
@@ -258,7 +257,7 @@ bool test_validate_rhs_var_missing() {
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(TYPE_INT, token),
+			AST_CONST_EXPR(token),
 			EXPR_ADD,
 			rhs
 		)
@@ -277,9 +276,9 @@ bool test_validate_pow_type() {
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(TYPE_STR, token),
+			AST_CONST_EXPR(token),
 			EXPR_POW,
-			AST_CONST_EXPR(TYPE_INT, token->next->next)
+			AST_CONST_EXPR(token->next->next)
 		)
 	};
 
@@ -301,15 +300,34 @@ bool test_validate_shift_no_ints() {
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(TYPE_FLOAT, token),
+			AST_CONST_EXPR(token),
 			EXPR_LSHIFT,
-			AST_CONST_EXPR(TYPE_FLOAT, token->next->next)
+			AST_CONST_EXPR(token->next->next)
 		)
 	};
 
 	return validate_binary_expr_fixture(
 		node,
 		"(null): Compilation error: line 1 column 1: expected an integer\n"
+	);
+}
+
+bool test_validate_not_oper_non_bool() {
+	Token *token = tokenize_fixture(U"not 1");
+
+	AstNode *node = &(AstNode){
+		.type = AST_NODE_EXPR,
+		.token = token,
+		.expr = AST_BINARY_EXPR(
+			NULL,
+			EXPR_NOT,
+			AST_CONST_EXPR(token->next)
+		)
+	};
+
+	return validate_binary_expr_fixture(
+		node,
+		"(null): Compilation error: line 1 column 5: expected type \"Bool\", got \"Int\"\n"
 	);
 }
 
@@ -328,7 +346,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_lhs_var_missing,
 		test_validate_rhs_var_missing,
 		test_validate_pow_type,
-		test_validate_shift_no_ints
+		test_validate_shift_no_ints,
+		test_validate_not_oper_non_bool
 	)
 }
 

@@ -2978,16 +2978,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x\n",
-TEST_DIR"/error/misc/only_identifier_fails.sk",
-
-NULL,
-
-"./test/sh/error/misc/only_identifier_fails.sk: Compilation error: line 1 column 1: expression cannot be used on its own\n"
-);
-
-
-pass |= e2e_wrapper(
 "x := (1\n",
 TEST_DIR"/error/misc/paren_expr_missing_paren.sk",
 
@@ -3219,18 +3209,6 @@ NULL,
 
 "./test/sh/error/oper/trailing_token.sk: Compilation error: line 2 column 1: expression cannot be used on its own\n" \
 "./test/sh/error/oper/trailing_token.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"mut x := not 1\n",
-TEST_DIR"/error/oper/using_non_bool_with_not.sk",
-
-NULL,
-
-"./test/sh/error/oper/using_non_bool_with_not.sk: Compilation error: line 1 column 14: expected type \"Bool\", got \"Int\"\n" \
-"./test/sh/error/oper/using_non_bool_with_not.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/oper/using_non_bool_with_not.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
 );
 
 
