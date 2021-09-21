@@ -12,32 +12,15 @@
 
 #include "test/testing.h"
 
-#define AST_CONST_EXPR(token) \
-	&(AstNodeExpr){ \
-		.lhs = { \
-			.tok = (token) \
-		}, \
-		.oper = EXPR_CONST \
-	}
+#include "./macros.h"
 
-#define AST_BINARY_EXPR(_lhs, _oper, _rhs) \
-	&(AstNodeExpr){ \
-		.lhs = { .expr = (_lhs) }, \
-		.rhs = (_rhs), \
-		.oper = (_oper) \
-	}
 
 static bool validate_binary_expr_fixture(AstNode *, const char *);
 static Token *tokenize_fixture(const char32_t *);
 
 bool test_validate_int_expr() {
 	Token *token = tokenize_fixture(U"1");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_CONST_EXPR(token)
-	};
+	AstNode *node = AST_SIMPLE_EXPR(token);
 
 	const bool pass = validate_expr(node);
 
@@ -47,12 +30,7 @@ bool test_validate_int_expr() {
 
 bool test_validate_int_overflow() {
 	Token *token = tokenize_fixture(U"99999999999999999999999999999999");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_CONST_EXPR(token)
-	};
+	AstNode *node = AST_SIMPLE_EXPR(token);
 
 	ASSERT_FALSEY(validate_expr(node));
 	ASSERT_FALSEY(compare_errors(
@@ -65,12 +43,7 @@ bool test_validate_int_overflow() {
 
 bool test_validate_int_underflow() {
 	Token *token = tokenize_fixture(U"-99999999999999999999999999999999");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_CONST_EXPR(token)
-	};
+	AstNode *node = AST_SIMPLE_EXPR(token);
 
 	ASSERT_FALSEY(validate_expr(node));
 	ASSERT_FALSEY(compare_errors(
@@ -83,12 +56,7 @@ bool test_validate_int_underflow() {
 
 bool test_validate_float_overflow() {
 	Token *token = tokenize_fixture(U"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_CONST_EXPR(token)
-	};
+	AstNode *node = AST_SIMPLE_EXPR(token);
 
 	ASSERT_FALSEY(validate_expr(node));
 	ASSERT_FALSEY(compare_errors(
@@ -105,15 +73,7 @@ bool test_validate_missing_function_decl() {
 	AstNode *node = &(AstNode){
 		.type = AST_NODE_EXPR,
 		.token = token,
-		.expr = &(AstNodeExpr){
-			.lhs = {
-				.func_call = &(AstNodeFunctionCall){
-					.func_name_tok = token
-				}
-			},
-			.type = TYPE_FLOAT,
-			.oper = EXPR_FUNC
-		}
+		.expr = AST_NO_ARG_FUNC_EXPR(token)
 	};
 
 	ASSERT_FALSEY(validate_expr(node));
@@ -127,12 +87,7 @@ bool test_validate_missing_function_decl() {
 
 bool test_validate_trailing_expr() {
 	Token *token = tokenize_fixture(U"1");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_CONST_EXPR(token)
-	};
+	AstNode *node = AST_SIMPLE_EXPR(token);
 
 	ASSERT_FALSEY(validate_ast_tree(node));
 	free(node->expr->value.str);
@@ -147,16 +102,7 @@ bool test_validate_trailing_expr() {
 
 bool test_validate_invalid_and() {
 	Token *token = tokenize_fixture(U"1 and 1");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(token),
-			EXPR_AND,
-			AST_CONST_EXPR(token->next->next)
-		)
-	};
+	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_AND);
 
 	return validate_binary_expr_fixture(
 		node,
@@ -166,16 +112,7 @@ bool test_validate_invalid_and() {
 
 bool test_validate_invalid_or() {
 	Token *token = tokenize_fixture(U"1 or 1");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(token),
-			EXPR_OR,
-			AST_CONST_EXPR(token->next->next)
-		)
-	};
+	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_OR);
 
 	return validate_binary_expr_fixture(
 		node,
@@ -185,16 +122,7 @@ bool test_validate_invalid_or() {
 
 bool test_validate_invalid_xor() {
 	Token *token = tokenize_fixture(U"1 xor 1");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(token),
-			EXPR_XOR,
-			AST_CONST_EXPR(token->next->next)
-		)
-	};
+	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_XOR);
 
 	return validate_binary_expr_fixture(
 		node,
@@ -204,16 +132,7 @@ bool test_validate_invalid_xor() {
 
 bool test_validate_div_by_zero() {
 	Token *token = tokenize_fixture(U"1 / 0");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(token),
-			EXPR_DIV,
-			AST_CONST_EXPR(token->next->next)
-		)
-	};
+	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_DIV);
 
 	return validate_binary_expr_fixture(
 		node,
@@ -224,16 +143,11 @@ bool test_validate_div_by_zero() {
 bool test_validate_lhs_var_missing() {
 	Token *token = tokenize_fixture(U"fail + 1");
 
-	AstNodeExpr *lhs = &(AstNodeExpr){
-		.lhs = { .tok = token },
-		.oper = EXPR_IDENTIFIER
-	};
-
 	AstNode *node = &(AstNode){
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
-			lhs,
+			AST_IDENT_EXPR(token),
 			EXPR_ADD,
 			AST_CONST_EXPR(token->next->next)
 		)
@@ -248,18 +162,13 @@ bool test_validate_lhs_var_missing() {
 bool test_validate_rhs_var_missing() {
 	Token *token = tokenize_fixture(U"1 + fail");
 
-	AstNodeExpr *rhs = &(AstNodeExpr){
-		.lhs = { .tok = token->next->next },
-		.oper = EXPR_IDENTIFIER
-	};
-
 	AstNode *node = &(AstNode){
 		.type = AST_NODE_EXPR,
 		.token = token,
 		.expr = AST_BINARY_EXPR(
 			AST_CONST_EXPR(token),
 			EXPR_ADD,
-			rhs
+			AST_IDENT_EXPR(token->next->next)
 		)
 	};
 
@@ -271,16 +180,7 @@ bool test_validate_rhs_var_missing() {
 
 bool test_validate_pow_type() {
 	Token *token = tokenize_fixture(U"\"123\" ^ \"123\"");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(token),
-			EXPR_POW,
-			AST_CONST_EXPR(token->next->next)
-		)
-	};
+	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_POW);
 
 	const bool pass = validate_binary_expr_fixture(
 		node,
@@ -295,16 +195,7 @@ bool test_validate_pow_type() {
 
 bool test_validate_shift_no_ints() {
 	Token *token = tokenize_fixture(U"1.0 << 2.0");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
-			AST_CONST_EXPR(token),
-			EXPR_LSHIFT,
-			AST_CONST_EXPR(token->next->next)
-		)
-	};
+	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_LSHIFT);
 
 	return validate_binary_expr_fixture(
 		node,
@@ -314,16 +205,7 @@ bool test_validate_shift_no_ints() {
 
 bool test_validate_not_oper_non_bool() {
 	Token *token = tokenize_fixture(U"not 1");
-
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
-			NULL,
-			EXPR_NOT,
-			AST_CONST_EXPR(token->next)
-		)
-	};
+	AstNode *node = AST_SIMPLE_UNARY_EXPR(token, EXPR_NOT);
 
 	return validate_binary_expr_fixture(
 		node,
