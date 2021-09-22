@@ -59,3 +59,13 @@
 			AST_CONST_EXPR((_token)->next) \
 		) \
 	}
+
+#define AST_VAR_ASSIGN(_token, _expr_node) \
+	&(AstNode){ \
+		.type = AST_NODE_VAR_ASSIGN, \
+		.token = (_token), \
+		.var_assign = &(AstNodeVarAssign){ \
+			.expr_node = (_expr_node), \
+			.var = NULL \
+		} \
+	}

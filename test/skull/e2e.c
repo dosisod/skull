@@ -2196,16 +2196,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x = 0\n",
-TEST_DIR"/error/declare/reassign_non_existet_var.sk",
-
-NULL,
-
-"./test/sh/error/declare/reassign_non_existet_var.sk: Compilation error: line 1 column 1: variable \"x\" not found\n"
-);
-
-
-pass |= e2e_wrapper(
 "external x()\n" \
 "external x()\n",
 TEST_DIR"/error/declare/redeclare_external.sk",

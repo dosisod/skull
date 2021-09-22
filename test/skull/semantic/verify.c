@@ -242,6 +242,27 @@ bool test_validate_non_numeric_exprs() {
 	return pass;
 }
 
+bool test_validate_reassign_non_existent_var() {
+	Token *token = tokenize_fixture(U"x = 0");
+
+	AstNode *node = AST_VAR_ASSIGN(
+		token,
+		(&(AstNode){
+			.type = AST_NODE_EXPR,
+			.token = token->next->next,
+			.expr = AST_CONST_EXPR(token->next->next)
+		})
+	);
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: variable \"x\" not found\n"
+	));
+
+	free_tokens(node->token);
+	PASS
+}
+
 
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
@@ -260,7 +281,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_pow_type,
 		test_validate_shift_no_ints,
 		test_validate_not_oper_non_bool,
-		test_validate_non_numeric_exprs
+		test_validate_non_numeric_exprs,
+		test_validate_reassign_non_existent_var
 	)
 }
 
