@@ -213,6 +213,36 @@ bool test_validate_not_oper_non_bool() {
 	);
 }
 
+bool test_validate_non_numeric_exprs() {
+	bool pass = true;
+
+	ExprType *opers = (ExprType[]){
+		EXPR_ADD,
+		EXPR_SUB,
+		EXPR_MULT,
+		EXPR_DIV,
+		EXPR_MOD,
+		EXPR_LESS_THAN,
+		EXPR_GTR_THAN,
+		EXPR_LESS_THAN_EQ,
+		EXPR_GTR_THAN_EQ,
+		EXPR_UNKNOWN
+	};
+
+	do {
+		Token *token = tokenize_fixture(U"true x false");
+		AstNode *node = AST_SIMPLE_BINARY_EXPR(token, *opers);
+
+		pass &= validate_binary_expr_fixture(
+			node,
+			"(null): Compilation error: line 1 column 1: expected a numeric value\n"
+		);
+	} while (*(++opers));
+
+	return pass;
+}
+
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -229,7 +259,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_rhs_var_missing,
 		test_validate_pow_type,
 		test_validate_shift_no_ints,
-		test_validate_not_oper_non_bool
+		test_validate_not_oper_non_bool,
+		test_validate_non_numeric_exprs
 	)
 }
 

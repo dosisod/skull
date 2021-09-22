@@ -2095,19 +2095,6 @@ NULL,
 );
 
 
-
-pass |= e2e_wrapper(
-"mut x := \"this will\" / \"fail\"\n",
-TEST_DIR"/error/declare/assign_unassignable_expression.sk",
-
-NULL,
-
-"./test/sh/error/declare/assign_unassignable_expression.sk: Compilation error: line 1 column 10: expected a numeric value\n" \
-"./test/sh/error/declare/assign_unassignable_expression.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/declare/assign_unassignable_expression.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
 pass |= e2e_wrapper(
 "x := y\n",
 TEST_DIR"/error/declare/assign_unknown_var.sk",
