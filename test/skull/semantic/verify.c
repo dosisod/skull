@@ -285,6 +285,52 @@ bool test_validate_check_expr_type_when_declaring() {
 	PASS
 }
 
+bool test_validate_check_explicit_type_exists() {
+	Token *token = tokenize_fixture(U"x: fail = 1");
+
+	AstNode *node = AST_VAR_DEF(
+		token,
+		AST_NODE_EXPR(token->next->next, AST_CONST_EXPR(token->next->next)),
+		false
+	);
+	node->token_end = token->next;
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 4: type \"fail\" could not be found\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
+bool test_validate_disallow_reassigning_const() {
+	Token *token = tokenize_fixture(U"x := 0\nx = 1");
+
+	AstNode *def = AST_VAR_DEF(
+		token,
+		AST_NODE_EXPR(token->next->next, AST_CONST_EXPR(token->next->next)),
+		true
+	);
+	def->token_end = token->next;
+
+	Token *assign_name = token->next->next->next->next;
+	Token *assign_expr = assign_name->next->next;
+
+	AstNode *assign = AST_VAR_ASSIGN(
+		assign_name,
+		AST_NODE_EXPR(assign_expr, AST_CONST_EXPR(assign_expr))
+	);
+
+	ASSERT_TRUTHY(validate_ast_tree(def));
+	ASSERT_FALSEY(validate_ast_tree(assign));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 2 column 1: cannot reassign const variable \"x\"\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
 
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
@@ -305,7 +351,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_not_oper_non_bool,
 		test_validate_non_numeric_exprs,
 		test_validate_reassign_non_existent_var,
-		test_validate_check_expr_type_when_declaring
+		test_validate_check_expr_type_when_declaring,
+		test_validate_check_explicit_type_exists,
+		test_validate_disallow_reassigning_const
 	)
 }
 

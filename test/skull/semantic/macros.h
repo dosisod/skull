@@ -78,7 +78,8 @@
 			.name_tok = (_token), \
 			.expr_node = (_expr_node), \
 			.var = NULL, \
-			.is_implicit = (_is_implicit) \
+			.is_implicit = (_is_implicit), \
+			.is_const = true \
 		} \
 	}
 

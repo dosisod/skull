@@ -2103,16 +2103,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x: fail = 1\n",
-TEST_DIR"/error/declare/bad_type_not_allowed.sk",
-
-NULL,
-
-"./test/sh/error/declare/bad_type_not_allowed.sk: Compilation error: line 1 column 4: type \"fail\" could not be found\n"
-);
-
-
-pass |= e2e_wrapper(
 "mut x: Int = 1 is 1\n",
 TEST_DIR"/error/declare/check_bool_assign.sk",
 
@@ -2145,29 +2135,6 @@ NULL,
 
 "./test/sh/error/declare/control_char_in_rune.sk: Compilation error: line 1 column 6: control character cannot be used in rune\n" \
 "./test/sh/error/declare/control_char_in_rune.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x: Float = 1 + 2\n",
-TEST_DIR"/error/declare/expr_assign_bad_type.sk",
-
-NULL,
-
-"./test/sh/error/declare/expr_assign_bad_type.sk: Compilation error: line 1 column 12: expected type \"Float\", got \"Int\"\n" \
-"./test/sh/error/declare/expr_assign_bad_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 0\n" \
-"x = 1\n",
-TEST_DIR"/error/declare/reassign_const.sk",
-
-NULL,
-
-"./test/sh/error/declare/reassign_const.sk: Compilation error: line 2 column 1: cannot reassign const variable \"x\"\n" \
-"./test/sh/error/declare/reassign_const.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
 );
 
 
