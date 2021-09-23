@@ -2073,19 +2073,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := 0\n" \
-"\n" \
-"z: Bool = x\n",
-TEST_DIR"/error/declare/assign_mismatch_var_type.sk",
-
-NULL,
-
-"./test/sh/error/declare/assign_mismatch_var_type.sk: Compilation error: line 3 column 11: expected type \"Bool\", got \"Int\"\n" \
-"./test/sh/error/declare/assign_mismatch_var_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n" \
-"./test/sh/error/declare/assign_mismatch_var_type.sk: Warning: line 3 column 1: variable \"z\" is unused\n"
-);
-
-pass |= e2e_wrapper(
 "x: Int =\n",
 TEST_DIR"/error/declare/assign_missing_rhs.sk",
 
@@ -3028,16 +3015,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"this_will_fail\n",
-TEST_DIR"/error/misc/unexpected_token_fails.sk",
-
-NULL,
-
-"./test/sh/error/misc/unexpected_token_fails.sk: Compilation error: line 1 column 1: expression cannot be used on its own\n"
-);
-
-
-pass |= e2e_wrapper(
 "mut x := 0\n" \
 "\n" \
 "x = 1 + \"fail\"\n",
@@ -3174,18 +3151,6 @@ NULL,
 
 "./test/sh/error/oper/sub_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n" \
 "./test/sh/error/oper/sub_mismatched_consts.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 1\n" \
-"x\n",
-TEST_DIR"/error/oper/trailing_token.sk",
-
-NULL,
-
-"./test/sh/error/oper/trailing_token.sk: Compilation error: line 2 column 1: expression cannot be used on its own\n" \
-"./test/sh/error/oper/trailing_token.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
 );
 
 

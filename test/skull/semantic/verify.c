@@ -70,11 +70,7 @@ bool test_validate_float_overflow() {
 bool test_validate_missing_function_decl() {
 	Token *token = tokenize_fixture(U"x()");
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_NO_ARG_FUNC_EXPR(token)
-	};
+	AstNode *node = AST_NODE_EXPR(token, AST_NO_ARG_FUNC_EXPR(token));
 
 	ASSERT_FALSEY(validate_expr(node));
 	ASSERT_FALSEY(compare_errors(
@@ -143,15 +139,14 @@ bool test_validate_div_by_zero() {
 bool test_validate_lhs_var_missing() {
 	Token *token = tokenize_fixture(U"fail + 1");
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_BINARY_EXPR(
 			AST_IDENT_EXPR(token),
 			EXPR_ADD,
 			AST_CONST_EXPR(token->next->next)
 		)
-	};
+	);
 
 	return validate_binary_expr_fixture(
 		node,
@@ -162,15 +157,14 @@ bool test_validate_lhs_var_missing() {
 bool test_validate_rhs_var_missing() {
 	Token *token = tokenize_fixture(U"1 + fail");
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_EXPR,
-		.token = token,
-		.expr = AST_BINARY_EXPR(
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_BINARY_EXPR(
 			AST_CONST_EXPR(token),
 			EXPR_ADD,
 			AST_IDENT_EXPR(token->next->next)
 		)
-	};
+	);
 
 	return validate_binary_expr_fixture(
 		node,
@@ -247,11 +241,7 @@ bool test_validate_reassign_non_existent_var() {
 
 	AstNode *node = AST_VAR_ASSIGN(
 		token,
-		(&(AstNode){
-			.type = AST_NODE_EXPR,
-			.token = token->next->next,
-			.expr = AST_CONST_EXPR(token->next->next)
-		})
+		AST_NODE_EXPR(token->next->next, AST_CONST_EXPR(token->next->next))
 	);
 
 	ASSERT_FALSEY(validate_ast_tree(node));
@@ -259,7 +249,39 @@ bool test_validate_reassign_non_existent_var() {
 		"(null): Compilation error: line 1 column 1: variable \"x\" not found\n"
 	));
 
-	free_tokens(node->token);
+	free_tokens(token);
+	PASS
+}
+
+bool test_validate_check_expr_type_when_declaring() {
+	Token *token = tokenize_fixture(U"x := 0\ny: Bool = x");
+
+	Token *var_x_name = token;
+	Token *var_x_expr = token->next->next;
+	Token *var_y_name = var_x_expr->next->next;
+	Token *var_y_expr = var_y_name->next->next->next;
+
+	AstNode *node_x = AST_VAR_DEF(
+		var_x_name,
+		AST_NODE_EXPR(var_x_expr, AST_CONST_EXPR(var_x_expr)),
+		true
+	);
+	node_x->token_end = token->next;
+
+	AstNode *node_y = AST_VAR_DEF(
+		var_y_name,
+		AST_NODE_EXPR(var_y_expr, AST_IDENT_EXPR(var_y_expr)),
+		false
+	);
+	node_y->token_end = var_y_name->next->next;
+
+	ASSERT_TRUTHY(validate_ast_tree(node_x));
+	ASSERT_FALSEY(validate_ast_tree(node_y));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 2 column 11: expected type \"Bool\", got \"Int\"\n"
+	));
+
+	free_tokens(token);
 	PASS
 }
 
@@ -282,7 +304,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_shift_no_ints,
 		test_validate_not_oper_non_bool,
 		test_validate_non_numeric_exprs,
-		test_validate_reassign_non_existent_var
+		test_validate_reassign_non_existent_var,
+		test_validate_check_expr_type_when_declaring
 	)
 }
 

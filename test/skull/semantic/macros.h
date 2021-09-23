@@ -69,3 +69,22 @@
 			.var = NULL \
 		} \
 	}
+
+#define AST_VAR_DEF(_token, _expr_node, _is_implicit) \
+	&(AstNode){ \
+		.type = AST_NODE_VAR_DEF, \
+		.token = (_token), \
+		.var_def = &(AstNodeVarDef){ \
+			.name_tok = (_token), \
+			.expr_node = (_expr_node), \
+			.var = NULL, \
+			.is_implicit = (_is_implicit) \
+		} \
+	}
+
+#define AST_NODE_EXPR(_token, _expr) \
+	&(AstNode){ \
+		.type = AST_NODE_EXPR, \
+		.token = (_token), \
+		.expr = (_expr) \
+	}
