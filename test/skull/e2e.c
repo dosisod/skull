@@ -2150,18 +2150,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := 1\n" \
-"x := Int\n",
-TEST_DIR"/error/declare/var_as_alias.sk",
-
-NULL,
-
-"./test/sh/error/declare/var_as_alias.sk: Compilation error: line 2 column 1: cannot redeclare variable \"x\" as type alias\n" \
-"./test/sh/error/declare/var_as_alias.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "# this wont work\n" \
 "else {\n" \
 "	noop\n" \
@@ -2171,18 +2159,6 @@ TEST_DIR"/error/flow/comment_then_else.sk",
 NULL,
 
 "./test/sh/error/flow/comment_then_else.sk: Compilation error: line 1 column 1: else/elif statement missing preceding if statement\n"
-);
-
-
-pass |= e2e_wrapper(
-"else {\n" \
-"	# do nothing\n" \
-"}\n",
-TEST_DIR"/error/flow/else_without_if.sk",
-
-NULL,
-
-"./test/sh/error/flow/else_without_if.sk: Compilation error: line 1 column 1: else/elif statement missing preceding if statement\n"
 );
 
 

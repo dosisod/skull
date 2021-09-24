@@ -375,6 +375,63 @@ bool test_validate_redeclare_variable() {
 	PASS
 }
 
+bool test_validate_redeclare_variable_as_alias() {
+	Token *token = tokenize_fixture(U"x := 1\nx := Int");
+
+	AstNode *variable = AST_VAR_DEF(
+		token,
+		AST_NODE_EXPR(
+			token->next->next,
+			AST_CONST_EXPR(token->next->next)
+		),
+		true
+	);
+	variable->token_end = token->next;
+	ASSERT_TRUTHY(validate_ast_tree(variable));
+
+	Token *alias_token = token->next->next->next->next;
+
+	AstNode *alias = AST_VAR_DEF(
+		alias_token,
+		AST_NODE_EXPR(
+			alias_token->next->next,
+			AST_CONST_EXPR(alias_token->next->next)
+		),
+		true
+	);
+	alias->token_end = alias_token->next;
+
+	ASSERT_FALSEY(validate_ast_tree(alias));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 2 column 1: cannot redeclare variable \"x\" as type alias\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
+bool test_validate_else_missing_preceding_if() {
+	Token *token = tokenize_fixture(U"else { noop }");
+
+	AstNode *node = &(AstNode){
+		.type = AST_NODE_ELSE,
+		.token = token,
+		.child = &(AstNode){
+			.type = AST_NODE_NOOP,
+			.token = token->next->next
+		},
+		.parent = NULL
+	};
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: else/elif statement missing preceding if statement\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -398,7 +455,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_check_explicit_type_exists,
 		test_validate_disallow_reassigning_const,
 		test_validate_redeclare_function,
-		test_validate_redeclare_variable
+		test_validate_redeclare_variable,
+		test_validate_redeclare_variable_as_alias,
+		test_validate_else_missing_preceding_if
 	)
 }
 
