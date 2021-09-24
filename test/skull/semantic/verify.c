@@ -332,6 +332,49 @@ bool test_validate_disallow_reassigning_const() {
 	PASS
 }
 
+bool test_validate_redeclare_function() {
+	Token *token = tokenize_fixture(U"external x()");
+
+	AstNode *external_func = AST_NODE_NO_ARGS_FUNC_DECL(
+		token->next,
+		false,
+		false
+	);
+	ASSERT_TRUTHY(validate_ast_tree(external_func));
+
+	// just call validate again to simulate a redeclaration
+	ASSERT_FALSEY(validate_ast_tree(external_func));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 10: cannot redeclare function \"x\"\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
+bool test_validate_redeclare_variable() {
+	Token *token = tokenize_fixture(U"x := 0");
+
+	AstNode *variable = AST_VAR_DEF(
+		token,
+		AST_NODE_EXPR(
+			token->next->next,
+			AST_CONST_EXPR(token->next->next)
+		),
+		true
+	);
+	variable->token_end = token->next;
+	ASSERT_TRUTHY(validate_ast_tree(variable));
+
+	ASSERT_FALSEY(validate_ast_tree(variable));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: variable \"x\" already defined\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -353,7 +396,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_reassign_non_existent_var,
 		test_validate_check_expr_type_when_declaring,
 		test_validate_check_explicit_type_exists,
-		test_validate_disallow_reassigning_const
+		test_validate_disallow_reassigning_const,
+		test_validate_redeclare_function,
+		test_validate_redeclare_variable
 	)
 }
 
@@ -366,10 +411,10 @@ static bool validate_binary_expr_fixture(AstNode *node, const char *errors) {
 }
 
 static Token *tokenize_fixture(const char32_t *code) {
-	free_errors();
 	free_semantic_state();
 	Token *token = tokenize(code);
 	classify_tokens(token);
+	free_errors();
 
 	return token;
 }

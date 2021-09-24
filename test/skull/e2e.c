@@ -2150,30 +2150,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"external x()\n" \
-"external x()\n",
-TEST_DIR"/error/declare/redeclare_external.sk",
-
-NULL,
-
-"./test/sh/error/declare/redeclare_external.sk: Compilation error: line 2 column 10: cannot redeclare function \"x\"\n" \
-"./test/sh/error/declare/redeclare_external.sk: Warning: line 1 column 10: function \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 0\n" \
-"x := 0\n",
-TEST_DIR"/error/declare/var_already_defined.sk",
-
-NULL,
-
-"./test/sh/error/declare/var_already_defined.sk: Compilation error: line 2 column 1: variable \"x\" already defined\n" \
-"./test/sh/error/declare/var_already_defined.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "x := 1\n" \
 "x := Int\n",
 TEST_DIR"/error/declare/var_as_alias.sk",

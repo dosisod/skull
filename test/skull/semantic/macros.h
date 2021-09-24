@@ -89,3 +89,15 @@
 		.token = (_token), \
 		.expr = (_expr) \
 	}
+
+#define AST_NODE_NO_ARGS_FUNC_DECL(_token, _is_external, _is_export) \
+	&(AstNode){ \
+		.type = AST_NODE_FUNCTION_PROTO, \
+		.token = (_token), \
+		.func_proto = &(AstNodeFunctionProto){ \
+			.name_tok = (_token), \
+			.return_type_name = NULL, \
+			.is_external = (_is_external), \
+			.is_export = (_is_export), \
+		} \
+	}
