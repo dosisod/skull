@@ -176,13 +176,15 @@ static bool is_missing_block(const AstNode *node, const char *name) {
 	return true;
 }
 
-bool validate_control_not_missing_if(const AstNode *node) {
+static bool validate_control_not_missing_if(const AstNode *node) {
 	const AstNode *last = node->last;
 
 	if (last) {
 		switch (last->type) {
-			case AST_NODE_COMMENT:
-				return validate_control_not_missing_if(last);
+			case AST_NODE_COMMENT: {
+				if (validate_control_not_missing_if(last)) return true;
+				break;
+			}
 			case AST_NODE_IF:
 			case AST_NODE_ELIF:
 				return true;
@@ -190,9 +192,11 @@ bool validate_control_not_missing_if(const AstNode *node) {
 		}
 	}
 
-	FMT_ERROR(ERR_ELSE_ELIF_MISSING_IF, {
-		.loc = &node->token->location
-	});
+	if (node->type == AST_NODE_ELIF || node->type == AST_NODE_ELSE) {
+		FMT_ERROR(ERR_ELSE_ELIF_MISSING_IF, {
+			.loc = &node->token->location
+		});
+	}
 
 	return false;
 }

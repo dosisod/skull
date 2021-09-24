@@ -432,6 +432,34 @@ bool test_validate_else_missing_preceding_if() {
 	PASS
 }
 
+bool test_validate_else_with_comment_missing_preceding_if() {
+	Token *token = tokenize_fixture(U"# comment\nelse { noop }");
+
+	AstNode * last = &(AstNode){
+		.type = AST_NODE_COMMENT,
+		.token = token
+	};
+
+	AstNode *node = &(AstNode){
+		.type = AST_NODE_ELSE,
+		.token = token->next->next,
+		.child = &(AstNode){
+			.type = AST_NODE_NOOP,
+			.token = token->next->next->next->next
+		},
+		.parent = NULL,
+		.last = last
+	};
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 2 column 1: else/elif statement missing preceding if statement\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -457,7 +485,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_redeclare_function,
 		test_validate_redeclare_variable,
 		test_validate_redeclare_variable_as_alias,
-		test_validate_else_missing_preceding_if
+		test_validate_else_missing_preceding_if,
+		test_validate_else_with_comment_missing_preceding_if
 	)
 }
 

@@ -2150,19 +2150,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"# this wont work\n" \
-"else {\n" \
-"	noop\n" \
-"}\n",
-TEST_DIR"/error/flow/comment_then_else.sk",
-
-NULL,
-
-"./test/sh/error/flow/comment_then_else.sk: Compilation error: line 1 column 1: else/elif statement missing preceding if statement\n"
-);
-
-
-pass |= e2e_wrapper(
 "if true {}\n",
 TEST_DIR"/error/flow/empty_block.sk",
 
