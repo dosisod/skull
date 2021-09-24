@@ -141,10 +141,10 @@ bool test_validate_lhs_var_missing() {
 
 	AstNode *node = AST_NODE_EXPR(
 		token,
-		AST_BINARY_EXPR(
-			AST_IDENT_EXPR(token),
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_IDENT_EXPR(token),
 			EXPR_ADD,
-			AST_CONST_EXPR(token->next->next)
+			AST_NODE_CONST_EXPR(token->next->next)
 		)
 	);
 
@@ -159,10 +159,10 @@ bool test_validate_rhs_var_missing() {
 
 	AstNode *node = AST_NODE_EXPR(
 		token,
-		AST_BINARY_EXPR(
-			AST_CONST_EXPR(token),
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
 			EXPR_ADD,
-			AST_IDENT_EXPR(token->next->next)
+			AST_NODE_IDENT_EXPR(token->next->next)
 		)
 	);
 
@@ -239,9 +239,9 @@ bool test_validate_non_numeric_exprs() {
 bool test_validate_reassign_non_existent_var() {
 	Token *token = tokenize_fixture(U"x = 0");
 
-	AstNode *node = AST_VAR_ASSIGN(
+	AstNode *node = AST_NODE_VAR_ASSIGN(
 		token,
-		AST_NODE_EXPR(token->next->next, AST_CONST_EXPR(token->next->next))
+		AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next))
 	);
 
 	ASSERT_FALSEY(validate_ast_tree(node));
@@ -261,16 +261,16 @@ bool test_validate_check_expr_type_when_declaring() {
 	Token *var_y_name = var_x_expr->next->next;
 	Token *var_y_expr = var_y_name->next->next->next;
 
-	AstNode *node_x = AST_VAR_DEF(
+	AstNode *node_x = AST_NODE_VAR_DEF(
 		var_x_name,
-		AST_NODE_EXPR(var_x_expr, AST_CONST_EXPR(var_x_expr)),
+		AST_NODE_EXPR(var_x_expr, AST_NODE_CONST_EXPR(var_x_expr)),
 		true
 	);
 	node_x->token_end = token->next;
 
-	AstNode *node_y = AST_VAR_DEF(
+	AstNode *node_y = AST_NODE_VAR_DEF(
 		var_y_name,
-		AST_NODE_EXPR(var_y_expr, AST_IDENT_EXPR(var_y_expr)),
+		AST_NODE_EXPR(var_y_expr, AST_NODE_IDENT_EXPR(var_y_expr)),
 		false
 	);
 	node_y->token_end = var_y_name->next->next;
@@ -288,9 +288,9 @@ bool test_validate_check_expr_type_when_declaring() {
 bool test_validate_check_explicit_type_exists() {
 	Token *token = tokenize_fixture(U"x: fail = 1");
 
-	AstNode *node = AST_VAR_DEF(
+	AstNode *node = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(token->next->next, AST_CONST_EXPR(token->next->next)),
+		AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next)),
 		false
 	);
 	node->token_end = token->next;
@@ -307,9 +307,9 @@ bool test_validate_check_explicit_type_exists() {
 bool test_validate_disallow_reassigning_const() {
 	Token *token = tokenize_fixture(U"x := 0\nx = 1");
 
-	AstNode *def = AST_VAR_DEF(
+	AstNode *def = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(token->next->next, AST_CONST_EXPR(token->next->next)),
+		AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next)),
 		true
 	);
 	def->token_end = token->next;
@@ -317,9 +317,9 @@ bool test_validate_disallow_reassigning_const() {
 	Token *assign_name = token->next->next->next->next;
 	Token *assign_expr = assign_name->next->next;
 
-	AstNode *assign = AST_VAR_ASSIGN(
+	AstNode *assign = AST_NODE_VAR_ASSIGN(
 		assign_name,
-		AST_NODE_EXPR(assign_expr, AST_CONST_EXPR(assign_expr))
+		AST_NODE_EXPR(assign_expr, AST_NODE_CONST_EXPR(assign_expr))
 	);
 
 	ASSERT_TRUTHY(validate_ast_tree(def));
@@ -355,11 +355,11 @@ bool test_validate_redeclare_function() {
 bool test_validate_redeclare_variable() {
 	Token *token = tokenize_fixture(U"x := 0");
 
-	AstNode *variable = AST_VAR_DEF(
+	AstNode *variable = AST_NODE_VAR_DEF(
 		token,
 		AST_NODE_EXPR(
 			token->next->next,
-			AST_CONST_EXPR(token->next->next)
+			AST_NODE_CONST_EXPR(token->next->next)
 		),
 		true
 	);
@@ -378,11 +378,11 @@ bool test_validate_redeclare_variable() {
 bool test_validate_redeclare_variable_as_alias() {
 	Token *token = tokenize_fixture(U"x := 1\nx := Int");
 
-	AstNode *variable = AST_VAR_DEF(
+	AstNode *variable = AST_NODE_VAR_DEF(
 		token,
 		AST_NODE_EXPR(
 			token->next->next,
-			AST_CONST_EXPR(token->next->next)
+			AST_NODE_CONST_EXPR(token->next->next)
 		),
 		true
 	);
@@ -391,11 +391,11 @@ bool test_validate_redeclare_variable_as_alias() {
 
 	Token *alias_token = token->next->next->next->next;
 
-	AstNode *alias = AST_VAR_DEF(
+	AstNode *alias = AST_NODE_VAR_DEF(
 		alias_token,
 		AST_NODE_EXPR(
 			alias_token->next->next,
-			AST_CONST_EXPR(alias_token->next->next)
+			AST_NODE_CONST_EXPR(alias_token->next->next)
 		),
 		true
 	);

@@ -1,6 +1,6 @@
 #pragma once
 
-#define AST_CONST_EXPR(token) \
+#define AST_NODE_CONST_EXPR(token) \
 	&(AstNodeExpr){ \
 		.lhs = { \
 			.tok = (token) \
@@ -8,7 +8,14 @@
 		.oper = EXPR_CONST \
 	}
 
-#define AST_BINARY_EXPR(_lhs, _oper, _rhs) \
+#define AST_NODE_EXPR(_token, _expr) \
+	&(AstNode){ \
+		.type = AST_NODE_EXPR, \
+		.token = (_token), \
+		.expr = (_expr) \
+	}
+
+#define AST_NODE_BINARY_EXPR(_lhs, _oper, _rhs) \
 	&(AstNodeExpr){ \
 		.lhs = { .expr = (_lhs) }, \
 		.rhs = (_rhs), \
@@ -16,22 +23,17 @@
 	}
 
 #define AST_SIMPLE_EXPR(_token) \
-	&(AstNode){ \
-		.type = AST_NODE_EXPR, \
-		.token = (_token), \
-		.expr = AST_CONST_EXPR(_token) \
-	}
+	AST_NODE_EXPR((_token), AST_NODE_CONST_EXPR(_token))
 
 #define AST_SIMPLE_BINARY_EXPR(_token, _oper) \
-	&(AstNode){ \
-		.type = AST_NODE_EXPR, \
-		.token = (_token), \
-		.expr = AST_BINARY_EXPR( \
-			AST_CONST_EXPR(_token), \
+	AST_NODE_EXPR( \
+		(_token), \
+		AST_NODE_BINARY_EXPR( \
+			AST_NODE_CONST_EXPR(_token), \
 			(_oper), \
-			AST_CONST_EXPR((_token)->next->next) \
+			AST_NODE_CONST_EXPR((_token)->next->next) \
 		) \
-	}
+	)
 
 #define AST_NO_ARG_FUNC_EXPR(_token) \
 	&(AstNodeExpr){ \
@@ -43,24 +45,23 @@
 		.oper = EXPR_FUNC \
 	}
 
-#define AST_IDENT_EXPR(_token) \
+#define AST_NODE_IDENT_EXPR(_token) \
 	&(AstNodeExpr){ \
 		.lhs = { .tok = (_token) }, \
 		.oper = EXPR_IDENTIFIER \
 	}
 
 #define AST_SIMPLE_UNARY_EXPR(_token, _oper) \
-	&(AstNode){ \
-		.type = AST_NODE_EXPR, \
-		.token = (_token), \
-		.expr = AST_BINARY_EXPR( \
+	AST_NODE_EXPR( \
+		(_token), \
+		AST_NODE_BINARY_EXPR( \
 			NULL, \
 			(_oper), \
-			AST_CONST_EXPR((_token)->next) \
+			AST_NODE_CONST_EXPR((_token)->next) \
 		) \
-	}
+	)
 
-#define AST_VAR_ASSIGN(_token, _expr_node) \
+#define AST_NODE_VAR_ASSIGN(_token, _expr_node) \
 	&(AstNode){ \
 		.type = AST_NODE_VAR_ASSIGN, \
 		.token = (_token), \
@@ -70,7 +71,7 @@
 		} \
 	}
 
-#define AST_VAR_DEF(_token, _expr_node, _is_implicit) \
+#define AST_NODE_VAR_DEF(_token, _expr_node, _is_implicit) \
 	&(AstNode){ \
 		.type = AST_NODE_VAR_DEF, \
 		.token = (_token), \
@@ -81,13 +82,6 @@
 			.is_implicit = (_is_implicit), \
 			.is_const = true \
 		} \
-	}
-
-#define AST_NODE_EXPR(_token, _expr) \
-	&(AstNode){ \
-		.type = AST_NODE_EXPR, \
-		.token = (_token), \
-		.expr = (_expr) \
 	}
 
 #define AST_NODE_NO_ARGS_FUNC_DECL(_token, _is_external, _is_export) \
