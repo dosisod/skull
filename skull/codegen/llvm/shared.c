@@ -63,13 +63,15 @@ void setup_llvm_state(void) {
 Convert/mangle `filename` into suitable name for "main" method for module.
 */
 char *create_main_func_name(const char *filename) {
+	if (!filename) filename = "";
+
 	char *slash_pos = strrchr(filename, '/');
 
 	if (slash_pos) {
 		filename = slash_pos + 1;
 	}
 
-	const size_t len = strlen(filename) - 1;
+	const size_t len = *filename ? strlen(filename) - 1 : 2;
 
 	char *ret = Malloc(len);
 	ret[0] = '.';

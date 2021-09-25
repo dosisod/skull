@@ -2187,20 +2187,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"if x {\n" \
-"	return 1\n" \
-"}\n" \
-"\n" \
-"return 0\n",
-TEST_DIR"/error/flow/if_with_nonexisting_var.sk",
-
-NULL,
-
-"./test/sh/error/flow/if_with_nonexisting_var.sk: Compilation error: line 1 column 4: variable \"x\" not found\n"
-);
-
-
-pass |= e2e_wrapper(
 "if true {\n" \
 "	x 1\n" \
 "}\n" \
@@ -2222,16 +2208,6 @@ TEST_DIR"/error/flow/missing_expr.sk",
 NULL,
 
 "./test/sh/error/flow/missing_expr.sk: Compilation error: line 1 column 4: invalid expression near \"# this will fail\"\n"
-);
-
-
-pass |= e2e_wrapper(
-"return 1.0\n",
-TEST_DIR"/error/flow/non_int_return.sk",
-
-NULL,
-
-"./test/sh/error/flow/non_int_return.sk: Compilation error: line 1 column 8: returning non-int expression \"1.0\" from main\n"
 );
 
 
@@ -3002,21 +2978,6 @@ NULL,
 
 "./test/sh/error/oper/mult_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n" \
 "./test/sh/error/oper/mult_mismatched_consts.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 0\n" \
-"\n" \
-"if x {\n" \
-"	# do nothing\n" \
-"}\n",
-TEST_DIR"/error/oper/non_bool_cond.sk",
-
-NULL,
-
-"./test/sh/error/oper/non_bool_cond.sk: Compilation error: line 3 column 4: expected boolean expression\n" \
-"./test/sh/error/oper/non_bool_cond.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
 );
 
 

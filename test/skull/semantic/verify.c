@@ -435,7 +435,7 @@ bool test_validate_else_missing_preceding_if() {
 bool test_validate_else_with_comment_missing_preceding_if() {
 	Token *token = tokenize_fixture(U"# comment\nelse { noop }");
 
-	AstNode * last = &(AstNode){
+	AstNode *last = &(AstNode){
 		.type = AST_NODE_COMMENT,
 		.token = token
 	};
@@ -454,6 +454,73 @@ bool test_validate_else_with_comment_missing_preceding_if() {
 	ASSERT_FALSEY(validate_ast_tree(node));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 2 column 1: else/elif statement missing preceding if statement\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
+bool test_validate_main_return_non_int() {
+	Token *token = tokenize_fixture(U"return 1.0");
+
+	AstNode *node = &(AstNode){
+		.type = AST_NODE_RETURN,
+		.token = token,
+		.expr_node = AST_SIMPLE_EXPR(token->next)
+	};
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 8: returning non-int expression \"1.0\" from main\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
+bool test_validate_check_bool_expr_in_if() {
+	Token *token = tokenize_fixture(U"if 0 { noop }");
+
+	AstNode *node = &(AstNode){
+		.type = AST_NODE_IF,
+		.token = token,
+		.child = &(AstNode){
+			.type = AST_NODE_NOOP,
+			.token = token->next->next->next
+		},
+		.expr_node = AST_SIMPLE_EXPR(token->next),
+		.parent = NULL
+	};
+
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 4: expected boolean expression\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
+bool test_validate_check_bool_expr_in_elif() {
+	Token *token = tokenize_fixture(U"elif 0 { noop }");
+
+	AstNode *node = &(AstNode){
+		.type = AST_NODE_ELIF,
+		.token = token,
+		.child = &(AstNode){
+			.type = AST_NODE_NOOP,
+			.token = token->next->next->next
+		},
+		.expr_node = AST_SIMPLE_EXPR(token->next),
+		.parent = NULL,
+		.last = &(AstNode){ .type = AST_NODE_IF }
+	};
+
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 6: expected boolean expression\n"
 	));
 
 	free_tokens(token);
@@ -486,7 +553,10 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_redeclare_variable,
 		test_validate_redeclare_variable_as_alias,
 		test_validate_else_missing_preceding_if,
-		test_validate_else_with_comment_missing_preceding_if
+		test_validate_else_with_comment_missing_preceding_if,
+		test_validate_main_return_non_int,
+		test_validate_check_bool_expr_in_if,
+		test_validate_check_bool_expr_in_elif
 	)
 }
 
@@ -500,6 +570,7 @@ static bool validate_binary_expr_fixture(AstNode *node, const char *errors) {
 
 static Token *tokenize_fixture(const char32_t *code) {
 	free_semantic_state();
+	setup_semantic_state();
 	Token *token = tokenize(code);
 	classify_tokens(token);
 	free_errors();
