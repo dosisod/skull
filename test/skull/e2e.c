@@ -2250,32 +2250,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"f() {\n" \
-"	return\n" \
-"	x := 1\n" \
-"}\n",
-TEST_DIR"/error/flow/unreachable_in_func.sk",
-
-NULL,
-
-"./test/sh/error/flow/unreachable_in_func.sk: Compilation error: line 3 column 2: unreachable code\n" \
-"./test/sh/error/flow/unreachable_in_func.sk: Warning: line 1 column 1: function \"f\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"return 1\n" \
-"\n" \
-"x := 0\n",
-TEST_DIR"/error/flow/unreachable_return.sk",
-
-NULL,
-
-"./test/sh/error/flow/unreachable_return.sk: Compilation error: line 3 column 1: unreachable code\n" \
-);
-
-
-pass |= e2e_wrapper(
 "x := Int\n" \
 "x() { noop }\n",
 TEST_DIR"/error/func/alias_as_func.sk",

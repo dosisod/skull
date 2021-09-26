@@ -619,6 +619,7 @@ static bool parse_ast_sub_tree_(
 	if (!child || err) return true;
 
 	if (!child->token) {
+		// move to semantic layer
 		FMT_ERROR(ERR_EMPTY_BLOCK, { .loc = &(*token)->location });
 
 		free_ast_tree_(child);

@@ -527,6 +527,55 @@ bool test_validate_check_bool_expr_in_elif() {
 	PASS
 }
 
+bool test_validate_unreachable_after_return() {
+	Token *token = tokenize_fixture(U"return 0\nx := 1");
+	Token *var_def_token = token->next->next->next;
+
+	AstNode *node = &(AstNode){
+		.type = AST_NODE_RETURN,
+		.token = token,
+		.expr_node = AST_SIMPLE_EXPR(token->next),
+		.next = &(AstNode){
+			.type = AST_NODE_VAR_DEF,
+			.token = var_def_token
+		}
+	};
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 2 column 1: unreachable code\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
+bool test_validate_unreachable_code_in_func() {
+	Token *token = tokenize_fixture(U"f() { return\nx := 1\n}");
+	Token *return_token = token->next->next->next->next;
+	Token *var_def_token = return_token->next->next;
+
+	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
+
+	node->child = &(AstNode){
+		.type = AST_NODE_RETURN,
+		.token = return_token,
+		.expr_node = NULL,
+		.next = &(AstNode){
+			.type = AST_NODE_VAR_DEF,
+			.token = var_def_token
+		}
+	};
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 2 column 1: unreachable code\n"
+	));
+
+	free_tokens(token);
+	PASS
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -556,7 +605,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_else_with_comment_missing_preceding_if,
 		test_validate_main_return_non_int,
 		test_validate_check_bool_expr_in_if,
-		test_validate_check_bool_expr_in_elif
+		test_validate_check_bool_expr_in_elif,
+		test_validate_unreachable_after_return,
+		test_validate_unreachable_code_in_func
 	)
 }
 
