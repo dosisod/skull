@@ -75,6 +75,7 @@
 	&(AstNode){ \
 		.type = AST_NODE_VAR_DEF, \
 		.token = (_token), \
+		.token_end = (_is_implicit) ? (_token)->next : (_token)->next->next, \
 		.var_def = &(AstNodeVarDef){ \
 			.name_tok = (_token), \
 			.expr_node = (_expr_node), \
@@ -94,4 +95,49 @@
 			.is_external = (_is_external), \
 			.is_export = (_is_export), \
 		} \
+	}
+
+#define AST_NODE_NOOP() \
+	&(AstNode){ \
+		.type = AST_NODE_NOOP, \
+		.token = NULL \
+	}
+
+#define AST_NODE_ELSE(_token, _child) \
+	&(AstNode){ \
+		.type = AST_NODE_ELSE, \
+		.token = (_token), \
+		.child = (_child), \
+		.parent = NULL \
+	}
+
+#define AST_NODE_COMMENT(_token) \
+	&(AstNode){ \
+		.type = AST_NODE_COMMENT, \
+		.token = (_token) \
+	}
+
+#define AST_NODE_RETURN(_token, _expr) \
+	&(AstNode){ \
+		.type = AST_NODE_RETURN, \
+		.token = (_token), \
+		.expr_node = (_expr), \
+	}
+
+#define AST_NODE_IF(_token, _cond, _child) \
+	&(AstNode){ \
+		.type = AST_NODE_IF, \
+		.token = (_token), \
+		.child = (_child), \
+		.expr_node = (_cond), \
+		.parent = NULL \
+	}
+
+#define AST_NODE_ELIF(_token, _cond, _child) \
+	&(AstNode){ \
+		.type = AST_NODE_ELIF, \
+		.token = (_token), \
+		.child = (_child), \
+		.expr_node = (_cond), \
+		.parent = NULL \
 	}

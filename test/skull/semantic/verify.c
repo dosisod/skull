@@ -16,6 +16,7 @@
 
 
 static bool validate_binary_expr_fixture(AstNode *, const char *);
+static bool validate_tree_fixture(AstNode *, const char *);
 static Token *tokenize_fixture(const char32_t *);
 
 bool test_validate_int_expr() {
@@ -239,41 +240,33 @@ bool test_validate_non_numeric_exprs() {
 bool test_validate_reassign_non_existent_var() {
 	Token *token = tokenize_fixture(U"x = 0");
 
-	AstNode *node = AST_NODE_VAR_ASSIGN(
-		token,
-		AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next))
-	);
-
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		AST_NODE_VAR_ASSIGN(
+			token,
+			AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next))
+		),
 		"(null): Compilation error: line 1 column 1: variable \"x\" not found\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 bool test_validate_check_expr_type_when_declaring() {
 	Token *token = tokenize_fixture(U"x := 0\ny: Bool = x");
 
-	Token *var_x_name = token;
 	Token *var_x_expr = token->next->next;
 	Token *var_y_name = var_x_expr->next->next;
 	Token *var_y_expr = var_y_name->next->next->next;
 
 	AstNode *node_x = AST_NODE_VAR_DEF(
-		var_x_name,
+		token,
 		AST_NODE_EXPR(var_x_expr, AST_NODE_CONST_EXPR(var_x_expr)),
 		true
 	);
-	node_x->token_end = token->next;
 
 	AstNode *node_y = AST_NODE_VAR_DEF(
 		var_y_name,
 		AST_NODE_EXPR(var_y_expr, AST_NODE_IDENT_EXPR(var_y_expr)),
 		false
 	);
-	node_y->token_end = var_y_name->next->next;
 
 	ASSERT_TRUTHY(validate_ast_tree(node_x));
 	ASSERT_FALSEY(validate_ast_tree(node_y));
@@ -288,20 +281,14 @@ bool test_validate_check_expr_type_when_declaring() {
 bool test_validate_check_explicit_type_exists() {
 	Token *token = tokenize_fixture(U"x: fail = 1");
 
-	AstNode *node = AST_NODE_VAR_DEF(
-		token,
-		AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next)),
-		false
-	);
-	node->token_end = token->next;
-
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		AST_NODE_VAR_DEF(
+			token,
+			AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next)),
+			false
+		),
 		"(null): Compilation error: line 1 column 4: type \"fail\" could not be found\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 bool test_validate_disallow_reassigning_const() {
@@ -312,7 +299,6 @@ bool test_validate_disallow_reassigning_const() {
 		AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next)),
 		true
 	);
-	def->token_end = token->next;
 
 	Token *assign_name = token->next->next->next->next;
 	Token *assign_expr = assign_name->next->next;
@@ -363,7 +349,6 @@ bool test_validate_redeclare_variable() {
 		),
 		true
 	);
-	variable->token_end = token->next;
 	ASSERT_TRUTHY(validate_ast_tree(variable));
 
 	ASSERT_FALSEY(validate_ast_tree(variable));
@@ -386,7 +371,6 @@ bool test_validate_redeclare_variable_as_alias() {
 		),
 		true
 	);
-	variable->token_end = token->next;
 	ASSERT_TRUTHY(validate_ast_tree(variable));
 
 	Token *alias_token = token->next->next->next->next;
@@ -399,7 +383,6 @@ bool test_validate_redeclare_variable_as_alias() {
 		),
 		true
 	);
-	alias->token_end = alias_token->next;
 
 	ASSERT_FALSEY(validate_ast_tree(alias));
 	ASSERT_FALSEY(compare_errors(
@@ -413,141 +396,73 @@ bool test_validate_redeclare_variable_as_alias() {
 bool test_validate_else_missing_preceding_if() {
 	Token *token = tokenize_fixture(U"else { noop }");
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_ELSE,
-		.token = token,
-		.child = &(AstNode){
-			.type = AST_NODE_NOOP,
-			.token = token->next->next
-		},
-		.parent = NULL
-	};
-
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		AST_NODE_ELSE(token, AST_NODE_NOOP()),
 		"(null): Compilation error: line 1 column 1: else/elif statement missing preceding if statement\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 bool test_validate_else_with_comment_missing_preceding_if() {
 	Token *token = tokenize_fixture(U"# comment\nelse { noop }");
 
-	AstNode *last = &(AstNode){
-		.type = AST_NODE_COMMENT,
-		.token = token
-	};
+	AstNode *node = AST_NODE_COMMENT(token);
+	node->next = AST_NODE_ELSE(token->next->next, AST_NODE_NOOP());
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_ELSE,
-		.token = token->next->next,
-		.child = &(AstNode){
-			.type = AST_NODE_NOOP,
-			.token = token->next->next->next->next
-		},
-		.parent = NULL,
-		.last = last
-	};
-
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		node,
 		"(null): Compilation error: line 2 column 1: else/elif statement missing preceding if statement\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 bool test_validate_main_return_non_int() {
 	Token *token = tokenize_fixture(U"return 1.0");
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_RETURN,
-		.token = token,
-		.expr_node = AST_SIMPLE_EXPR(token->next)
-	};
-
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		AST_NODE_RETURN(token, AST_SIMPLE_EXPR(token->next)),
 		"(null): Compilation error: line 1 column 8: returning non-int expression \"1.0\" from main\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 bool test_validate_check_bool_expr_in_if() {
 	Token *token = tokenize_fixture(U"if 0 { noop }");
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_IF,
-		.token = token,
-		.child = &(AstNode){
-			.type = AST_NODE_NOOP,
-			.token = token->next->next->next
-		},
-		.expr_node = AST_SIMPLE_EXPR(token->next),
-		.parent = NULL
-	};
-
-
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		AST_NODE_IF(
+			token,
+			AST_SIMPLE_EXPR(token->next),
+			AST_NODE_NOOP()
+		),
 		"(null): Compilation error: line 1 column 4: expected boolean expression\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 bool test_validate_check_bool_expr_in_elif() {
 	Token *token = tokenize_fixture(U"elif 0 { noop }");
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_ELIF,
-		.token = token,
-		.child = &(AstNode){
-			.type = AST_NODE_NOOP,
-			.token = token->next->next->next
-		},
-		.expr_node = AST_SIMPLE_EXPR(token->next),
-		.parent = NULL,
-		.last = &(AstNode){ .type = AST_NODE_IF }
-	};
+	AstNode *node = AST_NODE_ELIF(
+		token,
+		AST_SIMPLE_EXPR(token->next),
+		AST_NODE_NOOP()
+	);
+	node->last = AST_NODE_IF(NULL, NULL, NULL);
 
-
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		node,
 		"(null): Compilation error: line 1 column 6: expected boolean expression\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 bool test_validate_unreachable_after_return() {
 	Token *token = tokenize_fixture(U"return 0\nx := 1");
 	Token *var_def_token = token->next->next->next;
 
-	AstNode *node = &(AstNode){
-		.type = AST_NODE_RETURN,
-		.token = token,
-		.expr_node = AST_SIMPLE_EXPR(token->next),
-		.next = &(AstNode){
-			.type = AST_NODE_VAR_DEF,
-			.token = var_def_token
-		}
-	};
+	AstNode *node = AST_NODE_RETURN(token, AST_SIMPLE_EXPR(token->next));
+	node->next = AST_NODE_VAR_DEF(var_def_token, NULL, false);
 
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		node,
 		"(null): Compilation error: line 2 column 1: unreachable code\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 bool test_validate_unreachable_code_in_func() {
@@ -557,23 +472,13 @@ bool test_validate_unreachable_code_in_func() {
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
 
-	node->child = &(AstNode){
-		.type = AST_NODE_RETURN,
-		.token = return_token,
-		.expr_node = NULL,
-		.next = &(AstNode){
-			.type = AST_NODE_VAR_DEF,
-			.token = var_def_token
-		}
-	};
+	node->child = AST_NODE_RETURN(return_token, NULL);
+	node->child->next = AST_NODE_VAR_DEF(var_def_token, NULL, false);
 
-	ASSERT_FALSEY(validate_ast_tree(node));
-	ASSERT_FALSEY(compare_errors(
+	return validate_tree_fixture(
+		node,
 		"(null): Compilation error: line 2 column 1: unreachable code\n"
-	));
-
-	free_tokens(token);
-	PASS
+	);
 }
 
 void semantic_verify_test_self(bool *pass) {
@@ -613,6 +518,14 @@ void semantic_verify_test_self(bool *pass) {
 
 static bool validate_binary_expr_fixture(AstNode *node, const char *errors) {
 	ASSERT_FALSEY(validate_expr(node));
+	ASSERT_FALSEY(compare_errors(errors));
+
+	free_tokens(node->token);
+	PASS
+}
+
+static bool validate_tree_fixture(AstNode *node, const char *errors) {
+	ASSERT_FALSEY(validate_ast_tree(node));
 	ASSERT_FALSEY(compare_errors(errors));
 
 	free_tokens(node->token);
