@@ -2908,31 +2908,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := 0\n" \
-"\n" \
-"z := x + 1.0\n",
-TEST_DIR"/error/oper/lhs_var_bad_type.sk",
-
-NULL,
-
-"./test/sh/error/oper/lhs_var_bad_type.sk: Compilation error: line 3 column 10: expected type \"Int\", got \"Float\"\n" \
-"./test/sh/error/oper/lhs_var_bad_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n" \
-"./test/sh/error/oper/lhs_var_bad_type.sk: Warning: line 3 column 1: variable \"z\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := x < 1\n",
-TEST_DIR"/error/oper/lhs_var_self_ref.sk",
-
-NULL,
-
-"./test/sh/error/oper/lhs_var_self_ref.sk: Compilation error: line 1 column 6: variable \"x\" not found\n" \
-"./test/sh/error/oper/lhs_var_self_ref.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "x := 1 +\n",
 TEST_DIR"/error/oper/missing_rhs.sk",
 
@@ -2952,33 +2927,6 @@ NULL,
 
 "./test/sh/error/oper/mult_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n" \
 "./test/sh/error/oper/mult_mismatched_consts.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"mut x := 1\n" \
-"\n" \
-"x = 1.0\n",
-TEST_DIR"/error/oper/reassign_different_type.sk",
-
-NULL,
-
-"./test/sh/error/oper/reassign_different_type.sk: Compilation error: line 3 column 5: expected type \"Int\", got \"Float\"\n" \
-"./test/sh/error/oper/reassign_different_type.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 0\n" \
-"\n" \
-"z := 1.0 + x\n",
-TEST_DIR"/error/oper/rhs_var_bad_type.sk",
-
-NULL,
-
-"./test/sh/error/oper/rhs_var_bad_type.sk: Compilation error: line 3 column 12: expected type \"Float\", got \"Int\"\n" \
-"./test/sh/error/oper/rhs_var_bad_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n" \
-"./test/sh/error/oper/rhs_var_bad_type.sk: Warning: line 3 column 1: variable \"z\" is unused\n"
 );
 
 

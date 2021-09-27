@@ -481,6 +481,90 @@ bool test_validate_unreachable_code_in_func() {
 	);
 }
 
+bool test_validate_lhs_var_self_ref() {
+	Token *token = tokenize_fixture(U"x := x < 1");
+	Token *expr_token = token->next->next;
+
+	return validate_tree_fixture(
+		AST_NODE_VAR_DEF(
+			token,
+			AST_NODE_EXPR(
+				expr_token,
+				AST_NODE_BINARY_EXPR(
+					AST_NODE_IDENT_EXPR(expr_token),
+					EXPR_LESS_THAN,
+					AST_NODE_CONST_EXPR(expr_token->next->next)
+				)
+			),
+			true
+		),
+		"(null): Compilation error: line 1 column 6: variable \"x\" not found\n"
+	);
+}
+
+bool test_validate_reassign_different_type() {
+	Token *token = tokenize_fixture(U"mut x := 1\nx = 1.0");
+	Token *var_expr_token = token->next->next->next;
+	Token *var_assign_token = var_expr_token->next->next;
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token->next,
+		AST_NODE_EXPR(
+			var_expr_token,
+			AST_NODE_CONST_EXPR(var_expr_token)
+		),
+		true
+	);
+	node->var_def->is_const = false;
+	node->token = token;
+
+	node->next = AST_NODE_VAR_ASSIGN(
+		var_assign_token,
+		AST_NODE_EXPR(
+			var_assign_token->next->next,
+			AST_NODE_CONST_EXPR(var_assign_token->next->next)
+		)
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 2 column 5: expected type \"Int\", got \"Float\"\n"
+	);
+}
+
+bool test_validate_lhs_expr() {
+	Token *token = tokenize_fixture(U"x := y + 1");
+
+	return validate_tree_fixture(
+		AST_NODE_VAR_DEF(
+			token,
+			AST_NODE_EXPR(
+				token->next->next,
+				AST_NODE_BINARY_EXPR(
+					AST_NODE_IDENT_EXPR(token->next->next),
+					EXPR_ADD,
+					AST_NODE_CONST_EXPR(token->next->next->next->next)
+				)
+			),
+			true
+		),
+		"(null): Compilation error: line 1 column 6: variable \"y\" not found\n"
+	);
+}
+
+bool test_validate_rhs_expr() {
+	Token *token = tokenize_fixture(U"x := 1.0 + 1");
+
+	return validate_tree_fixture(
+		AST_NODE_VAR_DEF(
+			token,
+			AST_SIMPLE_BINARY_EXPR(token->next->next, EXPR_ADD),
+			true
+		),
+		"(null): Compilation error: line 1 column 12: expected type \"Float\", got \"Int\"\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -512,7 +596,11 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_check_bool_expr_in_if,
 		test_validate_check_bool_expr_in_elif,
 		test_validate_unreachable_after_return,
-		test_validate_unreachable_code_in_func
+		test_validate_unreachable_code_in_func,
+		test_validate_lhs_var_self_ref,
+		test_validate_reassign_different_type,
+		test_validate_lhs_expr,
+		test_validate_rhs_expr
 	)
 }
 
