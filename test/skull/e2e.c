@@ -2103,30 +2103,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"mut x: Int = 1 is 1\n",
-TEST_DIR"/error/declare/check_bool_assign.sk",
-
-NULL,
-
-"./test/sh/error/declare/check_bool_assign.sk: Compilation error: line 1 column 14: expected type \"Int\", got \"Bool\"\n" \
-"./test/sh/error/declare/check_bool_assign.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/declare/check_bool_assign.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"mut x: Int = not true\n",
-TEST_DIR"/error/declare/check_bool_not_assign.sk",
-
-NULL,
-
-"./test/sh/error/declare/check_bool_not_assign.sk: Compilation error: line 1 column 18: expected type \"Int\", got \"Bool\"\n" \
-"./test/sh/error/declare/check_bool_not_assign.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/declare/check_bool_not_assign.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "x := '\n" \
 "'\n",
 TEST_DIR"/error/declare/control_char_in_rune.sk",

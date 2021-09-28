@@ -565,6 +565,32 @@ bool test_validate_rhs_expr() {
 	);
 }
 
+bool test_validate_binary_bool_expr() {
+	Token *token = tokenize_fixture(U"x: Int = 1 is 1");
+
+	return validate_tree_fixture(
+		AST_NODE_VAR_DEF(
+			token,
+			AST_SIMPLE_BINARY_EXPR(token->next->next->next, EXPR_IS),
+			false
+		),
+		"(null): Compilation error: line 1 column 10: expected type \"Int\", got \"Bool\"\n"
+	);
+}
+
+bool test_validate_unary_bool_expr() {
+	Token *token = tokenize_fixture(U"x: Int = not true");
+
+	return validate_tree_fixture(
+		AST_NODE_VAR_DEF(
+			token,
+			AST_SIMPLE_UNARY_EXPR(token->next->next->next, EXPR_NOT),
+			false
+		),
+		"(null): Compilation error: line 1 column 14: expected type \"Int\", got \"Bool\"\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -600,7 +626,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_lhs_var_self_ref,
 		test_validate_reassign_different_type,
 		test_validate_lhs_expr,
-		test_validate_rhs_expr
+		test_validate_rhs_expr,
+		test_validate_binary_bool_expr,
+		test_validate_unary_bool_expr
 	)
 }
 
