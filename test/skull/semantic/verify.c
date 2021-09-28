@@ -591,6 +591,76 @@ bool test_validate_unary_bool_expr() {
 	);
 }
 
+bool test_validate_var_in_if_scoped() {
+	Token *token = tokenize_fixture(U"if true { x := 0\n}return x");
+	Token *cond_token = token->next;
+	Token *var_def_token = cond_token->next->next;
+	Token *var_def_expr_token = var_def_token->next->next;
+	Token *return_token = var_def_expr_token->next->next->next;
+
+	AstNode *node = AST_NODE_IF(
+		token,
+		AST_NODE_EXPR(
+			cond_token,
+			AST_NODE_CONST_EXPR(cond_token)
+		),
+		AST_NODE_VAR_DEF(
+			var_def_token,
+			AST_NODE_EXPR(
+				var_def_expr_token,
+				AST_NODE_CONST_EXPR(var_def_expr_token)
+			),
+			true
+		)
+	);
+	node->next = AST_NODE_RETURN(
+		return_token,
+		AST_NODE_EXPR(
+			return_token->next,
+			AST_NODE_IDENT_EXPR(return_token->next)
+		)
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Warning: line 1 column 4: condition is always true\n" \
+		"(null): Compilation error: line 2 column 9: variable \"x\" not found\n"
+	);
+}
+
+bool test_validate_stmt_between_if_and_elif() {
+	Token *token = tokenize_fixture(U"if true { noop } x := 1\nelif true { noop }");
+	Token *if_cond  = token->next;
+	Token *var_def_token = if_cond->next->next->next->next;
+	Token *var_def_expr_token = var_def_token->next->next;
+	Token *elif_token = var_def_expr_token->next->next;
+
+	AstNode *node = AST_NODE_IF(
+		token,
+		AST_NODE_EXPR(if_cond, AST_NODE_CONST_EXPR(if_cond)),
+		AST_NODE_NOOP()
+	);
+	node->next = AST_NODE_VAR_DEF(
+		var_def_token,
+		AST_NODE_EXPR(
+			var_def_expr_token,
+			AST_NODE_CONST_EXPR(var_def_expr_token)
+		),
+		true
+	);
+	node->next->next = AST_NODE_ELIF(
+		elif_token,
+		AST_NODE_EXPR(elif_token->next, AST_NODE_CONST_EXPR(elif_token->next)),
+		AST_NODE_NOOP()
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Warning: line 1 column 4: condition is always true\n" \
+		"(null): Compilation error: line 2 column 1: else/elif statement missing preceding if statement\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -628,7 +698,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_lhs_expr,
 		test_validate_rhs_expr,
 		test_validate_binary_bool_expr,
-		test_validate_unary_bool_expr
+		test_validate_unary_bool_expr,
+		test_validate_var_in_if_scoped,
+		test_validate_stmt_between_if_and_elif
 	)
 }
 

@@ -2147,23 +2147,6 @@ NULL,
 
 pass |= e2e_wrapper(
 "if true {\n" \
-"	mut x := 0\n" \
-"}\n" \
-"\n" \
-"return x\n",
-TEST_DIR"/error/flow/if_var_out_of_scope.sk",
-
-NULL,
-
-"./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 1 column 4: condition is always true\n" \
-"./test/sh/error/flow/if_var_out_of_scope.sk: Compilation error: line 5 column 8: variable \"x\" not found\n" \
-"./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 2 column 6: variable \"x\" should be constant\n" \
-"./test/sh/error/flow/if_var_out_of_scope.sk: Warning: line 2 column 6: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"if true {\n" \
 "	x 1\n" \
 "}\n" \
 "\n" \
@@ -2204,24 +2187,6 @@ TEST_DIR"/error/flow/return_non_existent_var.sk",
 NULL,
 
 "./test/sh/error/flow/return_non_existent_var.sk: Compilation error: line 1 column 8: variable \"x\" not found\n"
-);
-
-
-pass |= e2e_wrapper(
-"if true {\n" \
-"	noop\n" \
-"}\n" \
-"x := 1\n" \
-"elif true {\n" \
-"	noop\n" \
-"}\n",
-TEST_DIR"/error/flow/stmt_between_elif.sk",
-
-NULL,
-
-"./test/sh/error/flow/stmt_between_elif.sk: Warning: line 1 column 4: condition is always true\n" \
-"./test/sh/error/flow/stmt_between_elif.sk: Compilation error: line 5 column 1: else/elif statement missing preceding if statement\n" \
-"./test/sh/error/flow/stmt_between_elif.sk: Warning: line 4 column 1: variable \"x\" is unused\n"
 );
 
 
