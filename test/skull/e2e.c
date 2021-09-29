@@ -2718,17 +2718,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"some_alias := Int\n" \
-"some_alias := Float\n",
-TEST_DIR"/error/misc/no_same_name_aliases.sk",
-
-NULL,
-
-"./test/sh/error/misc/no_same_name_aliases.sk: Compilation error: line 2 column 1: alias \"some_alias\" is already defined\n"
-);
-
-
-pass |= e2e_wrapper(
 "{ noop }\n",
 TEST_DIR"/error/misc/only_brackets.sk",
 
@@ -2781,23 +2770,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x: Int = 1\n",
-TEST_DIR"/error/misc/trivial_type.sk",
-
-"; ModuleID = './test/sh/error/misc/trivial_type.sk'\n" \
-"source_filename = \"./test/sh/error/misc/trivial_type.sk\"\n" \
-"\n" \
-"define i64 @.trivial_type() {\n" \
-"entry:\n" \
-"  ret i64 0\n" \
-"}\n",
-
-"./test/sh/error/misc/trivial_type.sk: Warning: explicit type \"Int\" can be trivialy deduced\n" \
-"./test/sh/error/misc/trivial_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "# do nothing\n" \
 "\n" \
 "{\n" \
@@ -2821,17 +2793,6 @@ NULL,
 
 "./test/sh/error/oper/add_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n" \
 "./test/sh/error/oper/add_mismatched_consts.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x: Float = 1\n",
-TEST_DIR"/error/oper/assign_bad_type.sk",
-
-NULL,
-
-"./test/sh/error/oper/assign_bad_type.sk: Compilation error: line 1 column 12: expected type \"Float\", got \"Int\"\n" \
-"./test/sh/error/oper/assign_bad_type.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
 );
 
 

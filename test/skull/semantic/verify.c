@@ -661,6 +661,48 @@ bool test_validate_stmt_between_if_and_elif() {
 	);
 }
 
+bool test_validate_no_redeclare_alias() {
+	Token *token = tokenize_fixture(U"alias := Int\nalias := Float");
+	Token *int_token = token->next->next;
+	Token *alias2_token = int_token->next->next;
+	Token *float_token = alias2_token->next->next;
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token,
+		AST_NODE_EXPR(int_token, AST_NODE_IDENT_EXPR(int_token)),
+		true
+	);
+	node->next = AST_NODE_VAR_DEF(
+		alias2_token,
+		AST_NODE_EXPR(float_token, AST_NODE_IDENT_EXPR(float_token)),
+		true
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 2 column 1: alias \"alias\" is already defined\n"
+	);
+}
+
+bool test_validate_trivial_type() {
+	Token *token = tokenize_fixture(U"x: Int = 1");
+	Token *expr_token = token->next->next->next;
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token,
+		AST_NODE_EXPR(expr_token, AST_NODE_CONST_EXPR(expr_token)),
+		false
+	);
+	ASSERT_TRUTHY(validate_ast_tree(node));
+
+	ASSERT_FALSEY(compare_errors(
+		"(null): Warning: explicit type \"Int\" can be trivialy deduced\n"
+	));
+
+	free_tokens(node->token);
+	PASS
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -700,7 +742,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_binary_bool_expr,
 		test_validate_unary_bool_expr,
 		test_validate_var_in_if_scoped,
-		test_validate_stmt_between_if_and_elif
+		test_validate_stmt_between_if_and_elif,
+		test_validate_no_redeclare_alias,
+		test_validate_trivial_type
 	)
 }
 
