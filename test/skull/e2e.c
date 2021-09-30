@@ -2492,17 +2492,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := Int\n" \
-"x := 1\n",
-TEST_DIR"/error/misc/alias_as_var.sk",
-
-NULL,
-
-"./test/sh/error/misc/alias_as_var.sk: Compilation error: line 2 column 1: cannot redeclare type alias \"x\" as variable\n"
-);
-
-
-pass |= e2e_wrapper(
 "#{\n",
 TEST_DIR"/error/misc/closing_block_comment_missing.sk",
 
@@ -2643,17 +2632,6 @@ NULL,
 );
 
 #endif
-
-pass |= e2e_wrapper(
-"export main() {\n" \
-"	# do nothing\n" \
-"}\n",
-TEST_DIR"/error/misc/main_reserved.sk",
-
-NULL,
-
-"./test/sh/error/misc/main_reserved.sk: Compilation error: line 1 column 8: cannot export function \"main\"\n"
-);
 
 
 pass |= e2e_wrapper(

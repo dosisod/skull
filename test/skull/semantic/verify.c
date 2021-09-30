@@ -321,11 +321,7 @@ bool test_validate_disallow_reassigning_const() {
 bool test_validate_redeclare_function() {
 	Token *token = tokenize_fixture(U"external x()");
 
-	AstNode *external_func = AST_NODE_NO_ARGS_FUNC_DECL(
-		token->next,
-		false,
-		false
-	);
+	AstNode *external_func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
 	ASSERT_TRUTHY(validate_ast_tree(external_func));
 
 	// just call validate again to simulate a redeclaration
@@ -703,6 +699,41 @@ bool test_validate_trivial_type() {
 	PASS
 }
 
+bool test_validate_no_export_main() {
+	Token *token = tokenize_fixture(U"export main() { noop }");
+
+	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, true);
+	node->token = token;
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 1 column 8: cannot export function \"main\"\n"
+	);
+}
+
+bool test_validate_redeclare_type_alias_as_var() {
+	Token *token = tokenize_fixture(U"x := Int\nx := 1");
+	Token *type_token = token->next->next;
+	Token *var_def_token = type_token->next->next;
+	Token *var_def_expr_token = var_def_token->next->next;
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token,
+		AST_NODE_EXPR(type_token, AST_NODE_IDENT_EXPR(type_token)),
+		true
+	);
+	node->next = AST_NODE_VAR_DEF(
+		var_def_token,
+		AST_NODE_EXPR(var_def_expr_token, AST_NODE_CONST_EXPR(var_def_expr_token)),
+		true
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 2 column 1: cannot redeclare type alias \"x\" as variable\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -744,7 +775,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_var_in_if_scoped,
 		test_validate_stmt_between_if_and_elif,
 		test_validate_no_redeclare_alias,
-		test_validate_trivial_type
+		test_validate_trivial_type,
+		test_validate_no_export_main,
+		test_validate_redeclare_type_alias_as_var
 	)
 }
 

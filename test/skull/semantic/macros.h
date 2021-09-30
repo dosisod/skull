@@ -88,9 +88,11 @@
 #define AST_NODE_NO_ARGS_FUNC_DECL(_token, _is_external, _is_export) \
 	&(AstNode){ \
 		.type = AST_NODE_FUNCTION_PROTO, \
-		.token = (_token), \
+		.token = ((_is_export) || (_is_external)) ? (_token)->next : (_token), \
 		.func_proto = &(AstNodeFunctionProto){ \
-			.name_tok = (_token), \
+			.name_tok = ((_is_export) || (_is_external)) ? \
+				(_token)->next : \
+				(_token), \
 			.return_type_name = NULL, \
 			.is_external = (_is_external), \
 			.is_export = (_is_export), \
