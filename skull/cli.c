@@ -35,9 +35,11 @@ static const char *module_shim;
 static bool parse_long_option(const char *);
 static char *squash_argv(char *[]);
 static int sh(char *[]);
+static int shell(char *);
 static int handle_args(int, char *[]);
 static void cleanup(void);
 static noreturn void bail(int);
+static char *get_llc_binary(void);
 
 char *filename = NULL;
 char *args = (char[]){0};
@@ -201,8 +203,9 @@ static int run_llc(void) {
 		return 1;
 	}
 
-	// TODO(dosisod): autodetect which llc to use
-	char *llc_cmd = strdup("llc-10");
+	char *llc_cmd = get_llc_binary();
+	if (!llc_cmd) return 1;
+
 	char *llvm_file = gen_filename(filename, "ll");
 	char *filetype = strdup(BUILD_DATA.asm_backend ?
 		"-filetype=asm" :
@@ -225,7 +228,6 @@ static int run_llc(void) {
 	errno = 0;
 	remove(llvm_file);
 
-	free(llc_cmd);
 	free(llvm_file);
 	free(filetype);
 
@@ -236,6 +238,23 @@ static int run_llc(void) {
 
 	return exit_code;
 }
+
+#define CHECK_CMD(_cmd) { \
+	static char check_cmd[] = "which "_cmd" > /dev/null"; \
+	static char cmd[] = _cmd; \
+	const bool cmd_exists = !shell(check_cmd); \
+	if (cmd_exists) return cmd; \
+}
+
+static char *get_llc_binary(void) {
+	CHECK_CMD("llc-10")
+	CHECK_CMD("llc")
+
+	puts("skull: llc-10 command not found");
+
+	return NULL;
+}
+#undef CHECK_CMD
 
 static int run_cc(char *binary_name) {
 	char *module_name = create_main_func_name(filename);
@@ -250,10 +269,7 @@ static int run_cc(char *binary_name) {
 	free(module_name);
 	free(binary_name);
 
-	static char shell[] = "/bin/sh";
-	static char dash_c[] = "-c";
-
-	const int exit_code = sh((char *[]){ shell, dash_c, shim, NULL });
+	const int exit_code = shell(shim);
 
 	remove(out_filename);
 	free(out_filename);
@@ -382,6 +398,13 @@ static int sh(char *argv[]) {
 	wait(&status);
 
 	return WEXITSTATUS(status);
+}
+
+static int shell(char *cmd) {
+	static char shell[] = "/bin/sh";
+	static char dash_c[] = "-c";
+
+	return sh((char *[]){ shell, dash_c, cmd, NULL });
 }
 
 static void bail(int exit_code) {
