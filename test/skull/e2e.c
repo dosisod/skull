@@ -2310,29 +2310,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := f()\n",
-TEST_DIR"/error/func/missing_declaration.sk",
-
-NULL,
-
-"./test/sh/error/func/missing_declaration.sk: Compilation error: line 1 column 6: function \"f\" missing declaration\n"
-);
-
-
-pass |= e2e_wrapper(
-"f() Int {\n" \
-"	# do nothing\n" \
-"}\n",
-TEST_DIR"/error/func/missing_return.sk",
-
-NULL,
-
-"./test/sh/error/func/missing_return.sk: Compilation error: expected return value in function \"f\"\n" \
-"./test/sh/error/func/missing_return.sk: Warning: line 1 column 1: function \"f\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
 "external f(a: Int, b: Int)\n" \
 "\n" \
 "f(1 2)\n",
@@ -2463,19 +2440,6 @@ NULL,
 
 "./test/sh/error/func/unexpected_return.sk: Compilation error: unexpected return from void function \"f\"\n"
 "./test/sh/error/func/unexpected_return.sk: Warning: line 1 column 1: function \"f\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := 1\n" \
-"\n" \
-"x() { noop }\n",
-TEST_DIR"/error/func/var_as_func.sk",
-
-NULL,
-
-"./test/sh/error/func/var_as_func.sk: Compilation error: line 3 column 1: cannot redeclare variable \"x\" as function\n" \
-"./test/sh/error/func/var_as_func.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
 );
 
 

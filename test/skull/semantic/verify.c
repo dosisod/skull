@@ -734,6 +734,37 @@ bool test_validate_redeclare_type_alias_as_var() {
 	);
 }
 
+bool test_validate_non_void_function_missing_return() {
+	Token *token = tokenize_fixture(U"f() Int { noop }");
+
+	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
+	static char int_name[] = "Int";
+	node->func_proto->return_type_name = int_name;
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: expected return value in function \"f\"\n"
+	);
+}
+
+bool test_validate_redeclare_var_as_func() {
+	Token *token = tokenize_fixture(U"x := 1\nx() { noop }");
+	Token *expr_token = token->next->next;
+	Token *func_token = expr_token->next->next;
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token,
+		AST_NODE_EXPR(expr_token, AST_NODE_CONST_EXPR(expr_token)),
+		true
+	);
+	node->next = AST_NODE_NO_ARGS_FUNC_DECL(func_token, false, false);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 2 column 1: cannot redeclare variable \"x\" as function\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -777,7 +808,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_no_redeclare_alias,
 		test_validate_trivial_type,
 		test_validate_no_export_main,
-		test_validate_redeclare_type_alias_as_var
+		test_validate_redeclare_type_alias_as_var,
+		test_validate_non_void_function_missing_return,
+		test_validate_redeclare_var_as_func
 	)
 }
 
