@@ -15,6 +15,10 @@
 #include "./macros.h"
 
 
+#ifndef __ANDROID_API__
+#define __ANDROID_API__ 0
+#endif
+
 static bool validate_binary_expr_fixture(AstNode *, const char *);
 static bool validate_tree_fixture(AstNode *, const char *);
 static Token *tokenize_fixture(const char32_t *);
@@ -765,6 +769,30 @@ bool test_validate_redeclare_var_as_func() {
 	);
 }
 
+// TODO(dosisod) Investigate why android parses wide chars differently
+#ifndef __ANDROID_API__
+bool test_validate_legal_utf8_str() {
+	Token *token = tokenize_fixture(U"\"\\xdb80\"\n");
+
+	return validate_binary_expr_fixture(
+		AST_NODE_EXPR(token, AST_NODE_CONST_EXPR(token)),
+		"(null): Compilation error: line 1 column 1: illegal UTF8 sequence in this region\n"
+	);
+}
+
+bool test_validate_legal_utf8_rune() {
+	Token *token = tokenize_fixture(U"\'\\xdb80\'\n");
+
+	return validate_binary_expr_fixture(
+		AST_NODE_EXPR(token, AST_NODE_CONST_EXPR(token)),
+		"(null): Compilation error: line 1 column 1: illegal UTF8 sequence in this region\n"
+	);
+}
+#else
+bool test_validate_legal_utf8_str() { PASS; }
+bool test_validate_legal_utf8_rune() { PASS; }
+#endif
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -810,7 +838,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_no_export_main,
 		test_validate_redeclare_type_alias_as_var,
 		test_validate_non_void_function_missing_return,
-		test_validate_redeclare_var_as_func
+		test_validate_redeclare_var_as_func,
+		test_validate_legal_utf8_str,
+		test_validate_legal_utf8_rune
 	)
 }
 

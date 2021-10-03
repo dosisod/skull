@@ -12,10 +12,6 @@
 #include "skull/pipeline.h"
 #include "test/testing.h"
 
-#ifndef __ANDROID_API__
-#define __ANDROID_API__ 0
-#endif
-
 bool SKULL_TESTING = 0;
 #define TEST_DIR "./test/sh"
 
@@ -2570,32 +2566,6 @@ NULL,
 
 "./test/sh/error/misc/invalid_paren_expr.sk: Compilation error: line 1 column 7: invalid expression near \"_\"\n"
 );
-
-// TODO(dosisod) Investigate why android parses wide chars differently
-#ifndef __ANDROID_API__
-
-pass |= e2e_wrapper(
-"x := '\\xdb80'\n",
-TEST_DIR"/error/misc/invalid_utf_rune.sk",
-
-NULL,
-
-"./test/sh/error/misc/invalid_utf_rune.sk: Compilation error: line 1 column 6: illegal UTF8 sequence in this region\n" \
-"./test/sh/error/misc/invalid_utf_rune.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := \"\\xdb80\"\n",
-TEST_DIR"/error/misc/invalid_utf_str.sk",
-
-NULL,
-
-"./test/sh/error/misc/invalid_utf_str.sk: Compilation error: line 1 column 6: illegal UTF8 sequence in this region\n" \
-"./test/sh/error/misc/invalid_utf_str.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
-);
-
-#endif
 
 
 pass |= e2e_wrapper(
