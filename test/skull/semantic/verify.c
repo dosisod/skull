@@ -793,6 +793,46 @@ bool test_validate_legal_utf8_str() { PASS; }
 bool test_validate_legal_utf8_rune() { PASS; }
 #endif
 
+bool test_validate_no_void_assign() {
+	Token *token = tokenize_fixture(U"external f()\nx := f()");
+	Token *x_token = token->next->next->next->next->next;
+	Token *func_call_token = x_token->next->next;
+
+	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
+	node->token = token;
+
+	node->next = AST_NODE_VAR_DEF(
+		x_token,
+		AST_NODE_EXPR(
+			func_call_token,
+			AST_NO_ARG_FUNC_EXPR(func_call_token)
+		),
+		true
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 2 column 6: function returning type void cannot be assigned to variable \"x\"\n"
+	);
+}
+
+bool test_validate_return_non_void_from_void_func() {
+	Token *token = tokenize_fixture(U"f() { return 0 }");
+	Token *return_token = token->next->next->next->next;
+	Token *return_expr = return_token->next;
+
+	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
+	node->child = AST_NODE_RETURN(
+		return_token,
+		AST_NODE_EXPR(return_expr, AST_NODE_CONST_EXPR(return_expr))
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: unexpected return from void function \"f\"\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -839,6 +879,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_redeclare_type_alias_as_var,
 		test_validate_non_void_function_missing_return,
 		test_validate_redeclare_var_as_func,
+		test_validate_no_void_assign,
+		test_validate_return_non_void_from_void_func,
 		test_validate_legal_utf8_str,
 		test_validate_legal_utf8_rune
 	)

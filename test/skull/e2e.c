@@ -2329,7 +2329,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "external f(x: Int)\n" \
 "\n" \
 "x := false\n" \
@@ -2356,7 +2356,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "f() {\n" \
 "	# do nothing\n" \
 "}\n" \
@@ -2370,7 +2370,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "f(x: does_not_exist) {\n" \
 "	# do nothing\n" \
 "}\n",
@@ -2383,7 +2383,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "f() does_not_exist {\n" \
 "	# do nothing\n" \
 "}\n",
@@ -2395,7 +2395,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "f() Int {\n" \
 "	return false\n" \
 "}\n",
@@ -2408,7 +2408,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "x := 0\n" \
 "\n" \
 "f(x: Int) Int {\n" \
@@ -2425,33 +2425,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"f() {\n" \
-"	return 0\n" \
-"}\n" \
-"\n" \
-"f()\n",
-TEST_DIR"/error/func/unexpected_return.sk",
-
-NULL,
-
-"./test/sh/error/func/unexpected_return.sk: Compilation error: unexpected return from void function \"f\"\n"
-"./test/sh/error/func/unexpected_return.sk: Warning: line 1 column 1: function \"f\" is unused\n"
-);
-
-
-pass |= e2e_wrapper(
-"external f()\n" \
-"\n" \
-"x := f(1)\n",
-TEST_DIR"/error/func/var_def_check_func.sk",
-
-NULL,
-
-"./test/sh/error/func/var_def_check_func.sk: Compilation error: line 3 column 6: function returning type void cannot be assigned to variable \"x\"\n"
-);
-
-
-pass |= e2e_wrapper(
 "#{\n",
 TEST_DIR"/error/misc/closing_block_comment_missing.sk",
 
@@ -2461,7 +2434,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "if true {\n" \
 "	return 1\n" \
 "} {\n" \
@@ -2497,7 +2470,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "mut x := 0\n" \
 "\n" \
 "x = 1 {\n" \
@@ -2513,7 +2486,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "x := 1\n" \
 "{\n" \
 "	# invalid\n" \
@@ -2526,7 +2499,7 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
+pass |= e2e_wrapper( //
 "return 1 {\n" \
 "	# invalid\n" \
 "}\n",
