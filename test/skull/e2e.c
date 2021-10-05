@@ -2470,47 +2470,6 @@ NULL,
 );
 
 
-pass |= e2e_wrapper( //
-"mut x := 0\n" \
-"\n" \
-"x = 1 {\n" \
-"	# invalid\n" \
-"}\n",
-TEST_DIR"/error/misc/invalid_block_in_assign.sk",
-
-NULL,
-
-"./test/sh/error/misc/invalid_block_in_assign.sk: Compilation error: line 4 column 2: unexpected code block\n" \
-"./test/sh/error/misc/invalid_block_in_assign.sk: Warning: line 1 column 5: variable \"x\" should be constant\n" \
-"./test/sh/error/misc/invalid_block_in_assign.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
-);
-
-
-pass |= e2e_wrapper( //
-"x := 1\n" \
-"{\n" \
-"	# invalid\n" \
-"}\n",
-TEST_DIR"/error/misc/invalid_block_in_def.sk",
-
-NULL,
-
-"./test/sh/error/misc/invalid_block_in_def.sk: Compilation error: line 3 column 2: unexpected code block\n"
-);
-
-
-pass |= e2e_wrapper( //
-"return 1 {\n" \
-"	# invalid\n" \
-"}\n",
-TEST_DIR"/error/misc/invalid_block_in_return.sk",
-
-NULL,
-
-"./test/sh/error/misc/invalid_block_in_return.sk: Compilation error: line 2 column 2: unexpected code block\n"
-);
-
-
 pass |= e2e_wrapper(
 "#x\n",
 TEST_DIR"/error/misc/invalid_comment_start.sk",

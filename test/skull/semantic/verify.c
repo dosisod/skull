@@ -833,6 +833,20 @@ bool test_validate_return_non_void_from_void_func() {
 	);
 }
 
+bool test_validate_unexpected_code_block() {
+	Token *token = tokenize_fixture(U"noop { noop }");
+
+	AstNode *node = AST_NODE_NOOP();
+	node->token = token;
+	node->child = AST_NODE_NOOP();
+	node->child->token = token->next;
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 1 column 6: unexpected code block\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -882,7 +896,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_no_void_assign,
 		test_validate_return_non_void_from_void_func,
 		test_validate_legal_utf8_str,
-		test_validate_legal_utf8_rune
+		test_validate_legal_utf8_rune,
+		test_validate_unexpected_code_block
 	)
 }
 
