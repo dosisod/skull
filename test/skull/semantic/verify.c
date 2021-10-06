@@ -847,6 +847,29 @@ bool test_validate_unexpected_code_block() {
 	);
 }
 
+bool test_validate_func_parameter_count() {
+	Token *token = tokenize_fixture(U"f() { noop }\nf(1)");
+	Token *func_call_token = token->next->next->next->next->next->next->next;
+	Token *func_call_expr_token = func_call_token->next->next;
+
+	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
+	node->next = AST_NODE_EXPR(
+		func_call_token,
+		AST_NO_ARG_FUNC_EXPR(func_call_token)
+	);
+
+	node->next->expr->lhs.func_call->params = AST_NODE_EXPR(
+		func_call_token,
+		AST_NODE_CONST_EXPR(func_call_expr_token)
+	);
+	node->next->expr->lhs.func_call->num_values = 1;
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 2 column 1: invalid number of parameters\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -897,7 +920,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_return_non_void_from_void_func,
 		test_validate_legal_utf8_str,
 		test_validate_legal_utf8_rune,
-		test_validate_unexpected_code_block
+		test_validate_unexpected_code_block,
+		test_validate_func_parameter_count
 	)
 }
 

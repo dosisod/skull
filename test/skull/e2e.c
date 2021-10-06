@@ -2357,20 +2357,6 @@ NULL,
 
 
 pass |= e2e_wrapper( //
-"f() {\n" \
-"	# do nothing\n" \
-"}\n" \
-"\n" \
-"f(x)\n",
-TEST_DIR"/error/func/passing_to_paramless_func.sk",
-
-NULL,
-
-"./test/sh/error/func/passing_to_paramless_func.sk: Compilation error: line 5 column 1: invalid number of parameters\n"
-);
-
-
-pass |= e2e_wrapper( //
 "f(x: does_not_exist) {\n" \
 "	# do nothing\n" \
 "}\n",
