@@ -2370,31 +2370,6 @@ NULL,
 
 
 pass |= e2e_wrapper( //
-"f() does_not_exist {\n" \
-"	# do nothing\n" \
-"}\n",
-TEST_DIR"/error/func/proto_return_bad_type.sk",
-
-NULL,
-
-"./test/sh/error/func/proto_return_bad_type.sk: Compilation error: type \"does_not_exist\" could not be found\n"
-);
-
-
-pass |= e2e_wrapper( //
-"f() Int {\n" \
-"	return false\n" \
-"}\n",
-TEST_DIR"/error/func/return_type_mismatch.sk",
-
-NULL,
-
-"./test/sh/error/func/return_type_mismatch.sk: Compilation error: line 2 column 9: expected type \"Int\", got \"Bool\"\n" \
-"./test/sh/error/func/return_type_mismatch.sk: Warning: line 1 column 1: function \"f\" is unused\n"
-);
-
-
-pass |= e2e_wrapper( //
 "x := 0\n" \
 "\n" \
 "f(x: Int) Int {\n" \

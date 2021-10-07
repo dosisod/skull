@@ -870,6 +870,42 @@ bool test_validate_func_parameter_count() {
 	);
 }
 
+bool test_validate_func_return_invalid_type() {
+	Token *token = tokenize_fixture(U"f() Int { return false }");
+	Token *return_token = token->next->next->next->next->next;
+	Token *return_expr_token = return_token->next;
+
+	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
+	static char int_name[] = "Int";
+	node->func_proto->return_type_name = int_name;
+
+	node->child = AST_NODE_RETURN(
+		return_token,
+		AST_NODE_EXPR(
+			return_expr_token,
+			AST_NODE_CONST_EXPR(return_expr_token)
+		)
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 1 column 18: expected type \"Int\", got \"Bool\"\n"
+	);
+}
+
+bool test_validate_func_check_return_type() {
+	Token *token = tokenize_fixture(U"f() invalid { noop }");
+
+	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
+	static char type_name[] = "invalid";
+	node->func_proto->return_type_name = type_name;
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: type \"invalid\" could not be found\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -921,7 +957,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_legal_utf8_str,
 		test_validate_legal_utf8_rune,
 		test_validate_unexpected_code_block,
-		test_validate_func_parameter_count
+		test_validate_func_parameter_count,
+		test_validate_func_return_invalid_type,
+		test_validate_func_check_return_type
 	)
 }
 
