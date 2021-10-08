@@ -2187,17 +2187,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := Int\n" \
-"x() { noop }\n",
-TEST_DIR"/error/func/alias_as_func.sk",
-
-NULL,
-
-"./test/sh/error/func/alias_as_func.sk: Compilation error: line 2 column 1: cannot redeclare type alias \"x\" as function\n"
-);
-
-
-pass |= e2e_wrapper(
 "# TODO: fix incorrect error (should be cannot assign type)\n" \
 "\n" \
 "func() Int {\n" \

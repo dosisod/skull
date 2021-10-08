@@ -906,6 +906,28 @@ bool test_validate_func_check_return_type() {
 	);
 }
 
+bool test_validate_redeclare_alias_as_func() {
+	Token *token = tokenize_fixture(U"x := Int\nx() { noop }");
+	Token *var_expr_token = token->next->next;
+	Token *func_token = var_expr_token->next->next;
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token,
+		AST_NODE_EXPR(
+			var_expr_token,
+			AST_NODE_IDENT_EXPR(var_expr_token)
+		),
+		true
+	);
+
+	node->next = AST_NODE_NO_ARGS_FUNC_DECL(func_token, false, false);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 2 column 1: cannot redeclare type alias \"x\" as function\n"
+	);
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -959,7 +981,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_unexpected_code_block,
 		test_validate_func_parameter_count,
 		test_validate_func_return_invalid_type,
-		test_validate_func_check_return_type
+		test_validate_func_check_return_type,
+		test_validate_redeclare_alias_as_func
 	)
 }
 
