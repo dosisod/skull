@@ -2044,31 +2044,6 @@ NULL
 // error tests
 
 pass |= e2e_wrapper(
-"	#{\n" \
-"	#{\n" \
-"	#}\n",
-
-TEST_DIR"/error/misc/nested_block_comment.sk",
-
-NULL,
-
-"./test/sh/error/misc/nested_block_comment.sk: Compilation error: line 2 column 3: cannot put opening block comment in existing block comment\n"
-);
-
-
-pass |= e2e_wrapper(
-"\xEF\xBB\xBF""fail",
-
-TEST_DIR"/error/misc/no_bom.sk",
-
-NULL,
-
-"./test/sh/error/misc/no_bom.sk: Warning: BOM found\n" \
-"./test/sh/error/misc/no_bom.sk: Compilation error: line 1 column 1: expression cannot be used on its own\n"
-);
-
-
-pass |= e2e_wrapper(
 "x: Int =\n",
 TEST_DIR"/error/declare/assign_missing_rhs.sk",
 
@@ -2374,16 +2349,6 @@ NULL,
 );
 
 
-pass |= e2e_wrapper(
-"#{\n",
-TEST_DIR"/error/misc/closing_block_comment_missing.sk",
-
-NULL,
-
-"./test/sh/error/misc/closing_block_comment_missing.sk: Compilation error: line 1 column 1: expected closing \"#}\" for block comment\n"
-);
-
-
 pass |= e2e_wrapper( //
 "if true {\n" \
 "	return 1\n" \
@@ -2421,16 +2386,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"#x\n",
-TEST_DIR"/error/misc/invalid_comment_start.sk",
-
-NULL,
-
-"./test/sh/error/misc/invalid_comment_start.sk: Compilation error: line 1 column 1: invalid start of comment\n"
-);
-
-
-pass |= e2e_wrapper(
 "x!@$ := \"this will fail\"\n",
 TEST_DIR"/error/misc/invalid_identifier.sk",
 
@@ -2461,26 +2416,6 @@ TEST_DIR"/error/misc/mismatched_bracket.sk",
 NULL,
 
 "./test/sh/error/misc/mismatched_bracket.sk: Compilation error: Reached EOF, expected closing bracket\n"
-);
-
-
-pass |= e2e_wrapper(
-"x := \"\n",
-TEST_DIR"/error/misc/missing_quote.sk",
-
-NULL,
-
-"./test/sh/error/misc/missing_quote.sk: Compilation error: line 1 column 6: expected closing quote\n"
-);
-
-
-pass |= e2e_wrapper(
-"{\n",
-TEST_DIR"/error/misc/no_closing_bracket.sk",
-
-NULL,
-
-"./test/sh/error/misc/no_closing_bracket.sk: Compilation error: Reached EOF, expected closing bracket\n"
 );
 
 

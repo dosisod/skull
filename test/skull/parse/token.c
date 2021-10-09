@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/parse/token.h"
 
@@ -245,6 +246,83 @@ bool test_tokenize_with_lines_and_columns() {
 	PASS
 }
 
+bool test_nested_block_comment_fails() {
+	free_errors();
+
+	Token *t = tokenize(U"#{\n#{\n");
+
+	ASSERT_FALSEY(t);
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 2 column 2: cannot put opening block comment in existing block comment\n"
+	));
+
+	PASS
+}
+
+bool test_warn_bom() {
+	free_errors();
+
+	Token *t = tokenize(U"\xFEFF");
+
+	ASSERT_TRUTHY(t);
+	ASSERT_FALSEY(compare_errors("(null): Warning: BOM found\n"));
+
+	free_tokens(t);
+	PASS
+}
+
+bool test_invalid_comment_start() {
+	free_errors();
+
+	Token *t = tokenize(U"#x");
+
+	ASSERT_FALSEY(t);
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: invalid start of comment\n"
+	));
+
+	PASS
+}
+
+bool test_check_for_missing_block_comment() {
+	free_errors();
+
+	Token *t = tokenize(U"#{");
+
+	ASSERT_FALSEY(t);
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: expected closing \"#}\" for block comment\n"
+	));
+
+	PASS
+}
+
+bool test_check_for_closing_single_quote() {
+	free_errors();
+
+	Token *t = tokenize(U"\'");
+
+	ASSERT_FALSEY(t);
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: expected closing quote\n"
+	));
+
+	PASS
+}
+
+bool test_check_for_closing_double_quote() {
+	free_errors();
+
+	Token *t = tokenize(U"\"");
+
+	ASSERT_FALSEY(t);
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: expected closing quote\n"
+	));
+
+	PASS
+}
+
 void tokenizer_test_self(bool *pass) {
 	RUN_ALL(
 		test_tokenize_single_token,
@@ -262,6 +340,12 @@ void tokenizer_test_self(bool *pass) {
 		test_tokenize_comment,
 		test_tokenize_trailing_comment,
 		test_make_token,
-		test_tokenize_with_lines_and_columns
+		test_tokenize_with_lines_and_columns,
+		test_nested_block_comment_fails,
+		test_warn_bom,
+		test_invalid_comment_start,
+		test_check_for_missing_block_comment,
+		test_check_for_closing_single_quote,
+		test_check_for_closing_double_quote
 	)
 }
