@@ -200,6 +200,16 @@ bool test_c32sunescape() {
 	PASS
 }
 
+bool test_mbstoc32s_illegal_utf8() {
+	ASSERT_FALSEY(mbstoc32s("\xc3\x28\n"));
+
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: illegal UTF8 sequence at character offset 0\n"
+	));
+
+	PASS
+}
+
 void str_test_self(bool *pass) {
 	RUN_ALL(
 		test_strrstr,
@@ -215,6 +225,7 @@ void str_test_self(bool *pass) {
 		test_c32isdigit,
 		test_c32isxdigit,
 		test_uvsnsprintf,
-		test_c32sunescape
+		test_c32sunescape,
+		test_mbstoc32s_illegal_utf8
 	)
 }

@@ -2376,16 +2376,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"\xc3\x28\n",
-TEST_DIR"/error/misc/illegal_utf8.sk",
-
-NULL,
-
-"./test/sh/error/misc/illegal_utf8.sk: Compilation error: illegal UTF8 sequence at character offset 0\n"
-);
-
-
-pass |= e2e_wrapper(
 "x!@$ := \"this will fail\"\n",
 TEST_DIR"/error/misc/invalid_identifier.sk",
 
