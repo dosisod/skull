@@ -116,53 +116,7 @@ bool validate_control_while(const AstNode *node) {
 		return false;
 	}
 
-	const AstNodeExpr *expr = node->expr_node->expr;
-
-	switch (expr->oper) {
-		case EXPR_CONST: {
-			if (expr->lhs.tok->type == TOKEN_BOOL_CONST) return true;
-			break;
-		}
-		case EXPR_IDENTIFIER: {
-			Variable *var = scope_find_var(expr->lhs.tok);
-			if (!var) return false;
-
-			if (var->type == TYPE_BOOL) return true;
-			break;
-		}
-		case EXPR_FUNC: {
-			const Token *token = expr->lhs.func_call->func_name_tok;
-			char *name = token_to_mbs_str(token);
-			FunctionDeclaration *func = find_func_by_name(name);
-			free(name);
-
-			if (!func) {
-				FMT_ERROR(ERR_MISSING_DECLARATION, {
-					.tok = token
-				});
-
-				return false;
-			}
-
-			if (func->return_type == TYPE_BOOL) return true;
-			break;
-		}
-		case EXPR_NOT:
-		case EXPR_IS:
-		case EXPR_ISNT:
-		case EXPR_LESS_THAN:
-		case EXPR_GTR_THAN:
-		case EXPR_LESS_THAN_EQ:
-		case EXPR_GTR_THAN_EQ:
-		case EXPR_AND:
-		case EXPR_OR:
-		case EXPR_XOR:
-			return true;
-		default: break;
-	}
-
-	FMT_ERROR(ERR_NON_BOOL_EXPR, { .loc = &node->expr_node->token->location });
-	return false;
+	return true;
 }
 
 static bool is_missing_block(const AstNode *node, const char *name) {
