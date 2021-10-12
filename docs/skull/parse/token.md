@@ -13,18 +13,18 @@ Token *tokenize(const char32_t *code)
 > Tokenize `code` into linked list of tokens.
 
 ```c
-static bool iter_comment(Token *token, const char32_t **_code, unsigned *line_num, unsigned *column)
+static bool iter_comment(TokenizeCtx *ctx)
 ```
 
-> Iterate through comment, starting at `code`.
+> Iterate through comment.
 > \
 > Return `true` if errors occurred.
 
 ```c
-static bool iter_quote(Token *token, const char32_t **_code, unsigned *line_num, unsigned *column)
+static bool iter_quote(TokenizeCtx *ctx)
 ```
 
-> Iterate through a quote, starting at `code`.
+> Iterate through a quote.
 > \
 > Return `true` if errors occurred.
 

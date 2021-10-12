@@ -10,14 +10,22 @@
 static bool is_whitespace(char32_t);
 static bool is_quote(char32_t);
 
-static bool iter_comment(Token *, const char32_t **, unsigned *, unsigned *);
-static bool iter_quote(Token *, const char32_t **, unsigned *, unsigned *);
-
 typedef enum {
 	NO_COMMENT,
 	LINE_COMMENT,
 	BLOCK_COMMENT
 } CommentState;
+
+typedef struct {
+	Token *token;
+	Token *last;
+	const char32_t *code;
+	unsigned line_num;
+	unsigned column;
+} TokenizeCtx;
+
+static bool iter_comment(TokenizeCtx *);
+static bool iter_quote(TokenizeCtx *);
 
 /*
 Allocate and append next token, return newly created token.
@@ -32,181 +40,178 @@ Tokenize `code` into linked list of tokens.
 Token *tokenize(const char32_t *code) {
 	Token *const head = make_token();
 
-	Token *token = head;
-	Token *last = token;
+	TokenizeCtx ctx = {
+		.token = head,
+		.last = head,
+		.code = code,
+		.line_num = 1,
+		.column = 0
+	};
 
-	unsigned line_num = 1;
-	unsigned column = 0;
-
-	if (*code == U'\xFEFF') {
+	if (*ctx.code == U'\xFEFF') {
 		bool err = false;
 		FMT_WARN(err, WARN_NO_BOM, {0});
 		if (err) return NULL;
 
-		code++;
+		ctx.code++;
 	}
 
-	while (*code) {
-		column++;
+	while (*ctx.code) {
+		ctx.column++;
 
-		if (*code == '#') {
-			if (iter_comment(token, &code, &line_num, &column)) {
+		if (*ctx.code == '#') {
+
+			if (iter_comment(&ctx)) {
 				free_tokens(head);
 				return NULL;
 			}
 
-			token->type = TOKEN_COMMENT;
+			ctx.token->type = TOKEN_COMMENT;
 
-			if (!*code) break;
+			if (!*ctx.code) break;
 		}
-		else if (is_quote(*code)) {
-			if (iter_quote(token, &code, &line_num, &column)) {
+		else if (is_quote(*ctx.code)) {
+			if (iter_quote(&ctx)) {
 				free_tokens(head);
 				return NULL;
 			}
 		}
 		else if (
-			*code == '{' ||
-			*code == '}' ||
-			*code == '(' ||
-			*code == ')' ||
-			*code == ',' ||
-			*code == '\n'
+			*ctx.code == '{' ||
+			*ctx.code == '}' ||
+			*ctx.code == '(' ||
+			*ctx.code == ')' ||
+			*ctx.code == ',' ||
+			*ctx.code == '\n'
 		) {
-			if (token->begin) {
-				token->end = code;
-				token = setup_next(token);
+			if (ctx.token->begin) {
+				ctx.token->end = ctx.code;
+				ctx.token = setup_next(ctx.token);
 			}
 
-			*token = (Token){
-				.begin = code,
-				.end = code + 1,
-				.location = { .line = line_num, .column = column }
+			*ctx.token = (Token){
+				.begin = ctx.code,
+				.end = ctx.code + 1,
+				.location = { .line = ctx.line_num, .column = ctx.column }
 			};
 
-			switch (*code) {
-				case '{': token->type = TOKEN_BRACKET_OPEN; break;
-				case '}': token->type = TOKEN_BRACKET_CLOSE; break;
-				case '(': token->type = TOKEN_PAREN_OPEN; break;
-				case ')': token->type = TOKEN_PAREN_CLOSE; break;
-				case ',': token->type = TOKEN_COMMA; break;
-				case '\n': token->type = TOKEN_NEWLINE; break;
+			switch (*ctx.code) {
+				case '{': ctx.token->type = TOKEN_BRACKET_OPEN; break;
+				case '}': ctx.token->type = TOKEN_BRACKET_CLOSE; break;
+				case '(': ctx.token->type = TOKEN_PAREN_OPEN; break;
+				case ')': ctx.token->type = TOKEN_PAREN_CLOSE; break;
+				case ',': ctx.token->type = TOKEN_COMMA; break;
+				case '\n': ctx.token->type = TOKEN_NEWLINE; break;
 				default: break; // make GCC happy
 			}
 
-			last = token;
-			token = setup_next(token);
+			ctx.last = ctx.token;
+			ctx.token = setup_next(ctx.token);
 		}
-		else if (!token->begin) {
-			if (!is_whitespace(*code)) {
-				token->begin = code;
-				token->location.line = line_num;
-				token->location.column = column;
+		else if (!ctx.token->begin) {
+			if (!is_whitespace(*ctx.code)) {
+				ctx.token->begin = ctx.code;
+				ctx.token->location.line = ctx.line_num;
+				ctx.token->location.column = ctx.column;
 			}
 		}
-		else if (!token->end) {
-			if (is_whitespace(*code)) {
-				token->end = code;
-				last = token;
-				token = setup_next(token);
+		else if (!ctx.token->end) {
+			if (is_whitespace(*ctx.code)) {
+				ctx.token->end = ctx.code;
+				ctx.last = ctx.token;
+				ctx.token = setup_next(ctx.token);
 			}
 		}
 
-		if (*code == '\n') {
-			line_num++;
-			column = 0;
+		if (*ctx.code == '\n') {
+			ctx.line_num++;
+			ctx.column = 0;
 		}
 
-		code++;
+		ctx.code++;
 	}
 
 	// close dangling token if there was no whitespace at EOF
-	if (token->begin) {
-		token->end = code;
+	if (ctx.token->begin) {
+		ctx.token->end = ctx.code;
 	}
 	// pop last token since it will not have any data
-	else if (token != head) {
-		last->next = NULL;
-		free(token);
+	else if (ctx.token != head) {
+		ctx.last->next = NULL;
+		free(ctx.token);
 	}
 
 	return head;
 }
 
 /*
-Iterate through comment, starting at `code`.
+Iterate through comment.
 
 Return `true` if errors occurred.
 */
-static bool iter_comment(
-	Token *token,
-	const char32_t **_code,
-	unsigned *line_num,
-	unsigned *column
-) {
-	const char32_t *code = *_code;
-
+static bool iter_comment(TokenizeCtx *ctx) {
 	CommentState comment = NO_COMMENT;
 
-	if (code[1] == ' ' || code[1] == '\t')
+	if (ctx->code[1] == ' ' || ctx->code[1] == '\t')
 		comment = LINE_COMMENT;
 
-	else if (code[1] == '{')
+	else if (ctx->code[1] == '{')
 		comment = BLOCK_COMMENT;
 
 	else {
-		Location location = (Location){ .line = *line_num, .column = *column };
+		Location location = (Location){
+			.line = ctx->line_num,
+			.column = ctx->column
+		};
 		FMT_ERROR(ERR_INVALID_COMMENT_START, { .loc = &location });
 		return true;
 	}
 
-	if (!token->begin) {
-		token->begin = code;
-		token->location.line = *line_num;
-		token->location.column = *column;
+	if (!ctx->token->begin) {
+		ctx->token->begin = ctx->code;
+		ctx->token->location.line = ctx->line_num;
+		ctx->token->location.column = ctx->column;
 	}
 
-	code++;
-	(*column)++;
+	ctx->code++;
+	ctx->column++;
 
 	do {
-		code++;
-		(*column)++;
+		ctx->code++;
+		ctx->column++;
 
-		if (comment == LINE_COMMENT && *code == '\n') {
-			code--;
+		if (comment == LINE_COMMENT && *ctx->code == '\n') {
+			ctx->code--;
 			break;
 		}
-		if (comment == BLOCK_COMMENT && *code == '#') {
-			code++;
-			(*column)++;
+		if (comment == BLOCK_COMMENT && *ctx->code == '#') {
+			ctx->code++;
+			ctx->column++;
 
-			if (*code == '}') break;
+			if (*ctx->code == '}') break;
 
-			if (*code == '\n') {
-				(*line_num)++;
-				*column = 0;
+			if (*ctx->code == '\n') {
+				ctx->line_num++;
+				ctx->column = 0;
 			}
 
-			else if (*code == '{') {
+			else if (*ctx->code == '{') {
 				Location location = (Location){
-					.line = *line_num,
-					.column = *column
+					.line = ctx->line_num,
+					.column = ctx->column
 				};
 				FMT_ERROR(ERR_NESTED_BLOCK_COMMENT, { .loc = &location });
 				return true;
 			}
 		}
-		else if (*code == '\n') {
-			(*line_num)++;
-			*column = 0;
+		else if (*ctx->code == '\n') {
+			ctx->line_num++;
+			ctx->column = 0;
 		}
-	} while (*code);
+	} while (*ctx->code);
 
-	*_code = code;
-
-	if (!*code && comment == BLOCK_COMMENT) {
-		FMT_ERROR(ERR_NO_CLOSING_COMMENT, { .loc = &token->location });
+	if (!*ctx->code && comment == BLOCK_COMMENT) {
+		FMT_ERROR(ERR_NO_CLOSING_COMMENT, { .loc = &ctx->token->location });
 		return true;
 	}
 
@@ -214,49 +219,42 @@ static bool iter_comment(
 }
 
 /*
-Iterate through a quote, starting at `code`.
+Iterate through a quote.
 
 Return `true` if errors occurred.
 */
-static bool iter_quote(
-	Token *token,
-	const char32_t **_code,
-	unsigned *line_num,
-	unsigned *column
-) {
-	const char32_t *code = *_code;
+static bool iter_quote(TokenizeCtx *ctx) {
+	const char32_t quote = *ctx->code;
 
-	char32_t quote = *code;
-
-	if (!token->begin) {
-		token->begin = code;
-		token->location.line = *line_num;
-		token->location.column = *column;
+	if (!ctx->token->begin) {
+		ctx->token->begin = ctx->code;
+		ctx->token->location.line = ctx->line_num;
+		ctx->token->location.column = ctx->column;
 	}
 
 	do {
-		code++;
+		ctx->code++;
 
-		if (*code == '\n') {
-			(*line_num)++;
-			*column = 0;
+		if (*ctx->code == '\n') {
+			ctx->line_num++;
+			ctx->column = 0;
 		}
-
-		if (*code == '\\' && (code[1] == '\\' || code[1] == quote)) {
-			code++;
-			(*column)++;
+		else if (*ctx->code == '\\' && (
+			ctx->code[1] == '\\' ||
+			ctx->code[1] == quote
+		)) {
+			ctx->code++;
+			ctx->column++;
 		}
+		else if (*ctx->code == quote) break;
 
-		else if (*code == quote) break;
+	} while (*ctx->code);
 
-	} while (*code);
-
-	if (!*code) {
-		FMT_ERROR(ERR_NO_CLOSING_QUOTE, { .loc = &token->location });
+	if (!*ctx->code) {
+		FMT_ERROR(ERR_NO_CLOSING_QUOTE, { .loc = &ctx->token->location });
 		return true;
 	}
 
-	*_code = code;
 	return false;
 }
 
