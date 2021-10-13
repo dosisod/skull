@@ -26,6 +26,11 @@ typedef struct {
 
 static bool iter_comment(TokenizeCtx *);
 static bool iter_quote(TokenizeCtx *);
+static bool tokenize_inner_loop(TokenizeCtx *);
+static bool is_delimeter(char32_t);
+static void token_add_info(TokenizeCtx *);
+static void chomp(TokenizeCtx *);
+static void next_line(TokenizeCtx *);
 
 /*
 Allocate and append next token, return newly created token.
@@ -38,6 +43,14 @@ static Token *setup_next(Token *token) {
 Tokenize `code` into linked list of tokens.
 */
 Token *tokenize(const char32_t *code) {
+	if (*code == U'\xFEFF') {
+		bool err = false;
+		FMT_WARN(err, WARN_NO_BOM, {0});
+		if (err) return NULL;
+
+		code++;
+	}
+
 	Token *const head = make_token();
 
 	TokenizeCtx ctx = {
@@ -48,87 +61,13 @@ Token *tokenize(const char32_t *code) {
 		.column = 0
 	};
 
-	if (*ctx.code == U'\xFEFF') {
-		bool err = false;
-		FMT_WARN(err, WARN_NO_BOM, {0});
-		if (err) return NULL;
-
-		ctx.code++;
-	}
-
 	while (*ctx.code) {
-		ctx.column++;
+		const bool err = tokenize_inner_loop(&ctx);
 
-		if (*ctx.code == '#') {
-
-			if (iter_comment(&ctx)) {
-				free_tokens(head);
-				return NULL;
-			}
-
-			ctx.token->type = TOKEN_COMMENT;
-
-			if (!*ctx.code) break;
+		if (err) {
+			free_tokens(head);
+			return NULL;
 		}
-		else if (is_quote(*ctx.code)) {
-			if (iter_quote(&ctx)) {
-				free_tokens(head);
-				return NULL;
-			}
-		}
-		else if (
-			*ctx.code == '{' ||
-			*ctx.code == '}' ||
-			*ctx.code == '(' ||
-			*ctx.code == ')' ||
-			*ctx.code == ',' ||
-			*ctx.code == '\n'
-		) {
-			if (ctx.token->begin) {
-				ctx.token->end = ctx.code;
-				ctx.token = setup_next(ctx.token);
-			}
-
-			*ctx.token = (Token){
-				.begin = ctx.code,
-				.end = ctx.code + 1,
-				.location = { .line = ctx.line_num, .column = ctx.column }
-			};
-
-			switch (*ctx.code) {
-				case '{': ctx.token->type = TOKEN_BRACKET_OPEN; break;
-				case '}': ctx.token->type = TOKEN_BRACKET_CLOSE; break;
-				case '(': ctx.token->type = TOKEN_PAREN_OPEN; break;
-				case ')': ctx.token->type = TOKEN_PAREN_CLOSE; break;
-				case ',': ctx.token->type = TOKEN_COMMA; break;
-				case '\n': ctx.token->type = TOKEN_NEWLINE; break;
-				default: break; // make GCC happy
-			}
-
-			ctx.last = ctx.token;
-			ctx.token = setup_next(ctx.token);
-		}
-		else if (!ctx.token->begin) {
-			if (!is_whitespace(*ctx.code)) {
-				ctx.token->begin = ctx.code;
-				ctx.token->location.line = ctx.line_num;
-				ctx.token->location.column = ctx.column;
-			}
-		}
-		else if (!ctx.token->end) {
-			if (is_whitespace(*ctx.code)) {
-				ctx.token->end = ctx.code;
-				ctx.last = ctx.token;
-				ctx.token = setup_next(ctx.token);
-			}
-		}
-
-		if (*ctx.code == '\n') {
-			ctx.line_num++;
-			ctx.column = 0;
-		}
-
-		ctx.code++;
 	}
 
 	// close dangling token if there was no whitespace at EOF
@@ -142,6 +81,73 @@ Token *tokenize(const char32_t *code) {
 	}
 
 	return head;
+}
+
+/*
+Run one iteration of the main tokenizer function.
+
+Returns `true` if en error occurred.
+*/
+static bool tokenize_inner_loop(TokenizeCtx *ctx) {
+	ctx->column++;
+
+	if (*ctx->code == '#') {
+		if (iter_comment(ctx)) return true;
+
+		ctx->token->type = TOKEN_COMMENT;
+
+		if (!*ctx->code) return false;
+	}
+	else if (is_quote(*ctx->code) && iter_quote(ctx)) {
+		return true;
+	}
+	else if (is_delimeter(*ctx->code)) {
+		if (ctx->token->begin) {
+			ctx->token->end = ctx->code;
+			ctx->token = setup_next(ctx->token);
+		}
+
+		*ctx->token = (Token){
+			.begin = ctx->code,
+			.end = ctx->code + 1,
+			.location = { .line = ctx->line_num, .column = ctx->column }
+		};
+
+		switch (*ctx->code) {
+			case '{': ctx->token->type = TOKEN_BRACKET_OPEN; break;
+			case '}': ctx->token->type = TOKEN_BRACKET_CLOSE; break;
+			case '(': ctx->token->type = TOKEN_PAREN_OPEN; break;
+			case ')': ctx->token->type = TOKEN_PAREN_CLOSE; break;
+			case ',': ctx->token->type = TOKEN_COMMA; break;
+			case '\n': ctx->token->type = TOKEN_NEWLINE; break;
+			default: break; // make GCC happy
+		}
+
+		ctx->last = ctx->token;
+		ctx->token = setup_next(ctx->token);
+	}
+	else if (!ctx->token->begin) {
+		if (!is_whitespace(*ctx->code)) token_add_info(ctx);
+	}
+	else if (!ctx->token->end) {
+		if (is_whitespace(*ctx->code)) {
+			ctx->token->end = ctx->code;
+			ctx->last = ctx->token;
+			ctx->token = setup_next(ctx->token);
+		}
+	}
+
+	if (*ctx->code == '\n') next_line(ctx);
+
+	ctx->code++;
+
+	return false;
+}
+
+static bool is_delimeter(char32_t c) {
+	return (
+		c == '{' || c == '}' || c == '(' || c == ')' || c == ',' || c == '\n'
+	);
 }
 
 /*
@@ -167,33 +173,23 @@ static bool iter_comment(TokenizeCtx *ctx) {
 		return true;
 	}
 
-	if (!ctx->token->begin) {
-		ctx->token->begin = ctx->code;
-		ctx->token->location.line = ctx->line_num;
-		ctx->token->location.column = ctx->column;
-	}
+	if (!ctx->token->begin) token_add_info(ctx);
 
-	ctx->code++;
-	ctx->column++;
+	chomp(ctx);
 
 	do {
-		ctx->code++;
-		ctx->column++;
+		chomp(ctx);
 
 		if (comment == LINE_COMMENT && *ctx->code == '\n') {
 			ctx->code--;
 			break;
 		}
 		if (comment == BLOCK_COMMENT && *ctx->code == '#') {
-			ctx->code++;
-			ctx->column++;
+			chomp(ctx);
 
 			if (*ctx->code == '}') break;
 
-			if (*ctx->code == '\n') {
-				ctx->line_num++;
-				ctx->column = 0;
-			}
+			if (*ctx->code == '\n') next_line(ctx);
 
 			else if (*ctx->code == '{') {
 				Location location = (Location){
@@ -204,10 +200,8 @@ static bool iter_comment(TokenizeCtx *ctx) {
 				return true;
 			}
 		}
-		else if (*ctx->code == '\n') {
-			ctx->line_num++;
-			ctx->column = 0;
-		}
+		else if (*ctx->code == '\n') next_line(ctx);
+
 	} while (*ctx->code);
 
 	if (!*ctx->code && comment == BLOCK_COMMENT) {
@@ -226,25 +220,19 @@ Return `true` if errors occurred.
 static bool iter_quote(TokenizeCtx *ctx) {
 	const char32_t quote = *ctx->code;
 
-	if (!ctx->token->begin) {
-		ctx->token->begin = ctx->code;
-		ctx->token->location.line = ctx->line_num;
-		ctx->token->location.column = ctx->column;
-	}
+	if (!ctx->token->begin) token_add_info(ctx);
 
 	do {
 		ctx->code++;
 
 		if (*ctx->code == '\n') {
-			ctx->line_num++;
-			ctx->column = 0;
+			next_line(ctx);
 		}
 		else if (*ctx->code == '\\' && (
 			ctx->code[1] == '\\' ||
 			ctx->code[1] == quote
 		)) {
-			ctx->code++;
-			ctx->column++;
+			chomp(ctx);
 		}
 		else if (*ctx->code == quote) break;
 
@@ -256,6 +244,22 @@ static bool iter_quote(TokenizeCtx *ctx) {
 	}
 
 	return false;
+}
+
+static void token_add_info(TokenizeCtx *ctx) {
+	ctx->token->begin = ctx->code;
+	ctx->token->location.line = ctx->line_num;
+	ctx->token->location.column = ctx->column;
+}
+
+static void chomp(TokenizeCtx *ctx) {
+	ctx->column++;
+	ctx->code++;
+}
+
+static void next_line(TokenizeCtx *ctx) {
+	ctx->line_num++;
+	ctx->column = 0;
 }
 
 /*

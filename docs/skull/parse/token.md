@@ -13,6 +13,14 @@ Token *tokenize(const char32_t *code)
 > Tokenize `code` into linked list of tokens.
 
 ```c
+static bool tokenize_inner_loop(TokenizeCtx *ctx)
+```
+
+> Run one iteration of the main tokenizer function.
+> \
+> Returns `true` if en error occurred.
+
+```c
 static bool iter_comment(TokenizeCtx *ctx)
 ```
 
