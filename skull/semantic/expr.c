@@ -22,6 +22,8 @@ static bool validate_shift_expr(const AstNodeExpr *);
 static FunctionDeclaration *find_func_by_token(const Token *);
 static bool validate_func_call_params(AstNodeFunctionCall *);
 static void set_expr_type(AstNodeExpr *);
+static bool validate_binary_expr(AstNodeExpr *);
+static bool validate_expr_restrictions(AstNodeExpr *);
 
 
 bool validate_expr(AstNodeExpr *expr) {
@@ -43,11 +45,25 @@ bool validate_expr(AstNodeExpr *expr) {
 	}
 
 	if (!validate_expr(expr->rhs)) return false;
+	if (!validate_binary_expr(expr)) return false;
+	if (!validate_expr_restrictions(expr)) return false;
 
-	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
-	if (is_binary && !validate_expr(expr->lhs.expr)) return false;
+	set_expr_type(expr);
 
-	if (is_binary && expr->lhs.expr->type != expr->rhs->type) {
+	return true;
+}
+
+static bool validate_binary_expr(AstNodeExpr *expr) {
+	const bool is_binary = !(
+		expr->oper == EXPR_UNARY_NEG ||
+		expr->oper == EXPR_NOT
+	);
+
+	if (!is_binary) return true;
+
+	if (!validate_expr(expr->lhs.expr)) return false;
+
+	if (expr->lhs.expr->type != expr->rhs->type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{
 				.loc = find_expr_node_location(expr->rhs),
@@ -58,7 +74,11 @@ bool validate_expr(AstNodeExpr *expr) {
 		return false;
 	}
 
-	switch (oper) {
+	return true;
+}
+
+static bool validate_expr_restrictions(AstNodeExpr *expr) {
+	switch (expr->oper) {
 		case EXPR_ADD:
 		case EXPR_SUB:
 		case EXPR_MULT:
@@ -66,35 +86,23 @@ bool validate_expr(AstNodeExpr *expr) {
 		case EXPR_LESS_THAN:
 		case EXPR_GTR_THAN:
 		case EXPR_LESS_THAN_EQ:
-		case EXPR_GTR_THAN_EQ: {
-			if (!is_numeric(expr)) return false;
-			break;
-		}
+		case EXPR_GTR_THAN_EQ:
+			return is_numeric(expr);
 		case EXPR_DIV:
-		case EXPR_MOD: {
-			if (is_div_by_zero(expr) || !is_numeric(expr)) return false;
-			break;
-		}
-		case EXPR_POW: {
-			if (!validate_pow_expr(expr) || !is_numeric(expr)) return false;
-			break;
-		}
+		case EXPR_MOD:
+			return !is_div_by_zero(expr) && is_numeric(expr);
+		case EXPR_POW:
+			return validate_pow_expr(expr) && is_numeric(expr);
 		case EXPR_LSHIFT:
-		case EXPR_RSHIFT: {
-			if (!validate_shift_expr(expr)) return false;
-			break;
-		}
+		case EXPR_RSHIFT:
+			return validate_shift_expr(expr);
 		case EXPR_NOT:
 		case EXPR_AND:
 		case EXPR_OR:
-		case EXPR_XOR: {
-			if (!validate_bool_expr(expr)) return false;
-			break;
-		}
+		case EXPR_XOR:
+			return validate_bool_expr(expr);
 		default: break;
 	}
-
-	set_expr_type(expr);
 
 	return true;
 }
