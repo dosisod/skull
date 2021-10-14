@@ -21,7 +21,7 @@ static bool is_valid_return_expr(const AstNode *);
 bool validate_stmt_return(const AstNode *node) {
 	if (!assert_sane_child(node->next)) return false;
 
-	if (node->expr && !validate_expr(node->expr_node)) return false;
+	if (node->expr && !validate_expr(node->expr_node->expr)) return false;
 
 	Type return_type = SEMANTIC_STATE.current_func->return_type;
 
@@ -97,20 +97,20 @@ bool validate_control_else(const AstNode *node) {
 
 bool validate_control_if(const AstNode *node) {
 	return !is_missing_block(node, "if") &&
-		validate_expr(node->expr_node) &&
+		validate_expr(node->expr_node->expr) &&
 		validate_bool_expr(node->expr_node->expr);
 }
 
 bool validate_control_elif(const AstNode *node) {
 	return !is_missing_block(node, "elif") &&
 		validate_control_not_missing_if(node) &&
-		validate_expr(node->expr_node) &&
+		validate_expr(node->expr_node->expr) &&
 		validate_bool_expr(node->expr_node->expr);
 }
 
 bool validate_control_while(const AstNode *node) {
 	if (is_missing_block(node, "while") ||
-		!validate_expr(node->expr_node) ||
+		!validate_expr(node->expr_node->expr) ||
 		!validate_bool_expr(node->expr_node->expr)
 	) {
 		return false;

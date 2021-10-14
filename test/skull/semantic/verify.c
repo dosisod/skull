@@ -27,7 +27,7 @@ bool test_validate_int_expr() {
 	Token *token = tokenize_fixture(U"1");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
-	const bool pass = validate_expr(node);
+	const bool pass = validate_expr(node->expr);
 
 	free_tokens(token);
 	return pass;
@@ -37,7 +37,7 @@ bool test_validate_int_overflow() {
 	Token *token = tokenize_fixture(U"99999999999999999999999999999999");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(node));
+	ASSERT_FALSEY(validate_expr(node->expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"99999999999999999999999999999999\"\n"
 	));
@@ -50,7 +50,7 @@ bool test_validate_int_underflow() {
 	Token *token = tokenize_fixture(U"-99999999999999999999999999999999");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(node));
+	ASSERT_FALSEY(validate_expr(node->expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"-99999999999999999999999999999999\"\n"
 	));
@@ -63,7 +63,7 @@ bool test_validate_float_overflow() {
 	Token *token = tokenize_fixture(U"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(node));
+	ASSERT_FALSEY(validate_expr(node->expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0\"\n"
 	));
@@ -77,7 +77,7 @@ bool test_validate_missing_function_decl() {
 
 	AstNode *node = AST_NODE_EXPR(token, AST_NO_ARG_FUNC_EXPR(token));
 
-	ASSERT_FALSEY(validate_expr(node));
+	ASSERT_FALSEY(validate_expr(node->expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: function \"x\" missing declaration\n"
 	));
@@ -987,7 +987,7 @@ void semantic_verify_test_self(bool *pass) {
 }
 
 static bool validate_binary_expr_fixture(AstNode *node, const char *errors) {
-	ASSERT_FALSEY(validate_expr(node));
+	ASSERT_FALSEY(validate_expr(node->expr));
 	ASSERT_FALSEY(compare_errors(errors));
 
 	free_tokens(node->token);

@@ -3,6 +3,7 @@
 #include "skull/build_data.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/semantic/expr.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
@@ -16,7 +17,6 @@ static Type var_def_node_to_type(const AstNode *);
 static Variable *node_to_var(const AstNode *const);
 static Type func_get_type(const AstNode *, const AstNodeExpr *);
 static bool is_expr_compatible_with_var(const AstNodeExpr *, const Variable *);
-bool validate_expr(AstNode *);
 
 
 bool validate_stmt_var_def(const AstNode *node) {
@@ -31,7 +31,7 @@ bool validate_stmt_var_def(const AstNode *node) {
 
 	node->var_def->var = var;
 
-	bool ok = validate_expr(node->var_def->expr_node);
+	bool ok = validate_expr(node->var_def->expr_node->expr);
 	var->is_defined = true;
 
 	if (!ok) return false;
@@ -65,7 +65,7 @@ bool validate_stmt_var_assign(const AstNode *node) {
 
 	var->was_reassigned = true;
 
-	if (!validate_expr(node->var_assign->expr_node)) return false;
+	if (!validate_expr(node->var_assign->expr_node->expr)) return false;
 
 	return is_expr_compatible_with_var(node->var_assign->expr_node->expr, var);
 }

@@ -13,7 +13,6 @@
 
 
 static bool validate_stmt_func_call(AstNodeExpr *);
-static bool _validate_expr(AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
 static bool validate_const_expr(AstNodeExpr *);
 static bool validate_pow_expr(const AstNodeExpr *);
@@ -22,13 +21,10 @@ static bool is_numeric(const AstNodeExpr *);
 static bool validate_shift_expr(const AstNodeExpr *);
 static FunctionDeclaration *find_func_by_token(const Token *);
 static bool validate_func_call_params(AstNodeFunctionCall *);
+static void set_expr_type(AstNodeExpr *);
 
 
-bool validate_expr(const AstNode *node) {
-	return _validate_expr(node->expr);
-}
-
-static bool _validate_expr(AstNodeExpr *expr) {
+bool validate_expr(AstNodeExpr *expr) {
 	const ExprType oper = expr->oper;
 
 	switch (oper) {
@@ -46,10 +42,10 @@ static bool _validate_expr(AstNodeExpr *expr) {
 		default: break;
 	}
 
-	if (!_validate_expr(expr->rhs)) return false;
+	if (!validate_expr(expr->rhs)) return false;
 
 	const bool is_binary = !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
-	if (is_binary && !_validate_expr(expr->lhs.expr)) return false;
+	if (is_binary && !validate_expr(expr->lhs.expr)) return false;
 
 	if (is_binary && expr->lhs.expr->type != expr->rhs->type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
@@ -98,7 +94,13 @@ static bool _validate_expr(AstNodeExpr *expr) {
 		default: break;
 	}
 
-	switch (oper) {
+	set_expr_type(expr);
+
+	return true;
+}
+
+static void set_expr_type(AstNodeExpr *expr) {
+	switch (expr->oper) {
 		case EXPR_NOT:
 		case EXPR_IS:
 		case EXPR_ISNT:
@@ -112,8 +114,6 @@ static bool _validate_expr(AstNodeExpr *expr) {
 			expr->type = TYPE_BOOL; break;
 		default: expr->type = expr->rhs->type; break;
 	}
-
-	return true;
 }
 
 static bool validate_const_expr(AstNodeExpr *expr) {
@@ -288,7 +288,7 @@ static bool validate_func_call_params(AstNodeFunctionCall *func_call) {
 	const AstNode *param = func_call->params;
 
 	for RANGE(i, function->num_params) {
-		if (!validate_expr(param)) return false;
+		if (!validate_expr(param->expr)) return false;
 
 		if (param->expr->type != function->param_types[i]) {
 			FMT_ERROR(ERR_FUNC_TYPE_MISMATCH,
