@@ -26,15 +26,14 @@ bool validate_stmt_var_def(const AstNode *node) {
 
 	if (type) return validate_stmt_type_alias(node);
 
+	bool ok = validate_expr(node->var_def->expr_node->expr);
+	if (!ok) return false;
+
 	Variable *var = node_to_var(node);
 	if (!var) return false;
-
-	node->var_def->var = var;
-
-	bool ok = validate_expr(node->var_def->expr_node->expr);
 	var->is_defined = true;
 
-	if (!ok) return false;
+	node->var_def->var = var;
 
 	AstNodeExpr *expr = node->var_def->expr_node->expr;
 	ok = is_expr_compatible_with_var(expr, var);

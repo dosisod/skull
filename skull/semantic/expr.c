@@ -268,7 +268,7 @@ static bool validate_stmt_func_call(AstNodeExpr *expr) {
 
 	const AstNode *param = func_call->params;
 
-	if (num_params == 0 && param->token) {
+	if (num_params == 0 && param && param->token) {
 		FMT_ERROR(ERR_ZERO_PARAM_FUNC, { .loc = &param->token->location });
 
 		return false;

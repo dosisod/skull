@@ -284,11 +284,12 @@ bool test_validate_check_expr_type_when_declaring() {
 
 bool test_validate_check_explicit_type_exists() {
 	Token *token = tokenize_fixture(U"x: fail = 1");
+	Token *expr_token = token->next->next->next;
 
 	return validate_tree_fixture(
 		AST_NODE_VAR_DEF(
 			token,
-			AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next)),
+			AST_NODE_EXPR(expr_token, AST_NODE_CONST_EXPR(expr_token)),
 			false
 		),
 		"(null): Compilation error: line 1 column 4: type \"fail\" could not be found\n"

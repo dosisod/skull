@@ -2080,8 +2080,7 @@ TEST_DIR"/error/declare/control_char_in_rune.sk",
 
 NULL,
 
-"./test/sh/error/declare/control_char_in_rune.sk: Compilation error: line 1 column 6: control character cannot be used in rune\n" \
-"./test/sh/error/declare/control_char_in_rune.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
+"./test/sh/error/declare/control_char_in_rune.sk: Compilation error: line 1 column 6: control character cannot be used in rune\n"
 );
 
 
