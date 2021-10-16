@@ -2074,17 +2074,6 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := '\n" \
-"'\n",
-TEST_DIR"/error/declare/control_char_in_rune.sk",
-
-NULL,
-
-"./test/sh/error/declare/control_char_in_rune.sk: Compilation error: line 1 column 6: control character cannot be used in rune\n"
-);
-
-
-pass |= e2e_wrapper(
 "mut x := 0\n" \
 "x =\n",
 TEST_DIR"/error/declare/reassign_missing_rhs.sk",

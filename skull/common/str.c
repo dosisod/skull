@@ -285,14 +285,13 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 		option[0] = *str;
 
 		while (c32isxdigit(*str) && i < 8) {
-			*str_ += 1;
-
 			option[i] = *str;
 
 			if (c32isxdigit(*str))
 				value = (value << 4) + c32unhex(*str);
 
 			i++;
+			*str_ += 1;
 			str = (*str_) + 1;
 		}
 

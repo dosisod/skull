@@ -185,17 +185,21 @@ static bool c32sunescape_fixture(
 bool test_c32sunescape() {
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\e", '\033', 1, NULL));
 	ASSERT_TRUTHY(c32sunescape_fixture(U"x", 'x', 0, NULL));
-	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x41", U'\x41', 3, NULL));
-	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xFF", U'\xFF', 3, NULL));
-	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x9", '\x09', 2, NULL));
-	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xdhello", '\x0d', 2, NULL));
-	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x1F480", U'\x1F480', 6, NULL));
+
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\\'", '\'', 1, NULL));
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\\"", '\"', 1, NULL));
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\\\", '\\', 1, NULL));
 
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x", '\0', 0, U"\\x"));
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xz", '\0', 0, U"\\xz"));
+
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x41", U'\x41', 3, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xFF", U'\xFF', 3, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xFFF", U'\xFFF', 4, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xFFFF", U'\xFFFF', 5, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x9", '\x09', 2, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xdhello", '\x0d', 2, NULL));
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x1F480", U'\x1F480', 6, NULL));
 
 	PASS
 }

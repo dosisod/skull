@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "skull/semantic/types.h"
+#include "skull/common/errors.h"
 #include "skull/common/str.h"
 
 #include "test/skull/semantic/types.h"
@@ -110,6 +111,58 @@ bool test_eval_rune() {
 	PASS;
 }
 
+bool test_eval_rune_with_control_char_fails() {
+	Token *token = tokenize(U"\'\n\'");
+
+	bool err = false;
+	const char32_t rune = eval_rune(token, &err);
+
+	ASSERT_TRUTHY(err);
+	ASSERT_FALSEY(rune);
+
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: control character cannot be used in rune\n"
+	));
+
+	free_tokens(token);
+
+	PASS
+}
+
+bool test_eval_rune_invalid_escape_fails() {
+	Token *token = tokenize(U"\'\\x\'");
+
+	bool err = false;
+	const char32_t rune = eval_rune(token, &err);
+
+	ASSERT_TRUTHY(err);
+	ASSERT_FALSEY(rune);
+
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: bad escape sequence: \"\\x\"\n"
+	));
+
+	free_tokens(token);
+
+	PASS
+}
+
+bool test_eval_str_invalid_escape_fails() {
+	Token *token = tokenize(U"\"\\x\"");
+
+	const char32_t *str = eval_str(token);
+
+	ASSERT_FALSEY(str);
+
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: bad escape sequence: \"\\x\"\n"
+	));
+
+	free_tokens(token);
+
+	PASS
+}
+
 bool test_eval_str() {
 	Token *token = tokenize(U"\"abcdef\"");
 
@@ -129,6 +182,9 @@ void types_test_self(bool *pass) {
 		test_eval_float,
 		test_eval_bool,
 		test_eval_rune,
-		test_eval_str
+		test_eval_rune_with_control_char_fails,
+		test_eval_rune_invalid_escape_fails,
+		test_eval_str,
+		test_eval_str_invalid_escape_fails
 	)
 }
