@@ -26,6 +26,7 @@ static const char *errors[] = {
 	[ERR_NOT_INT] = "expected an integer",
 	[ERR_FUNC_TYPE_MISMATCH] = "expected param of type \"%s\", got \"%s\"\n",
 	[ERR_EXPECTED_SAME_TYPE] = "expected type \"%s\", got \"%s\"\n",
+	[ERR_RUNE_TOO_LONG] = "rune contains too many characters",
 	[ERR_BAD_ESCAPE] = "bad escape sequence: \"%s\"\n",
 	[ERR_VAR_NOT_FOUND] = "variable \"%s\" not found\n",
 	[ERR_OVERFLOW] = "overflow occurred while parsing \"%s\"\n",

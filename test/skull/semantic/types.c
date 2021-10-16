@@ -147,6 +147,24 @@ bool test_eval_rune_invalid_escape_fails() {
 	PASS
 }
 
+bool test_eval_rune_chars_after_escape_invalid() {
+	Token *token = tokenize(U"\'\\nz\'");
+
+	bool err = false;
+	const char32_t rune = eval_rune(token, &err);
+
+	ASSERT_TRUTHY(err);
+	ASSERT_FALSEY(rune);
+
+	ASSERT_FALSEY(compare_errors(
+		"(null): Compilation error: line 1 column 1: rune contains too many characters\n"
+	));
+
+	free_tokens(token);
+
+	PASS
+}
+
 bool test_eval_str_invalid_escape_fails() {
 	Token *token = tokenize(U"\"\\x\"");
 
@@ -184,6 +202,7 @@ void types_test_self(bool *pass) {
 		test_eval_rune,
 		test_eval_rune_with_control_char_fails,
 		test_eval_rune_invalid_escape_fails,
+		test_eval_rune_chars_after_escape_invalid,
 		test_eval_str,
 		test_eval_str_invalid_escape_fails
 	)

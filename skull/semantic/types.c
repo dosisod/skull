@@ -106,6 +106,19 @@ char32_t eval_rune(const Token *const token, bool *err) {
 	const char32_t *error = NULL;
 	const char32_t ret = c32sunescape(&start, &error);
 
+	if (error) {
+		FMT_ERROR(ERR_BAD_ESCAPE, { .loc = &token->location, .str32 = error });
+
+		*err = true;
+		return '\0';
+	}
+
+	if (start[1] != '\'') {
+		*err = true;
+		FMT_ERROR(ERR_RUNE_TOO_LONG, { .loc = &token->location });
+		return '\0';
+	}
+
 	mbstate_t mbs;
 	memset(&mbs, 0, sizeof mbs);
 
@@ -115,13 +128,6 @@ char32_t eval_rune(const Token *const token, bool *err) {
 
 	if (errno == EILSEQ) {
 		FMT_ERROR(ERR_ILLEGAL_SEQ, { .loc = &token->location });
-
-		*err = true;
-		return '\0';
-	}
-
-	if (error) {
-		FMT_ERROR(ERR_BAD_ESCAPE, { .loc = &token->location, .str32 = error });
 
 		*err = true;
 		return '\0';
