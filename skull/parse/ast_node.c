@@ -19,6 +19,12 @@ static void free_expr_node(AstNodeExpr *);
 static void splice_expr_node(AstNode *);
 static void push_ast_node(Token *const, Token *, NodeType, AstNode **);
 
+typedef enum {
+	RESULT_OK,
+	RESULT_IGNORE,
+	RESULT_ERROR
+} ParserResult;
+
 #define AST_TOKEN_CMP2(tok, type1, type2) \
 	((tok) && (tok)->type == (type1) && \
 	(tok)->next && (tok)->next->type == (type2))
@@ -67,11 +73,9 @@ static bool parse_return(Token **token, AstNode **node) {
 	((token)->type == TOKEN_TYPE || (token)->type == TOKEN_IDENTIFIER)
 
 /*
-Try and generate a variable definition node from `token`.
-
-Set `err` if an error occurred.
+Try and generate a variable definition node from `token` and `node`.
 */
-static bool parse_var_def(Token **_token, AstNode **node, bool *err) {
+static ParserResult parse_var_def(Token **_token, AstNode **node) {
 	bool is_const = true;
 	bool is_implicit = true;
 	bool is_exported = false;
@@ -89,7 +93,7 @@ static bool parse_var_def(Token **_token, AstNode **node, bool *err) {
 		token = token->next;
 	}
 
-	if (!token) return false;
+	if (!token) return RESULT_IGNORE;
 
 	if (token->type == TOKEN_NEW_IDENTIFIER &&
 		token->next &&
@@ -106,7 +110,7 @@ static bool parse_var_def(Token **_token, AstNode **node, bool *err) {
 	) {
 		*_token = token->next;
 	}
-	else return false;
+	else return RESULT_IGNORE;
 
 	(*node)->var_def = Malloc(sizeof(AstNodeVarDef));
 	*(*node)->var_def = (AstNodeVarDef){
@@ -121,16 +125,16 @@ static bool parse_var_def(Token **_token, AstNode **node, bool *err) {
 
 	if ((*_token)->type == TOKEN_TYPE) {
 		*_token = (*_token)->next;
-		return true;
+		return RESULT_OK;
 	}
 
-	const bool success = parse_expression(_token, node, err);
-	if (*err) return false;
+	bool err = false;
+	const bool success = parse_expression(_token, node, &err);
+	if (err) return RESULT_ERROR;
 
 	if (!success) {
 		FMT_ERROR(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*_token)->location });
-		*err = true;
-		return false;
+		return RESULT_ERROR;
 	}
 
 	splice_expr_node(*node);
@@ -139,23 +143,21 @@ static bool parse_var_def(Token **_token, AstNode **node, bool *err) {
 		FMT_ERROR(ERR_EXPECTED_NEWLINE, {
 			.loc = &(*_token)->location
 		});
-		*err = true;
+		return RESULT_ERROR;
 	}
 
-	return true;
+	return RESULT_OK;
 }
 
 /*
-Try and generate a variable assignment node from `token`.
-
-Set `err` if an error occurred.
+Try and generate a variable assignment node from `token` and `node`.
 */
-static bool parse_var_assign(Token **token, AstNode **node, bool *err) {
+static ParserResult parse_var_assign(Token **token, AstNode **node) {
 	if (!AST_TOKEN_CMP2(*token,
 		TOKEN_IDENTIFIER,
 		TOKEN_OPER_EQUAL)
 	) {
-		return false;
+		return RESULT_IGNORE;
 	}
 
 	AstNodeVarAssign *var_assign;
@@ -164,24 +166,24 @@ static bool parse_var_assign(Token **token, AstNode **node, bool *err) {
 	push_ast_node((*token)->next, *token, AST_NODE_VAR_ASSIGN, node);
 	*token = (*token)->next->next;
 
-	const bool success = parse_expression(token, node, err);
-	if (*err) {
+	bool err = false;
+	const bool success = parse_expression(token, node, &err);
+	if (err) {
 		free(var_assign);
-		return false;
+		return RESULT_ERROR;
 	}
 
 	if (!success) {
 		FMT_ERROR(ERR_ASSIGN_MISSING_EXPR, { .loc = &(*token)->location });
-		*err = true;
 
 		free(var_assign);
-		return false;
+		return RESULT_ERROR;
 	}
 
 	(*node)->last->last->var_assign = var_assign;
 	splice_expr_node(*node);
 
-	return true;
+	return RESULT_OK;
 }
 
 /*
@@ -287,13 +289,9 @@ static void free_param(AstNodeFunctionParam *param) {
 }
 
 /*
-Try to parse a function prototype from `_token`.
+Try to parse a function prototype from `_token` and `node`.
 */
-static bool parse_function_proto(
-	Token **_token,
-	AstNode **node,
-	bool *err
-) {
+static ParserResult parse_function_proto(Token **_token, AstNode **node) {
 	Token *token = *_token;
 	Token *last = token;
 
@@ -306,7 +304,7 @@ static bool parse_function_proto(
 		TOKEN_IDENTIFIER,
 		TOKEN_PAREN_OPEN)
 	) {
-		return false;
+		return RESULT_IGNORE;
 	}
 
 	const Token *const func_name_token = token;
@@ -365,11 +363,10 @@ static bool parse_function_proto(
 				.loc = &token->location
 			});
 
-			*err = true;
-			return false;
+			return RESULT_ERROR;
 		}
 
-		return false;
+		return RESULT_IGNORE;
 	}
 
 	const unsigned short num_params = (unsigned short)params->length;
@@ -403,7 +400,8 @@ static bool parse_function_proto(
 	*_token = token;
 	push_ast_node(*_token, last, AST_NODE_FUNCTION_PROTO, node);
 	*_token = (*_token)->next;
-	return true;
+
+	return RESULT_OK;
 }
 
 /*
@@ -578,16 +576,24 @@ static bool parse_ast_node(
 		push_ast_node(*token, *token, AST_NODE_NOOP, node);
 		*token = (*token)->next;
 	}
-	else if (
-		parse_function_proto(token, node, err) ||
-		(!*err && parse_var_def(token, node, err)) ||
-		(!*err && parse_var_assign(token, node, err)) ||
-		(!*err && parse_expression(token, node, err)) ||
-		*err
-	) {}
 	else {
-		FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = *token });
-		*err = true;
+		ParserResult result = parse_function_proto(token, node);
+
+		if (result == RESULT_IGNORE)
+			result = parse_var_def(token, node);
+
+		if (result == RESULT_IGNORE)
+			result = parse_var_assign(token, node);
+
+		if (result == RESULT_IGNORE) {
+			if (!parse_expression(token, node, err)) {
+				result = RESULT_ERROR;
+
+				if (!*err) FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = *token });
+			}
+		}
+
+		if (result == RESULT_ERROR) *err = true;
 	}
 
 	return false;

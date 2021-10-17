@@ -147,20 +147,16 @@ static bool parse_return(Token **token, AstNode **node)
 > Return `true` if error occurred.
 
 ```c
-static bool parse_var_def(Token **_token, AstNode **node, bool *err)
+static ParserResult parse_var_def(Token **_token, AstNode **node)
 ```
 
-> Try and generate a variable definition node from `token`.
-> \
-> Set `err` if an error occurred.
+> Try and generate a variable definition node from `token` and `node`.
 
 ```c
-static bool parse_var_assign(Token **token, AstNode **node, bool *err)
+static ParserResult parse_var_assign(Token **token, AstNode **node)
 ```
 
-> Try and generate a variable assignment node from `token`.
-> \
-> Set `err` if an error occurred.
+> Try and generate a variable assignment node from `token` and `node`.
 
 ```c
 static ExprType token_type_to_expr_oper_type(TokenType type)
@@ -193,10 +189,10 @@ static AstNodeExpr *parse_unary_oper(Token **token, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static bool parse_function_proto(Token **_token, AstNode **node, bool *err)
+static ParserResult parse_function_proto(Token **_token, AstNode **node)
 ```
 
-> Try to parse a function prototype from `_token`.
+> Try to parse a function prototype from `_token` and `node`.
 
 ```c
 static bool parse_condition(Token **token, AstNode **node, NodeType node_type)
