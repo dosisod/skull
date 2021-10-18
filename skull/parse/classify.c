@@ -184,7 +184,7 @@ static bool is_constant_integer_str(const char32_t *str) {
 		else if (str[-1] == 'o') {
 			EXHAUST_STR_INT('0' <= *str && *str <= '7');
 		}
-		else {
+		else if (!c32isdigit(str[-1])) {
 			return false;
 		}
 

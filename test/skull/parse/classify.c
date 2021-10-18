@@ -49,6 +49,7 @@ bool test_is_reserved_str() {
 bool test_is_constant_integer() {
 	ASSERT_TRUTHY(is_constant_integer_str(U"123"));
 	ASSERT_TRUTHY(is_constant_integer_str(U"-123"));
+	ASSERT_TRUTHY(is_constant_integer_str(U"000"));
 	ASSERT_TRUTHY(is_constant_integer_str(U"0x123"));
 	ASSERT_TRUTHY(is_constant_integer_str(U"0x0123456789ABCDEF"));
 	ASSERT_TRUTHY(is_constant_integer_str(U"0xabcdef"));
