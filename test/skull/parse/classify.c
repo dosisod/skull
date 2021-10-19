@@ -64,6 +64,7 @@ bool test_is_constant_integer() {
 	ASSERT_FALSEY(is_constant_integer_str(U"0b"));
 	ASSERT_FALSEY(is_constant_integer_str(U"0x"));
 	ASSERT_FALSEY(is_constant_integer_str(U"0o"));
+	ASSERT_FALSEY(is_constant_integer_str(U"000x"));
 	ASSERT_FALSEY(is_constant_integer_str(U"-"));
 	ASSERT_FALSEY(is_constant_integer_str(U"123aaa"));
 	ASSERT_FALSEY(is_constant_integer_str(U"-123aaa"));

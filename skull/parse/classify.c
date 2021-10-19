@@ -172,7 +172,7 @@ of an integer.
 Examples: `-123`, `123`, `0xFF`, `0xff`, `0b1010`, `0o777`
 */
 static bool is_constant_integer_str(const char32_t *str) {
-	if (*str == '0' && str[1] && str[2]) {
+	if (*str == '0' && str[1] && !c32isdigit(str[1]) && str[2]) {
 		str += 2;
 
 		if (str[-1] == 'x') {
@@ -184,7 +184,7 @@ static bool is_constant_integer_str(const char32_t *str) {
 		else if (str[-1] == 'o') {
 			EXHAUST_STR_INT('0' <= *str && *str <= '7');
 		}
-		else if (!c32isdigit(str[-1])) {
+		else {
 			return false;
 		}
 
