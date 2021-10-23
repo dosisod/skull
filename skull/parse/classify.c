@@ -221,9 +221,7 @@ static bool is_constant_float_str(const char32_t *str) {
 		was_last_underscore = *str == '_';
 		str++;
 	}
-	if (str[-1] == '_') return false;
-
-	if (!*str || !str[1]) return false;
+	if (str[-1] == '_' || !*str || !str[1]) return false;
 
 	str++;
 	EXHAUST_STR(c32isdigit(*str));

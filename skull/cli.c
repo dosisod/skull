@@ -27,6 +27,7 @@
 
 static int usage(void);
 static int version(void);
+static void set_bool_flag(bool *, const char *);
 static int handle_file(void);
 static int run_llc(void);
 static int run_cc(char *);
@@ -77,43 +78,23 @@ static int handle_args(int argc, char *argv[]) {
 		case 'h': bail(usage());
 		case 'v': bail(version());
 		case 'c': {
-			if (BUILD_DATA.compile_only) {
-				puts("skull: -c cannot be used more then once");
-				bail(1);
-			}
-			BUILD_DATA.compile_only = true;
+			set_bool_flag(&BUILD_DATA.compile_only, "-c");
 			break;
 		}
 		case 'S': {
-			if (BUILD_DATA.asm_backend) {
-				puts("skull: -S cannot be used more then once");
-				bail(1);
-			}
-			BUILD_DATA.asm_backend = true;
+			set_bool_flag(&BUILD_DATA.asm_backend, "-S");
 			break;
 		}
 		case 'E': {
-			if (BUILD_DATA.preprocess) {
-				puts("skull: -E cannot be used more then once");
-				bail(1);
-			}
-			BUILD_DATA.preprocess = true;
+			set_bool_flag(&BUILD_DATA.preprocess, "-E");
 			break;
 		}
 		case 'g': {
-			if (BUILD_DATA.debug) {
-				puts("skull: -g cannot be used more then once");
-				bail(1);
-			}
-			BUILD_DATA.debug = true;
+			set_bool_flag(&BUILD_DATA.debug, "-g");
 			break;
 		}
 		case 'q': {
-			if (BUILD_DATA.quiet) {
-				puts("skull: -q cannot be used more then once");
-				bail(1);
-			}
-			BUILD_DATA.quiet = true;
+			set_bool_flag(&BUILD_DATA.quiet, "-q");
 			break;
 		}
 		case 'o': {
@@ -150,6 +131,14 @@ static int handle_args(int argc, char *argv[]) {
 	}
 
 	return handle_args(--argc, ++argv);
+}
+
+static void set_bool_flag(bool *flag, const char *str) {
+	if (*flag) {
+		printf("skull: %s cannot be used more then once\n", str);
+		bail(1);
+	}
+	*flag = true;
 }
 
 static int handle_file(void) {
