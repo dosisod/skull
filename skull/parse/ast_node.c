@@ -13,6 +13,10 @@ static AstNode *parse_expression(Token **, AstNode **, bool *);
 static AstNodeExpr *_parse_expression(Token **, bool *);
 static AstNodeExpr *parse_func_call(Token **, bool *);
 static AstNode *parse_ast_tree_(Token **, unsigned, bool *);
+static void free_ast_function_proto(AstNode *);
+static void free_ast_var_def(AstNode *);
+static void free_ast_var_assign(AstNode *);
+static void free_ast_node(AstNode *);
 static void free_ast_tree_(AstNode *);
 static bool is_single_token_expr(TokenType);
 static void free_expr_node(AstNodeExpr *);
@@ -877,56 +881,75 @@ static void free_ast_tree_(AstNode *node) {
 	AstNode *current = NULL;
 
 	while (node) {
-		if (node->type == AST_NODE_FUNCTION_PROTO) {
-			free(node->func_proto->return_type_name);
+		free_ast_node(node);
 
-			unsigned num_params = node->func_proto->num_params;
-
-			AstNodeFunctionParam **params = node->func_proto->params;
-
-			for RANGE(i, num_params) { // NOLINT
-				free_param(params[i]);
-			}
-
-			free(node->func_proto);
-		}
-		else if (node->type == AST_NODE_VAR_DEF) {
-			if (node->var_def) {
-				if (node->var_def->expr_node)
-					free_expr_node(node->var_def->expr_node->expr);
-
-				free(node->var_def->expr_node);
-			}
-
-			free(node->var_def);
-		}
-		else if (node->type == AST_NODE_EXPR) {
-			free_expr_node(node->expr);
-		}
-		else if (node->type == AST_NODE_VAR_ASSIGN) {
-			if (node->var_assign && node->var_assign->expr_node) {
-				free_expr_node(node->var_assign->expr_node->expr);
-				free(node->var_assign->expr_node);
-				free(node->var_assign);
-			}
-		}
-		else if (node->expr_node && (
-			node->type == AST_NODE_IF ||
-			node->type == AST_NODE_ELIF ||
-			node->type == AST_NODE_RETURN ||
-			node->type == AST_NODE_WHILE)
-		) {
-			free_expr_node(node->expr_node->expr);
-			free(node->expr_node);
-		}
-
-		if (node->child)
-			free_ast_tree_(node->child);
+		if (node->child) free_ast_tree_(node->child);
 
 		current = node;
 		node = node->next;
 		current->next = NULL;
 		free(current);
+	}
+}
+
+static void free_ast_node(AstNode *node) {
+	switch (node->type) {
+		case AST_NODE_FUNCTION_PROTO:
+			free_ast_function_proto(node);
+			break;
+		case AST_NODE_VAR_DEF:
+			free_ast_var_def(node);
+			break;
+		case AST_NODE_EXPR:
+			free_expr_node(node->expr);
+			break;
+		case AST_NODE_VAR_ASSIGN :
+			free_ast_var_assign(node);
+			break;
+		case AST_NODE_IF:
+		case AST_NODE_ELIF:
+		case AST_NODE_RETURN:
+		case AST_NODE_WHILE: {
+			if (!node->expr_node) return;
+
+			free_expr_node(node->expr_node->expr);
+			free(node->expr_node);
+			break;
+		}
+		default: break;
+	}
+}
+
+static void free_ast_function_proto(AstNode *node) {
+	free(node->func_proto->return_type_name);
+
+	unsigned num_params = node->func_proto->num_params;
+
+	AstNodeFunctionParam **params = node->func_proto->params;
+
+	for RANGE(i, num_params) { // NOLINT
+		free_param(params[i]);
+	}
+
+	free(node->func_proto);
+}
+
+static void free_ast_var_def(AstNode *node) {
+	if (node->var_def) {
+		if (node->var_def->expr_node)
+			free_expr_node(node->var_def->expr_node->expr);
+
+		free(node->var_def->expr_node);
+	}
+
+	free(node->var_def);
+}
+
+static void free_ast_var_assign(AstNode *node) {
+	if (node->var_assign && node->var_assign->expr_node) {
+		free_expr_node(node->var_assign->expr_node->expr);
+		free(node->var_assign->expr_node);
+		free(node->var_assign);
 	}
 }
 
