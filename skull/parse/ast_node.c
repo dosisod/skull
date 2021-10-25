@@ -9,10 +9,18 @@
 
 #include "skull/parse/ast_node.h"
 
+typedef struct {
+	AstNode *node;
+	AstNode *head;
+	Token *token;
+	unsigned indent_lvl;
+	bool err;
+} ParserCtx;
+
 static AstNode *parse_expression(Token **, AstNode **, bool *);
 static AstNodeExpr *_parse_expression(Token **, bool *);
 static AstNodeExpr *parse_func_call(Token **, bool *);
-static AstNode *parse_ast_tree_(Token **, unsigned, bool *);
+static AstNode *parse_ast_tree_(ParserCtx *);
 static void free_ast_function_proto(AstNode *);
 static void free_ast_var_def(AstNode *);
 static void free_ast_var_assign(AstNode *);
@@ -37,9 +45,13 @@ typedef enum {
 Makes an AST (abstract syntax tree) from a given string.
 */
 AstNode *parse_ast_tree(Token *token) {
-	bool err = false;
 	Token *head = token;
-	AstNode *const tree = parse_ast_tree_(&token, 0, &err);
+
+	ParserCtx ctx = {
+		.token = token
+	};
+
+	AstNode *const tree = parse_ast_tree_(&ctx);
 
 	if (!tree) free_tokens(head);
 	else if (!tree->token) {
@@ -47,7 +59,7 @@ AstNode *parse_ast_tree(Token *token) {
 		// the token list to it
 		tree->token = head;
 	}
-	if (err) {
+	if (ctx.err) {
 		free_ast_tree(tree);
 		return NULL;
 	}
@@ -473,54 +485,45 @@ static bool parse_while(Token **token, AstNode **node) {
 	return parse_condition(token, node, AST_NODE_WHILE);
 }
 
-static bool parse_ast_sub_tree_(
-	Token **,
-	unsigned,
-	AstNode *,
-	AstNode *
-);
+static void parse_ast_sub_tree_(ParserCtx *);
 
-static bool parse_ast_node(
-	Token **,
-	unsigned,
-	AstNode **,
-	AstNode *,
-	bool *
-);
+static bool parse_ast_node(ParserCtx *ctx);
 
 /*
 Internal AST tree generator.
+
+Do not set the `node` or `head` fields in `ctx`, they will be overridden.
 */
-static AstNode *parse_ast_tree_(Token **token, unsigned indent_lvl, bool *err) {
-	AstNode *node = make_ast_node();
-	AstNode *head = node;
+static AstNode *parse_ast_tree_(ParserCtx *ctx) {
+	ctx->node = make_ast_node();
+	ctx->head = ctx->node;
 
-	while (*token) {
-		const bool done = parse_ast_node(token, indent_lvl, &node, head, err);
+	while (ctx->token) {
+		const bool done = parse_ast_node(ctx);
 
-		if (done || *err) break;
+		if (done || ctx->err) break;
 	}
 
-	if (*err) {
-		free_ast_tree_(head);
+	if (ctx->err) {
+		free_ast_tree_(ctx->head);
 		return NULL;
 	}
 
-	if (!*token && indent_lvl != 0) {
+	if (!ctx->token && ctx->indent_lvl != 0) {
 		FMT_ERROR(ERR_EOF_NO_BRACKET, {0});
 
-		free_ast_tree_(head);
-		*err = true;
+		free_ast_tree_(ctx->head);
+		ctx->err = true;
 		return NULL;
 	}
 
-	if (node->last && head != node) {
-		node->last->next = NULL;
-		node->last = NULL;
-		free(node);
+	if (ctx->node->last && ctx->head != ctx->node) {
+		ctx->node->last->next = NULL;
+		ctx->node->last = NULL;
+		free(ctx->node);
 	}
 
-	return head;
+	return ctx->head;
 }
 
 /*
@@ -530,74 +533,77 @@ Set `err` if an error occurred.
 
 Return `true` if a terminating token was reached (closing bracket).
 */
-static bool parse_ast_node(
-	Token **token,
-	unsigned indent_lvl,
-	AstNode **node,
-	AstNode *head,
-	bool *err
-) {
-	const TokenType token_type = (*token)->type;
+static bool parse_ast_node(ParserCtx *ctx) {
+	const TokenType token_type = (ctx->token)->type;
 
 	if (token_type == TOKEN_BRACKET_OPEN) {
-		*err |= parse_ast_sub_tree_(token, indent_lvl, *node, head);
+		parse_ast_sub_tree_(ctx);
 	}
 	else if (token_type == TOKEN_BRACKET_CLOSE) {
-		if (indent_lvl == 0) {
-			FMT_ERROR(ERR_MISSING_OPEN_BRAK, { .loc = &(*token)->location });
+		if (ctx->indent_lvl == 0) {
+			FMT_ERROR(ERR_MISSING_OPEN_BRAK, {
+				.loc = &(ctx->token)->location
+			});
 
-			*err = true;
+			ctx->err = true;
 		}
 		return true;
 	}
 	else if (token_type == TOKEN_NEWLINE || token_type == TOKEN_COMMA) {
-		*token = (*token)->next;
+		ctx->token = ctx->token->next;
 	}
 	else if (token_type == TOKEN_KW_RETURN) {
-		*err |= parse_return(token, node);
+		ctx->err |= parse_return(&ctx->token, &ctx->node);
 	}
 	else if (token_type == TOKEN_KW_IF) {
-		*err |= parse_if(token, node);
+		ctx->err |= parse_if(&ctx->token, &ctx->node);
 	}
 	else if (token_type == TOKEN_KW_ELIF) {
-		*err |= parse_elif(token, node);
+		ctx->err |= parse_elif(&ctx->token, &ctx->node);
 	}
 	else if (token_type == TOKEN_KW_ELSE) {
-		parse_else(token, node);
+		parse_else(&ctx->token, &ctx->node);
 	}
 	else if (token_type == TOKEN_KW_WHILE) {
-		*err |= parse_while(token, node);
+		ctx->err |= parse_while(&ctx->token, &ctx->node);
 	}
 	else if (token_type == TOKEN_KW_UNREACHABLE) {
-		push_ast_node(*token, *token, AST_NODE_UNREACHABLE, node);
-		*token = (*token)->next;
+		push_ast_node(
+			ctx->token,
+			ctx->token,
+			AST_NODE_UNREACHABLE,
+			&ctx->node
+		);
+		ctx->token = ctx->token->next;
 	}
 	else if (token_type == TOKEN_COMMENT) {
-		push_ast_node(*token, *token, AST_NODE_COMMENT, node);
-		*token = (*token)->next;
+		push_ast_node(ctx->token, ctx->token, AST_NODE_COMMENT, &ctx->node);
+		ctx->token = ctx->token->next;
 	}
 	else if (token_type == TOKEN_KW_NOOP) {
-		push_ast_node(*token, *token, AST_NODE_NOOP, node);
-		*token = (*token)->next;
+		push_ast_node(ctx->token, ctx->token, AST_NODE_NOOP, &ctx->node);
+		ctx->token = ctx->token->next;
 	}
 	else {
-		ParserResult result = parse_function_proto(token, node);
+		ParserResult result = parse_function_proto(&ctx->token, &ctx->node);
 
 		if (result == RESULT_IGNORE)
-			result = parse_var_def(token, node);
+			result = parse_var_def(&ctx->token, &ctx->node);
 
 		if (result == RESULT_IGNORE)
-			result = parse_var_assign(token, node);
+			result = parse_var_assign(&ctx->token, &ctx->node);
 
 		if (result == RESULT_IGNORE) {
-			if (!parse_expression(token, node, err)) {
+			if (!parse_expression(&ctx->token, &ctx->node, &ctx->err)) {
 				result = RESULT_ERROR;
 
-				if (!*err) FMT_ERROR(ERR_UNEXPECTED_TOKEN, { .tok = *token });
+				if (!ctx->err) FMT_ERROR(ERR_UNEXPECTED_TOKEN, {
+					.tok = ctx->token
+				});
 			}
 		}
 
-		if (result == RESULT_ERROR) *err = true;
+		if (result == RESULT_ERROR) ctx->err = true;
 	}
 
 	return false;
@@ -605,47 +611,49 @@ static bool parse_ast_node(
 
 /*
 Start parsing a AST sub tree.
-
-Return `true` if an error occurred.
 */
-static bool parse_ast_sub_tree_(
-	Token **token,
-	unsigned indent_lvl,
-	AstNode *node,
-	AstNode *head
-) {
-	if (node->last && node->last->child) {
+static void parse_ast_sub_tree_(ParserCtx *ctx) {
+	if (ctx->node->last && ctx->node->last->child) {
 		FMT_ERROR(ERR_UNEXPECTED_CODE_BLOCK, {
-			.loc = &(*token)->location
+			.loc = &(ctx->token)->location
 		});
 
-		return true;
+		ctx->err = true;
+		return;
 	}
 
-	*token = (*token)->next;
-	bool err = false;
-	AstNode *const child = parse_ast_tree_(token, indent_lvl + 1, &err);
+	ctx->token = ctx->token->next;
 
-	if (!child || err) return true;
+	ParserCtx new_ctx = {
+		.token = ctx->token,
+		.indent_lvl = ctx->indent_lvl + 1
+	};
+
+	AstNode *const child = parse_ast_tree_(&new_ctx);
+	ctx->token = new_ctx.token;
+
+	if (!child || new_ctx.err) {
+		ctx->err = true;
+		return;
+	}
 
 	if (!child->token) {
-		// move to semantic layer
-		FMT_ERROR(ERR_EMPTY_BLOCK, { .loc = &(*token)->location });
+		FMT_ERROR(ERR_EMPTY_BLOCK, { .loc = &(ctx->token)->location });
 
 		free_ast_tree_(child);
-		return true;
+		ctx->err = true;
+		return;
 	}
-	if (!node->last) {
-		head->child = child;
-		child->parent = head;
+	if (!ctx->node->last) {
+		ctx->head->child = child;
+		child->parent = ctx->head;
 	}
 	else {
-		node->last->child = child;
-		child->parent = node->last;
+		ctx->node->last->child = child;
+		child->parent = ctx->node->last;
 	}
 
-	*token = (*token)->next;
-	return false;
+	ctx->token = ctx->token->next; // NOLINT
 }
 
 static AstNodeExpr *parse_single_token_expr(Token **);

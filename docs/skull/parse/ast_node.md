@@ -235,13 +235,15 @@ static bool parse_while(Token **token, AstNode **node)
 > Return `true` if an error occurred.
 
 ```c
-static AstNode *parse_ast_tree_(Token **token, unsigned indent_lvl, bool *err)
+static AstNode *parse_ast_tree_(ParserCtx *ctx)
 ```
 
 > Internal AST tree generator.
+> \
+> Do not set the `node` or `head` fields in `ctx`, they will be overridden.
 
 ```c
-static bool parse_ast_node(Token **token, unsigned indent_lvl, AstNode **node, AstNode *head, bool *err)
+static bool parse_ast_node(ParserCtx *ctx)
 ```
 
 > Parse a single AST node.
@@ -251,12 +253,10 @@ static bool parse_ast_node(Token **token, unsigned indent_lvl, AstNode **node, A
 > Return `true` if a terminating token was reached (closing bracket).
 
 ```c
-static bool parse_ast_sub_tree_(Token **token, unsigned indent_lvl, AstNode *node, AstNode *head)
+static void parse_ast_sub_tree_(ParserCtx *ctx)
 ```
 
 > Start parsing a AST sub tree.
-> \
-> Return `true` if an error occurred.
 
 ```c
 static AstNode *parse_expression(Token **token, AstNode **node, bool *err)
