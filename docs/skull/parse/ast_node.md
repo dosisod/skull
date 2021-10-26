@@ -139,26 +139,6 @@ AstNode *parse_ast_tree(Token *token)
 > Makes an AST (abstract syntax tree) from a given string.
 
 ```c
-static bool parse_return(Token **token, AstNode **node)
-```
-
-> Try and generate a valid return node from `token`.
-> \
-> Return `true` if error occurred.
-
-```c
-static ParserResult parse_var_def(Token **_token, AstNode **node)
-```
-
-> Try and generate a variable definition node from `token` and `node`.
-
-```c
-static ParserResult parse_var_assign(Token **token, AstNode **node)
-```
-
-> Try and generate a variable assignment node from `token` and `node`.
-
-```c
 static ExprType token_type_to_expr_oper_type(TokenType type)
 ```
 
@@ -189,52 +169,6 @@ static AstNodeExpr *parse_unary_oper(Token **token, bool *err)
 > Set `err` if an error occurred.
 
 ```c
-static ParserResult parse_function_proto(Token **_token, AstNode **node)
-```
-
-> Try to parse a function prototype from `_token` and `node`.
-
-```c
-static bool parse_condition(Token **token, AstNode **node, NodeType node_type)
-```
-
-> Try to parse a conditional (if/elif/else/while statement) from `token`.
-> \
-> Return `true` if error occurred.
-
-```c
-static bool parse_if(Token **token, AstNode **node)
-```
-
-> Parse an "if" AST node.
-> \
-> Return `true` if an error occurred.
-
-```c
-static bool parse_elif(Token **token, AstNode **node)
-```
-
-> Parse an "elif" AST node.
-> \
-> Return `true` if an error occurred.
-
-```c
-static void parse_else(Token **token, AstNode **node)
-```
-
-> Parse an "else" AST node.
-> \
-> Return `true` if an error occurred.
-
-```c
-static bool parse_while(Token **token, AstNode **node)
-```
-
-> Parse a "while" AST node.
-> \
-> Return `true` if an error occurred.
-
-```c
 static AstNode *parse_ast_tree_(ParserCtx *ctx)
 ```
 
@@ -259,7 +193,7 @@ static void parse_ast_sub_tree_(ParserCtx *ctx)
 > Start parsing a AST sub tree.
 
 ```c
-static AstNode *parse_expression(Token **token, AstNode **node, bool *err)
+static AstNode *parse_expression(ParserCtx *ctx)
 ```
 
 > Try and generate AST node for expression.
@@ -267,7 +201,7 @@ static AstNode *parse_expression(Token **token, AstNode **node, bool *err)
 > Returns node if one was added, NULL otherwise.
 
 ```c
-static AstNodeExpr *_parse_expression(Token **token, bool *err)
+static AstNodeExpr *_parse_expression(ParserCtx *ctx)
 ```
 
 > Internal `parse_expression` function. Used for recursive expr parsing.
