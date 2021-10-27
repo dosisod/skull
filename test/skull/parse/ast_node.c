@@ -34,10 +34,15 @@ bool test_push_ast_node() {
 	AstNode *node = make_ast_node();
 	AstNode *tmp = node;
 
-	push_ast_node(token, last, AST_NODE_VAR_DEF, &node);
+	ParserCtx ctx = {
+		.node = node,
+		.token = token
+	};
+
+	push_ast_node(&ctx, last, AST_NODE_VAR_DEF);
 
 	ASSERT_FALSEY(tmp->last);
-	ASSERT_EQUAL(tmp->next, node);
+	ASSERT_EQUAL(tmp->next, ctx.node);
 	ASSERT_EQUAL(tmp->next->last, tmp);
 
 	free_ast_tree(tmp);

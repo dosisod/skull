@@ -145,23 +145,19 @@ static ExprType token_type_to_expr_oper_type(TokenType type)
 > Convert a `TokenType` to an `ExprType`.
 
 ```c
-static AstNodeExpr *build_rhs_expr(AstNodeExpr *lhs, ExprType oper, Token **token, bool *err)
+static AstNodeExpr *build_rhs_expr(ParserCtx *ctx, AstNodeExpr *lhs, ExprType oper)
 ```
 
-> Parse the right-hand-side of an expression given `lhs`.
-> \
-> Set `err` if an error occurred.
+> Parse the right-hand-side of an expression given `lhs` and `oper`.
 
 ```c
-static AstNodeExpr *parse_binary_oper(AstNodeExpr *expr, Token **token, bool *err)
+static AstNodeExpr *parse_binary_oper(ParserCtx *ctx, AstNodeExpr *expr)
 ```
 
 > Try to parse a binary operator from `expr`.
-> \
-> Set `err` if an error occurred.
 
 ```c
-static AstNodeExpr *parse_unary_oper(Token **token, bool *err)
+static AstNodeExpr *parse_unary_oper(ParserCtx *ctx)
 ```
 
 > Try to parse a unary operator from `expr`.
@@ -207,21 +203,13 @@ static AstNodeExpr *_parse_expression(ParserCtx *ctx)
 > Internal `parse_expression` function. Used for recursive expr parsing.
 
 ```c
-static AstNodeExpr *parse_paren_expr(Token **token, bool *err)
-```
-
-> Parse parenthesis expression from `token`.
-> \
-> Set `err` if an error occurred.
-
-```c
 static AstNodeExpr *parse_single_token_expr(Token **token)
 ```
 
 > Parse a single token expression (constant or variable) from `token`.
 
 ```c
-static AstNodeExpr *parse_func_call(Token **token, bool *err)
+static AstNodeExpr *parse_func_call(ParserCtx *ctx)
 ```
 
 > Try and generate AST node for a function call.
@@ -229,7 +217,7 @@ static AstNodeExpr *parse_func_call(Token **token, bool *err)
 > Returns true if a node was added, false otherwise.
 
 ```c
-static void push_ast_node(Token *const token, Token *last, NodeType node_type, AstNode **node)
+static void push_ast_node(ParserCtx *ctx, Token *last, NodeType node_type)
 ```
 
 > Push a new AST node to `node` with type `node_type`
