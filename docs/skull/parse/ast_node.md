@@ -178,8 +178,6 @@ static bool parse_ast_node(ParserCtx *ctx)
 
 > Parse a single AST node.
 > \
-> Set `err` if an error occurred.
-> \
 > Return `true` if a terminating token was reached (closing bracket).
 
 ```c

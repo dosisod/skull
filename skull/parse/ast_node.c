@@ -409,31 +409,33 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 	return RESULT_OK;
 }
 
-static bool parse_condition(ParserCtx *ctx, NodeType node_type) {
-	if (!ctx->token || !ctx->token->next) return true;
+static void parse_condition(ParserCtx *ctx, NodeType node_type) {
+	if (!ctx->token || !ctx->token->next) {
+		ctx->err = true;
+		return;
+	}
 
 	push_ast_node(ctx, ctx->token, node_type);
 	next_token(ctx);
 
-	bool err = false;
 	const bool success = parse_expression(ctx);
 
-	if (success && !err) {
-		splice_expr_node(ctx->node);
+	if (!success || ctx->err) {
+		FMT_ERROR(ERR_INVALID_EXPR, { .tok = ctx->token });
+		ctx->err = true;
 
-		return false;
+		return;
 	}
 
-	FMT_ERROR(ERR_INVALID_EXPR, { .tok = ctx->token });
-	return true;
+	splice_expr_node(ctx->node);
 }
 
-static bool parse_if(ParserCtx *ctx) {
-	return parse_condition(ctx, AST_NODE_IF);
+static void parse_if(ParserCtx *ctx) {
+	parse_condition(ctx, AST_NODE_IF);
 }
 
-static bool parse_elif(ParserCtx *ctx) {
-	return parse_condition(ctx, AST_NODE_ELIF);
+static void parse_elif(ParserCtx *ctx) {
+	parse_condition(ctx, AST_NODE_ELIF);
 }
 
 static void parse_else(ParserCtx *ctx) {
@@ -441,8 +443,8 @@ static void parse_else(ParserCtx *ctx) {
 	next_token(ctx);
 }
 
-static bool parse_while(ParserCtx *ctx) {
-	return parse_condition(ctx, AST_NODE_WHILE);
+static void parse_while(ParserCtx *ctx) {
+	parse_condition(ctx, AST_NODE_WHILE);
 }
 
 /*
@@ -500,73 +502,55 @@ static void parse_noop(ParserCtx *ctx) {
 /*
 Parse a single AST node.
 
-Set `err` if an error occurred.
-
 Return `true` if a terminating token was reached (closing bracket).
 */
 static bool parse_ast_node(ParserCtx *ctx) {
-	const TokenType token_type = (ctx->token)->type;
-
-	if (token_type == TOKEN_BRACKET_OPEN) {
-		parse_ast_sub_tree_(ctx);
-	}
-	else if (token_type == TOKEN_BRACKET_CLOSE) {
-		if (ctx->indent_lvl == 0) {
-			FMT_ERROR(ERR_MISSING_OPEN_BRAK, {
-				.loc = &(ctx->token)->location
-			});
-
-			ctx->err = true;
-		}
-		return true;
-	}
-	else if (token_type == TOKEN_NEWLINE || token_type == TOKEN_COMMA) {
-		next_token(ctx);
-	}
-	else if (token_type == TOKEN_KW_RETURN) {
-		parse_return(ctx);
-	}
-	else if (token_type == TOKEN_KW_IF) {
-		ctx->err |= parse_if(ctx);
-	}
-	else if (token_type == TOKEN_KW_ELIF) {
-		ctx->err |= parse_elif(ctx);
-	}
-	else if (token_type == TOKEN_KW_ELSE) {
-		parse_else(ctx);
-	}
-	else if (token_type == TOKEN_KW_WHILE) {
-		ctx->err |= parse_while(ctx);
-	}
-	else if (token_type == TOKEN_KW_UNREACHABLE) {
-		parse_unreachable(ctx);
-	}
-	else if (token_type == TOKEN_COMMENT) {
-		parse_comment(ctx);
-	}
-	else if (token_type == TOKEN_KW_NOOP) {
-		parse_noop(ctx);
-	}
-	else {
-		ParserResult result = parse_function_proto(ctx);
-
-		if (result == RESULT_IGNORE)
-			result = parse_var_def(ctx);
-
-		if (result == RESULT_IGNORE)
-			result = parse_var_assign(ctx);
-
-		if (result == RESULT_IGNORE) {
-			if (!parse_expression(ctx)) {
-				result = RESULT_ERROR;
-
-				if (!ctx->err) FMT_ERROR(ERR_UNEXPECTED_TOKEN, {
-					.tok = ctx->token
+	switch (ctx->token->type) {
+		case TOKEN_BRACKET_CLOSE: {
+			if (ctx->indent_lvl == 0) {
+				FMT_ERROR(ERR_MISSING_OPEN_BRAK, {
+					.loc = &(ctx->token)->location
 				});
-			}
-		}
 
-		if (result == RESULT_ERROR) ctx->err = true;
+				ctx->err = true;
+			}
+			return true;
+		}
+		case TOKEN_BRACKET_OPEN: parse_ast_sub_tree_(ctx); break;
+		case TOKEN_NEWLINE:
+		case TOKEN_COMMA:
+			next_token(ctx); break;
+		case TOKEN_KW_RETURN: parse_return(ctx); break;
+		case TOKEN_KW_IF: parse_if(ctx); break;
+		case TOKEN_KW_ELIF: parse_elif(ctx); break;
+		case TOKEN_KW_ELSE: parse_else(ctx); break;
+		case TOKEN_KW_WHILE: parse_while(ctx); break;
+		case TOKEN_KW_UNREACHABLE: parse_unreachable(ctx); break;
+		case TOKEN_COMMENT: parse_comment(ctx); break;
+		case TOKEN_KW_NOOP: parse_noop(ctx); break;
+		default: {
+			ParserResult result = parse_function_proto(ctx);
+
+			if (result == RESULT_IGNORE)
+				result = parse_var_def(ctx);
+
+			if (result == RESULT_IGNORE)
+				result = parse_var_assign(ctx);
+
+			if (result == RESULT_IGNORE) {
+				if (!parse_expression(ctx)) {
+					result = RESULT_ERROR;
+
+					if (!ctx->err) FMT_ERROR(ERR_UNEXPECTED_TOKEN, {
+						.tok = ctx->token
+					});
+				}
+			}
+
+			if (result == RESULT_ERROR) ctx->err = true;
+
+			return false;
+		}
 	}
 
 	return false;
