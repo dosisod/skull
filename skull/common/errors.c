@@ -18,84 +18,92 @@ static void message_stringify(Message *const);
 static bool do_show_color(void);
 static void write_error_msg(char *);
 
+const char *color_warning_msg = \
+	"%s: " COLOR_BOLD COLOR_YELLOW_FG "Warning" COLOR_RESET ": ";
+const char *color_fatal_msg = \
+	"%s: " COLOR_BOLD COLOR_RED_FG "Compilation error" COLOR_RESET ": ";
+const char *warning_msg = "%s: Warning: ";
+const char *fatal_msg = "%s: Compilation error: ";
+
+
 Vector *error_msgs;
 
 static const char *errors[] = {
-	[ERR_UNEXPECTED_TOKEN] = "unexpected token: \"%s\"\n",
+	[ERR_UNEXPECTED_TOKEN] = "unexpected token: \"%s\"",
 	[ERR_EOF_NO_BRACKET] = "Reached EOF, expected closing bracket",
 	[ERR_NOT_INT] = "expected an integer",
-	[ERR_FUNC_TYPE_MISMATCH] = "expected param of type \"%s\", got \"%s\"\n",
-	[ERR_EXPECTED_SAME_TYPE] = "expected type \"%s\", got \"%s\"\n",
+	[ERR_FUNC_TYPE_MISMATCH] = "expected param of type \"%s\", got \"%s\"",
+	[ERR_EXPECTED_SAME_TYPE] = "expected type \"%s\", got \"%s\"",
 	[ERR_RUNE_TOO_LONG] = "rune contains too many characters",
-	[ERR_BAD_ESCAPE] = "bad escape sequence: \"%s\"\n",
-	[ERR_VAR_NOT_FOUND] = "variable \"%s\" not found\n",
-	[ERR_OVERFLOW] = "overflow occurred while parsing \"%s\"\n",
+	[ERR_BAD_ESCAPE] = "bad escape sequence: \"%s\"",
+	[ERR_VAR_NOT_FOUND] = "variable \"%s\" not found",
+	[ERR_OVERFLOW] = "overflow occurred while parsing \"%s\"",
 	[ERR_MISSING_OPEN_BRAK] = "missing opening bracket",
 	[ERR_MISSING_CLOSING_PAREN] = "missing closing parenthesis",
-	[ERR_MISSING_DECLARATION] = "function \"%s\" missing declaration\n",
-	[ERR_MISSING_BLOCK] = "%s statement must be followed by code block\n",
+	[ERR_MISSING_DECLARATION] = "function \"%s\" missing declaration",
+	[ERR_MISSING_BLOCK] = "%s statement must be followed by code block",
 	[ERR_NO_CLOSING_COMMENT] = "expected closing \"#}\" for block comment",
 	[ERR_NO_CLOSING_QUOTE] = "expected closing quote",
 	[ERR_NO_VOID_ASSIGN] = \
-		"function returning type void cannot be assigned to variable \"%s\"\n",
-	[ERR_VAR_ALREADY_DEFINED] = "variable \"%s\" already defined\n",
-	[ERR_NON_INT_MAIN] = "returning non-int expression \"%s\" from main\n",
+		"function returning type void cannot be assigned to variable \"%s\"",
+	[ERR_VAR_ALREADY_DEFINED] = "variable \"%s\" already defined",
+	[ERR_NON_INT_MAIN] = "returning non-int expression \"%s\" from main",
 	[ERR_NON_BOOL_EXPR] = "expected boolean expression",
 	[ERR_MAIN_RESERVED] = "cannot export function \"main\"",
-	[ERR_NO_REDEFINE_FUNC] = "cannot redeclare function \"%s\"\n",
+	[ERR_NO_REDEFINE_FUNC] = "cannot redeclare function \"%s\"",
 	[ERR_NO_REDEFINE_VAR_AS_FUNC] = \
-		"cannot redeclare variable \"%s\" as function\n",
+		"cannot redeclare variable \"%s\" as function",
 	[ERR_NO_REDEFINE_FUNC_AS_VAR] = \
-		"cannot redeclare function \"%s\" as variable\n",
+		"cannot redeclare function \"%s\" as variable",
 	[ERR_ZERO_PARAM_FUNC] = \
 		"passing parameter to function that takes zero parameters",
-	[ERR_SHADOW_VAR] = "variable \"%s\" shadows existing variable\n",
-	[ERR_EXPECTED_RETURN] = "expected return value in function \"%s\"\n",
-	[ERR_NO_VOID_RETURN] = "unexpected return from void function \"%s\"\n",
+	[ERR_SHADOW_VAR] = "variable \"%s\" shadows existing variable",
+	[ERR_EXPECTED_RETURN] = "expected return value in function \"%s\"",
+	[ERR_NO_VOID_RETURN] = "unexpected return from void function \"%s\"",
 	[ERR_ELSE_ELIF_MISSING_IF] = \
 		"else/elif statement missing preceding if statement",
 	[ERR_UNEXPECTED_CODE_BLOCK] = "unexpected code block",
 	[ERR_EMPTY_BLOCK] = "code block cannot be empty",
 	[ERR_UNREACHABLE_CODE] = "unreachable code",
-	[ERR_REASSIGN_CONST] = "cannot reassign const variable \"%s\"\n",
-	[ERR_INVALID_EXPR] = "invalid expression near \"%s\"\n",
+	[ERR_REASSIGN_CONST] = "cannot reassign const variable \"%s\"",
+	[ERR_INVALID_EXPR] = "invalid expression near \"%s\"",
 	[ERR_NO_DANGLING_EXPR] = "expression cannot be used on its own",
 	[ERR_REDUNDANT_REASSIGN] = \
-		"redundant assignment of variable \"%s\" to itself\n",
+		"redundant assignment of variable \"%s\" to itself",
 	[ERR_DIV_BY_ZERO] = "division by zero",
 	[ERR_NO_NESTED] = \
-		"cannot declare nested function \"%s\" as external or exported\n",
+		"cannot declare nested function \"%s\" as external or exported",
 	[ERR_EXPECTED_COMMA] = "expected comma",
 	[ERR_UNCLOSED_FUNC_CALL] = "function call missing closing parenthesis",
-	[ERR_TYPE_NOT_FOUND] = "type \"%s\" could not be found\n",
-	[ERR_ALIAS_ALREADY_DEFINED] = "alias \"%s\" is already defined\n",
+	[ERR_TYPE_NOT_FOUND] = "type \"%s\" could not be found",
+	[ERR_ALIAS_ALREADY_DEFINED] = "alias \"%s\" is already defined",
 	[ERR_ASSIGN_MISSING_EXPR] = "expected expression in assignment variable",
 	[ERR_RETURN_MISSING_EXPR] = "expected expression in return",
-	[ERR_EXPECTED_EXPR] = "expected expression after \"%s\"\n",
+	[ERR_EXPECTED_EXPR] = "expected expression after \"%s\"",
 	[ERR_NO_CONTROL_CHAR] = "control character cannot be used in rune",
 	[ERR_INVALID_NUM_PARAMS] = "invalid number of parameters",
 	[ERR_INVALID_COMMENT_START] = "invalid start of comment",
-	[ERR_ILLEGAL_SEQ_AT] = "illegal UTF8 sequence at character offset %s\n",
+	[ERR_ILLEGAL_SEQ_AT] = "illegal UTF8 sequence at character offset %s",
 	[ERR_ILLEGAL_SEQ] = "illegal UTF8 sequence in this region",
-	[ERR_POW_BAD_TYPE] = "cannot use type \"%s\" for power operator\n",
+	[ERR_POW_BAD_TYPE] = "cannot use type \"%s\" for power operator",
 	[ERR_EXPECTED_NEWLINE] = "expected a newline",
-	[WARN_VAR_NOT_CONST] = "variable \"%s\" should be constant\n",
-	[WARN_VAR_UNUSED] = "variable \"%s\" is unused\n",
-	[WARN_FUNC_UNUSED] = "function \"%s\" is unused\n",
+	[WARN_VAR_NOT_CONST] = "variable \"%s\" should be constant",
+	[WARN_VAR_UNUSED] = "variable \"%s\" is unused",
+	[WARN_FUNC_UNUSED] = "function \"%s\" is unused",
 	[WARN_COND_ALWAYS_TRUE] = "condition is always true",
 	[WARN_COND_ALWAYS_FALSE] = "condition is always false",
 	[WARN_FILE_EMPTY] = "file is empty",
 	[ERR_NESTED_BLOCK_COMMENT] = \
 		"cannot put opening block comment in existing block comment",
-	[WARN_TRIVIAL_TYPE] = "explicit type \"%s\" can be trivialy deduced\n",
+	[WARN_TRIVIAL_TYPE] = "explicit type \"%s\" can be trivialy deduced",
 	[ERR_NO_REDEFINE_ALIAS_AS_VAR] = \
-		"cannot redeclare type alias \"%s\" as variable\n",
+		"cannot redeclare type alias \"%s\" as variable",
 	[ERR_NO_REDEFINE_ALIAS_AS_FUNC] = \
-		"cannot redeclare type alias \"%s\" as function\n",
+		"cannot redeclare type alias \"%s\" as function",
 	[ERR_NO_REDEFINE_VAR_AS_ALIAS] = \
-		"cannot redeclare variable \"%s\" as type alias\n",
+		"cannot redeclare variable \"%s\" as type alias",
 	[ERR_NO_REDEFINE_FUNC_AS_ALIAS] = \
-		"cannot redeclare function \"%s\" as type alias\n",
+		"cannot redeclare function \"%s\" as type alias",
 	[ERR_NOT_NUMERIC] = "expected a numeric value",
 	[WARN_NO_BOM] = "BOM found"
 };
@@ -131,6 +139,8 @@ Every `%s` in the string is expanded according to the corresponding `Message`
 in `msgs`.
 */
 static char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
+	if (id >= MAX_ERRORS) return NULL;
+
 	Message *msg = msgs;
 	message_stringify(msg);
 
@@ -142,27 +152,16 @@ static char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 	}
 	msg = msgs;
 
-	char *prefix = NULL;
-	if (type == ERROR_FATAL) {
-		prefix = uvsnprintf(
-			do_show_color() ? (
-					"%s: "
-					COLOR_BOLD COLOR_RED_FG
-					"Compilation error"
-					COLOR_RESET ": "
-				) :
-				"%s: Compilation error: ",
-			BUILD_DATA.filename
-		);
-	}
-	else if (type == ERROR_WARN) {
-		prefix = uvsnprintf(
-			do_show_color() ?
-				"%s: " COLOR_BOLD COLOR_YELLOW_FG "Warning" COLOR_RESET ": " :
-				"%s: Warning: ",
-			BUILD_DATA.filename
-		);
-	}
+	char *prefix = uvsnprintf(
+		(type == ERROR_FATAL) ?
+			(do_show_color() ?
+				color_fatal_msg :
+				fatal_msg) :
+			(do_show_color() ?
+				color_warning_msg :
+				warning_msg),
+		BUILD_DATA.filename
+	);
 
 	const Location *location = msg[0].tok ?
 		&msg[0].tok->location :
@@ -181,25 +180,24 @@ static char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 		);
 	}
 
-	if (id >= MAX_ERRORS) return NULL;
-	const char *fmt = errors[id];
-
 	char *error_msg = NULL;
-	if (num_of_percents == 0)
-		error_msg = uvsnprintf("%s\n", fmt);
-	else if (num_of_percents == 1)
+	if (num_of_percents == 0) error_msg = strdup(errors[id]);
+
+	else if (num_of_percents == 1) {
 		error_msg = uvsnprintf(
-			fmt,
+			errors[id],
 			msgs[0].real ? msgs[0].real : msgs[0].str
 		);
-	else if (num_of_percents == 2)
+	}
+	else if (num_of_percents == 2) {
 		error_msg = uvsnprintf(
-			fmt,
+			errors[id],
 			msgs[0].real ? msgs[0].real : msgs[0].str,
 			msgs[1].real ? msgs[1].real : msgs[1].str
 		);
+	}
 
-	char *final_str = uvsnprintf("%s%s%s",
+	char *final_str = uvsnprintf("%s%s%s\n",
 		prefix,
 		location_str ? location_str : "",
 		error_msg
