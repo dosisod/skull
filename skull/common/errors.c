@@ -17,6 +17,8 @@ static char *_fmt_message(ErrorType, ErrorCode, Message []);
 static void message_stringify(Message *const);
 static bool do_show_color(void);
 static void write_error_msg(char *);
+static char *get_location_str(const Message *);
+static char *get_error_msg(const Message[], size_t, ErrorCode);
 
 const char *color_warning_msg = \
 	"%s: " COLOR_BOLD COLOR_YELLOW_FG "Warning" COLOR_RESET ": ";
@@ -163,45 +165,15 @@ static char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 		BUILD_DATA.filename
 	);
 
-	const Location *location = msg[0].tok ?
-		&msg[0].tok->location :
-		(msg[0].loc ?
-			msg[0].loc :
-			NULL);
-
-	// if location is invalid, dont use it in error
-	if (location && !location->line) location = NULL;
-
-	char *location_str = NULL;
-	if (location) {
-		location_str = uvsnprintf("line %u column %u: ",
-			location->line,
-			location->column
-		);
-	}
-
-	char *error_msg = NULL;
-	if (num_of_percents == 0) error_msg = strdup(errors[id]);
-
-	else if (num_of_percents == 1) {
-		error_msg = uvsnprintf(
-			errors[id],
-			msgs[0].real ? msgs[0].real : msgs[0].str
-		);
-	}
-	else if (num_of_percents == 2) {
-		error_msg = uvsnprintf(
-			errors[id],
-			msgs[0].real ? msgs[0].real : msgs[0].str,
-			msgs[1].real ? msgs[1].real : msgs[1].str
-		);
-	}
+	char *location_str = get_location_str(&msg[0]);
+	char *error_msg = get_error_msg(msgs, num_of_percents, id);
 
 	char *final_str = uvsnprintf("%s%s%s\n",
 		prefix,
 		location_str ? location_str : "",
 		error_msg
 	);
+
 	free(prefix);
 	free(location_str);
 	free(error_msg);
@@ -212,6 +184,46 @@ static char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 	}
 
 	return final_str;
+}
+
+static char *get_location_str(const Message *msg) {
+	const Location *location = msg[0].tok ?
+		&msg[0].tok->location :
+		(msg[0].loc ?
+			msg[0].loc :
+			NULL);
+
+	if (!location || !location->line) return NULL;
+
+	return uvsnprintf("line %u column %u: ",
+		location->line,
+		location->column
+	);
+}
+
+static char *get_error_msg(
+	const Message msgs[],
+	size_t num_of_percents,
+	ErrorCode id
+) {
+	if (num_of_percents == 0) return strdup(errors[id]);
+
+	if (num_of_percents == 1) {
+		return uvsnprintf(
+			errors[id],
+			msgs[0].real ? msgs[0].real : msgs[0].str
+		);
+	}
+
+	if (num_of_percents == 2) {
+		return uvsnprintf(
+			errors[id],
+			msgs[0].real ? msgs[0].real : msgs[0].str,
+			msgs[1].real ? msgs[1].real : msgs[1].str
+		);
+	}
+
+	return NULL;
 }
 
 /*
