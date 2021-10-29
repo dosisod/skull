@@ -22,6 +22,7 @@ typedef struct {
 	const char32_t *code;
 	unsigned line_num;
 	unsigned column;
+	CommentState comment;
 } TokenizeCtx;
 
 static bool iter_comment(TokenizeCtx *);
@@ -31,6 +32,7 @@ static bool is_delimeter(char32_t);
 static void token_add_info(TokenizeCtx *);
 static void chomp(TokenizeCtx *);
 static void next_line(TokenizeCtx *);
+static bool is_valid_comment_start(TokenizeCtx *);
 
 /*
 Allocate and append next token, return newly created token.
@@ -156,35 +158,19 @@ Iterate through comment.
 Return `true` if errors occurred.
 */
 static bool iter_comment(TokenizeCtx *ctx) {
-	CommentState comment = NO_COMMENT;
-
-	if (ctx->code[1] == ' ' || ctx->code[1] == '\t')
-		comment = LINE_COMMENT;
-
-	else if (ctx->code[1] == '{')
-		comment = BLOCK_COMMENT;
-
-	else {
-		Location location = (Location){
-			.line = ctx->line_num,
-			.column = ctx->column
-		};
-		FMT_ERROR(ERR_INVALID_COMMENT_START, { .loc = &location });
-		return true;
-	}
+	if (!is_valid_comment_start(ctx)) return true;
 
 	if (!ctx->token->begin) token_add_info(ctx);
-
 	chomp(ctx);
 
 	do {
 		chomp(ctx);
 
-		if (comment == LINE_COMMENT && *ctx->code == '\n') {
+		if (ctx->comment == LINE_COMMENT && *ctx->code == '\n') {
 			ctx->code--;
 			break;
 		}
-		if (comment == BLOCK_COMMENT && *ctx->code == '#') {
+		if (ctx->comment == BLOCK_COMMENT && *ctx->code == '#') {
 			chomp(ctx);
 
 			if (*ctx->code == '}') break;
@@ -204,12 +190,34 @@ static bool iter_comment(TokenizeCtx *ctx) {
 
 	} while (*ctx->code);
 
-	if (!*ctx->code && comment == BLOCK_COMMENT) {
+	if (!*ctx->code && ctx->comment == BLOCK_COMMENT) {
 		FMT_ERROR(ERR_NO_CLOSING_COMMENT, { .loc = &ctx->token->location });
 		return true;
 	}
 
 	return false;
+}
+
+static bool is_valid_comment_start(TokenizeCtx *ctx) {
+	ctx->comment = NO_COMMENT;
+
+	if (ctx->code[1] == ' ' || ctx->code[1] == '\t')
+		ctx->comment = LINE_COMMENT;
+
+	else if (ctx->code[1] == '{')
+		ctx->comment = BLOCK_COMMENT;
+
+	else {
+		Location location = (Location){
+			.line = ctx->line_num,
+			.column = ctx->column
+		};
+		FMT_ERROR(ERR_INVALID_COMMENT_START, { .loc = &location });
+
+		return false;
+	}
+
+	return true;
 }
 
 /*
