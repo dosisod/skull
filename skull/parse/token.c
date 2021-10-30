@@ -33,6 +33,7 @@ static void token_add_info(TokenizeCtx *);
 static void chomp(TokenizeCtx *);
 static void next_line(TokenizeCtx *);
 static bool is_valid_comment_start(TokenizeCtx *);
+static void parse_delimiter(TokenizeCtx *);
 
 /*
 Allocate and append next token, return newly created token.
@@ -96,47 +97,21 @@ static bool tokenize_inner_loop(TokenizeCtx *ctx) {
 	if (*ctx->code == '#') {
 		if (iter_comment(ctx)) return true;
 
-		ctx->token->type = TOKEN_COMMENT;
-
 		if (!*ctx->code) return false;
 	}
 	else if (is_quote(*ctx->code) && iter_quote(ctx)) {
 		return true;
 	}
 	else if (is_delimeter(*ctx->code)) {
-		if (ctx->token->begin) {
-			ctx->token->end = ctx->code;
-			ctx->token = setup_next(ctx->token);
-		}
-
-		*ctx->token = (Token){
-			.begin = ctx->code,
-			.end = ctx->code + 1,
-			.location = { .line = ctx->line_num, .column = ctx->column }
-		};
-
-		switch (*ctx->code) {
-			case '{': ctx->token->type = TOKEN_BRACKET_OPEN; break;
-			case '}': ctx->token->type = TOKEN_BRACKET_CLOSE; break;
-			case '(': ctx->token->type = TOKEN_PAREN_OPEN; break;
-			case ')': ctx->token->type = TOKEN_PAREN_CLOSE; break;
-			case ',': ctx->token->type = TOKEN_COMMA; break;
-			case '\n': ctx->token->type = TOKEN_NEWLINE; break;
-			default: break; // make GCC happy
-		}
-
-		ctx->last = ctx->token;
-		ctx->token = setup_next(ctx->token);
+		parse_delimiter(ctx);
 	}
 	else if (!ctx->token->begin) {
 		if (!is_whitespace(*ctx->code)) token_add_info(ctx);
 	}
-	else if (!ctx->token->end) {
-		if (is_whitespace(*ctx->code)) {
-			ctx->token->end = ctx->code;
-			ctx->last = ctx->token;
-			ctx->token = setup_next(ctx->token);
-		}
+	else if (!ctx->token->end && is_whitespace(*ctx->code)) {
+		ctx->token->end = ctx->code;
+		ctx->last = ctx->token;
+		ctx->token = setup_next(ctx->token);
 	}
 
 	if (*ctx->code == '\n') next_line(ctx);
@@ -195,6 +170,7 @@ static bool iter_comment(TokenizeCtx *ctx) {
 		return true;
 	}
 
+	ctx->token->type = TOKEN_COMMENT;
 	return false;
 }
 
@@ -252,6 +228,32 @@ static bool iter_quote(TokenizeCtx *ctx) {
 	}
 
 	return false;
+}
+
+static void parse_delimiter(TokenizeCtx *ctx) {
+	if (ctx->token->begin) {
+		ctx->token->end = ctx->code;
+		ctx->token = setup_next(ctx->token);
+	}
+
+	*ctx->token = (Token){
+		.begin = ctx->code,
+		.end = ctx->code + 1,
+		.location = { .line = ctx->line_num, .column = ctx->column }
+	};
+
+	switch (*ctx->code) {
+		case '{': ctx->token->type = TOKEN_BRACKET_OPEN; break;
+		case '}': ctx->token->type = TOKEN_BRACKET_CLOSE; break;
+		case '(': ctx->token->type = TOKEN_PAREN_OPEN; break;
+		case ')': ctx->token->type = TOKEN_PAREN_CLOSE; break;
+		case ',': ctx->token->type = TOKEN_COMMA; break;
+		case '\n': ctx->token->type = TOKEN_NEWLINE; break;
+		default: break; // make GCC happy
+	}
+
+	ctx->last = ctx->token;
+	ctx->token = setup_next(ctx->token);
 }
 
 static void token_add_info(TokenizeCtx *ctx) {
