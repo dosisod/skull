@@ -8,6 +8,8 @@
 
 #include "skull/common/str.h"
 
+static char32_t *escape_hex(const char32_t **, char32_t *);
+
 /*
 Make a heap allocated version of `str`.
 
@@ -278,29 +280,8 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 	}
 
 	if (escape == 'x') {
-		char32_t value = 0;
-		size_t i = 0;
-
-		str = (*str_) + 1;
-		option[0] = *str;
-
-		while (c32isxdigit(*str) && i < 8) {
-			option[i] = *str;
-
-			if (c32isxdigit(*str))
-				value = (value << 4) + c32unhex(*str);
-
-			i++;
-			*str_ += 1;
-			str = (*str_) + 1;
-		}
-
-		if (*str == '\'' || *str == '\"')
-			option[i] = '\0';
-
-		if (i > 0) {
-			return value;
-		}
+		const char32_t *c = escape_hex(str_, option);
+		if (c) return *c;
 	}
 
 	static char32_t bad_escape[5] = {0};
@@ -311,6 +292,35 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 	*str_ = copy;
 
 	return '\0';
+}
+
+static char32_t *escape_hex(const char32_t **str, char32_t *option) {
+	static char32_t value;
+	value = 0;
+	size_t i = 0;
+
+	*str += 1;
+	option[0] = **str;
+
+	while (c32isxdigit(**str) && i < 8) {
+		option[i] = **str;
+
+		if (c32isxdigit(**str))
+			value = (value << 4) + c32unhex(**str);
+
+		i++;
+		*str += 1;
+	}
+
+	if (**str == '\'' || **str == '\"')
+		option[i] = '\0';
+
+	if (i > 0) {
+		*str -= 1;
+		return &value;
+	}
+
+	return NULL;
 }
 
 #ifdef __clang__
