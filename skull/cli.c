@@ -269,11 +269,14 @@ static int run_cc(char *binary_name) {
 }
 
 static int usage(void) {
-	printf("skull -v\n" \
-"skull file [ -S | -E | -c ]\n" \
-"           [ -o output ]\n" \
-"           [ -- args]\n"
-	);
+printf("skull [-v|--version|-h|--help]\n\n" \
+"skull file [-S|-E|-c|--c-backend]\n" \
+"           [-gq]\n" \
+"           [--werror]\n" \
+"           [-o output]\n" \
+"           [-- args]\n"
+);
+
 
 	return 0;
 }

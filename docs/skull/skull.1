@@ -1,30 +1,41 @@
-.TH SKULL 1 "December 2020" "Linux" "User Manuals"
+.TH SKULL 1 "OCTOBER 2021" "Linux" "User Manuals"
 .SH NAME
 .B skull\fR \- A strict, static, and strongly typed programming language.
 
 .SH SYNOPSIS
-\fBskull\fR \-v
+\fBskull\fR [\fB\-v\fR|\fB\-\-version\fR|\fB\-h\fR|\fB\-\-help\fR]
 
-\fBskull\fR \fIfile\fR [ \-S | \-E | \-c ]
-           [ \-o \fIoutput\fR ]
-           [ \-\- \fIargs\fR ]
+\fBskull\fR \fIfile\fR [\fB\-S\fR|\fB\-E\fR|\fB\-c\fR|\fB\-\-c\-backend\fR]
+           [\fB\-gq\fR]
+           [\fB\-\-werror\fR]
+           [\fB\-o\fR \fIoutput\fR]
+           [\fB\-\-\fR \fIargs\fR]
 
 .SH DESCRIPTION
 \fBskull\fR is a strict, static, and strongly typed programming language.
 It strives to be as maintainable, readable, and powerful as possible.
-It allows for compilation to native binaries, assembler, and LLVM IR out of the box.
+It allows for compilation to native binaries, assembler, C (experimental),
+and LLVM IR out of the box.
 
-If no arguments are passed, \fBskull\fR will compile \fIfile\fR into an executable
-named \fIfile\fR, with the ".sk" extention dropped.
+\fIfile\fR must end with the ".sk" extension. Since the ".sk" extension is
+dropped when outputting files, When \fIfile\fR is referenced here, it is
+implied that the ".sk" extension is not there.
+
+If no flags are passed, \fBskull\fR will compile \fIfile\fR into an executable
+named \fIfile\fR.
 .SH OPTIONS
 .TP
-.B \-v
+.B \-v, \-\-version
 Print version and exit.
+
+.TP
+.B \-h, \-\-help
+Print basic usage.
 
 .TP
 .B \-S
 Output assembly representation of \fIfile\fR.
-Newly created file is called ".\fIfile\fR.o" and put in the same directory as \fIfile\fR.
+The newly created file is called ".\fIfile\fR.s" and put in the same directory as \fIfile\fR.
 
 .TP
 .B \-E
@@ -33,15 +44,32 @@ Output LLVM IR representation of \fIfile\fR to stdout.
 .TP
 .B \-c
 Output an object file compiled from \fIfile\fR.
-Newly created file is called ".\fIfile\fR.o" and put in the same directory as \fIfile\fR.
+The newly created file is called ".\fIfile\fR.o" and put in the same directory as \fIfile\fR.
+
+.TP
+.B \-\-c\-backend
+Output files using (experimental) C backend.
+The newly created file is called ".\fIfile\fR.c" and put in the same directory as \fIfile\fR.
+
+.TP
+.B \-g
+Add debugging symbols.
+
+.TP
+.B \-q
+Suppress warnings.
+
+.TP
+.B \-\-werror
+Treat all warnings as errors.
 
 .TP
 .BI \-o " output"
-Change filename of newly created file.
+Output compiled file to \fIoutput\fR instead of default path.
 
 .TP
 .BI \-\- " args"
-Forward \fIargs\fR to CC during the final compilation of \fIfile\fR.
+Forward \fIargs\fR to \fBcc\fR during the final compilation of \fIfile\fR.
 
 .SH AUTHOR
 dosisod <https://github.com/dosisod>
