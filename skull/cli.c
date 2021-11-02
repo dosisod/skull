@@ -330,16 +330,17 @@ static bool parse_long_option(const char *arg) {
 	if (strcmp(arg, "version") == 0) bail(version());
 	if (strcmp(arg, "help") == 0) bail(usage());
 	if (strcmp(arg, "c-backend") == 0) {
-		BUILD_DATA.c_backend = true;
-		return false;
+		set_bool_flag(&BUILD_DATA.c_backend, "--c-backend");
 	}
-	if (strcmp(arg, "werror") == 0) {
-		BUILD_DATA.werror = true;
-		return false;
+	else if (strcmp(arg, "werror") == 0) {
+		set_bool_flag(&BUILD_DATA.werror, "--werror");
+	}
+	else {
+		printf("skull: unknown option \"--%s\"\n", arg);
+		return true;
 	}
 
-	printf("skull: unknown option \"--%s\"\n", arg);
-	return true;
+	return false;
 }
 
 static char *squash_argv(char *argv[]) {
