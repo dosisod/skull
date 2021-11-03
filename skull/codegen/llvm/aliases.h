@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 Convert `num` to an `i64` LLVM value.
 */

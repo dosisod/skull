@@ -4,6 +4,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/build_data.h"
+#include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/func.h"
@@ -57,6 +58,10 @@ void setup_llvm_state(void) {
 	state->main_func->type = main_func_type;
 
 	state->current_func = state->main_func;
+
+	if (BUILD_DATA.debug) {
+		setup_debug_info(filename, SKULL_STATE_LLVM.module);
+	}
 }
 
 /*

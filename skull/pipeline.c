@@ -3,10 +3,9 @@
 
 #include "skull/build_data.h"
 #include "skull/codegen/ast.h"
-#include "skull/codegen/llvm/debug.h"
+#include "skull/codegen/c/backend.h"
+#include "skull/codegen/llvm/backend.h"
 #include "skull/codegen/llvm/shared.h"
-#include "skull/codegen/llvm/write.h"
-#include "skull/codegen/write.h"
 #include "skull/common/str.h"
 #include "skull/parse/classify.h"
 #include "skull/pipeline.h"
@@ -51,21 +50,22 @@ int run_pipeline(const char *filename, char *file_contents) {
 	setup_semantic_state();
 
 	bool err = !validate_ast_tree(node);
-	if (!err) {
-		setup_llvm_state();
 
-		if (BUILD_DATA.debug) {
-			setup_debug_info(filename, SKULL_STATE_LLVM.module);
-		}
+	// For now, the LLVM backend will always be selected as the default.
+	BUILD_DATA.llvm_backend = true;
 
-		gen_module(node);
-		err = write_file(filename);
+	if (err) {}
+	else if (BUILD_DATA.c_backend) {
+		err = run_backend(&c_backend, node, filename);
+	}
+	else if (BUILD_DATA.llvm_backend) {
+		err = run_backend(&llvm_backend, node, filename);
 	}
 
 	free_ast_tree(node);
 	free(_file_contents);
 	free(file_contents);
-	free_llvm_state();
+	llvm_backend.cleanup();
 	err |= free_semantic_state();
 
 	return err;

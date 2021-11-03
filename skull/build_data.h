@@ -5,6 +5,7 @@ typedef struct {
 	char *out_file;
 	_Bool quiet;
 	_Bool c_backend;
+	_Bool llvm_backend;
 	_Bool asm_backend;
 	_Bool debug;
 	_Bool preprocess;

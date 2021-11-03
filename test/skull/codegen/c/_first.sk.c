@@ -20,6 +20,4 @@ int64_t _int_pow(int64_t base, int64_t exp) {
 	return result;
 }
 
-int main(void) {
-	int x(void) __asm__("./test/skull/codegen/c/.first"); return x();
-}
+int main(void) { int x(void) __asm__("./test/skull/codegen/c/.first"); return x(); }

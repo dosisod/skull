@@ -8,7 +8,33 @@
 
 #include "skull/codegen/c/write.h"
 
-static const char *data = \
+static const char *builtin_decls;
+
+
+/*
+Write c code to `filename`, return whether error occured.
+*/
+bool write_file_c(const char *filename) {
+	char *c_filename = gen_filename(filename, "c");
+	FILE *f = open_file(c_filename, false);
+
+	const size_t len = strlen(c_filename);
+	c_filename[len - 5] = '\0';
+
+	fprintf(f, "%s\n", builtin_decls);
+
+	fprintf(
+		f,
+		"int main(void) { int x(void) __asm__(\"%s\"); return x(); }\n",
+		c_filename
+	);
+
+	free(c_filename);
+
+	return false;
+}
+
+static const char *builtin_decls = \
 "_Bool _strcmp(const char *a, const char *b) {\n"
 "	while (*a && *b) {\n"
 "		if (*a != *b) {\n"
@@ -29,36 +55,4 @@ static const char *data = \
 "	int64_t result = base;\n"
 "	for (int64_t i = 1; i < exp; i++) result *= base;\n"
 "	return result;\n"
-"}\n"
-"\n"
-"int main(void) {\n"
-"	int x(void) __asm__(\"%s\"); return x();\n"
 "}\n";
-
-
-
-/*
-Write c code to `filename`, return whether error occured.
-*/
-bool write_file_c(char *filename) {
-	FILE *f = open_file(filename, false);
-
-	const size_t len = strlen(filename);
-	filename[len - 5] = '\0';
-
-#ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wformat-nonliteral"
-#else
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wformat-nonliteral"
-#endif
-	fprintf(f, data, filename);
-#ifdef __clang__
-# pragma clang diagnostic pop
-#else
-# pragma GCC diagnostic pop
-#endif
-
-	return false;
-}
