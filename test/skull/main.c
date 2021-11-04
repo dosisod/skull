@@ -16,6 +16,8 @@
 #include "common/str.h"
 #include "common/vector.h"
 
+#include "codegen/c/expr.h"
+
 #include "../testing.h"
 
 #include "skull/common/local.h"
@@ -42,6 +44,8 @@ int main(void) {
 	scope_test_self(&passed);
 	variable_test_self(&passed);
 	semantic_verify_test_self(&passed);
+
+	codegen_c_expr_test_self(&passed);
 
 	if (passed) {
 		puts("All tests passed!");

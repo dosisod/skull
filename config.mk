@@ -99,4 +99,5 @@ DIRS := build/skull \
 	$(ODIR)/skull/semantic \
 	$(ODIR)/test/skull/semantic \
 	$(ODIR)/test/skull/parse/ast \
+	$(ODIR)/test/skull/codegen/c \
 	$(ODIR)/test/skull/common
