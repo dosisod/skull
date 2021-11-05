@@ -1,12 +1,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/semantic/types.h"
 #include "skull/common/str.h"
+#include "skull/semantic/types.h"
+#include "skull/semantic/variable.h"
 
 #include "skull/codegen/c/expr.h"
 
+static char *const_expr_node_to_string(const AstNodeExpr *);
+
 char *expr_node_to_string(const AstNodeExpr *expr) {
+	if (expr->oper == EXPR_CONST) {
+		return const_expr_node_to_string(expr);
+	}
+
+	if (expr->oper == EXPR_IDENTIFIER) {
+		return strdup(expr->var->name);
+	}
+
+	return NULL;
+}
+
+static char *const_expr_node_to_string(const AstNodeExpr *expr) {
 	if (expr->type == TYPE_INT) {
 		return uvsnprintf("%liL", expr->value._int);
 	}
