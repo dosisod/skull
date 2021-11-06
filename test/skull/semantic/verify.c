@@ -1123,6 +1123,40 @@ bool test_validate_isnt_str() {
 	PASS;
 }
 
+bool test_validate_matching_types() {
+	ExprType *opers = (ExprType[]){
+		EXPR_ADD,
+		EXPR_SUB,
+		EXPR_MULT,
+		EXPR_DIV,
+		EXPR_MOD,
+		EXPR_LSHIFT,
+		EXPR_RSHIFT,
+		EXPR_POW,
+		EXPR_IS,
+		EXPR_ISNT,
+		EXPR_LESS_THAN,
+		EXPR_GTR_THAN,
+		EXPR_LESS_THAN_EQ,
+		EXPR_GTR_THAN_EQ,
+		EXPR_UNKNOWN
+	};
+
+	bool pass = true;
+
+	do {
+		Token *token = tokenize_fixture(U"1 x 1.0");
+		AstNode *node = AST_SIMPLE_BINARY_EXPR(token, *opers);
+
+		pass &= validate_binary_expr_fixture(
+			node,
+			"(null): Compilation error: line 1 column 5: expected type \"Int\", got \"Float\"\n"
+		);
+	} while (*(++opers));
+
+	return pass;
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -1187,7 +1221,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_isnt_float,
 		test_validate_isnt_rune,
 		test_validate_isnt_bool,
-		test_validate_isnt_str
+		test_validate_isnt_str,
+		test_validate_matching_types
 	)
 }
 
