@@ -929,6 +929,200 @@ bool test_validate_redeclare_alias_as_func() {
 	);
 }
 
+bool test_validate_is_int() {
+	Token *token = tokenize_fixture(U"1 is 1");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_IS,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	PASS;
+}
+
+bool test_validate_is_float() {
+	Token *token = tokenize_fixture(U"1.0 is 1.0");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_IS,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	PASS;
+}
+
+bool test_validate_is_rune() {
+	Token *token = tokenize_fixture(U"'x' is 'x'");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_IS,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	PASS;
+}
+
+bool test_validate_is_bool() {
+	Token *token = tokenize_fixture(U"true is true");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_IS,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	PASS;
+}
+
+bool test_validate_is_str() {
+	Token *token = tokenize_fixture(U"\"x\" is \"x\"");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_IS,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	free(node->expr->lhs.expr->value.str);
+	free(node->expr->rhs->value.str);
+	PASS;
+}
+
+bool test_validate_isnt_int() {
+	Token *token = tokenize_fixture(U"1 isnt 1");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_ISNT,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	PASS;
+}
+
+bool test_validate_isnt_float() {
+	Token *token = tokenize_fixture(U"1.0 isnt 1.0");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_ISNT,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	PASS;
+}
+
+bool test_validate_isnt_rune() {
+	Token *token = tokenize_fixture(U"'x' isnt 'x'");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_ISNT,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	PASS;
+}
+
+bool test_validate_isnt_bool() {
+	Token *token = tokenize_fixture(U"true isnt true");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_ISNT,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	PASS;
+}
+
+bool test_validate_isnt_str() {
+	Token *token = tokenize_fixture(U"\"x\" isnt \"x\"");
+
+	AstNode *node = AST_NODE_EXPR(
+		token,
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_CONST_EXPR(token),
+			EXPR_ISNT,
+			AST_NODE_CONST_EXPR(token->next->next)
+		)
+	);
+
+	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+
+	free_tokens(token);
+	free(node->expr->lhs.expr->value.str);
+	free(node->expr->rhs->value.str);
+	PASS;
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -983,7 +1177,17 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_func_parameter_count,
 		test_validate_func_return_invalid_type,
 		test_validate_func_check_return_type,
-		test_validate_redeclare_alias_as_func
+		test_validate_redeclare_alias_as_func,
+		test_validate_is_int,
+		test_validate_is_float,
+		test_validate_is_rune,
+		test_validate_is_bool,
+		test_validate_is_str,
+		test_validate_isnt_int,
+		test_validate_isnt_float,
+		test_validate_isnt_rune,
+		test_validate_isnt_bool,
+		test_validate_isnt_str
 	)
 }
 
