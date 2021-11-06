@@ -16,6 +16,7 @@
 #include "common/str.h"
 #include "common/vector.h"
 
+#include "codegen/c/assign.h"
 #include "codegen/c/expr.h"
 
 #include "../testing.h"
@@ -46,6 +47,7 @@ int main(void) {
 	semantic_verify_test_self(&passed);
 
 	codegen_c_expr_test_self(&passed);
+	codegen_c_assign_test_self(&passed);
 
 	if (passed) {
 		puts("All tests passed!");
