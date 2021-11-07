@@ -202,6 +202,47 @@ bool test_binary_expr_to_string() {
 	return pass;
 }
 
+bool test_int_pow_expr_to_string() {
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		AST_NODE_CONST_EXPR(NULL),
+		EXPR_POW,
+		AST_NODE_CONST_EXPR(NULL)
+	);
+	expr->lhs.expr->type = TYPE_INT;
+	expr->lhs.expr->value._int = 1;
+	expr->rhs->type = TYPE_INT;
+	expr->rhs->value._int = 2;
+	expr->type = TYPE_INT;
+
+	char *expr_str = expr_node_to_string(expr);
+
+	ASSERT_TRUTHY(strcmp(expr_str, "_int_pow(1, 2)") == 0);
+
+	free(expr_str);
+	PASS;
+}
+
+bool test_float_pow_expr_to_string() {
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		AST_NODE_CONST_EXPR(NULL),
+		EXPR_POW,
+		AST_NODE_CONST_EXPR(NULL)
+	);
+	expr->lhs.expr->type = TYPE_FLOAT;
+	expr->lhs.expr->value._float = 1.0;
+	expr->rhs->type = TYPE_FLOAT;
+	expr->rhs->value._float = 2.0;
+	expr->type = TYPE_FLOAT;
+
+	char *expr_str = expr_node_to_string(expr);
+
+	const char *expected = "_float_pow(0x1p+0, 0x1p+1)";
+	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
+
+	free(expr_str);
+	PASS;
+}
+
 void codegen_c_expr_test_self(bool *pass) {
 	RUN_ALL(
 		test_int_expr_to_string,
@@ -209,6 +250,8 @@ void codegen_c_expr_test_self(bool *pass) {
 		test_bool_expr_to_string,
 		test_rune_expr_to_string,
 		test_identifier_expr_to_string,
-		test_binary_expr_to_string
+		test_binary_expr_to_string,
+		test_int_pow_expr_to_string,
+		test_float_pow_expr_to_string
 	)
 }

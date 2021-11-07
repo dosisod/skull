@@ -33,6 +33,7 @@ char *expr_node_to_string(const AstNodeExpr *expr) {
 		case EXPR_AND:
 		case EXPR_OR:
 		case EXPR_XOR:
+		case EXPR_POW:
 			return binary_expr_to_string(expr);
 		default:
 			return NULL;
@@ -87,6 +88,11 @@ static char *binary_expr_to_string(const AstNodeExpr *expr) {
 		case EXPR_AND: fmt = "%s && %s"; break;
 		case EXPR_OR: fmt = "%s || %s"; break;
 		case EXPR_XOR: fmt = "%s ^ %s"; break;
+		case EXPR_POW: {
+			if (expr->type == TYPE_INT) fmt = "_int_pow(%s, %s)";
+			else if (expr->type == TYPE_FLOAT) fmt = "_float_pow(%s, %s)";
+			break;
+		}
 		default: return NULL;
 	}
 
