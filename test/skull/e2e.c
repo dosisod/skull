@@ -25,6 +25,151 @@ int main(void) {
 	bool pass = false;
 
 pass |= e2e_wrapper(
+"mut bool := true\n" \
+"mut int := 1234\n" \
+"mut float := 3.14\n" \
+"mut str := \"hello world\"\n" \
+"mut rune := 'x'\n" \
+"\n" \
+"mut not_ := not false\n" \
+"mut and_ := true and true\n" \
+"mut or_ := false or true\n" \
+"mut xor_ := false xor true\n" \
+"\n" \
+"mut greater_than_eq_int := 1 >= 1\n" \
+"mut greater_than_eq_float := 1.0 >= 1.0\n" \
+"\n" \
+"mut gtr_than_int := 2 > 1\n" \
+"mut gtr_than_float := 2.0 > 1.0\n" \
+"\n" \
+"mut is_int := 1 is 1\n" \
+"mut is_float := 1.0 is 1.0\n" \
+"mut is_rune := 'x' is 'x'\n" \
+"mut is_bool := true is true\n" \
+"\n" \
+"mut isnt_int := 1 isnt 1\n" \
+"mut isnt_float := 1.0 isnt 1.0\n" \
+"mut isnt_rune := 'x' isnt 'x'\n" \
+"mut isnt_bool := true isnt true\n" \
+"\n" \
+"mut less_than_eq_int := 1 <= 1\n" \
+"mut less_than_eq_float := 1.0 <= 1.0\n" \
+"\n" \
+"mut less_than_int := 1 < 2\n" \
+"mut less_than_float := 1.0 < 2.0\n" \
+"\n" \
+"mut mult_float := 2.0 * 3.0\n" \
+"mut mult_int := 2 * 3\n" \
+"\n" \
+"mut div_float := 4.0 / 2.0\n" \
+"mut div_int := 4 / 2\n" \
+"\n" \
+"mut add_int := 1 + 2\n" \
+"mut add_float := 2.0 + 3.0\n" \
+"\n" \
+"mut subtract_int := 1 - 2\n" \
+"mut subtract_float := 2.0 - 3.0\n" \
+"\n" \
+"mut lshift := 1 << 2\n" \
+"mut rshift := 0b1111 >> 2\n" \
+"\n" \
+"mut mod_int := 9 mod 2\n" \
+"mut mod_negative_int := -10 mod 3\n" \
+"mut mod_float := 12.0 mod 5.0\n" \
+"\n",
+
+TEST_DIR"/oper/all_exprs.sk",
+
+"; ModuleID = './test/sh/oper/all_exprs.sk'\n" \
+"source_filename = \"./test/sh/oper/all_exprs.sk\"\n" \
+"\n" \
+"@bool = private global i1 false\n" \
+"@int = private global i64 0\n" \
+"@float = private global double 0.000000e+00\n" \
+"@0 = private unnamed_addr constant [12 x i8] c\"hello world\00\", align 1\n" \
+"@str = private global i8* null\n" \
+"@rune = private global i32 0\n" \
+"@not_ = private global i1 false\n" \
+"@and_ = private global i1 false\n" \
+"@or_ = private global i1 false\n" \
+"@xor_ = private global i1 false\n" \
+"@greater_than_eq_int = private global i1 false\n" \
+"@greater_than_eq_float = private global i1 false\n" \
+"@gtr_than_int = private global i1 false\n" \
+"@gtr_than_float = private global i1 false\n" \
+"@is_int = private global i1 false\n" \
+"@is_float = private global i1 false\n" \
+"@is_rune = private global i1 false\n" \
+"@is_bool = private global i1 false\n" \
+"@isnt_int = private global i1 false\n" \
+"@isnt_float = private global i1 false\n" \
+"@isnt_rune = private global i1 false\n" \
+"@isnt_bool = private global i1 false\n" \
+"@less_than_eq_int = private global i1 false\n" \
+"@less_than_eq_float = private global i1 false\n" \
+"@less_than_int = private global i1 false\n" \
+"@less_than_float = private global i1 false\n" \
+"@mult_float = private global double 0.000000e+00\n" \
+"@mult_int = private global i64 0\n" \
+"@div_float = private global double 0.000000e+00\n" \
+"@div_int = private global i64 0\n" \
+"@add_int = private global i64 0\n" \
+"@add_float = private global double 0.000000e+00\n" \
+"@subtract_int = private global i64 0\n" \
+"@subtract_float = private global double 0.000000e+00\n" \
+"@lshift = private global i64 0\n" \
+"@rshift = private global i64 0\n" \
+"@mod_int = private global i64 0\n" \
+"@mod_negative_int = private global i64 0\n" \
+"@mod_float = private global double 0.000000e+00\n" \
+"\n" \
+"define i64 @.tmp() {\n" \
+"entry:\n" \
+  "store i1 true, i1* @bool\n" \
+  "store i64 1234, i64* @int\n" \
+  "store double 3.140000e+00, double* @float\n" \
+  "store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** @str\n" \
+  "store i32 120, i32* @rune\n" \
+  "store i1 true, i1* @not_\n" \
+  "store i1 true, i1* @and_\n" \
+  "store i1 true, i1* @or_\n" \
+  "store i1 true, i1* @xor_\n" \
+  "store i1 true, i1* @greater_than_eq_int\n" \
+  "store i1 true, i1* @greater_than_eq_float\n" \
+  "store i1 true, i1* @gtr_than_int\n" \
+  "store i1 true, i1* @gtr_than_float\n" \
+  "store i1 true, i1* @is_int\n" \
+  "store i1 true, i1* @is_float\n" \
+  "store i1 true, i1* @is_rune\n" \
+  "store i1 true, i1* @is_bool\n" \
+  "store i1 false, i1* @isnt_int\n" \
+  "store i1 false, i1* @isnt_float\n" \
+  "store i1 false, i1* @isnt_rune\n" \
+  "store i1 false, i1* @isnt_bool\n" \
+  "store i1 true, i1* @less_than_eq_int\n" \
+  "store i1 true, i1* @less_than_eq_float\n" \
+  "store i1 true, i1* @less_than_int\n" \
+  "store i1 true, i1* @less_than_float\n" \
+  "store double 6.000000e+00, double* @mult_float\n" \
+  "store i64 6, i64* @mult_int\n" \
+  "store double 2.000000e+00, double* @div_float\n" \
+  "store i64 2, i64* @div_int\n" \
+  "store i64 3, i64* @add_int\n" \
+  "store double 5.000000e+00, double* @add_float\n" \
+  "store i64 -1, i64* @subtract_int\n" \
+  "store double -1.000000e+00, double* @subtract_float\n" \
+  "store i64 4, i64* @lshift\n" \
+  "store i64 3, i64* @rshift\n" \
+  "store i64 1, i64* @mod_int\n" \
+  "store i64 -1, i64* @mod_negative_int\n" \
+  "store double 2.000000e+00, double* @mod_float\n" \
+  "ret i64 0\n" \
+"}\n",
+
+NULL
+);
+
+pass |= e2e_wrapper( //
 "	mut bool := true\n" \
 "	mut int := 1234\n" \
 "	mut float := 3.14\n" \
@@ -58,207 +203,6 @@ NULL
 
 
 pass |= e2e_wrapper(
-"	mut x := true and true\n",
-
-TEST_DIR"/declare/bool_expr/and.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/and.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/and.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.and() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1 >= 1\n" \
-"	mut y := 1.0 >= 1.0\n",
-
-TEST_DIR"/declare/bool_expr/gtr_than_eq.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/gtr_than_eq.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/gtr_than_eq.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"@y = private global i1 false\n" \
-"\n" \
-"define i64 @.gtr_than_eq() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  store i1 true, i1* @y\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 2 > 1\n" \
-"	mut y := 2.0 > 1.0\n",
-
-TEST_DIR"/declare/bool_expr/gtr_than.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/gtr_than.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/gtr_than.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"@y = private global i1 false\n" \
-"\n" \
-"define i64 @.gtr_than() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  store i1 true, i1* @y\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1 isnt 2\n",
-
-TEST_DIR"/declare/bool_expr/isnt.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/isnt.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/isnt.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.isnt() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1 is 1\n" \
-"	mut y := 1.0 is 1.0\n" \
-"	mut z := 'x' is 'x'\n" \
-"	mut q := true is true\n",
-
-TEST_DIR"/declare/bool_expr/is.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/is.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/is.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"@y = private global i1 false\n" \
-"@z = private global i1 false\n" \
-"@q = private global i1 false\n" \
-"\n" \
-"define i64 @.is() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  store i1 true, i1* @y\n" \
-"  store i1 true, i1* @z\n" \
-"  store i1 true, i1* @q\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1 <= 1\n" \
-"	mut y := 1.0 <= 1.0\n",
-
-TEST_DIR"/declare/bool_expr/less_than_eq.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/less_than_eq.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/less_than_eq.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"@y = private global i1 false\n" \
-"\n" \
-"define i64 @.less_than_eq() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  store i1 true, i1* @y\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1 < 2\n" \
-"	mut y := 1.0 < 2.0\n",
-
-TEST_DIR"/declare/bool_expr/less_than.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/less_than.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/less_than.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"@y = private global i1 false\n" \
-"\n" \
-"define i64 @.less_than() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  store i1 true, i1* @y\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := not false\n",
-
-TEST_DIR"/declare/bool_expr/not.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/not.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/not.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.not() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := false or true\n",
-
-TEST_DIR"/declare/bool_expr/or.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/or.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/or.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.or() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
 "	x := 1\n" \
 "	\n" \
 "	y := 1 is x\n",
@@ -270,26 +214,6 @@ TEST_DIR"/declare/bool_expr/var_rhs.sk",
 "\n" \
 "define i64 @.var_rhs() {\n" \
 "entry:\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := false xor true\n",
-
-TEST_DIR"/declare/bool_expr/xor.sk",
-
-"; ModuleID = './test/sh/declare/bool_expr/xor.sk'\n" \
-"source_filename = \"./test/sh/declare/bool_expr/xor.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.xor() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -1502,86 +1426,6 @@ NULL
 
 
 pass |= e2e_wrapper(
-"	mut x := 2.0 + 3.0\n",
-
-TEST_DIR"/oper/add_float_consts.sk",
-
-"; ModuleID = './test/sh/oper/add_float_consts.sk'\n" \
-"source_filename = \"./test/sh/oper/add_float_consts.sk\"\n" \
-"\n" \
-"@x = private global double 0.000000e+00\n" \
-"\n" \
-"define i64 @.add_float_consts() {\n" \
-"entry:\n" \
-"  store double 5.000000e+00, double* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1 + 2\n",
-
-TEST_DIR"/oper/add_int_consts.sk",
-
-"; ModuleID = './test/sh/oper/add_int_consts.sk'\n" \
-"source_filename = \"./test/sh/oper/add_int_consts.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.add_int_consts() {\n" \
-"entry:\n" \
-"  store i64 3, i64* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 4.0 / 2.0\n",
-
-TEST_DIR"/oper/div_float_consts.sk",
-
-"; ModuleID = './test/sh/oper/div_float_consts.sk'\n" \
-"source_filename = \"./test/sh/oper/div_float_consts.sk\"\n" \
-"\n" \
-"@x = private global double 0.000000e+00\n" \
-"\n" \
-"define i64 @.div_float_consts() {\n" \
-"entry:\n" \
-"  store double 2.000000e+00, double* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 4 / 2\n",
-
-TEST_DIR"/oper/div_int_consts.sk",
-
-"; ModuleID = './test/sh/oper/div_int_consts.sk'\n" \
-"source_filename = \"./test/sh/oper/div_int_consts.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.div_int_consts() {\n" \
-"entry:\n" \
-"  store i64 2, i64* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
 "	mut x := 2.0 ^ 3.0\n",
 
 TEST_DIR"/oper/float_pow.sk",
@@ -1622,66 +1466,6 @@ TEST_DIR"/oper/int_pow.sk",
 "}\n" \
 "\n" \
 "declare i64 @_int_pow(i64, i64)\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 3.14 is 3.14\n",
-
-TEST_DIR"/oper/is_cmp_float.sk",
-
-"; ModuleID = './test/sh/oper/is_cmp_float.sk'\n" \
-"source_filename = \"./test/sh/oper/is_cmp_float.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.is_cmp_float() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1234 is 1234\n",
-
-TEST_DIR"/oper/is_cmp_int.sk",
-
-"; ModuleID = './test/sh/oper/is_cmp_int.sk'\n" \
-"source_filename = \"./test/sh/oper/is_cmp_int.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.is_cmp_int() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 'x' is 'x'\n",
-
-TEST_DIR"/oper/is_cmp_rune.sk",
-
-"; ModuleID = './test/sh/oper/is_cmp_rune.sk'\n" \
-"source_filename = \"./test/sh/oper/is_cmp_rune.sk\"\n" \
-"\n" \
-"@x = private global i1 false\n" \
-"\n" \
-"define i64 @.is_cmp_rune() {\n" \
-"entry:\n" \
-"  store i1 true, i1* @x\n" \
-"  ret i64 0\n" \
-"}\n",
 
 NULL
 );
@@ -1735,92 +1519,6 @@ TEST_DIR"/oper/lhs_with_var.sk",
 "  %2 = load i64, i64* @x\n" \
 "  %3 = icmp slt i64 %2, 1\n" \
 "  store i1 %3, i1* @z\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1 << 2\n",
-
-TEST_DIR"/oper/lshift.sk",
-
-"; ModuleID = './test/sh/oper/lshift.sk'\n" \
-"source_filename = \"./test/sh/oper/lshift.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.lshift() {\n" \
-"entry:\n" \
-"  store i64 4, i64* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 9 mod 2\n" \
-"	mut y := -10 mod 3\n" \
-"	mut z := 12.0 mod 5.0\n",
-
-TEST_DIR"/oper/mod.sk",
-
-"; ModuleID = './test/sh/oper/mod.sk'\n" \
-"source_filename = \"./test/sh/oper/mod.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"@y = private global i64 0\n" \
-"@z = private global double 0.000000e+00\n" \
-"\n" \
-"define i64 @.mod() {\n" \
-"entry:\n" \
-"  store i64 1, i64* @x\n" \
-"  store i64 -1, i64* @y\n" \
-"  store double 2.000000e+00, double* @z\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 2.0 * 3.0\n",
-
-TEST_DIR"/oper/mult_float_consts.sk",
-
-"; ModuleID = './test/sh/oper/mult_float_consts.sk'\n" \
-"source_filename = \"./test/sh/oper/mult_float_consts.sk\"\n" \
-"\n" \
-"@x = private global double 0.000000e+00\n" \
-"\n" \
-"define i64 @.mult_float_consts() {\n" \
-"entry:\n" \
-"  store double 6.000000e+00, double* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 2 * 3\n",
-
-TEST_DIR"/oper/mult_int_consts.sk",
-
-"; ModuleID = './test/sh/oper/mult_int_consts.sk'\n" \
-"source_filename = \"./test/sh/oper/mult_int_consts.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.mult_int_consts() {\n" \
-"entry:\n" \
-"  store i64 6, i64* @x\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -1891,63 +1589,6 @@ TEST_DIR"/oper/rhs_with_var.sk",
 "  %0 = load i64, i64* @x\n" \
 "  %1 = add nsw i64 2, %0\n" \
 "  store i64 %1, i64* @z\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	return 0b1111 >> 2\n",
-
-TEST_DIR"/oper/rshift.sk",
-
-"; ModuleID = './test/sh/oper/rshift.sk'\n" \
-"source_filename = \"./test/sh/oper/rshift.sk\"\n" \
-"\n" \
-"define i64 @.rshift() {\n" \
-"entry:\n" \
-"  ret i64 3\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 2.0 - 3.0\n",
-
-TEST_DIR"/oper/sub_float_consts.sk",
-
-"; ModuleID = './test/sh/oper/sub_float_consts.sk'\n" \
-"source_filename = \"./test/sh/oper/sub_float_consts.sk\"\n" \
-"\n" \
-"@x = private global double 0.000000e+00\n" \
-"\n" \
-"define i64 @.sub_float_consts() {\n" \
-"entry:\n" \
-"  store double -1.000000e+00, double* @x\n" \
-"  ret i64 0\n" \
-"}\n",
-
-NULL
-);
-
-
-pass |= e2e_wrapper(
-"	mut x := 1 - 2\n",
-
-TEST_DIR"/oper/sub_int_consts.sk",
-
-"; ModuleID = './test/sh/oper/sub_int_consts.sk'\n" \
-"source_filename = \"./test/sh/oper/sub_int_consts.sk\"\n" \
-"\n" \
-"@x = private global i64 0\n" \
-"\n" \
-"define i64 @.sub_int_consts() {\n" \
-"entry:\n" \
-"  store i64 -1, i64* @x\n" \
 "  ret i64 0\n" \
 "}\n",
 
