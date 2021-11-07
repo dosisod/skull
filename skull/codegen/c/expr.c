@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -40,7 +41,14 @@ char *expr_node_to_string(const AstNodeExpr *expr) {
 
 static char *const_expr_node_to_string(const AstNodeExpr *expr) {
 	if (expr->type == TYPE_INT) {
-		return uvsnprintf("%liL", expr->value._int);
+		const int64_t i = expr->value._int;
+
+		// only add L suffix if value is larger then a C "int"
+		if (i > INT_MAX || i < INT_MIN) {
+			return uvsnprintf("%liL", i);
+		}
+
+		return uvsnprintf("%li", i);
 	}
 	if (expr->type == TYPE_FLOAT) {
 		if (!expr->value._int) return strdup("0.0");

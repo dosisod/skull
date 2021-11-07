@@ -1,8 +1,10 @@
+#include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "skull/codegen/c/expr.h"
+#include "skull/common/str.h"
 #include "skull/parse/classify.h"
 #include "skull/parse/token.h"
 #include "skull/semantic/types.h"
@@ -20,14 +22,32 @@ bool expr_to_string_fixture(const AstNodeExpr *expr, const char *expected) {
 }
 
 bool test_int_expr_to_string() {
-	return expr_to_string_fixture(
-		&(AstNodeExpr) {
-			.type = TYPE_INT,
-			.value._int = 1234,
-			.oper = EXPR_CONST
-		},
-		"1234L"
+	ASSERT_TRUTHY(
+		expr_to_string_fixture(
+			&(AstNodeExpr) {
+				.type = TYPE_INT,
+				.value._int = 1234,
+				.oper = EXPR_CONST
+			},
+			"1234"
+		)
 	);
+
+	char *expected = uvsnprintf("%liL", INT_MAX + 1L);
+
+	ASSERT_TRUTHY(
+		expr_to_string_fixture(
+			&(AstNodeExpr) {
+				.type = TYPE_INT,
+				.value._int = INT_MAX + 1L,
+				.oper = EXPR_CONST
+			},
+			expected
+		)
+	);
+
+	free(expected);
+	PASS;
 }
 
 bool test_float_expr_to_string() {
@@ -139,22 +159,22 @@ bool test_binary_expr_to_string() {
 	// Not all of these expressions are valid. What is being tested is that
 	// the operators are converted to the proper C equivalent.
 	const char **expected = (const char*[]){
-		"1L + 1L",
-		"1L - 1L",
-		"1L * 1L",
-		"1L / 1L",
-		"1L % 1L",
-		"1L << 1L",
-		"1L >> 1L",
-		"1L == 1L",
-		"1L != 1L",
-		"1L < 1L",
-		"1L > 1L",
-		"1L <= 1L",
-		"1L >= 1L",
-		"1L && 1L",
-		"1L || 1L",
-		"1L ^ 1L",
+		"1 + 1",
+		"1 - 1",
+		"1 * 1",
+		"1 / 1",
+		"1 % 1",
+		"1 << 1",
+		"1 >> 1",
+		"1 == 1",
+		"1 != 1",
+		"1 < 1",
+		"1 > 1",
+		"1 <= 1",
+		"1 >= 1",
+		"1 && 1",
+		"1 || 1",
+		"1 ^ 1",
 		NULL
 	};
 

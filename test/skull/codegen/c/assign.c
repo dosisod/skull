@@ -27,7 +27,7 @@ static bool test_assign() {
 	char *str = var_assign_to_string(node);
 
 	ASSERT_TRUTHY(str);
-	ASSERT_EQUAL(strcmp(str, "x = 1L;"), 0);
+	ASSERT_EQUAL(strcmp(str, "x = 1;"), 0);
 
 	free(str);
 	free_tokens(token);
