@@ -10,6 +10,7 @@
 
 static char *const_expr_node_to_string(const AstNodeExpr *);
 static char *binary_expr_to_string(const AstNodeExpr *);
+static char *unary_expr_to_string(const AstNodeExpr *);
 
 char *expr_node_to_string(const AstNodeExpr *expr) {
 	switch (expr->oper) {
@@ -35,6 +36,9 @@ char *expr_node_to_string(const AstNodeExpr *expr) {
 		case EXPR_XOR:
 		case EXPR_POW:
 			return binary_expr_to_string(expr);
+		case EXPR_UNARY_NEG:
+		case EXPR_NOT:
+			return unary_expr_to_string(expr);
 		default:
 			return NULL;
 	}
@@ -103,5 +107,23 @@ static char *binary_expr_to_string(const AstNodeExpr *expr) {
 
 	free(expr_lhs);
 	free(expr_rhs);
+	return out;
+}
+
+static char *unary_expr_to_string(const AstNodeExpr *expr) {
+	const char *fmt = NULL;
+
+	switch (expr->oper) {
+		case EXPR_UNARY_NEG: fmt = "-(%s)"; break;
+		case EXPR_NOT: fmt = "!%s"; break;
+		default: break;
+	}
+
+	if (!fmt) return NULL;
+
+	char *expr_str = expr_node_to_string(expr->rhs);
+	char *out = uvsnprintf(fmt, expr_str);
+
+	free(expr_str);
 	return out;
 }

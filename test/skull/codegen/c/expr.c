@@ -243,6 +243,42 @@ bool test_float_pow_expr_to_string() {
 	PASS;
 }
 
+bool test_unary_negation_to_string() {
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		NULL,
+		EXPR_UNARY_NEG,
+		AST_NODE_CONST_EXPR(NULL)
+	);
+	expr->rhs->type = TYPE_INT;
+	expr->rhs->value._int = 1;
+
+	char *expr_str = expr_node_to_string(expr);
+
+	const char *expected = "-(1)";
+	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
+
+	free(expr_str);
+	PASS;
+}
+
+bool test_unary_not_to_string() {
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		NULL,
+		EXPR_NOT,
+		AST_NODE_CONST_EXPR(NULL)
+	);
+	expr->rhs->type = TYPE_INT;
+	expr->rhs->value._int = 1;
+
+	char *expr_str = expr_node_to_string(expr);
+
+	const char *expected = "!1";
+	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
+
+	free(expr_str);
+	PASS;
+}
+
 void codegen_c_expr_test_self(bool *pass) {
 	RUN_ALL(
 		test_int_expr_to_string,
@@ -252,6 +288,8 @@ void codegen_c_expr_test_self(bool *pass) {
 		test_identifier_expr_to_string,
 		test_binary_expr_to_string,
 		test_int_pow_expr_to_string,
-		test_float_pow_expr_to_string
+		test_float_pow_expr_to_string,
+		test_unary_negation_to_string,
+		test_unary_not_to_string
 	)
 }
