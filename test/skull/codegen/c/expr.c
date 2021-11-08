@@ -159,22 +159,22 @@ bool test_binary_expr_to_string() {
 	// Not all of these expressions are valid. What is being tested is that
 	// the operators are converted to the proper C equivalent.
 	const char **expected = (const char*[]){
-		"1 + 1",
-		"1 - 1",
-		"1 * 1",
-		"1 / 1",
-		"1 % 1",
-		"1 << 1",
-		"1 >> 1",
-		"1 == 1",
-		"1 != 1",
-		"1 < 1",
-		"1 > 1",
-		"1 <= 1",
-		"1 >= 1",
-		"1 && 1",
-		"1 || 1",
-		"1 ^ 1",
+		"(1 + 1)",
+		"(1 - 1)",
+		"(1 * 1)",
+		"(1 / 1)",
+		"(1 % 1)",
+		"(1 << 1)",
+		"(1 >> 1)",
+		"(1 == 1)",
+		"(1 != 1)",
+		"(1 < 1)",
+		"(1 > 1)",
+		"(1 <= 1)",
+		"(1 >= 1)",
+		"(1 && 1)",
+		"(1 || 1)",
+		"(1 ^ 1)",
 		NULL
 	};
 

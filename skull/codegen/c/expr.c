@@ -72,22 +72,22 @@ static char *binary_expr_to_string(const AstNodeExpr *expr) {
 	const char *fmt = NULL;
 
 	switch (expr->oper) {
-		case EXPR_ADD: fmt = "%s + %s"; break;
-		case EXPR_SUB: fmt = "%s - %s"; break;
-		case EXPR_MULT: fmt = "%s * %s"; break;
-		case EXPR_DIV: fmt = "%s / %s"; break;
-		case EXPR_MOD: fmt = "%s %% %s"; break;
-		case EXPR_LSHIFT: fmt = "%s << %s"; break;
-		case EXPR_RSHIFT: fmt = "%s >> %s"; break;
-		case EXPR_IS: fmt = "%s == %s"; break;
-		case EXPR_ISNT: fmt = "%s != %s"; break;
-		case EXPR_LESS_THAN: fmt = "%s < %s"; break;
-		case EXPR_GTR_THAN: fmt = "%s > %s"; break;
-		case EXPR_LESS_THAN_EQ: fmt = "%s <= %s"; break;
-		case EXPR_GTR_THAN_EQ: fmt = "%s >= %s"; break;
-		case EXPR_AND: fmt = "%s && %s"; break;
-		case EXPR_OR: fmt = "%s || %s"; break;
-		case EXPR_XOR: fmt = "%s ^ %s"; break;
+		case EXPR_ADD: fmt = "(%s + %s)"; break;
+		case EXPR_SUB: fmt = "(%s - %s)"; break;
+		case EXPR_MULT: fmt = "(%s * %s)"; break;
+		case EXPR_DIV: fmt = "(%s / %s)"; break;
+		case EXPR_MOD: fmt = "(%s %% %s)"; break;
+		case EXPR_LSHIFT: fmt = "(%s << %s)"; break;
+		case EXPR_RSHIFT: fmt = "(%s >> %s)"; break;
+		case EXPR_IS: fmt = "(%s == %s)"; break;
+		case EXPR_ISNT: fmt = "(%s != %s)"; break;
+		case EXPR_LESS_THAN: fmt = "(%s < %s)"; break;
+		case EXPR_GTR_THAN: fmt = "(%s > %s)"; break;
+		case EXPR_LESS_THAN_EQ: fmt = "(%s <= %s)"; break;
+		case EXPR_GTR_THAN_EQ: fmt = "(%s >= %s)"; break;
+		case EXPR_AND: fmt = "(%s && %s)"; break;
+		case EXPR_OR: fmt = "(%s || %s)"; break;
+		case EXPR_XOR: fmt = "(%s ^ %s)"; break;
 		case EXPR_POW: {
 			if (expr->type == TYPE_INT) fmt = "_int_pow(%s, %s)";
 			else if (expr->type == TYPE_FLOAT) fmt = "_float_pow(%s, %s)";
