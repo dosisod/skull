@@ -18,6 +18,7 @@
 
 #include "codegen/c/assign.h"
 #include "codegen/c/expr.h"
+#include "codegen/c/flow.h"
 
 #include "../testing.h"
 
@@ -48,6 +49,7 @@ int main(void) {
 
 	codegen_c_expr_test_self(&passed);
 	codegen_c_assign_test_self(&passed);
+	codegen_c_flow_test_self(&passed);
 
 	if (passed) {
 		puts("All tests passed!");
