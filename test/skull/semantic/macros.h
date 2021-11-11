@@ -75,7 +75,7 @@
 	&(AstNode){ \
 		.type = AST_NODE_VAR_DEF, \
 		.token = (_token), \
-		.token_end = (_is_implicit) ? (_token)->next : (_token)->next->next, \
+		.token_end = (_token) ? ((_is_implicit) ? (_token)->next : (_token)->next->next) : NULL, \
 		.var_def = &(AstNodeVarDef){ \
 			.name_tok = (_token), \
 			.expr_node = (_expr_node), \

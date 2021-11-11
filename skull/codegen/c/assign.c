@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "skull/codegen/c/expr.h"
+#include "skull/codegen/c/types.h"
 #include "skull/common/str.h"
 #include "skull/semantic/variable.h"
 
@@ -14,4 +15,16 @@ char *var_assign_to_string(const AstNode *node) {
 	free(expr_str);
 
 	return stmt;
+}
+
+char *var_def_to_string(const AstNode *node) {
+	const Variable *var = node->var_def->var;
+
+	const char *type = skull_type_to_c_type(var->type);
+	char *expr_str = expr_node_to_string(node->var_def->expr_node->expr);
+
+	char *out = uvsnprintf("%s %s = %s;", type, var->name, expr_str);
+
+	free(expr_str);
+	return out;
 }
