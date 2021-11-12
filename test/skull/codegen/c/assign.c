@@ -38,7 +38,6 @@ static bool test_mutable_var_def() {
 	node->var_def->expr_node->expr->type = TYPE_INT;
 	node->var_def->expr_node->expr->value._int = 1;
 	node->var_def->var = make_variable(TYPE_INT, U"x", false);
-	node->var_def->is_const = false;
 
 	char *str = var_def_to_string(node);
 
@@ -50,9 +49,33 @@ static bool test_mutable_var_def() {
 	PASS;
 }
 
+static bool test_const_var_def() {
+	Token *token = NULL;
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token,
+		AST_SIMPLE_EXPR(NULL),
+		true
+	);
+
+	node->var_def->expr_node->expr->type = TYPE_INT;
+	node->var_def->expr_node->expr->value._int = 1;
+	node->var_def->var = make_variable(TYPE_INT, U"x", true);
+
+	char *str = var_def_to_string(node);
+
+	ASSERT_TRUTHY(str);
+	ASSERT_EQUAL(strcmp(str, "const int64_t x = 1;"), 0);
+
+	free(str);
+	free_variable(node->var_def->var);
+	PASS;
+}
+
 void codegen_c_assign_test_self(bool *pass) {
 	RUN_ALL(
 		test_assign,
-		test_mutable_var_def
+		test_mutable_var_def,
+		test_const_var_def
 	)
 }
