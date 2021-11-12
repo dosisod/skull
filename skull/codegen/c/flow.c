@@ -15,3 +15,9 @@ char *return_node_to_string(const AstNode *node) {
 	free(expr_str);
 	return out;
 }
+
+char *noop_to_string(const AstNode *node) {
+	(void)node;
+
+	return strdup("(void)0;");
+}

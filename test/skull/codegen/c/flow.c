@@ -36,9 +36,19 @@ bool test_return_no_expr_to_string() {
 	PASS;
 }
 
+bool test_noop_to_string() {
+	char *str = noop_to_string(NULL);
+
+	ASSERT_TRUTHY(strcmp(str, "(void)0;") == 0);
+
+	free(str);
+	PASS;
+}
+
 void codegen_c_flow_test_self(bool *pass) {
 	RUN_ALL(
 		test_return_node_to_string,
-		test_return_no_expr_to_string
+		test_return_no_expr_to_string,
+		test_noop_to_string
 	)
 }
