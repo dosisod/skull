@@ -25,7 +25,9 @@ bool write_file_c(const char *filename) {
 
 	fprintf(
 		f,
-		"int main(void) { int x(void) __asm__(\"%s\"); return x(); }\n",
+		"static int init(void) __asm__(\"%s\");\n" \
+		"static int init(void) { return 0; }\n" \
+		"int main(void) { return init(); }\n",
 		c_filename
 	);
 
