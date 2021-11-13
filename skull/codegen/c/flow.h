@@ -4,3 +4,4 @@
 
 char *return_node_to_string(const AstNode *);
 char *noop_to_string(const AstNode *);
+char *if_to_string(const AstNode *);

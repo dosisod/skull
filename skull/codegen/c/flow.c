@@ -21,3 +21,12 @@ char *noop_to_string(const AstNode *node) {
 
 	return strdup("(void)0;");
 }
+
+char *if_to_string(const AstNode *node) {
+	char *expr_str = expr_node_to_string(node->expr_node->expr);
+
+	char *out = uvsnprintf("if (%s) {}", expr_str);
+
+	free(expr_str);
+	return out;
+}

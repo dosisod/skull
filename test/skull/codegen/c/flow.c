@@ -45,10 +45,24 @@ bool test_noop_to_string() {
 	PASS;
 }
 
+bool test_if_to_string() {
+	AstNode *node = AST_NODE_IF(NULL, AST_SIMPLE_EXPR(NULL), NULL);
+	node->expr_node->expr->type = TYPE_BOOL;
+	node->expr_node->expr->value._bool = true;
+
+	char *str = if_to_string(node);
+
+	ASSERT_TRUTHY(strcmp(str, "if (1) {}") == 0);
+
+	free(str);
+	PASS;
+}
+
 void codegen_c_flow_test_self(bool *pass) {
 	RUN_ALL(
 		test_return_node_to_string,
 		test_return_no_expr_to_string,
-		test_noop_to_string
+		test_noop_to_string,
+		test_if_to_string
 	)
 }
