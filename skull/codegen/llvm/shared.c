@@ -4,6 +4,7 @@
 #include <llvm-c/Core.h>
 
 #include "skull/build_data.h"
+#include "skull/codegen/abi.h"
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/common/malloc.h"
@@ -62,28 +63,6 @@ void setup_llvm_state(void) {
 	if (BUILD_DATA.debug) {
 		setup_debug_info(filename, SKULL_STATE_LLVM.module);
 	}
-}
-
-/*
-Convert/mangle `filename` into suitable name for "main" method for module.
-*/
-char *create_main_func_name(const char *filename) {
-	if (!filename) filename = "";
-
-	char *slash_pos = strrchr(filename, '/');
-
-	if (slash_pos) {
-		filename = slash_pos + 1;
-	}
-
-	const size_t len = *filename ? strlen(filename) - 1 : 2;
-
-	char *ret = Malloc(len);
-	ret[0] = '.';
-	strncpy(ret + 1, filename, len - 1);
-	ret[len - 1] = '\0';
-
-	return ret;
 }
 
 /*

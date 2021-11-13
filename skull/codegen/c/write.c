@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/codegen/abi.h"
 #include "skull/common/io.h"
 
 #include "skull/codegen/c/write.h"
@@ -17,9 +18,9 @@ Write c code to `filename`, return whether error occured.
 bool write_file_c(const char *filename) {
 	char *c_filename = gen_filename(filename, "c");
 	FILE *f = open_file(c_filename, false);
+	free(c_filename);
 
-	const size_t len = strlen(c_filename);
-	c_filename[len - 5] = '\0';
+	char *module_name = create_main_func_name(filename);
 
 	fprintf(f, "%s\n", builtin_decls);
 
@@ -28,10 +29,10 @@ bool write_file_c(const char *filename) {
 		"static int init(void) __asm__(\"%s\");\n" \
 		"static int init(void) { return 0; }\n" \
 		"int main(void) { return init(); }\n",
-		c_filename
+		module_name
 	);
 
-	free(c_filename);
+	free(module_name);
 
 	return false;
 }

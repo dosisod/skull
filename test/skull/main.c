@@ -17,6 +17,7 @@
 #include "common/vector.h"
 
 #include "codegen/c/assign.h"
+#include "codegen/c/core.h"
 #include "codegen/c/expr.h"
 #include "codegen/c/flow.h"
 
@@ -50,6 +51,7 @@ int main(void) {
 	codegen_c_expr_test_self(&passed);
 	codegen_c_assign_test_self(&passed);
 	codegen_c_flow_test_self(&passed);
+	codegen_c_core_test_self(&passed);
 
 	if (passed) {
 		puts("All tests passed!");

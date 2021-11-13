@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 #include "skull/build_data.h"
-#include "skull/codegen/llvm/shared.h"
+#include "skull/codegen/abi.h"
 #include "skull/common/io.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"

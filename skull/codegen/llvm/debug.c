@@ -9,6 +9,7 @@
 #include <llvm-c/DebugInfo.h>
 
 #include "skull/build_data.h"
+#include "skull/codegen/abi.h"
 #include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/common/malloc.h"
