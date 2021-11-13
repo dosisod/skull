@@ -1,4 +1,4 @@
-# skull/codegen/func
+# skull/codegen/llvm/func
 
 ```c
 void gen_stmt_func_decl(const AstNode *const node)

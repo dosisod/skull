@@ -1,8 +1,8 @@
-#include "skull/codegen/assign.h"
-#include "skull/codegen/flow.h"
-#include "skull/codegen/func.h"
+#include "skull/codegen/llvm/assign.h"
+#include "skull/codegen/llvm/flow.h"
+#include "skull/codegen/llvm/func.h"
 
-#include "skull/codegen/ast.h"
+#include "skull/codegen/llvm/core.h"
 
 static Expr _gen_tree(AstNode **);
 

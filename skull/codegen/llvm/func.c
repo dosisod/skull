@@ -19,7 +19,7 @@
 #include "skull/semantic/shared.h"
 #include "skull/semantic/types.h"
 
-#include "skull/codegen/func.h"
+#include "skull/codegen/llvm/func.h"
 
 Expr gen_tree(AstNode *);
 

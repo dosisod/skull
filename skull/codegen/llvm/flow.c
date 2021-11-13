@@ -11,7 +11,7 @@
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 
-#include "skull/codegen/flow.h"
+#include "skull/codegen/llvm/flow.h"
 
 Expr gen_tree(AstNode *);
 static void gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);

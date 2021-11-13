@@ -1,6 +1,6 @@
 #pragma once
 
-#include "skull/codegen/expr.h"
+#include "skull/codegen/llvm/expr.h"
 #include "skull/codegen/llvm/fwd_decl.h"
 
 typedef struct FunctionDeclaration FunctionDeclaration;

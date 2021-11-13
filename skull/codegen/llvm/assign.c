@@ -5,15 +5,15 @@
 #include <llvm-c/DebugInfo.h>
 
 #include "skull/build_data.h"
-#include "skull/codegen/expr.h"
 #include "skull/codegen/llvm/debug.h"
+#include "skull/codegen/llvm/expr.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
 
-#include "skull/codegen/assign.h"
+#include "skull/codegen/llvm/assign.h"
 
 static void assign_value_to_var(LLVMValueRef, Variable *const);
 static void setup_var_llvm(LLVMValueRef, Variable *);

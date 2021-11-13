@@ -1,6 +1,6 @@
 #pragma once
 
-#include "skull/codegen/expr.h"
+#include "skull/codegen/llvm/expr.h"
 #include "skull/parse/ast_node.h"
 
 typedef struct AstNode AstNode;

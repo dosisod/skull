@@ -1,4 +1,4 @@
-# skull/codegen/ast
+# skull/codegen/llvm/core
 
 ```c
 void gen_module(AstNode *node)
