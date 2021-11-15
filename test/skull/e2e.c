@@ -2193,6 +2193,16 @@ NULL,
 );
 
 
+pass |= e2e_wrapper(
+"mut x = 0",
+TEST_DIR"/error/misc/invalid_mut.sk",
+
+NULL,
+
+"./test/sh/error/misc/invalid_mut.sk: Compilation error: line 1 column 1: unexpected token: \"mut\"\n"
+);
+
+
 	return pass;
 }
 

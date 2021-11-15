@@ -125,7 +125,10 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 	) {
 		next_token(ctx);
 	}
-	else return RESULT_IGNORE;
+	else {
+		ctx->token = first;
+		return RESULT_IGNORE;
+	}
 
 	ctx->node->var_def = Malloc(sizeof(AstNodeVarDef));
 	*ctx->node->var_def = (AstNodeVarDef){
