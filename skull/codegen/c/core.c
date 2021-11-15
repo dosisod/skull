@@ -2,6 +2,7 @@
 
 #include "skull/codegen/c/assign.h"
 #include "skull/codegen/c/flow.h"
+#include "skull/codegen/c/shared.h"
 #include "skull/common/str.h"
 
 #include "skull/codegen/c/core.h"
@@ -9,11 +10,7 @@
 static char *gen_node_c(AstNode *);
 
 void gen_module_c(AstNode *node) {
-	char *tree = gen_tree_c(node);
-
-	// TBD ...
-
-	free(tree);
+	SKULL_STATE_C.tree = gen_tree_c(node);
 }
 
 char *gen_tree_c(AstNode *node) {

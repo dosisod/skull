@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "skull/codegen/abi.h"
+#include "skull/codegen/c/shared.h"
 #include "skull/common/io.h"
 
 #include "skull/codegen/c/write.h"
@@ -27,9 +28,10 @@ bool write_file_c(const char *filename) {
 	fprintf(
 		f,
 		"static int init(void) __asm__(\"%s\");\n" \
-		"static int init(void) { return 0; }\n" \
+		"static int init(void) {\n%s\nreturn 0;\n}\n" \
 		"int main(void) { return init(); }\n",
-		module_name
+		module_name,
+		SKULL_STATE_C.tree
 	);
 
 	free(module_name);

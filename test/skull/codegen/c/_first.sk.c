@@ -21,5 +21,11 @@ int64_t _int_pow(int64_t base, int64_t exp) {
 }
 
 static int init(void) __asm__(".first");
-static int init(void) { return 0; }
+static int init(void) {
+int64_t x = 1;
+x = 2;
+(void)0;
+return x;
+return 0;
+}
 int main(void) { return init(); }
