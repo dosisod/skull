@@ -74,6 +74,11 @@ static int handle_args(int argc, char *argv[]) {
 		return handle_args(--argc, ++argv);
 	}
 
+	if (argv[0][1] && argv[0][1] != '-' && argv[0][2]) {
+		puts("skull: short option must be exactly one character");
+		bail(1);
+	}
+
 	switch (argv[0][1]) {
 		case 'h': bail(usage());
 		case 'v': bail(version());
