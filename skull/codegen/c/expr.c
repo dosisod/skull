@@ -8,11 +8,11 @@
 
 #include "skull/codegen/c/expr.h"
 
-static char *const_expr_node_to_string(const AstNodeExpr *);
-static char *binary_expr_to_string(const AstNodeExpr *);
-static char *unary_expr_to_string(const AstNodeExpr *);
+static CExpr const_expr_node_to_string(const AstNodeExpr *);
+static CExpr binary_expr_to_string(const AstNodeExpr *);
+static CExpr unary_expr_to_string(const AstNodeExpr *);
 
-char *expr_node_to_string(const AstNodeExpr *expr) {
+CExpr expr_node_to_string(const AstNodeExpr *expr) {
 	switch (expr->oper) {
 		case EXPR_CONST:
 			return const_expr_node_to_string(expr);
@@ -44,7 +44,7 @@ char *expr_node_to_string(const AstNodeExpr *expr) {
 	}
 }
 
-static char *const_expr_node_to_string(const AstNodeExpr *expr) {
+static CExpr const_expr_node_to_string(const AstNodeExpr *expr) {
 	if (expr->type == TYPE_INT) {
 		const int64_t i = expr->value._int;
 
@@ -72,7 +72,7 @@ static char *const_expr_node_to_string(const AstNodeExpr *expr) {
 	return NULL;
 }
 
-static char *binary_expr_to_string(const AstNodeExpr *expr) {
+static CExpr binary_expr_to_string(const AstNodeExpr *expr) {
 	const char *fmt = NULL;
 
 	switch (expr->oper) {
@@ -100,17 +100,17 @@ static char *binary_expr_to_string(const AstNodeExpr *expr) {
 		default: return NULL;
 	}
 
-	char *expr_lhs = expr_node_to_string(expr->lhs.expr);
-	char *expr_rhs = expr_node_to_string(expr->rhs);
+	CExpr expr_lhs = expr_node_to_string(expr->lhs.expr);
+	CExpr expr_rhs = expr_node_to_string(expr->rhs);
 
-	char *out = uvsnprintf(fmt, expr_lhs, expr_rhs);
+	CExpr out = uvsnprintf(fmt, expr_lhs, expr_rhs);
 
 	free(expr_lhs);
 	free(expr_rhs);
 	return out;
 }
 
-static char *unary_expr_to_string(const AstNodeExpr *expr) {
+static CExpr unary_expr_to_string(const AstNodeExpr *expr) {
 	const char *fmt = NULL;
 
 	switch (expr->oper) {
@@ -121,8 +121,8 @@ static char *unary_expr_to_string(const AstNodeExpr *expr) {
 
 	if (!fmt) return NULL;
 
-	char *expr_str = expr_node_to_string(expr->rhs);
-	char *out = uvsnprintf(fmt, expr_str);
+	CExpr expr_str = expr_node_to_string(expr->rhs);
+	CExpr out = uvsnprintf(fmt, expr_str);
 
 	free(expr_str);
 	return out;

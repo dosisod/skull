@@ -7,17 +7,17 @@
 
 #include "skull/codegen/c/core.h"
 
-static char *gen_node_c(const AstNode *);
+static CStmt gen_node_c(const AstNode *);
 
 void gen_module_c(const AstNode *node) {
 	SKULL_STATE_C.tree = gen_tree_c(node);
 }
 
-char *gen_tree_c(const AstNode *node) {
+CTree gen_tree_c(const AstNode *node) {
 	char *generated = NULL;
 
 	while (node) {
-		char *current = gen_node_c(node);
+		CStmt current = gen_node_c(node);
 
 		if (current) {
 			if (!generated) {
@@ -37,7 +37,7 @@ char *gen_tree_c(const AstNode *node) {
 	return generated;
 }
 
-static char *gen_node_c(const AstNode *node) {
+static CStmt gen_node_c(const AstNode *node) {
 	switch (node->type) {
 		case AST_NODE_VAR_DEF: return var_def_to_string(node);
 		case AST_NODE_VAR_ASSIGN: return var_assign_to_string(node);
