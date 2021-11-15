@@ -4,5 +4,5 @@
 
 typedef struct AstNode AstNode;
 
-void gen_module_c(AstNode *);
-char *gen_tree_c(AstNode *);
+void gen_module_c(const AstNode *);
+char *gen_tree_c(const AstNode *);

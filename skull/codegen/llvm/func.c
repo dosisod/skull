@@ -21,7 +21,7 @@
 
 #include "skull/codegen/llvm/func.h"
 
-Expr gen_tree(AstNode *);
+Expr gen_tree(const AstNode *);
 
 static void gen_function_def(const AstNode *const, FunctionDeclaration *);
 static void add_func(FunctionDeclaration *);

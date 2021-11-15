@@ -4,12 +4,12 @@
 
 #include "skull/codegen/llvm/core.h"
 
-static Expr _gen_tree(AstNode **);
+static Expr _gen_tree(const AstNode **);
 
 /*
 Run code generator for module starting at `node`.
 */
-void gen_module(AstNode *node) {
+void gen_module(const AstNode *node) {
 	const Expr expr = gen_tree(node);
 
 	if (!expr.value) {
@@ -20,7 +20,7 @@ void gen_module(AstNode *node) {
 /*
 Generate tree starting at `node`, returning an expr if one is returned.
 */
-Expr gen_tree(AstNode *node) {
+Expr gen_tree(const AstNode *node) {
 	while (node) {
 		Expr parsed = _gen_tree(&node);
 
@@ -34,7 +34,7 @@ Expr gen_tree(AstNode *node) {
 /*
 Internal `gen_tree` function.
 */
-static Expr _gen_tree(AstNode **node) {
+static Expr _gen_tree(const AstNode **node) {
 	switch ((*node)->type) {
 		case AST_NODE_IF: gen_control_if(node); break;
 		case AST_NODE_WHILE: gen_control_while(*node); break;

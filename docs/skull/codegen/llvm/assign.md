@@ -1,13 +1,13 @@
 # skull/codegen/llvm/assign
 
 ```c
-void gen_stmt_var_def(AstNodeVarDef *var_def)
+void gen_stmt_var_def(const AstNodeVarDef *var_def)
 ```
 
 > Builds a variable definition from `expr_node`.
 
 ```c
-void gen_stmt_var_assign(AstNodeVarAssign *var_assign)
+void gen_stmt_var_assign(const AstNodeVarAssign *var_assign)
 ```
 
 > Assign a to a variable from `var_assign`.

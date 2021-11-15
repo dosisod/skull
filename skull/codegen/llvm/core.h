@@ -5,5 +5,5 @@
 
 typedef struct AstNode AstNode;
 
-Expr gen_tree(AstNode *);
-void gen_module(AstNode *);
+Expr gen_tree(const AstNode *);
+void gen_module(const AstNode *);

@@ -7,25 +7,25 @@ Expr gen_stmt_unreachable(void)
 > Build an unreachable statement.
 
 ```c
-Expr gen_stmt_return(AstNode *node)
+Expr gen_stmt_return(const AstNode *node)
 ```
 
 > Builds an return statement from `node`.
 
 ```c
-void gen_control_while(AstNode *node)
+void gen_control_while(const AstNode *node)
 ```
 
 > Builds LLVM for a while loop from `node`.
 
 ```c
-void gen_control_if(AstNode **node)
+void gen_control_if(const AstNode **node)
 ```
 
 > Builds an if block from `node`.
 
 ```c
-static void gen_control_if_(AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end)
+static void gen_control_if_(const AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end)
 ```
 
 > Internal function for building an `if` node.

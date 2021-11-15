@@ -13,8 +13,12 @@
 
 #include "skull/codegen/llvm/flow.h"
 
-Expr gen_tree(AstNode *);
-static void gen_control_if_(AstNode **, LLVMBasicBlockRef, LLVMBasicBlockRef);
+Expr gen_tree(const AstNode *);
+static void gen_control_if_(
+	const AstNode **,
+	LLVMBasicBlockRef,
+	LLVMBasicBlockRef
+);
 static LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *);
 
 static void gen_control_code_block(
@@ -58,7 +62,7 @@ void gen_stmt_noop(const Location *location) {
 /*
 Builds an return statement from `node`.
 */
-Expr gen_stmt_return(AstNode *node) {
+Expr gen_stmt_return(const AstNode *node) {
 	if (!node->expr_node) {
 		return (Expr){
 			.value = LLVMBuildRetVoid(SKULL_STATE_LLVM.builder),
@@ -78,7 +82,7 @@ Expr gen_stmt_return(AstNode *node) {
 /*
 Builds LLVM for a while loop from `node`.
 */
-void gen_control_while(AstNode *node) {
+void gen_control_while(const AstNode *node) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		SKULL_STATE_LLVM.ctx,
 		SKULL_STATE_LLVM.current_func->ref,
@@ -116,7 +120,7 @@ void gen_control_while(AstNode *node) {
 /*
 Builds an if block from `node`.
 */
-void gen_control_if(AstNode **node) {
+void gen_control_if(const AstNode **node) {
 	gen_control_if_(
 		node,
 		LLVMGetInsertBlock(SKULL_STATE_LLVM.builder),
@@ -132,11 +136,11 @@ void gen_control_if(AstNode **node) {
 Internal function for building an `if` node.
 */
 static void gen_control_if_(
-	AstNode **node,
+	const AstNode **node,
 	LLVMBasicBlockRef entry,
 	LLVMBasicBlockRef end
 ) {
-	AstNode *next_non_comment = (*node)->next;
+	const AstNode *next_non_comment = (*node)->next;
 
 	while (next_non_comment) {
 		if (next_non_comment->type == AST_NODE_COMMENT) {
