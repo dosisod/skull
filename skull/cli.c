@@ -206,13 +206,11 @@ static int run_llc(void) {
 		"-filetype=obj"
 	);
 
-	static char dash_o[] = "-o";
-
 	char *_args[] = {
 		llc_cmd,
 		llvm_file,
 		filetype,
-		dash_o,
+		(char[]){"-o"},
 		out_filename,
 		NULL
 	};
@@ -234,9 +232,8 @@ static int run_llc(void) {
 }
 
 #define CHECK_CMD(_cmd) { \
-	static char check_cmd[] = "which "_cmd" > /dev/null"; \
+	const bool cmd_exists = !shell((char[]){"which "_cmd" > /dev/null"}); \
 	static char cmd[] = _cmd; \
-	const bool cmd_exists = !shell(check_cmd); \
 	if (cmd_exists) return cmd; \
 }
 
@@ -399,10 +396,7 @@ static int sh(char *argv[]) {
 }
 
 static int shell(char *cmd) {
-	static char shell[] = "/bin/sh";
-	static char dash_c[] = "-c";
-
-	return sh((char *[]){ shell, dash_c, cmd, NULL });
+	return sh((char *[]){ (char[]){"/bin/sh"}, (char[]){"-c"}, cmd, NULL });
 }
 
 static void bail(int exit_code) {

@@ -743,8 +743,7 @@ bool test_validate_non_void_function_missing_return() {
 	Token *token = tokenize_fixture(U"f() Int { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	static char int_name[] = "Int";
-	node->func_proto->return_type_name = int_name;
+	node->func_proto->return_type_name = (char[]){"Int"};
 
 	return validate_tree_fixture(
 		node,
@@ -877,8 +876,7 @@ bool test_validate_func_return_invalid_type() {
 	Token *return_expr_token = return_token->next;
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	static char int_name[] = "Int";
-	node->func_proto->return_type_name = int_name;
+	node->func_proto->return_type_name = (char[]){"Int"};
 
 	node->child = AST_NODE_RETURN(
 		return_token,
@@ -898,8 +896,7 @@ bool test_validate_func_check_return_type() {
 	Token *token = tokenize_fixture(U"f() invalid { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	static char type_name[] = "invalid";
-	node->func_proto->return_type_name = type_name;
+	node->func_proto->return_type_name = (char[]){"invalid"};
 
 	return validate_tree_fixture(
 		node,
