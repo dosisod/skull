@@ -12,8 +12,7 @@
 
 static bool test_assign() {
 	AstNode *node = AST_NODE_VAR_ASSIGN(NULL, AST_SIMPLE_EXPR(NULL));
-	node->var_assign->expr_node->expr->type = TYPE_INT;
-	node->var_assign->expr_node->expr->value._int = 1;
+	SET_EXPR_VALUE_INT(node->var_assign->expr_node->expr, 1);
 	node->var_assign->var = make_variable(TYPE_INT, U"x", false);
 
 	char *str = var_assign_to_string(node);
@@ -29,14 +28,9 @@ static bool test_assign() {
 static bool test_mutable_var_def() {
 	Token *token = NULL;
 
-	AstNode *node = AST_NODE_VAR_DEF(
-		token,
-		AST_SIMPLE_EXPR(NULL),
-		true
-	);
+	AstNode *node = AST_NODE_VAR_DEF(token, AST_SIMPLE_EXPR(NULL), true);
 
-	node->var_def->expr_node->expr->type = TYPE_INT;
-	node->var_def->expr_node->expr->value._int = 1;
+	SET_EXPR_VALUE_INT(node->var_def->expr_node->expr, 1);
 	node->var_def->var = make_variable(TYPE_INT, U"x", false);
 
 	char *str = var_def_to_string(node);
@@ -52,14 +46,9 @@ static bool test_mutable_var_def() {
 static bool test_const_var_def() {
 	Token *token = NULL;
 
-	AstNode *node = AST_NODE_VAR_DEF(
-		token,
-		AST_SIMPLE_EXPR(NULL),
-		true
-	);
+	AstNode *node = AST_NODE_VAR_DEF(token, AST_SIMPLE_EXPR(NULL), true);
 
-	node->var_def->expr_node->expr->type = TYPE_INT;
-	node->var_def->expr_node->expr->value._int = 1;
+	SET_EXPR_VALUE_INT(node->var_def->expr_node->expr, 1);
 	node->var_def->var = make_variable(TYPE_INT, U"x", true);
 
 	char *str = var_def_to_string(node);

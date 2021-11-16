@@ -14,9 +14,7 @@ bool test_return_node_to_string() {
 		NULL,
 		AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL))
 	);
-	node->expr_node->expr->type = TYPE_INT;
-	node->expr_node->expr->value._int = 1;
-	node->expr_node->expr->oper = EXPR_CONST;
+	SET_EXPR_VALUE_INT(node->expr_node->expr, 1);
 
 	char *str = return_node_to_string(node);
 
@@ -47,8 +45,7 @@ bool test_noop_to_string() {
 
 bool test_if_to_string() {
 	AstNode *node = AST_NODE_IF(NULL, AST_SIMPLE_EXPR(NULL), NULL);
-	node->expr_node->expr->type = TYPE_BOOL;
-	node->expr_node->expr->value._bool = true;
+	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
 
 	char *str = if_to_string(node);
 

@@ -75,7 +75,7 @@ bool test_validate_float_overflow() {
 bool test_validate_missing_function_decl() {
 	Token *token = tokenize_fixture(U"x()");
 
-	AstNode *node = AST_NODE_EXPR(token, AST_NO_ARG_FUNC_EXPR(token));
+	AstNode *node = AST_NODE_EXPR(token, AST_NODE_FUNC_EXPR(token));
 
 	ASSERT_FALSEY(validate_expr(node->expr));
 	ASSERT_FALSEY(compare_errors(
@@ -803,10 +803,7 @@ bool test_validate_no_void_assign() {
 
 	node->next = AST_NODE_VAR_DEF(
 		x_token,
-		AST_NODE_EXPR(
-			func_call_token,
-			AST_NO_ARG_FUNC_EXPR(func_call_token)
-		),
+		AST_NODE_EXPR(func_call_token, AST_NODE_FUNC_EXPR(func_call_token)),
 		true
 	);
 
@@ -855,14 +852,13 @@ bool test_validate_func_parameter_count() {
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
 	node->next = AST_NODE_EXPR(
 		func_call_token,
-		AST_NO_ARG_FUNC_EXPR(func_call_token)
+		AST_NODE_FUNC_EXPR(func_call_token)
 	);
 
-	node->next->expr->lhs.func_call->params = AST_NODE_EXPR(
-		func_call_token,
-		AST_NODE_CONST_EXPR(func_call_expr_token)
+	AST_NODE_FUNC_ADD_PARAM(
+		node->next,
+		AST_NODE_EXPR(func_call_token, AST_NODE_CONST_EXPR(func_call_expr_token))
 	);
-	node->next->expr->lhs.func_call->num_values = 1;
 
 	return validate_tree_fixture(
 		node,

@@ -35,7 +35,7 @@
 		) \
 	)
 
-#define AST_NO_ARG_FUNC_EXPR(_token) \
+#define AST_NODE_FUNC_EXPR(_token) \
 	&(AstNodeExpr){ \
 		.lhs = { \
 			.func_call = &(AstNodeFunctionCall){ \
@@ -143,3 +143,53 @@
 		.expr_node = (_cond), \
 		.parent = NULL \
 	}
+
+#define AST_NODE_CONST_INT(_value) \
+	&(AstNodeExpr) { \
+		.type = TYPE_INT, \
+		.value._int = (_value), \
+		.oper = EXPR_CONST \
+	}
+
+#define AST_NODE_CONST_FLOAT(_value) \
+	&(AstNodeExpr) { \
+		.type = TYPE_FLOAT , \
+		.value._float = (_value), \
+		.oper = EXPR_CONST \
+	}
+
+#define AST_NODE_CONST_BOOL(_value) \
+	&(AstNodeExpr) { \
+		.type = TYPE_BOOL, \
+		.value._bool = (_value), \
+		.oper = EXPR_CONST \
+	}
+
+#define AST_NODE_CONST_RUNE(_value) \
+	&(AstNodeExpr) { \
+		.type = TYPE_RUNE, \
+		.value.rune = (_value), \
+		.oper = EXPR_CONST \
+	}
+
+#define AST_NODE_EXPR_VAR(_var) \
+	&(AstNodeExpr) { \
+		.var = (_var), \
+		.oper = EXPR_IDENTIFIER \
+	}
+
+#define SET_EXPR_VALUE_INT(_expr, _value) \
+	(_expr)->type = TYPE_INT; \
+	(_expr)->value._int = (_value)
+
+#define SET_EXPR_VALUE_FLOAT(_expr, _value) \
+	(_expr)->type = TYPE_FLOAT; \
+	(_expr)->value._float = (_value)
+
+#define SET_EXPR_VALUE_BOOL(_expr, _value) \
+	(_expr)->type = TYPE_BOOL; \
+	(_expr)->value._bool = (_value)
+
+typedef struct AstNode AstNode;
+
+void AST_NODE_FUNC_ADD_PARAM(AstNode *, AstNode *);
