@@ -1,5 +1,7 @@
 #pragma once
 
+#include "skull/semantic/func.h"
+
 #define AST_NODE_CONST_EXPR(token) \
 	&(AstNodeExpr){ \
 		.lhs = { \
@@ -39,7 +41,8 @@
 	&(AstNodeExpr){ \
 		.lhs = { \
 			.func_call = &(AstNodeFunctionCall){ \
-				.func_name_tok = (_token) \
+				.func_name_tok = (_token), \
+				.func_decl = &(FunctionDeclaration) {0} \
 			} \
 		}, \
 		.oper = EXPR_FUNC \
@@ -191,5 +194,6 @@
 	(_expr)->value._bool = (_value)
 
 typedef struct AstNode AstNode;
+typedef struct AstNodeExpr AstNodeExpr;
 
-void AST_NODE_FUNC_ADD_PARAM(AstNode *, AstNode *);
+void AST_NODE_FUNC_ADD_PARAM(AstNodeExpr *, AstNode *);

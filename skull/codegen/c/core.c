@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "skull/codegen/c/assign.h"
+#include "skull/codegen/c/expr.h"
 #include "skull/codegen/c/flow.h"
 #include "skull/codegen/c/shared.h"
 #include "skull/common/str.h"
@@ -43,6 +44,7 @@ static CStmt gen_node_c(const AstNode *node) {
 		case AST_NODE_VAR_ASSIGN: return var_assign_to_string(node);
 		case AST_NODE_RETURN: return return_node_to_string(node);
 		case AST_NODE_NOOP: return noop_to_string(NULL);
+		case AST_NODE_EXPR: return expr_node_to_string(node->expr);
 		default: return NULL;
 	}
 }

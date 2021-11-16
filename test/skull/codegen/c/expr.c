@@ -216,8 +216,74 @@ bool test_unary_not_to_string() {
 
 	char *expr_str = expr_node_to_string(expr);
 
-	const char *expected = "!1";
-	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
+	ASSERT_TRUTHY(strcmp(expr_str, "!1") == 0);
+
+	free(expr_str);
+	PASS;
+}
+
+bool test_func_call_no_args_to_string() {
+	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
+	char func_name[] = "f";
+	expr->lhs.func_call->func_decl->name = func_name;
+
+	char *expr_str = expr_node_to_string(expr);
+
+	ASSERT_TRUTHY(strcmp(expr_str, "f();") == 0);
+
+	free(expr_str);
+	PASS;
+}
+
+bool test_func_call_single_arg_to_string() {
+	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
+
+	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
+
+	expr->lhs.func_call->func_decl->name = (char[]){"f"};
+	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
+
+	char *expr_str = expr_node_to_string(expr);
+
+	ASSERT_TRUTHY(strcmp(expr_str, "f(1);") == 0);
+
+	free(expr_str);
+	PASS;
+}
+
+bool test_func_call_two_args_to_string() {
+	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
+
+	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
+	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
+
+	expr->lhs.func_call->func_decl->name = (char[]){"f"};
+	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
+	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->expr, 2);
+
+	char *expr_str = expr_node_to_string(expr);
+
+	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2);") == 0);
+
+	free(expr_str);
+	PASS;
+}
+
+bool test_func_call_many_args_to_string() {
+	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
+
+	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
+	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
+	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
+
+	expr->lhs.func_call->func_decl->name = (char[]){"f"};
+	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
+	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->expr, 2);
+	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->next->expr, 3);
+
+	char *expr_str = expr_node_to_string(expr);
+
+	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2, 3);") == 0);
 
 	free(expr_str);
 	PASS;
@@ -234,6 +300,10 @@ void codegen_c_expr_test_self(bool *pass) {
 		test_int_pow_expr_to_string,
 		test_float_pow_expr_to_string,
 		test_unary_negation_to_string,
-		test_unary_not_to_string
+		test_unary_not_to_string,
+		test_func_call_no_args_to_string,
+		test_func_call_single_arg_to_string,
+		test_func_call_two_args_to_string,
+		test_func_call_many_args_to_string
 	)
 }

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "skull/common/str.h"
+#include "skull/semantic/func.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
 
@@ -39,6 +40,8 @@ CExpr expr_node_to_string(const AstNodeExpr *expr) {
 		case EXPR_UNARY_NEG:
 		case EXPR_NOT:
 			return unary_expr_to_string(expr);
+		case EXPR_FUNC:
+			return func_expr_node_to_string(expr->lhs.func_call);
 		default:
 			return NULL;
 	}
@@ -126,4 +129,38 @@ static CExpr unary_expr_to_string(const AstNodeExpr *expr) {
 
 	free(expr_str);
 	return out;
+}
+
+CExpr func_expr_node_to_string(const AstNodeFunctionCall *func_call) {
+	FunctionDeclaration *function = func_call->func_decl;
+	char *name = function->name;
+	unsigned short num_params = function->num_params;
+
+	if (num_params == 0) return uvsnprintf("%s();", name);
+
+	const AstNode *param = func_call->params;
+	char *param_list = NULL;
+	unsigned short at = 0;
+
+	while (at < num_params) {
+		CExpr expr = expr_node_to_string(param->expr);
+
+		if (at == 0) {
+			param_list = expr;
+		}
+		else {
+			char *old_list = param_list;
+			param_list = uvsnprintf("%s, %s", old_list, expr);
+			free(old_list);
+			free(expr);
+		}
+
+		at++;
+		param = param->next;
+	}
+
+	CExpr temp = uvsnprintf("%s(%s);", name, param_list);
+
+	free(param_list);
+	return temp;
 }

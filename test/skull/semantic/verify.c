@@ -856,7 +856,7 @@ bool test_validate_func_parameter_count() {
 	);
 
 	AST_NODE_FUNC_ADD_PARAM(
-		node->next,
+		node->next->expr,
 		AST_NODE_EXPR(func_call_token, AST_NODE_CONST_EXPR(func_call_expr_token))
 	);
 
