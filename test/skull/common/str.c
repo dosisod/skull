@@ -9,7 +9,7 @@
 #include "test/skull/common/str.h"
 #include "test/testing.h"
 
-bool test_strrstr() {
+bool test_strrstr(void) {
 	const char *str1 = "aaaaa";
 	const char *str2 = "ababab";
 	const char *str3 = "abcdefg";
@@ -23,7 +23,7 @@ bool test_strrstr() {
 	PASS
 }
 
-bool test_c32sncpy() {
+bool test_c32sncpy(void) {
 	const char32_t *data = U"abc";
 	char32_t buf[4];
 
@@ -35,7 +35,7 @@ bool test_c32sncpy() {
 	PASS
 }
 
-bool test_c32sncpy_fill_nulls() {
+bool test_c32sncpy_fill_nulls(void) {
 	const char32_t *data = U"abc";
 	char32_t buf[5];
 	memset(buf, 0xff, 5 * sizeof *buf);
@@ -50,7 +50,7 @@ bool test_c32sncpy_fill_nulls() {
 	PASS
 }
 
-bool test_c32sdup() {
+bool test_c32sdup(void) {
 	char32_t *str = c32sdup(U"hello world");
 
 	ASSERT_TRUTHY(c32scmp(str, U"hello world"));
@@ -60,7 +60,7 @@ bool test_c32sdup() {
 	PASS
 }
 
-bool test_c32slen() {
+bool test_c32slen(void) {
 	ASSERT_EQUAL(c32slen(U"abc"), 3);
 	ASSERT_EQUAL(c32slen(U""), 0);
 	ASSERT_EQUAL(c32slen(NULL), 0);
@@ -68,7 +68,7 @@ bool test_c32slen() {
 	PASS
 }
 
-bool test_c32stombs() {
+bool test_c32stombs(void) {
 	char *str = c32stombs(U"hello world! 存", NULL);
 
 	ASSERT_EQUAL(strcmp(str, "hello world! 存"), 0);
@@ -78,7 +78,7 @@ bool test_c32stombs() {
 	PASS
 }
 
-bool test_mbstoc32s() {
+bool test_mbstoc32s(void) {
 	char32_t *str = mbstoc32s("left 字 right");
 
 	ASSERT_TRUTHY(c32scmp(str, U"left 字 right"));
@@ -88,7 +88,7 @@ bool test_mbstoc32s() {
 	PASS
 }
 
-bool test_c32scmp() {
+bool test_c32scmp(void) {
 	ASSERT_TRUTHY(c32scmp(U"abc", U"abc"));
 	ASSERT_FALSEY(c32scmp(U"abc", U"abcdef"));
 	ASSERT_FALSEY(c32scmp(U"abcdef", U"abc"));
@@ -97,7 +97,7 @@ bool test_c32scmp() {
 	PASS
 }
 
-bool test_c32sncmp() {
+bool test_c32sncmp(void) {
 	ASSERT_TRUTHY(c32sncmp(U"abc", U"abc", 3));
 	ASSERT_TRUTHY(c32sncmp(U"abc", U"abcdef", 3));
 	ASSERT_TRUTHY(c32sncmp(U"abcdef", U"abc", 3));
@@ -108,7 +108,7 @@ bool test_c32sncmp() {
 	PASS
 }
 
-bool test_c32isdigit() {
+bool test_c32isdigit(void) {
 	ASSERT_FALSEY(c32isdigit('/'));
 	ASSERT_TRUTHY(c32isdigit('0'));
 	ASSERT_TRUTHY(c32isdigit('9'));
@@ -117,7 +117,7 @@ bool test_c32isdigit() {
 	PASS
 }
 
-bool test_c32isalnum() {
+bool test_c32isalnum(void) {
 	ASSERT_FALSEY(c32isalnum('/'));
 	ASSERT_TRUTHY(c32isalnum('0'));
 	ASSERT_TRUTHY(c32isalnum('9'));
@@ -134,7 +134,7 @@ bool test_c32isalnum() {
 	PASS
 }
 
-bool test_c32isxdigit() {
+bool test_c32isxdigit(void) {
 	ASSERT_FALSEY(c32isxdigit('/'));
 	ASSERT_TRUTHY(c32isxdigit('0'));
 	ASSERT_TRUTHY(c32isxdigit('9'));
@@ -151,7 +151,7 @@ bool test_c32isxdigit() {
 	PASS
 }
 
-bool test_uvsnsprintf() {
+bool test_uvsnsprintf(void) {
 	char *str = uvsnprintf("%s %s %i!", "hello", "world", 1234);
 
 	ASSERT_EQUAL(strcmp(str, "hello world 1234!"), 0);
@@ -182,7 +182,7 @@ static bool c32sunescape_fixture(
 	PASS
 }
 
-bool test_c32sunescape() {
+bool test_c32sunescape(void) {
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\e", '\033', 1, NULL));
 	ASSERT_TRUTHY(c32sunescape_fixture(U"x", 'x', 0, NULL));
 
@@ -204,7 +204,7 @@ bool test_c32sunescape() {
 	PASS
 }
 
-bool test_mbstoc32s_illegal_utf8() {
+bool test_mbstoc32s_illegal_utf8(void) {
 	ASSERT_FALSEY(mbstoc32s("\xc3\x28\n"));
 
 	ASSERT_FALSEY(compare_errors(

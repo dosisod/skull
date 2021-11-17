@@ -46,6 +46,11 @@ CFLAGS += -std=c18 \
 	-Wwrite-strings \
 	-Wdouble-promotion \
 	-fno-common \
+	-Wnull-dereference \
+	-Wstrict-overflow=5 \
+	-Wstrict-prototypes \
+	-Wcast-qual \
+	-Wstack-protector \
 	-I. \
 	-DSKULL_VERSION="\"$(SKULL_VERSION)\""
 
@@ -67,6 +72,16 @@ endif
 ifeq ($(findstring clang,$(CC)),)
 	CFLAGS += -Waggressive-loop-optimizations \
 	-Wformat-signedness \
+	-Wformat-overflow=2 \
+	-Wformat-truncation=2 \
+	-Wstringop-overflow=4 \
+	-Wduplicated-cond \
+	-Wduplicated-branches \
+	-Wjump-misses-init \
+	-Warray-bounds=2 \
+	-Wshift-overflow=2 \
+	-Wcast-align=strict \
+	-D_FORTIFY_SOURCE=2 \
 	-Wlogical-op \
 	-Wsuggest-attribute=const \
 	-Wsuggest-attribute=format \
@@ -76,7 +91,22 @@ ifeq ($(findstring clang,$(CC)),)
 	-Wtrampolines \
 	-Wunsafe-loop-optimizations
 else
-	CFLAGS += -Wno-newline-eof
+	CFLAGS += -Wno-newline-eof \
+		-Warray-bounds \
+		-Wshift-overflow \
+		-Wshift-sign-overflow \
+		-Wcast-align \
+		-Warray-bounds-pointer-arithmetic \
+		-Wimplicit-fallthrough \
+		-Wconditional-uninitialized \
+		-Wloop-analysis \
+		-Wtautological-constant-in-range-compare \
+		-Wcomma \
+		-Wassign-enum \
+		-Wformat-type-confusion \
+		-Wpointer-arith \
+		-Widiomatic-parentheses \
+		-Wunreachable-code-aggressive
 endif
 
 _OBJS := $(patsubst %.c,%.o,$(shell find skull -name "*.c" | grep -v "main\|codegen\|cli"))

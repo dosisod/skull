@@ -8,7 +8,7 @@
 #include "test/skull/parse/token.h"
 #include "test/testing.h"
 
-bool test_tokenize_single_token() {
+bool test_tokenize_single_token(void) {
 	const char32_t *code1 = U"token";
 	const char32_t *code2 = U"token字";
 	Token *t1 = tokenize(code1);
@@ -25,7 +25,7 @@ bool test_tokenize_single_token() {
 	PASS
 }
 
-bool test_tokenize_no_tokens() {
+bool test_tokenize_no_tokens(void) {
 	const char32_t *code = U"";
 	Token *t = tokenize(code);
 
@@ -37,7 +37,7 @@ bool test_tokenize_no_tokens() {
 	PASS
 }
 
-bool test_whitespace_between_tokens() {
+bool test_whitespace_between_tokens(void) {
 	const char32_t *code = U"token1\r\t token2";
 	Token *t = tokenize(code);
 
@@ -51,7 +51,7 @@ bool test_whitespace_between_tokens() {
 	PASS
 }
 
-bool test_whitespace_at_eol_ignored() {
+bool test_whitespace_at_eol_ignored(void) {
 	const char32_t *code = U"token   ";
 	Token *t = tokenize(code);
 
@@ -63,7 +63,7 @@ bool test_whitespace_at_eol_ignored() {
 	PASS
 }
 
-bool test_whitespace_inside_double_quotes_respected() {
+bool test_whitespace_inside_double_quotes_respected(void) {
 	const char32_t *code = U"\"this is a single token\"";
 	Token *t = tokenize(code);
 
@@ -76,7 +76,7 @@ bool test_whitespace_inside_double_quotes_respected() {
 	PASS
 }
 
-bool test_whitespace_inside_single_quotes_respected() {
+bool test_whitespace_inside_single_quotes_respected(void) {
 	const char32_t *code = U"'this is a single token'";
 	Token *t = tokenize(code);
 
@@ -89,7 +89,7 @@ bool test_whitespace_inside_single_quotes_respected() {
 	PASS
 }
 
-bool test_brackets_always_make_their_own_token() {
+bool test_brackets_always_make_their_own_token(void) {
 	const char32_t *code = U"left{}right";
 	Token *t = tokenize(code);
 
@@ -110,7 +110,7 @@ bool test_brackets_always_make_their_own_token() {
 	PASS
 }
 
-bool test_newlines_always_make_their_own_token() {
+bool test_newlines_always_make_their_own_token(void) {
 	const char32_t *code = U"left\nright";
 	Token *t = tokenize(code);
 
@@ -128,7 +128,7 @@ bool test_newlines_always_make_their_own_token() {
 	PASS
 }
 
-bool test_token_len() {
+bool test_token_len(void) {
 	Token *token = tokenize(U"token");
 
 	ASSERT_EQUAL(token_len(token), 5);
@@ -138,7 +138,7 @@ bool test_token_len() {
 	PASS
 }
 
-bool test_token_cmp() {
+bool test_token_cmp(void) {
 	Token *token = tokenize(U"data");
 
 	ASSERT_TRUTHY(token_cmp(U"data", token));
@@ -149,7 +149,7 @@ bool test_token_cmp() {
 	PASS
 }
 
-bool test_token_cmp_match_exact_strings_only() {
+bool test_token_cmp_match_exact_strings_only(void) {
 	Token *token1 = tokenize(U"data");
 	Token *token2 = tokenize(U"dat");
 	Token *token3 = tokenize(U"da");
@@ -168,7 +168,7 @@ bool test_token_cmp_match_exact_strings_only() {
 	PASS
 }
 
-bool test_token_to_string() {
+bool test_token_to_string(void) {
 	Token *token = tokenize(U"left right");
 	char32_t *buf = token_to_string(token);
 
@@ -180,7 +180,7 @@ bool test_token_to_string() {
 	PASS
 }
 
-bool test_tokenize_comment() {
+bool test_tokenize_comment(void) {
 	#define comment1 U"# this is a comment"
 	#define comment2 U"#\talso a comment"
 	const char32_t *code = comment1 U"\n" comment2;
@@ -202,7 +202,7 @@ bool test_tokenize_comment() {
 	#undef comment2
 }
 
-bool test_tokenize_trailing_comment() {
+bool test_tokenize_trailing_comment(void) {
 	Token *token = tokenize(U"stuff # this is a comment");
 	char32_t *buf1 = token_to_string(token);
 	char32_t *buf2 = token_to_string(token->next);
@@ -217,7 +217,7 @@ bool test_tokenize_trailing_comment() {
 	PASS
 }
 
-bool test_make_token() {
+bool test_make_token(void) {
 	Token *token = make_token();
 
 	ASSERT_FALSEY(token->begin);
@@ -230,7 +230,7 @@ bool test_make_token() {
 	PASS
 }
 
-bool test_tokenize_with_lines_and_columns() {
+bool test_tokenize_with_lines_and_columns(void) {
 	const char32_t *code = U"token1\ntoken2";
 	Token *t = tokenize(code);
 
@@ -246,7 +246,7 @@ bool test_tokenize_with_lines_and_columns() {
 	PASS
 }
 
-bool test_nested_block_comment_fails() {
+bool test_nested_block_comment_fails(void) {
 	free_errors();
 
 	Token *t = tokenize(U"#{\n#{\n");
@@ -259,7 +259,7 @@ bool test_nested_block_comment_fails() {
 	PASS
 }
 
-bool test_warn_bom() {
+bool test_warn_bom(void) {
 	free_errors();
 
 	Token *t = tokenize(U"\xFEFF");
@@ -271,7 +271,7 @@ bool test_warn_bom() {
 	PASS
 }
 
-bool test_invalid_comment_start() {
+bool test_invalid_comment_start(void) {
 	free_errors();
 
 	Token *t = tokenize(U"#x");
@@ -284,7 +284,7 @@ bool test_invalid_comment_start() {
 	PASS
 }
 
-bool test_check_for_missing_block_comment() {
+bool test_check_for_missing_block_comment(void) {
 	free_errors();
 
 	Token *t = tokenize(U"#{");
@@ -297,7 +297,7 @@ bool test_check_for_missing_block_comment() {
 	PASS
 }
 
-bool test_check_for_closing_single_quote() {
+bool test_check_for_closing_single_quote(void) {
 	free_errors();
 
 	Token *t = tokenize(U"\'");
@@ -310,7 +310,7 @@ bool test_check_for_closing_single_quote() {
 	PASS
 }
 
-bool test_check_for_closing_double_quote() {
+bool test_check_for_closing_double_quote(void) {
 	free_errors();
 
 	Token *t = tokenize(U"\"");

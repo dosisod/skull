@@ -122,8 +122,11 @@ char32_t eval_rune(const Token *const token, bool *err) {
 	mbstate_t mbs;
 	memset(&mbs, 0, sizeof mbs);
 
+
+	// Since MB_CUR_MAX cannot be used (would result in VLA), 16 is used
+	// instead. MB_CUR_MAX on my system is 6, so I think 16 should be safe
+	char buf[16];
 	errno = 0;
-	char *buf = alloca(MB_CUR_MAX);
 	c32rtomb(buf, ret, &mbs);
 
 	if (errno == EILSEQ) {

@@ -6,7 +6,7 @@
 #include "test/skull/semantic/macros.h"
 #include "test/testing.h"
 
-bool test_parse_single_node() {
+bool test_parse_single_node(void) {
 	AstNode *node = AST_NODE_NOOP();
 
 	char *tree = gen_tree_c(node);
@@ -17,7 +17,7 @@ bool test_parse_single_node() {
 	PASS;
 }
 
-bool test_parse_multiple_nodes() {
+bool test_parse_multiple_nodes(void) {
 	AstNode *node = AST_NODE_NOOP();
 	node->next = AST_NODE_NOOP();
 

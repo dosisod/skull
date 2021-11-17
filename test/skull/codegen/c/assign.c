@@ -10,7 +10,7 @@
 #include "test/skull/semantic/macros.h"
 #include "test/testing.h"
 
-static bool test_assign() {
+static bool test_assign(void) {
 	AstNode *node = AST_NODE_VAR_ASSIGN(NULL, AST_SIMPLE_EXPR(NULL));
 	SET_EXPR_VALUE_INT(node->var_assign->expr_node->expr, 1);
 	node->var_assign->var = make_variable(TYPE_INT, U"x", false);
@@ -25,7 +25,7 @@ static bool test_assign() {
 	PASS;
 }
 
-static bool test_mutable_var_def() {
+static bool test_mutable_var_def(void) {
 	Token *token = NULL;
 
 	AstNode *node = AST_NODE_VAR_DEF(token, AST_SIMPLE_EXPR(NULL), true);
@@ -43,7 +43,7 @@ static bool test_mutable_var_def() {
 	PASS;
 }
 
-static bool test_const_var_def() {
+static bool test_const_var_def(void) {
 	Token *token = NULL;
 
 	AstNode *node = AST_NODE_VAR_DEF(token, AST_SIMPLE_EXPR(NULL), true);

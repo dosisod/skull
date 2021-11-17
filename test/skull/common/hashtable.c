@@ -7,7 +7,7 @@
 #include "test/skull/common/hashtable.h"
 #include "test/testing.h"
 
-bool test_hashtable_create_and_free() {
+bool test_hashtable_create_and_free(void) {
 	HashTable *ht = make_ht();
 
 	ASSERT_TRUTHY(ht);
@@ -17,7 +17,7 @@ bool test_hashtable_create_and_free() {
 	PASS
 }
 
-bool test_hashtable_add_and_get() {
+bool test_hashtable_add_and_get(void) {
 	HashTable *ht = make_ht();
 
 	int value = 123;
@@ -32,7 +32,7 @@ bool test_hashtable_add_and_get() {
 	PASS
 }
 
-bool test_hashtable_add_to_existing_slot() {
+bool test_hashtable_add_to_existing_slot(void) {
 	HashTable *ht = make_ht();
 
 	// simulate adding entry into slot that already has an entry
@@ -54,7 +54,7 @@ bool test_hashtable_add_to_existing_slot() {
 	PASS
 }
 
-bool test_hashtable_cannot_add_null() {
+bool test_hashtable_cannot_add_null(void) {
 	HashTable *ht = make_ht();
 
 	ASSERT_FALSEY(ht_add(ht, "key", NULL));
@@ -65,7 +65,7 @@ bool test_hashtable_cannot_add_null() {
 	PASS
 }
 
-bool test_hashtable_cannot_add_key_twice() {
+bool test_hashtable_cannot_add_key_twice(void) {
 	HashTable *ht = make_ht();
 
 	int value = 123;
@@ -78,7 +78,7 @@ bool test_hashtable_cannot_add_key_twice() {
 	PASS
 }
 
-bool test_hashtable_with_nulls() {
+bool __attribute__((const)) test_hashtable_with_nulls(void) {
 	ASSERT_FALSEY(ht_get(NULL, "key"));
 	ASSERT_FALSEY(ht_add(NULL, "key", NULL));
 	free_ht(NULL, NULL);

@@ -20,23 +20,23 @@ void run_many_tests(Test tests[], bool *pass) {
 	}
 }
 
-bool __attribute__((const)) test_pass_macro() {
+bool __attribute__((const)) test_pass_macro(void) {
 	PASS;
 }
 
-bool test_assert_truthy() {
+bool __attribute__((const)) test_assert_truthy(void) {
 	ASSERT_TRUTHY(true);
 
 	PASS;
 }
 
-bool test_assert_falsey() {
+bool __attribute__((const)) test_assert_falsey(void) {
 	ASSERT_FALSEY(false);
 
 	PASS;
 }
 
-bool test_assert_equal() {
+bool __attribute__((const)) test_assert_equal(void) {
 	ASSERT_EQUAL(1, 1);
 
 	PASS;

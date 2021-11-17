@@ -91,7 +91,7 @@ typedef struct AstNodeFunctionProto {
 ```c
 typedef struct AstNodeFunctionCall {
 	const Token *func_name_tok;
-	const AstNode *params;
+	AstNode *params;
 	unsigned short num_values;
 	FunctionDeclaration *func_decl;
 }

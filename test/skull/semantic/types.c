@@ -10,7 +10,7 @@
 #include "test/skull/semantic/types.h"
 #include "test/testing.h"
 
-bool test_find_type() {
+bool test_find_type(void) {
 	ASSERT_EQUAL(find_type("Int"), TYPE_INT);
 
 	PASS
@@ -30,7 +30,7 @@ bool eval_integer_fixture(const char32_t *str, int64_t expected) {
 	PASS;
 }
 
-bool test_eval_int() {
+bool test_eval_int(void) {
 	ASSERT_TRUTHY(eval_integer_fixture(U"1234", 1234));
 	ASSERT_TRUTHY(eval_integer_fixture(U"-1234", -1234));
 	ASSERT_TRUTHY(eval_integer_fixture(U"0b10101", 21));
@@ -58,7 +58,7 @@ double eval_float_fixture(const char32_t *str) {
 	return f;
 }
 
-bool test_eval_float() {
+bool test_eval_float(void) {
 	const double inf = eval_float_fixture(U"Infinity");
 	ASSERT_TRUTHY(isinf(inf) && inf > 0);
 
@@ -80,7 +80,7 @@ bool test_eval_float() {
 	PASS;
 }
 
-bool test_eval_bool() {
+bool test_eval_bool(void) {
 	Token *token = tokenize(U"true false");
 
 	ASSERT_TRUTHY(eval_bool(token));
@@ -104,14 +104,14 @@ char32_t eval_rune_fixture(const char32_t *str) {
 	return rune;
 }
 
-bool test_eval_rune() {
+bool test_eval_rune(void) {
 	ASSERT_EQUAL(eval_rune_fixture(U"'A'"), 'A');
 	ASSERT_EQUAL(eval_rune_fixture(U"'\\0'"), '\0');
 
 	PASS;
 }
 
-bool test_eval_rune_with_control_char_fails() {
+bool test_eval_rune_with_control_char_fails(void) {
 	Token *token = tokenize(U"\'\n\'");
 
 	bool err = false;
@@ -129,7 +129,7 @@ bool test_eval_rune_with_control_char_fails() {
 	PASS
 }
 
-bool test_eval_rune_invalid_escape_fails() {
+bool test_eval_rune_invalid_escape_fails(void) {
 	Token *token = tokenize(U"\'\\x\'");
 
 	bool err = false;
@@ -147,7 +147,7 @@ bool test_eval_rune_invalid_escape_fails() {
 	PASS
 }
 
-bool test_eval_rune_chars_after_escape_invalid() {
+bool test_eval_rune_chars_after_escape_invalid(void) {
 	Token *token = tokenize(U"\'\\nz\'");
 
 	bool err = false;
@@ -165,7 +165,7 @@ bool test_eval_rune_chars_after_escape_invalid() {
 	PASS
 }
 
-bool test_eval_str_invalid_escape_fails() {
+bool test_eval_str_invalid_escape_fails(void) {
 	Token *token = tokenize(U"\"\\x\"");
 
 	const char32_t *str = eval_str(token);
@@ -181,7 +181,7 @@ bool test_eval_str_invalid_escape_fails() {
 	PASS
 }
 
-bool test_eval_str() {
+bool test_eval_str(void) {
 	Token *token = tokenize(U"\"abcdef\"");
 
 	char32_t *str = eval_str(token);

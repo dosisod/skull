@@ -821,14 +821,14 @@ static void free_expr_node(AstNodeExpr *expr) {
 		return;
 	}
 	if (expr->oper == EXPR_FUNC) {
-		free_ast_tree_((void *)expr->lhs.func_call->params);
+		free_ast_tree_(expr->lhs.func_call->params);
 		free(expr->lhs.func_call);
 		free(expr);
 		return;
 	}
 
-	free_expr_node((void *)expr->lhs.expr);
-	free_expr_node((void *)expr->rhs);
+	free_expr_node(expr->lhs.expr);
+	free_expr_node(expr->rhs);
 	free(expr);
 }
 
@@ -970,7 +970,7 @@ static void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 		}
 
 		printf("<node at %p, node_type: %u>\n",
-			(void *)node,
+			(const void *)node,
 			node->type
 		);
 
@@ -989,7 +989,7 @@ static void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 			printf(
 				"   <token at %p, token_type: %u, "
 				"column: %u, line: %u, data: `%s`>\n",
-				(void *)token,
+				(const void *)token,
 				token->type,
 				token->location.column,
 				token->location.line,

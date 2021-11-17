@@ -176,12 +176,8 @@ static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 	if (!BUILD_DATA.debug) return NULL;
 
 	LLVMMetadataRef *di_param_types = NULL;
-	// using VLA since number of params should be a reasonable amount
-
 	if (func->num_params) {
-		di_param_types = alloca(
-			func->num_params * sizeof(LLVMMetadataRef)
-		);
+		di_param_types = Malloc(func->num_params * sizeof(LLVMMetadataRef));
 
 		for RANGE(i, func->num_params) {
 			di_param_types[i] = type_to_di_type(func->param_types[i]);
@@ -194,6 +190,7 @@ static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 		di_param_types, func->num_params,
 		LLVMDIFlagZero
 	);
+	if (func->num_params) free(di_param_types);
 
 	LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
 		DEBUG_INFO.builder,

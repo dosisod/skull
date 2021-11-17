@@ -1,6 +1,6 @@
 #include "skull/codegen/c/types.h"
 
-CType skull_type_to_c_type(Type type) {
+CType __attribute__((pure)) skull_type_to_c_type(Type type) {
 	if (type == TYPE_INT) return "int64_t";
 	if (type == TYPE_FLOAT) return "double";
 	if (type == TYPE_RUNE) return "char32_t";

@@ -9,7 +9,7 @@
 
 #include "test/skull/codegen/c/flow.h"
 
-bool test_return_node_to_string() {
+bool test_return_node_to_string(void) {
 	AstNode *node = AST_NODE_RETURN(
 		NULL,
 		AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL))
@@ -24,7 +24,7 @@ bool test_return_node_to_string() {
 	PASS;
 }
 
-bool test_return_no_expr_to_string() {
+bool test_return_no_expr_to_string(void) {
 	AstNode *node = AST_NODE_RETURN(NULL, NULL);
 	char *str = return_node_to_string(node);
 
@@ -34,7 +34,7 @@ bool test_return_no_expr_to_string() {
 	PASS;
 }
 
-bool test_noop_to_string() {
+bool test_noop_to_string(void) {
 	char *str = noop_to_string(NULL);
 
 	ASSERT_TRUTHY(strcmp(str, "(void)0;") == 0);
@@ -43,7 +43,7 @@ bool test_noop_to_string() {
 	PASS;
 }
 
-bool test_if_to_string() {
+bool test_if_to_string(void) {
 	AstNode *node = AST_NODE_IF(NULL, AST_SIMPLE_EXPR(NULL), NULL);
 	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
 

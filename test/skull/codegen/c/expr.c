@@ -21,7 +21,7 @@ bool expr_to_string_fixture(const AstNodeExpr *expr, const char *expected) {
 	return pass;
 }
 
-bool test_int_expr_to_string() {
+bool test_int_expr_to_string(void) {
 	ASSERT_TRUTHY(
 		expr_to_string_fixture(
 			AST_NODE_CONST_INT(1234),
@@ -42,7 +42,7 @@ bool test_int_expr_to_string() {
 	PASS;
 }
 
-bool test_float_expr_to_string() {
+bool test_float_expr_to_string(void) {
 	ASSERT_TRUTHY(
 		expr_to_string_fixture(
 			AST_NODE_CONST_FLOAT(3.14),
@@ -57,7 +57,7 @@ bool test_float_expr_to_string() {
 	PASS;
 }
 
-bool test_bool_expr_to_string() {
+bool test_bool_expr_to_string(void) {
 	ASSERT_TRUTHY(
 		expr_to_string_fixture(AST_NODE_CONST_BOOL(true), "1")
 	);
@@ -69,7 +69,7 @@ bool test_bool_expr_to_string() {
 	PASS;
 }
 
-bool test_rune_expr_to_string() {
+bool test_rune_expr_to_string(void) {
 	ASSERT_TRUTHY(
 		expr_to_string_fixture(AST_NODE_CONST_RUNE('A'), "0x41")
 	);
@@ -77,7 +77,7 @@ bool test_rune_expr_to_string() {
 	PASS;
 }
 
-bool test_identifier_expr_to_string() {
+bool test_identifier_expr_to_string(void) {
 	Variable *var = make_variable(TYPE_INT, U"x", false);
 
 	ASSERT_TRUTHY(expr_to_string_fixture(AST_NODE_EXPR_VAR(var), "x"));
@@ -87,7 +87,7 @@ bool test_identifier_expr_to_string() {
 	PASS;
 }
 
-bool test_binary_expr_to_string() {
+bool test_binary_expr_to_string(void) {
 	ExprType *opers = (ExprType[]){
 		EXPR_ADD,
 		EXPR_SUB,
@@ -152,7 +152,7 @@ bool test_binary_expr_to_string() {
 	return pass;
 }
 
-bool test_int_pow_expr_to_string() {
+bool test_int_pow_expr_to_string(void) {
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		AST_NODE_CONST_EXPR(NULL),
 		EXPR_POW,
@@ -170,7 +170,7 @@ bool test_int_pow_expr_to_string() {
 	PASS;
 }
 
-bool test_float_pow_expr_to_string() {
+bool test_float_pow_expr_to_string(void) {
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		AST_NODE_CONST_EXPR(NULL),
 		EXPR_POW,
@@ -189,7 +189,7 @@ bool test_float_pow_expr_to_string() {
 	PASS;
 }
 
-bool test_unary_negation_to_string() {
+bool test_unary_negation_to_string(void) {
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		NULL,
 		EXPR_UNARY_NEG,
@@ -206,7 +206,7 @@ bool test_unary_negation_to_string() {
 	PASS;
 }
 
-bool test_unary_not_to_string() {
+bool test_unary_not_to_string(void) {
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		NULL,
 		EXPR_NOT,
@@ -222,7 +222,7 @@ bool test_unary_not_to_string() {
 	PASS;
 }
 
-bool test_func_call_no_args_to_string() {
+bool test_func_call_no_args_to_string(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 	char func_name[] = "f";
 	expr->lhs.func_call->func_decl->name = func_name;
@@ -235,7 +235,7 @@ bool test_func_call_no_args_to_string() {
 	PASS;
 }
 
-bool test_func_call_single_arg_to_string() {
+bool test_func_call_single_arg_to_string(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
@@ -251,7 +251,7 @@ bool test_func_call_single_arg_to_string() {
 	PASS;
 }
 
-bool test_func_call_two_args_to_string() {
+bool test_func_call_two_args_to_string(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
@@ -269,7 +269,7 @@ bool test_func_call_two_args_to_string() {
 	PASS;
 }
 
-bool test_func_call_many_args_to_string() {
+bool test_func_call_many_args_to_string(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));

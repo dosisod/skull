@@ -5,7 +5,7 @@
 
 #include "../skull/common/color.h"
 
-typedef _Bool (*Test)();
+typedef _Bool (*Test)(void);
 
 #define RUN_ALL(...) \
 	run_many_tests((Test[]){ \
