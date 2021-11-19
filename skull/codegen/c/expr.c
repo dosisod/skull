@@ -9,14 +9,14 @@
 
 #include "skull/codegen/c/expr.h"
 
-static CExpr const_expr_node_to_string(const AstNodeExpr *);
-static CExpr binary_expr_to_string(const AstNodeExpr *);
-static CExpr unary_expr_to_string(const AstNodeExpr *);
+static CExpr gen_expr_const_c(const AstNodeExpr *);
+static CExpr gen_expr_binary_c(const AstNodeExpr *);
+static CExpr gen_expr_unary_c(const AstNodeExpr *);
 
-CExpr expr_node_to_string(const AstNodeExpr *expr) {
+CExpr gen_expr_c(const AstNodeExpr *expr) {
 	switch (expr->oper) {
 		case EXPR_CONST:
-			return const_expr_node_to_string(expr);
+			return gen_expr_const_c(expr);
 		case EXPR_IDENTIFIER:
 			return strdup(expr->var->name);
 		case EXPR_ADD:
@@ -36,18 +36,18 @@ CExpr expr_node_to_string(const AstNodeExpr *expr) {
 		case EXPR_OR:
 		case EXPR_XOR:
 		case EXPR_POW:
-			return binary_expr_to_string(expr);
+			return gen_expr_binary_c(expr);
 		case EXPR_UNARY_NEG:
 		case EXPR_NOT:
-			return unary_expr_to_string(expr);
+			return gen_expr_unary_c(expr);
 		case EXPR_FUNC:
-			return func_expr_node_to_string(expr->lhs.func_call);
+			return gen_expr_func_call_c(expr->lhs.func_call);
 		default:
 			return NULL;
 	}
 }
 
-static CExpr const_expr_node_to_string(const AstNodeExpr *expr) {
+static CExpr gen_expr_const_c(const AstNodeExpr *expr) {
 	if (expr->type == TYPE_INT) {
 		const int64_t i = expr->value._int;
 
@@ -75,7 +75,7 @@ static CExpr const_expr_node_to_string(const AstNodeExpr *expr) {
 	return NULL;
 }
 
-static CExpr binary_expr_to_string(const AstNodeExpr *expr) {
+static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 	const char *fmt = NULL;
 
 	switch (expr->oper) {
@@ -103,8 +103,8 @@ static CExpr binary_expr_to_string(const AstNodeExpr *expr) {
 		default: return NULL;
 	}
 
-	CExpr expr_lhs = expr_node_to_string(expr->lhs.expr);
-	CExpr expr_rhs = expr_node_to_string(expr->rhs);
+	CExpr expr_lhs = gen_expr_c(expr->lhs.expr);
+	CExpr expr_rhs = gen_expr_c(expr->rhs);
 
 	CExpr out = uvsnprintf(fmt, expr_lhs, expr_rhs);
 
@@ -113,7 +113,7 @@ static CExpr binary_expr_to_string(const AstNodeExpr *expr) {
 	return out;
 }
 
-static CExpr unary_expr_to_string(const AstNodeExpr *expr) {
+static CExpr gen_expr_unary_c(const AstNodeExpr *expr) {
 	const char *fmt = NULL;
 
 	switch (expr->oper) {
@@ -124,14 +124,14 @@ static CExpr unary_expr_to_string(const AstNodeExpr *expr) {
 
 	if (!fmt) return NULL;
 
-	CExpr expr_str = expr_node_to_string(expr->rhs);
+	CExpr expr_str = gen_expr_c(expr->rhs);
 	CExpr out = uvsnprintf(fmt, expr_str);
 
 	free(expr_str);
 	return out;
 }
 
-CExpr func_expr_node_to_string(const AstNodeFunctionCall *func_call) {
+CExpr gen_expr_func_call_c(const AstNodeFunctionCall *func_call) {
 	FunctionDeclaration *function = func_call->func_decl;
 	char *name = function->name;
 	unsigned short num_params = function->num_params;
@@ -143,7 +143,7 @@ CExpr func_expr_node_to_string(const AstNodeFunctionCall *func_call) {
 	unsigned short at = 0;
 
 	while (at < num_params) {
-		CExpr expr = expr_node_to_string(param->expr);
+		CExpr expr = gen_expr_c(param->expr);
 
 		if (at == 0) {
 			param_list = expr;

@@ -64,7 +64,6 @@ int run_pipeline(const char *filename, char *file_contents) {
 	free_ast_tree(node);
 	free(_file_contents);
 	free(file_contents);
-	llvm_backend.cleanup();
 	err |= free_semantic_state();
 
 	return err;

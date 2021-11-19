@@ -6,24 +6,24 @@
 
 #include "skull/codegen/c/flow.h"
 
-CStmt return_node_to_string(const AstNode *node) {
+CStmt gen_stmt_return_c(const AstNode *node) {
 	if (!node->expr_node || !node->expr_node->expr) return strdup("return;");
 
-	CExpr expr_str = expr_node_to_string(node->expr_node->expr);
+	CExpr expr_str = gen_expr_c(node->expr_node->expr);
 	CStmt stmt = uvsnprintf("return %s;", expr_str);
 
 	free(expr_str);
 	return stmt;
 }
 
-CStmt noop_to_string(const AstNode *node) {
+CStmt gen_stmt_noop_c(const AstNode *node) {
 	(void)node;
 
 	return strdup("(void)0;");
 }
 
-CBlock if_to_string(const AstNode *node) {
-	CExpr expr_str = expr_node_to_string(node->expr_node->expr);
+CBlock gen_control_if_c(const AstNode *node) {
+	CExpr expr_str = gen_expr_c(node->expr_node->expr);
 
 	CBlock block = uvsnprintf("if (%s) {}", expr_str);
 

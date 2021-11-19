@@ -5,6 +5,6 @@
 typedef char * CStmt;
 typedef char * CBlock;
 
-CStmt return_node_to_string(const AstNode *);
-CStmt noop_to_string(const AstNode *);
-CBlock if_to_string(const AstNode *);
+CStmt gen_stmt_return_c(const AstNode *);
+CStmt gen_stmt_noop_c(const AstNode *);
+CBlock gen_control_if_c(const AstNode *);

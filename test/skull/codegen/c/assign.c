@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "skull/codegen/c/assign.h"
+#include "skull/codegen/c/types.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/variable.h"
 
@@ -15,7 +16,7 @@ static bool test_assign(void) {
 	SET_EXPR_VALUE_INT(node->var_assign->expr_node->expr, 1);
 	node->var_assign->var = make_variable(TYPE_INT, U"x", false);
 
-	char *str = var_assign_to_string(node);
+	char *str = gen_stmt_var_assign_c(node);
 
 	ASSERT_TRUTHY(str);
 	ASSERT_EQUAL(strcmp(str, "x = 1;"), 0);
@@ -33,10 +34,10 @@ static bool test_mutable_var_def(void) {
 	SET_EXPR_VALUE_INT(node->var_def->expr_node->expr, 1);
 	node->var_def->var = make_variable(TYPE_INT, U"x", false);
 
-	char *str = var_def_to_string(node);
+	char *str = gen_stmt_var_def_c(node);
 
 	ASSERT_TRUTHY(str);
-	ASSERT_EQUAL(strcmp(str, "int64_t x = 1;"), 0);
+	ASSERT_EQUAL(strcmp(str, TYPE_INT_C" x = 1;"), 0);
 
 	free(str);
 	free_variable(node->var_def->var);
@@ -51,10 +52,10 @@ static bool test_const_var_def(void) {
 	SET_EXPR_VALUE_INT(node->var_def->expr_node->expr, 1);
 	node->var_def->var = make_variable(TYPE_INT, U"x", true);
 
-	char *str = var_def_to_string(node);
+	char *str = gen_stmt_var_def_c(node);
 
 	ASSERT_TRUTHY(str);
-	ASSERT_EQUAL(strcmp(str, "const int64_t x = 1;"), 0);
+	ASSERT_EQUAL(strcmp(str, "const "TYPE_INT_C" x = 1;"), 0);
 
 	free(str);
 	free_variable(node->var_def->var);

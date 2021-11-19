@@ -4,5 +4,5 @@
 
 typedef char * CExpr;
 
-CExpr expr_node_to_string(const AstNodeExpr *);
-CExpr func_expr_node_to_string(const AstNodeFunctionCall *);
+CExpr gen_expr_c(const AstNodeExpr *);
+CExpr gen_expr_func_call_c(const AstNodeFunctionCall *);

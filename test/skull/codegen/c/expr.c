@@ -12,8 +12,8 @@
 #include "test/skull/semantic/macros.h"
 #include "test/testing.h"
 
-bool expr_to_string_fixture(const AstNodeExpr *expr, const char *expected) {
-	char *out = expr_node_to_string(expr);
+static bool expr_fixture(const AstNodeExpr *expr, const char *expected) {
+	char *out = gen_expr_c(expr);
 
 	const bool pass = out && strcmp(out, expected) == 0;
 
@@ -21,9 +21,9 @@ bool expr_to_string_fixture(const AstNodeExpr *expr, const char *expected) {
 	return pass;
 }
 
-bool test_int_expr_to_string(void) {
+static bool test_int_expr(void) {
 	ASSERT_TRUTHY(
-		expr_to_string_fixture(
+		expr_fixture(
 			AST_NODE_CONST_INT(1234),
 			"1234"
 		)
@@ -32,7 +32,7 @@ bool test_int_expr_to_string(void) {
 	char *expected = uvsnprintf("%liL", INT_MAX + 1L);
 
 	ASSERT_TRUTHY(
-		expr_to_string_fixture(
+		expr_fixture(
 			AST_NODE_CONST_INT(INT_MAX + 1L),
 			expected
 		)
@@ -42,52 +42,52 @@ bool test_int_expr_to_string(void) {
 	PASS;
 }
 
-bool test_float_expr_to_string(void) {
+static bool test_float_expr(void) {
 	ASSERT_TRUTHY(
-		expr_to_string_fixture(
+		expr_fixture(
 			AST_NODE_CONST_FLOAT(3.14),
 			"0x1.91eb851eb851fp+1"
 		)
 	);
 
 	ASSERT_TRUTHY(
-		expr_to_string_fixture(AST_NODE_CONST_FLOAT(0), "0.0")
+		expr_fixture(AST_NODE_CONST_FLOAT(0), "0.0")
 	);
 
 	PASS;
 }
 
-bool test_bool_expr_to_string(void) {
+static bool test_bool_expr(void) {
 	ASSERT_TRUTHY(
-		expr_to_string_fixture(AST_NODE_CONST_BOOL(true), "1")
+		expr_fixture(AST_NODE_CONST_BOOL(true), "1")
 	);
 
 	ASSERT_TRUTHY(
-		expr_to_string_fixture(AST_NODE_CONST_BOOL(false), "0")
-	);
-
-	PASS;
-}
-
-bool test_rune_expr_to_string(void) {
-	ASSERT_TRUTHY(
-		expr_to_string_fixture(AST_NODE_CONST_RUNE('A'), "0x41")
+		expr_fixture(AST_NODE_CONST_BOOL(false), "0")
 	);
 
 	PASS;
 }
 
-bool test_identifier_expr_to_string(void) {
+static bool test_rune_expr(void) {
+	ASSERT_TRUTHY(
+		expr_fixture(AST_NODE_CONST_RUNE('A'), "0x41")
+	);
+
+	PASS;
+}
+
+static bool test_identifier_expr(void) {
 	Variable *var = make_variable(TYPE_INT, U"x", false);
 
-	ASSERT_TRUTHY(expr_to_string_fixture(AST_NODE_EXPR_VAR(var), "x"));
+	ASSERT_TRUTHY(expr_fixture(AST_NODE_EXPR_VAR(var), "x"));
 
 	free_variable(var);
 
 	PASS;
 }
 
-bool test_binary_expr_to_string(void) {
+static bool test_binary_expr(void) {
 	ExprType *opers = (ExprType[]){
 		EXPR_ADD,
 		EXPR_SUB,
@@ -139,7 +139,7 @@ bool test_binary_expr_to_string(void) {
 		SET_EXPR_VALUE_INT(node->expr->lhs.expr, 1);
 		SET_EXPR_VALUE_INT(node->expr->rhs, 1);
 
-		char *expr_str = expr_node_to_string(node->expr);
+		char *expr_str = gen_expr_c(node->expr);
 
 		pass &= expr_str && strcmp(*expected, expr_str) == 0;
 
@@ -152,7 +152,7 @@ bool test_binary_expr_to_string(void) {
 	return pass;
 }
 
-bool test_int_pow_expr_to_string(void) {
+static bool test_int_pow_expr(void) {
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		AST_NODE_CONST_EXPR(NULL),
 		EXPR_POW,
@@ -162,7 +162,7 @@ bool test_int_pow_expr_to_string(void) {
 	SET_EXPR_VALUE_INT(expr->rhs, 2);
 	expr->type = TYPE_INT;
 
-	char *expr_str = expr_node_to_string(expr);
+	char *expr_str = gen_expr_c(expr);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "_int_pow(1, 2)") == 0);
 
@@ -170,7 +170,7 @@ bool test_int_pow_expr_to_string(void) {
 	PASS;
 }
 
-bool test_float_pow_expr_to_string(void) {
+static bool test_float_pow_expr(void) {
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		AST_NODE_CONST_EXPR(NULL),
 		EXPR_POW,
@@ -180,7 +180,7 @@ bool test_float_pow_expr_to_string(void) {
 	SET_EXPR_VALUE_FLOAT(expr->rhs, 2.0);
 	expr->type = TYPE_FLOAT;
 
-	char *expr_str = expr_node_to_string(expr);
+	char *expr_str = gen_expr_c(expr);
 
 	const char *expected = "_float_pow(0x1p+0, 0x1p+1)";
 	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
@@ -189,7 +189,7 @@ bool test_float_pow_expr_to_string(void) {
 	PASS;
 }
 
-bool test_unary_negation_to_string(void) {
+static bool test_unary_negation(void) {
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		NULL,
 		EXPR_UNARY_NEG,
@@ -197,7 +197,7 @@ bool test_unary_negation_to_string(void) {
 	);
 	SET_EXPR_VALUE_INT(expr->rhs, 1);
 
-	char *expr_str = expr_node_to_string(expr);
+	char *expr_str = gen_expr_c(expr);
 
 	const char *expected = "-(1)";
 	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
@@ -206,7 +206,7 @@ bool test_unary_negation_to_string(void) {
 	PASS;
 }
 
-bool test_unary_not_to_string(void) {
+static bool test_unary_not(void) {
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		NULL,
 		EXPR_NOT,
@@ -214,7 +214,7 @@ bool test_unary_not_to_string(void) {
 	);
 	SET_EXPR_VALUE_INT(expr->rhs, 1);
 
-	char *expr_str = expr_node_to_string(expr);
+	char *expr_str = gen_expr_c(expr);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "!1") == 0);
 
@@ -222,12 +222,12 @@ bool test_unary_not_to_string(void) {
 	PASS;
 }
 
-bool test_func_call_no_args_to_string(void) {
+static bool test_func_call_no_args(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 	char func_name[] = "f";
 	expr->lhs.func_call->func_decl->name = func_name;
 
-	char *expr_str = expr_node_to_string(expr);
+	char *expr_str = gen_expr_c(expr);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "f();") == 0);
 
@@ -235,7 +235,7 @@ bool test_func_call_no_args_to_string(void) {
 	PASS;
 }
 
-bool test_func_call_single_arg_to_string(void) {
+static bool test_func_call_single_arg(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
@@ -243,7 +243,7 @@ bool test_func_call_single_arg_to_string(void) {
 	expr->lhs.func_call->func_decl->name = (char[]){"f"};
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
 
-	char *expr_str = expr_node_to_string(expr);
+	char *expr_str = gen_expr_c(expr);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "f(1);") == 0);
 
@@ -251,7 +251,7 @@ bool test_func_call_single_arg_to_string(void) {
 	PASS;
 }
 
-bool test_func_call_two_args_to_string(void) {
+static bool test_func_call_two_args(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
@@ -261,7 +261,7 @@ bool test_func_call_two_args_to_string(void) {
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->expr, 2);
 
-	char *expr_str = expr_node_to_string(expr);
+	char *expr_str = gen_expr_c(expr);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2);") == 0);
 
@@ -269,7 +269,7 @@ bool test_func_call_two_args_to_string(void) {
 	PASS;
 }
 
-bool test_func_call_many_args_to_string(void) {
+static bool test_func_call_many_args(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
@@ -281,7 +281,7 @@ bool test_func_call_many_args_to_string(void) {
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->expr, 2);
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->next->expr, 3);
 
-	char *expr_str = expr_node_to_string(expr);
+	char *expr_str = gen_expr_c(expr);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2, 3);") == 0);
 
@@ -291,19 +291,19 @@ bool test_func_call_many_args_to_string(void) {
 
 void codegen_c_expr_test_self(bool *pass) {
 	RUN_ALL(
-		test_int_expr_to_string,
-		test_float_expr_to_string,
-		test_bool_expr_to_string,
-		test_rune_expr_to_string,
-		test_identifier_expr_to_string,
-		test_binary_expr_to_string,
-		test_int_pow_expr_to_string,
-		test_float_pow_expr_to_string,
-		test_unary_negation_to_string,
-		test_unary_not_to_string,
-		test_func_call_no_args_to_string,
-		test_func_call_single_arg_to_string,
-		test_func_call_two_args_to_string,
-		test_func_call_many_args_to_string
+		test_int_expr,
+		test_float_expr,
+		test_bool_expr,
+		test_rune_expr,
+		test_identifier_expr,
+		test_binary_expr,
+		test_int_pow_expr,
+		test_float_pow_expr,
+		test_unary_negation,
+		test_unary_not,
+		test_func_call_no_args,
+		test_func_call_single_arg,
+		test_func_call_two_args,
+		test_func_call_many_args
 	)
 }

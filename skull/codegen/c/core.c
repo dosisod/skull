@@ -40,11 +40,11 @@ CTree gen_tree_c(const AstNode *node) {
 
 static CStmt gen_node_c(const AstNode *node) {
 	switch (node->type) {
-		case AST_NODE_VAR_DEF: return var_def_to_string(node);
-		case AST_NODE_VAR_ASSIGN: return var_assign_to_string(node);
-		case AST_NODE_RETURN: return return_node_to_string(node);
-		case AST_NODE_NOOP: return noop_to_string(NULL);
-		case AST_NODE_EXPR: return expr_node_to_string(node->expr);
+		case AST_NODE_VAR_DEF: return gen_stmt_var_def_c(node);
+		case AST_NODE_VAR_ASSIGN: return gen_stmt_var_assign_c(node);
+		case AST_NODE_RETURN: return gen_stmt_return_c(node);
+		case AST_NODE_NOOP: return gen_stmt_noop_c(NULL);
+		case AST_NODE_EXPR: return gen_expr_c(node->expr);
 		default: return NULL;
 	}
 }

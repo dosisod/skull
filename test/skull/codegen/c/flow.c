@@ -9,14 +9,14 @@
 
 #include "test/skull/codegen/c/flow.h"
 
-bool test_return_node_to_string(void) {
+static bool test_return_node(void) {
 	AstNode *node = AST_NODE_RETURN(
 		NULL,
 		AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL))
 	);
 	SET_EXPR_VALUE_INT(node->expr_node->expr, 1);
 
-	char *str = return_node_to_string(node);
+	char *str = gen_stmt_return_c(node);
 
 	ASSERT_TRUTHY(strcmp(str, "return 1;") == 0);
 
@@ -24,9 +24,9 @@ bool test_return_node_to_string(void) {
 	PASS;
 }
 
-bool test_return_no_expr_to_string(void) {
+static bool test_return_no_expr(void) {
 	AstNode *node = AST_NODE_RETURN(NULL, NULL);
-	char *str = return_node_to_string(node);
+	char *str = gen_stmt_return_c(node);
 
 	ASSERT_TRUTHY(strcmp(str, "return;") == 0);
 
@@ -34,8 +34,8 @@ bool test_return_no_expr_to_string(void) {
 	PASS;
 }
 
-bool test_noop_to_string(void) {
-	char *str = noop_to_string(NULL);
+static bool test_noop(void) {
+	char *str = gen_stmt_noop_c(NULL);
 
 	ASSERT_TRUTHY(strcmp(str, "(void)0;") == 0);
 
@@ -43,11 +43,11 @@ bool test_noop_to_string(void) {
 	PASS;
 }
 
-bool test_if_to_string(void) {
+static bool test_if(void) {
 	AstNode *node = AST_NODE_IF(NULL, AST_SIMPLE_EXPR(NULL), NULL);
 	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
 
-	char *str = if_to_string(node);
+	char *str = gen_control_if_c(node);
 
 	ASSERT_TRUTHY(strcmp(str, "if (1) {}") == 0);
 
@@ -57,9 +57,9 @@ bool test_if_to_string(void) {
 
 void codegen_c_flow_test_self(bool *pass) {
 	RUN_ALL(
-		test_return_node_to_string,
-		test_return_no_expr_to_string,
-		test_noop_to_string,
-		test_if_to_string
+		test_return_node,
+		test_return_no_expr,
+		test_noop,
+		test_if
 	)
 }
