@@ -45,6 +45,7 @@ static CStmt gen_node_c(const AstNode *node) {
 		case AST_NODE_RETURN: return gen_stmt_return_c(node);
 		case AST_NODE_NOOP: return gen_stmt_noop_c(NULL);
 		case AST_NODE_EXPR: return gen_expr_c(node->expr);
+		case AST_NODE_IF: return gen_control_if_c(node);
 		default: return NULL;
 	}
 }

@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "skull/common/str.h"
+#include "skull/codegen/c/core.h"
 #include "skull/codegen/c/expr.h"
 
 #include "skull/codegen/c/flow.h"
@@ -24,9 +25,10 @@ CStmt gen_stmt_noop_c(const AstNode *node) {
 
 CBlock gen_control_if_c(const AstNode *node) {
 	CExpr expr_str = gen_expr_c(node->expr_node->expr);
+	CTree tree = gen_tree_c(node->child);
+	CBlock block = uvsnprintf("if (%s) {%s}", expr_str, tree);
 
-	CBlock block = uvsnprintf("if (%s) {}", expr_str);
-
+	free(tree);
 	free(expr_str);
 	return block;
 }

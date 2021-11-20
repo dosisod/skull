@@ -44,12 +44,12 @@ static bool test_noop(void) {
 }
 
 static bool test_if(void) {
-	AstNode *node = AST_NODE_IF(NULL, AST_SIMPLE_EXPR(NULL), NULL);
+	AstNode *node = AST_NODE_IF(NULL, AST_SIMPLE_EXPR(NULL), AST_NODE_NOOP());
 	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
 
 	char *str = gen_control_if_c(node);
 
-	ASSERT_TRUTHY(strcmp(str, "if (1) {}") == 0);
+	ASSERT_TRUTHY(strcmp(str, "if (1) {(void)0;}") == 0);
 
 	free(str);
 	PASS;
