@@ -10,8 +10,13 @@
 
 #include "skull/codegen/c/write.h"
 
-static const char *builtin_decls;
+static const char *_strcmp;
+static const char *_float_pow;
+static const char *_int_pow;
+static const char *headers;
 
+static void print_builtins(FILE *);
+static void print_headers(FILE *);
 
 /*
 Write c code to `filename`, return whether error occured.
@@ -23,7 +28,8 @@ bool write_file_c(const char *filename) {
 
 	char *module_name = create_main_func_name(filename);
 
-	fprintf(f, "%s\n", builtin_decls);
+	print_headers(f);
+	print_builtins(f);
 
 	fprintf(
 		f,
@@ -39,7 +45,19 @@ bool write_file_c(const char *filename) {
 	return false;
 }
 
-static const char *builtin_decls = \
+static void print_headers(FILE *f) {
+	fprintf(f, "%s\n", headers);
+}
+
+static void print_builtins(FILE *f) {
+	if (SKULL_STATE_C.called_strcmp) fprintf(f, "%s\n", _strcmp);
+	if (SKULL_STATE_C.called_int_pow) fprintf(f, "%s\n", _int_pow);
+	if (SKULL_STATE_C.called_float_pow) fprintf(f, "%s\n", _float_pow);
+}
+
+static const char *headers = "#include <stdint.h>\n";
+
+static const char *_strcmp = \
 "_Bool _strcmp(const char *a, const char *b) {\n"
 "	while (*a && *b) {\n"
 "		if (*a != *b) {\n"
@@ -50,12 +68,14 @@ static const char *builtin_decls = \
 "	}\n"
 "\n"
 "	return !*a && !*b;\n"
-"}\n"
-"\n"
+"}\n";
+
+
+static const char *_float_pow = \
 "#include <math.h>\n"
-"double (*_float_pow)(double, double) = pow;\n"
-"\n"
-"#include <stdint.h>\n"
+"double (*_float_pow)(double, double) = pow;\n";
+
+static const char *_int_pow = \
 "int64_t _int_pow(int64_t base, int64_t exp) {\n"
 "	int64_t result = base;\n"
 "	for (int64_t i = 1; i < exp; i++) result *= base;\n"

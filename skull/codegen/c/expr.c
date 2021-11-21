@@ -1,7 +1,9 @@
 #include <limits.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/codegen/c/shared.h"
 #include "skull/common/str.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/types.h"
@@ -96,8 +98,14 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 		case EXPR_OR: fmt = "(%s || %s)"; break;
 		case EXPR_XOR: fmt = "(%s ^ %s)"; break;
 		case EXPR_POW: {
-			if (expr->type == TYPE_INT) fmt = "_int_pow(%s, %s)";
-			else if (expr->type == TYPE_FLOAT) fmt = "_float_pow(%s, %s)";
+			if (expr->type == TYPE_INT) {
+				fmt = "_int_pow(%s, %s)";
+				SKULL_STATE_C.called_int_pow = true;
+			}
+			else if (expr->type == TYPE_FLOAT) {
+				fmt = "_float_pow(%s, %s)";
+				SKULL_STATE_C.called_float_pow = true;
+			}
 			break;
 		}
 		default: return NULL;
