@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "skull/codegen/c/expr.h"
+#include "skull/codegen/c/shared.h"
 #include "skull/common/str.h"
 #include "skull/parse/classify.h"
 #include "skull/parse/token.h"
@@ -72,6 +73,14 @@ static bool test_bool_expr(void) {
 static bool test_rune_expr(void) {
 	ASSERT_TRUTHY(
 		expr_fixture(AST_NODE_CONST_RUNE('A'), "0x41")
+	);
+
+	PASS;
+}
+
+static bool test_str_expr(void) {
+	ASSERT_TRUTHY(
+		expr_fixture(AST_NODE_CONST_STR((char[]){"hello"}), "\"hello\"")
 	);
 
 	PASS;
@@ -165,6 +174,7 @@ static bool test_int_pow_expr(void) {
 	char *expr_str = gen_expr_c(expr);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "_int_pow(1, 2)") == 0);
+	ASSERT_TRUTHY(SKULL_STATE_C.called_int_pow);
 
 	free(expr_str);
 	PASS;
@@ -184,6 +194,47 @@ static bool test_float_pow_expr(void) {
 
 	const char *expected = "_float_pow(0x1p+0, 0x1p+1)";
 	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
+	ASSERT_TRUTHY(SKULL_STATE_C.called_float_pow);
+
+	free(expr_str);
+	PASS;
+}
+
+static bool test_str_is(void) {
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		AST_NODE_CONST_EXPR(NULL),
+		EXPR_IS,
+		AST_NODE_CONST_EXPR(NULL)
+	);
+	SET_EXPR_VALUE_STR(expr->lhs.expr, "x");
+	SET_EXPR_VALUE_STR(expr->rhs, "x");
+	expr->type = TYPE_BOOL;
+
+	char *expr_str = gen_expr_c(expr);
+
+	const char *expected = "_strcmp(\"x\", \"x\")";
+	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
+	ASSERT_TRUTHY(SKULL_STATE_C.called_strcmp);
+
+	free(expr_str);
+	PASS;
+}
+
+static bool test_str_isnt(void) {
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		AST_NODE_CONST_EXPR(NULL),
+		EXPR_ISNT,
+		AST_NODE_CONST_EXPR(NULL)
+	);
+	SET_EXPR_VALUE_STR(expr->lhs.expr, "x");
+	SET_EXPR_VALUE_STR(expr->rhs, "x");
+	expr->type = TYPE_BOOL;
+
+	char *expr_str = gen_expr_c(expr);
+
+	const char *expected = "!_strcmp(\"x\", \"x\")";
+	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
+	ASSERT_TRUTHY(SKULL_STATE_C.called_strcmp);
 
 	free(expr_str);
 	PASS;
@@ -295,10 +346,13 @@ void codegen_c_expr_test_self(bool *pass) {
 		test_float_expr,
 		test_bool_expr,
 		test_rune_expr,
+		test_str_expr,
 		test_identifier_expr,
 		test_binary_expr,
 		test_int_pow_expr,
 		test_float_pow_expr,
+		test_str_is,
+		test_str_isnt,
 		test_unary_negation,
 		test_unary_not,
 		test_func_call_no_args,

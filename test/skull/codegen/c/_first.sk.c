@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <uchar.h>
 
 static int init(void) __asm__(".first");
 static int init(void) {

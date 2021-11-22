@@ -175,6 +175,13 @@
 		.oper = EXPR_CONST \
 	}
 
+#define AST_NODE_CONST_STR(_value) \
+	&(AstNodeExpr) { \
+		.type = TYPE_STR, \
+		.value.str = (_value), \
+		.oper = EXPR_CONST \
+	}
+
 #define AST_NODE_EXPR_VAR(_var) \
 	&(AstNodeExpr) { \
 		.var = (_var), \
@@ -192,6 +199,10 @@
 #define SET_EXPR_VALUE_BOOL(_expr, _value) \
 	(_expr)->type = TYPE_BOOL; \
 	(_expr)->value._bool = (_value)
+
+#define SET_EXPR_VALUE_STR(_expr, _value) \
+	(_expr)->type = TYPE_STR; \
+	(_expr)->value.str = (char[]){_value}
 
 typedef struct AstNode AstNode;
 typedef struct AstNodeExpr AstNodeExpr;

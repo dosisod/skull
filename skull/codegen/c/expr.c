@@ -73,6 +73,9 @@ static CExpr gen_expr_const_c(const AstNodeExpr *expr) {
 	if (expr->type == TYPE_RUNE) {
 		return uvsnprintf("0x%lX", expr->value.rune);
 	}
+	if (expr->type == TYPE_STR) {
+		return uvsnprintf("\"%s\"", expr->value.str);
+	}
 
 	return NULL;
 }
@@ -88,8 +91,22 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 		case EXPR_MOD: fmt = "(%s %% %s)"; break;
 		case EXPR_LSHIFT: fmt = "(%s << %s)"; break;
 		case EXPR_RSHIFT: fmt = "(%s >> %s)"; break;
-		case EXPR_IS: fmt = "(%s == %s)"; break;
-		case EXPR_ISNT: fmt = "(%s != %s)"; break;
+		case EXPR_IS: {
+			if (expr->lhs.expr->type == TYPE_STR) {
+				fmt = "_strcmp(%s, %s)";
+				SKULL_STATE_C.called_strcmp = true;
+			}
+			else fmt = "(%s == %s)";
+			break;
+		}
+		case EXPR_ISNT: {
+			if (expr->lhs.expr->type == TYPE_STR) {
+				fmt = "!_strcmp(%s, %s)";
+				SKULL_STATE_C.called_strcmp = true;
+			}
+			else fmt = "(%s != %s)";
+			break;
+		}
 		case EXPR_LESS_THAN: fmt = "(%s < %s)"; break;
 		case EXPR_GTR_THAN: fmt = "(%s > %s)"; break;
 		case EXPR_LESS_THAN_EQ: fmt = "(%s <= %s)"; break;

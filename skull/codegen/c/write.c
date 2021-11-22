@@ -55,7 +55,9 @@ static void print_builtins(FILE *f) {
 	if (SKULL_STATE_C.called_float_pow) fprintf(f, "%s\n", _float_pow);
 }
 
-static const char *headers = "#include <stdint.h>\n";
+static const char *headers = \
+"#include <stdint.h>\n" \
+"#include <uchar.h>\n";
 
 static const char *_strcmp = \
 "_Bool _strcmp(const char *a, const char *b) {\n"
