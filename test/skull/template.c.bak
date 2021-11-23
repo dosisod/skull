@@ -1,0 +1,15 @@
+#include <stdbool.h>
+
+#include "test/testing.h"
+
+#include "test/skull/NAME.h"
+
+static bool test_x(void) {
+	FAIL;
+}
+
+void x_test_self(bool *pass) {
+	RUN_ALL(
+		test_x,
+	)
+}

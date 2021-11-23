@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# shellcheck disable=SC2046,SC2215
+# shellcheck disable=SC2046,SC2215,SC2171
 
 include config.mk
 
@@ -45,6 +45,16 @@ docs:
 clean:
 	@$(ECHO) "\033[92mCleaning\033[0m\n"
 	@rm -rf build/*
+
+scaffold:
+	@[ -n "$(NAME)" ] || { echo "NAME is not set, exiting"; exit 1; }
+	@echo "\033[92mScaffold\033[0m $(NAME)\n"
+	@cp ./test/skull/template.c.bak ./test/skull/$(NAME).c
+	@cp ./test/skull/template.h.bak ./test/skull/$(NAME).h
+	@cp ./skull/template.c.bak ./skull/$(NAME).c
+	@cp ./skull/template.h.bak ./skull/$(NAME).h
+	@sed -i "s/NAME/$(subst /,\\/,$(NAME))/" ./test/skull/$(NAME).c
+	@sed -i "s/NAME/$(subst /,\\/,$(NAME))/" ./skull/$(NAME).c
 
 install: clean | skull
 	@mkdir -p $(MANPATH)
