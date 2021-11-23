@@ -9,12 +9,15 @@
 #include "skull/codegen/c/core.h"
 
 static CStmt gen_node_c(const AstNode *);
+static char *apply_indentation(char *);
 
 void gen_module_c(const AstNode *node) {
 	SKULL_STATE_C.tree = gen_tree_c(node);
 }
 
 CTree gen_tree_c(const AstNode *node) {
+	SKULL_STATE_C.indent_lvl++;
+
 	char *generated = NULL;
 
 	while (node) {
@@ -35,17 +38,31 @@ CTree gen_tree_c(const AstNode *node) {
 		node = node->next;
 	}
 
+	SKULL_STATE_C.indent_lvl--;
+
 	return generated;
 }
 
 static CStmt gen_node_c(const AstNode *node) {
+	char *str = NULL;
+
 	switch (node->type) {
-		case AST_NODE_VAR_DEF: return gen_stmt_var_def_c(node);
-		case AST_NODE_VAR_ASSIGN: return gen_stmt_var_assign_c(node);
-		case AST_NODE_RETURN: return gen_stmt_return_c(node);
-		case AST_NODE_NOOP: return gen_stmt_noop_c(NULL);
-		case AST_NODE_EXPR: return gen_expr_c(node->expr);
-		case AST_NODE_IF: return gen_control_if_c(node);
-		default: return NULL;
+		case AST_NODE_VAR_DEF: str = gen_stmt_var_def_c(node); break;
+		case AST_NODE_VAR_ASSIGN: str = gen_stmt_var_assign_c(node); break;
+		case AST_NODE_RETURN: str = gen_stmt_return_c(node); break;
+		case AST_NODE_NOOP: str = gen_stmt_noop_c(NULL); break;
+		case AST_NODE_EXPR: str = gen_expr_c(node->expr); break;
+		case AST_NODE_IF: str = gen_control_if_c(node); break;
+		default: break;
 	}
+
+	return apply_indentation(str);
+}
+
+static char *apply_indentation(char *str) {
+	char *old = str;
+	str = uvsnprintf("%s%s", get_indentation(), old);
+	free(old);
+
+	return str;
 }

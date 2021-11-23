@@ -49,7 +49,7 @@ static bool test_if(void) {
 
 	char *str = gen_control_if_c(node);
 
-	ASSERT_TRUTHY(strcmp(str, "if (1) {(void)0;}") == 0);
+	ASSERT_TRUTHY(strcmp(str, "if (1) {\n\t(void)0;\n}") == 0);
 
 	free(str);
 	PASS;

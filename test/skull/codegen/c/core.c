@@ -11,7 +11,7 @@ static bool test_parse_single_node(void) {
 
 	char *tree = gen_tree_c(node);
 
-	ASSERT_TRUTHY(strcmp(tree, "(void)0;") == 0);
+	ASSERT_TRUTHY(strcmp(tree, "\t(void)0;") == 0);
 
 	free(tree);
 	PASS;
@@ -23,7 +23,7 @@ static bool test_parse_multiple_nodes(void) {
 
 	char *tree = gen_tree_c(node);
 
-	ASSERT_TRUTHY(strcmp(tree, "(void)0;\n(void)0;") == 0);
+	ASSERT_TRUTHY(strcmp(tree, "\t(void)0;\n\t(void)0;") == 0);
 
 	free(tree);
 	PASS;
