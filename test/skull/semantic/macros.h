@@ -147,6 +147,15 @@
 		.parent = NULL \
 	}
 
+#define AST_NODE_WHILE(_token, _cond, _child) \
+	&(AstNode){ \
+		.type = AST_NODE_WHILE, \
+		.token = (_token), \
+		.child = (_child), \
+		.expr_node = (_cond), \
+		.parent = NULL \
+	}
+
 #define AST_NODE_CONST_INT(_value) \
 	&(AstNodeExpr) { \
 		.type = TYPE_INT, \

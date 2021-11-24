@@ -8,6 +8,8 @@
 
 #include "skull/codegen/c/flow.h"
 
+static CBlock gen_control_block_c(const AstNode *, const char *);
+
 CStmt gen_stmt_return_c(const AstNode *node) {
 	if (!node->expr_node || !node->expr_node->expr) return strdup("return;");
 
@@ -25,14 +27,28 @@ CStmt gen_stmt_noop_c(const AstNode *node) {
 }
 
 CBlock gen_control_if_c(const AstNode *node) {
+	return gen_control_block_c(node, "if (%s) {\n%s\n%s}");
+}
+
+CBlock gen_control_elif_c(const AstNode *node) {
+	return gen_control_block_c(node, "else if (%s) {\n%s\n%s}");
+}
+CBlock gen_control_else_c(const AstNode *node) {
+	CTree tree = gen_tree_c(node->child);
+	CBlock block = uvsnprintf("else {\n%s\n%s}", tree, get_indentation());
+
+	free(tree);
+	return block;
+}
+
+CBlock gen_control_while_c(const AstNode *node) {
+	return gen_control_block_c(node, "while (%s) {\n%s\n%s}");
+}
+
+static CBlock gen_control_block_c(const AstNode *node, const char *fmt) {
 	CExpr expr_str = gen_expr_c(node->expr_node->expr);
 	CTree tree = gen_tree_c(node->child);
-	CBlock block = uvsnprintf(
-		"if (%s) {\n%s\n%s}",
-		expr_str,
-		tree,
-		get_indentation()
-	);
+	CBlock block = uvsnprintf(fmt, expr_str, tree, get_indentation());
 
 	free(tree);
 	free(expr_str);

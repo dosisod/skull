@@ -53,6 +53,9 @@ static CStmt gen_node_c(const AstNode *node) {
 		case AST_NODE_NOOP: str = gen_stmt_noop_c(NULL); break;
 		case AST_NODE_EXPR: str = gen_expr_c(node->expr); break;
 		case AST_NODE_IF: str = gen_control_if_c(node); break;
+		case AST_NODE_ELIF: str = gen_control_elif_c(node); break;
+		case AST_NODE_ELSE: str = gen_control_else_c(node); break;
+		case AST_NODE_WHILE: str = gen_control_while_c(node); break;
 		default: break;
 	}
 

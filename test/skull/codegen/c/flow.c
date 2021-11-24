@@ -55,11 +55,49 @@ static bool test_if(void) {
 	PASS;
 }
 
+static bool test_elif(void) {
+	AstNode *node = AST_NODE_ELIF(NULL, AST_SIMPLE_EXPR(NULL), AST_NODE_NOOP());
+	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
+
+	char *str = gen_control_elif_c(node);
+
+	ASSERT_TRUTHY(strcmp(str, "else if (1) {\n\t(void)0;\n}") == 0);
+
+	free(str);
+	PASS;
+}
+
+static bool test_else(void) {
+	AstNode *node = AST_NODE_ELSE(NULL, AST_NODE_NOOP());
+
+	char *str = gen_control_else_c(node);
+
+	ASSERT_TRUTHY(strcmp(str, "else {\n\t(void)0;\n}") == 0);
+
+	free(str);
+	PASS;
+}
+
+static bool test_while(void) {
+	AstNode *node = AST_NODE_WHILE(NULL, AST_SIMPLE_EXPR(NULL), AST_NODE_NOOP());
+	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
+
+	char *str = gen_control_while_c(node);
+
+	ASSERT_TRUTHY(strcmp(str, "while (1) {\n\t(void)0;\n}") == 0);
+
+	free(str);
+	PASS;
+}
+
 void codegen_c_flow_test_self(bool *pass) {
 	RUN_ALL(
 		test_return_node,
 		test_return_no_expr,
 		test_noop,
-		test_if
+		test_if,
+		test_elif,
+		test_else,
+		test_while
 	)
 }
