@@ -1,4 +1,18 @@
 mut x := 1
 x = 2
 noop
+
+if true {
+	noop
+}
+elif true {
+	noop
+}
+else {
+	noop
+}
+while false {
+	noop
+}
+
 return x
