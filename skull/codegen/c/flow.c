@@ -26,6 +26,12 @@ CStmt gen_stmt_noop_c(const AstNode *node) {
 	return strdup("(void)0;");
 }
 
+CStmt gen_stmt_unreachable_c(const AstNode *node) {
+	(void)node;
+
+	return strdup("while (1) {}");
+}
+
 CBlock gen_control_if_c(const AstNode *node) {
 	return gen_control_block_c(node, "if (%s) {\n%s\n%s}");
 }

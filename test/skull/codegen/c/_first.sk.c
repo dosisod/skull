@@ -13,7 +13,7 @@ static int init(void) {
 		(void)0;
 	}
 	else {
-		(void)0;
+		while (1) {}
 	}
 	while (0) {
 		(void)0;

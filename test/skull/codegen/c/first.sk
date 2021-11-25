@@ -1,3 +1,5 @@
+# ignored
+
 mut x := 1
 x = 2
 noop
@@ -9,7 +11,7 @@ elif true {
 	noop
 }
 else {
-	noop
+	unreachable
 }
 while false {
 	noop
