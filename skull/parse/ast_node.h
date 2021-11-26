@@ -34,7 +34,6 @@ typedef struct AstNodeFunctionCall AstNodeFunctionCall;
 typedef struct AstNodeExpr AstNodeExpr;
 typedef struct FunctionDeclaration FunctionDeclaration;
 typedef struct Variable Variable;
-typedef struct FunctionDeclaration FunctionDeclaration;
 typedef const char * Type;
 
 /*

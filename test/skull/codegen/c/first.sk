@@ -21,4 +21,10 @@ while false {
 	noop
 }
 
+external f()
+
+f()
+
+f2() { noop }
+
 return a

@@ -3,6 +3,7 @@
 #include "skull/codegen/c/assign.h"
 #include "skull/codegen/c/expr.h"
 #include "skull/codegen/c/flow.h"
+#include "skull/codegen/c/func.h"
 #include "skull/codegen/c/shared.h"
 #include "skull/common/str.h"
 
@@ -57,6 +58,7 @@ static CStmt gen_node_c(const AstNode *node) {
 		case AST_NODE_ELSE: str = gen_control_else_c(node); break;
 		case AST_NODE_WHILE: str = gen_control_while_c(node); break;
 		case AST_NODE_UNREACHABLE: str = gen_stmt_unreachable_c(NULL); break;
+		case AST_NODE_FUNCTION_PROTO: gen_function_def_c(node); break;
 		default: break;
 	}
 

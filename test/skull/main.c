@@ -20,6 +20,7 @@
 #include "codegen/c/core.h"
 #include "codegen/c/expr.h"
 #include "codegen/c/flow.h"
+#include "codegen/c/func.h"
 
 #include "../testing.h"
 
@@ -52,6 +53,7 @@ int main(void) {
 	codegen_c_assign_test_self(&passed);
 	codegen_c_flow_test_self(&passed);
 	codegen_c_core_test_self(&passed);
+	codegen_c_func_test_self(&passed);
 
 	if (passed) {
 		puts("All tests passed!");

@@ -4,6 +4,10 @@
 
 static int64_t a = 1;
 static const int64_t b = 2;
+void f(void);
+static void f2(void) {
+	(void)0;
+}
 
 static int init(void) __asm__(".first");
 static int init(void) {
@@ -22,6 +26,7 @@ static int init(void) {
 	while (0) {
 		(void)0;
 	}
+	f();
 	return a;
 	return 0;
 }
