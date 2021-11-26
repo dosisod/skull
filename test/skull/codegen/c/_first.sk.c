@@ -1,13 +1,17 @@
 #include <stdint.h>
 #include <uchar.h>
 
+
+static int64_t a = 1;
+static const int64_t b = 2;
+
 static int init(void) __asm__(".first");
 static int init(void) {
-	int64_t x = 1;
-	x = 2;
+	a = 2;
 	(void)0;
 	if (1) {
-		(void)0;
+		int64_t c = 3;
+		const int64_t d = 4;
 	}
 	else if (1) {
 		(void)0;
@@ -18,7 +22,7 @@ static int init(void) {
 	while (0) {
 		(void)0;
 	}
-	return x;
+	return a;
 	return 0;
 }
 int main(void) { return init(); }

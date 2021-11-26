@@ -57,8 +57,10 @@ static CStmt gen_node_c(const AstNode *node) {
 		case AST_NODE_ELSE: str = gen_control_else_c(node); break;
 		case AST_NODE_WHILE: str = gen_control_while_c(node); break;
 		case AST_NODE_UNREACHABLE: str = gen_stmt_unreachable_c(NULL); break;
-		default: return NULL;
+		default: break;
 	}
+
+	if (!str) return NULL;
 
 	return apply_indentation(str);
 }

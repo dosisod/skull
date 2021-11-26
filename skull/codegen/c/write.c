@@ -17,6 +17,7 @@ static const char *headers;
 
 static void print_builtins(FILE *);
 static void print_headers(FILE *);
+static void print_globals(FILE *);
 
 /*
 Write c code to `filename`, return whether error occured.
@@ -30,6 +31,7 @@ bool write_file_c(const char *filename) {
 
 	print_headers(f);
 	print_builtins(f);
+	print_globals(f);
 
 	fprintf(
 		f,
@@ -47,6 +49,10 @@ bool write_file_c(const char *filename) {
 
 static void print_headers(FILE *f) {
 	fprintf(f, "%s\n", headers);
+}
+
+static void print_globals(FILE *f) {
+	fprintf(f, "%s\n\n", SKULL_STATE_C.globals);
 }
 
 static void print_builtins(FILE *f) {

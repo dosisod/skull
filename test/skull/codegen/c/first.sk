@@ -1,11 +1,15 @@
 # ignored
 
-mut x := 1
-x = 2
+mut a := 1
+a = 2
+
+b := 2
+
 noop
 
 if true {
-	noop
+	mut c := 3
+	d := 4
 }
 elif true {
 	noop
@@ -17,4 +21,4 @@ while false {
 	noop
 }
 
-return x
+return a
