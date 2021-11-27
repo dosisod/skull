@@ -59,8 +59,10 @@ static int compile_file(char *filename) {
 		bool err = false;
 		FMT_WARN(err, WARN_FILE_EMPTY, {0});
 
-		fclose(f);
-		return err;
+		if (err) {
+			fclose(f);
+			return err;
+		}
 	}
 	fclose(f);
 

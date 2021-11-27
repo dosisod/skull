@@ -39,7 +39,7 @@ bool write_file_c(const char *filename) {
 		"static int init(void) {\n%s\n\treturn 0;\n}\n" \
 		"int main(void) { return init(); }\n",
 		module_name,
-		SKULL_STATE_C.tree
+		SKULL_STATE_C.tree ? SKULL_STATE_C.tree : ""
 	);
 
 	free(module_name);
@@ -52,7 +52,7 @@ static void print_headers(FILE *f) {
 }
 
 static void print_globals(FILE *f) {
-	fprintf(f, "%s\n\n", SKULL_STATE_C.globals);
+	if (SKULL_STATE_C.globals) fprintf(f, "%s\n\n", SKULL_STATE_C.globals);
 }
 
 static void print_builtins(FILE *f) {
