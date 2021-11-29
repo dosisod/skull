@@ -15,7 +15,7 @@
 /*
 Write LLVM code to `filename`, return whether error occured.
 */
-bool write_file_llvm(char *filename) {
+bool write_file_llvm(const char *filename) {
 	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
 
 	if (strcmp(filename, "-") == 0) {

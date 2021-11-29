@@ -7,6 +7,7 @@ typedef struct Backend {
 	_Bool (*write)(const char *);
 	void (*gen_module)(const AstNode *);
 	void (*cleanup)(void);
+	const char *extension;
 } Backend;
 
 _Bool run_backend(const Backend *, const AstNode *, const char *);

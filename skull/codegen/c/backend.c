@@ -5,5 +5,6 @@
 
 Backend c_backend = {
 	.write = write_file_c,
-	.gen_module = gen_module_c
+	.gen_module = gen_module_c,
+	.extension = "c"
 };

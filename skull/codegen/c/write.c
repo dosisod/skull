@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "skull/build_data.h"
 #include "skull/codegen/abi.h"
 #include "skull/codegen/c/shared.h"
 #include "skull/common/io.h"
@@ -23,11 +24,11 @@ static void print_globals(FILE *);
 Write c code to `filename`, return whether error occured.
 */
 bool write_file_c(const char *filename) {
-	char *c_filename = gen_filename(filename, "c");
-	FILE *f = open_file(c_filename, false);
-	free(c_filename);
+	FILE *f = strcmp(filename, "-") == 0 ?
+		stdout :
+		open_file(filename, false);
 
-	char *module_name = create_main_func_name(filename);
+	char *module_name = create_main_func_name(BUILD_DATA.filename);
 
 	print_headers(f);
 	print_builtins(f);
