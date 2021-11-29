@@ -52,7 +52,7 @@ static CStmt gen_node_c(const AstNode *node) {
 		case AST_NODE_VAR_ASSIGN: str = gen_stmt_var_assign_c(node); break;
 		case AST_NODE_RETURN: str = gen_stmt_return_c(node); break;
 		case AST_NODE_NOOP: str = gen_stmt_noop_c(NULL); break;
-		case AST_NODE_EXPR: str = gen_expr_c(node->expr); break;
+		case AST_NODE_EXPR: str = gen_stmt_func_call_c(node); break;
 		case AST_NODE_IF: str = gen_control_if_c(node); break;
 		case AST_NODE_ELIF: str = gen_control_elif_c(node); break;
 		case AST_NODE_ELSE: str = gen_control_else_c(node); break;

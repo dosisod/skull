@@ -280,7 +280,7 @@ static bool test_func_call_no_args(void) {
 
 	char *expr_str = gen_expr_c(expr);
 
-	ASSERT_TRUTHY(strcmp(expr_str, "f();") == 0);
+	ASSERT_TRUTHY(strcmp(expr_str, "f()") == 0);
 
 	free(expr_str);
 	PASS;
@@ -296,7 +296,7 @@ static bool test_func_call_single_arg(void) {
 
 	char *expr_str = gen_expr_c(expr);
 
-	ASSERT_TRUTHY(strcmp(expr_str, "f(1);") == 0);
+	ASSERT_TRUTHY(strcmp(expr_str, "f(1)") == 0);
 
 	free(expr_str);
 	PASS;
@@ -314,7 +314,7 @@ static bool test_func_call_two_args(void) {
 
 	char *expr_str = gen_expr_c(expr);
 
-	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2);") == 0);
+	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2)") == 0);
 
 	free(expr_str);
 	PASS;
@@ -334,7 +334,7 @@ static bool test_func_call_many_args(void) {
 
 	char *expr_str = gen_expr_c(expr);
 
-	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2, 3);") == 0);
+	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2, 3)") == 0);
 
 	free(expr_str);
 	PASS;

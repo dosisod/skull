@@ -161,7 +161,7 @@ CExpr gen_expr_func_call_c(const AstNodeFunctionCall *func_call) {
 	char *name = function->name;
 	unsigned short num_params = function->num_params;
 
-	if (num_params == 0) return uvsnprintf("%s();", name);
+	if (num_params == 0) return uvsnprintf("%s()", name);
 
 	const AstNode *param = func_call->params;
 	char *param_list = NULL;
@@ -184,7 +184,7 @@ CExpr gen_expr_func_call_c(const AstNodeFunctionCall *func_call) {
 		param = param->next;
 	}
 
-	CExpr temp = uvsnprintf("%s(%s);", name, param_list);
+	CExpr temp = uvsnprintf("%s(%s)", name, param_list);
 
 	free(param_list);
 	return temp;

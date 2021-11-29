@@ -21,10 +21,12 @@ while false {
 	noop
 }
 
-external f()
+external f() Int
 
 f()
 
 f2() { noop }
+
+x := 1 + f()
 
 return a

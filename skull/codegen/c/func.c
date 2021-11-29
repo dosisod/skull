@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "skull/codegen/c/core.h"
+#include "skull/codegen/c/expr.h"
 #include "skull/codegen/c/shared.h"
 #include "skull/codegen/c/types.h"
 #include "skull/common/str.h"
@@ -10,6 +11,14 @@
 #include "skull/codegen/c/func.h"
 
 static char *gen_param_c(AstNodeFunctionParam *);
+
+CStmt gen_stmt_func_call_c(const AstNode *node) {
+	CExpr expr = gen_expr_c(node->expr);
+	CStmt out = uvsnprintf("%s;", expr);
+
+	free(expr);
+	return out;
+}
 
 void gen_function_def_c(const AstNode *node) {
 	char *func = gen_function_prototype_c(node);
