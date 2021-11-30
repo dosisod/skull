@@ -22,8 +22,6 @@ Function takes ownership of `file_contents`.
 Return `true` if errors occurred.
 */
 int run_pipeline(const char *filename, char *file_contents) {
-	BUILD_DATA.filename = filename;
-
 	char32_t *_file_contents = mbstoc32s(file_contents);
 	if (!_file_contents) {
 		free(file_contents);

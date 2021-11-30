@@ -1,6 +1,9 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdnoreturn.h>
+
+#include "skull/build_data.h"
 
 #include "parse/ast_node.h"
 #include "parse/classify.h"
@@ -26,9 +29,9 @@
 
 #include "skull/common/local.h"
 
-_Bool SKULL_TESTING = 1;
-
 int main(void) {
+	BUILD_DATA.quiet = true;
+
 	setup_locale();
 
 	_Bool passed = 1;

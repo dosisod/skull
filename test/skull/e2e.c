@@ -12,7 +12,6 @@
 #include "skull/pipeline.h"
 #include "test/testing.h"
 
-bool SKULL_TESTING = 0;
 #define TEST_DIR "./test/sh"
 
 static int e2e_wrapper(const char *, const char *, const char *, const char *);
@@ -2210,7 +2209,8 @@ NULL,
 static int e2e_wrapper(const char *code, const char *mock_file, const char *llvm_expected, const char *err_expected) {
 	char *output_file = NULL;
 
-	if (!err_expected) BUILD_DATA.quiet = true;
+	BUILD_DATA.quiet = !err_expected;
+	BUILD_DATA.filename = mock_file;
 
 	char *tmp = strdup(code);
 	bool err = run_pipeline(mock_file, tmp);

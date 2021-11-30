@@ -15,8 +15,6 @@
 
 static int compile_file(char *);
 
-bool SKULL_TESTING = false;
-
 /*
 Actual `main` function, can be called by external programs.
 */
@@ -54,8 +52,6 @@ static int compile_file(char *filename) {
 
 	char *const file_contents = file_to_string(f);
 	if (!file_contents) {
-		BUILD_DATA.filename = filename;
-
 		bool err = false;
 		FMT_WARN(err, WARN_FILE_EMPTY, {0});
 

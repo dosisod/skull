@@ -4,16 +4,11 @@
 #include <stdlib.h>
 #include <stdnoreturn.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <unistd.h>
 
 #include "skull/build_data.h"
-#include "skull/codegen/abi.h"
-#include "skull/common/io.h"
+#include "skull/codegen/llvm/cc.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
-#include "skull/real_main.h"
 
 
 #ifndef SKULL_VERSION
@@ -28,49 +23,39 @@
 static int usage(void);
 static int version(void);
 static void set_bool_flag(bool *, const char *);
-static int handle_file(void);
-static int run_llc(void);
-static int run_cc(char *);
-static bool is_directory(const char *);
-static const char *module_shim;
 static bool parse_long_option(const char *);
 static char *squash_argv(char *[]);
-static int sh(char *[]);
-static int shell(char *);
 static int handle_args(int, char *[]);
 static void cleanup(void);
 static noreturn void bail(int);
-static char *get_llc_binary(void);
-
-char *filename = NULL;
-char *args = (char[]){0};
-char *out_filename = NULL;
 
 int main(int argc, char *argv[]) {
 	if (argc == 1) return usage();
 
-	const int exit_code = handle_args(argc - 1, argv + 1);
-	if (exit_code) return exit_code;
+	int err = handle_args(argc - 1, argv + 1);
+	if (err) return err;
 
-	if (!filename) {
+	if (!BUILD_DATA.filename) {
 		puts("skull: expected filename");
 		return 1;
 	}
 
-	if (!strrstr(filename, ".sk")) {
+	if (!strrstr(BUILD_DATA.filename, ".sk")) {
 		printf("skull: missing required \".sk\" extension, exiting");
-		free(out_filename);
+		cleanup();
 		return 1;
 	}
 
-	return handle_file();
+	err = handle_file();
+	free(BUILD_DATA.out_file);
+	return err;
 }
 
 static int handle_args(int argc, char *argv[]) {
 	if (argc == 0) return 0;
 
 	if (**argv != '-') {
-		filename = argv[0];
+		BUILD_DATA.filename = argv[0];
 		return handle_args(--argc, ++argv);
 	}
 
@@ -108,9 +93,8 @@ static int handle_args(int argc, char *argv[]) {
 				bail(1);
 			}
 
-			free(out_filename);
-			out_filename = strdup(argv[1]);
-			BUILD_DATA.out_file = out_filename;
+			free(BUILD_DATA.out_file);
+			BUILD_DATA.out_file = strdup(argv[1]);
 			argc--;
 			break;
 		}
@@ -126,7 +110,7 @@ static int handle_args(int argc, char *argv[]) {
 				bail(1);
 			}
 
-			args = squash_argv(argv + 1);
+			BUILD_DATA.extra_args = squash_argv(argv + 1);
 			return 0;
 		}
 		default: {
@@ -144,130 +128,6 @@ static void set_bool_flag(bool *flag, const char *str) {
 		bail(1);
 	}
 	*flag = true;
-}
-
-static int handle_file(void) {
-	char *binary_name = strdup(filename); // NOLINT
-	char *last_dot = strrchr(binary_name, '.');
-	binary_name[last_dot - binary_name] = '\0';
-
-	if (is_directory(binary_name)) {
-		printf("skull: \"%s\" is a directory not a file\n", binary_name);
-		free(binary_name);
-		return 1;
-	}
-
-	const int err = real_main(2, (char *[]){ NULL, filename, NULL });
-	if (err || BUILD_DATA.preprocess || BUILD_DATA.c_backend) {
-		free(binary_name);
-		free(out_filename);
-		return err;
-	}
-
-	if (BUILD_DATA.preprocess) {
-		free(binary_name);
-		return 0;
-	}
-
-	const int exit_code = run_llc();
-	if (exit_code) {
-		free(binary_name);
-		free(out_filename);
-		return exit_code;
-	}
-
-	if (BUILD_DATA.asm_backend || BUILD_DATA.compile_only) {
-		free(binary_name);
-		free(out_filename);
-		return 0;
-	}
-
-	return run_cc(binary_name);
-}
-
-static int run_llc(void) {
-	if (!out_filename) {
-		out_filename = gen_filename(
-			filename,
-			BUILD_DATA.asm_backend ? "s" : "o"
-		);
-	}
-	if (!BUILD_DATA.asm_backend && strcmp(out_filename, "-") == 0) {
-		puts("skull: cannot print binary file to stdout");
-		return 1;
-	}
-
-	char *llc_cmd = get_llc_binary();
-	if (!llc_cmd) return 1;
-
-	char *llvm_file = gen_filename(filename, "ll");
-	char *filetype = strdup(BUILD_DATA.asm_backend ?
-		"-filetype=asm" :
-		"-filetype=obj"
-	);
-
-	char *_args[] = {
-		llc_cmd,
-		llvm_file,
-		filetype,
-		(char[]){"-o"},
-		out_filename,
-		NULL
-	};
-
-	const int exit_code = sh(_args);
-
-	errno = 0;
-	remove(llvm_file);
-
-	free(llvm_file);
-	free(filetype);
-
-	if (errno) {
-		perror("remove");
-		return 1;
-	}
-
-	return exit_code;
-}
-
-#define CHECK_CMD(_cmd) { \
-	const bool cmd_exists = !shell((char[]){"which "_cmd" > /dev/null"}); \
-	static char cmd[] = _cmd; \
-	if (cmd_exists) return cmd; \
-}
-
-static char *get_llc_binary(void) {
-	CHECK_CMD("llc-10")
-	CHECK_CMD("llc")
-
-	puts("skull: llc-10 command not found");
-
-	return NULL;
-}
-#undef CHECK_CMD
-
-static int run_cc(char *binary_name) {
-	char *module_name = create_main_func_name(filename);
-
-	char *shim = uvsnprintf(
-		module_shim,
-		module_name,
-		out_filename,
-		binary_name,
-		args
-	);
-	free(module_name);
-	free(binary_name);
-
-	const int exit_code = shell(shim);
-
-	remove(out_filename);
-	free(out_filename);
-	free(shim);
-	if (*args) free(args);
-
-	return exit_code;
 }
 
 static int usage(void) {
@@ -290,7 +150,7 @@ static int version(void) {
 # define VERSION_MAX 32
 	static char version_buf[VERSION_MAX];
 
-	// this `popen` call is insecure, since the HOME variable can be modified
+	// this `popen` call is insecure, since the PATH variable can be modified
 	// to change what the `git` command points to. This is only indented for
 	// developers only, and not for release builds. Also, do not run this with
 	// elevated privileges when in debug mode!
@@ -318,13 +178,6 @@ static int version(void) {
 
 	printf("\033[92mSkull\033[0m %s\n", version_buf);
 	return 0;
-}
-
-static bool is_directory(const char *path) {
-	 struct stat statbuf;
-	 if (stat(path, &statbuf) != 0) return false;
-
-	 return S_ISDIR(statbuf.st_mode);
 }
 
 // return true if an error occurs
@@ -372,43 +225,12 @@ static char *squash_argv(char *argv[]) {
 	return out;
 }
 
-static int sh(char *argv[]) {
-	errno = 0;
-	const pid_t pid = fork();
-	if (errno) {
-		perror("fork");
-		return 1;
-	}
-
-	if (pid == 0) {
-		errno = 0;
-		execvp(argv[0], argv);
-		if (errno) {
-			perror("execvp");
-			return 1;
-		}
-	}
-
-	int status = 0;
-	wait(&status);
-
-	return WEXITSTATUS(status);
-}
-
-static int shell(char *cmd) {
-	return sh((char *[]){ (char[]){"/bin/sh"}, (char[]){"-c"}, cmd, NULL });
-}
-
 static void bail(int exit_code) {
 	cleanup();
 	exit(exit_code);
 }
 
 static void cleanup(void) {
-	free(out_filename);
-	if (*args) free(args);
+	free(BUILD_DATA.out_file);
+	free(BUILD_DATA.extra_args);
 }
-
-
-#include "skull/cc_shim.h"
-static const char *module_shim = SHIM;

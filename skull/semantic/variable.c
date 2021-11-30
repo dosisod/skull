@@ -9,8 +9,6 @@
 
 #include "skull/semantic/variable.h"
 
-extern bool SKULL_TESTING;
-
 /*
 Make a variable called `name` with type `type`, and make it const if
 `is_const` is true.
@@ -46,7 +44,7 @@ bool free_variable(Variable *var) {
 
 	bool err = false;
 
-	if (!SKULL_TESTING) {
+	if (!BUILD_DATA.quiet) {
 		if (!var->is_const && !var->was_reassigned) {
 			FMT_WARN(err, WARN_VAR_NOT_CONST, {
 				.var = var, .loc = &var->location

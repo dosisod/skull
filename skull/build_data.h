@@ -3,6 +3,7 @@
 typedef struct {
 	const char *filename;
 	char *out_file;
+	char *extra_args;
 	_Bool quiet;
 	_Bool c_backend;
 	_Bool llvm_backend;

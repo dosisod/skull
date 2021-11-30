@@ -23,17 +23,17 @@ $(ODIR)/%.o: %.c %.h
 	@$(ECHO) "\033[92mCompile\033[0m $<\n"
 	@$(CC) $< -c -o "$@" $(CFLAGS) $(LLVM_CFLAGS)
 
-test: setup | $(OBJS_LLVM) $(OBJS_TEST)
+test: setup | $(OBJS_LLVM) $(OBJS_TEST) $(ODIR)/skull/real_main.o
 	@$(ECHO) "\033[92mLink\033[0m test\n"
 	@$(CC) $| -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
-skull: setup | $(OBJS) $(OBJS_LLVM) build/objs/skull/real_main.o
+skull: setup | $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o
 	@$(ECHO) "\033[92mLink\033[0m skull\n"
 	@$(CC) $| -DRELEASE=$(RELEASE) -DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
 		skull/cli.c -o build/skull/skull \
 		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
 
-e2e: setup | $(OBJS) $(OBJS_LLVM)
+e2e: setup | $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o
 	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
 	@$(CC) $| test/skull/e2e.c $(ODIR)/test/testing.o -o build/test/e2e \
 		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
