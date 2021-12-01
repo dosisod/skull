@@ -96,6 +96,7 @@ static int handle_args(int argc, char *argv[]) {
 			free(BUILD_DATA.out_file);
 			BUILD_DATA.out_file = strdup(argv[1]);
 			argc--;
+			argv++;
 			break;
 		}
 		case '-': {

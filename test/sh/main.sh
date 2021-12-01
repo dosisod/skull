@@ -132,6 +132,7 @@ test_skull "dash_o_no_binary.sh" "./test/sh/skull/dummy.sk -o -"
 test_skull "werror.sh" "./test/sh/skull/werror.sk --werror"
 test_skull "invalid_short_option.sh" "-xy"
 test_skull "c_backend_dash_o.sh" "./test/sh/skull/dummy.sk --c-backend -o -"
+test_skull "trailing_arg_after_dash_o.sh" "-o ./test/sh/skull/something ./test/sh/skull/dummy.sk"
 
 printf "\n"
 $passed || (printf "1 or more tests failed\n" && exit 1)
