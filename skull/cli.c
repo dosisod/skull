@@ -36,12 +36,14 @@ int main(int argc, char *argv[]) {
 	if (err) return err;
 
 	if (!BUILD_DATA.filename) {
-		puts("skull: expected filename");
+		fprintf(stderr, "skull: expected filename\n");
 		return 1;
 	}
 
 	if (!strrstr(BUILD_DATA.filename, ".sk")) {
-		printf("skull: missing required \".sk\" extension, exiting");
+		fprintf(
+			stderr, "skull: missing required \".sk\" extension, exiting\n"
+		);
 		cleanup();
 		return 1;
 	}
@@ -60,7 +62,7 @@ static int handle_args(int argc, char *argv[]) {
 	}
 
 	if (argv[0][1] && argv[0][1] != '-' && argv[0][2]) {
-		puts("skull: short option must be exactly one character");
+		fprintf(stderr, "skull: short option must be exactly one character\n");
 		bail(1);
 	}
 
@@ -89,7 +91,7 @@ static int handle_args(int argc, char *argv[]) {
 		}
 		case 'o': {
 			if (argc == 1) {
-				puts("skull: expected filename after -o");
+				fprintf(stderr, "skull: expected filename after -o\n");
 				bail(1);
 			}
 
@@ -107,7 +109,7 @@ static int handle_args(int argc, char *argv[]) {
 				break;
 			}
 			if (argc == 1) {
-				puts("skull: expected arguments after --");
+				fprintf(stderr, "skull: expected arguments after --\n");
 				bail(1);
 			}
 
@@ -115,7 +117,7 @@ static int handle_args(int argc, char *argv[]) {
 			return 0;
 		}
 		default: {
-			printf("skull: unknown option \"%s\"\n", *argv);
+			fprintf(stderr, "skull: unknown option \"%s\"\n", *argv);
 			bail(1);
 		}
 	}
@@ -125,7 +127,7 @@ static int handle_args(int argc, char *argv[]) {
 
 static void set_bool_flag(bool *flag, const char *str) {
 	if (*flag) {
-		printf("skull: %s cannot be used more then once\n", str);
+		fprintf(stderr, "skull: %s cannot be used more then once\n", str);
 		bail(1);
 	}
 	*flag = true;
@@ -172,7 +174,7 @@ static int version(void) {
 	if (newline) version_buf[newline - version_buf] = '\0';
 
 	if (WEXITSTATUS(pclose(f))) {
-		puts("skull: failed to get version (is git installed?)");
+		fprintf(stderr, "skull: failed to get version (is git installed?)\n");
 		return 1;
 	}
 #endif
@@ -192,7 +194,7 @@ static bool parse_long_option(const char *arg) {
 		set_bool_flag(&BUILD_DATA.werror, "--werror");
 	}
 	else {
-		printf("skull: unknown option \"--%s\"\n", arg);
+		fprintf(stderr, "skull: unknown option \"--%s\"\n", arg);
 		return true;
 	}
 

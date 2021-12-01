@@ -118,7 +118,6 @@ ODIR := build/objs
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))
 OBJS_TEST := $(addprefix $(ODIR)/,$(_OBJS_TEST))
 OBJS_LLVM := $(addprefix $(ODIR)/,$(_OBJS_LLVM))
-OBJS_MAIN := $(addprefix $(ODIR)/,skull/main.o skull/real_main.o)
 
 DIRS := build/skull \
 	build/test \

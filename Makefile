@@ -14,7 +14,6 @@ options:
 	@$(ECHO) "\033[92mOBJS:\033[0m $(OBJS)\n"
 	@$(ECHO) "\033[92mOBJS_LLVM:\033[0m $(OBJS_LLVM)\n"
 	@$(ECHO) "\033[92mOBJS_TEST:\033[0m $(OBJS_TEST)\n"
-	@$(ECHO) "\033[92mOBJS_MAIN:\033[0m $(OBJS_MAIN)\n"
 
 setup:
 	@mkdir $(DIRS) -p
