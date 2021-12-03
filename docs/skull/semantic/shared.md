@@ -6,6 +6,7 @@ typedef struct {
 	FunctionDeclaration *main_func;
 	FunctionDeclaration *current_func;
 	FunctionDeclaration *last_func;
+	unsigned while_loop_depth;
 }
 ```
 

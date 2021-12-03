@@ -108,6 +108,18 @@
 		.token = NULL \
 	}
 
+#define AST_NODE_BREAK(_tok) \
+	&(AstNode){ \
+		.type = AST_NODE_BREAK, \
+		.token = (_tok) \
+	}
+
+#define AST_NODE_CONTINUE(_tok) \
+	&(AstNode){ \
+		.type = AST_NODE_CONTINUE, \
+		.token = (_tok) \
+	}
+
 #define AST_NODE_ELSE(_token, _child) \
 	&(AstNode){ \
 		.type = AST_NODE_ELSE, \

@@ -922,6 +922,28 @@ bool test_validate_redeclare_alias_as_func(void) {
 	);
 }
 
+bool test_break_outside_while(void) {
+	Token *token = tokenize_fixture(U"break");
+
+	AstNode *node = AST_NODE_BREAK(token);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 1 column 1: break must be inside while loop\n"
+	);
+}
+
+bool test_continue_outside_while(void) {
+	Token *token = tokenize_fixture(U"continue");
+
+	AstNode *node = AST_NODE_CONTINUE(token);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 1 column 1: continue must be inside while loop\n"
+	);
+}
+
 bool test_validate_is_int(void) {
 	Token *token = tokenize_fixture(U"1 is 1");
 
@@ -1205,6 +1227,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_func_return_invalid_type,
 		test_validate_func_check_return_type,
 		test_validate_redeclare_alias_as_func,
+		test_break_outside_while,
+		test_continue_outside_while,
 		test_validate_is_int,
 		test_validate_is_float,
 		test_validate_is_rune,

@@ -59,6 +59,8 @@ static CStmt gen_node_c(const AstNode *node) {
 		case AST_NODE_WHILE: str = gen_control_while_c(node); break;
 		case AST_NODE_UNREACHABLE: str = gen_stmt_unreachable_c(NULL); break;
 		case AST_NODE_FUNCTION_PROTO: gen_function_def_c(node); break;
+		case AST_NODE_BREAK: str = gen_stmt_break_c(node); break;
+		case AST_NODE_CONTINUE: str = gen_stmt_continue_c(node); break;
 		default: break;
 	}
 

@@ -243,6 +243,14 @@ bool test_parse_ast_tree_noop(void) {
 	return ast_tree_fixture(U"noop", AST_NODE_NOOP, 0, 4);
 }
 
+bool test_parse_ast_tree_break(void) {
+	return ast_tree_fixture(U"break", AST_NODE_BREAK, 0, 5);
+}
+
+bool test_parse_ast_tree_continue(void) {
+	return ast_tree_fixture(U"continue", AST_NODE_CONTINUE, 0, 8);
+}
+
 bool test_free_ast_tree(void) {
 	free_ast_tree(parse_ast_tree(tokenize(U"noop")));
 
@@ -291,6 +299,8 @@ void ast_node_test_self(bool *pass) {
 		test_parse_ast_tree_if_with_var,
 		test_parse_ast_tree_comment,
 		test_parse_ast_tree_noop,
+		test_parse_ast_tree_break,
+		test_parse_ast_tree_continue,
 		test_free_ast_tree
 	)
 }

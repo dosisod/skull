@@ -502,6 +502,16 @@ static void parse_noop(ParserCtx *ctx) {
 	next_token(ctx);
 }
 
+static void parse_break(ParserCtx *ctx) {
+	push_ast_node(ctx, ctx->token, AST_NODE_BREAK);
+	next_token(ctx);
+}
+
+static void parse_continue(ParserCtx *ctx) {
+	push_ast_node(ctx, ctx->token, AST_NODE_CONTINUE);
+	next_token(ctx);
+}
+
 /*
 Parse a single AST node.
 
@@ -531,6 +541,8 @@ static bool parse_ast_node(ParserCtx *ctx) {
 		case TOKEN_KW_UNREACHABLE: parse_unreachable(ctx); break;
 		case TOKEN_COMMENT: parse_comment(ctx); break;
 		case TOKEN_KW_NOOP: parse_noop(ctx); break;
+		case TOKEN_KW_BREAK: parse_break(ctx); break;
+		case TOKEN_KW_CONTINUE: parse_continue(ctx); break;
 		default: {
 			ParserResult result = parse_function_proto(ctx);
 

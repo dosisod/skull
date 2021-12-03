@@ -75,7 +75,9 @@ typedef enum {
 	ERR_NO_REDEFINE_VAR_AS_ALIAS = 64,
 	ERR_NO_REDEFINE_FUNC_AS_ALIAS = 65,
 	ERR_NOT_NUMERIC = 66,
-	WARN_NO_BOM = 67
+	WARN_NO_BOM = 67,
+	ERR_BREAK_NOT_IN_WHILE = 68,
+	ERR_CONTINUE_NOT_IN_WHILE = 69
 } ErrorCode;
 
 typedef struct Variable Variable;

@@ -57,6 +57,9 @@ static bool post_validate_ast_node(const AstNode *node) {
 	if (node->type == AST_NODE_FUNCTION_PROTO) {
 		return post_validate_stmt_func_decl(node);
 	}
+	if (node->type == AST_NODE_WHILE) {
+		SEMANTIC_STATE.while_loop_depth--;
+	}
 
 	return true;
 }
@@ -78,6 +81,8 @@ static bool validate_ast_node(const AstNode *node) {
 		case AST_NODE_ELSE: return validate_control_else(node);
 		case AST_NODE_ELIF: return validate_control_elif(node);
 		case AST_NODE_WHILE: return validate_control_while(node);
+		case AST_NODE_BREAK: return validate_control_break(node);
+		case AST_NODE_CONTINUE: return validate_control_continue(node);
 		default: return true;
 	}
 }

@@ -23,7 +23,9 @@ typedef enum {
 	AST_NODE_WHILE,
 
 	AST_NODE_COMMENT,
-	AST_NODE_NOOP
+	AST_NODE_NOOP,
+	AST_NODE_BREAK,
+	AST_NODE_CONTINUE
 } NodeType;
 
 typedef struct AstNode AstNode;

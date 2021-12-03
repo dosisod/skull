@@ -32,6 +32,18 @@ CStmt gen_stmt_unreachable_c(const AstNode *node) {
 	return strdup("while (1) {}");
 }
 
+CStmt gen_stmt_break_c(const AstNode *node) {
+	(void)node;
+
+	return strdup("break;");
+}
+
+CStmt gen_stmt_continue_c(const AstNode *node) {
+	(void)node;
+
+	return strdup("continue;");
+}
+
 CBlock gen_control_if_c(const AstNode *node) {
 	return gen_control_block_c(node, "if (%s) {\n%s\n%s}");
 }

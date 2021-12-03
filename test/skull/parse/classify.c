@@ -37,6 +37,8 @@ bool test_is_reserved_str(void) {
 	ASSERT_TRUTHY(is_reserved_str(U"external"));
 	ASSERT_TRUTHY(is_reserved_str(U"export"));
 	ASSERT_TRUTHY(is_reserved_str(U"noop"));
+	ASSERT_TRUTHY(is_reserved_str(U"break"));
+	ASSERT_TRUTHY(is_reserved_str(U"continue"));
 	ASSERT_TRUTHY(is_reserved_str(U"mod"));
 	ASSERT_TRUTHY(is_reserved_str(U"isnt"));
 	ASSERT_TRUTHY(is_reserved_str(U"and"));

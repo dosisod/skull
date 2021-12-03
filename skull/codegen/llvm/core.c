@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "skull/codegen/llvm/assign.h"
 #include "skull/codegen/llvm/flow.h"
 #include "skull/codegen/llvm/func.h"
@@ -47,6 +50,14 @@ static Expr _gen_tree(const AstNode **node) {
 		case AST_NODE_EXPR:
 			gen_expr_func_call((*node)->expr->lhs.func_call); break;
 		case AST_NODE_NOOP: gen_stmt_noop(&(*node)->token->location); break;
+		case AST_NODE_BREAK:
+		case AST_NODE_CONTINUE: {
+			fprintf(
+				stderr,
+				"skull: break/continue not supported in LLVM backend yet\n"
+			);
+			exit(1);
+		}
 		default: break;
 	}
 

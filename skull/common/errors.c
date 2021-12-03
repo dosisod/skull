@@ -107,7 +107,9 @@ static const char *errors[] = {
 	[ERR_NO_REDEFINE_FUNC_AS_ALIAS] = \
 		"cannot redeclare function \"%s\" as type alias",
 	[ERR_NOT_NUMERIC] = "expected a numeric value",
-	[WARN_NO_BOM] = "BOM found"
+	[WARN_NO_BOM] = "BOM found",
+	[ERR_BREAK_NOT_IN_WHILE] = "break must be inside while loop",
+	[ERR_CONTINUE_NOT_IN_WHILE] = "continue must be inside while loop"
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);

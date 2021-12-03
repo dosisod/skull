@@ -109,6 +109,8 @@ bool validate_control_elif(const AstNode *node) {
 }
 
 bool validate_control_while(const AstNode *node) {
+	SEMANTIC_STATE.while_loop_depth++;
+
 	if (is_missing_block(node, "while") ||
 		!validate_expr(node->expr_node->expr) ||
 		!validate_bool_expr(node->expr_node->expr)
@@ -117,6 +119,20 @@ bool validate_control_while(const AstNode *node) {
 	}
 
 	return true;
+}
+
+bool validate_control_break(const AstNode *node) {
+	if (SEMANTIC_STATE.while_loop_depth > 0) return true;
+
+	FMT_ERROR(ERR_BREAK_NOT_IN_WHILE, { .loc = &node->token->location });
+	return false;
+}
+
+bool validate_control_continue(const AstNode *node) {
+	if (SEMANTIC_STATE.while_loop_depth > 0) return true;
+
+	FMT_ERROR(ERR_CONTINUE_NOT_IN_WHILE, { .loc = &node->token->location });
+	return false;
 }
 
 static bool is_missing_block(const AstNode *node, const char *name) {

@@ -43,6 +43,24 @@ static bool test_noop(void) {
 	PASS;
 }
 
+static bool test_break(void) {
+	char *str = gen_stmt_break_c(NULL);
+
+	ASSERT_TRUTHY(strcmp(str, "break;") == 0);
+
+	free(str);
+	PASS;
+}
+
+static bool test_continue(void) {
+	char *str = gen_stmt_continue_c(NULL);
+
+	ASSERT_TRUTHY(strcmp(str, "continue;") == 0);
+
+	free(str);
+	PASS;
+}
+
 static bool test_if(void) {
 	AstNode *node = AST_NODE_IF(NULL, AST_SIMPLE_EXPR(NULL), AST_NODE_NOOP());
 	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
@@ -95,6 +113,8 @@ void codegen_c_flow_test_self(bool *pass) {
 		test_return_node,
 		test_return_no_expr,
 		test_noop,
+		test_break,
+		test_continue,
 		test_if,
 		test_elif,
 		test_else,
