@@ -466,6 +466,48 @@ bool test_validate_unreachable_after_return(void) {
 	);
 }
 
+bool test_validate_unreachable_after_break(void) {
+	Token *token = tokenize_fixture(U"while true { break\nx := 1\n}");
+	Token *break_token = token->next->next->next;
+	Token *var_def_token = break_token->next->next;
+
+	AstNode *break_node = AST_NODE_BREAK(break_token);
+	break_node->next = AST_NODE_VAR_DEF(var_def_token, NULL, false);
+
+	AstNode *while_node = AST_NODE_WHILE(
+		token,
+		AST_SIMPLE_EXPR(token->next),
+		break_node
+	);
+
+	return validate_tree_fixture(
+		while_node,
+		"(null): Warning: line 1 column 7: condition is always true\n" \
+		"(null): Compilation error: line 2 column 1: unreachable code\n"
+	);
+}
+
+bool test_validate_unreachable_after_continue(void) {
+	Token *token = tokenize_fixture(U"while true { continue\nx := 1\n}");
+	Token *continue_token = token->next->next->next;
+	Token *var_def_token = continue_token->next->next;
+
+	AstNode *continue_node = AST_NODE_CONTINUE(continue_token);
+	continue_node->next = AST_NODE_VAR_DEF(var_def_token, NULL, false);
+
+	AstNode *while_node = AST_NODE_WHILE(
+		token,
+		AST_SIMPLE_EXPR(token->next),
+		continue_node
+	);
+
+	return validate_tree_fixture(
+		while_node,
+		"(null): Warning: line 1 column 7: condition is always true\n" \
+		"(null): Compilation error: line 2 column 1: unreachable code\n"
+	);
+}
+
 bool test_validate_unreachable_code_in_func(void) {
 	Token *token = tokenize_fixture(U"f() { return\nx := 1\n}");
 	Token *return_token = token->next->next->next->next;
@@ -1203,6 +1245,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_check_bool_expr_in_if,
 		test_validate_check_bool_expr_in_elif,
 		test_validate_unreachable_after_return,
+		test_validate_unreachable_after_break,
+		test_validate_unreachable_after_continue,
 		test_validate_unreachable_code_in_func,
 		test_validate_lhs_var_self_ref,
 		test_validate_reassign_different_type,

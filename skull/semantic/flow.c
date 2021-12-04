@@ -122,14 +122,18 @@ bool validate_control_while(const AstNode *node) {
 }
 
 bool validate_control_break(const AstNode *node) {
-	if (SEMANTIC_STATE.while_loop_depth > 0) return true;
+	if (SEMANTIC_STATE.while_loop_depth > 0) {
+		return no_dead_code_below(node->next);
+	}
 
 	FMT_ERROR(ERR_BREAK_NOT_IN_WHILE, { .loc = &node->token->location });
 	return false;
 }
 
 bool validate_control_continue(const AstNode *node) {
-	if (SEMANTIC_STATE.while_loop_depth > 0) return true;
+	if (SEMANTIC_STATE.while_loop_depth > 0) {
+		return no_dead_code_below(node->next);
+	}
 
 	FMT_ERROR(ERR_CONTINUE_NOT_IN_WHILE, { .loc = &node->token->location });
 	return false;

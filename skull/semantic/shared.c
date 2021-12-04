@@ -40,6 +40,7 @@ _Bool free_semantic_state(void) {
 	}
 
 	state->scope = NULL;
+	state->while_loop_depth = 0;
 
 	return failed;
 }
