@@ -2202,6 +2202,16 @@ NULL,
 );
 
 
+pass |= e2e_wrapper(
+"f() { noop }\nx := 1 + f()",
+TEST_DIR"/error/function/void_func_expr.sk",
+
+NULL,
+
+"./test/sh/error/function/void_func_expr.sk: Compilation error: line 2 column 10: expected type \"Int\", got \"Void\"\n"
+);
+
+
 	return pass;
 }
 
