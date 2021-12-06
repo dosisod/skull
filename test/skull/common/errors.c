@@ -21,7 +21,7 @@ static bool message_stringify_wrapper(Message *error, const char *expected) {
 	return pass;
 }
 
-bool test_fmt_error_stringify(void) {
+static bool test_fmt_error_stringify(void) {
 	Token *tok = tokenize(U"xxx");
 	Message err_tok = {
 		.tok = tok

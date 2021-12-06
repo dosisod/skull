@@ -9,7 +9,7 @@
 #include "test/skull/semantic/scope.h"
 #include "test/testing.h"
 
-Symbol *symbol_wrapper(Variable *var) {
+static Symbol *symbol_wrapper(Variable *var) {
 	Symbol *symbol;
 	symbol = Calloc(1, sizeof *symbol);
 
@@ -24,7 +24,7 @@ Symbol *symbol_wrapper(Variable *var) {
 	return symbol;
 }
 
-bool test_make_scope(void) {
+static bool test_make_scope(void) {
 	Scope *scope = make_scope();
 
 	free_scope(scope);
@@ -32,7 +32,7 @@ bool test_make_scope(void) {
 	PASS
 }
 
-bool test_scope_find_name(void) {
+static bool test_scope_find_name(void) {
 	SEMANTIC_STATE.scope = make_scope();
 	Variable *var = make_variable(TYPE_INT, U"x", true);
 
@@ -46,7 +46,7 @@ bool test_scope_find_name(void) {
 	PASS
 }
 
-bool test_add_vars_to_scope(void) {
+static bool test_add_vars_to_scope(void) {
 	SEMANTIC_STATE.scope = make_scope();
 	Variable *var = make_variable(TYPE_INT, U"x", true);
 
@@ -59,7 +59,7 @@ bool test_add_vars_to_scope(void) {
 	PASS
 }
 
-bool test_cannot_add_same_varname_to_scope(void) {
+static bool test_cannot_add_same_varname_to_scope(void) {
 	SEMANTIC_STATE.scope = make_scope();
 	Variable *var1 = make_variable(TYPE_INT, U"x", true);
 	Variable *var2 = make_variable(TYPE_INT, U"x", true);
@@ -78,7 +78,7 @@ bool test_cannot_add_same_varname_to_scope(void) {
 	PASS
 }
 
-bool test_scope_find_name_when_null(void) {
+static bool test_scope_find_name_when_null(void) {
 	ASSERT_FALSEY(scope_find_name(NULL, "anything"));
 
 	PASS

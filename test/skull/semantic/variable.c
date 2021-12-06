@@ -8,7 +8,7 @@
 #include "test/skull/semantic/variable.h"
 #include "test/testing.h"
 
-bool test_create_variable(void) {
+static bool test_create_variable(void) {
 	Variable *var = make_variable(TYPE_INT, U"x", true);
 
 	ASSERT_EQUAL(strcmp(var->type, TYPE_INT), 0);
@@ -21,13 +21,13 @@ bool test_create_variable(void) {
 	PASS
 }
 
-bool test_create_variable_with_invalid_type_fails(void) {
+static bool test_create_variable_with_invalid_type_fails(void) {
 	ASSERT_FALSEY(make_variable(NULL, U"x", true));
 
 	PASS
 }
 
-bool test_make_variable_with_invalid_name_fails(void) {
+static bool test_make_variable_with_invalid_name_fails(void) {
 	Variable *var = make_variable(TYPE_INT, U"1nvalid", false);
 
 	ASSERT_FALSEY(var);
@@ -37,13 +37,13 @@ bool test_make_variable_with_invalid_name_fails(void) {
 	PASS
 }
 
-bool test_free_variable(void) {
+static bool test_free_variable(void) {
 	free_variable(make_variable(TYPE_INT, U"x", true));
 
 	PASS
 }
 
-bool test_free_null_variable_is_ok(void) {
+static bool test_free_null_variable_is_ok(void) {
 	free_variable(NULL);
 
 	PASS

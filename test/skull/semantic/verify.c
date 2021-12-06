@@ -23,7 +23,7 @@ static bool validate_binary_expr_fixture(AstNode *, const char *);
 static bool validate_tree_fixture(AstNode *, const char *);
 static Token *tokenize_fixture(const char32_t *);
 
-bool test_validate_int_expr(void) {
+static bool test_validate_int_expr(void) {
 	Token *token = tokenize_fixture(U"1");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
@@ -33,7 +33,7 @@ bool test_validate_int_expr(void) {
 	return pass;
 }
 
-bool test_validate_int_overflow(void) {
+static bool test_validate_int_overflow(void) {
 	Token *token = tokenize_fixture(U"99999999999999999999999999999999");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
@@ -46,7 +46,7 @@ bool test_validate_int_overflow(void) {
 	PASS
 }
 
-bool test_validate_int_underflow(void) {
+static bool test_validate_int_underflow(void) {
 	Token *token = tokenize_fixture(U"-99999999999999999999999999999999");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
@@ -59,7 +59,7 @@ bool test_validate_int_underflow(void) {
 	PASS
 }
 
-bool test_validate_float_overflow(void) {
+static bool test_validate_float_overflow(void) {
 	Token *token = tokenize_fixture(U"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
@@ -72,7 +72,7 @@ bool test_validate_float_overflow(void) {
 	PASS
 }
 
-bool test_validate_missing_function_decl(void) {
+static bool test_validate_missing_function_decl(void) {
 	Token *token = tokenize_fixture(U"x()");
 
 	AstNode *node = AST_NODE_EXPR(token, AST_NODE_FUNC_EXPR(token));
@@ -86,7 +86,7 @@ bool test_validate_missing_function_decl(void) {
 	PASS
 }
 
-bool test_validate_trailing_expr(void) {
+static bool test_validate_trailing_expr(void) {
 	Token *token = tokenize_fixture(U"1");
 	AstNode *node = AST_SIMPLE_EXPR(token);
 
@@ -101,7 +101,7 @@ bool test_validate_trailing_expr(void) {
 	PASS
 }
 
-bool test_validate_invalid_and(void) {
+static bool test_validate_invalid_and(void) {
 	Token *token = tokenize_fixture(U"1 and 1");
 	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_AND);
 
@@ -111,7 +111,7 @@ bool test_validate_invalid_and(void) {
 	);
 }
 
-bool test_validate_invalid_or(void) {
+static bool test_validate_invalid_or(void) {
 	Token *token = tokenize_fixture(U"1 or 1");
 	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_OR);
 
@@ -121,7 +121,7 @@ bool test_validate_invalid_or(void) {
 	);
 }
 
-bool test_validate_invalid_xor(void) {
+static bool test_validate_invalid_xor(void) {
 	Token *token = tokenize_fixture(U"1 xor 1");
 	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_XOR);
 
@@ -131,7 +131,7 @@ bool test_validate_invalid_xor(void) {
 	);
 }
 
-bool test_validate_div_by_zero(void) {
+static bool test_validate_div_by_zero(void) {
 	Token *token = tokenize_fixture(U"1 / 0");
 	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_DIV);
 
@@ -141,7 +141,7 @@ bool test_validate_div_by_zero(void) {
 	);
 }
 
-bool test_validate_lhs_var_missing(void) {
+static bool test_validate_lhs_var_missing(void) {
 	Token *token = tokenize_fixture(U"fail + 1");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -159,7 +159,7 @@ bool test_validate_lhs_var_missing(void) {
 	);
 }
 
-bool test_validate_rhs_var_missing(void) {
+static bool test_validate_rhs_var_missing(void) {
 	Token *token = tokenize_fixture(U"1 + fail");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -177,7 +177,7 @@ bool test_validate_rhs_var_missing(void) {
 	);
 }
 
-bool test_validate_pow_type(void) {
+static bool test_validate_pow_type(void) {
 	Token *token = tokenize_fixture(U"\"123\" ^ \"123\"");
 	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_POW);
 
@@ -192,7 +192,7 @@ bool test_validate_pow_type(void) {
 	return pass;
 }
 
-bool test_validate_shift_no_ints(void) {
+static bool test_validate_shift_no_ints(void) {
 	Token *token = tokenize_fixture(U"1.0 << 2.0");
 	AstNode *node = AST_SIMPLE_BINARY_EXPR(token, EXPR_LSHIFT);
 
@@ -202,7 +202,7 @@ bool test_validate_shift_no_ints(void) {
 	);
 }
 
-bool test_validate_not_oper_non_bool(void) {
+static bool test_validate_not_oper_non_bool(void) {
 	Token *token = tokenize_fixture(U"not 1");
 	AstNode *node = AST_SIMPLE_UNARY_EXPR(token, EXPR_NOT);
 
@@ -212,7 +212,7 @@ bool test_validate_not_oper_non_bool(void) {
 	);
 }
 
-bool test_validate_non_numeric_exprs(void) {
+static bool test_validate_non_numeric_exprs(void) {
 	bool pass = true;
 
 	ExprType *opers = (ExprType[]){
@@ -241,7 +241,7 @@ bool test_validate_non_numeric_exprs(void) {
 	return pass;
 }
 
-bool test_validate_reassign_non_existent_var(void) {
+static bool test_validate_reassign_non_existent_var(void) {
 	Token *token = tokenize_fixture(U"x = 0");
 
 	return validate_tree_fixture(
@@ -253,7 +253,7 @@ bool test_validate_reassign_non_existent_var(void) {
 	);
 }
 
-bool test_validate_check_expr_type_when_declaring(void) {
+static bool test_validate_check_expr_type_when_declaring(void) {
 	Token *token = tokenize_fixture(U"x := 0\ny: Bool = x");
 
 	Token *var_x_expr = token->next->next;
@@ -282,7 +282,7 @@ bool test_validate_check_expr_type_when_declaring(void) {
 	PASS
 }
 
-bool test_validate_check_explicit_type_exists(void) {
+static bool test_validate_check_explicit_type_exists(void) {
 	Token *token = tokenize_fixture(U"x: fail = 1");
 	Token *expr_token = token->next->next->next;
 
@@ -296,7 +296,7 @@ bool test_validate_check_explicit_type_exists(void) {
 	);
 }
 
-bool test_validate_disallow_reassigning_const(void) {
+static bool test_validate_disallow_reassigning_const(void) {
 	Token *token = tokenize_fixture(U"x := 0\nx = 1");
 
 	AstNode *def = AST_NODE_VAR_DEF(
@@ -323,7 +323,7 @@ bool test_validate_disallow_reassigning_const(void) {
 	PASS
 }
 
-bool test_validate_redeclare_function(void) {
+static bool test_validate_redeclare_function(void) {
 	Token *token = tokenize_fixture(U"external x()");
 
 	AstNode *external_func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
@@ -339,7 +339,7 @@ bool test_validate_redeclare_function(void) {
 	PASS
 }
 
-bool test_validate_redeclare_variable(void) {
+static bool test_validate_redeclare_variable(void) {
 	Token *token = tokenize_fixture(U"x := 0");
 
 	AstNode *variable = AST_NODE_VAR_DEF(
@@ -361,7 +361,7 @@ bool test_validate_redeclare_variable(void) {
 	PASS
 }
 
-bool test_validate_redeclare_variable_as_alias(void) {
+static bool test_validate_redeclare_variable_as_alias(void) {
 	Token *token = tokenize_fixture(U"x := 1\nx := Int");
 
 	AstNode *variable = AST_NODE_VAR_DEF(
@@ -394,7 +394,7 @@ bool test_validate_redeclare_variable_as_alias(void) {
 	PASS
 }
 
-bool test_validate_else_missing_preceding_if(void) {
+static bool test_validate_else_missing_preceding_if(void) {
 	Token *token = tokenize_fixture(U"else { noop }");
 
 	return validate_tree_fixture(
@@ -403,7 +403,7 @@ bool test_validate_else_missing_preceding_if(void) {
 	);
 }
 
-bool test_validate_else_with_comment_missing_preceding_if(void) {
+static bool test_validate_else_with_comment_missing_preceding_if(void) {
 	Token *token = tokenize_fixture(U"# comment\nelse { noop }");
 
 	AstNode *node = AST_NODE_COMMENT(token);
@@ -415,7 +415,7 @@ bool test_validate_else_with_comment_missing_preceding_if(void) {
 	);
 }
 
-bool test_validate_main_return_non_int(void) {
+static bool test_validate_main_return_non_int(void) {
 	Token *token = tokenize_fixture(U"return 1.0");
 
 	return validate_tree_fixture(
@@ -424,7 +424,7 @@ bool test_validate_main_return_non_int(void) {
 	);
 }
 
-bool test_validate_check_bool_expr_in_if(void) {
+static bool test_validate_check_bool_expr_in_if(void) {
 	Token *token = tokenize_fixture(U"if 0 { noop }");
 
 	return validate_tree_fixture(
@@ -437,7 +437,7 @@ bool test_validate_check_bool_expr_in_if(void) {
 	);
 }
 
-bool test_validate_check_bool_expr_in_elif(void) {
+static bool test_validate_check_bool_expr_in_elif(void) {
 	Token *token = tokenize_fixture(U"elif 0 { noop }");
 
 	AstNode *node = AST_NODE_ELIF(
@@ -453,7 +453,7 @@ bool test_validate_check_bool_expr_in_elif(void) {
 	);
 }
 
-bool test_validate_unreachable_after_return(void) {
+static bool test_validate_unreachable_after_return(void) {
 	Token *token = tokenize_fixture(U"return 0\nx := 1");
 	Token *var_def_token = token->next->next->next;
 
@@ -466,7 +466,7 @@ bool test_validate_unreachable_after_return(void) {
 	);
 }
 
-bool test_validate_unreachable_after_break(void) {
+static bool test_validate_unreachable_after_break(void) {
 	Token *token = tokenize_fixture(U"while true { break\nx := 1\n}");
 	Token *break_token = token->next->next->next;
 	Token *var_def_token = break_token->next->next;
@@ -487,7 +487,7 @@ bool test_validate_unreachable_after_break(void) {
 	);
 }
 
-bool test_validate_unreachable_after_continue(void) {
+static bool test_validate_unreachable_after_continue(void) {
 	Token *token = tokenize_fixture(U"while true { continue\nx := 1\n}");
 	Token *continue_token = token->next->next->next;
 	Token *var_def_token = continue_token->next->next;
@@ -508,7 +508,7 @@ bool test_validate_unreachable_after_continue(void) {
 	);
 }
 
-bool test_validate_unreachable_code_in_func(void) {
+static bool test_validate_unreachable_code_in_func(void) {
 	Token *token = tokenize_fixture(U"f() { return\nx := 1\n}");
 	Token *return_token = token->next->next->next->next;
 	Token *var_def_token = return_token->next->next;
@@ -524,7 +524,7 @@ bool test_validate_unreachable_code_in_func(void) {
 	);
 }
 
-bool test_validate_lhs_var_self_ref(void) {
+static bool test_validate_lhs_var_self_ref(void) {
 	Token *token = tokenize_fixture(U"x := x < 1");
 	Token *expr_token = token->next->next;
 
@@ -545,7 +545,7 @@ bool test_validate_lhs_var_self_ref(void) {
 	);
 }
 
-bool test_validate_reassign_different_type(void) {
+static bool test_validate_reassign_different_type(void) {
 	Token *token = tokenize_fixture(U"mut x := 1\nx = 1.0");
 	Token *var_expr_token = token->next->next->next;
 	Token *var_assign_token = var_expr_token->next->next;
@@ -575,7 +575,7 @@ bool test_validate_reassign_different_type(void) {
 	);
 }
 
-bool test_validate_lhs_expr(void) {
+static bool test_validate_lhs_expr(void) {
 	Token *token = tokenize_fixture(U"x := y + 1");
 
 	return validate_tree_fixture(
@@ -595,7 +595,7 @@ bool test_validate_lhs_expr(void) {
 	);
 }
 
-bool test_validate_rhs_expr(void) {
+static bool test_validate_rhs_expr(void) {
 	Token *token = tokenize_fixture(U"x := 1.0 + 1");
 
 	return validate_tree_fixture(
@@ -608,7 +608,7 @@ bool test_validate_rhs_expr(void) {
 	);
 }
 
-bool test_validate_binary_bool_expr(void) {
+static bool test_validate_binary_bool_expr(void) {
 	Token *token = tokenize_fixture(U"x: Int = 1 is 1");
 
 	return validate_tree_fixture(
@@ -621,7 +621,7 @@ bool test_validate_binary_bool_expr(void) {
 	);
 }
 
-bool test_validate_unary_bool_expr(void) {
+static bool test_validate_unary_bool_expr(void) {
 	Token *token = tokenize_fixture(U"x: Int = not true");
 
 	return validate_tree_fixture(
@@ -634,7 +634,7 @@ bool test_validate_unary_bool_expr(void) {
 	);
 }
 
-bool test_validate_var_in_if_scoped(void) {
+static bool test_validate_var_in_if_scoped(void) {
 	Token *token = tokenize_fixture(U"if true { x := 0\n}return x");
 	Token *cond_token = token->next;
 	Token *var_def_token = cond_token->next->next;
@@ -671,7 +671,7 @@ bool test_validate_var_in_if_scoped(void) {
 	);
 }
 
-bool test_validate_stmt_between_if_and_elif(void) {
+static bool test_validate_stmt_between_if_and_elif(void) {
 	Token *token = tokenize_fixture(U"if true { noop } x := 1\nelif true { noop }");
 	Token *if_cond  = token->next;
 	Token *var_def_token = if_cond->next->next->next->next;
@@ -704,7 +704,7 @@ bool test_validate_stmt_between_if_and_elif(void) {
 	);
 }
 
-bool test_validate_no_redeclare_alias(void) {
+static bool test_validate_no_redeclare_alias(void) {
 	Token *token = tokenize_fixture(U"alias := Int\nalias := Float");
 	Token *int_token = token->next->next;
 	Token *alias2_token = int_token->next->next;
@@ -727,7 +727,7 @@ bool test_validate_no_redeclare_alias(void) {
 	);
 }
 
-bool test_validate_trivial_type(void) {
+static bool test_validate_trivial_type(void) {
 	Token *token = tokenize_fixture(U"x: Int = 1");
 	Token *expr_token = token->next->next->next;
 
@@ -746,7 +746,7 @@ bool test_validate_trivial_type(void) {
 	PASS
 }
 
-bool test_validate_no_export_main(void) {
+static bool test_validate_no_export_main(void) {
 	Token *token = tokenize_fixture(U"export main() { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, true);
@@ -758,7 +758,7 @@ bool test_validate_no_export_main(void) {
 	);
 }
 
-bool test_validate_redeclare_type_alias_as_var(void) {
+static bool test_validate_redeclare_type_alias_as_var(void) {
 	Token *token = tokenize_fixture(U"x := Int\nx := 1");
 	Token *type_token = token->next->next;
 	Token *var_def_token = type_token->next->next;
@@ -781,7 +781,7 @@ bool test_validate_redeclare_type_alias_as_var(void) {
 	);
 }
 
-bool test_validate_non_void_function_missing_return(void) {
+static bool test_validate_non_void_function_missing_return(void) {
 	Token *token = tokenize_fixture(U"f() Int { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
@@ -793,7 +793,7 @@ bool test_validate_non_void_function_missing_return(void) {
 	);
 }
 
-bool test_validate_redeclare_var_as_func(void) {
+static bool test_validate_redeclare_var_as_func(void) {
 	Token *token = tokenize_fixture(U"x := 1\nx() { noop }");
 	Token *expr_token = token->next->next;
 	Token *func_token = expr_token->next->next;
@@ -813,7 +813,7 @@ bool test_validate_redeclare_var_as_func(void) {
 
 // TODO(dosisod) Investigate why android parses wide chars differently
 #ifndef __ANDROID_API__
-bool test_validate_legal_utf8_str(void) {
+static bool test_validate_legal_utf8_str(void) {
 	Token *token = tokenize_fixture(U"\"\\xdb80\"\n");
 
 	return validate_binary_expr_fixture(
@@ -822,7 +822,7 @@ bool test_validate_legal_utf8_str(void) {
 	);
 }
 
-bool test_validate_legal_utf8_rune(void) {
+static bool test_validate_legal_utf8_rune(void) {
 	Token *token = tokenize_fixture(U"\'\\xdb80\'\n");
 
 	return validate_binary_expr_fixture(
@@ -831,11 +831,11 @@ bool test_validate_legal_utf8_rune(void) {
 	);
 }
 #else
-bool __attribute__((const)) test_validate_legal_utf8_str(void) { PASS; }
-bool __attribute__((const)) test_validate_legal_utf8_rune(void) { PASS; }
+static bool __attribute__((const)) test_validate_legal_utf8_str(void) { PASS; }
+static bool __attribute__((const)) test_validate_legal_utf8_rune(void) { PASS; }
 #endif
 
-bool test_validate_no_void_assign(void) {
+static bool test_validate_no_void_assign(void) {
 	Token *token = tokenize_fixture(U"external f()\nx := f()");
 	Token *x_token = token->next->next->next->next->next;
 	Token *func_call_token = x_token->next->next;
@@ -855,7 +855,7 @@ bool test_validate_no_void_assign(void) {
 	);
 }
 
-bool test_validate_return_non_void_from_void_func(void) {
+static bool test_validate_return_non_void_from_void_func(void) {
 	Token *token = tokenize_fixture(U"f() { return 0 }");
 	Token *return_token = token->next->next->next->next;
 	Token *return_expr = return_token->next;
@@ -872,7 +872,7 @@ bool test_validate_return_non_void_from_void_func(void) {
 	);
 }
 
-bool test_validate_unexpected_code_block(void) {
+static bool test_validate_unexpected_code_block(void) {
 	Token *token = tokenize_fixture(U"noop { noop }");
 
 	AstNode *node = AST_NODE_NOOP();
@@ -886,7 +886,7 @@ bool test_validate_unexpected_code_block(void) {
 	);
 }
 
-bool test_validate_func_parameter_count(void) {
+static bool test_validate_func_parameter_count(void) {
 	Token *token = tokenize_fixture(U"f() { noop }\nf(1)");
 	Token *func_call_token = token->next->next->next->next->next->next->next;
 	Token *func_call_expr_token = func_call_token->next->next;
@@ -908,7 +908,7 @@ bool test_validate_func_parameter_count(void) {
 	);
 }
 
-bool test_validate_func_return_invalid_type(void) {
+static bool test_validate_func_return_invalid_type(void) {
 	Token *token = tokenize_fixture(U"f() Int { return false }");
 	Token *return_token = token->next->next->next->next->next;
 	Token *return_expr_token = return_token->next;
@@ -930,7 +930,7 @@ bool test_validate_func_return_invalid_type(void) {
 	);
 }
 
-bool test_validate_func_check_return_type(void) {
+static bool test_validate_func_check_return_type(void) {
 	Token *token = tokenize_fixture(U"f() invalid { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
@@ -942,7 +942,7 @@ bool test_validate_func_check_return_type(void) {
 	);
 }
 
-bool test_validate_redeclare_alias_as_func(void) {
+static bool test_validate_redeclare_alias_as_func(void) {
 	Token *token = tokenize_fixture(U"x := Int\nx() { noop }");
 	Token *var_expr_token = token->next->next;
 	Token *func_token = var_expr_token->next->next;
@@ -964,7 +964,7 @@ bool test_validate_redeclare_alias_as_func(void) {
 	);
 }
 
-bool test_break_outside_while(void) {
+static bool test_break_outside_while(void) {
 	Token *token = tokenize_fixture(U"break");
 
 	AstNode *node = AST_NODE_BREAK(token);
@@ -975,7 +975,7 @@ bool test_break_outside_while(void) {
 	);
 }
 
-bool test_continue_outside_while(void) {
+static bool test_continue_outside_while(void) {
 	Token *token = tokenize_fixture(U"continue");
 
 	AstNode *node = AST_NODE_CONTINUE(token);
@@ -986,7 +986,7 @@ bool test_continue_outside_while(void) {
 	);
 }
 
-bool test_validate_is_int(void) {
+static bool test_validate_is_int(void) {
 	Token *token = tokenize_fixture(U"1 is 1");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1005,7 +1005,7 @@ bool test_validate_is_int(void) {
 	PASS;
 }
 
-bool test_validate_is_float(void) {
+static bool test_validate_is_float(void) {
 	Token *token = tokenize_fixture(U"1.0 is 1.0");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1024,7 +1024,7 @@ bool test_validate_is_float(void) {
 	PASS;
 }
 
-bool test_validate_is_rune(void) {
+static bool test_validate_is_rune(void) {
 	Token *token = tokenize_fixture(U"'x' is 'x'");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1043,7 +1043,7 @@ bool test_validate_is_rune(void) {
 	PASS;
 }
 
-bool test_validate_is_bool(void) {
+static bool test_validate_is_bool(void) {
 	Token *token = tokenize_fixture(U"true is true");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1062,7 +1062,7 @@ bool test_validate_is_bool(void) {
 	PASS;
 }
 
-bool test_validate_is_str(void) {
+static bool test_validate_is_str(void) {
 	Token *token = tokenize_fixture(U"\"x\" is \"x\"");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1083,7 +1083,7 @@ bool test_validate_is_str(void) {
 	PASS;
 }
 
-bool test_validate_isnt_int(void) {
+static bool test_validate_isnt_int(void) {
 	Token *token = tokenize_fixture(U"1 isnt 1");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1102,7 +1102,7 @@ bool test_validate_isnt_int(void) {
 	PASS;
 }
 
-bool test_validate_isnt_float(void) {
+static bool test_validate_isnt_float(void) {
 	Token *token = tokenize_fixture(U"1.0 isnt 1.0");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1121,7 +1121,7 @@ bool test_validate_isnt_float(void) {
 	PASS;
 }
 
-bool test_validate_isnt_rune(void) {
+static bool test_validate_isnt_rune(void) {
 	Token *token = tokenize_fixture(U"'x' isnt 'x'");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1140,7 +1140,7 @@ bool test_validate_isnt_rune(void) {
 	PASS;
 }
 
-bool test_validate_isnt_bool(void) {
+static bool test_validate_isnt_bool(void) {
 	Token *token = tokenize_fixture(U"true isnt true");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1159,7 +1159,7 @@ bool test_validate_isnt_bool(void) {
 	PASS;
 }
 
-bool test_validate_isnt_str(void) {
+static bool test_validate_isnt_str(void) {
 	Token *token = tokenize_fixture(U"\"x\" isnt \"x\"");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1180,7 +1180,7 @@ bool test_validate_isnt_str(void) {
 	PASS;
 }
 
-bool test_validate_matching_types(void) {
+static bool test_validate_matching_types(void) {
 	ExprType *opers = (ExprType[]){
 		EXPR_ADD,
 		EXPR_SUB,

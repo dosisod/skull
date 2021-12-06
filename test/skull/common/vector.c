@@ -8,7 +8,7 @@
 #include "test/skull/common/vector.h"
 #include "test/testing.h"
 
-bool test_vector_create_and_free(void) {
+static bool test_vector_create_and_free(void) {
 	Vector *v = make_vector();
 
 	ASSERT_TRUTHY(v);
@@ -20,7 +20,7 @@ bool test_vector_create_and_free(void) {
 	PASS
 }
 
-bool test_vector_push_pop(void) {
+static bool test_vector_push_pop(void) {
 	Vector *v = make_vector();
 
 	ASSERT_EQUAL(v->length, 0);
@@ -39,7 +39,7 @@ bool test_vector_push_pop(void) {
 	PASS
 }
 
-bool test_vector_pop_empty(void) {
+static bool test_vector_pop_empty(void) {
 	Vector *v = make_vector();
 
 	ASSERT_EQUAL(v->length, 0);
@@ -51,7 +51,7 @@ bool test_vector_pop_empty(void) {
 	PASS
 }
 
-bool test_vector_scale(void) {
+static bool test_vector_scale(void) {
 	Vector *v = make_vector();
 
 	ASSERT_EQUAL(v->max, VECTOR_START_MAX);
@@ -67,7 +67,7 @@ bool test_vector_scale(void) {
 	PASS
 }
 
-bool test_vector_free_func(void) {
+static bool test_vector_free_func(void) {
 	Vector *v = make_vector();
 
 	vector_push(v, Malloc(1));
@@ -77,7 +77,7 @@ bool test_vector_free_func(void) {
 	PASS
 }
 
-bool test_vector_at(void) {
+static bool test_vector_at(void) {
 	Vector *v = make_vector();
 
 	int i = 1234;
@@ -91,7 +91,7 @@ bool test_vector_at(void) {
 	PASS
 }
 
-bool test_vector_freeze(void) {
+static bool test_vector_freeze(void) {
 	Vector *v = make_vector();
 
 	int i = 1234;

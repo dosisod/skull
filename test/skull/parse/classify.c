@@ -9,7 +9,7 @@
 static bool classify_token_fixture(const char32_t *, TokenType);
 static bool classify_token_with_len_fixture(const char32_t *, TokenType, unsigned, unsigned);
 
-bool test_is_type_str(void) {
+static bool test_is_type_str(void) {
 	Token *token = tokenize(U"Int not_a_type");
 
 	char32_t *buf = token_to_string(token);
@@ -25,7 +25,7 @@ bool test_is_type_str(void) {
 	PASS
 }
 
-bool test_is_reserved_str(void) {
+static bool test_is_reserved_str(void) {
 	ASSERT_TRUTHY(is_reserved_str(U"return"));
 	ASSERT_TRUTHY(is_reserved_str(U"mut"));
 	ASSERT_FALSEY(is_reserved_str(U"not_reserved"));
@@ -48,7 +48,7 @@ bool test_is_reserved_str(void) {
 	PASS
 }
 
-bool test_is_constant_integer(void) {
+static bool test_is_constant_integer(void) {
 	ASSERT_TRUTHY(is_constant_integer_str(U"123"));
 	ASSERT_TRUTHY(is_constant_integer_str(U"-123"));
 	ASSERT_TRUTHY(is_constant_integer_str(U"000"));
@@ -75,7 +75,7 @@ bool test_is_constant_integer(void) {
 	PASS
 }
 
-bool test_is_constant_float(void) {
+static bool test_is_constant_float(void) {
 	ASSERT_TRUTHY(is_constant_float_str(U"123.0"));
 	ASSERT_TRUTHY(is_constant_float_str(U"-123.0"));
 	ASSERT_TRUTHY(is_constant_float_str(U"0.0"));
@@ -95,7 +95,7 @@ bool test_is_constant_float(void) {
 	PASS
 }
 
-bool test_is_constant_bool(void) {
+static bool test_is_constant_bool(void) {
 	ASSERT_TRUTHY(is_constant_bool_str(U"true"));
 	ASSERT_TRUTHY(is_constant_bool_str(U"false"));
 	ASSERT_FALSEY(is_constant_bool_str(U"not_bool"));
@@ -103,7 +103,7 @@ bool test_is_constant_bool(void) {
 	PASS
 }
 
-bool test_is_constant_rune(void) {
+static bool test_is_constant_rune(void) {
 	ASSERT_TRUTHY(is_constant_rune_str(U"'x'"));
 	ASSERT_FALSEY(is_constant_rune_str(U"'x '"));
 	ASSERT_FALSEY(is_constant_rune_str(U"''"));
@@ -111,7 +111,7 @@ bool test_is_constant_rune(void) {
 	PASS
 }
 
-bool test_is_constant_str(void) {
+static bool test_is_constant_str(void) {
 	ASSERT_TRUTHY(is_constant_str_str(U"\"\""));
 	ASSERT_TRUTHY(is_constant_str_str(U"\"x\""));
 	ASSERT_TRUTHY(is_constant_str_str(U"\"xyz\""));
@@ -121,107 +121,107 @@ bool test_is_constant_str(void) {
 	PASS
 }
 
-bool test_token_newline(void) {
+static bool test_token_newline(void) {
 	return classify_token_fixture(U"\n", TOKEN_NEWLINE);
 }
 
-bool test_bracket_token_open(void) {
+static bool test_bracket_token_open(void) {
 	return classify_token_fixture(U"{", TOKEN_BRACKET_OPEN);
 }
 
-bool test_bracket_token_close(void) {
+static bool test_bracket_token_close(void) {
 	return classify_token_fixture(U"}", TOKEN_BRACKET_CLOSE);
 }
 
-bool test_paren_token_open(void) {
+static bool test_paren_token_open(void) {
 	return classify_token_fixture(U"(", TOKEN_PAREN_OPEN);
 }
 
-bool test_paren_token_close(void) {
+static bool test_paren_token_close(void) {
 	return classify_token_fixture(U")", TOKEN_PAREN_CLOSE);
 }
 
-bool test_token_mut_kw(void) {
+static bool test_token_mut_kw(void) {
 	return classify_token_fixture(U"mut", TOKEN_KW_MUT);
 }
 
-bool test_token_return_kw(void) {
+static bool test_token_return_kw(void) {
 	return classify_token_fixture(U"return", TOKEN_KW_RETURN);
 }
 
-bool test_token_if_kw(void) {
+static bool test_token_if_kw(void) {
 	return classify_token_fixture(U"if", TOKEN_KW_IF);
 }
 
-bool test_token_equal_oper(void) {
+static bool test_token_equal_oper(void) {
 	return classify_token_fixture(U"=", TOKEN_OPER_EQUAL);
 }
 
-bool test_token_auto_equal_oper(void) {
+static bool test_token_auto_equal_oper(void) {
 	return classify_token_fixture(U":=", TOKEN_OPER_AUTO_EQUAL);
 }
 
-bool test_token_plus_oper(void) {
+static bool test_token_plus_oper(void) {
 	return classify_token_fixture(U"+", TOKEN_OPER_PLUS);
 }
 
-bool test_token_minus_oper(void) {
+static bool test_token_minus_oper(void) {
 	return classify_token_fixture(U"-", TOKEN_OPER_MINUS);
 }
 
-bool test_token_mult_oper(void) {
+static bool test_token_mult_oper(void) {
 	return classify_token_fixture(U"*", TOKEN_OPER_MULT);
 }
 
-bool test_token_div_oper(void) {
+static bool test_token_div_oper(void) {
 	return classify_token_fixture(U"/", TOKEN_OPER_DIV);
 }
 
-bool test_token_unknown(void) {
+static bool test_token_unknown(void) {
 	return classify_token_fixture(U"123garbage_value", TOKEN_UNKNOWN);
 }
 
-bool test_token_integer_constant(void) {
+static bool test_token_integer_constant(void) {
 	return classify_token_fixture(U"1234", TOKEN_INT_CONST);
 }
 
-bool test_token_float_constant(void) {
+static bool test_token_float_constant(void) {
 	return classify_token_fixture(U"1234.0", TOKEN_FLOAT_CONST);
 }
 
-bool test_token_bool_constant(void) {
+static bool test_token_bool_constant(void) {
 	return classify_token_fixture(U"true", TOKEN_BOOL_CONST);
 }
 
-bool test_token_rune_constant(void) {
+static bool test_token_rune_constant(void) {
 	return classify_token_with_len_fixture(U"'x'", TOKEN_RUNE_CONST, 0, 3);
 }
 
-bool test_token_rune_constant_simple_escape(void) {
+static bool test_token_rune_constant_simple_escape(void) {
 	return classify_token_with_len_fixture(U"'\\r'", TOKEN_RUNE_CONST, 0, 4);
 }
 
-bool test_token_rune_constant_hex_escape(void) {
+static bool test_token_rune_constant_hex_escape(void) {
 	return classify_token_with_len_fixture(U"'\\xFF'", TOKEN_RUNE_CONST, 0, 6);
 }
 
-bool test_token_to_string_constant(void) {
+static bool test_token_to_string_constant(void) {
 	return classify_token_with_len_fixture(U"\"xyz\"", TOKEN_STR_CONST, 0, 5);
 }
 
-bool test_token_type(void) {
+static bool test_token_type(void) {
 	return classify_token_with_len_fixture(U"Int", TOKEN_TYPE, 0, 3);
 }
 
-bool test_token_comment(void) {
+static bool test_token_comment(void) {
 	return classify_token_with_len_fixture(U"# this is a comment", TOKEN_COMMENT, 0, 19);
 }
 
-bool test_token_comment_empty(void) {
+static bool test_token_comment_empty(void) {
 	return classify_token_with_len_fixture(U"# ", TOKEN_COMMENT, 0, 2);
 }
 
-bool test_is_valid_identifier(void) {
+static bool test_is_valid_identifier(void) {
 	ASSERT_TRUTHY(is_valid_identifier_str(U"a"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"z"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"A"));
@@ -240,23 +240,23 @@ bool test_is_valid_identifier(void) {
 	PASS
 }
 
-bool test_is_valid_identifier_token(void) {
+static bool test_is_valid_identifier_token(void) {
 	return classify_token_with_len_fixture(U"x", TOKEN_IDENTIFIER, 0, 1);
 }
 
-bool test_new_identifier_clip_trailing_colon(void) {
+static bool test_new_identifier_clip_trailing_colon(void) {
 	return classify_token_with_len_fixture(U"x: Int = 0", TOKEN_NEW_IDENTIFIER, 0, 1);
 }
 
-bool test_identifier_cannot_be_type(void) {
+static bool test_identifier_cannot_be_type(void) {
 	return classify_token_with_len_fixture(U"Int: Int = 0", TOKEN_UNKNOWN, 0, 4);
 }
 
-bool test_identifier_cannot_be_reserved(void) {
+static bool test_identifier_cannot_be_reserved(void) {
 	return classify_token_with_len_fixture(U"mut: Int = 0", TOKEN_UNKNOWN, 0, 4);
 }
 
-bool test_classify_tokens(void) {
+static bool test_classify_tokens(void) {
 	Token *t = tokenize(U"{ }");
 	classify_tokens(t);
 
