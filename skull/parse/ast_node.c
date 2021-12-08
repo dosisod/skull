@@ -31,7 +31,7 @@ static void free_expr_node(AstNodeExpr *);
 static void splice_expr_node(AstNode *);
 static void push_ast_node(ParserCtx *, Token *, NodeType);
 static void print_ast_tree_(const AstNode *, unsigned);
-static AstNodeExpr *parse_single_token_expr(Token **);
+static AstNodeExpr *parse_single_token_expr(ParserCtx *);
 static AstNodeExpr *parse_paren_expr(ParserCtx *);
 static void parse_ast_sub_tree_(ParserCtx *);
 static bool parse_ast_node(ParserCtx *);
@@ -54,11 +54,9 @@ Makes an AST (abstract syntax tree) from a given string.
 AstNode *parse_ast_tree(Token *token) {
 	Token *head = token;
 
-	ParserCtx ctx = {
-		.token = token
-	};
+	ParserCtx ctx = { .token = token };
 
-	AstNode *const tree = parse_ast_tree_(&ctx);
+	AstNode *tree = parse_ast_tree_(&ctx);
 
 	if (!tree) free_tokens(head);
 	else if (!tree->token) {
@@ -79,7 +77,6 @@ static void parse_return(ParserCtx *ctx) {
 	next_token(ctx);
 
 	const bool added_expr = parse_expression(ctx);
-
 	if (ctx->err) return;
 
 	if (added_expr) splice_expr_node(ctx->node);
@@ -167,15 +164,9 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 }
 
 static ParserResult parse_var_assign(ParserCtx *ctx) {
-	if (!AST_TOKEN_CMP2(ctx->token,
-		TOKEN_IDENTIFIER,
-		TOKEN_OPER_EQUAL)
-	) {
+	if (!AST_TOKEN_CMP2(ctx->token, TOKEN_IDENTIFIER, TOKEN_OPER_EQUAL)) {
 		return RESULT_IGNORE;
 	}
-
-	AstNodeVarAssign *var_assign;
-	var_assign = Calloc(1, sizeof *var_assign);
 
 	Token *last = ctx->token;
 	next_token(ctx);
@@ -183,21 +174,14 @@ static ParserResult parse_var_assign(ParserCtx *ctx) {
 	push_ast_node(ctx, last, AST_NODE_VAR_ASSIGN);
 	next_token(ctx);
 
-	bool err = false;
 	const bool success = parse_expression(ctx);
-	if (err) {
-		free(var_assign);
-		return RESULT_ERROR;
-	}
-
 	if (!success) {
 		FMT_ERROR(ERR_ASSIGN_MISSING_EXPR, { .loc = &ctx->token->location });
 
-		free(var_assign);
 		return RESULT_ERROR;
 	}
 
-	ctx->node->last->last->var_assign = var_assign;
+	ctx->node->last->last->var_assign = Calloc(1, sizeof(AstNodeVarAssign));
 	splice_expr_node(ctx->node);
 
 	return RESULT_OK;
@@ -315,7 +299,7 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 		return RESULT_IGNORE;
 	}
 
-	const Token *const func_name_token = ctx->token;
+	const Token *func_name_token = ctx->token;
 	ctx->token = ctx->token->next->next;
 
 	Vector *params = make_vector();
@@ -360,10 +344,7 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 		next_token(ctx);
 	}
 
-	else if (!AST_TOKEN_CMP2(ctx->token,
-		TOKEN_PAREN_CLOSE,
-		token_type)
-	) {
+	else if (!AST_TOKEN_CMP2(ctx->token, TOKEN_PAREN_CLOSE, token_type)) {
 		free_vector(params, (void(*)(void *))free_param);
 
 		if (is_proto) {
@@ -531,8 +512,7 @@ static bool parse_ast_node(ParserCtx *ctx) {
 		}
 		case TOKEN_BRACKET_OPEN: parse_ast_sub_tree_(ctx); break;
 		case TOKEN_NEWLINE:
-		case TOKEN_COMMA:
-			next_token(ctx); break;
+		case TOKEN_COMMA: next_token(ctx); break;
 		case TOKEN_KW_RETURN: parse_return(ctx); break;
 		case TOKEN_KW_IF: parse_if(ctx); break;
 		case TOKEN_KW_ELIF: parse_elif(ctx); break;
@@ -590,7 +570,7 @@ static void parse_ast_sub_tree_(ParserCtx *ctx) {
 		.indent_lvl = ctx->indent_lvl + 1
 	};
 
-	AstNode *const child = parse_ast_tree_(&new_ctx);
+	AstNode *child = parse_ast_tree_(&new_ctx);
 	ctx->token = new_ctx.token;
 
 	if (!child || new_ctx.err) {
@@ -659,7 +639,7 @@ static AstNodeExpr *_parse_expression(ParserCtx *ctx) {
 		// pass
 	}
 	else if (is_single_token_expr(ctx->token->type)) {
-		expr = parse_single_token_expr(&ctx->token);
+		expr = parse_single_token_expr(ctx);
 	}
 
 	if (!expr) return NULL;
@@ -670,22 +650,15 @@ static AstNodeExpr *_parse_expression(ParserCtx *ctx) {
 		return NULL;
 	}
 
-	if (binary_oper) return binary_oper;
-	return expr;
+	return binary_oper ? binary_oper : expr;
 }
 
 static AstNodeExpr *parse_paren_expr(ParserCtx *ctx) {
-	bool *err = &ctx->err;
-
 	next_token(ctx);
 
 	AstNodeExpr *pushed = _parse_expression(ctx);
-	*err = ctx->err;
-
-	if (!pushed || *err) {
+	if (!pushed) {
 		FMT_ERROR(ERR_INVALID_EXPR, { .tok = ctx->token });
-
-		if (pushed) free_expr_node(pushed);
 
 		ctx->err = true;
 		return NULL;
@@ -704,18 +677,18 @@ static AstNodeExpr *parse_paren_expr(ParserCtx *ctx) {
 }
 
 /*
-Parse a single token expression (constant or variable) from `token`.
+Parse a single token expression (constant or variable) from `ctx`.
 */
-static AstNodeExpr *parse_single_token_expr(Token **token) {
+static AstNodeExpr *parse_single_token_expr(ParserCtx *ctx) {
 	AstNodeExpr *expr = Malloc(sizeof(AstNodeExpr));
 	*expr = (AstNodeExpr){
-		.lhs = { .tok = *token },
-		.oper = (*token)->type == TOKEN_IDENTIFIER ?
+		.lhs = { .tok = ctx->token },
+		.oper = ctx->token->type == TOKEN_IDENTIFIER ?
 			EXPR_IDENTIFIER :
 			EXPR_CONST
 	};
 
-	*token = (*token)->next;
+	next_token(ctx);
 	return expr;
 }
 
@@ -769,9 +742,7 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 	}
 
 	AstNodeExpr *expr_node = Malloc(sizeof(AstNodeExpr));
-	*expr_node = (AstNodeExpr){
-		.oper = EXPR_FUNC
-	};
+	expr_node->oper = EXPR_FUNC;
 
 	expr_node->lhs.func_call = Malloc(sizeof(AstNodeFunctionCall));
 	*expr_node->lhs.func_call = (AstNodeFunctionCall){
@@ -792,7 +763,7 @@ static void push_ast_node(
 	Token *last,
 	NodeType node_type
 ) {
-	AstNode *const new_node = make_ast_node();
+	AstNode *new_node = make_ast_node();
 	new_node->last = ctx->node;
 
 	ctx->node->type = node_type;

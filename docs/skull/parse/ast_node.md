@@ -201,10 +201,10 @@ static AstNodeExpr *_parse_expression(ParserCtx *ctx)
 > Internal `parse_expression` function. Used for recursive expr parsing.
 
 ```c
-static AstNodeExpr *parse_single_token_expr(Token **token)
+static AstNodeExpr *parse_single_token_expr(ParserCtx *ctx)
 ```
 
-> Parse a single token expression (constant or variable) from `token`.
+> Parse a single token expression (constant or variable) from `ctx`.
 
 ```c
 static AstNodeExpr *parse_func_call(ParserCtx *ctx)
