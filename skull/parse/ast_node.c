@@ -82,9 +82,6 @@ static void parse_return(ParserCtx *ctx) {
 	if (added_expr) splice_expr_node(ctx->node);
 }
 
-#define IS_TYPE_LIKE(token) \
-	((token)->type == TOKEN_TYPE || (token)->type == TOKEN_IDENTIFIER)
-
 static ParserResult parse_var_def(ParserCtx *ctx) {
 	bool is_const = true;
 	bool is_implicit = true;
@@ -109,7 +106,7 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 
 	if (ctx->token->type == TOKEN_NEW_IDENTIFIER &&
 		ctx->token->next &&
-		IS_TYPE_LIKE(ctx->token->next) &&
+		ctx->token->next->type == TOKEN_IDENTIFIER &&
 		ctx->token->next->next &&
 		ctx->token->next->next->type == TOKEN_OPER_EQUAL
 	) {
@@ -137,11 +134,6 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 
 	push_ast_node(ctx, first, AST_NODE_VAR_DEF);
 	next_token(ctx);
-
-	if (ctx->token->type == TOKEN_TYPE) {
-		next_token(ctx);
-		return RESULT_OK;
-	}
 
 	const bool success = parse_expression(ctx);
 	if (ctx->err) return RESULT_ERROR;
@@ -306,10 +298,7 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 
 	bool is_proto = false;
 
-	while (ctx->token->type == TOKEN_NEW_IDENTIFIER &&
-		ctx->token->next &&
-		IS_TYPE_LIKE(ctx->token->next)
-	) {
+	while (AST_TOKEN_CMP2(ctx->token, TOKEN_NEW_IDENTIFIER, TOKEN_IDENTIFIER)) {
 		is_proto = true;
 
 		AstNodeFunctionParam *param;
@@ -336,7 +325,7 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 
 	if (ctx->token->type == TOKEN_PAREN_CLOSE &&
 		ctx->token->next &&
-		IS_TYPE_LIKE(ctx->token->next) &&
+		ctx->token->next->type == TOKEN_IDENTIFIER &&
 		ctx->token->next->next &&
 		ctx->token->next->next->type == token_type
 	) {

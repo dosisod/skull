@@ -209,10 +209,6 @@ static bool test_token_to_string_constant(void) {
 	return classify_token_with_len_fixture(U"\"xyz\"", TOKEN_STR_CONST, 0, 5);
 }
 
-static bool test_token_type(void) {
-	return classify_token_with_len_fixture(U"Int", TOKEN_TYPE, 0, 3);
-}
-
 static bool test_token_comment(void) {
 	return classify_token_with_len_fixture(U"# this is a comment", TOKEN_COMMENT, 0, 19);
 }
@@ -299,7 +295,6 @@ void classifier_test_self(bool *pass) {
 		test_token_rune_constant_simple_escape,
 		test_token_rune_constant_hex_escape,
 		test_token_to_string_constant,
-		test_token_type,
 		test_token_comment,
 		test_token_comment_empty,
 		test_is_valid_identifier,

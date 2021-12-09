@@ -82,7 +82,6 @@ static void classify_token(Token *const token) {
 	TOKEN_SET_IF(is_constant_bool_str(str), TOKEN_BOOL_CONST)
 	TOKEN_SET_IF(is_constant_rune_str(str), TOKEN_RUNE_CONST)
 	TOKEN_SET_IF(is_constant_str_str(str), TOKEN_STR_CONST)
-	TOKEN_SET_IF(is_type_str(str), TOKEN_TYPE)
 
 	else if (is_valid_identifier_str(str)) {
 		token->type = TOKEN_IDENTIFIER;
