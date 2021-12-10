@@ -54,14 +54,13 @@ Token *tokenize(const char32_t *code) {
 		code++;
 	}
 
-	Token *const head = make_token();
+	Token *head = make_token();
 
 	TokenizeCtx ctx = {
 		.token = head,
 		.last = head,
 		.code = code,
-		.line_num = 1,
-		.column = 0
+		.line_num = 1
 	};
 
 	while (*ctx.code) {
@@ -300,7 +299,7 @@ Make a heap allocated copy of the data inside `token`.
 
 The result of this function must be freed.
 */
-char32_t *token_to_string(const Token *const token) {
+char32_t *token_to_string(const Token *token) {
 	const size_t len = token_len(token);
 	char32_t *str;
 	str = Malloc((len + 1) * sizeof *str);
@@ -316,9 +315,9 @@ Make a heap allocated copy of the data inside `token` as a multi-byte string.
 
 The result of this function must be freed.
 */
-char *token_to_mbs_str(const Token *const token) {
-	char32_t *const tmp = token_to_string(token);
-	char *const ret = c32stombs(tmp, &token->location);
+char *token_to_mbs_str(const Token *token) {
+	char32_t *tmp = token_to_string(token);
+	char *ret = c32stombs(tmp, &token->location);
 
 	free(tmp);
 	return ret;
@@ -327,17 +326,16 @@ char *token_to_mbs_str(const Token *const token) {
 /*
 Returns true if `str` is equal to the value of `token`.
 */
-bool token_cmp(const char32_t *const str, const Token *const token) {
+bool token_cmp(const char32_t *str, const Token *token) {
 	const size_t len = token_len(token);
 
-	return c32slen(str) == len &&
-		c32sncmp(str, token->begin, len);
+	return c32slen(str) == len && c32sncmp(str, token->begin, len);
 }
 
 /*
 Return the string length of `token`.
 */
-__attribute__((pure)) size_t token_len(const Token *const token) {
+__attribute__((pure)) size_t token_len(const Token *token) {
 	return (size_t)(token->end - token->begin);
 }
 

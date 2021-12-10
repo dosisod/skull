@@ -96,10 +96,10 @@ Token *make_token(void);
 
 Token *tokenize(const char32_t *);
 
-void free_tokens(Token *const);
+void free_tokens(Token *);
 
-size_t token_len(const Token *const);
-_Bool token_cmp(const char32_t *const, const Token *const);
+size_t token_len(const Token *);
+_Bool token_cmp(const char32_t *, const Token *);
 
-char32_t *token_to_string(const Token *const);
-char *token_to_mbs_str(const Token *const);
+char32_t *token_to_string(const Token *);
+char *token_to_mbs_str(const Token *);

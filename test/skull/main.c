@@ -38,9 +38,9 @@ int main(void) {
 
 	testing_test_self(&passed);
 
+	tokenizer_test_self(&passed);
 	ast_node_test_self(&passed);
 	classifier_test_self(&passed);
-	tokenizer_test_self(&passed);
 	types_test_self(&passed);
 
 	error_test_self(&passed);

@@ -348,4 +348,6 @@ void tokenizer_test_self(bool *pass) {
 		test_check_for_closing_single_quote,
 		test_check_for_closing_double_quote
 	)
+
+	free_errors();
 }

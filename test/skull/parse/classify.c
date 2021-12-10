@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "skull/common/errors.h"
 #include "skull/parse/classify.c"
 
 #include "test/skull/parse/classify.h"
@@ -304,6 +305,8 @@ void classifier_test_self(bool *pass) {
 		test_identifier_cannot_be_reserved,
 		test_classify_tokens
 	)
+
+	free_errors();
 }
 
 static bool classify_token_fixture(const char32_t *code, TokenType expected) {
