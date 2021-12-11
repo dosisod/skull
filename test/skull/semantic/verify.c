@@ -380,7 +380,7 @@ static bool test_validate_redeclare_variable_as_alias(void) {
 		alias_token,
 		AST_NODE_EXPR(
 			alias_token->next->next,
-			AST_NODE_CONST_EXPR(alias_token->next->next)
+			AST_NODE_IDENT_EXPR(alias_token->next->next)
 		),
 		true
 	);
@@ -1214,6 +1214,63 @@ static bool test_validate_matching_types(void) {
 	return pass;
 }
 
+static bool test_validate_type_alias_mut_not_allowed(void) {
+	Token *token = tokenize_fixture(U"mut x := Int");
+	Token *int_token = token->next->next->next;
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token,
+		AST_NODE_EXPR(int_token, AST_NODE_IDENT_EXPR(int_token)),
+		true
+	);
+	node->var_def->is_const = false;
+	node->token_end = token->next->next;
+
+	const char *errors = "(null): Compilation error: line 1 column 5: Type alias cannot be mutable\n";
+
+	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(compare_errors(errors));
+
+	free_tokens(node->token);
+	PASS
+}
+
+static bool test_validate_type_alias_in_expr_not_allowed(void) {
+	Token *token = tokenize_fixture(U"x := Int\ny := x + 1");
+	Token *int_token = token->next->next;
+	Token *y_token = int_token->next->next;
+	Token *x_token = y_token->next->next;
+	Token *one_token = x_token->next->next;
+
+	AstNode *x_def = AST_NODE_VAR_DEF(
+		token,
+		AST_NODE_EXPR(int_token, AST_NODE_IDENT_EXPR(int_token)),
+		true
+	);
+	ASSERT_TRUTHY(validate_ast_tree(x_def));
+
+	AstNode *y_def = AST_NODE_VAR_DEF(
+		y_token,
+		AST_NODE_EXPR(
+			x_token,
+			AST_NODE_BINARY_EXPR(
+				AST_NODE_IDENT_EXPR(x_token),
+				EXPR_ADD,
+				AST_NODE_CONST_EXPR(one_token)
+			)
+		),
+		true
+	);
+
+	const char *errors = "(null): Compilation error: line 2 column 6: Type aliases cannot be used in expressions\n";
+
+	ASSERT_FALSEY(validate_ast_tree(y_def));
+	ASSERT_FALSEY(compare_errors(errors));
+
+	free_tokens(x_def->token);
+	PASS
+}
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -1283,7 +1340,9 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_isnt_rune,
 		test_validate_isnt_bool,
 		test_validate_isnt_str,
-		test_validate_matching_types
+		test_validate_matching_types,
+		test_validate_type_alias_mut_not_allowed,
+		test_validate_type_alias_in_expr_not_allowed
 	)
 }
 

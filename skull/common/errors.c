@@ -109,7 +109,9 @@ static const char *errors[] = {
 	[ERR_NOT_NUMERIC] = "expected a numeric value",
 	[WARN_NO_BOM] = "BOM found",
 	[ERR_BREAK_NOT_IN_WHILE] = "break must be inside while loop",
-	[ERR_CONTINUE_NOT_IN_WHILE] = "continue must be inside while loop"
+	[ERR_CONTINUE_NOT_IN_WHILE] = "continue must be inside while loop",
+	[ERR_NO_MUT_TYPE_ALIAS] = "Type alias cannot be mutable",
+	[ERR_NO_TYPE_EXPR] = "Type aliases cannot be used in expressions"
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);

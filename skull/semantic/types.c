@@ -233,7 +233,17 @@ static void strip_underscore_num(char *str, char c) {
 }
 
 bool validate_stmt_type_alias(const AstNode *node) {
-	const Token *const token = node->token;
+	const Token *token = node->token;
+
+	if (!node->var_def->is_const) {
+		FMT_ERROR(ERR_NO_MUT_TYPE_ALIAS, { .loc = &token->next->location });
+		return false;
+	}
+
+	if (node->var_def->expr_node->expr->oper != EXPR_IDENTIFIER) {
+		FMT_ERROR(ERR_NO_TYPE_EXPR, { .loc = &token->next->next->location });
+		return false;
+	}
 
 	char *type_name = token_to_mbs_str(token->next->next);
 	char *alias = token_to_mbs_str(token);
