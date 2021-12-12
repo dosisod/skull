@@ -111,7 +111,8 @@ static const char *errors[] = {
 	[ERR_BREAK_NOT_IN_WHILE] = "break must be inside while loop",
 	[ERR_CONTINUE_NOT_IN_WHILE] = "continue must be inside while loop",
 	[ERR_NO_MUT_TYPE_ALIAS] = "Type alias cannot be mutable",
-	[ERR_NO_TYPE_EXPR] = "Type aliases cannot be used in expressions"
+	[ERR_NO_TYPE_EXPR] = "Type aliases cannot be used in expressions",
+	[ERR_NO_DOUBLE_UNARY] = "Cannot use unary operator twice"
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);

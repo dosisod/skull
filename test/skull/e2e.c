@@ -1597,7 +1597,7 @@ NULL
 
 pass |= e2e_wrapper(
 "	mut w := - 1.0\n" \
-"	mut x := not not false\n" \
+"	mut x := not false\n" \
 "	mut y := - 1\n" \
 "	mut z := - y\n",
 
@@ -1614,7 +1614,7 @@ TEST_DIR"/oper/unary_expr.sk",
 "define i64 @.unary_expr() {\n" \
 "entry:\n" \
 "  store double -1.000000e+00, double* @w\n" \
-"  store i1 false, i1* @x\n" \
+"  store i1 true, i1* @x\n" \
 "  store i64 -1, i64* @y\n" \
 "  %0 = load i64, i64* @y\n" \
 "  %1 = sub nsw i64 0, %0\n" \
@@ -1626,7 +1626,7 @@ NULL
 );
 
 
-/*
+/* TODO
 pass |= e2e_wrapper(
 "a(x: Int) { noop }\n" \
 "b(x: Int) { noop }\n" \
@@ -2211,6 +2211,15 @@ NULL,
 "./test/sh/error/function/void_func_expr.sk: Compilation error: line 2 column 10: expected type \"Int\", got \"Void\"\n"
 );
 
+
+pass |= e2e_wrapper(
+"x := not not true",
+TEST_DIR"/error/oper/disallow_double_unary_oper.sk",
+
+NULL,
+
+"./test/sh/error/oper/disallow_double_unary_oper.sk: Compilation error: line 1 column 10: Cannot use unary operator twice\n"
+);
 
 	return pass;
 }

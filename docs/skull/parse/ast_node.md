@@ -145,26 +145,6 @@ static ExprType token_type_to_expr_oper_type(TokenType type)
 > Convert a `TokenType` to an `ExprType`.
 
 ```c
-static AstNodeExpr *build_rhs_expr(ParserCtx *ctx, AstNodeExpr *lhs, ExprType oper)
-```
-
-> Parse the right-hand-side of an expression given `lhs` and `oper`.
-
-```c
-static AstNodeExpr *parse_binary_oper(ParserCtx *ctx, AstNodeExpr *expr)
-```
-
-> Try to parse a binary operator from `expr`.
-
-```c
-static AstNodeExpr *parse_unary_oper(ParserCtx *ctx)
-```
-
-> Try to parse a unary operator from `expr`.
-> \
-> Set `err` if an error occurred.
-
-```c
 static AstNode *parse_ast_tree_(ParserCtx *ctx)
 ```
 
@@ -199,6 +179,21 @@ static AstNodeExpr *_parse_expression(ParserCtx *ctx)
 ```
 
 > Internal `parse_expression` function. Used for recursive expr parsing.
+
+```c
+static bool is_unary_oper(ExprType oper)
+```
+
+> Return whether `oper` is a unary expr or not. Since `EXPR_SUB` and
+> `EXPR_UNARY_NEG` are share the same representation, they can both
+> can be considered unary, if it would make since in context.
+
+```c
+static AstNodeExpr *parse_root_expr(ParserCtx *ctx)
+```
+
+> Parse root expression from context `ctx`. A root expression is an expression
+> which has no association, and as such, has the highest precedence.
 
 ```c
 static AstNodeExpr *parse_single_token_expr(ParserCtx *ctx)

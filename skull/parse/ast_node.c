@@ -36,6 +36,12 @@ static AstNodeExpr *parse_paren_expr(ParserCtx *);
 static void parse_ast_sub_tree_(ParserCtx *);
 static bool parse_ast_node(ParserCtx *);
 static void next_token(ParserCtx *);
+static AstNodeExpr *parse_single_expr(ParserCtx *);
+static AstNodeExpr *parse_expr_rhs(ParserCtx *, AstNodeExpr *);
+static unsigned oper_to_precedence(ExprType);
+static void rebalance_precedence(AstNodeExpr *, AstNodeExpr *);
+static AstNodeExpr *parse_root_expr(ParserCtx *);
+static bool is_unary_oper(ExprType);
 
 
 typedef enum {
@@ -204,66 +210,6 @@ static ExprType token_type_to_expr_oper_type(TokenType type) {
 		case TOKEN_OPER_NOT: return EXPR_NOT;
 		default: return EXPR_UNKNOWN;
 	}
-}
-
-/*
-Parse the right-hand-side of an expression given `lhs` and `oper`.
-*/
-static AstNodeExpr *build_rhs_expr(
-	ParserCtx *ctx,
-	AstNodeExpr *lhs,
-	ExprType oper
-) {
-	const Token *oper_tok = ctx->token;
-	next_token(ctx);
-
-	AstNodeExpr *rhs = _parse_expression(ctx);
-
-	if (ctx->err) return false;
-
-	if (!rhs) {
-		FMT_ERROR(ERR_EXPECTED_EXPR, { .tok = oper_tok });
-
-		ctx->err = true;
-		return false;
-	}
-
-	AstNodeExpr *new_expr = Malloc(sizeof(AstNodeExpr));
-	*new_expr = (AstNodeExpr){
-		.lhs = { .expr = lhs },
-		.oper = oper,
-		.rhs = rhs
-	};
-
-	return new_expr;
-}
-
-/*
-Try to parse a binary operator from `expr`.
-*/
-static AstNodeExpr *parse_binary_oper(ParserCtx *ctx, AstNodeExpr *expr) {
-	if (!ctx->token || !ctx->token->next) return NULL;
-
-	const ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
-	if (oper == EXPR_UNKNOWN) return NULL;
-
-	return build_rhs_expr(ctx, expr, oper);
-}
-
-/*
-Try to parse a unary operator from `expr`.
-
-Set `err` if an error occurred.
-*/
-static AstNodeExpr *parse_unary_oper(ParserCtx *ctx) {
-	if (!ctx->token->next) return NULL;
-
-	ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
-
-	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
-	else if (oper != EXPR_NOT) return NULL;
-
-	return build_rhs_expr(ctx, NULL, oper);
 }
 
 static void free_param(AstNodeFunctionParam *param) {
@@ -592,22 +538,17 @@ Try and generate AST node for expression.
 Returns node if one was added, NULL otherwise.
 */
 static AstNode *parse_expression(ParserCtx *ctx) {
-	Token **token = &ctx->token;
-	AstNode **node = &ctx->node;
-
-	Token *last = *token;
+	Token *last = ctx->token;
 
 	AstNodeExpr *expr_node = _parse_expression(ctx);
+
 	if (!expr_node || ctx->err) return NULL;
 
 	push_ast_node(ctx, last, AST_NODE_EXPR);
 
-	(*node)->last->expr = expr_node;
+	ctx->node->last->expr = expr_node;
 
-	ctx->node = *node;
-	ctx->token = *token;
-
-	return (*node)->last;
+	return ctx->node->last;
 }
 
 /*
@@ -616,37 +557,157 @@ Internal `parse_expression` function. Used for recursive expr parsing.
 static AstNodeExpr *_parse_expression(ParserCtx *ctx) {
 	if (!ctx->token) return NULL;
 
-	AstNodeExpr *expr = NULL;
+	AstNodeExpr *head = parse_single_expr(ctx);
+	if (ctx->err) return NULL;
 
-	if (ctx->token->type == TOKEN_PAREN_OPEN) {
-		expr = parse_paren_expr(ctx);
-	}
-	else if (AST_TOKEN_CMP2(ctx->token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
-		expr = parse_func_call(ctx);
-	}
-	else if ((expr = parse_unary_oper(ctx))) {
-		// pass
-	}
-	else if (is_single_token_expr(ctx->token->type)) {
-		expr = parse_single_token_expr(ctx);
+	AstNodeExpr *current = head;
+	AstNodeExpr *last = NULL;
+
+	while (last != current) {
+		last = current;
+
+		current = parse_expr_rhs(ctx, current);
+		if (ctx->err) {
+			free_expr_node(head);
+			return NULL;
+		}
+
+		rebalance_precedence(last, current);
 	}
 
-	if (!expr) return NULL;
+	return last ? last : current;
+}
 
-	AstNodeExpr *binary_oper = parse_binary_oper(ctx, expr);
-	if (ctx->err) {
-		free_expr_node(expr);
+static void rebalance_precedence(AstNodeExpr *lhs, AstNodeExpr *rhs) {
+	if (oper_to_precedence(lhs->oper) > oper_to_precedence(rhs->oper)) {
+		rhs->lhs.expr = lhs->rhs;
+		lhs->rhs = rhs;
+	}
+}
+
+static AstNodeExpr *parse_single_expr(ParserCtx *ctx) {
+	ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
+
+	if (!is_unary_oper(oper)) {
+		return parse_root_expr(ctx);
+	}
+
+	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
+	next_token(ctx);
+
+	const ExprType next_oper = token_type_to_expr_oper_type(ctx->token->type);
+	if (is_unary_oper(next_oper)) {
+		FMT_ERROR(ERR_NO_DOUBLE_UNARY, { .loc = &ctx->token->location });
+
+		ctx->err = true;
 		return NULL;
 	}
 
-	return binary_oper ? binary_oper : expr;
+	AstNodeExpr *expr = Malloc(sizeof(AstNodeExpr));
+	*expr = (AstNodeExpr){
+		.oper = oper,
+		.rhs = parse_root_expr(ctx)
+	};
+
+	return expr;
+}
+
+/*
+Return whether `oper` is a unary expr or not. Since `EXPR_SUB` and
+`EXPR_UNARY_NEG` are share the same representation, they can both
+can be considered unary, if it would make since in context.
+*/
+static bool is_unary_oper(ExprType oper) {
+	return oper == EXPR_SUB || oper == EXPR_UNARY_NEG || oper == EXPR_NOT;
+}
+
+/*
+Parse root expression from context `ctx`. A root expression is an expression
+which has no association, and as such, has the highest precedence.
+*/
+static AstNodeExpr *parse_root_expr(ParserCtx *ctx) {
+	if (ctx->token->type == TOKEN_PAREN_OPEN) {
+		return parse_paren_expr(ctx);
+	}
+	if (AST_TOKEN_CMP2(ctx->token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
+		return parse_func_call(ctx);
+	}
+	if (is_single_token_expr(ctx->token->type)) {
+		return parse_single_token_expr(ctx);
+	}
+
+	return NULL;
+}
+
+static AstNodeExpr *parse_expr_rhs(ParserCtx *ctx, AstNodeExpr *expr) {
+	if (!ctx->token) return expr;
+
+	const ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
+	if (oper == EXPR_UNKNOWN) return expr;
+
+	Token *oper_token = ctx->token;
+	next_token(ctx);
+
+	AstNodeExpr *rhs = parse_single_expr(ctx);
+	if (!rhs) {
+		FMT_ERROR(ERR_EXPECTED_EXPR, { .tok = oper_token });
+
+		ctx->err = true;
+		return expr;
+	}
+
+	AstNodeExpr *new_expr = Malloc(sizeof(AstNodeExpr));
+	*new_expr = (AstNodeExpr){
+		.lhs = { .expr = expr },
+		.oper = oper,
+		.rhs = rhs
+	};
+
+	return new_expr;
+}
+
+static unsigned oper_to_precedence(ExprType oper) {
+	switch (oper) {
+		case EXPR_UNKNOWN:
+			return 0;
+		case EXPR_IDENTIFIER:
+		case EXPR_CONST:
+		case EXPR_FUNC:
+			return 1;
+		case EXPR_POW:
+			return 2;
+		case EXPR_NOT:
+		case EXPR_UNARY_NEG:
+			return 3;
+		case EXPR_MULT:
+		case EXPR_DIV:
+		case EXPR_MOD:
+			return 4;
+		case EXPR_ADD:
+		case EXPR_SUB:
+			return 5;
+		case EXPR_AND:
+		case EXPR_OR:
+		case EXPR_XOR:
+		case EXPR_LSHIFT:
+		case EXPR_RSHIFT:
+			return 6;
+		case EXPR_IS:
+		case EXPR_ISNT:
+		case EXPR_LESS_THAN:
+		case EXPR_GTR_THAN:
+		case EXPR_LESS_THAN_EQ:
+		case EXPR_GTR_THAN_EQ:
+			return 7;
+		default: return 0;
+	}
 }
 
 static AstNodeExpr *parse_paren_expr(ParserCtx *ctx) {
 	next_token(ctx);
 
-	AstNodeExpr *pushed = _parse_expression(ctx);
-	if (!pushed) {
+	AstNodeExpr *expr = _parse_expression(ctx);
+	if (!expr) {
 		FMT_ERROR(ERR_INVALID_EXPR, { .tok = ctx->token });
 
 		ctx->err = true;
@@ -656,13 +717,13 @@ static AstNodeExpr *parse_paren_expr(ParserCtx *ctx) {
 	if (!ctx->token || ctx->token->type != TOKEN_PAREN_CLOSE) {
 		FMT_ERROR(ERR_MISSING_CLOSING_PAREN, { .loc = &ctx->token->location });
 
-		free_expr_node(pushed);
+		free_expr_node(expr);
 		ctx->err = true;
 		return NULL;
 	}
 
 	next_token(ctx);
-	return pushed;
+	return expr;
 }
 
 /*
