@@ -1226,7 +1226,7 @@ static bool test_validate_type_alias_mut_not_allowed(void) {
 	node->var_def->is_const = false;
 	node->token_end = token->next->next;
 
-	const char *errors = "(null): Compilation error: line 1 column 5: Type alias cannot be mutable\n";
+	const char *errors = "(null): Compilation error: line 1 column 5: type alias cannot be mutable\n";
 
 	ASSERT_FALSEY(validate_ast_tree(node));
 	ASSERT_FALSEY(compare_errors(errors));
@@ -1262,7 +1262,7 @@ static bool test_validate_type_alias_in_expr_not_allowed(void) {
 		true
 	);
 
-	const char *errors = "(null): Compilation error: line 2 column 6: Type aliases cannot be used in expressions\n";
+	const char *errors = "(null): Compilation error: line 2 column 6: type aliases cannot be used in expressions\n";
 
 	ASSERT_FALSEY(validate_ast_tree(y_def));
 	ASSERT_FALSEY(compare_errors(errors));

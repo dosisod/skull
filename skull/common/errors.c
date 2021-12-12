@@ -110,9 +110,10 @@ static const char *errors[] = {
 	[WARN_NO_BOM] = "BOM found",
 	[ERR_BREAK_NOT_IN_WHILE] = "break must be inside while loop",
 	[ERR_CONTINUE_NOT_IN_WHILE] = "continue must be inside while loop",
-	[ERR_NO_MUT_TYPE_ALIAS] = "Type alias cannot be mutable",
-	[ERR_NO_TYPE_EXPR] = "Type aliases cannot be used in expressions",
-	[ERR_NO_DOUBLE_UNARY] = "Cannot use unary operator twice"
+	[ERR_NO_MUT_TYPE_ALIAS] = "type alias cannot be mutable",
+	[ERR_NO_TYPE_EXPR] = "type aliases cannot be used in expressions",
+	[ERR_NO_DOUBLE_UNARY] = "cannot use unary operator twice",
+	[ERR_UNEXPECTED_UNARY_EXPR] = "unexpected unary operator"
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);

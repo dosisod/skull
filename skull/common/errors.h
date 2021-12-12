@@ -80,7 +80,8 @@ typedef enum {
 	ERR_CONTINUE_NOT_IN_WHILE = 69,
 	ERR_NO_MUT_TYPE_ALIAS = 70,
 	ERR_NO_TYPE_EXPR = 71,
-	ERR_NO_DOUBLE_UNARY = 72
+	ERR_NO_DOUBLE_UNARY = 72,
+	ERR_UNEXPECTED_UNARY_EXPR = 73
 } ErrorCode;
 
 typedef struct Variable Variable;

@@ -644,6 +644,11 @@ static AstNodeExpr *parse_expr_rhs(ParserCtx *ctx, AstNodeExpr *expr) {
 
 	const ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
 	if (oper == EXPR_UNKNOWN) return expr;
+	if (is_unary_oper(oper) && oper != EXPR_SUB) {
+		FMT_ERROR(ERR_UNEXPECTED_UNARY_EXPR, { .loc = &ctx->token->location });
+		ctx->err = true;
+		return NULL;
+	}
 
 	Token *oper_token = ctx->token;
 	next_token(ctx);

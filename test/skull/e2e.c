@@ -2218,7 +2218,17 @@ TEST_DIR"/error/oper/disallow_double_unary_oper.sk",
 
 NULL,
 
-"./test/sh/error/oper/disallow_double_unary_oper.sk: Compilation error: line 1 column 10: Cannot use unary operator twice\n"
+"./test/sh/error/oper/disallow_double_unary_oper.sk: Compilation error: line 1 column 10: cannot use unary operator twice\n"
+);
+
+
+pass |= e2e_wrapper(
+"x := true not true",
+TEST_DIR"/error/oper/check_unary_oper.sk",
+
+NULL,
+
+"./test/sh/error/oper/check_unary_oper.sk: Compilation error: line 1 column 11: unexpected unary operator\n"
 );
 
 	return pass;
