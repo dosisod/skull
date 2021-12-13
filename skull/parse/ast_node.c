@@ -39,7 +39,6 @@ static void next_token(ParserCtx *);
 static AstNodeExpr *parse_single_expr(ParserCtx *);
 static AstNodeExpr *parse_expr_rhs(ParserCtx *, AstNodeExpr *);
 static unsigned oper_to_precedence(ExprType);
-static void rebalance_precedence(AstNodeExpr *, AstNodeExpr *);
 static AstNodeExpr *parse_root_expr(ParserCtx *);
 static bool is_unary_oper(ExprType);
 
@@ -572,17 +571,20 @@ static AstNodeExpr *_parse_expression(ParserCtx *ctx) {
 			return NULL;
 		}
 
-		rebalance_precedence(last, current);
+		const unsigned last_precedence = oper_to_precedence(last->oper);
+		const unsigned current_precedence = oper_to_precedence(current->oper);
+
+		if (last_precedence > current_precedence) {
+			current->lhs.expr = last->rhs;
+			last->rhs = current;
+
+			AstNodeExpr *tmp = last;
+			last = current;
+			current = tmp;
+		}
 	}
 
 	return last ? last : current;
-}
-
-static void rebalance_precedence(AstNodeExpr *lhs, AstNodeExpr *rhs) {
-	if (oper_to_precedence(lhs->oper) > oper_to_precedence(rhs->oper)) {
-		rhs->lhs.expr = lhs->rhs;
-		lhs->rhs = rhs;
-	}
 }
 
 static AstNodeExpr *parse_single_expr(ParserCtx *ctx) {

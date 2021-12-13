@@ -110,7 +110,6 @@ static bool test_parse_ast_tree_less_then_expr(void) {
 	return ast_tree_expr_fixture(U"1 < 0", EXPR_LESS_THAN, 0, 5);
 }
 
-
 static bool test_parse_ast_tree_not_expr(void) {
 	return ast_tree_expr_fixture(U"not false", EXPR_NOT, 0, 9);
 }
@@ -191,14 +190,16 @@ static bool test_parse_ast_tree_function_newline(void) {
 static bool test_parse_ast_tree_return(void) {
 	return ast_tree_fixture(U"return 0", AST_NODE_RETURN, 0, 6);
 }
+
+#define AST_NODE_FIXTURE(_code) \
+	const char32_t *code = (_code); \
+	Token *token = tokenize(code); \
+	if (!token) return true; \
+	classify_tokens(token); \
+	AstNode *node = parse_ast_tree(token)
+
 static bool test_parse_ast_tree_if(void) {
-	const char32_t *const code = U"if true { noop }";
-	Token *token = tokenize(code);
-	if (!token) return true;
-
-	classify_tokens(token);
-
-	AstNode *node = parse_ast_tree(token);
+	AST_NODE_FIXTURE(U"if true { noop }");
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
@@ -214,13 +215,7 @@ static bool test_parse_ast_tree_if(void) {
 }
 
 static bool test_parse_ast_tree_if_with_var(void) {
-	const char32_t *const code = U"if x { noop }";
-	Token *token = tokenize(code);
-	if (!token) return true;
-
-	classify_tokens(token);
-
-	AstNode *node = parse_ast_tree(token);
+	AST_NODE_FIXTURE(U"if x { noop }");
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
@@ -253,6 +248,113 @@ static bool test_parse_ast_tree_continue(void) {
 
 static bool test_free_ast_tree(void) {
 	free_ast_tree(parse_ast_tree(tokenize(U"noop")));
+
+	PASS
+}
+
+static bool test_ooo_unary_association(void) {
+	AST_NODE_FIXTURE(U"- 1 + 2");
+
+	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
+	ASSERT_EQUAL(node->expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->lhs.expr->oper, EXPR_UNARY_NEG);
+	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_CONST);
+
+	free_ast_tree(node);
+
+	PASS
+}
+
+static bool test_ooo_paren_expr(void) {
+	AST_NODE_FIXTURE(U"(1 + 2)");
+
+	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
+	ASSERT_EQUAL(node->expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_CONST);
+
+	free_ast_tree(node);
+
+	PASS
+}
+
+static bool test_ooo_group_higher_precedence_1(void) {
+	AST_NODE_FIXTURE(U"1 * 2 + 3");
+
+	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
+	ASSERT_EQUAL(node->expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->lhs.expr->oper, EXPR_MULT);
+	ASSERT_EQUAL(node->expr->lhs.expr->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->lhs.expr->rhs->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_CONST);
+
+	free_ast_tree(node);
+
+	PASS
+}
+
+static bool test_ooo_group_higher_precedence_2(void) {
+	AST_NODE_FIXTURE(U"1 + 2 * 3");
+
+	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
+	ASSERT_EQUAL(node->expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_MULT);
+	ASSERT_EQUAL(node->expr->rhs->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->rhs->rhs->oper, EXPR_CONST);
+
+	free_ast_tree(node);
+
+	PASS
+}
+
+static bool test_ooo_group_higher_precedence_3(void) {
+	AST_NODE_FIXTURE(U"1 + 2 + 3 * 4");
+
+	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
+	ASSERT_EQUAL(node->expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->lhs.expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->lhs.expr->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->lhs.expr->rhs->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_MULT);
+	ASSERT_EQUAL(node->expr->rhs->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->rhs->rhs->oper, EXPR_CONST);
+
+	free_ast_tree(node);
+
+	PASS
+}
+
+static bool test_ooo_group_higher_precedence_4(void) {
+	AST_NODE_FIXTURE(U"1 + 2 * 3 + 4");
+
+	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
+	ASSERT_EQUAL(node->expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->lhs.expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->lhs.expr->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->lhs.expr->rhs->oper, EXPR_MULT);
+	ASSERT_EQUAL(node->expr->lhs.expr->rhs->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->lhs.expr->rhs->rhs->oper, EXPR_CONST);
+
+	free_ast_tree(node);
+
+	PASS
+}
+
+static bool test_ooo_group_same_precedence(void) {
+	AST_NODE_FIXTURE(U"1 * 2 / 3 + 4");
+
+	ASSERT_EQUAL(node->type, AST_NODE_EXPR);
+	ASSERT_EQUAL(node->expr->oper, EXPR_ADD);
+	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->lhs.expr->oper, EXPR_DIV);
+	ASSERT_EQUAL(node->expr->lhs.expr->rhs->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->lhs.expr->lhs.expr->oper, EXPR_MULT);
+	ASSERT_EQUAL(node->expr->lhs.expr->lhs.expr->lhs.expr->oper, EXPR_CONST);
+	ASSERT_EQUAL(node->expr->lhs.expr->lhs.expr->rhs->oper, EXPR_CONST);
+
+	free_ast_tree(node);
 
 	PASS
 }
@@ -302,7 +404,14 @@ void ast_node_test_self(bool *pass) {
 		test_parse_ast_tree_noop,
 		test_parse_ast_tree_break,
 		test_parse_ast_tree_continue,
-		test_free_ast_tree
+		test_free_ast_tree,
+		test_ooo_unary_association,
+		test_ooo_paren_expr,
+		test_ooo_group_higher_precedence_1,
+		test_ooo_group_higher_precedence_2,
+		test_ooo_group_higher_precedence_3,
+		test_ooo_group_higher_precedence_4,
+		test_ooo_group_same_precedence
 	)
 }
 
