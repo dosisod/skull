@@ -99,6 +99,9 @@ void gen_control_while(const AstNode *node) {
 		"while_end"
 	);
 
+	SKULL_STATE_LLVM.current_while_cond = while_cond;
+	SKULL_STATE_LLVM.current_while_end = while_end;
+
 	LLVMBuildBr(SKULL_STATE_LLVM.builder, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_cond);
 
@@ -115,6 +118,11 @@ void gen_control_while(const AstNode *node) {
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_loop);
 	gen_control_code_block(node, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_end);
+
+	// shouldn't be needed since semantic layer checks that all break/continue
+	// statements are in a while loop, but it doesn't hurt to leave it in.
+	SKULL_STATE_LLVM.current_while_cond = NULL;
+	SKULL_STATE_LLVM.current_while_end = NULL;
 }
 
 /*
@@ -210,6 +218,14 @@ static void gen_control_if_(
 	}
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, end);
+}
+
+void gen_stmt_break(void) {
+	LLVMBuildBr(SKULL_STATE_LLVM.builder, SKULL_STATE_LLVM.current_while_end);
+}
+
+void gen_stmt_continue(void) {
+	LLVMBuildBr(SKULL_STATE_LLVM.builder, SKULL_STATE_LLVM.current_while_cond);
 }
 
 /*

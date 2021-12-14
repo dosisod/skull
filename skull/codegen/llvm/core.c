@@ -50,14 +50,8 @@ static Expr _gen_tree(const AstNode **node) {
 		case AST_NODE_EXPR:
 			gen_expr_func_call((*node)->expr->lhs.func_call); break;
 		case AST_NODE_NOOP: gen_stmt_noop(&(*node)->token->location); break;
-		case AST_NODE_BREAK:
-		case AST_NODE_CONTINUE: {
-			fprintf(
-				stderr,
-				"skull: break/continue not supported in LLVM backend yet\n"
-			);
-			exit(1);
-		}
+		case AST_NODE_BREAK: gen_stmt_break(); break;
+		case AST_NODE_CONTINUE: gen_stmt_continue(); break;
 		default: break;
 	}
 

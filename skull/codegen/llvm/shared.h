@@ -10,6 +10,8 @@ typedef struct {
 	LLVMModuleRef module;
 	FunctionDeclaration *current_func;
 	FunctionDeclaration *main_func;
+	LLVMBasicBlockRef current_while_cond;
+	LLVMBasicBlockRef current_while_end;
 } SkullStateLLVM;
 
 extern SkullStateLLVM SKULL_STATE_LLVM;

@@ -9,6 +9,9 @@ typedef struct LLVMOpaqueContext *LLVMContextRef;
 struct LLVMOpaqueModule;
 typedef struct LLVMOpaqueModule *LLVMModuleRef;
 
+struct LLVMOpaqueBasicBlock;
+typedef struct LLVMOpaqueBasicBlock *LLVMBasicBlockRef;
+
 struct LLVMOpaqueType;
 typedef struct LLVMOpaqueType *LLVMTypeRef;
 

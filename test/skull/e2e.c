@@ -1681,6 +1681,64 @@ NULL
 );
 
 
+pass |= e2e_wrapper(
+"while true {\n" \
+"	break\n"
+"}",
+
+TEST_DIR"/flow/break.sk",
+
+"; ModuleID = './test/sh/flow/break.sk'\n" \
+"source_filename = \"./test/sh/flow/break.sk\"\n" \
+"\n" \
+"define i64 @.break() {\n" \
+"entry:\n" \
+"  br label %while_cond\n" \
+"\n" \
+"while_cond:                                       ; preds = %while_loop, %entry\n" \
+"  br i1 true, label %while_loop, label %while_end\n" \
+"\n" \
+"while_loop:                                       ; preds = %while_cond\n" \
+"  br label %while_end\n" \
+"  br label %while_cond\n" \
+"\n" \
+"while_end:                                        ; preds = %while_loop, %while_cond\n" \
+"  ret i64 0\n" \
+"}\n",
+
+NULL
+);
+
+
+pass |= e2e_wrapper(
+"while true {\n" \
+"  continue\n"
+"}",
+
+TEST_DIR"/flow/continue.sk",
+
+"; ModuleID = './test/sh/flow/continue.sk'\n" \
+"source_filename = \"./test/sh/flow/continue.sk\"\n" \
+"\n" \
+"define i64 @.continue() {\n" \
+"entry:\n" \
+"  br label %while_cond\n" \
+"\n" \
+"while_cond:                                       ; preds = %while_loop, %while_loop, %entry\n" \
+"  br i1 true, label %while_loop, label %while_end\n" \
+"\n" \
+"while_loop:                                       ; preds = %while_cond\n" \
+"  br label %while_cond\n" \
+"  br label %while_cond\n" \
+"\n" \
+"while_end:                                        ; preds = %while_cond\n" \
+"  ret i64 0\n" \
+"}\n",
+
+NULL
+);
+
+
 // error tests
 
 pass |= e2e_wrapper(
