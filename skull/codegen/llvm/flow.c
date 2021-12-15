@@ -106,7 +106,7 @@ void gen_control_while(const AstNode *node) {
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_cond);
 
 	LLVMValueRef cond = gen_expr(node->expr_node->expr).value;
-	add_llvm_debug_info(cond, &node->expr_node->token->location);
+	add_llvm_debug_info(cond, find_expr_node_location(node->expr_node->expr));
 
 	LLVMBuildCondBr(
 		SKULL_STATE_LLVM.builder,
@@ -183,7 +183,10 @@ static void gen_control_if_(
 		LLVMMoveBasicBlockAfter(end, if_false);
 
 		LLVMValueRef cond = gen_expr((*node)->expr_node->expr).value;
-		add_llvm_debug_info(cond, &(*node)->expr_node->token->location);
+		add_llvm_debug_info(
+			cond,
+			find_expr_node_location((*node)->expr_node->expr)
+		);
 
 		LLVMBuildCondBr(
 			SKULL_STATE_LLVM.builder,
@@ -207,7 +210,10 @@ static void gen_control_if_(
 	// just a single if statement
 	else {
 		LLVMValueRef cond = gen_expr((*node)->expr_node->expr).value;
-		add_llvm_debug_info(cond, &(*node)->expr_node->token->location);
+		add_llvm_debug_info(
+			cond,
+			find_expr_node_location((*node)->expr_node->expr)
+		);
 
 		LLVMBuildCondBr(
 			SKULL_STATE_LLVM.builder,

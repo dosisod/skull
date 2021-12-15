@@ -44,8 +44,10 @@ static bool is_valid_return_expr(const AstNode *node) {
 
 	const AstNodeExpr *expr = node->expr_node->expr;
 
+	const Token *expr_token = find_expr_node_token(node->expr_node->expr);
+
 	if (is_main && expr->type != TYPE_INT) {
-		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = node->expr_node->token });
+		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = expr_token });
 
 		return false;
 	}
@@ -54,7 +56,7 @@ static bool is_valid_return_expr(const AstNode *node) {
 
 	if (return_type != TYPE_VOID && expr->type != return_type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
-			{ .loc = &node->expr_node->token->location, .type = return_type },
+			{ .loc = &expr_token->location, .type = return_type },
 			{ .type = expr->type }
 		);
 

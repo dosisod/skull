@@ -192,3 +192,4 @@ AstNode *parse_ast_tree(Token *);
 void free_ast_tree(AstNode *);
 
 const Location *find_expr_node_location(const AstNodeExpr *);
+const Token *find_expr_node_token(const AstNodeExpr *);
