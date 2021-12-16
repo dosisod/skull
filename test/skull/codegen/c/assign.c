@@ -18,8 +18,8 @@ static void reset_state(void) {
 }
 
 static bool test_assign(void) {
-	AstNode *node = AST_NODE_VAR_ASSIGN(NULL, AST_SIMPLE_EXPR(NULL));
-	SET_EXPR_VALUE_INT(node->var_assign->expr_node->expr, 1);
+	AstNode *node = AST_NODE_VAR_ASSIGN(NULL, AST_NODE_CONST_EXPR(NULL));
+	SET_EXPR_VALUE_INT(node->var_assign->expr, 1);
 	node->var_assign->var = make_variable(TYPE_INT, U"x", false);
 
 	char *str = gen_stmt_var_assign_c(node);
@@ -35,9 +35,9 @@ static bool test_assign(void) {
 static bool test_mutable_var_def(void) {
 	Token *token = NULL;
 
-	AstNode *node = AST_NODE_VAR_DEF(token, AST_SIMPLE_EXPR(NULL), true);
+	AstNode *node = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(NULL), true);
 
-	SET_EXPR_VALUE_INT(node->var_def->expr_node->expr, 1);
+	SET_EXPR_VALUE_INT(node->var_def->expr, 1);
 	node->var_def->var = make_variable(TYPE_INT, U"x", false);
 
 	char *str = gen_stmt_var_def_c(node);
@@ -53,9 +53,9 @@ static bool test_mutable_var_def(void) {
 static bool test_const_var_def(void) {
 	Token *token = NULL;
 
-	AstNode *node = AST_NODE_VAR_DEF(token, AST_SIMPLE_EXPR(NULL), true);
+	AstNode *node = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(NULL), true);
 
-	SET_EXPR_VALUE_INT(node->var_def->expr_node->expr, 1);
+	SET_EXPR_VALUE_INT(node->var_def->expr, 1);
 	node->var_def->var = make_variable(TYPE_INT, U"x", true);
 
 	char *str = gen_stmt_var_def_c(node);
@@ -71,9 +71,9 @@ static bool test_const_var_def(void) {
 static bool test_top_lvl_var_def(void) {
 	Token *token = NULL;
 
-	AstNode *node = AST_NODE_VAR_DEF(token, AST_SIMPLE_EXPR(NULL), true);
+	AstNode *node = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(NULL), true);
 
-	SET_EXPR_VALUE_INT(node->var_def->expr_node->expr, 1);
+	SET_EXPR_VALUE_INT(node->var_def->expr, 1);
 	node->var_def->var = make_variable(TYPE_INT, U"x", true);
 
 	SKULL_STATE_C.indent_lvl = 1;
@@ -95,9 +95,9 @@ static bool test_top_lvl_var_def(void) {
 static bool test_top_lvl_export_var_def(void) {
 	Token *token = NULL;
 
-	AstNode *node = AST_NODE_VAR_DEF(token, AST_SIMPLE_EXPR(NULL), true);
+	AstNode *node = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(NULL), true);
 
-	SET_EXPR_VALUE_INT(node->var_def->expr_node->expr, 1);
+	SET_EXPR_VALUE_INT(node->var_def->expr, 1);
 	node->var_def->var = make_variable(TYPE_INT, U"x", true);
 	node->var_def->var->is_exported = true;
 

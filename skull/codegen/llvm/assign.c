@@ -20,7 +20,7 @@ static void setup_var_llvm(LLVMValueRef, Variable *);
 static void add_llvm_var_def_debug_info(const Variable *);
 
 /*
-Builds a variable definition from `expr_node`.
+Builds a variable definition from `var_def`.
 */
 void gen_stmt_var_def(const AstNodeVarDef *var_def) {
 	Variable *var = var_def->var;
@@ -28,7 +28,7 @@ void gen_stmt_var_def(const AstNodeVarDef *var_def) {
 	// this is actually a type alias, nothing to generate
 	if (!var) return;
 
-	LLVMValueRef value = gen_expr(var_def->expr_node->expr).value;
+	LLVMValueRef value = gen_expr(var_def->expr).value;
 
 	setup_var_llvm(value, var);
 	assign_value_to_var(value, var);
@@ -64,7 +64,7 @@ static void add_llvm_var_def_debug_info(const Variable *var) {
 Assign a to a variable from `var_assign`.
 */
 void gen_stmt_var_assign(const AstNodeVarAssign *var_assign) {
-	LLVMValueRef value = gen_expr(var_assign->expr_node->expr).value;
+	LLVMValueRef value = gen_expr(var_assign->expr).value;
 
 	assign_value_to_var(value, var_assign->var);
 }

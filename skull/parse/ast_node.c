@@ -17,7 +17,7 @@ typedef struct {
 	bool err;
 } ParserCtx;
 
-static AstNode *parse_expression(ParserCtx *);
+static AstNodeExpr *parse_expression(ParserCtx *);
 static AstNodeExpr *_parse_expression(ParserCtx *);
 static AstNodeExpr *parse_func_call(ParserCtx *);
 static AstNode *parse_ast_tree_(ParserCtx *);
@@ -28,8 +28,7 @@ static void free_ast_node(AstNode *);
 static void free_ast_tree_(AstNode *);
 static bool is_single_token_expr(TokenType);
 static void free_expr_node(AstNodeExpr *);
-static void splice_expr_node(AstNode *);
-static void push_ast_node(ParserCtx *, Token *, NodeType);
+static AstNode *push_ast_node(ParserCtx *, Token *, NodeType);
 static void print_ast_tree_(const AstNode *, unsigned);
 static AstNodeExpr *parse_single_token_expr(ParserCtx *);
 static AstNodeExpr *parse_paren_expr(ParserCtx *);
@@ -78,13 +77,13 @@ AstNode *parse_ast_tree(Token *token) {
 }
 
 static void parse_return(ParserCtx *ctx) {
-	push_ast_node(ctx, ctx->token, AST_NODE_RETURN);
+	AstNode *return_node = push_ast_node(ctx, ctx->token, AST_NODE_RETURN);
 	next_token(ctx);
 
-	const bool added_expr = parse_expression(ctx);
+	AstNodeExpr *expr = parse_expression(ctx);
 	if (ctx->err) return;
 
-	if (added_expr) splice_expr_node(ctx->node);
+	if (expr) return_node->expr = expr;
 }
 
 static ParserResult parse_var_def(ParserCtx *ctx) {
@@ -129,26 +128,25 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 		return RESULT_IGNORE;
 	}
 
-	ctx->node->var_def = Malloc(sizeof(AstNodeVarDef));
-	*ctx->node->var_def = (AstNodeVarDef){
-		.is_const = is_const,
-		.is_implicit = is_implicit,
-		.is_exported = is_exported,
-		.name_tok = name_token
-	};
-
-	push_ast_node(ctx, first, AST_NODE_VAR_DEF);
+	AstNode *var_def_node = push_ast_node(ctx, first, AST_NODE_VAR_DEF);
 	next_token(ctx);
 
-	const bool success = parse_expression(ctx);
+	AstNodeExpr *expr = parse_expression(ctx);
 	if (ctx->err) return RESULT_ERROR;
 
-	if (!success) {
+	if (!expr) {
 		FMT_ERROR(ERR_ASSIGN_MISSING_EXPR, { .loc = &ctx->token->location });
 		return RESULT_ERROR;
 	}
 
-	splice_expr_node(ctx->node);
+	var_def_node->var_def = Malloc(sizeof(AstNodeVarDef));
+	*var_def_node->var_def = (AstNodeVarDef){
+		.is_const = is_const,
+		.is_implicit = is_implicit,
+		.is_exported = is_exported,
+		.name_tok = name_token,
+		.expr = expr
+	};
 
 	if (ctx->token && ctx->token->type != TOKEN_NEWLINE) {
 		FMT_ERROR(ERR_EXPECTED_NEWLINE, {
@@ -168,18 +166,18 @@ static ParserResult parse_var_assign(ParserCtx *ctx) {
 	Token *last = ctx->token;
 	next_token(ctx);
 
-	push_ast_node(ctx, last, AST_NODE_VAR_ASSIGN);
+	AstNode *var_assign_node = push_ast_node(ctx, last, AST_NODE_VAR_ASSIGN);
 	next_token(ctx);
 
-	const bool success = parse_expression(ctx);
-	if (!success) {
+	AstNodeExpr *expr = parse_expression(ctx);
+	if (!expr) {
 		FMT_ERROR(ERR_ASSIGN_MISSING_EXPR, { .loc = &ctx->token->location });
 
 		return RESULT_ERROR;
 	}
 
-	ctx->node->last->last->var_assign = Calloc(1, sizeof(AstNodeVarAssign));
-	splice_expr_node(ctx->node);
+	var_assign_node->var_assign = Calloc(1, sizeof(AstNodeVarAssign));
+	var_assign_node->var_assign->expr = expr;
 
 	return RESULT_OK;
 }
@@ -333,19 +331,19 @@ static void parse_condition(ParserCtx *ctx, NodeType node_type) {
 		return;
 	}
 
-	push_ast_node(ctx, ctx->token, node_type);
+	AstNode *cond_node = push_ast_node(ctx, ctx->token, node_type);
 	next_token(ctx);
 
-	const bool success = parse_expression(ctx);
+	AstNodeExpr *expr = parse_expression(ctx);
 
-	if (!success || ctx->err) {
+	if (!expr || ctx->err) {
 		FMT_ERROR(ERR_INVALID_EXPR, { .tok = ctx->token });
 		ctx->err = true;
 
 		return;
 	}
 
-	splice_expr_node(ctx->node);
+	cond_node->expr = expr;
 }
 
 static void parse_if(ParserCtx *ctx) {
@@ -467,7 +465,17 @@ static bool parse_ast_node(ParserCtx *ctx) {
 				result = parse_var_assign(ctx);
 
 			if (result == RESULT_IGNORE) {
-				if (!parse_expression(ctx)) {
+				Token *last = ctx->token;
+				AstNodeExpr *expr = parse_expression(ctx);
+
+				if (expr) {
+					AstNode *expr_node = push_ast_node(
+						ctx, last, AST_NODE_EXPR
+					);
+
+					expr_node->expr = expr;
+				}
+				else {
 					result = RESULT_ERROR;
 
 					if (!ctx->err) FMT_ERROR(ERR_UNEXPECTED_TOKEN, {
@@ -536,18 +544,11 @@ Try and generate AST node for expression.
 
 Returns node if one was added, NULL otherwise.
 */
-static AstNode *parse_expression(ParserCtx *ctx) {
-	Token *last = ctx->token;
+static AstNodeExpr *parse_expression(ParserCtx *ctx) {
+	AstNodeExpr *node = _parse_expression(ctx);
+	if (!node || ctx->err) return NULL;
 
-	AstNodeExpr *expr_node = _parse_expression(ctx);
-
-	if (!expr_node || ctx->err) return NULL;
-
-	push_ast_node(ctx, last, AST_NODE_EXPR);
-
-	ctx->node->last->expr = expr_node;
-
-	return ctx->node->last;
+	return node;
 }
 
 /*
@@ -778,7 +779,16 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 		AstNode *old_node = ctx->node;
 
 		ctx->node = child;
-		if (parse_expression(ctx)) num_values++;
+
+		Token *last = ctx->token;
+		AstNodeExpr *expr = parse_expression(ctx);
+
+		if (expr) {
+			num_values++;
+			AstNode *expr_node = push_ast_node(ctx, last, AST_NODE_EXPR);
+			expr_node->expr = expr;
+		}
+
 		child = ctx->node;
 
 		ctx->node = old_node;
@@ -798,24 +808,24 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 		next_token(ctx);
 	}
 
-	AstNodeExpr *expr_node = Malloc(sizeof(AstNodeExpr));
-	expr_node->oper = EXPR_FUNC;
+	AstNodeExpr *node = Malloc(sizeof(AstNodeExpr));
+	node->oper = EXPR_FUNC;
 
-	expr_node->lhs.func_call = Malloc(sizeof(AstNodeFunctionCall));
-	*expr_node->lhs.func_call = (AstNodeFunctionCall){
+	node->lhs.func_call = Malloc(sizeof(AstNodeFunctionCall));
+	*node->lhs.func_call = (AstNodeFunctionCall){
 		.func_name_tok = func_name_token,
 		.params = child_copy,
 		.num_values = num_values
 	};
 
 	next_token(ctx);
-	return expr_node;
+	return node;
 }
 
 /*
-Push a new AST node to `node` with type `node_type`
+Push a new AST node to `node` with type `node_type`. Return created node.
 */
-static void push_ast_node(
+static AstNode *push_ast_node(
 	ParserCtx *ctx,
 	Token *last,
 	NodeType node_type
@@ -829,6 +839,8 @@ static void push_ast_node(
 	ctx->node->next = new_node;
 
 	ctx->node = new_node;
+
+	return ctx->node->last;
 }
 
 /*
@@ -899,21 +911,15 @@ static void free_ast_node(AstNode *node) {
 			free_ast_var_def(node);
 			break;
 		case AST_NODE_EXPR:
+		case AST_NODE_RETURN:
+		case AST_NODE_IF:
+		case AST_NODE_ELIF:
+		case AST_NODE_WHILE:
 			free_expr_node(node->expr);
 			break;
 		case AST_NODE_VAR_ASSIGN :
 			free_ast_var_assign(node);
 			break;
-		case AST_NODE_IF:
-		case AST_NODE_ELIF:
-		case AST_NODE_RETURN:
-		case AST_NODE_WHILE: {
-			if (!node->expr_node) return;
-
-			free_expr_node(node->expr_node->expr);
-			free(node->expr_node);
-			break;
-		}
 		default: break;
 	}
 }
@@ -933,20 +939,15 @@ static void free_ast_function_proto(AstNode *node) {
 }
 
 static void free_ast_var_def(AstNode *node) {
-	if (node->var_def) {
-		if (node->var_def->expr_node)
-			free_expr_node(node->var_def->expr_node->expr);
-
-		free(node->var_def->expr_node);
+	if (node->var_def && node->var_def->expr) {
+		free_expr_node(node->var_def->expr);
+		free(node->var_def);
 	}
-
-	free(node->var_def);
 }
 
 static void free_ast_var_assign(AstNode *node) {
-	if (node->var_assign && node->var_assign->expr_node) {
-		free_expr_node(node->var_assign->expr_node->expr);
-		free(node->var_assign->expr_node);
+	if (node->var_assign && node->var_assign->expr) {
+		free_expr_node(node->var_assign->expr);
 		free(node->var_assign);
 	}
 }
@@ -965,29 +966,6 @@ static __attribute__((pure)) bool is_single_token_expr(TokenType token_type) {
 			return true;
 		default: return false;
 	}
-}
-
-/*
-Given `node`, take the last node (expr) and attach it to the node before
-that one.
-*/
-static void splice_expr_node(AstNode *node) {
-	AstNode *cond_node = node->last->last;
-	AstNode *expr_node = node->last;
-
-	if (cond_node->type == AST_NODE_VAR_DEF) {
-		cond_node->var_def->expr_node = expr_node;
-	}
-	else if (cond_node->type == AST_NODE_VAR_ASSIGN) {
-		cond_node->var_assign->expr_node = expr_node;
-	}
-	else {
-		cond_node->expr_node = expr_node;
-	}
-	cond_node->next = node;
-	node->last = cond_node;
-	expr_node->next = NULL;
-	expr_node->last = NULL;
 }
 
 /*

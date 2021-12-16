@@ -64,24 +64,24 @@
 		) \
 	)
 
-#define AST_NODE_VAR_ASSIGN(_token, _expr_node) \
+#define AST_NODE_VAR_ASSIGN(_token, _expr) \
 	&(AstNode){ \
 		.type = AST_NODE_VAR_ASSIGN, \
 		.token = (_token), \
 		.var_assign = &(AstNodeVarAssign){ \
-			.expr_node = (_expr_node), \
+			.expr = (_expr), \
 			.var = NULL \
 		} \
 	}
 
-#define AST_NODE_VAR_DEF(_token, _expr_node, _is_implicit) \
+#define AST_NODE_VAR_DEF(_token, _expr, _is_implicit) \
 	&(AstNode){ \
 		.type = AST_NODE_VAR_DEF, \
 		.token = (_token), \
 		.token_end = (_token) ? ((_is_implicit) ? (_token)->next : (_token)->next->next) : NULL, \
 		.var_def = &(AstNodeVarDef){ \
 			.name_tok = (_token), \
-			.expr_node = (_expr_node), \
+			.expr = (_expr), \
 			.var = NULL, \
 			.is_implicit = (_is_implicit), \
 			.is_const = true \
@@ -138,7 +138,7 @@
 	&(AstNode){ \
 		.type = AST_NODE_RETURN, \
 		.token = (_token), \
-		.expr_node = (_expr), \
+		.expr = (_expr), \
 	}
 
 #define AST_NODE_IF(_token, _cond, _child) \
@@ -146,7 +146,7 @@
 		.type = AST_NODE_IF, \
 		.token = (_token), \
 		.child = (_child), \
-		.expr_node = (_cond), \
+		.expr = (_cond), \
 		.parent = NULL \
 	}
 
@@ -155,7 +155,7 @@
 		.type = AST_NODE_ELIF, \
 		.token = (_token), \
 		.child = (_child), \
-		.expr_node = (_cond), \
+		.expr = (_cond), \
 		.parent = NULL \
 	}
 
@@ -164,7 +164,7 @@
 		.type = AST_NODE_WHILE, \
 		.token = (_token), \
 		.child = (_child), \
-		.expr_node = (_cond), \
+		.expr = (_cond), \
 		.parent = NULL \
 	}
 

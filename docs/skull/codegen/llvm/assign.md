@@ -4,7 +4,7 @@
 void gen_stmt_var_def(const AstNodeVarDef *var_def)
 ```
 
-> Builds a variable definition from `expr_node`.
+> Builds a variable definition from `var_def`.
 
 ```c
 void gen_stmt_var_assign(const AstNodeVarAssign *var_assign)

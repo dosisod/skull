@@ -206,7 +206,7 @@ static bool test_parse_ast_tree_if(void) {
 	ASSERT_EQUAL(node->token_end->end, code + 2);
 	ASSERT_FALSEY(node->last);
 	ASSERT_FALSEY(node->next);
-	ASSERT_TRUTHY(node->expr_node);
+	ASSERT_TRUTHY(node->expr);
 	ASSERT_TRUTHY(node->child);
 
 	free_ast_tree(node);
@@ -222,7 +222,7 @@ static bool test_parse_ast_tree_if_with_var(void) {
 	ASSERT_EQUAL(node->token_end->end, code + 2);
 	ASSERT_FALSEY(node->last);
 	ASSERT_FALSEY(node->next);
-	ASSERT_TRUTHY(node->expr_node);
+	ASSERT_TRUTHY(node->expr);
 	ASSERT_TRUTHY(node->child);
 
 	free_ast_tree(node);

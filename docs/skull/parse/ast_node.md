@@ -19,7 +19,6 @@ typedef struct AstNode {
 		AstNodeVarAssign *var_assign;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
-		AstNode *expr_node;
 		_Bool is_void_return;
 	};
 }
@@ -40,7 +39,7 @@ typedef struct AstNode {
 ```c
 typedef struct AstNodeVarDef {
 	const Token *name_tok;
-	AstNode *expr_node;
+	AstNodeExpr *expr;
 	Variable *var;
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
@@ -52,7 +51,7 @@ typedef struct AstNodeVarDef {
 
 ```c
 typedef struct AstNodeVarAssign {
-	AstNode *expr_node;
+	AstNodeExpr *expr;
 	Variable *var;
 }
 ```
@@ -167,7 +166,7 @@ static void parse_ast_sub_tree_(ParserCtx *ctx)
 > Start parsing a AST sub tree.
 
 ```c
-static AstNode *parse_expression(ParserCtx *ctx)
+static AstNodeExpr *parse_expression(ParserCtx *ctx)
 ```
 
 > Try and generate AST node for expression.
@@ -210,10 +209,10 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx)
 > Returns true if a node was added, false otherwise.
 
 ```c
-static void push_ast_node(ParserCtx *ctx, Token *last, NodeType node_type)
+static AstNode *push_ast_node(ParserCtx *ctx, Token *last, NodeType node_type)
 ```
 
-> Push a new AST node to `node` with type `node_type`
+> Push a new AST node to `node` with type `node_type`. Return created node.
 
 ```c
 void free_ast_tree(AstNode *node)
@@ -238,13 +237,6 @@ static __attribute__((pure)) bool is_single_token_expr(TokenType token_type)
 ```
 
 > Return whether `token_type` represents a constant literal, or an identifier.
-
-```c
-static void splice_expr_node(AstNode *node)
-```
-
-> Given `node`, take the last node (expr) and attach it to the node before
-> that one.
 
 ```c
 void print_ast_tree(const AstNode *node)

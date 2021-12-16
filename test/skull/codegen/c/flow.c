@@ -10,11 +10,8 @@
 #include "test/skull/codegen/c/flow.h"
 
 static bool test_return_node(void) {
-	AstNode *node = AST_NODE_RETURN(
-		NULL,
-		AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL))
-	);
-	SET_EXPR_VALUE_INT(node->expr_node->expr, 1);
+	AstNode *node = AST_NODE_RETURN(NULL, AST_NODE_CONST_EXPR(NULL));
+	SET_EXPR_VALUE_INT(node->expr, 1);
 
 	char *str = gen_stmt_return_c(node);
 
@@ -62,8 +59,8 @@ static bool test_continue(void) {
 }
 
 static bool test_if(void) {
-	AstNode *node = AST_NODE_IF(NULL, AST_SIMPLE_EXPR(NULL), AST_NODE_NOOP());
-	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
+	AstNode *node = AST_NODE_IF(NULL, AST_NODE_CONST_EXPR(NULL), AST_NODE_NOOP());
+	SET_EXPR_VALUE_BOOL(node->expr, true);
 
 	char *str = gen_control_if_c(node);
 
@@ -74,8 +71,8 @@ static bool test_if(void) {
 }
 
 static bool test_elif(void) {
-	AstNode *node = AST_NODE_ELIF(NULL, AST_SIMPLE_EXPR(NULL), AST_NODE_NOOP());
-	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
+	AstNode *node = AST_NODE_ELIF(NULL, AST_NODE_CONST_EXPR(NULL), AST_NODE_NOOP());
+	SET_EXPR_VALUE_BOOL(node->expr, true);
 
 	char *str = gen_control_elif_c(node);
 
@@ -97,8 +94,8 @@ static bool test_else(void) {
 }
 
 static bool test_while(void) {
-	AstNode *node = AST_NODE_WHILE(NULL, AST_SIMPLE_EXPR(NULL), AST_NODE_NOOP());
-	SET_EXPR_VALUE_BOOL(node->expr_node->expr, true);
+	AstNode *node = AST_NODE_WHILE(NULL, AST_NODE_CONST_EXPR(NULL), AST_NODE_NOOP());
+	SET_EXPR_VALUE_BOOL(node->expr, true);
 
 	char *str = gen_control_while_c(node);
 

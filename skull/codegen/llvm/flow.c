@@ -63,14 +63,14 @@ void gen_stmt_noop(const Location *location) {
 Builds an return statement from `node`.
 */
 Expr gen_stmt_return(const AstNode *node) {
-	if (!node->expr_node) {
+	if (!node->expr) {
 		return (Expr){
 			.value = LLVMBuildRetVoid(SKULL_STATE_LLVM.builder),
 			.type = TYPE_VOID
 		};
 	}
 
-	const Expr expr = gen_expr(node->expr_node->expr);
+	const Expr expr = gen_expr(node->expr);
 
 	LLVMValueRef ret = LLVMBuildRet(SKULL_STATE_LLVM.builder, expr.value);
 
@@ -105,8 +105,8 @@ void gen_control_while(const AstNode *node) {
 	LLVMBuildBr(SKULL_STATE_LLVM.builder, while_cond);
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_cond);
 
-	LLVMValueRef cond = gen_expr(node->expr_node->expr).value;
-	add_llvm_debug_info(cond, find_expr_node_location(node->expr_node->expr));
+	LLVMValueRef cond = gen_expr(node->expr).value;
+	add_llvm_debug_info(cond, find_expr_node_location(node->expr));
 
 	LLVMBuildCondBr(
 		SKULL_STATE_LLVM.builder,
@@ -182,10 +182,10 @@ static void gen_control_if_(
 		);
 		LLVMMoveBasicBlockAfter(end, if_false);
 
-		LLVMValueRef cond = gen_expr((*node)->expr_node->expr).value;
+		LLVMValueRef cond = gen_expr((*node)->expr).value;
 		add_llvm_debug_info(
 			cond,
-			find_expr_node_location((*node)->expr_node->expr)
+			find_expr_node_location((*node)->expr)
 		);
 
 		LLVMBuildCondBr(
@@ -209,10 +209,10 @@ static void gen_control_if_(
 	}
 	// just a single if statement
 	else {
-		LLVMValueRef cond = gen_expr((*node)->expr_node->expr).value;
+		LLVMValueRef cond = gen_expr((*node)->expr).value;
 		add_llvm_debug_info(
 			cond,
-			find_expr_node_location((*node)->expr_node->expr)
+			find_expr_node_location((*node)->expr)
 		);
 
 		LLVMBuildCondBr(

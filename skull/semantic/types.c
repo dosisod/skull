@@ -240,7 +240,7 @@ bool validate_stmt_type_alias(const AstNode *node) {
 		return false;
 	}
 
-	if (node->var_def->expr_node->expr->oper != EXPR_IDENTIFIER) {
+	if (node->var_def->expr->oper != EXPR_IDENTIFIER) {
 		FMT_ERROR(ERR_NO_TYPE_EXPR, { .loc = &token->next->next->location });
 		return false;
 	}

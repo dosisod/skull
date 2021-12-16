@@ -14,7 +14,7 @@ static CStmt gen_stmt_var_assign_c_(const char *, const AstNodeExpr *);
 CStmt gen_stmt_var_assign_c(const AstNode *node) {
 	return gen_stmt_var_assign_c_(
 		node->var_assign->var->name,
-		node->var_assign->expr_node->expr
+		node->var_assign->expr
 	);
 }
 
@@ -37,13 +37,13 @@ CStmt gen_stmt_var_def_c(const AstNode *node) {
 		free(old_globals);
 
 		return gen_stmt_var_assign_c_(
-			var->name, node->var_def->expr_node->expr
+			var->name, node->var_def->expr
 		);
 	}
 
 	const char *fmt = var->is_const ? "const %s %s = %s;" : "%s %s = %s;";
 
-	CExpr expr_str = gen_expr_c(node->var_def->expr_node->expr);
+	CExpr expr_str = gen_expr_c(node->var_def->expr);
 	CStmt stmt = uvsnprintf(fmt, type, var->name, expr_str);
 
 	free(expr_str);

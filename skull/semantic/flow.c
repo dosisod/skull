@@ -21,11 +21,11 @@ static bool is_valid_return_expr(const AstNode *);
 bool validate_stmt_return(const AstNode *node) {
 	if (!assert_sane_child(node->next)) return false;
 
-	if (node->expr && !validate_expr(node->expr_node->expr)) return false;
+	if (node->expr && !validate_expr(node->expr)) return false;
 
 	Type return_type = SEMANTIC_STATE.current_func->return_type;
 
-	if (!node->expr_node && return_type != TYPE_VOID) {
+	if (!node->expr && return_type != TYPE_VOID) {
 		FMT_ERROR(ERR_RETURN_MISSING_EXPR, {
 			.loc = &node->token->location
 		});
@@ -33,7 +33,7 @@ bool validate_stmt_return(const AstNode *node) {
 		return false;
 	}
 
-	if (node->expr_node && !is_valid_return_expr(node)) return false;
+	if (node->expr && !is_valid_return_expr(node)) return false;
 
 	return no_dead_code_below(node->next);
 }
@@ -42,9 +42,9 @@ static bool is_valid_return_expr(const AstNode *node) {
 	const bool is_main = \
 		SEMANTIC_STATE.current_func == SEMANTIC_STATE.main_func;
 
-	const AstNodeExpr *expr = node->expr_node->expr;
+	const AstNodeExpr *expr = node->expr;
 
-	const Token *expr_token = find_expr_node_token(node->expr_node->expr);
+	const Token *expr_token = find_expr_node_token(node->expr);
 
 	if (is_main && expr->type != TYPE_INT) {
 		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = expr_token });
@@ -99,23 +99,23 @@ bool validate_control_else(const AstNode *node) {
 
 bool validate_control_if(const AstNode *node) {
 	return !is_missing_block(node, "if") &&
-		validate_expr(node->expr_node->expr) &&
-		validate_bool_expr(node->expr_node->expr);
+		validate_expr(node->expr) &&
+		validate_bool_expr(node->expr);
 }
 
 bool validate_control_elif(const AstNode *node) {
 	return !is_missing_block(node, "elif") &&
 		validate_control_not_missing_if(node) &&
-		validate_expr(node->expr_node->expr) &&
-		validate_bool_expr(node->expr_node->expr);
+		validate_expr(node->expr) &&
+		validate_bool_expr(node->expr);
 }
 
 bool validate_control_while(const AstNode *node) {
 	SEMANTIC_STATE.while_loop_depth++;
 
 	if (is_missing_block(node, "while") ||
-		!validate_expr(node->expr_node->expr) ||
-		!validate_bool_expr(node->expr_node->expr)
+		!validate_expr(node->expr) ||
+		!validate_bool_expr(node->expr)
 	) {
 		return false;
 	}

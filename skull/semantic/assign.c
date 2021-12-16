@@ -25,7 +25,7 @@ bool validate_stmt_var_def(const AstNode *node) {
 
 	if (type) return validate_stmt_type_alias(node);
 
-	bool ok = validate_expr(node->var_def->expr_node->expr);
+	bool ok = validate_expr(node->var_def->expr);
 	if (!ok) return false;
 
 	Variable *var = node_to_var(node);
@@ -34,7 +34,7 @@ bool validate_stmt_var_def(const AstNode *node) {
 
 	node->var_def->var = var;
 
-	AstNodeExpr *expr = node->var_def->expr_node->expr;
+	AstNodeExpr *expr = node->var_def->expr;
 	ok = is_expr_compatible_with_var(expr, var);
 	if (!ok) return false;
 
@@ -63,9 +63,9 @@ bool validate_stmt_var_assign(const AstNode *node) {
 
 	var->was_reassigned = true;
 
-	if (!validate_expr(node->var_assign->expr_node->expr)) return false;
+	if (!validate_expr(node->var_assign->expr)) return false;
 
-	return is_expr_compatible_with_var(node->var_assign->expr_node->expr, var);
+	return is_expr_compatible_with_var(node->var_assign->expr, var);
 }
 
 /*
@@ -75,7 +75,7 @@ Return `NULL` if an error occurred.
 */
 static Variable *node_to_var(const AstNode *const node) {
 	const Token *token = node->var_def->name_tok;
-	Type type = node->var_def->expr_node->expr->type;
+	Type type = node->var_def->expr->type;
 
 	if (node->var_def->is_implicit) {
 		if (is_void_func_assign(node)) return NULL;
@@ -129,7 +129,7 @@ static Variable *node_to_var(const AstNode *const node) {
 }
 
 static bool is_void_func_assign(const AstNode *node) {
-	const AstNodeExpr *expr = node->var_def->expr_node->expr;
+	const AstNodeExpr *expr = node->var_def->expr;
 
 	if (expr->oper == EXPR_FUNC && expr->type == TYPE_VOID) {
 		FMT_ERROR(ERR_NO_VOID_ASSIGN, {

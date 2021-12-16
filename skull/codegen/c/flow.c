@@ -11,9 +11,9 @@
 static CBlock gen_control_block_c(const AstNode *, const char *);
 
 CStmt gen_stmt_return_c(const AstNode *node) {
-	if (!node->expr_node || !node->expr_node->expr) return strdup("return;");
+	if (!node->expr) return strdup("return;");
 
-	CExpr expr_str = gen_expr_c(node->expr_node->expr);
+	CExpr expr_str = gen_expr_c(node->expr);
 	CStmt stmt = uvsnprintf("return %s;", expr_str);
 
 	free(expr_str);
@@ -64,7 +64,7 @@ CBlock gen_control_while_c(const AstNode *node) {
 }
 
 static CBlock gen_control_block_c(const AstNode *node, const char *fmt) {
-	CExpr expr_str = gen_expr_c(node->expr_node->expr);
+	CExpr expr_str = gen_expr_c(node->expr);
 	CTree tree = gen_tree_c(node->child);
 	CBlock block = uvsnprintf(fmt, expr_str, tree, get_indentation());
 

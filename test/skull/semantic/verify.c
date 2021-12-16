@@ -247,7 +247,7 @@ static bool test_validate_reassign_non_existent_var(void) {
 	return validate_tree_fixture(
 		AST_NODE_VAR_ASSIGN(
 			token,
-			AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next))
+			AST_NODE_CONST_EXPR(token->next->next)
 		),
 		"(null): Compilation error: line 1 column 1: variable \"x\" not found\n"
 	);
@@ -262,13 +262,13 @@ static bool test_validate_check_expr_type_when_declaring(void) {
 
 	AstNode *node_x = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(var_x_expr, AST_NODE_CONST_EXPR(var_x_expr)),
+		AST_NODE_CONST_EXPR(var_x_expr),
 		true
 	);
 
 	AstNode *node_y = AST_NODE_VAR_DEF(
 		var_y_name,
-		AST_NODE_EXPR(var_y_expr, AST_NODE_IDENT_EXPR(var_y_expr)),
+		AST_NODE_IDENT_EXPR(var_y_expr),
 		false
 	);
 
@@ -289,7 +289,7 @@ static bool test_validate_check_explicit_type_exists(void) {
 	return validate_tree_fixture(
 		AST_NODE_VAR_DEF(
 			token,
-			AST_NODE_EXPR(expr_token, AST_NODE_CONST_EXPR(expr_token)),
+			AST_NODE_CONST_EXPR(expr_token),
 			false
 		),
 		"(null): Compilation error: line 1 column 4: type \"fail\" could not be found\n"
@@ -301,7 +301,7 @@ static bool test_validate_disallow_reassigning_const(void) {
 
 	AstNode *def = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(token->next->next, AST_NODE_CONST_EXPR(token->next->next)),
+		AST_NODE_CONST_EXPR(token->next->next),
 		true
 	);
 
@@ -310,7 +310,7 @@ static bool test_validate_disallow_reassigning_const(void) {
 
 	AstNode *assign = AST_NODE_VAR_ASSIGN(
 		assign_name,
-		AST_NODE_EXPR(assign_expr, AST_NODE_CONST_EXPR(assign_expr))
+		AST_NODE_CONST_EXPR(assign_expr)
 	);
 
 	ASSERT_TRUTHY(validate_ast_tree(def));
@@ -344,10 +344,7 @@ static bool test_validate_redeclare_variable(void) {
 
 	AstNode *variable = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(
-			token->next->next,
-			AST_NODE_CONST_EXPR(token->next->next)
-		),
+		AST_NODE_CONST_EXPR(token->next->next),
 		true
 	);
 	ASSERT_TRUTHY(validate_ast_tree(variable));
@@ -366,10 +363,7 @@ static bool test_validate_redeclare_variable_as_alias(void) {
 
 	AstNode *variable = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(
-			token->next->next,
-			AST_NODE_CONST_EXPR(token->next->next)
-		),
+		AST_NODE_CONST_EXPR(token->next->next),
 		true
 	);
 	ASSERT_TRUTHY(validate_ast_tree(variable));
@@ -378,10 +372,7 @@ static bool test_validate_redeclare_variable_as_alias(void) {
 
 	AstNode *alias = AST_NODE_VAR_DEF(
 		alias_token,
-		AST_NODE_EXPR(
-			alias_token->next->next,
-			AST_NODE_IDENT_EXPR(alias_token->next->next)
-		),
+		AST_NODE_IDENT_EXPR(alias_token->next->next),
 		true
 	);
 
@@ -419,7 +410,7 @@ static bool test_validate_main_return_non_int(void) {
 	Token *token = tokenize_fixture(U"return 1.0");
 
 	return validate_tree_fixture(
-		AST_NODE_RETURN(token, AST_SIMPLE_EXPR(token->next)),
+		AST_NODE_RETURN(token, AST_NODE_CONST_EXPR(token->next)),
 		"(null): Compilation error: line 1 column 8: returning non-int expression \"1.0\" from main\n"
 	);
 }
@@ -430,7 +421,7 @@ static bool test_validate_check_bool_expr_in_if(void) {
 	return validate_tree_fixture(
 		AST_NODE_IF(
 			token,
-			AST_SIMPLE_EXPR(token->next),
+			AST_NODE_CONST_EXPR(token->next),
 			AST_NODE_NOOP()
 		),
 		"(null): Compilation error: line 1 column 4: expected boolean expression\n"
@@ -442,7 +433,7 @@ static bool test_validate_check_bool_expr_in_elif(void) {
 
 	AstNode *node = AST_NODE_ELIF(
 		token,
-		AST_SIMPLE_EXPR(token->next),
+		AST_NODE_CONST_EXPR(token->next),
 		AST_NODE_NOOP()
 	);
 	node->last = AST_NODE_IF(NULL, NULL, NULL);
@@ -457,7 +448,7 @@ static bool test_validate_unreachable_after_return(void) {
 	Token *token = tokenize_fixture(U"return 0\nx := 1");
 	Token *var_def_token = token->next->next->next;
 
-	AstNode *node = AST_NODE_RETURN(token, AST_SIMPLE_EXPR(token->next));
+	AstNode *node = AST_NODE_RETURN(token, AST_NODE_CONST_EXPR(token->next));
 	node->next = AST_NODE_VAR_DEF(var_def_token, NULL, false);
 
 	return validate_tree_fixture(
@@ -476,7 +467,7 @@ static bool test_validate_unreachable_after_break(void) {
 
 	AstNode *while_node = AST_NODE_WHILE(
 		token,
-		AST_SIMPLE_EXPR(token->next),
+		AST_NODE_CONST_EXPR(token->next),
 		break_node
 	);
 
@@ -497,7 +488,7 @@ static bool test_validate_unreachable_after_continue(void) {
 
 	AstNode *while_node = AST_NODE_WHILE(
 		token,
-		AST_SIMPLE_EXPR(token->next),
+		AST_NODE_CONST_EXPR(token->next),
 		continue_node
 	);
 
@@ -531,13 +522,10 @@ static bool test_validate_lhs_var_self_ref(void) {
 	return validate_tree_fixture(
 		AST_NODE_VAR_DEF(
 			token,
-			AST_NODE_EXPR(
-				expr_token,
-				AST_NODE_BINARY_EXPR(
-					AST_NODE_IDENT_EXPR(expr_token),
-					EXPR_LESS_THAN,
-					AST_NODE_CONST_EXPR(expr_token->next->next)
-				)
+			AST_NODE_BINARY_EXPR(
+				AST_NODE_IDENT_EXPR(expr_token),
+				EXPR_LESS_THAN,
+				AST_NODE_CONST_EXPR(expr_token->next->next)
 			),
 			true
 		),
@@ -552,10 +540,7 @@ static bool test_validate_reassign_different_type(void) {
 
 	AstNode *node = AST_NODE_VAR_DEF(
 		token->next,
-		AST_NODE_EXPR(
-			var_expr_token,
-			AST_NODE_CONST_EXPR(var_expr_token)
-		),
+		AST_NODE_CONST_EXPR(var_expr_token),
 		true
 	);
 	node->var_def->is_const = false;
@@ -563,10 +548,7 @@ static bool test_validate_reassign_different_type(void) {
 
 	node->next = AST_NODE_VAR_ASSIGN(
 		var_assign_token,
-		AST_NODE_EXPR(
-			var_assign_token->next->next,
-			AST_NODE_CONST_EXPR(var_assign_token->next->next)
-		)
+		AST_NODE_CONST_EXPR(var_assign_token->next->next)
 	);
 
 	return validate_tree_fixture(
@@ -581,13 +563,10 @@ static bool test_validate_lhs_expr(void) {
 	return validate_tree_fixture(
 		AST_NODE_VAR_DEF(
 			token,
-			AST_NODE_EXPR(
-				token->next->next,
-				AST_NODE_BINARY_EXPR(
-					AST_NODE_IDENT_EXPR(token->next->next),
-					EXPR_ADD,
-					AST_NODE_CONST_EXPR(token->next->next->next->next)
-				)
+			AST_NODE_BINARY_EXPR(
+				AST_NODE_IDENT_EXPR(token->next->next),
+				EXPR_ADD,
+				AST_NODE_CONST_EXPR(token->next->next->next->next)
 			),
 			true
 		),
@@ -601,7 +580,11 @@ static bool test_validate_rhs_expr(void) {
 	return validate_tree_fixture(
 		AST_NODE_VAR_DEF(
 			token,
-			AST_SIMPLE_BINARY_EXPR(token->next->next, EXPR_ADD),
+			AST_NODE_BINARY_EXPR(
+				AST_NODE_CONST_EXPR(token->next->next),
+				EXPR_ADD,
+				AST_NODE_CONST_EXPR(token->next->next->next->next)
+			),
 			true
 		),
 		"(null): Compilation error: line 1 column 12: expected type \"Float\", got \"Int\"\n"
@@ -614,7 +597,11 @@ static bool test_validate_binary_bool_expr(void) {
 	return validate_tree_fixture(
 		AST_NODE_VAR_DEF(
 			token,
-			AST_SIMPLE_BINARY_EXPR(token->next->next->next, EXPR_IS),
+			AST_NODE_BINARY_EXPR(
+				AST_NODE_CONST_EXPR(token->next->next->next),
+				EXPR_IS,
+				AST_NODE_CONST_EXPR(token->next->next->next->next->next)
+			),
 			false
 		),
 		"(null): Compilation error: line 1 column 10: expected type \"Int\", got \"Bool\"\n"
@@ -627,7 +614,11 @@ static bool test_validate_unary_bool_expr(void) {
 	return validate_tree_fixture(
 		AST_NODE_VAR_DEF(
 			token,
-			AST_SIMPLE_UNARY_EXPR(token->next->next->next, EXPR_NOT),
+			AST_NODE_BINARY_EXPR(
+				NULL,
+				EXPR_NOT,
+				AST_NODE_CONST_EXPR(token->next->next->next->next)
+			),
 			false
 		),
 		"(null): Compilation error: line 1 column 14: expected type \"Int\", got \"Bool\"\n"
@@ -643,25 +634,16 @@ static bool test_validate_var_in_if_scoped(void) {
 
 	AstNode *node = AST_NODE_IF(
 		token,
-		AST_NODE_EXPR(
-			cond_token,
-			AST_NODE_CONST_EXPR(cond_token)
-		),
+		AST_NODE_CONST_EXPR(cond_token),
 		AST_NODE_VAR_DEF(
 			var_def_token,
-			AST_NODE_EXPR(
-				var_def_expr_token,
-				AST_NODE_CONST_EXPR(var_def_expr_token)
-			),
+			AST_NODE_CONST_EXPR(var_def_expr_token),
 			true
 		)
 	);
 	node->next = AST_NODE_RETURN(
 		return_token,
-		AST_NODE_EXPR(
-			return_token->next,
-			AST_NODE_IDENT_EXPR(return_token->next)
-		)
+		AST_NODE_IDENT_EXPR(return_token->next)
 	);
 
 	return validate_tree_fixture(
@@ -680,20 +662,17 @@ static bool test_validate_stmt_between_if_and_elif(void) {
 
 	AstNode *node = AST_NODE_IF(
 		token,
-		AST_NODE_EXPR(if_cond, AST_NODE_CONST_EXPR(if_cond)),
+		AST_NODE_CONST_EXPR(if_cond),
 		AST_NODE_NOOP()
 	);
 	node->next = AST_NODE_VAR_DEF(
 		var_def_token,
-		AST_NODE_EXPR(
-			var_def_expr_token,
-			AST_NODE_CONST_EXPR(var_def_expr_token)
-		),
+		AST_NODE_CONST_EXPR(var_def_expr_token),
 		true
 	);
 	node->next->next = AST_NODE_ELIF(
 		elif_token,
-		AST_NODE_EXPR(elif_token->next, AST_NODE_CONST_EXPR(elif_token->next)),
+		AST_NODE_CONST_EXPR(elif_token->next),
 		AST_NODE_NOOP()
 	);
 
@@ -712,12 +691,12 @@ static bool test_validate_no_redeclare_alias(void) {
 
 	AstNode *node = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(int_token, AST_NODE_IDENT_EXPR(int_token)),
+		AST_NODE_IDENT_EXPR(int_token),
 		true
 	);
 	node->next = AST_NODE_VAR_DEF(
 		alias2_token,
-		AST_NODE_EXPR(float_token, AST_NODE_IDENT_EXPR(float_token)),
+		AST_NODE_IDENT_EXPR(float_token),
 		true
 	);
 
@@ -733,7 +712,7 @@ static bool test_validate_trivial_type(void) {
 
 	AstNode *node = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(expr_token, AST_NODE_CONST_EXPR(expr_token)),
+		AST_NODE_CONST_EXPR(expr_token),
 		false
 	);
 	ASSERT_TRUTHY(validate_ast_tree(node));
@@ -766,12 +745,12 @@ static bool test_validate_redeclare_type_alias_as_var(void) {
 
 	AstNode *node = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(type_token, AST_NODE_IDENT_EXPR(type_token)),
+		AST_NODE_IDENT_EXPR(type_token),
 		true
 	);
 	node->next = AST_NODE_VAR_DEF(
 		var_def_token,
-		AST_NODE_EXPR(var_def_expr_token, AST_NODE_CONST_EXPR(var_def_expr_token)),
+		AST_NODE_CONST_EXPR(var_def_expr_token),
 		true
 	);
 
@@ -800,7 +779,7 @@ static bool test_validate_redeclare_var_as_func(void) {
 
 	AstNode *node = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(expr_token, AST_NODE_CONST_EXPR(expr_token)),
+		AST_NODE_CONST_EXPR(expr_token),
 		true
 	);
 	node->next = AST_NODE_NO_ARGS_FUNC_DECL(func_token, false, false);
@@ -845,7 +824,7 @@ static bool test_validate_no_void_assign(void) {
 
 	node->next = AST_NODE_VAR_DEF(
 		x_token,
-		AST_NODE_EXPR(func_call_token, AST_NODE_FUNC_EXPR(func_call_token)),
+		AST_NODE_FUNC_EXPR(func_call_token),
 		true
 	);
 
@@ -863,7 +842,7 @@ static bool test_validate_return_non_void_from_void_func(void) {
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
 	node->child = AST_NODE_RETURN(
 		return_token,
-		AST_NODE_EXPR(return_expr, AST_NODE_CONST_EXPR(return_expr))
+		AST_NODE_CONST_EXPR(return_expr)
 	);
 
 	return validate_tree_fixture(
@@ -918,10 +897,7 @@ static bool test_validate_func_return_invalid_type(void) {
 
 	node->child = AST_NODE_RETURN(
 		return_token,
-		AST_NODE_EXPR(
-			return_expr_token,
-			AST_NODE_CONST_EXPR(return_expr_token)
-		)
+		AST_NODE_CONST_EXPR(return_expr_token)
 	);
 
 	return validate_tree_fixture(
@@ -949,10 +925,7 @@ static bool test_validate_redeclare_alias_as_func(void) {
 
 	AstNode *node = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(
-			var_expr_token,
-			AST_NODE_IDENT_EXPR(var_expr_token)
-		),
+		AST_NODE_IDENT_EXPR(var_expr_token),
 		true
 	);
 
@@ -1220,7 +1193,7 @@ static bool test_validate_type_alias_mut_not_allowed(void) {
 
 	AstNode *node = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(int_token, AST_NODE_IDENT_EXPR(int_token)),
+		AST_NODE_IDENT_EXPR(int_token),
 		true
 	);
 	node->var_def->is_const = false;
@@ -1244,20 +1217,17 @@ static bool test_validate_type_alias_in_expr_not_allowed(void) {
 
 	AstNode *x_def = AST_NODE_VAR_DEF(
 		token,
-		AST_NODE_EXPR(int_token, AST_NODE_IDENT_EXPR(int_token)),
+		AST_NODE_IDENT_EXPR(int_token),
 		true
 	);
 	ASSERT_TRUTHY(validate_ast_tree(x_def));
 
 	AstNode *y_def = AST_NODE_VAR_DEF(
 		y_token,
-		AST_NODE_EXPR(
-			x_token,
-			AST_NODE_BINARY_EXPR(
-				AST_NODE_IDENT_EXPR(x_token),
-				EXPR_ADD,
-				AST_NODE_CONST_EXPR(one_token)
-			)
+		AST_NODE_BINARY_EXPR(
+			AST_NODE_IDENT_EXPR(x_token),
+			EXPR_ADD,
+			AST_NODE_CONST_EXPR(one_token)
 		),
 		true
 	);

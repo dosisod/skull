@@ -69,7 +69,6 @@ typedef struct AstNode {
 		AstNodeVarAssign *var_assign;
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
-		AstNode *expr_node;
 		_Bool is_void_return;
 	};
 } AstNode;
@@ -79,7 +78,7 @@ Used to store special data about `AST_NODE_VAR_DEF` nodes.
 */
 typedef struct AstNodeVarDef {
 	const Token *name_tok;
-	AstNode *expr_node;
+	AstNodeExpr *expr;
 	Variable *var;
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
@@ -90,7 +89,7 @@ typedef struct AstNodeVarDef {
 Used to store special data about `AST_NODE_VAR_ASSIGN` nodes.
 */
 typedef struct AstNodeVarAssign {
-	AstNode *expr_node;
+	AstNodeExpr *expr;
 	Variable *var;
 } AstNodeVarAssign;
 
