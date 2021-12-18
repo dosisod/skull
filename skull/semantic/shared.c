@@ -24,15 +24,13 @@ void setup_semantic_state(void) {
 }
 
 /*
-Free everything about a Skull compiler instance.
-
-Return `true` if an error occurred.
+Free everything about a Skull semantic instance.
 */
-_Bool free_semantic_state(void) {
+void free_semantic_state(void) {
 	SemanticState *state = &SEMANTIC_STATE;
 
 	reset_scope_head();
-	const bool failed = free_scope(state->scope);
+	free_scope(state->scope);
 
 	if (state->main_func) {
 		state->main_func->was_called = true;
@@ -41,6 +39,4 @@ _Bool free_semantic_state(void) {
 
 	state->scope = NULL;
 	state->while_loop_depth = 0;
-
-	return failed;
 }

@@ -194,20 +194,10 @@ FunctionDeclaration *find_func_by_name(const char *name) {
 	return NULL;
 }
 
-bool free_function_declaration(FunctionDeclaration *func) {
-	if (!func) return false;
+void free_function_declaration(FunctionDeclaration *func) {
+	if (!func) return;
 
-	bool err = false;
-
-	if (!func->was_called) {
-		FMT_WARN(err, WARN_FUNC_UNUSED, {
-			.real = func->name, .loc = &func->location
-		});
-	}
-	else free(func->name);
-
+	free(func->name);
 	free(func->param_types);
 	free(func);
-
-	return err;
 }

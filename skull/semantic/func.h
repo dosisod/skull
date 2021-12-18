@@ -45,6 +45,6 @@ typedef struct FunctionDeclaration {
 _Bool validate_stmt_func_decl(const AstNode *);
 _Bool post_validate_stmt_func_decl(const AstNode *);
 
-_Bool free_function_declaration(FunctionDeclaration *);
+void free_function_declaration(FunctionDeclaration *);
 
 FunctionDeclaration *find_func_by_name(const char *);

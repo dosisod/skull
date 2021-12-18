@@ -6,9 +6,9 @@
 #include <string.h>
 
 #include "skull/build_data.h"
-#include "skull/codegen/llvm/cc.h"
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
+#include "skull/real_main.h"
 
 
 #ifndef SKULL_VERSION
@@ -48,8 +48,11 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	err = handle_file();
+	char *binary_name = strdup(BUILD_DATA.filename); // NOLINT
+	err = real_main(2, (char *[]){ NULL, binary_name, NULL });
+	free(binary_name);
 	free(BUILD_DATA.out_file);
+
 	return err;
 }
 

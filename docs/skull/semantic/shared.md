@@ -13,10 +13,8 @@ typedef struct {
 > Stores semantic analyzer global state.
 
 ```c
-_Bool free_semantic_state(void)
+void free_semantic_state(void)
 ```
 
-> Free everything about a Skull compiler instance.
-> \
-> Return `true` if an error occurred.
+> Free everything about a Skull semantic instance.
 

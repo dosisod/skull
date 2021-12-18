@@ -10,6 +10,7 @@
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
+#include "skull/semantic/unused.h"
 
 #include "skull/semantic/entry.h"
 
@@ -25,7 +26,7 @@ bool validate_ast_tree(const AstNode *node) {
 	const bool pass = _validate_ast_tree(node);
 	reset_scope_head();
 
-	return pass;
+	return pass && check_unused_symbols(node);
 }
 
 /*

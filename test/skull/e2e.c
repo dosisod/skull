@@ -1859,8 +1859,7 @@ TEST_DIR"/error/func/assign_bad_type.sk",
 
 NULL,
 
-"./test/sh/error/func/assign_bad_type.sk: Compilation error: line 7 column 12: expected type \"Float\", got \"Int\"\n" \
-"./test/sh/error/func/assign_bad_type.sk: Warning: line 7 column 1: variable \"x\" is unused\n"
+"./test/sh/error/func/assign_bad_type.sk: Compilation error: line 7 column 12: expected type \"Float\", got \"Int\"\n"
 );
 
 
@@ -1888,8 +1887,7 @@ TEST_DIR"/error/func/bad_expr_param.sk",
 
 NULL,
 
-"./test/sh/error/func/bad_expr_param.sk: Compilation error: line 5 column 3: expected param of type \"Bool\", got \"Int\"\n" \
-"./test/sh/error/func/bad_expr_param.sk: Warning: line 1 column 3: variable \"b\" is unused\n"
+"./test/sh/error/func/bad_expr_param.sk: Compilation error: line 5 column 3: expected param of type \"Bool\", got \"Int\"\n"
 );
 
 
@@ -1912,8 +1910,7 @@ TEST_DIR"/error/func/func_as_alias.sk",
 
 NULL,
 
-"./test/sh/error/func/func_as_alias.sk: Compilation error: line 2 column 1: cannot redeclare function \"x\" as type alias\n" \
-"./test/sh/error/func/func_as_alias.sk: Warning: line 1 column 1: function \"x\" is unused\n"
+"./test/sh/error/func/func_as_alias.sk: Compilation error: line 2 column 1: cannot redeclare function \"x\" as type alias\n"
 );
 
 
@@ -1925,8 +1922,7 @@ TEST_DIR"/error/func/func_as_var.sk",
 
 NULL,
 
-"./test/sh/error/func/func_as_var.sk: Compilation error: line 3 column 1: cannot redeclare function \"x\" as variable\n" \
-"./test/sh/error/func/func_as_var.sk: Warning: line 1 column 1: function \"x\" is unused\n"
+"./test/sh/error/func/func_as_var.sk: Compilation error: line 3 column 1: cannot redeclare function \"x\" as variable\n"
 );
 
 
@@ -1940,8 +1936,7 @@ TEST_DIR"/error/func/invalid_num_params.sk",
 
 NULL,
 
-"./test/sh/error/func/invalid_num_params.sk: Compilation error: line 5 column 1: invalid number of parameters\n" \
-"./test/sh/error/func/invalid_num_params.sk: Warning: line 1 column 3: variable \"x\" is unused\n"
+"./test/sh/error/func/invalid_num_params.sk: Compilation error: line 5 column 1: invalid number of parameters\n"
 );
 
 
@@ -1989,8 +1984,7 @@ TEST_DIR"/error/func/param_bad_type.sk",
 
 NULL,
 
-"./test/sh/error/func/param_bad_type.sk: Compilation error: line 5 column 3: expected param of type \"Int\", got \"Bool\"\n" \
-"./test/sh/error/func/param_bad_type.sk: Warning: line 3 column 1: variable \"x\" is unused\n"
+"./test/sh/error/func/param_bad_type.sk: Compilation error: line 5 column 3: expected param of type \"Int\", got \"Bool\"\n"
 );
 
 
@@ -2014,8 +2008,7 @@ TEST_DIR"/error/func/proto_param_bad_type.sk",
 
 NULL,
 
-"./test/sh/error/func/proto_param_bad_type.sk: Compilation error: type \"does_not_exist\" could not be found\n" \
-"./test/sh/error/func/proto_param_bad_type.sk: Warning: line 1 column 1: function \"f\" is unused\n"
+"./test/sh/error/func/proto_param_bad_type.sk: Compilation error: type \"does_not_exist\" could not be found\n"
 );
 
 
@@ -2029,9 +2022,7 @@ TEST_DIR"/error/func/shadowed_param.sk",
 
 NULL,
 
-"./test/sh/error/func/shadowed_param.sk: Compilation error: line 3 column 3: variable \"x\" shadows existing variable\n" \
-"./test/sh/error/func/shadowed_param.sk: Warning: line 1 column 1: variable \"x\" is unused\n" \
-"./test/sh/error/func/shadowed_param.sk: Warning: line 3 column 1: function \"f\" is unused\n"
+"./test/sh/error/func/shadowed_param.sk: Compilation error: line 3 column 3: variable \"x\" shadows existing variable\n"
 );
 
 
@@ -2169,8 +2160,7 @@ TEST_DIR"/error/misc/token_iter_keep_loc.sk",
 
 NULL,
 
-"./test/sh/error/misc/token_iter_keep_loc.sk: Compilation error: line 12 column 1: expression cannot be used on its own\n" \
-"./test/sh/error/misc/token_iter_keep_loc.sk: Warning: line 1 column 1: variable \"x\" is unused\n"
+"./test/sh/error/misc/token_iter_keep_loc.sk: Compilation error: line 12 column 1: expression cannot be used on its own\n"
 );
 
 
@@ -2196,8 +2186,7 @@ TEST_DIR"/error/oper/add_mismatched_consts.sk",
 
 NULL,
 
-"./test/sh/error/oper/add_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n" \
-"./test/sh/error/oper/add_mismatched_consts.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
+"./test/sh/error/oper/add_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n"
 );
 
 
@@ -2209,8 +2198,7 @@ TEST_DIR"/error/oper/div_mismatched_consts.sk",
 
 NULL,
 
-"./test/sh/error/oper/div_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n" \
-"./test/sh/error/oper/div_mismatched_consts.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
+"./test/sh/error/oper/div_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n"
 );
 
 
@@ -2232,8 +2220,7 @@ TEST_DIR"/error/oper/mult_mismatched_consts.sk",
 
 NULL,
 
-"./test/sh/error/oper/mult_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n" \
-"./test/sh/error/oper/mult_mismatched_consts.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
+"./test/sh/error/oper/mult_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n"
 );
 
 
@@ -2245,8 +2232,7 @@ TEST_DIR"/error/oper/sub_mismatched_consts.sk",
 
 NULL,
 
-"./test/sh/error/oper/sub_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n" \
-"./test/sh/error/oper/sub_mismatched_consts.sk: Warning: line 1 column 5: variable \"x\" is unused\n"
+"./test/sh/error/oper/sub_mismatched_consts.sk: Compilation error: line 3 column 9: expected type \"Int\", got \"Str\"\n"
 );
 
 
@@ -2294,10 +2280,12 @@ NULL,
 
 
 static int e2e_wrapper(const char *code, const char *mock_file, const char *llvm_expected, const char *err_expected) {
-	char *output_file = NULL;
-
 	BUILD_DATA.quiet = !err_expected;
 	BUILD_DATA.filename = mock_file;
+	BUILD_DATA.preprocess = true;
+	BUILD_DATA.out_file = llvm_expected ?
+		mock_file_to_output_file(mock_file, ".ll") :
+		NULL;
 
 	char *tmp = strdup(code);
 	bool err = run_pipeline(mock_file, tmp);
@@ -2307,9 +2295,8 @@ static int e2e_wrapper(const char *code, const char *mock_file, const char *llvm
 		err |= compare_errors(err_expected);
 	}
 	if (llvm_expected) {
-		output_file = mock_file_to_output_file(mock_file, ".ll");
-		err |= compare_compiler_output(output_file, llvm_expected);
-		free(output_file);
+		err |= compare_compiler_output(BUILD_DATA.out_file, llvm_expected);
+		free(BUILD_DATA.out_file);
 	}
 
 	free_errors();

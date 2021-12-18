@@ -36,31 +36,12 @@ Variable *make_variable(
 
 /*
 Free variable `var`.
-
-Return `true` if an error occurred.
 */
-bool free_variable(Variable *var) {
-	if (!var) return false;
-
-	bool err = false;
-
-	if (!BUILD_DATA.quiet) {
-		if (!var->is_const && !var->was_reassigned) {
-			FMT_WARN(err, WARN_VAR_NOT_CONST, {
-				.var = var, .loc = &var->location
-			});
-		}
-		if (!var->was_read && !var->is_exported) {
-			FMT_WARN(err, WARN_VAR_UNUSED, {
-				.var = var, .loc = &var->location
-			});
-		}
-	}
+void free_variable(Variable *var) {
+	if (!var) return;
 
 	free(var->name);
 	free(var);
-
-	return err;
 }
 
 /*
