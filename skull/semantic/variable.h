@@ -6,6 +6,8 @@
 #include "skull/parse/token.h"
 #include "skull/semantic/types.h"
 
+typedef struct AstNodeExpr AstNodeExpr;
+
 /*
 `Variable` acts as a more strict abstraction on top of LLVM.
 
@@ -50,6 +52,7 @@ typedef struct Variable {
 	Location location;
 
 	LLVMValueRef ref;
+	AstNodeExpr *expr;
 } Variable;
 
 Variable *make_variable(Type, const char32_t *const, _Bool);

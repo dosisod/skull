@@ -25,18 +25,18 @@ bool validate_stmt_var_def(const AstNode *node) {
 
 	if (type) return validate_stmt_type_alias(node);
 
-	bool ok = validate_expr(node->var_def->expr);
-	if (!ok) return false;
+	AstNodeExpr *expr = node->var_def->expr;
+	if (!validate_expr(expr)) return false;
 
 	Variable *var = node_to_var(node);
 	if (!var) return false;
+
 	var->is_defined = true;
+	var->expr = expr;
 
 	node->var_def->var = var;
 
-	AstNodeExpr *expr = node->var_def->expr;
-	ok = is_expr_compatible_with_var(expr, var);
-	if (!ok) return false;
+	if (!is_expr_compatible_with_var(expr, var)) return false;
 
 	if (expr->oper == EXPR_CONST && !var->implicitly_typed) {
 		bool err = false;

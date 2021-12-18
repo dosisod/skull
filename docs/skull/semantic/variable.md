@@ -16,6 +16,7 @@ typedef struct Variable {
 	Location location;
 
 	LLVMValueRef ref;
+	AstNodeExpr *expr;
 }
 ```
 

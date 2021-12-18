@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "skull/common/errors.h"
 #include "skull/parse/ast_node.h"
@@ -25,19 +26,235 @@ static Token *tokenize_fixture(const char32_t *);
 
 static bool test_validate_int_expr(void) {
 	Token *token = tokenize_fixture(U"1");
-	AstNode *node = AST_SIMPLE_EXPR(token);
+	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	const bool pass = validate_expr(node->expr);
+	const bool pass = validate_expr(expr);
+
+	ASSERT_TRUTHY(expr->is_const_expr);
+	ASSERT_EQUAL(expr->value._int, 1);
 
 	free_tokens(token);
 	return pass;
 }
 
+static bool test_validate_float_expr(void) {
+	Token *token = tokenize_fixture(U"1.0");
+	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
+
+	const bool pass = validate_expr(expr);
+
+	ASSERT_TRUTHY(expr->is_const_expr);
+	ASSERT_EQUAL((int)expr->value._float, 1);
+
+	free_tokens(token);
+	return pass;
+}
+
+static bool test_validate_bool_expr(void) {
+	Token *token = tokenize_fixture(U"true");
+	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
+
+	const bool pass = validate_expr(expr);
+
+	ASSERT_TRUTHY(expr->is_const_expr);
+	ASSERT_TRUTHY(expr->value._bool);
+
+	free_tokens(token);
+	return pass;
+}
+
+static bool test_validate_rune_expr(void) {
+	Token *token = tokenize_fixture(U"'x'");
+	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
+
+	const bool pass = validate_expr(expr);
+
+	ASSERT_TRUTHY(expr->is_const_expr);
+	ASSERT_EQUAL(expr->value.rune, 'x');
+
+	free_tokens(token);
+	return pass;
+}
+
+static bool test_validate_str_expr(void) {
+	Token *token = tokenize_fixture(U"\"x\"");
+	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
+
+	const bool pass = validate_expr(expr);
+
+	ASSERT_TRUTHY(expr->is_const_expr);
+	ASSERT_TRUTHY(strcmp(expr->value.str, "x")== 0);
+
+	free_tokens(token);
+	free(expr->value.str);
+	return pass;
+}
+
+static bool test_binary_oper_is_const_expr_if_lhs_and_rhs_are_const_expr(void) {
+	Token *token = tokenize_fixture(U"1 + 2");
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		AST_NODE_CONST_EXPR(token),
+		EXPR_ADD,
+		AST_NODE_CONST_EXPR(token->next->next)
+	);
+
+	const bool pass = validate_expr(expr);
+
+	ASSERT_TRUTHY(expr->is_const_expr);
+
+	free_tokens(token);
+	return pass;
+}
+
+static bool test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr(void) {
+	Token *token = tokenize_fixture(U"external f() Int\nf() + 2");
+	Token *expr_token = token->next->next->next->next->next->next;;
+	Token *int_token = expr_token->next->next->next->next;
+
+	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
+	AST_NODE_FUNC_RTYPE(func, "Int");
+
+	ASSERT_TRUTHY(validate_ast_tree(func));
+
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		AST_NODE_FUNC_EXPR(expr_token),
+		EXPR_ADD,
+		AST_NODE_CONST_EXPR(int_token)
+	);
+
+	const bool pass = validate_expr(expr);
+	ASSERT_TRUTHY(pass);
+
+	ASSERT_FALSEY(expr->is_const_expr);
+
+	free_tokens(token);
+	return pass;
+}
+
+static bool test_binary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
+	Token *token = tokenize_fixture(U"external f() Int\n1 + f()");
+	Token *int_token = token->next->next->next->next->next->next;
+	Token *expr_token = int_token->next->next;
+
+	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
+	AST_NODE_FUNC_RTYPE(func, "Int");
+
+	ASSERT_TRUTHY(validate_ast_tree(func));
+
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		AST_NODE_CONST_EXPR(int_token),
+		EXPR_ADD,
+		AST_NODE_FUNC_EXPR(expr_token)
+	);
+
+	const bool pass = validate_expr(expr);
+	ASSERT_TRUTHY(pass);
+
+	ASSERT_FALSEY(expr->is_const_expr);
+
+	free_tokens(token);
+	return pass;
+}
+
+static bool test_unary_oper_is_const_expr_if_rhs_is_const_expr(void) {
+	Token *token = tokenize_fixture(U"not true");
+
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		NULL,
+		EXPR_NOT,
+		AST_NODE_CONST_EXPR(token->next)
+	);
+
+	const bool pass = validate_expr(expr);
+
+	ASSERT_TRUTHY(expr->is_const_expr);
+
+	free_tokens(token);
+
+	ASSERT_TRUTHY(pass);
+	PASS;
+}
+
+static bool test_unary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
+	Token *token = tokenize_fixture(U"external f() Bool\nnot f()");
+	Token *expr_token = token->next->next->next->next->next->next;
+
+	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
+	AST_NODE_FUNC_RTYPE(func, "Bool");
+
+	ASSERT_TRUTHY(validate_ast_tree(func));
+
+	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
+		NULL,
+		EXPR_NOT,
+		AST_NODE_FUNC_EXPR(expr_token->next)
+	);
+
+	const bool pass = validate_expr(expr);
+	ASSERT_TRUTHY(pass);
+
+	ASSERT_FALSEY(expr->is_const_expr);
+
+	free_tokens(token);
+	free(expr->value.str);
+	return pass;
+}
+
+static bool test_var_expr_is_const_expr_if_var_def_expr_is_const_expr(void) {
+	Token *token = tokenize_fixture(U"x := 1\nx");
+
+	AstNode *node = AST_NODE_VAR_DEF(
+		token,
+		AST_NODE_CONST_EXPR(token->next->next),
+		true
+	);
+	ASSERT_TRUTHY(validate_ast_tree(node));
+
+	AstNodeExpr *expr = AST_NODE_IDENT_EXPR(token->next->next->next->next);
+
+	const bool pass = validate_expr(expr);
+	ASSERT_TRUTHY(expr->is_const_expr);
+
+	free_tokens(token);
+
+	ASSERT_TRUTHY(pass);
+	PASS;
+}
+
+static bool test_var_expr_isnt_const_expr_if_var_def_expr_isnt_const_expr(void) {
+	Token *token = tokenize_fixture(U"external f() Int\nx := f()\nx");
+	Token *var_def_token = token->next->next->next->next->next->next;
+	Token *var_def_expr_token = var_def_token->next->next;
+	Token *expr_token = var_def_expr_token->next->next->next->next;
+
+	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
+	AST_NODE_FUNC_RTYPE(func, "Bool");
+
+	ASSERT_TRUTHY(validate_ast_tree(func));
+
+	AstNode *var_def = AST_NODE_VAR_DEF(
+		var_def_token,
+		AST_NODE_FUNC_EXPR(var_def_expr_token),
+		true
+	);
+	ASSERT_TRUTHY(validate_ast_tree(var_def));
+
+	AstNodeExpr *expr = AST_NODE_IDENT_EXPR(expr_token);
+
+	const bool pass = validate_expr(expr);
+	ASSERT_FALSEY(expr->is_const_expr);
+
+	free_tokens(token);
+
+	ASSERT_TRUTHY(pass);
+	PASS;
+}
+
 static bool test_validate_int_overflow(void) {
 	Token *token = tokenize_fixture(U"99999999999999999999999999999999");
-	AstNode *node = AST_SIMPLE_EXPR(token);
+	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(node->expr));
+	ASSERT_FALSEY(validate_expr(expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"99999999999999999999999999999999\"\n"
 	));
@@ -48,9 +265,9 @@ static bool test_validate_int_overflow(void) {
 
 static bool test_validate_int_underflow(void) {
 	Token *token = tokenize_fixture(U"-99999999999999999999999999999999");
-	AstNode *node = AST_SIMPLE_EXPR(token);
+	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(node->expr));
+	ASSERT_FALSEY(validate_expr(expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"-99999999999999999999999999999999\"\n"
 	));
@@ -61,9 +278,9 @@ static bool test_validate_int_underflow(void) {
 
 static bool test_validate_float_overflow(void) {
 	Token *token = tokenize_fixture(U"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0");
-	AstNode *node = AST_SIMPLE_EXPR(token);
+	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(node->expr));
+	ASSERT_FALSEY(validate_expr(expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0\"\n"
 	));
@@ -88,7 +305,7 @@ static bool test_validate_missing_function_decl(void) {
 
 static bool test_validate_trailing_expr(void) {
 	Token *token = tokenize_fixture(U"1");
-	AstNode *node = AST_SIMPLE_EXPR(token);
+	AstNode *node = AST_NODE_EXPR(token, AST_NODE_CONST_EXPR(token));
 
 	ASSERT_FALSEY(validate_ast_tree(node));
 	free(node->expr->value.str);
@@ -765,7 +982,7 @@ static bool test_validate_non_void_function_missing_return(void) {
 	Token *token = tokenize_fixture(U"f() Int { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	node->func_proto->return_type_name = (char[]){"Int"};
+	AST_NODE_FUNC_RTYPE(node, "Int");
 
 	return validate_tree_fixture(
 		node,
@@ -894,7 +1111,7 @@ static bool test_validate_func_return_invalid_type(void) {
 	Token *return_expr_token = return_token->next;
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	node->func_proto->return_type_name = (char[]){"Int"};
+	AST_NODE_FUNC_RTYPE(node, "Int");
 
 	node->child = AST_NODE_RETURN(
 		return_token,
@@ -911,7 +1128,7 @@ static bool test_validate_func_check_return_type(void) {
 	Token *token = tokenize_fixture(U"f() invalid { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	node->func_proto->return_type_name = (char[]){"invalid"};
+	AST_NODE_FUNC_RTYPE(node, "invalid");
 
 	return validate_tree_fixture(
 		node,
@@ -1245,6 +1462,17 @@ static bool test_validate_type_alias_in_expr_not_allowed(void) {
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
+		test_validate_float_expr,
+		test_validate_bool_expr,
+		test_validate_rune_expr,
+		test_validate_str_expr,
+		test_binary_oper_is_const_expr_if_lhs_and_rhs_are_const_expr,
+		test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr,
+		test_binary_oper_isnt_const_expr_if_rhs_isnt_const_expr,
+		test_unary_oper_isnt_const_expr_if_rhs_isnt_const_expr,
+		test_unary_oper_is_const_expr_if_rhs_is_const_expr,
+		test_var_expr_is_const_expr_if_var_def_expr_is_const_expr,
+		test_var_expr_isnt_const_expr_if_var_def_expr_isnt_const_expr,
 		test_validate_int_overflow,
 		test_validate_int_underflow,
 		test_validate_float_overflow,

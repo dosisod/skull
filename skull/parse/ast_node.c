@@ -808,18 +808,18 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 		next_token(ctx);
 	}
 
-	AstNodeExpr *node = Malloc(sizeof(AstNodeExpr));
-	node->oper = EXPR_FUNC;
+	AstNodeExpr *expr = Calloc(1, sizeof(AstNodeExpr));
+	expr->oper = EXPR_FUNC;
 
-	node->lhs.func_call = Malloc(sizeof(AstNodeFunctionCall));
-	*node->lhs.func_call = (AstNodeFunctionCall){
+	expr->lhs.func_call = Malloc(sizeof(AstNodeFunctionCall));
+	*expr->lhs.func_call = (AstNodeFunctionCall){
 		.func_name_tok = func_name_token,
 		.params = child_copy,
 		.num_values = num_values
 	};
 
 	next_token(ctx);
-	return node;
+	return expr;
 }
 
 /*

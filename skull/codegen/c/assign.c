@@ -24,6 +24,35 @@ CStmt gen_stmt_var_def_c(const AstNode *node) {
 	CType type = skull_type_to_c_type(var->type);
 
 	if (SKULL_STATE_C.indent_lvl == 1) {
+		if (var->expr->is_const_expr) {
+			CExpr value = gen_expr_c(var->expr);
+
+			const char *fmt = NULL;
+
+			if (var->is_exported) {
+				if (var->is_const) fmt = "%s\nconst %s %s = %s;";
+				else fmt = "%s\n%s %s = %s;";
+			}
+			else {
+				if (var->is_const) fmt = "%s\nstatic const %s %s = %s;";
+				else fmt = "%s\nstatic %s %s = %s;";
+			}
+
+			char *old_globals = SKULL_STATE_C.globals;
+			SKULL_STATE_C.globals = uvsnprintf(
+				fmt,
+				old_globals ? old_globals : "",
+				type,
+				var->name,
+				value
+			);
+
+			free(old_globals);
+			free(value);
+
+			return NULL;
+		}
+
 		char *old_globals = SKULL_STATE_C.globals;
 		SKULL_STATE_C.globals = uvsnprintf(
 			var->is_exported ?

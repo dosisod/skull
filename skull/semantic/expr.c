@@ -13,6 +13,7 @@
 
 
 static bool validate_stmt_func_call(AstNodeExpr *);
+static bool validate_ident_expr(AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
 static bool validate_const_expr(AstNodeExpr *);
 static bool validate_pow_expr(const AstNodeExpr *);
@@ -22,24 +23,18 @@ static bool validate_shift_expr(const AstNodeExpr *);
 static FunctionDeclaration *find_func_by_token(const Token *);
 static bool validate_func_call_params(AstNodeFunctionCall *);
 static void set_expr_type(AstNodeExpr *);
+static void set_const_expr(AstNodeExpr *);
 static bool validate_binary_expr(AstNodeExpr *);
 static bool validate_expr_restrictions(AstNodeExpr *);
+static bool is_binary_expr(ExprType);
 
 
 bool validate_expr(AstNodeExpr *expr) {
 	const ExprType oper = expr->oper;
 
 	switch (oper) {
-		case EXPR_FUNC:
-			return validate_stmt_func_call(expr);
-		case EXPR_IDENTIFIER: {
-			Variable *var = scope_find_var(expr->lhs.tok);
-			if (var) {
-				expr->var = var;
-				expr->type = var->type;
-			}
-			return !!var;
-		}
+		case EXPR_FUNC: return validate_stmt_func_call(expr);
+		case EXPR_IDENTIFIER: return validate_ident_expr(expr);
 		case EXPR_CONST: return validate_const_expr(expr);
 		default: break;
 	}
@@ -49,17 +44,24 @@ bool validate_expr(AstNodeExpr *expr) {
 	if (!validate_expr_restrictions(expr)) return false;
 
 	set_expr_type(expr);
+	set_const_expr(expr);
+
+	return true;
+}
+
+static bool validate_ident_expr(AstNodeExpr *expr) {
+	Variable *var = scope_find_var(expr->lhs.tok);
+	if (!var) return false;
+
+	expr->var = var;
+	expr->type = var->type;
+	if (var->expr) expr->is_const_expr = var->expr->is_const_expr;
 
 	return true;
 }
 
 static bool validate_binary_expr(AstNodeExpr *expr) {
-	const bool is_binary = !(
-		expr->oper == EXPR_UNARY_NEG ||
-		expr->oper == EXPR_NOT
-	);
-
-	if (!is_binary) return true;
+	if (!is_binary_expr(expr->oper)) return true;
 
 	if (!validate_expr(expr->lhs.expr)) return false;
 
@@ -124,6 +126,15 @@ static void set_expr_type(AstNodeExpr *expr) {
 	}
 }
 
+static void set_const_expr(AstNodeExpr *expr) {
+	if (is_binary_expr(expr->oper)) {
+		expr->is_const_expr = (
+			expr->lhs.expr->is_const_expr && expr->rhs->is_const_expr
+		);
+	}
+	else expr->is_const_expr = expr->rhs->is_const_expr;
+}
+
 static bool validate_const_expr(AstNodeExpr *expr) {
 	const Token *token = expr->lhs.tok;
 	bool err = false;
@@ -165,6 +176,7 @@ static bool validate_const_expr(AstNodeExpr *expr) {
 		default: return false;
 	}
 
+	expr->is_const_expr = true;
 	return !err;
 }
 
@@ -314,4 +326,8 @@ static bool validate_func_call_params(AstNodeFunctionCall *func_call) {
 	}
 
 	return true;
+}
+
+static bool is_binary_expr(ExprType oper) {
+	return !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
 }

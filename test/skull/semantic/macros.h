@@ -7,7 +7,8 @@
 		.lhs = { \
 			.tok = (token) \
 		}, \
-		.oper = EXPR_CONST \
+		.oper = EXPR_CONST, \
+		.is_const_expr = false \
 	}
 
 #define AST_NODE_EXPR(_token, _expr) \
@@ -23,9 +24,6 @@
 		.rhs = (_rhs), \
 		.oper = (_oper) \
 	}
-
-#define AST_SIMPLE_EXPR(_token) \
-	AST_NODE_EXPR((_token), AST_NODE_CONST_EXPR(_token))
 
 #define AST_SIMPLE_BINARY_EXPR(_token, _oper) \
 	AST_NODE_EXPR( \
@@ -101,6 +99,9 @@
 			.is_export = (_is_export), \
 		} \
 	}
+
+#define AST_NODE_FUNC_RTYPE(_node, _rtype) \
+	(_node)->func_proto->return_type_name = (char[]){_rtype}
 
 #define AST_NODE_NOOP() \
 	&(AstNode){ \

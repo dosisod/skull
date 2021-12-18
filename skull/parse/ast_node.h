@@ -180,6 +180,8 @@ typedef struct AstNodeExpr {
 	AstNodeExpr *rhs;
 
 	ExprType oper;
+
+	_Bool is_const_expr;
 } AstNodeExpr;
 
 /*
