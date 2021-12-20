@@ -15,7 +15,7 @@ bool check_unused_symbols(const AstNode *node) {
 		if (head->type == AST_NODE_VAR_DEF) {
 			const Variable *var = head->var_def->var;
 
-			if (BUILD_DATA.quiet) {
+			if (!var || BUILD_DATA.quiet) {
 				head = head->next;
 				continue;
 			}

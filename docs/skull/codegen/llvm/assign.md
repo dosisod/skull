@@ -13,7 +13,7 @@ void gen_stmt_var_assign(const AstNodeVarAssign *var_assign)
 > Assign a to a variable from `var_assign`.
 
 ```c
-static void assign_value_to_var(LLVMValueRef value, Variable *const var)
+static void assign_value_to_var(LLVMValueRef value, Variable *const var, bool is_first_assign)
 ```
 
 > Assign `value` to `var`.

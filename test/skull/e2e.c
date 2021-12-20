@@ -82,86 +82,48 @@ TEST_DIR"/oper/all_exprs.sk",
 "; ModuleID = './test/sh/oper/all_exprs.sk'\n" \
 "source_filename = \"./test/sh/oper/all_exprs.sk\"\n" \
 "\n" \
-"@bool = private global i1 false\n" \
-"@int = private global i64 0\n" \
-"@float = private global double 0.000000e+00\n" \
+"@bool = private global i1 true\n" \
+"@int = private global i64 1234\n" \
+"@float = private global double 3.140000e+00\n" \
 "@0 = private unnamed_addr constant [12 x i8] c\"hello world\00\", align 1\n" \
-"@str = private global i8* null\n" \
-"@rune = private global i32 0\n" \
-"@not_ = private global i1 false\n" \
-"@and_ = private global i1 false\n" \
-"@or_ = private global i1 false\n" \
-"@xor_ = private global i1 false\n" \
-"@greater_than_eq_int = private global i1 false\n" \
-"@greater_than_eq_float = private global i1 false\n" \
-"@gtr_than_int = private global i1 false\n" \
-"@gtr_than_float = private global i1 false\n" \
-"@is_int = private global i1 false\n" \
-"@is_float = private global i1 false\n" \
-"@is_rune = private global i1 false\n" \
-"@is_bool = private global i1 false\n" \
+"@str = private global i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0)\n" \
+"@rune = private global i32 120\n" \
+"@not_ = private global i1 true\n" \
+"@and_ = private global i1 true\n" \
+"@or_ = private global i1 true\n" \
+"@xor_ = private global i1 true\n" \
+"@greater_than_eq_int = private global i1 true\n" \
+"@greater_than_eq_float = private global i1 true\n" \
+"@gtr_than_int = private global i1 true\n" \
+"@gtr_than_float = private global i1 true\n" \
+"@is_int = private global i1 true\n" \
+"@is_float = private global i1 true\n" \
+"@is_rune = private global i1 true\n" \
+"@is_bool = private global i1 true\n" \
 "@isnt_int = private global i1 false\n" \
 "@isnt_float = private global i1 false\n" \
 "@isnt_rune = private global i1 false\n" \
 "@isnt_bool = private global i1 false\n" \
-"@less_than_eq_int = private global i1 false\n" \
-"@less_than_eq_float = private global i1 false\n" \
-"@less_than_int = private global i1 false\n" \
-"@less_than_float = private global i1 false\n" \
-"@mult_float = private global double 0.000000e+00\n" \
-"@mult_int = private global i64 0\n" \
-"@div_float = private global double 0.000000e+00\n" \
-"@div_int = private global i64 0\n" \
-"@add_int = private global i64 0\n" \
-"@add_float = private global double 0.000000e+00\n" \
-"@subtract_int = private global i64 0\n" \
-"@subtract_float = private global double 0.000000e+00\n" \
-"@lshift = private global i64 0\n" \
-"@rshift = private global i64 0\n" \
-"@mod_int = private global i64 0\n" \
-"@mod_negative_int = private global i64 0\n" \
-"@mod_float = private global double 0.000000e+00\n" \
+"@less_than_eq_int = private global i1 true\n" \
+"@less_than_eq_float = private global i1 true\n" \
+"@less_than_int = private global i1 true\n" \
+"@less_than_float = private global i1 true\n" \
+"@mult_float = private global double 6.000000e+00\n" \
+"@mult_int = private global i64 6\n" \
+"@div_float = private global double 2.000000e+00\n" \
+"@div_int = private global i64 2\n" \
+"@add_int = private global i64 3\n" \
+"@add_float = private global double 5.000000e+00\n" \
+"@subtract_int = private global i64 -1\n" \
+"@subtract_float = private global double -1.000000e+00\n" \
+"@lshift = private global i64 4\n" \
+"@rshift = private global i64 3\n" \
+"@mod_int = private global i64 1\n" \
+"@mod_negative_int = private global i64 -1\n" \
+"@mod_float = private global double 2.000000e+00\n" \
 "\n" \
 "define i64 @.tmp() {\n" \
 "entry:\n" \
-  "store i1 true, i1* @bool\n" \
-  "store i64 1234, i64* @int\n" \
-  "store double 3.140000e+00, double* @float\n" \
-  "store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** @str\n" \
-  "store i32 120, i32* @rune\n" \
-  "store i1 true, i1* @not_\n" \
-  "store i1 true, i1* @and_\n" \
-  "store i1 true, i1* @or_\n" \
-  "store i1 true, i1* @xor_\n" \
-  "store i1 true, i1* @greater_than_eq_int\n" \
-  "store i1 true, i1* @greater_than_eq_float\n" \
-  "store i1 true, i1* @gtr_than_int\n" \
-  "store i1 true, i1* @gtr_than_float\n" \
-  "store i1 true, i1* @is_int\n" \
-  "store i1 true, i1* @is_float\n" \
-  "store i1 true, i1* @is_rune\n" \
-  "store i1 true, i1* @is_bool\n" \
-  "store i1 false, i1* @isnt_int\n" \
-  "store i1 false, i1* @isnt_float\n" \
-  "store i1 false, i1* @isnt_rune\n" \
-  "store i1 false, i1* @isnt_bool\n" \
-  "store i1 true, i1* @less_than_eq_int\n" \
-  "store i1 true, i1* @less_than_eq_float\n" \
-  "store i1 true, i1* @less_than_int\n" \
-  "store i1 true, i1* @less_than_float\n" \
-  "store double 6.000000e+00, double* @mult_float\n" \
-  "store i64 6, i64* @mult_int\n" \
-  "store double 2.000000e+00, double* @div_float\n" \
-  "store i64 2, i64* @div_int\n" \
-  "store i64 3, i64* @add_int\n" \
-  "store double 5.000000e+00, double* @add_float\n" \
-  "store i64 -1, i64* @subtract_int\n" \
-  "store double -1.000000e+00, double* @subtract_float\n" \
-  "store i64 4, i64* @lshift\n" \
-  "store i64 3, i64* @rshift\n" \
-  "store i64 1, i64* @mod_int\n" \
-  "store i64 -1, i64* @mod_negative_int\n" \
-  "store double 2.000000e+00, double* @mod_float\n" \
   "ret i64 0\n" \
 "}\n",
 
@@ -180,20 +142,15 @@ TEST_DIR"/declare/basic_types.sk",
 "; ModuleID = './test/sh/declare/basic_types.sk'\n" \
 "source_filename = \"./test/sh/declare/basic_types.sk\"\n" \
 "\n" \
-"@bool = private global i1 false\n" \
-"@int = private global i64 0\n" \
-"@float = private global double 0.000000e+00\n" \
+"@bool = private global i1 true\n" \
+"@int = private global i64 1234\n" \
+"@float = private global double 3.140000e+00\n" \
 "@0 = private unnamed_addr constant [12 x i8] c\"hello world\\00\", align 1\n" \
-"@str = private global i8* null\n" \
-"@rune = private global i32 0\n" \
+"@str = private global i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0)\n" \
+"@rune = private global i32 120\n" \
 "\n" \
 "define i64 @.basic_types() {\n" \
 "entry:\n" \
-"  store i1 true, i1* @bool\n" \
-"  store i64 1234, i64* @int\n" \
-"  store double 3.140000e+00, double* @float\n" \
-"  store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** @str\n" \
-"  store i32 120, i32* @rune\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -253,8 +210,6 @@ TEST_DIR"/declare/many_vars.sk",
 "\n" \
 "define i64 @.many_vars() {\n" \
 "entry:\n" \
-"  store i64 0, i64* @x\n" \
-"  store i64 0, i64* @y\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -274,7 +229,6 @@ TEST_DIR"/declare/mut_with_explicit_type.sk",
 "\n" \
 "define i64 @.mut_with_explicit_type() {\n" \
 "entry:\n" \
-"  store i64 0, i64* @x\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -292,12 +246,11 @@ TEST_DIR"/declare/reassign_str.sk",
 "source_filename = \"./test/sh/declare/reassign_str.sk\"\n" \
 "\n" \
 "@0 = private unnamed_addr constant [4 x i8] c\"abc\\00\", align 1\n" \
-"@x = private global i8* null\n" \
+"@x = private global i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0)\n" \
 "@1 = private unnamed_addr constant [5 x i8] c\"defg\\00\", align 1\n" \
 "\n" \
 "define i64 @.reassign_str() {\n" \
 "entry:\n" \
-"  store i8* getelementptr inbounds ([4 x i8], [4 x i8]* @0, i32 0, i32 0), i8** @x\n" \
 "  store i8* getelementptr inbounds ([5 x i8], [5 x i8]* @1, i32 0, i32 0), i8** @x\n" \
 "  ret i64 0\n" \
 "}\n",
@@ -320,7 +273,6 @@ TEST_DIR"/declare/reassign_var.sk",
 "\n" \
 "define i64 @.reassign_var() {\n" \
 "entry:\n" \
-"  store i64 0, i64* @x\n" \
 "  store i64 1, i64* @x\n" \
 "  ret i64 0\n" \
 "}\n",
@@ -364,7 +316,6 @@ TEST_DIR"/declare/variable_auto_deduce.sk",
 "\n" \
 "define i64 @.variable_auto_deduce() {\n" \
 "entry:\n" \
-"  store i64 0, i64* @x\n" \
 "  %0 = load i64, i64* @x\n" \
 "  store i64 %0, i64* @z\n" \
 "  %1 = load i64, i64* @z\n" \
@@ -518,11 +469,10 @@ TEST_DIR"/flow/if/not_with_var.sk",
 "; ModuleID = './test/sh/flow/if/not_with_var.sk'\n" \
 "source_filename = \"./test/sh/flow/if/not_with_var.sk\"\n" \
 "\n" \
-"@x = private global i1 false\n" \
+"@x = private global i1 true\n" \
 "\n" \
 "define i64 @.not_with_var() {\n" \
 "entry:\n" \
-"  store i1 true, i1* @x\n" \
 "  %0 = load i1, i1* @x\n" \
 "  %1 = xor i1 %0, true\n" \
 "  br i1 %1, label %if_true, label %end\n" \
@@ -552,11 +502,10 @@ TEST_DIR"/flow/if/with_var_true.sk",
 "; ModuleID = './test/sh/flow/if/with_var_true.sk'\n" \
 "source_filename = \"./test/sh/flow/if/with_var_true.sk\"\n" \
 "\n" \
-"@x = private global i1 false\n" \
+"@x = private global i1 true\n" \
 "\n" \
 "define i64 @.with_var_true() {\n" \
 "entry:\n" \
-"  store i1 true, i1* @x\n" \
 "  %0 = load i1, i1* @x\n" \
 "  br i1 %0, label %if_true, label %end\n" \
 "\n" \
@@ -636,14 +585,13 @@ TEST_DIR"/flow/set_var_in_if.sk",
 "; ModuleID = './test/sh/flow/set_var_in_if.sk'\n" \
 "source_filename = \"./test/sh/flow/set_var_in_if.sk\"\n" \
 "\n" \
-"@x = private global i64 0\n" \
+"@x = private global i64 1\n" \
 "\n" \
 "define i64 @.set_var_in_if() {\n" \
 "entry:\n" \
 "  br i1 true, label %if_true, label %end\n" \
 "\n" \
 "if_true:                                          ; preds = %entry\n" \
-"  store i64 1, i64* @x\n" \
 "  br label %end\n" \
 "\n" \
 "end:                                              ; preds = %entry, %if_true\n" \
@@ -926,7 +874,6 @@ TEST_DIR"/function/func_with_scope.sk",
 "\n" \
 "define i64 @.func_with_scope() {\n" \
 "entry:\n" \
-"  store i64 0, i64* @x\n" \
 "  ret i64 0\n" \
 "}\n" \
 "\n" \
@@ -1232,13 +1179,11 @@ TEST_DIR"/misc/escape_sequences.sk",
 "source_filename = \"./test/sh/misc/escape_sequences.sk\"\n" \
 "\n" \
 "@0 = private unnamed_addr constant [2 x i8] c\"\\0A\\00\", align 1\n" \
-"@x = private global i8* null\n" \
-"@y = private global i32 0\n" \
+"@x = private global i8* getelementptr inbounds ([2 x i8], [2 x i8]* @0, i32 0, i32 0)\n" \
+"@y = private global i32 10\n" \
 "\n" \
 "define i64 @.escape_sequences() {\n" \
 "entry:\n" \
-"  store i8* getelementptr inbounds ([2 x i8], [2 x i8]* @0, i32 0, i32 0), i8** @x\n" \
-"  store i32 10, i32* @y\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -1407,11 +1352,10 @@ TEST_DIR"/misc/type_alias.sk",
 "; ModuleID = './test/sh/misc/type_alias.sk'\n" \
 "source_filename = \"./test/sh/misc/type_alias.sk\"\n" \
 "\n" \
-"@x = private global i64 0\n" \
+"@x = private global i64 1234\n" \
 "\n" \
 "define i64 @.type_alias() {\n" \
 "entry:\n" \
-"  store i64 1234, i64* @x\n" \
 "  ret i64 0\n" \
 "}\n" \
 "\n" \
@@ -1505,13 +1449,12 @@ TEST_DIR"/oper/lhs_with_var.sk",
 "; ModuleID = './test/sh/oper/lhs_with_var.sk'\n" \
 "source_filename = \"./test/sh/oper/lhs_with_var.sk\"\n" \
 "\n" \
-"@x = private global i64 0\n" \
+"@x = private global i64 1\n" \
 "@y = private global i64 0\n" \
 "@z = private global i1 false\n" \
 "\n" \
 "define i64 @.lhs_with_var() {\n" \
 "entry:\n" \
-"  store i64 1, i64* @x\n" \
 "  %0 = load i64, i64* @x\n" \
 "  %1 = add nsw i64 %0, 2\n" \
 "  store i64 %1, i64* @y\n" \
@@ -1535,13 +1478,11 @@ TEST_DIR"/oper/paren_expr.sk",
 "; ModuleID = './test/sh/oper/paren_expr.sk'\n" \
 "source_filename = \"./test/sh/oper/paren_expr.sk\"\n" \
 "\n" \
-"@x = private global i64 0\n" \
-"@y = private global i64 0\n" \
+"@x = private global i64 3\n" \
+"@y = private global i64 3\n" \
 "\n" \
 "define i64 @.paren_expr() {\n" \
 "entry:\n" \
-"  store i64 3, i64* @x\n" \
-"  store i64 3, i64* @y\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -1557,11 +1498,10 @@ TEST_DIR"/oper/paren_rhs_expr.sk",
 "; ModuleID = './test/sh/oper/paren_rhs_expr.sk'\n" \
 "source_filename = \"./test/sh/oper/paren_rhs_expr.sk\"\n" \
 "\n" \
-"@x = private global i64 0\n" \
+"@x = private global i64 6\n" \
 "\n" \
 "define i64 @.paren_rhs_expr() {\n" \
 "entry:\n" \
-"  store i64 6, i64* @x\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -1579,12 +1519,11 @@ TEST_DIR"/oper/rhs_with_var.sk",
 "; ModuleID = './test/sh/oper/rhs_with_var.sk'\n" \
 "source_filename = \"./test/sh/oper/rhs_with_var.sk\"\n" \
 "\n" \
-"@x = private global i64 0\n" \
+"@x = private global i64 1\n" \
 "@z = private global i64 0\n" \
 "\n" \
 "define i64 @.rhs_with_var() {\n" \
 "entry:\n" \
-"  store i64 1, i64* @x\n" \
 "  %0 = load i64, i64* @x\n" \
 "  %1 = add nsw i64 2, %0\n" \
 "  store i64 %1, i64* @z\n" \
@@ -1606,16 +1545,13 @@ TEST_DIR"/oper/unary_expr.sk",
 "; ModuleID = './test/sh/oper/unary_expr.sk'\n" \
 "source_filename = \"./test/sh/oper/unary_expr.sk\"\n" \
 "\n" \
-"@w = private global double 0.000000e+00\n" \
-"@x = private global i1 false\n" \
-"@y = private global i64 0\n" \
+"@w = private global double -1.000000e+00\n" \
+"@x = private global i1 true\n" \
+"@y = private global i64 -1\n" \
 "@z = private global i64 0\n" \
 "\n" \
 "define i64 @.unary_expr() {\n" \
 "entry:\n" \
-"  store double -1.000000e+00, double* @w\n" \
-"  store i1 true, i1* @x\n" \
-"  store i64 -1, i64* @y\n" \
 "  %0 = load i64, i64* @y\n" \
 "  %1 = sub nsw i64 0, %0\n" \
 "  store i64 %1, i64* @z\n" \

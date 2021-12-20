@@ -15,7 +15,7 @@
 
 #include "skull/codegen/llvm/assign.h"
 
-static void assign_value_to_var(LLVMValueRef, Variable *const);
+static void assign_value_to_var(LLVMValueRef, Variable *const, bool);
 static void setup_var_llvm(LLVMValueRef, Variable *);
 static void add_llvm_var_def_debug_info(const Variable *);
 
@@ -31,7 +31,7 @@ void gen_stmt_var_def(const AstNodeVarDef *var_def) {
 	LLVMValueRef value = gen_expr(var_def->expr).value;
 
 	setup_var_llvm(value, var);
-	assign_value_to_var(value, var);
+	assign_value_to_var(value, var, true);
 	add_llvm_var_def_debug_info(var);
 }
 
@@ -66,7 +66,7 @@ Assign a to a variable from `var_assign`.
 void gen_stmt_var_assign(const AstNodeVarAssign *var_assign) {
 	LLVMValueRef value = gen_expr(var_assign->expr).value;
 
-	assign_value_to_var(value, var_assign->var);
+	assign_value_to_var(value, var_assign->var, false);
 }
 
 static void setup_var_llvm(LLVMValueRef value, Variable *var) {
@@ -90,7 +90,9 @@ static void setup_var_llvm(LLVMValueRef value, Variable *var) {
 
 		LLVMSetInitializer(
 			var->ref,
-			is_export ? value : LLVMConstNull(type_to_llvm_type(var->type))
+			is_const_literal ?
+				value :
+				LLVMConstNull(type_to_llvm_type(var->type))
 		);
 	}
 	else if (!is_global && !var->is_const) {
@@ -108,8 +110,11 @@ static void setup_var_llvm(LLVMValueRef value, Variable *var) {
 /*
 Assign `value` to `var`.
 */
-static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
-	const bool is_first_assign = !var->ref;
+static void assign_value_to_var(
+	LLVMValueRef value,
+	Variable *const var,
+	bool is_first_assign
+) {
 	const bool is_const_literal = LLVMIsConstant(value);
 
 	const bool is_global = is_first_assign ?
@@ -119,7 +124,7 @@ static void assign_value_to_var(LLVMValueRef value, Variable *const var) {
 	if (var->is_const && !(is_global && !is_const_literal)) {
 		var->ref = value;
 	}
-	else {
+	else if (!(is_global && is_first_assign && is_const_literal)) {
 		LLVMValueRef store = LLVMBuildStore(
 			SKULL_STATE_LLVM.builder,
 			value,
