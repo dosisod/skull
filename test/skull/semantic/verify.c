@@ -549,7 +549,6 @@ static bool test_validate_redeclare_function(void) {
 	// just call validate again to simulate a redeclaration
 	ASSERT_FALSEY(validate_ast_tree(external_func));
 	ASSERT_FALSEY(compare_errors(
-		"(null): Warning: line 1 column 10: function \"x\" is unused\n" \
 		"(null): Compilation error: line 1 column 10: cannot redeclare function \"x\"\n"
 	));
 

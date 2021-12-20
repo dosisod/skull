@@ -53,6 +53,8 @@ static bool validate_ident_expr(AstNodeExpr *expr) {
 	Variable *var = scope_find_var(expr->lhs.tok);
 	if (!var) return false;
 
+	var->was_read = true;
+
 	expr->var = var;
 	expr->type = var->type;
 	if (var->expr) expr->is_const_expr = var->expr->is_const_expr;

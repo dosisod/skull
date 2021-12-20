@@ -8,6 +8,8 @@
 #include "skull/semantic/unused.h"
 
 bool check_unused_symbols(const AstNode *node) {
+	if (BUILD_DATA.quiet) return true;
+
 	const AstNode *head = node;
 	bool err = false;
 
@@ -15,7 +17,7 @@ bool check_unused_symbols(const AstNode *node) {
 		if (head->type == AST_NODE_VAR_DEF) {
 			const Variable *var = head->var_def->var;
 
-			if (!var || BUILD_DATA.quiet) {
+			if (!var) {
 				head = head->next;
 				continue;
 			}

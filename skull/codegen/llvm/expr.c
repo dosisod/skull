@@ -75,7 +75,6 @@ Return expression for identifier `token` with type `type`.
 */
 static Expr gen_expr_identifier(const AstNodeExpr *expr) {
 	Variable *var_found = expr->var;
-	var_found->was_read = true;
 
 	if (var_found->is_const &&
 		!(var_found->is_global && !var_found->is_const_lit)
