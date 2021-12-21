@@ -56,12 +56,8 @@ Expr gen_expr(const AstNodeExpr *const expr) {
 		default: break;
 	}
 
-	const Expr lhs = expr->lhs.expr ?
-		gen_expr(expr->lhs.expr) :
-		(Expr){0};
-
+	const Expr lhs = expr->lhs.expr ? gen_expr(expr->lhs.expr) : (Expr){0};
 	const Expr rhs = gen_expr(expr->rhs);
-
 	Operation *func = expr_type_to_func(expr->oper);
 
 	return func(
@@ -74,25 +70,23 @@ Expr gen_expr(const AstNodeExpr *const expr) {
 Return expression for identifier `token` with type `type`.
 */
 static Expr gen_expr_identifier(const AstNodeExpr *expr) {
-	Variable *var_found = expr->var;
+	Variable *var = expr->var;
 
-	if (var_found->is_const &&
-		!(var_found->is_global && !var_found->is_const_lit)
-	) {
+	if (var->is_const && !(var->is_global && !var->is_const_lit)) {
 		return (Expr){
-			.value = var_found->ref,
-			.type = var_found->type
+			.value = var->ref,
+			.type = var->type
 		};
 	}
 
 	return (Expr) {
 		.value = LLVMBuildLoad2(
 			SKULL_STATE_LLVM.builder,
-			type_to_llvm_type(var_found->type),
-			var_found->ref,
+			type_to_llvm_type(var->type),
+			var->ref,
 			""
 		),
-		.type = var_found->type
+		.type = var->type
 	};
 }
 
@@ -163,60 +157,42 @@ static Expr gen_expr_math_oper(
 /*
 Return expression for addition of `lhs` and `rhs`.
 */
-static Expr gen_expr_add(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_add(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWAdd, LLVMBuildFAdd);
 }
 
 /*
 Return expression for subtraction of `lhs` and `rhs`.
 */
-static Expr gen_expr_sub(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_sub(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWSub, LLVMBuildFSub);
 }
 
 /*
 Return expression for multiplication of `lhs` and `rhs`.
 */
-static Expr gen_expr_mult(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_mult(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWMul, LLVMBuildFMul);
 }
 
 /*
 Return expression for division of `lhs` and `rhs`.
 */
-static Expr gen_expr_div(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_div(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_math_oper(lhs, rhs, LLVMBuildExactSDiv, LLVMBuildFDiv);
 }
 
 /*
 Return expression for modulus of `lhs` and `rhs`.
 */
-static Expr gen_expr_mod(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_mod(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_math_oper(lhs, rhs, LLVMBuildSRem, LLVMBuildFRem);
 }
 
 /*
 Return expression for left shift of `lhs` and `rhs`.
 */
-static Expr gen_expr_lshift(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_lshift(const Expr *lhs, LLVMValueRef rhs) {
 	if (lhs->type == TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildShl(
@@ -234,10 +210,7 @@ static Expr gen_expr_lshift(
 /*
 Return expression for logical right shift of `lhs` and `rhs`.
 */
-static Expr gen_expr_rshift(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_rshift(const Expr *lhs, LLVMValueRef rhs) {
 	if (lhs->type == TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildLShr(
@@ -255,10 +228,7 @@ static Expr gen_expr_rshift(
 /*
 Return expression for taking `lhs` to the power of `rhs`.
 */
-static Expr gen_expr_pow(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs) {
 	const char *func_name = NULL;
 
 	if (lhs->type == TYPE_INT)
@@ -454,20 +424,14 @@ static Expr gen_expr_relational_oper(
 /*
 Return expression for result of less than operator for `lhs` and `rhs`.
 */
-static Expr gen_expr_less_than(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_less_than(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_relational_oper(lhs, rhs, LLVMIntSLT, LLVMRealOLT);
 }
 
 /*
 Return expression for result of greater than operator for `lhs` and `rhs`.
 */
-static Expr gen_expr_gtr_than(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_gtr_than(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_relational_oper(lhs, rhs, LLVMIntSGT, LLVMRealOGT);
 }
 
@@ -475,10 +439,7 @@ static Expr gen_expr_gtr_than(
 Return expression for result of less than or equal to operator for `lhs` and
 `rhs`.
 */
-static Expr gen_expr_less_than_eq(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_less_than_eq(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_relational_oper(lhs, rhs, LLVMIntSLE, LLVMRealOLE);
 }
 
@@ -486,10 +447,7 @@ static Expr gen_expr_less_than_eq(
 Return expression for result of greater than or equal to operator for `lhs`
 and `rhs`.
 */
-static Expr gen_expr_gtr_than_eq(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_gtr_than_eq(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_relational_oper(lhs, rhs, LLVMIntSGE, LLVMRealOGE);
 }
 
@@ -515,10 +473,7 @@ static Expr gen_expr_logical_oper(
 /*
 Return result of logical "and" operation of `lhs` and `rhs`.
 */
-static Expr gen_expr_and(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_and(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_logical_oper(lhs, rhs, LLVMBuildAnd);
 }
 
@@ -532,10 +487,7 @@ static Expr gen_expr_or(const Expr *lhs, LLVMValueRef rhs) {
 /*
 Return result of logical "xor" operation of `lhs` and `rhs`.
 */
-static Expr gen_expr_xor(
-	const Expr *lhs,
-	LLVMValueRef rhs
-) {
+static Expr gen_expr_xor(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_logical_oper(lhs, rhs, LLVMBuildXor);
 }
 

@@ -12,14 +12,19 @@
 #include "skull/codegen/abi.h"
 #include "skull/codegen/llvm/aliases.h"
 #include "skull/codegen/llvm/shared.h"
+#include "skull/codegen/llvm/types.h"
 #include "skull/common/malloc.h"
+#include "skull/common/range.h"
+#include "skull/common/str.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/types.h"
+#include "skull/semantic/variable.h"
 
 #include "skull/codegen/llvm/debug.h"
 
 
 static LLVMMetadataRef type_to_llvm_di_type(const Type);
+static void alloc_debug_function_param(Variable *);
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<unknown>"
@@ -65,14 +70,14 @@ LLVMDIBuilderRef setup_debug_info(
 		LLVMDWARFSourceLanguageC99,
 		di_file,
 		"skull "SKULL_VERSION, strlen("skull "SKULL_VERSION),
-		false,
-		"", 0,
-		0,
-		"", 0,
-		1,
-		0,
-		false,
-		false
+		false, // is optimized
+		"", 0, // flags
+		0, // runtime version
+		"", 0, // split name
+		1, // debug kind
+		0, // DWOId
+		false, // emit inline debug info
+		false // debug info for profiling
 	);
 
 	LLVMMetadataRef sub_type = LLVMDIBuilderCreateSubroutineType(
@@ -90,15 +95,15 @@ LLVMDIBuilderRef setup_debug_info(
 		di_builder,
 		di_file,
 		main_func_name, strlen(main_func_name),
-		"", 0,
+		"", 0, // linkage name
 		di_file,
-		1,
+		1, // line number
 		sub_type,
-		false,
-		true,
-		1,
+		false, // is local to unit
+		true, // is definition
+		1, // scope line
 		LLVMDIFlagZero,
-		false
+		false // is optimized
 	);
 	free(main_func_name);
 
@@ -132,36 +137,36 @@ LLVMMetadataRef type_to_llvm_di_type(const Type type) {
 				DW_ATE_signed_char,
 				LLVMDIFlagZero
 			),
-			64,
-			0,
-			0,
+			64, // size in bits
+			0, // align in bits
+			0, // address space
 			"Str", 3
 		);
 	}
 
-	unsigned size = 0;
+	unsigned bits = 0;
 	DW_ATE encoding = DW_ATE_signed;
 
 	if (type == TYPE_BOOL) {
-		size = 1;
+		bits = 1;
 		encoding = DW_ATE_boolean;
 	}
 	else if (type == TYPE_INT) {
-		size = 64;
+		bits = 64;
 	}
 	else if (type == TYPE_FLOAT) {
-		size = sizeof(double) * CHAR_BIT;
+		bits = sizeof(double) * CHAR_BIT;
 		encoding = DW_ATE_float;
 	}
 	else if (type == TYPE_RUNE) {
-		size = 32;
+		bits = 32;
 		encoding = DW_ATE_UTF;
 	}
 
 	return LLVMDIBuilderCreateBasicType(
 		DEBUG_INFO.builder,
 		type, strlen(type),
-		size,
+		bits,
 		encoding,
 		LLVMDIFlagZero
 	);
@@ -190,4 +195,139 @@ LLVMMetadataRef __attribute__((pure)) type_to_di_type(Type type) {
 	if (type == TYPE_STR) return DI_TYPE_STR;
 
 	return NULL;
+}
+
+void add_llvm_var_def_debug_info(const Variable *var) {
+	if (!BUILD_DATA.debug) return;
+
+	LLVMMetadataRef di_var = LLVMDIBuilderCreateAutoVariable(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.scope,
+		var->name, strlen(var->name),
+		DEBUG_INFO.file,
+		var->location.line,
+		type_to_di_type(var->type),
+		true, // survive optimizations
+		LLVMDIFlagZero,
+		8 // alignment
+	);
+
+	LLVMDIBuilderInsertDeclareAtEnd(
+		DEBUG_INFO.builder,
+		var->ref,
+		di_var,
+		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
+		make_llvm_debug_location(&var->location),
+		LLVMGetLastBasicBlock(SKULL_STATE_LLVM.current_func->ref)
+	);
+}
+
+LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *location) {
+	if (!BUILD_DATA.debug) return NULL;
+
+	LLVMMetadataRef old_di_scope = DEBUG_INFO.scope;
+
+	DEBUG_INFO.scope = LLVMDIBuilderCreateLexicalBlock(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.scope,
+		DEBUG_INFO.file,
+		location->line,
+		location->column
+	);
+
+	return old_di_scope;
+}
+
+LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
+	if (!BUILD_DATA.debug) return NULL;
+
+	LLVMMetadataRef *di_param_types = NULL;
+	if (func->num_params) {
+		di_param_types = Malloc(func->num_params * sizeof(LLVMMetadataRef));
+
+		for RANGE(i, func->num_params) {
+			di_param_types[i] = type_to_di_type(func->param_types[i]);
+		}
+	}
+
+	LLVMMetadataRef di_type = LLVMDIBuilderCreateSubroutineType(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.file,
+		di_param_types, func->num_params,
+		LLVMDIFlagZero
+	);
+	if (func->num_params) free(di_param_types);
+
+	LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.file,
+		func->name, strlen(func->name),
+		"", 0,
+		DEBUG_INFO.file,
+		func->location.line,
+		di_type,
+		false,
+		!func->is_external,
+		func->location.line,
+		LLVMDIFlagZero,
+		false
+	);
+	LLVMMetadataRef old_di_scope = DEBUG_INFO.scope;
+	DEBUG_INFO.scope = new_di_scope;
+	LLVMSetSubprogram(func->ref, DEBUG_INFO.scope);
+
+	if (func->num_params) {
+		for RANGE(i, func->num_params) {
+			char *param_name = c32stombs(
+				func->params[i]->param_name,
+				&func->location
+			);
+
+			LLVMMetadataRef di_var = LLVMDIBuilderCreateParameterVariable(
+				DEBUG_INFO.builder,
+				DEBUG_INFO.scope,
+				param_name, strlen(param_name),
+				i + 1,
+				DEBUG_INFO.file,
+				func->location.line,
+				type_to_di_type(func->param_types[i]),
+				true,
+				LLVMDIFlagZero
+			);
+			free(param_name);
+
+			alloc_debug_function_param(func->params[i]->var);
+
+			LLVMDIBuilderInsertDeclareAtEnd(
+				DEBUG_INFO.builder,
+				func->params[i]->var->ref,
+				di_var,
+				LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
+				make_llvm_debug_location(&func->location),
+				LLVMGetLastBasicBlock(func->ref)
+			);
+		}
+	}
+
+	return old_di_scope;
+}
+
+static void alloc_debug_function_param(Variable *var) {
+	LLVMValueRef old_ref = var->ref;
+	Variable *func_var = var;
+
+	func_var->ref = LLVMBuildAlloca(
+		SKULL_STATE_LLVM.builder,
+		type_to_llvm_type(func_var->type),
+		func_var->name
+	);
+
+	LLVMBuildStore(
+		SKULL_STATE_LLVM.builder,
+		old_ref,
+		func_var->ref
+	);
+
+	var->ref = func_var->ref;
+	var->is_const = false;
 }

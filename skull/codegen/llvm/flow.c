@@ -19,12 +19,8 @@ static void gen_control_if_(
 	LLVMBasicBlockRef,
 	LLVMBasicBlockRef
 );
-static LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *);
 
-static void gen_control_code_block(
-	const AstNode *const,
-	LLVMBasicBlockRef
-);
+static void gen_control_code_block(const AstNode *, LLVMBasicBlockRef);
 
 
 /*
@@ -159,15 +155,15 @@ static void gen_control_if_(
 		break;
 	}
 
-	LLVMBasicBlockRef if_true = LLVMAppendBasicBlockInContext(
+	LLVMBasicBlockRef if_cond_true = LLVMAppendBasicBlockInContext(
 		SKULL_STATE_LLVM.ctx,
 		SKULL_STATE_LLVM.current_func->ref,
 		"if_true"
 	);
-	LLVMBasicBlockRef if_false = NULL;
-	LLVMMoveBasicBlockBefore(if_true, end);
+	LLVMBasicBlockRef if_cond_false = NULL;
+	LLVMMoveBasicBlockBefore(if_cond_true, end);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_true);
+	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_cond_true);
 	gen_control_code_block(*node, end);
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, entry);
 
@@ -175,12 +171,12 @@ static void gen_control_if_(
 		next_non_comment->type == AST_NODE_ELIF ||
 		next_non_comment->type == AST_NODE_ELSE)
 	) {
-		if_false = LLVMAppendBasicBlockInContext(
+		if_cond_false = LLVMAppendBasicBlockInContext(
 			SKULL_STATE_LLVM.ctx,
 			SKULL_STATE_LLVM.current_func->ref,
 			"if_false"
 		);
-		LLVMMoveBasicBlockAfter(end, if_false);
+		LLVMMoveBasicBlockAfter(end, if_cond_false);
 
 		LLVMValueRef cond = gen_expr((*node)->expr).value;
 		add_llvm_debug_info(
@@ -191,8 +187,8 @@ static void gen_control_if_(
 		LLVMBuildCondBr(
 			SKULL_STATE_LLVM.builder,
 			cond,
-			if_true,
-			if_false
+			if_cond_true,
+			if_cond_false
 		);
 
 		*node = next_non_comment;
@@ -200,11 +196,11 @@ static void gen_control_if_(
 
 	// if there is an elif block following the current if block
 	if (next_non_comment && next_non_comment->type == AST_NODE_ELIF) {
-		gen_control_if_(node, if_false, end);
+		gen_control_if_(node, if_cond_false, end);
 	}
 	// if there is an else block following the current if block
 	else if (next_non_comment && next_non_comment->type == AST_NODE_ELSE) {
-		LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_false);
+		LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_cond_false);
 		gen_control_code_block(*node, end);
 	}
 	// just a single if statement
@@ -218,7 +214,7 @@ static void gen_control_if_(
 		LLVMBuildCondBr(
 			SKULL_STATE_LLVM.builder,
 			cond,
-			if_true,
+			if_cond_true,
 			end
 		);
 	}
@@ -238,7 +234,7 @@ void gen_stmt_continue(void) {
 Parse `node` while in a new scope. Branch to `block` if no return occurred.
 */
 static void gen_control_code_block(
-	const AstNode *const node,
+	const AstNode *node,
 	LLVMBasicBlockRef block
 ) {
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
@@ -256,22 +252,4 @@ static void gen_control_code_block(
 	if (SEMANTIC_STATE.scope) SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
 	if (!returned.value) LLVMBuildBr(SKULL_STATE_LLVM.builder, block);
-}
-
-static LLVMMetadataRef add_llvm_control_flow_debug_info(
-	const Location *location
-) {
-	if (!BUILD_DATA.debug) return NULL;
-
-	LLVMMetadataRef old_di_scope = DEBUG_INFO.scope;
-
-	DEBUG_INFO.scope = LLVMDIBuilderCreateLexicalBlock(
-		DEBUG_INFO.builder,
-		DEBUG_INFO.scope,
-		DEBUG_INFO.file,
-		location->line,
-		location->column
-	);
-
-	return old_di_scope;
 }

@@ -26,8 +26,6 @@ Expr gen_tree(const AstNode *);
 static void gen_function_def(const AstNode *const, FunctionDeclaration *);
 static void add_func(FunctionDeclaration *);
 static LLVMTypeRef *parse_func_param(const FunctionDeclaration *);
-static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *);
-static void alloc_debug_function_param(Variable **);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
@@ -170,98 +168,4 @@ static void gen_function_def(
 		LLVMBuildRetVoid(SKULL_STATE_LLVM.builder);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, current_block);
-}
-
-static LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
-	if (!BUILD_DATA.debug) return NULL;
-
-	LLVMMetadataRef *di_param_types = NULL;
-	if (func->num_params) {
-		di_param_types = Malloc(func->num_params * sizeof(LLVMMetadataRef));
-
-		for RANGE(i, func->num_params) {
-			di_param_types[i] = type_to_di_type(func->param_types[i]);
-		}
-	}
-
-	LLVMMetadataRef di_type = LLVMDIBuilderCreateSubroutineType(
-		DEBUG_INFO.builder,
-		DEBUG_INFO.file,
-		di_param_types, func->num_params,
-		LLVMDIFlagZero
-	);
-	if (func->num_params) free(di_param_types);
-
-	LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
-		DEBUG_INFO.builder,
-		DEBUG_INFO.file,
-		func->name, strlen(func->name),
-		"", 0,
-		DEBUG_INFO.file,
-		func->location.line,
-		di_type,
-		false,
-		!func->is_external,
-		func->location.line,
-		LLVMDIFlagZero,
-		false
-	);
-	LLVMMetadataRef old_di_scope = DEBUG_INFO.scope;
-	DEBUG_INFO.scope = new_di_scope;
-	LLVMSetSubprogram(func->ref, DEBUG_INFO.scope);
-
-	if (func->num_params) {
-		for RANGE(i, func->num_params) {
-			char *param_name = c32stombs(
-				func->params[i]->param_name,
-				&func->location
-			);
-
-			LLVMMetadataRef di_var = LLVMDIBuilderCreateParameterVariable(
-				DEBUG_INFO.builder,
-				DEBUG_INFO.scope,
-				param_name, strlen(param_name),
-				i + 1,
-				DEBUG_INFO.file,
-				func->location.line,
-				type_to_di_type(func->param_types[i]),
-				true,
-				LLVMDIFlagZero
-			);
-			free(param_name);
-
-			alloc_debug_function_param(&func->params[i]->var);
-
-			LLVMDIBuilderInsertDeclareAtEnd(
-				DEBUG_INFO.builder,
-				func->params[i]->var->ref,
-				di_var,
-				LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
-				make_llvm_debug_location(&func->location),
-				LLVMGetLastBasicBlock(func->ref)
-			);
-		}
-	}
-
-	return old_di_scope;
-}
-
-static void alloc_debug_function_param(Variable **var) {
-	LLVMValueRef old_ref = (*var)->ref;
-	Variable *func_var = *var;
-
-	func_var->ref = LLVMBuildAlloca(
-		SKULL_STATE_LLVM.builder,
-		type_to_llvm_type(func_var->type),
-		func_var->name
-	);
-
-	LLVMBuildStore(
-		SKULL_STATE_LLVM.builder,
-		old_ref,
-		func_var->ref
-	);
-
-	(*var)->ref = func_var->ref;
-	(*var)->is_const = false;
 }

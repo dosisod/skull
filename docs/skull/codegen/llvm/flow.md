@@ -31,7 +31,7 @@ static void gen_control_if_(const AstNode **node, LLVMBasicBlockRef entry, LLVMB
 > Internal function for building an `if` node.
 
 ```c
-static void gen_control_code_block(const AstNode *const node, LLVMBasicBlockRef block)
+static void gen_control_code_block(const AstNode *node, LLVMBasicBlockRef block)
 ```
 
 > Parse `node` while in a new scope. Branch to `block` if no return occurred.

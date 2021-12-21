@@ -15,9 +15,8 @@
 
 #include "skull/codegen/llvm/assign.h"
 
-static void assign_value_to_var(LLVMValueRef, Variable *const, bool);
+static void assign_value_to_var(LLVMValueRef, Variable *, bool);
 static void setup_var_llvm(LLVMValueRef, Variable *);
-static void add_llvm_var_def_debug_info(const Variable *);
 
 /*
 Builds a variable definition from `var_def`.
@@ -33,31 +32,6 @@ void gen_stmt_var_def(const AstNodeVarDef *var_def) {
 	setup_var_llvm(value, var);
 	assign_value_to_var(value, var, true);
 	add_llvm_var_def_debug_info(var);
-}
-
-static void add_llvm_var_def_debug_info(const Variable *var) {
-	if (!BUILD_DATA.debug) return;
-
-	LLVMMetadataRef di_var = LLVMDIBuilderCreateAutoVariable(
-		DEBUG_INFO.builder,
-		DEBUG_INFO.scope,
-		var->name, strlen(var->name),
-		DEBUG_INFO.file,
-		var->location.line,
-		type_to_di_type(var->type),
-		true,
-		LLVMDIFlagZero,
-		8
-	);
-
-	LLVMDIBuilderInsertDeclareAtEnd(
-		DEBUG_INFO.builder,
-		var->ref,
-		di_var,
-		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
-		make_llvm_debug_location(&var->location),
-		LLVMGetLastBasicBlock(SKULL_STATE_LLVM.current_func->ref)
-	);
 }
 
 /*
@@ -112,7 +86,7 @@ Assign `value` to `var`.
 */
 static void assign_value_to_var(
 	LLVMValueRef value,
-	Variable *const var,
+	Variable *var,
 	bool is_first_assign
 ) {
 	const bool is_const_literal = LLVMIsConstant(value);
@@ -121,10 +95,10 @@ static void assign_value_to_var(
 		SKULL_STATE_LLVM.current_func == SKULL_STATE_LLVM.main_func :
 		var->is_global;
 
-	if (var->is_const && !(is_global && !is_const_literal)) {
+	if (var->is_const && (!is_global || is_const_literal)) {
 		var->ref = value;
 	}
-	else if (!(is_global && is_first_assign && is_const_literal)) {
+	else if (!is_global || !is_first_assign || !is_const_literal) {
 		LLVMValueRef store = LLVMBuildStore(
 			SKULL_STATE_LLVM.builder,
 			value,
