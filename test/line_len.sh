@@ -8,14 +8,14 @@ echo
 
 cmd='
 gsub("\t", "    ") {}
-length > MAX_LEN {
+length > '$MAX_LEN' {
 	print FILENAME ":" NR
 	exit_code=1
 }
 END { exit exit_code }'
 
 for file in $(find skull -type f) ; do
-	awk -v MAX_LEN=$MAX_LEN "$cmd" "$file" || pass=/bin/false
+	awk "$cmd" "$file" || pass=/bin/false
 done
 
 echo

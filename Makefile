@@ -55,6 +55,12 @@ scaffold:
 	@sed -i "s/NAME/$(subst /,\\/,$(NAME))/" ./test/skull/$(NAME).c
 	@sed -i "s/NAME/$(subst /,\\/,$(NAME))/" ./skull/$(NAME).c
 
+lint:
+	@echo "\033[92mChecking Line Length\033[0m"
+	@./test/line_len.sh
+	@echo "\033[92mRunning clang-tidy\033[0m"
+	@./test/clang_tidy.sh
+
 install: clean | skull
 	@mkdir -p $(MANPATH)
 	@install -m 644 docs/skull/skull.1 $(MANPATH)

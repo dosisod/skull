@@ -14,15 +14,12 @@ jobs:
     - name: Run clang-tidy-10
       run: |
         clang-tidy-10 --version
-        ./test/clang_tidy.sh
+        make lint
 
     - name: Run Shellcheck
       run: |
         shellcheck --version
         shellcheck test/sh/main.sh Makefile
-
-    - name: Check line length
-      run: ./test/line_len.sh
 
   test-gcc:
     runs-on: ubuntu-latest
