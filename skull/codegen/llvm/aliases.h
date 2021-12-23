@@ -33,12 +33,7 @@ Convert `val` to an `i1` LLVM value.
 /*
 Convert `c` to an `i32` (rune) LLVM value.
 */
-#define LLVM_RUNE(c) \
-	LLVMConstInt( \
-		LLVMInt32TypeInContext(SKULL_STATE_LLVM.ctx), \
-		c, \
-		1 \
-	)
+#define LLVM_RUNE(c) LLVM_INT32(c)
 
 /*
 Convert `num` to a double as an LLVM value.
