@@ -1,6 +1,37 @@
 # skull/parse/token
 
 ```c
+typedef struct Location {
+	unsigned line;
+	unsigned column;
+}
+```
+
+> Stores the line and column of a certain token/variable/function.
+
+```c
+typedef struct Token {
+	const char32_t *begin;
+	const char32_t *end;
+
+	TokenType type;
+	Location location;
+
+	Token *next;
+}
+```
+
+> Stores the smallest meaningful chunk of parsed code.
+> \
+> `begin` points to the first character in the token.
+> \
+> `end` points to the last character in the token.
+> \
+> `type` stores the type of token.
+> \
+> `next` stores the next parsed token.
+
+```c
 static Token *setup_next(Token *token)
 ```
 
@@ -89,35 +120,4 @@ void free_tokens(Token *head)
 ```
 
 > Free all tokens from `head` and beyond.
-
-```c
-typedef struct Location {
-	unsigned line;
-	unsigned column;
-}
-```
-
-> Stores the line and column of a certain token/variable/function.
-
-```c
-typedef struct Token {
-	const char32_t *begin;
-	const char32_t *end;
-
-	TokenType type;
-	Location location;
-
-	Token *next;
-}
-```
-
-> Stores the smallest meaningful chunk of parsed code.
-> \
-> `begin` points to the first character in the token.
-> \
-> `end` points to the last character in the token.
-> \
-> `type` stores the type of token.
-> \
-> `next` stores the next parsed token.
 

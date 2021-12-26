@@ -17,7 +17,7 @@
 
 
 #ifndef __ANDROID_API__
-#define __ANDROID_API__ 0
+#define __ANDROID_API__ 0 // NOLINT
 #endif
 
 static bool validate_binary_expr_fixture(AstNode *, const char *);

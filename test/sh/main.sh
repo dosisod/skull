@@ -90,7 +90,7 @@ printf "skull: cannot open \"./test/sh/error/read_protected.sk\", permission den
 
 ./build/skull/skull "./test/sh/error/read_protected.sk" 2> "./test/sh/error/.read_protected.sk.out"
 [ "$?" = "1" ] || { fail; passed=false; }
-printf "%s" "test/sh/error/read_protected.sk"
+printf "%s " "test/sh/error/read_protected.sk"
 
 compare "./test/sh/error/.read_protected.sk.out" "./test/sh/error/_read_protected.sk.out"
 rm -f "./test/sh/error/.read_protected.out"

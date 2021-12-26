@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# shellcheck disable=SC2046,SC2215,SC2171
+# shellcheck disable=SC2046,SC2215,SC2171,SC2288
 
 include config.mk
 
@@ -46,8 +46,8 @@ clean:
 	@rm -rf build/*
 
 scaffold:
-	@[ -n "$(NAME)" ] || { echo "NAME is not set, exiting"; exit 1; }
-	@echo "\033[92mScaffold\033[0m $(NAME)\n"
+	@[ -n "$(NAME)" ] || { $(ECHO) "NAME is not set, exiting\n"; exit 1; }
+	@$(ECHO) "\033[92mScaffold\033[0m $(NAME)\n"
 	@cp ./test/skull/template.c.bak ./test/skull/$(NAME).c
 	@cp ./test/skull/template.h.bak ./test/skull/$(NAME).h
 	@cp ./skull/template.c.bak ./skull/$(NAME).c
@@ -56,9 +56,9 @@ scaffold:
 	@sed -i "s/NAME/$(subst /,\\/,$(NAME))/" ./skull/$(NAME).c
 
 lint:
-	@echo "\033[92mChecking Line Length\033[0m"
+	@$(ECHO) "\033[92mChecking Line Length\033[0m\n"
 	@./test/line_len.sh
-	@echo "\033[92mRunning clang-tidy\033[0m"
+	@$(ECHO) "\033[92mRunning clang-tidy\033[0m\n"
 	@./test/clang_tidy.sh
 
 install: clean | skull

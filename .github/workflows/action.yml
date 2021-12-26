@@ -9,11 +9,11 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install clang-tidy
-      run: sudo apt install clang-tidy-10
+      run: sudo apt install clang-tidy-12
 
-    - name: Run clang-tidy-10
+    - name: Run Clang Tidy
       run: |
-        clang-tidy-10 --version
+        clang-tidy-12 --version
         make lint
 
     - name: Run Shellcheck
@@ -26,8 +26,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install LLVM 10
-      run: sudo apt install llvm-10-dev
+    - name: Install LLVM
+      run: sudo apt install llvm-12-dev
 
     - name: Build
       run: make TRACE=1 CC=gcc-9 options clean all
@@ -43,8 +43,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install LLVM 10
-      run: sudo apt install llvm-10-dev
+    - name: Install LLVM
+      run: sudo apt install llvm-12-dev
 
     - name: Build
       run: make TRACE=1 CC=clang options clean all
@@ -60,8 +60,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install LLVM 10
-      run: sudo apt install llvm-10-dev
+    - name: Install LLVM
+      run: sudo apt install llvm-12-dev
 
     - name: Build
       run: sudo make TRACE=1 CC=gcc-9 options install install-dev

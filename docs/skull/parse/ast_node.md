@@ -176,12 +176,6 @@ static AstNodeExpr *parse_expression(ParserCtx *ctx)
 > Returns node if one was added, NULL otherwise.
 
 ```c
-static AstNodeExpr *_parse_expression(ParserCtx *ctx)
-```
-
-> Internal `parse_expression` function. Used for recursive expr parsing.
-
-```c
 static bool is_unary_oper(ExprType oper)
 ```
 

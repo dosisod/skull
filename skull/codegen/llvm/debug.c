@@ -77,7 +77,9 @@ LLVMDIBuilderRef setup_debug_info(
 		1, // debug kind
 		0, // DWOId
 		false, // emit inline debug info
-		false // debug info for profiling
+		false, // debug info for profiling
+		"", 0, // sysroot
+		"", 0 // sdk
 	);
 
 	LLVMMetadataRef sub_type = LLVMDIBuilderCreateSubroutineType(

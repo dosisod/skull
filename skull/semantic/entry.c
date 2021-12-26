@@ -15,7 +15,7 @@
 #include "skull/semantic/entry.h"
 
 
-static bool _validate_ast_tree(const AstNode *);
+static bool validate_ast_tree_(const AstNode *);
 static bool validate_ast_node(const AstNode *);
 static bool post_validate_ast_node(const AstNode *);
 
@@ -23,7 +23,7 @@ static bool post_validate_ast_node(const AstNode *);
 Validate an entire AST tree starting at `node`.
 */
 bool validate_ast_tree(const AstNode *node) {
-	const bool pass = _validate_ast_tree(node);
+	const bool pass = validate_ast_tree_(node);
 	reset_scope_head();
 
 	return pass && check_unused_symbols(node);
@@ -32,13 +32,13 @@ bool validate_ast_tree(const AstNode *node) {
 /*
 Validate an entire AST tree starting at `node`.
 */
-static bool _validate_ast_tree(const AstNode *node) {
+static bool validate_ast_tree_(const AstNode *node) {
 	while (node) {
 		if (!validate_ast_node(node)) return false;
 
 		if (node->child) {
 			make_child_scope();
-			const bool is_valid = _validate_ast_tree(node->child);
+			const bool is_valid = validate_ast_tree_(node->child);
 			restore_parent_scope();
 
 			if (!is_valid) return false;

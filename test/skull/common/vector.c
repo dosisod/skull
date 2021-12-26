@@ -60,7 +60,7 @@ static bool test_vector_scale(void) {
 		vector_push(v, NULL);
 	}
 
-	ASSERT_EQUAL(v->max, VECTOR_START_MAX * 2);
+	ASSERT_EQUAL(v->max, (unsigned long)VECTOR_START_MAX * 2);
 
 	free_vector(v, NULL);
 

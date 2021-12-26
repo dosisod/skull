@@ -101,7 +101,7 @@ static int run_llc(void) {
 
 	char *llc_cmd = get_llc_binary();
 	if (!llc_cmd) {
-		puts("skull: llc-10 command not found");
+		puts("skull: llc command not found");
 		return 1;
 	}
 
@@ -134,14 +134,19 @@ static int run_llc(void) {
 }
 
 #define CHECK_CMD(_cmd) { \
-	const bool cmd_exists = !shell((char[]){"which "_cmd" > /dev/null"}); \
+	const bool cmd_exists = !shell((char[]){"which "_cmd" > /dev/null 2>&1"}); \
 	static char cmd[] = _cmd; \
 	if (cmd_exists) return cmd; \
 }
 
 static char *get_llc_binary(void) {
-	CHECK_CMD("llc-10")
+	// LLVM 13 is the recommend version, with no prefix, we assume it is version
+	// 13 (should check this in the future), otherwise, check if version 12
+	// exists (should still work, so just check it last).
+
+	CHECK_CMD("llc-13")
 	CHECK_CMD("llc")
+	CHECK_CMD("llc-12")
 
 	return NULL;
 }

@@ -11,9 +11,9 @@
 
 #include "skull/codegen/c/write.h"
 
-static const char *_strcmp;
-static const char *_float_pow;
-static const char *_int_pow;
+static const char *_strcmp; // NOLINT
+static const char *_float_pow; // NOLINT
+static const char *_int_pow; // NOLINT
 static const char *headers;
 
 static void print_builtins(FILE *);

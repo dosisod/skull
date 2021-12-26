@@ -251,7 +251,7 @@ TEST_DIR"/declare/reassign_str.sk",
 "\n" \
 "define i64 @.reassign_str() {\n" \
 "entry:\n" \
-"  store i8* getelementptr inbounds ([5 x i8], [5 x i8]* @1, i32 0, i32 0), i8** @x\n" \
+"  store i8* getelementptr inbounds ([5 x i8], [5 x i8]* @1, i32 0, i32 0), i8** @x, align 8\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -273,7 +273,7 @@ TEST_DIR"/declare/reassign_var.sk",
 "\n" \
 "define i64 @.reassign_var() {\n" \
 "entry:\n" \
-"  store i64 1, i64* @x\n" \
+"  store i64 1, i64* @x, align 4\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -316,9 +316,9 @@ TEST_DIR"/declare/variable_auto_deduce.sk",
 "\n" \
 "define i64 @.variable_auto_deduce() {\n" \
 "entry:\n" \
-"  %0 = load i64, i64* @x\n" \
-"  store i64 %0, i64* @z\n" \
-"  %1 = load i64, i64* @z\n" \
+"  %0 = load i64, i64* @x, align 4\n" \
+"  store i64 %0, i64* @z, align 4\n" \
+"  %1 = load i64, i64* @z, align 4\n" \
 "  ret i64 %1\n" \
 "}\n",
 
@@ -473,7 +473,7 @@ TEST_DIR"/flow/if/not_with_var.sk",
 "\n" \
 "define i64 @.not_with_var() {\n" \
 "entry:\n" \
-"  %0 = load i1, i1* @x\n" \
+"  %0 = load i1, i1* @x, align 1\n" \
 "  %1 = xor i1 %0, true\n" \
 "  br i1 %1, label %if_true, label %end\n" \
 "\n" \
@@ -506,7 +506,7 @@ TEST_DIR"/flow/if/with_var_true.sk",
 "\n" \
 "define i64 @.with_var_true() {\n" \
 "entry:\n" \
-"  %0 = load i1, i1* @x\n" \
+"  %0 = load i1, i1* @x, align 1\n" \
 "  br i1 %0, label %if_true, label %end\n" \
 "\n" \
 "if_true:                                          ; preds = %entry\n" \
@@ -727,8 +727,8 @@ TEST_DIR"/function/assign_return_value.sk",
 "define i64 @.assign_return_value() {\n" \
 "entry:\n" \
 "  %0 = call i64 @func()\n" \
-"  store i64 %0, i64* @x\n" \
-"  %1 = load i64, i64* @x\n" \
+"  store i64 %0, i64* @x, align 4\n" \
+"  %1 = load i64, i64* @x, align 4\n" \
 "  ret i64 %1\n" \
 "}\n" \
 "\n" \
@@ -879,8 +879,8 @@ TEST_DIR"/function/func_with_scope.sk",
 "\n" \
 "define private void @f() {\n" \
 "entry:\n" \
-"  %x = alloca i64\n" \
-"  store i64 1, i64* %x\n" \
+"  %x = alloca i64, align 8\n" \
+"  store i64 1, i64* %x, align 4\n" \
 "  ret void\n" \
 "}\n",
 
@@ -1067,9 +1067,9 @@ TEST_DIR"/function/non_int_return.sk",
 "\n" \
 "define private double @func() {\n" \
 "entry:\n" \
-"  %ret = alloca double\n" \
-"  store double 3.140000e+00, double* %ret\n" \
-"  %0 = load double, double* %ret\n" \
+"  %ret = alloca double, align 8\n" \
+"  store double 3.140000e+00, double* %ret, align 8\n" \
+"  %0 = load double, double* %ret, align 8\n" \
 "  ret double %0\n" \
 "}\n" \
 "\n" \
@@ -1381,7 +1381,7 @@ TEST_DIR"/oper/float_pow.sk",
 "define i64 @.float_pow() {\n" \
 "entry:\n" \
 "  %0 = call double @_float_pow(double 2.000000e+00, double 3.000000e+00)\n" \
-"  store double %0, double* @x\n" \
+"  store double %0, double* @x, align 8\n" \
 "  ret i64 0\n" \
 "}\n" \
 "\n" \
@@ -1404,7 +1404,7 @@ TEST_DIR"/oper/int_pow.sk",
 "define i64 @.int_pow() {\n" \
 "entry:\n" \
 "  %0 = call i64 @_int_pow(i64 10, i64 3)\n" \
-"  store i64 %0, i64* @x\n" \
+"  store i64 %0, i64* @x, align 4\n" \
 "  ret i64 0\n" \
 "}\n" \
 "\n" \
@@ -1429,7 +1429,7 @@ TEST_DIR"/oper/is_cmp_str.sk",
 "define i64 @.is_cmp_str() {\n" \
 "entry:\n" \
 "  %0 = call i1 @_strcmp(i8* getelementptr inbounds ([2 x i8], [2 x i8]* @0, i32 0, i32 0), i8* getelementptr inbounds ([2 x i8], [2 x i8]* @1, i32 0, i32 0))\n" \
-"  store i1 %0, i1* @x\n" \
+"  store i1 %0, i1* @x, align 1\n" \
 "  ret i64 0\n" \
 "}\n" \
 "\n" \
@@ -1455,12 +1455,12 @@ TEST_DIR"/oper/lhs_with_var.sk",
 "\n" \
 "define i64 @.lhs_with_var() {\n" \
 "entry:\n" \
-"  %0 = load i64, i64* @x\n" \
+"  %0 = load i64, i64* @x, align 4\n" \
 "  %1 = add nsw i64 %0, 2\n" \
-"  store i64 %1, i64* @y\n" \
-"  %2 = load i64, i64* @x\n" \
+"  store i64 %1, i64* @y, align 4\n" \
+"  %2 = load i64, i64* @x, align 4\n" \
 "  %3 = icmp slt i64 %2, 1\n" \
-"  store i1 %3, i1* @z\n" \
+"  store i1 %3, i1* @z, align 1\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -1524,9 +1524,9 @@ TEST_DIR"/oper/rhs_with_var.sk",
 "\n" \
 "define i64 @.rhs_with_var() {\n" \
 "entry:\n" \
-"  %0 = load i64, i64* @x\n" \
+"  %0 = load i64, i64* @x, align 4\n" \
 "  %1 = add nsw i64 2, %0\n" \
-"  store i64 %1, i64* @z\n" \
+"  store i64 %1, i64* @z, align 4\n" \
 "  ret i64 0\n" \
 "}\n",
 
@@ -1552,9 +1552,9 @@ TEST_DIR"/oper/unary_expr.sk",
 "\n" \
 "define i64 @.unary_expr() {\n" \
 "entry:\n" \
-"  %0 = load i64, i64* @y\n" \
+"  %0 = load i64, i64* @y, align 4\n" \
 "  %1 = sub nsw i64 0, %0\n" \
-"  store i64 %1, i64* @z\n" \
+"  store i64 %1, i64* @z, align 4\n" \
 "  ret i64 0\n" \
 "}\n",
 

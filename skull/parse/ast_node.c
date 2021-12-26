@@ -18,7 +18,6 @@ typedef struct {
 } ParserCtx;
 
 static AstNodeExpr *parse_expression(ParserCtx *);
-static AstNodeExpr *_parse_expression(ParserCtx *);
 static AstNodeExpr *parse_func_call(ParserCtx *);
 static AstNode *parse_ast_tree_(ParserCtx *);
 static void free_ast_function_proto(AstNode *);
@@ -545,16 +544,6 @@ Try and generate AST node for expression.
 Returns node if one was added, NULL otherwise.
 */
 static AstNodeExpr *parse_expression(ParserCtx *ctx) {
-	AstNodeExpr *node = _parse_expression(ctx);
-	if (!node || ctx->err) return NULL;
-
-	return node;
-}
-
-/*
-Internal `parse_expression` function. Used for recursive expr parsing.
-*/
-static AstNodeExpr *_parse_expression(ParserCtx *ctx) {
 	if (!ctx->token) return NULL;
 
 	AstNodeExpr *head = parse_single_expr(ctx);
@@ -714,7 +703,7 @@ static unsigned oper_to_precedence(ExprType oper) {
 static AstNodeExpr *parse_paren_expr(ParserCtx *ctx) {
 	next_token(ctx);
 
-	AstNodeExpr *expr = _parse_expression(ctx);
+	AstNodeExpr *expr = parse_expression(ctx);
 	if (!expr) {
 		FMT_ERROR(ERR_INVALID_EXPR, { .tok = ctx->token });
 

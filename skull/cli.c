@@ -150,7 +150,7 @@ printf("skull [-v|--version|-h|--help]\n\n" \
 }
 
 static int version(void) {
-#if RELEASE
+#ifdef RELEASE
 	const char *version_buf = SKULL_VERSION;
 #else
 # define VERSION_MAX 32

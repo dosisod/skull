@@ -13,7 +13,7 @@
 #include "skull/common/errors.h"
 
 
-static char *_fmt_message(ErrorType, ErrorCode, Message []);
+static char *fmt_message_internal(ErrorType, ErrorCode, Message []);
 static void message_stringify(Message *const);
 static bool do_show_color(void);
 static void write_error_msg(char *);
@@ -134,7 +134,7 @@ static bool do_show_color(void) {
 }
 
 void fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
-	char *msg = _fmt_message(type, id, msgs);
+	char *msg = fmt_message_internal(type, id, msgs);
 
 	if (!error_msgs) error_msgs = make_vector();
 	vector_push(error_msgs, msg);
@@ -146,7 +146,11 @@ Returns formatted message.
 Every `%s` in the string is expanded according to the corresponding `Message`
 in `msgs`.
 */
-static char *_fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
+static char *fmt_message_internal(
+	ErrorType type,
+	ErrorCode id,
+	Message msgs[]
+) {
 	if (id >= MAX_ERRORS) return NULL;
 
 	Message *msg = msgs;
@@ -209,7 +213,7 @@ static char *get_location_str(const Message *msg) {
 
 static char *get_error_msg(
 	const Message msgs[],
-	size_t num_of_percents,
+	size_t num_of_percents, // NOLINT
 	ErrorCode id
 ) {
 	if (num_of_percents == 0) return strdup(errors[id]);

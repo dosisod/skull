@@ -16,72 +16,72 @@ entry:
 
 define private void @f2(i64 %0) !dbg !11 {
 entry:
-  %x = alloca i64
-  store i64 %0, i64* %x
+  %x = alloca i64, align 8
+  store i64 %0, i64* %x, align 4
   call void @llvm.dbg.declare(metadata i64* %x, metadata !16, metadata !DIExpression()), !dbg !17
-  %noop = alloca i64
-  store i64 0, i64* %noop, !dbg !18
+  %noop = alloca i64, align 8
+  store i64 0, i64* %noop, align 4, !dbg !18
   ret void
 }
 
-; Function Attrs: nounwind readnone speculatable willreturn
+; Function Attrs: nofree nosync nounwind readnone speculatable willreturn
 declare void @llvm.dbg.declare(metadata, metadata, metadata) #0
 
 define private void @f3(i64 %0, i64 %1) !dbg !19 {
 entry:
-  %y = alloca i64
-  store i64 %0, i64* %y
+  %y = alloca i64, align 8
+  store i64 %0, i64* %y, align 4
   call void @llvm.dbg.declare(metadata i64* %y, metadata !23, metadata !DIExpression()), !dbg !25
-  %z = alloca i64
-  store i64 %1, i64* %z
+  %z = alloca i64, align 8
+  store i64 %1, i64* %z, align 4
   call void @llvm.dbg.declare(metadata i64* %z, metadata !24, metadata !DIExpression()), !dbg !25
-  %noop = alloca i64
-  store i64 0, i64* %noop, !dbg !26
+  %noop = alloca i64, align 8
+  store i64 0, i64* %noop, align 4, !dbg !26
   ret void
 }
 
 define private void @f4() !dbg !27 {
 entry:
-  %local_var = alloca i64
-  store i64 1, i64* %local_var, !dbg !42
+  %local_var = alloca i64, align 8
+  store i64 1, i64* %local_var, align 4, !dbg !42
   call void @llvm.dbg.declare(metadata i64* %local_var, metadata !29, metadata !DIExpression()), !dbg !42
   br i1 true, label %if_true, label %end
 
 if_true:                                          ; preds = %entry
-  %if_test = alloca i64
-  store i64 1, i64* %if_test, !dbg !43
+  %if_test = alloca i64, align 8
+  store i64 1, i64* %if_test, align 4, !dbg !43
   br label %end
 
 end:                                              ; preds = %entry, %if_true
   call void @llvm.dbg.declare(metadata i64* %if_test, metadata !30, metadata !DIExpression()), !dbg !43
-  %int = alloca i64
-  store i64 1234, i64* %int, !dbg !44
+  %int = alloca i64, align 8
+  store i64 1234, i64* %int, align 4, !dbg !44
   call void @llvm.dbg.declare(metadata i64* %int, metadata !32, metadata !DIExpression()), !dbg !44
-  %float = alloca double
-  store double 3.141500e+00, double* %float, !dbg !45
+  %float = alloca double, align 8
+  store double 3.141500e+00, double* %float, align 8, !dbg !45
   call void @llvm.dbg.declare(metadata double* %float, metadata !33, metadata !DIExpression()), !dbg !45
-  %rune = alloca i32
-  store i32 120, i32* %rune, !dbg !46
+  %rune = alloca i32, align 4
+  store i32 120, i32* %rune, align 4, !dbg !46
   call void @llvm.dbg.declare(metadata i32* %rune, metadata !35, metadata !DIExpression()), !dbg !46
-  %bool = alloca i1
-  store i1 false, i1* %bool, !dbg !47
+  %bool = alloca i1, align 1
+  store i1 false, i1* %bool, align 1, !dbg !47
   call void @llvm.dbg.declare(metadata i1* %bool, metadata !37, metadata !DIExpression()), !dbg !47
-  %str = alloca i8*
-  store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** %str, !dbg !48
+  %str = alloca i8*, align 8
+  store i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), i8** %str, align 8, !dbg !48
   call void @llvm.dbg.declare(metadata i8** %str, metadata !39, metadata !DIExpression()), !dbg !48
-  %0 = load i1, i1* %bool, !dbg !49
+  %0 = load i1, i1* %bool, align 1, !dbg !49
   br i1 %0, label %if_true2, label %end1
 
 if_true2:                                         ; preds = %end
-  %noop = alloca i64
-  store i64 0, i64* %noop, !dbg !50
+  %noop = alloca i64, align 8
+  store i64 0, i64* %noop, align 4, !dbg !50
   br label %end1
 
 end1:                                             ; preds = %end, %if_true2
   ret void
 }
 
-attributes #0 = { nounwind readnone speculatable willreturn }
+attributes #0 = { nofree nosync nounwind readnone speculatable willreturn }
 
 !llvm.dbg.cu = !{!0}
 !llvm.module.flags = !{!3, !4}

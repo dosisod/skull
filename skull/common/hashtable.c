@@ -26,7 +26,7 @@ static __attribute__((pure)) unsigned ht_hash_key(const char *const key) {
 	unsigned long long hash = 0;
 
 	for RANGE(i, len) { // NOLINT
-		hash += (unsigned)key[i] * i;
+		hash += (unsigned long long)key[i] * i;
 	}
 
 	return hash % MAX_SLOTS;
