@@ -2,15 +2,12 @@
 
 #include <uchar.h>
 
-#include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/parse/token.h"
 #include "skull/semantic/types.h"
 
 typedef struct AstNodeExpr AstNodeExpr;
 
 /*
-`Variable` acts as a more strict abstraction on top of LLVM.
-
 `type` is the Skull type of the variable.
 
 `name` is the name of the variable.
@@ -35,7 +32,7 @@ self-referencing the variable currently being assignment to).
 
 `location` stores the location where the variable was first defined.
 
-`ref` stores the actual LLVM alloca/constant/global.
+`ref` stores arbitrary data, for use in the backend.
 */
 typedef struct Variable {
 	Type type;
@@ -51,7 +48,7 @@ typedef struct Variable {
 
 	Location location;
 
-	LLVMValueRef ref;
+	void *ref;
 	AstNodeExpr *expr;
 } Variable;
 

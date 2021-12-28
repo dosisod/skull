@@ -1,6 +1,5 @@
 #pragma once
 
-#include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/parse/ast_node.h"
 
 typedef const char * Type;
@@ -12,9 +11,9 @@ Stores a function declaration.
 
 `location` is the location of the function name.
 
-`ref` is the LLVM function handle.
+`ref` is for storing arbitrary information, for use in the backend
 
-`type` is the LLVM function type.
+`type` same as `ref`.
 
 `num_params` stores the number of params a function can take.
 
@@ -26,8 +25,8 @@ typedef struct FunctionDeclaration {
 	char *name;
 	Location location;
 
-	LLVMValueRef ref;
-	LLVMTypeRef type;
+	void *ref;
+	void *type;
 
 	unsigned short num_params;
 	Type *param_types;

@@ -15,13 +15,11 @@ typedef struct Variable {
 
 	Location location;
 
-	LLVMValueRef ref;
+	void *ref;
 	AstNodeExpr *expr;
 }
 ```
 
-> `Variable` acts as a more strict abstraction on top of LLVM.
-> \
 > `type` is the Skull type of the variable.
 > \
 > `name` is the name of the variable.
@@ -46,7 +44,7 @@ typedef struct Variable {
 > \
 > `location` stores the location where the variable was first defined.
 > \
-> `ref` stores the actual LLVM alloca/constant/global.
+> `ref` stores arbitrary data, for use in the backend.
 
 ```c
 Variable *make_variable(Type type, const char32_t *const name, bool is_const)
