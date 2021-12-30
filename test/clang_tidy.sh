@@ -4,7 +4,7 @@ CLANG_TIDY=$(command -v clang-tidy-13 || command -v clang-tidy || command -v cla
 LLVM_CONFIG=$(command -v llvm-config-13 || command -v llvm-config || command -v llvm-config-12)
 
 [ ! "$($CLANG_TIDY \
-	$(find -L skull test -type f -name "*.[ch]" ! -name "*.sk.c") \
+	$(find -L skull test -type f -name "*.[ch]" ! -name "*.sk.c" ! -path "*/sh/*") \
 	-checks=*,-google-readability-braces-around-statements,-readability-braces-around-statements,\
 -hicpp-braces-around-statements,-hicpp-signed-bitwise,-llvm-header-guard,\
 -readability-named-parameter,-readability-avoid-const-params-in-decls,\

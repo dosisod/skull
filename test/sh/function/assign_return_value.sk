@@ -1,0 +1,5 @@
+external func() Int
+
+mut x := func()
+
+return x

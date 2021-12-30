@@ -1,0 +1,2 @@
+external x() Int
+external y(num: Int) Int

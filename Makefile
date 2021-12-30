@@ -1,12 +1,12 @@
 #!/bin/sh
 
-# shellcheck disable=SC2046,SC2215,SC2171,SC2288
+# shellcheck disable=SC2046,SC2215,SC2171,SC2288,SC2266,SC2068
 
 include config.mk
 
-all: skull test docs e2e
+all: skull test docs e2e embed
 
-.PHONY: skull test docs
+.PHONY: skull test docs e2e embed
 
 options:
 	@$(ECHO) "\033[92mCC:\033[0m $(CC)\n"
@@ -15,26 +15,41 @@ options:
 	@$(ECHO) "\033[92mOBJS_LLVM:\033[0m $(OBJS_LLVM)\n"
 	@$(ECHO) "\033[92mOBJS_TEST:\033[0m $(OBJS_TEST)\n"
 
-setup:
-	@mkdir $(DIRS) -p
+$(DIRS):
+	@mkdir -p $(DIRS)
+
+skull: $(DIRS) | build/skull/skull
+test: $(DIRS) | build/test/test
+embed: $(DIRS) | build/test/embed
+e2e: $(DIRS) test/sh/e2e_inner.h build/test/e2e
 
 $(ODIR)/%.o: %.c %.h
 	@$(ECHO) "\033[92mCompile\033[0m $<\n"
 	@$(CC) $< -c -o "$@" $(CFLAGS) $(LLVM_CFLAGS)
 
-test: setup | $(OBJS_LLVM) $(OBJS_TEST) $(ODIR)/skull/real_main.o
+build/test/test: $(OBJS_LLVM) $(OBJS_TEST) $(ODIR)/skull/real_main.o
 	@$(ECHO) "\033[92mLink\033[0m test\n"
-	@$(CC) $| -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
+	@$(CC) $^ -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
-skull: setup | $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o
+build/skull/skull: $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o
 	@$(ECHO) "\033[92mLink\033[0m skull\n"
-	@$(CC) $| -DRELEASE=$(RELEASE) -DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
+	@$(CC) $^ -DRELEASE=$(RELEASE) -DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
 		skull/cli.c -o build/skull/skull \
 		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
 
-e2e: setup | $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o
+build/test/embed: test/embed.c
+	@$(ECHO) "\033[92mCompile\033[0m embed\n"
+	@$(CC) $^ -o build/test/embed
+
+test/sh/%.c: build/test/embed | test/sh/%.sk test/sh/%.sk.ll
+	@./build/test/embed ./$| $@
+
+test/sh/e2e_inner.h: $(E2E)
+	@cat $(E2E) > test/sh/e2e_inner.h
+
+build/test/e2e: $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o | test/sh/e2e_inner.h
 	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
-	@$(CC) $| test/skull/e2e.c $(ODIR)/test/testing.o -o build/test/e2e \
+	@$(CC) $^ test/skull/e2e.c $(ODIR)/test/testing.o -o build/test/e2e \
 		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
 
 docs:
@@ -43,7 +58,7 @@ docs:
 
 clean:
 	@$(ECHO) "\033[92mCleaning\033[0m\n"
-	@rm -rf build/*
+	@rm -rf build/* test/sh/e2e_inner.h test/sh/**/*.c
 
 scaffold:
 	@[ -n "$(NAME)" ] || { $(ECHO) "NAME is not set, exiting\n"; exit 1; }

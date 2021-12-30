@@ -1,0 +1,7 @@
+f(a: Int, b: Int) Int {
+	x := a + b
+
+	return x
+}
+
+f(1, 2)

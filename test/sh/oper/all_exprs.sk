@@ -1,0 +1,51 @@
+mut bool := true
+mut int := 1234
+mut float := 3.14
+mut str := "hello world"
+mut rune := 'x'
+
+mut not_ := not false
+mut and_ := true and true
+mut or_ := false or true
+mut xor_ := false xor true
+
+mut greater_than_eq_int := 1 >= 1
+mut greater_than_eq_float := 1.0 >= 1.0
+
+mut gtr_than_int := 2 > 1
+mut gtr_than_float := 2.0 > 1.0
+
+mut is_int := 1 is 1
+mut is_float := 1.0 is 1.0
+mut is_rune := 'x' is 'x'
+mut is_bool := true is true
+
+mut isnt_int := 1 isnt 1
+mut isnt_float := 1.0 isnt 1.0
+mut isnt_rune := 'x' isnt 'x'
+mut isnt_bool := true isnt true
+
+mut less_than_eq_int := 1 <= 1
+mut less_than_eq_float := 1.0 <= 1.0
+
+mut less_than_int := 1 < 2
+mut less_than_float := 1.0 < 2.0
+
+mut mult_float := 2.0 * 3.0
+mut mult_int := 2 * 3
+
+mut div_float := 4.0 / 2.0
+mut div_int := 4 / 2
+
+mut add_int := 1 + 2
+mut add_float := 2.0 + 3.0
+
+mut subtract_int := 1 - 2
+mut subtract_float := 2.0 - 3.0
+
+mut lshift := 1 << 2
+mut rshift := 0b1111 >> 2
+
+mut mod_int := 9 mod 2
+mut mod_negative_int := -10 mod 3
+mut mod_float := 12.0 mod 5.0

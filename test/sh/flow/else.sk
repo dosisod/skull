@@ -1,0 +1,6 @@
+if true {
+	# do nothing
+}
+else {
+	# do nothing
+}
