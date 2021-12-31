@@ -1,12 +1,13 @@
 #!/bin/sh
 
-# shellcheck disable=SC2046,SC2215,SC2171,SC2288,SC2266,SC2068
+# shellcheck disable=SC2046,SC2215,SC2171,SC2288,SC2266,SC2068,SC2145
 
 include config.mk
 
 all: skull test docs e2e embed
 
 .PHONY: skull test docs e2e embed
+.POSIX:
 
 options:
 	@$(ECHO) "\033[92mCC:\033[0m $(CC)\n"
@@ -18,9 +19,9 @@ options:
 $(DIRS):
 	@mkdir -p $(DIRS)
 
-skull: $(DIRS) | build/skull/skull
-test: $(DIRS) | build/test/test
-embed: $(DIRS) | build/test/embed
+skull: $(DIRS) build/skull/skull
+test: $(DIRS) build/test/test
+embed: $(DIRS) build/test/embed
 e2e: $(DIRS) test/sh/e2e_inner.h build/test/e2e
 
 $(ODIR)/%.o: %.c %.h
@@ -41,15 +42,18 @@ build/test/embed: test/embed.c
 	@$(ECHO) "\033[92mCompile\033[0m embed\n"
 	@$(CC) $^ -o build/test/embed
 
-test/sh/%.c: build/test/embed | test/sh/%.sk test/sh/%.sk.ll
-	@./build/test/embed ./$| $@
+test/sh/%.c: test/sh/%.sk test/sh/%.sk.ll build/test/embed
+	@$(ECHO) "\033[92mGenerate\033[0m $@\n"
+	@./build/test/embed "./test/sh/$*.sk" "test/sh/$*.sk.ll" $@
 
 test/sh/e2e_inner.h: $(E2E)
+	@$(ECHO) "\033[92mGenerate\033[0m e2e_inner\n"
 	@cat $(E2E) > test/sh/e2e_inner.h
 
-build/test/e2e: $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o | test/sh/e2e_inner.h
+E2E_DEPS=$(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o $(ODIR)/test/testing.o
+build/test/e2e: test/sh/e2e_inner.h $(E2E_DEPS)
 	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
-	@$(CC) $^ test/skull/e2e.c $(ODIR)/test/testing.o -o build/test/e2e \
+	@$(CC) $(E2E_DEPS) test/skull/e2e.c -o build/test/e2e \
 		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
 
 docs:
