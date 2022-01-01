@@ -55,7 +55,7 @@ CFLAGS += -std=c18 \
 	-I. \
 	-DSKULL_VERSION="\"$(SKULL_VERSION)\""
 
-LLVM_CONFIG = $(shell command -v llvm-config-13 || command -v llvm-config-12 || command -v llvm-config)
+LLVM_CONFIG = $(shell command -v llvm-config-13 || command -v llvm-config)
 
 LLVM_CFLAGS = $(shell $(LLVM_CONFIG) --cflags)
 

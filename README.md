@@ -22,22 +22,31 @@ return main()
 
 ## Setup
 
-Before you build, you will need to install LLVM dev dependencies. Currently
-Skull uses LLVM 13, but should work on version 12 as well.
-
-Assumes you have basic `make`, `gcc`, `git`, and other common compiler tools.
+Before you build, you will need to install some common development packages,
+and LLVM 13.
 
 #### Ubuntu
 
+Note: the `llvm-13-dev` package is only available in impish (21.10) or jammy
+(22.04). If you want to use this in 20.04 or earlier, you will need to add the
+[LLVM APT repositories](https://apt.llvm.org/) to your system (untested), or
+build from [source](https://github.com/llvm/llvm-project#getting-the-source-code-and-building-llvm).
+
 ```
-$ sudo apt install llvm-13-dev # impish (21.10)
-$ sudo apt install llvm-12-dev # focal (20.04)
+$ sudo apt install llvm-13-dev build-essential git
+```
+
+You can also drop in `clang` instead of `gcc` (`gcc` is included in
+`build-essential` package by default):
+
+```
+$ sudo apt install clang
 ```
 
 #### Arch Linux
 
 ```
-$ sudo pacman -S clang llvm llvm-libs
+$ sudo pacman -S base-devel clang llvm llvm-libs git man-db
 ```
 
 ## Building and Running
@@ -58,10 +67,17 @@ Install additional dependencies:
 
 #### Ubuntu
 
+Install [https://docs.docker.com/engine/install/ubuntu/](docker).
+
+In addition run:
+
 ```
-$ sudo apt install clang-tidy-13 # impish
-$ sudo apt install clang-tidy-12 # focal
+$ sudo apt install clang-tidy-13
 ```
+
+#### Arch Linux
+
+Install [https://wiki.archlinux.org/title/Docker](docker).
 
 ### Running Tests
 
@@ -93,6 +109,10 @@ $ make test e2e
 $ ./build/test/test
 $ ./test/sh/main.sh
 ```
+
+## Install Vim syntax highlighting
+
+See [dosisod/vim-skull](https://github.com/dosisod/vim-skull).
 
 ## Todo
 

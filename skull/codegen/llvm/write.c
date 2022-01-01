@@ -201,7 +201,6 @@ static char *get_llc_binary(void) {
 
 	CHECK_CMD("llc-13")
 	CHECK_CMD("llc")
-	CHECK_CMD("llc-12")
 
 	return NULL;
 }

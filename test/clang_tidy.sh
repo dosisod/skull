@@ -17,8 +17,8 @@ LLVM_CONFIG=$(command -v llvm-config-13 || command -v llvm-config || command -v 
 -concurrency-mt-unsafe,-altera-struct-pack-align,\
 -altera-id-dependent-backward-branch,altera-unroll-loops,-misc-no-recursion,\
 -altera-unroll-loops,-readability-function-cognitive-complexity,\
--bugprone-suspicious-include,-bugprone-easily-swappable-parameters\
-	-header-filter=.* \
+-bugprone-suspicious-include,-bugprone-easily-swappable-parameters,\
+-clang-diagnostic-strict-prototypes\
 	-quiet -- \
 	-std=c17 -I. $($LLVM_CONFIG --cflags) 2>&1 | tee /dev/stderr | grep "skull"
 )" ]
