@@ -18,7 +18,6 @@
 "	for (int64_t i = 1; i < exp; i++) result *= base;\n" \
 "	return result;\n" \
 "}\n" \
-"static int init(void) __asm__(\"%s\");\n" \
-"static int init(void) {\n\treturn 0;\n}\n" \
+"int init(void) __asm__(\"%s\");\n" \
 "int main(void) { return init(); }\n" \
 "\' | cc \"%s\" -o \"%s\" %s -I/usr/include/skull -x c - -lm"

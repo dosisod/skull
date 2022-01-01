@@ -12,6 +12,9 @@ typedef struct {
 	_Bool preprocess;
 	_Bool compile_only;
 	_Bool werror;
+	_Bool optimize1;
+	_Bool optimize2;
+	_Bool optimize3;
 } BuildData;
 
 extern BuildData BUILD_DATA;

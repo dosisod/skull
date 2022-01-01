@@ -63,7 +63,7 @@ RELEASE ?= 0
 ifeq ($(RELEASE), 1)
 	LLVM_LDFLAGS = $(shell $(LLVM_CONFIG) --libfiles --link-static) \
 		$(shell $(CXX) -print-file-name=libstdc++.a) \
-		-lm -lpthread -lncurses
+		-lm -lpthread -lncurses -lz
 else
 	LLVM_LDFLAGS = $(shell $(LLVM_CONFIG) --libs)
 endif

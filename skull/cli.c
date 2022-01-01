@@ -64,7 +64,12 @@ static int handle_args(int argc, char *argv[]) {
 		return handle_args(--argc, ++argv);
 	}
 
-	if (argv[0][1] && argv[0][1] != '-' && argv[0][2]) {
+	const char first_char = argv[0][1];
+
+	// allow optimizaton flags (-Ox) to be more then 1 char
+	if (first_char == 'O') {}
+	// all non-long options (--example) must be in form "-x"
+	else if (first_char && first_char != '-' && argv[0][2]) {
 		fprintf(stderr, "skull: short option must be exactly one character\n");
 		bail(1);
 	}
@@ -90,6 +95,24 @@ static int handle_args(int argc, char *argv[]) {
 		}
 		case 'q': {
 			set_bool_flag(&BUILD_DATA.quiet, "-q");
+			break;
+		}
+		case 'O': {
+			switch (argv[0][2]) {
+				case '1': set_bool_flag(&BUILD_DATA.optimize1, "-O1"); break;
+				case '2': set_bool_flag(&BUILD_DATA.optimize2, "-O2"); break;
+				case '3': set_bool_flag(&BUILD_DATA.optimize3, "-O3"); break;
+				default: {
+					fprintf(
+						stderr,
+						"skull: unrecognized optimization level \"%s\"\n",
+						argv[0] + 2
+					);
+
+					bail(1);
+				}
+			}
+
 			break;
 		}
 		case 'o': {

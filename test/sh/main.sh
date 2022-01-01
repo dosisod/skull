@@ -61,7 +61,8 @@ test_skull() {
 	# shellcheck disable=SC2086
 	out=$(./build/skull/skull $2 2>&1)
 
-	sh -e "./test/sh/skull/$1" "$out" "$?"
+	# shellcheck disable=SC2086
+	sh -e ./test/sh/skull/$1 "$out" "$?"
 	# shellcheck disable=SC2181
 	[ "$?" != "0" ] && fail || pass
 }
@@ -119,13 +120,16 @@ test_skull "output_asm.sh" "./test/sh/skull/dummy.sk -S -o test/sh/skull/alt_nam
 test_skull "output_obj.sh" "./test/sh/skull/dummy.sk -c -o test/sh/skull/alt_name"
 test_skull "directory_exists.sh" "./test/sh/skull/dir.sk"
 test_skull "no_file_passed.sh" "-E"
-test_skull "multiple_dash_e.sh" "-E -E"
-test_skull "multiple_dash_c.sh" "-c -c"
-test_skull "multiple_dash_s.sh" "-S -S"
-test_skull "multiple_dash_q.sh" "-q -q"
-test_skull "multiple_dash_g.sh" "-g -g"
-test_skull "multiple_c_backend.sh" "--c-backend --c-backend"
-test_skull "multiple_werror.sh" "--werror --werror"
+test_skull "duplicate_arg.sh -E" "-E -E"
+test_skull "duplicate_arg.sh -c" "-c -c"
+test_skull "duplicate_arg.sh -S" "-S -S"
+test_skull "duplicate_arg.sh -q" "-q -q"
+test_skull "duplicate_arg.sh -g" "-g -g"
+test_skull "duplicate_arg.sh -O1" "-O1 -O1"
+test_skull "duplicate_arg.sh -O2" "-O2 -O2"
+test_skull "duplicate_arg.sh -O3" "-O3 -O3"
+test_skull "duplicate_arg.sh --c-backend" "--c-backend --c-backend"
+test_skull "duplicate_arg.sh --werror" "--werror --werror"
 test_skull "warn_dash_dash_no_args.sh" "--"
 test_skull "dash_o_expect_filename.sh" "-o"
 test_skull "dash_o_no_binary.sh" "./test/sh/skull/dummy.sk -o -"
@@ -133,6 +137,8 @@ test_skull "werror.sh" "./test/sh/skull/werror.sk --werror"
 test_skull "invalid_short_option.sh" "-xy"
 test_skull "c_backend_dash_o.sh" "./test/sh/skull/dummy.sk --c-backend -o -"
 test_skull "trailing_arg_after_dash_o.sh" "-o ./test/sh/skull/something ./test/sh/skull/dummy.sk"
+test_skull "optimization.sh" "./test/sh/skull/o1.sk -O1 -E"
+test_skull "invalid_optimization_flag.sh" "-Ox"
 
 printf "\n"
 $passed || (printf "1 or more tests failed\n" && exit 1)

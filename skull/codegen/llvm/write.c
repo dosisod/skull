@@ -8,6 +8,8 @@
 
 #include <llvm-c/Core.h>
 #include <llvm-c/DebugInfo.h>
+#include <llvm-c/Target.h>
+#include <llvm-c/Transforms/PassBuilder.h>
 
 #include "skull/build_data.h"
 #include "skull/cc_shim.h"
@@ -19,6 +21,7 @@
 #include "skull/common/str.h"
 
 static bool create_ll_file(const char *);
+static bool optimize_llvm(void);
 static int run_llc(void);
 static int run_cc(char *);
 static int sh(char *[]);
@@ -31,6 +34,10 @@ static int check_directory(char *);
 Write LLVM code to `filename`, return whether error occured.
 */
 bool write_file_llvm(const char *filename) {
+	if (BUILD_DATA.optimize1 || BUILD_DATA.optimize2 || BUILD_DATA.optimize3) {
+		if (optimize_llvm()) return true;
+	}
+
 	bool err = create_ll_file(filename);
 
 	if (err || BUILD_DATA.preprocess) return err;
@@ -42,6 +49,54 @@ bool write_file_llvm(const char *filename) {
 	err = check_directory(binary_name);
 
 	return err || run_cc(binary_name);
+}
+
+static bool optimize_llvm(void) {
+	LLVMInitializeAllTargetInfos();
+
+	char *triple = LLVMGetDefaultTargetTriple();
+	LLVMTargetRef target = NULL;
+	char *err_msg = NULL;
+
+	const bool err = LLVMGetTargetFromTriple(triple, &target, &err_msg);
+
+	if (err) {
+		fprintf(stderr, "skull: \"%s\"\n", err_msg);
+		LLVMDisposeMessage(err_msg);
+		LLVMDisposeMessage(triple);
+		return true;
+	}
+
+	char *cpu = LLVMGetHostCPUName();
+	char *features = LLVMGetHostCPUFeatures();
+
+	LLVMTargetMachineRef target_machine = LLVMCreateTargetMachine(
+		target,
+		triple,
+		cpu,
+		features,
+		LLVMCodeGenLevelDefault,
+		LLVMRelocDefault,
+		LLVMCodeModelDefault
+	);
+
+	LLVMPassBuilderOptionsRef options = LLVMCreatePassBuilderOptions();
+
+	const char *passes = BUILD_DATA.optimize1 ?
+		"default<O1>" :
+		BUILD_DATA.optimize2 ?
+			"default<O2>" :
+			"default<O3>";
+
+	LLVMRunPasses(SKULL_STATE_LLVM.module, passes, target_machine, options);
+
+	LLVMDisposeMessage(triple);
+	LLVMDisposeMessage(cpu);
+	LLVMDisposeMessage(features);
+	LLVMDisposeTargetMachine(target_machine);
+	LLVMDisposePassBuilderOptions(options);
+
+	return false;
 }
 
 static bool create_ll_file(const char *filename) {
