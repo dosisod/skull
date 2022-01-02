@@ -47,8 +47,8 @@ static Expr gen_node(const AstNode **node) {
 		case AST_NODE_EXPR:
 			gen_expr_func_call((*node)->expr->lhs.func_call); break;
 		case AST_NODE_NOOP: gen_stmt_noop(&(*node)->token->location); break;
-		case AST_NODE_BREAK: gen_stmt_break(); break;
-		case AST_NODE_CONTINUE: gen_stmt_continue(); break;
+		case AST_NODE_BREAK: return gen_stmt_break();
+		case AST_NODE_CONTINUE: return gen_stmt_continue();
 		default: break;
 	}
 

@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include <llvm-c/Analysis.h>
 #include <llvm-c/Core.h>
 #include <llvm-c/DebugInfo.h>
 #include <llvm-c/Target.h>
@@ -21,6 +22,7 @@
 #include "skull/common/str.h"
 
 static bool create_ll_file(const char *);
+static bool verify_llvm(void);
 static bool optimize_llvm(void);
 static int run_llc(void);
 static int run_cc(char *);
@@ -34,6 +36,10 @@ static int check_directory(char *);
 Write LLVM code to `filename`, return whether error occured.
 */
 bool write_file_llvm(const char *filename) {
+	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
+
+	if (!BUILD_DATA.llvm_no_verify && verify_llvm()) return true;
+
 	if (BUILD_DATA.optimize1 || BUILD_DATA.optimize2 || BUILD_DATA.optimize3) {
 		if (optimize_llvm()) return true;
 	}
@@ -49,6 +55,24 @@ bool write_file_llvm(const char *filename) {
 	err = check_directory(binary_name);
 
 	return err || run_cc(binary_name);
+}
+
+static bool verify_llvm(void) {
+	char *err_msg = NULL;
+
+	const bool err = LLVMVerifyModule(
+		SKULL_STATE_LLVM.module,
+		LLVMReturnStatusAction,
+		&err_msg
+	);
+
+	if (err) {
+		fprintf(stderr, "skull: error while verifying LLVM: %s\n", err_msg);
+	}
+
+	LLVMDisposeMessage(err_msg);
+
+	return err;
 }
 
 static bool optimize_llvm(void) {
@@ -100,8 +124,6 @@ static bool optimize_llvm(void) {
 }
 
 static bool create_ll_file(const char *filename) {
-	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
-
 	if (strcmp(filename, "-") == 0) {
 		char *msg = LLVMPrintModuleToString(SKULL_STATE_LLVM.module);
 		printf("%s", msg);

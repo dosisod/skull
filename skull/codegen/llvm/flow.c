@@ -222,12 +222,24 @@ static void gen_control_if_(
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, end);
 }
 
-void gen_stmt_break(void) {
-	LLVMBuildBr(SKULL_STATE_LLVM.builder, SKULL_STATE_LLVM.current_while_end);
+Expr gen_stmt_break(void) {
+	return (Expr){
+		.value = LLVMBuildBr(
+			SKULL_STATE_LLVM.builder,
+			SKULL_STATE_LLVM.current_while_end
+		),
+		.type = TYPE_VOID
+	};
 }
 
-void gen_stmt_continue(void) {
-	LLVMBuildBr(SKULL_STATE_LLVM.builder, SKULL_STATE_LLVM.current_while_cond);
+Expr gen_stmt_continue(void) {
+	return (Expr){
+		.value = LLVMBuildBr(
+			SKULL_STATE_LLVM.builder,
+			SKULL_STATE_LLVM.current_while_cond
+		),
+		.type = TYPE_VOID
+	};
 }
 
 /*

@@ -15,6 +15,7 @@ typedef struct {
 	_Bool optimize1;
 	_Bool optimize2;
 	_Bool optimize3;
+	_Bool llvm_no_verify;
 } BuildData;
 
 extern BuildData BUILD_DATA;
