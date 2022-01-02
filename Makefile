@@ -32,10 +32,10 @@ build/test/test: $(OBJS_LLVM) $(OBJS_TEST) $(ODIR)/skull/real_main.o
 	@$(ECHO) "\033[92mLink\033[0m test\n"
 	@$(CC) $^ -o build/test/test $(CFLAGS) $(LLVM_LDFLAGS)
 
-build/skull/skull: $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o
+build/skull/skull: $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o $(ODIR)/skull/cli.o
 	@$(ECHO) "\033[92mLink\033[0m skull\n"
 	@$(CC) $^ -DRELEASE=$(RELEASE) -DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
-		skull/cli.c -o build/skull/skull \
+		-o build/skull/skull \
 		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
 
 build/test/embed: test/embed.c
@@ -50,11 +50,11 @@ test/sh/e2e_inner.h: $(E2E)
 	@$(ECHO) "\033[92mGenerate\033[0m e2e_inner\n"
 	@cat $(E2E) > test/sh/e2e_inner.h
 
-E2E_DEPS=$(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o $(ODIR)/test/testing.o
-build/test/e2e: test/sh/e2e_inner.h $(E2E_DEPS)
+$(ODIR)/test/skull/e2e.o: test/sh/e2e_inner.h
+
+build/test/e2e: $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o $(ODIR)/test/testing.o $(ODIR)/test/skull/e2e.o
 	@$(ECHO) "\033[92mLink\033[0m e2e tests\n"
-	@$(CC) $(E2E_DEPS) test/skull/e2e.c -o build/test/e2e \
-		$(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
+	@$(CC) $^ -o build/test/e2e $(CFLAGS) $(LLVM_LDFLAGS) $(LLVM_CFLAGS)
 
 docs:
 	@$(ECHO) "\033[92mBuild\033[0m docs\n"

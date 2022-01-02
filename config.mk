@@ -2,10 +2,10 @@ BIN := /usr/local/bin
 HEADER := /usr/include
 MANPATH := $(shell manpath | cut -d : -f1)/man1/
 
-CC = $(shell readlink -f `which cc`)
+CC := $(shell readlink -f `which cc`)
 CXX ?= g++
 
-SKULL_VERSION=$(shell git describe --always)
+SKULL_VERSION := $(shell git describe --always)
 
 ECHO=printf
 
@@ -55,17 +55,16 @@ CFLAGS += -std=c18 \
 	-I. \
 	-DSKULL_VERSION="\"$(SKULL_VERSION)\""
 
-LLVM_CONFIG = $(shell command -v llvm-config-13 || command -v llvm-config)
-
-LLVM_CFLAGS = $(shell $(LLVM_CONFIG) --cflags)
+LLVM_CONFIG := $(shell command -v llvm-config-13 || command -v llvm-config)
+LLVM_CFLAGS := $(shell $(LLVM_CONFIG) --cflags)
 
 RELEASE ?= 0
 ifeq ($(RELEASE), 1)
-	LLVM_LDFLAGS = $(shell $(LLVM_CONFIG) --libfiles --link-static) \
+	LLVM_LDFLAGS := $(shell $(LLVM_CONFIG) --libfiles --link-static) \
 		$(shell $(CXX) -print-file-name=libstdc++.a) \
 		-lm -lpthread -lncurses -lz
 else
-	LLVM_LDFLAGS = $(shell $(LLVM_CONFIG) --libs)
+	LLVM_LDFLAGS := $(shell $(LLVM_CONFIG) --libs)
 endif
 
 
