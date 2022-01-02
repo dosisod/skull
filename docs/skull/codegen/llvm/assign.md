@@ -25,5 +25,6 @@ static bool requires_global_decl(const Variable *var)
 > Determine if a global LLVM declaration is needed for this variable.
 > \
 > Exported variables always need a declaration, and mutable variables only
-> need one if they are marked "mut" (since they could be reassigned later).
+> need one if they are marked "mut" (since they could be reassigned later),
+> or if expression is not const (since it cannot be known at compile time).
 

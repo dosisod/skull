@@ -1,0 +1,3 @@
+f() Int { return 1 }
+
+x := f()
