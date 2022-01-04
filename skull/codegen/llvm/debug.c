@@ -30,6 +30,8 @@ static void alloc_debug_function_param(Variable *);
 #define SKULL_VERSION "<unknown>"
 #endif
 
+#define PRODUCER "clang (skull "SKULL_VERSION")"
+
 DebugInfo DEBUG_INFO;
 LLVMMetadataRef DI_TYPE_BOOL;
 LLVMMetadataRef DI_TYPE_INT;
@@ -69,7 +71,7 @@ LLVMDIBuilderRef setup_debug_info(
 		di_builder,
 		LLVMDWARFSourceLanguageC99,
 		di_file,
-		"skull "SKULL_VERSION, strlen("skull "SKULL_VERSION),
+		PRODUCER, strlen(PRODUCER),
 		false, // is optimized
 		"", 0, // flags
 		0, // runtime version
