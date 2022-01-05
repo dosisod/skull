@@ -201,6 +201,9 @@ static bool test_c32sunescape(void) {
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xdhello", '\x0d', 2, NULL));
 	ASSERT_TRUTHY(c32sunescape_fixture(U"\\x1F480", U'\x1F480', 6, NULL));
 
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xFFFFFFFF\'", 0xFFFFFFFF, 9, NULL))
+	ASSERT_TRUTHY(c32sunescape_fixture(U"\\xFFFFFFFFF", 0xFFFFFFFF, 9, NULL))
+
 	PASS
 }
 

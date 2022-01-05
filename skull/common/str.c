@@ -263,7 +263,7 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 	if (*str != '\\') return *str;
 
 	char32_t escape = str[1];
-	char32_t option[8] = {0};
+	char32_t option[9] = {0};
 
 	(*str_)++;
 
@@ -284,7 +284,7 @@ char32_t c32sunescape(const char32_t **str_, const char32_t **error) {
 		if (c) return *c;
 	}
 
-	static char32_t bad_escape[5] = {0};
+	static char32_t bad_escape[4] = {0};
 	bad_escape[0] = '\\';
 	bad_escape[1] = escape;
 	bad_escape[2] = option[0];
