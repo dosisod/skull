@@ -3,7 +3,7 @@ name: tests
 on: [push, pull_request]
 
 jobs:
-  lint-and-semantics:
+  tests:
     runs-on: ubuntu-latest
 
     steps:

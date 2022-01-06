@@ -4,7 +4,7 @@ RUN apt update && \
 	apt upgrade -y && \
 	DEBIAN_FRONTEND=noninteractive apt install \
 		build-essential \
-		gcc-9 \
+		gcc-11 \
 		clang-13 \
 		clang-tidy-13 \
 		llvm-13-dev \
@@ -22,7 +22,7 @@ USER 1000
 RUN clang-tidy-13 --version
 RUN make lint
 
-RUN make TRACE=1 CC=gcc-9 options clean all
+RUN make TRACE=1 CC=gcc-11 options clean all
 RUN ./build/test/test
 RUN ./test/sh/main.sh
 RUN make clean
@@ -33,7 +33,7 @@ RUN ./test/sh/main.sh
 RUN make clean
 
 USER 0
-RUN make TRACE=1 CC=gcc-9 options install install-dev
+RUN make TRACE=1 CC=gcc-11 options install install-dev
 USER 1000
 RUN skull test/main.sk
 RUN ./test/main
