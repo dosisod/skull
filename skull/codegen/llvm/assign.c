@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include <llvm-c/Core.h>
-#include <llvm-c/DebugInfo.h>
 
 #include "skull/build_data.h"
 #include "skull/codegen/llvm/debug.h"

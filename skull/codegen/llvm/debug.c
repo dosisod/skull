@@ -25,6 +25,8 @@
 
 static LLVMMetadataRef type_to_llvm_di_type(const Type);
 static void alloc_debug_function_param(Variable *);
+static void add_llvm_global_var_def_debug_info(const Variable *);
+static void add_llvm_local_var_def_debug_info(const Variable *);
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<unknown>"
@@ -67,7 +69,7 @@ LLVMDIBuilderRef setup_debug_info(
 	);
 	DEBUG_INFO.file = di_file;
 
-	LLVMDIBuilderCreateCompileUnit(
+	DEBUG_INFO.compile_unit = LLVMDIBuilderCreateCompileUnit(
 		di_builder,
 		LLVMDWARFSourceLanguageC99,
 		di_file,
@@ -204,6 +206,29 @@ LLVMMetadataRef __attribute__((pure)) type_to_di_type(Type type) {
 void add_llvm_var_def_debug_info(const Variable *var) {
 	if (!BUILD_DATA.debug) return;
 
+	if (var->is_global) add_llvm_global_var_def_debug_info(var);
+	else add_llvm_local_var_def_debug_info(var);
+}
+
+static void add_llvm_global_var_def_debug_info(const Variable *var) {
+	LLVMMetadataRef metadata = LLVMDIBuilderCreateGlobalVariableExpression(
+		DEBUG_INFO.builder,
+		DEBUG_INFO.compile_unit,
+		var->name, strlen(var->name),
+		"", 0, // linkage
+		DEBUG_INFO.file,
+		var->location.line,
+		type_to_di_type(var->type),
+		!var->is_exported, // local to unit
+		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
+		NULL, // decl
+		8 // alignment
+	);
+
+	LLVMGlobalSetMetadata(var->ref, 0, metadata);
+}
+
+static void add_llvm_local_var_def_debug_info(const Variable *var) {
 	LLVMMetadataRef di_var = LLVMDIBuilderCreateAutoVariable(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.scope,
@@ -245,22 +270,24 @@ LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *location) {
 LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 	if (!BUILD_DATA.debug) return NULL;
 
-	LLVMMetadataRef *di_param_types = NULL;
-	if (func->num_params) {
-		di_param_types = Malloc(func->num_params * sizeof(LLVMMetadataRef));
+	LLVMMetadataRef *di_param_types = Malloc(
+		(func->num_params + 1) * sizeof(LLVMMetadataRef)
+	);
+	di_param_types[0] = type_to_di_type(func->return_type);
 
-		for RANGE(i, func->num_params) {
-			di_param_types[i] = type_to_di_type(func->param_types[i]);
+	if (func->num_params) {
+		for (unsigned i = 1; i <= func->num_params; i++) {
+			di_param_types[i] = type_to_di_type(func->param_types[i - 1]);
 		}
 	}
 
 	LLVMMetadataRef di_type = LLVMDIBuilderCreateSubroutineType(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.file,
-		di_param_types, func->num_params,
+		di_param_types, func->num_params + 1,
 		LLVMDIFlagZero
 	);
-	if (func->num_params) free(di_param_types);
+	free(di_param_types);
 
 	LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
 		DEBUG_INFO.builder,

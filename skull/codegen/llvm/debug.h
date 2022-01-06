@@ -11,6 +11,7 @@ typedef struct {
 	LLVMDIBuilderRef builder;
 	LLVMMetadataRef file;
 	LLVMMetadataRef scope;
+	LLVMMetadataRef compile_unit;
 } DebugInfo;
 
 typedef enum {

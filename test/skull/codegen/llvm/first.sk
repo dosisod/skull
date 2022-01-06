@@ -32,3 +32,5 @@ f4() {
 		noop
 	}
 }
+
+mut global := 1
