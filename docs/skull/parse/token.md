@@ -12,12 +12,11 @@ typedef struct Location {
 ```c
 typedef struct Token {
 	const char32_t *begin;
-	const char32_t *end;
+	Token *next;
 
+	unsigned len;
 	TokenType type;
 	Location location;
-
-	Token *next;
 }
 ```
 
@@ -108,12 +107,6 @@ bool token_cmp(const char32_t *str, const Token *token)
 ```
 
 > Returns true if `str` is equal to the value of `token`.
-
-```c
-__attribute__((pure)) size_t token_len(const Token *token)
-```
-
-> Return the string length of `token`.
 
 ```c
 void free_tokens(Token *head)

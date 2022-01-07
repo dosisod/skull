@@ -323,7 +323,7 @@ static bool classify_token_with_len_fixture(const char32_t *code, TokenType tok_
 	classify_tokens(token);
 	ASSERT_EQUAL(token->type, tok_type);
 	ASSERT_EQUAL(token->begin, code + start_at);
-	ASSERT_EQUAL(token->end, code + end_at);
+	ASSERT_EQUAL(token->len, end_at);
 	free_tokens(token);
 
 	PASS

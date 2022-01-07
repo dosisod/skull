@@ -15,9 +15,9 @@ static bool test_tokenize_single_token(void) {
 	Token *t2 = tokenize(code2);
 
 	ASSERT_EQUAL(t1->begin, code1);
-	ASSERT_EQUAL(t1->end, code1 + 5);
+	ASSERT_EQUAL(t1->len, 5);
 	ASSERT_EQUAL(t2->begin, code2);
-	ASSERT_EQUAL(t2->end, code2 + 6);
+	ASSERT_EQUAL(t2->len, 6);
 
 	free_tokens(t1);
 	free_tokens(t2);
@@ -30,7 +30,7 @@ static bool test_tokenize_no_tokens(void) {
 	Token *t = tokenize(code);
 
 	ASSERT_FALSEY(t->begin);
-	ASSERT_FALSEY(t->end);
+	ASSERT_FALSEY(t->len);
 
 	free_tokens(t);
 
@@ -42,9 +42,9 @@ static bool test_whitespace_between_tokens(void) {
 	Token *t = tokenize(code);
 
 	ASSERT_EQUAL(t->begin, code);
-	ASSERT_EQUAL(t->end, code + 6);
+	ASSERT_EQUAL(t->len, 6);
 	ASSERT_EQUAL(t->next->begin, code + 9);
-	ASSERT_EQUAL(t->next->end, code + 15);
+	ASSERT_EQUAL(t->next->len, 6);
 
 	free_tokens(t);
 
@@ -56,7 +56,7 @@ static bool test_whitespace_at_eol_ignored(void) {
 	Token *t = tokenize(code);
 
 	ASSERT_EQUAL(t->begin, code);
-	ASSERT_EQUAL(t->end, code + 5);
+	ASSERT_EQUAL(t->len, 5);
 
 	free_tokens(t);
 
@@ -69,7 +69,7 @@ static bool test_whitespace_inside_double_quotes_respected(void) {
 
 	ASSERT_FALSEY(t->next);
 	ASSERT_EQUAL(t->begin, code);
-	ASSERT_EQUAL(t->end, code + 24);
+	ASSERT_EQUAL(t->len, 24);
 
 	free_tokens(t);
 
@@ -82,7 +82,7 @@ static bool test_whitespace_inside_single_quotes_respected(void) {
 
 	ASSERT_FALSEY(t->next);
 	ASSERT_EQUAL(t->begin, code);
-	ASSERT_EQUAL(t->end, code + 24);
+	ASSERT_EQUAL(t->len, 24);
 
 	free_tokens(t);
 
@@ -94,16 +94,16 @@ static bool test_brackets_always_make_their_own_token(void) {
 	Token *t = tokenize(code);
 
 	ASSERT_EQUAL(t->begin, code);
-	ASSERT_EQUAL(t->end, code + 4);
+	ASSERT_EQUAL(t->len, 4);
 	ASSERT_TRUTHY(t->next);
 	ASSERT_EQUAL(t->next->begin, code + 4);
-	ASSERT_EQUAL(t->next->end, code + 5);
+	ASSERT_EQUAL(t->next->len, 1);
 	ASSERT_TRUTHY(t->next->next);
 	ASSERT_EQUAL(t->next->next->begin, code + 5);
-	ASSERT_EQUAL(t->next->next->end, code + 6);
+	ASSERT_EQUAL(t->next->next->len, 1);
 	ASSERT_TRUTHY(t->next->next->next);
 	ASSERT_EQUAL(t->next->next->next->begin, code + 6);
-	ASSERT_EQUAL(t->next->next->next->end, code + 11);
+	ASSERT_EQUAL(t->next->next->next->len, 5);
 
 	free_tokens(t);
 
@@ -115,25 +115,15 @@ static bool test_newlines_always_make_their_own_token(void) {
 	Token *t = tokenize(code);
 
 	ASSERT_EQUAL(t->begin, code);
-	ASSERT_EQUAL(t->end, code + 4);
+	ASSERT_EQUAL(t->len, 4);
 	ASSERT_TRUTHY(t->next);
 	ASSERT_EQUAL(t->next->begin, code + 4);
-	ASSERT_EQUAL(t->next->end, code + 5);
+	ASSERT_EQUAL(t->next->len, 1);
 	ASSERT_TRUTHY(t->next->next);
 	ASSERT_EQUAL(t->next->next->begin, code + 5);
-	ASSERT_EQUAL(t->next->next->end, code + 10);
+	ASSERT_EQUAL(t->next->next->len, 5);
 
 	free_tokens(t);
-
-	PASS
-}
-
-static bool test_token_len(void) {
-	Token *token = tokenize(U"token");
-
-	ASSERT_EQUAL(token_len(token), 5);
-
-	free_tokens(token);
 
 	PASS
 }
@@ -221,7 +211,7 @@ static bool test_make_token(void) {
 	Token *token = make_token();
 
 	ASSERT_FALSEY(token->begin);
-	ASSERT_FALSEY(token->end);
+	ASSERT_FALSEY(token->len);
 	ASSERT_FALSEY(token->type);
 	ASSERT_FALSEY(token->next);
 
@@ -333,7 +323,6 @@ void tokenizer_test_self(bool *pass) {
 		test_whitespace_inside_single_quotes_respected,
 		test_brackets_always_make_their_own_token,
 		test_newlines_always_make_their_own_token,
-		test_token_len,
 		test_token_cmp,
 		test_token_cmp_match_exact_strings_only,
 		test_token_to_string,

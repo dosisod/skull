@@ -23,7 +23,7 @@ Return bool converted from `token`
 */
 bool eval_bool(const Token *const token) {
 	// since token is either "true" or "false", just check length of token
-	return token_len(token) == 4;
+	return token->len == 4;
 }
 
 /*
@@ -71,7 +71,7 @@ int64_t eval_integer(const Token *const token, bool *err) {
 	// create a dummy token since we cannot modify `token`
 	// but still need to advance the `begin` field
 	char *num_str = token_to_mbs_str(&(Token){
-		.begin = begin, .end = token->end
+		.begin = begin, .len = token->len
 	});
 
 	strip_underscore_num(num_str, 0);
@@ -144,11 +144,11 @@ Return string converted from `token`, or `NULL` if an error occurred.
 */
 char32_t *eval_str(const Token *const token) {
 	char32_t *copy;
-	copy = Malloc((token_len(token) - 1) * sizeof *copy);
+	copy = Malloc((token->len - 1) * sizeof *copy);
 
 	const char32_t *str = token->begin + 1;
 	size_t wrote = 0;
-	while (*str && str < token->end - 1) {
+	while (*str && str < token->begin + token->len - 1) {
 		const char32_t *error = NULL;
 		copy[wrote] = c32sunescape(&str, &error);
 

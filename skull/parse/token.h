@@ -84,12 +84,11 @@ Stores the smallest meaningful chunk of parsed code.
 */
 typedef struct Token {
 	const char32_t *begin;
-	const char32_t *end;
+	Token *next;
 
+	unsigned len;
 	TokenType type;
 	Location location;
-
-	Token *next;
 } Token;
 
 Token *make_token(void);
@@ -98,7 +97,6 @@ Token *tokenize(const char32_t *);
 
 void free_tokens(Token *);
 
-size_t token_len(const Token *);
 _Bool token_cmp(const char32_t *, const Token *);
 
 char32_t *token_to_string(const Token *);

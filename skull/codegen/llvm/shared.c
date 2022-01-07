@@ -20,7 +20,6 @@ void setup_llvm_state(void) {
 	SkullStateLLVM *state = &SKULL_STATE_LLVM;
 
 	const char *filename = BUILD_DATA.filename;
-	char *main_func_name = create_main_func_name(filename);
 
 	LLVMContextRef ctx = LLVMContextCreate();
 	LLVMModuleRef main_module = LLVMModuleCreateWithNameInContext(
@@ -33,10 +32,9 @@ void setup_llvm_state(void) {
 
 	LLVMValueRef main_func = LLVMAddFunction(
 		main_module,
-		main_func_name,
+		SEMANTIC_STATE.main_func->name,
 		main_func_type
 	);
-	free(main_func_name);
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
 		ctx,

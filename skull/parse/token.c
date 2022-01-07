@@ -74,7 +74,7 @@ Token *tokenize(const char32_t *code) {
 
 	// close dangling token if there was no whitespace at EOF
 	if (ctx.token->begin) {
-		ctx.token->end = ctx.code;
+		ctx.token->len = (unsigned)(ctx.code - ctx.token->begin);
 	}
 	// pop last token since it will not have any data
 	else if (ctx.token != head) {
@@ -107,8 +107,8 @@ static bool tokenize_inner_loop(TokenizeCtx *ctx) {
 	else if (!ctx->token->begin) {
 		if (!is_whitespace(*ctx->code)) token_add_info(ctx);
 	}
-	else if (!ctx->token->end && is_whitespace(*ctx->code)) {
-		ctx->token->end = ctx->code;
+	else if (!ctx->token->len && is_whitespace(*ctx->code)) {
+		ctx->token->len = (unsigned)(ctx->code - ctx->token->begin);
 		ctx->last = ctx->token;
 		ctx->token = setup_next(ctx->token);
 	}
@@ -231,13 +231,13 @@ static bool iter_quote(TokenizeCtx *ctx) {
 
 static void parse_delimiter(TokenizeCtx *ctx) {
 	if (ctx->token->begin) {
-		ctx->token->end = ctx->code;
+		ctx->token->len = (unsigned)(ctx->code - ctx->token->begin);
 		ctx->token = setup_next(ctx->token);
 	}
 
 	*ctx->token = (Token){
 		.begin = ctx->code,
-		.end = ctx->code + 1,
+		.len = 1,
 		.location = { .line = ctx->line_num, .column = ctx->column }
 	};
 
@@ -300,7 +300,7 @@ Make a heap allocated copy of the data inside `token`.
 The result of this function must be freed.
 */
 char32_t *token_to_string(const Token *token) {
-	const size_t len = token_len(token);
+	const size_t len = token->len;
 	char32_t *str;
 	str = Malloc((len + 1) * sizeof *str);
 
@@ -327,16 +327,10 @@ char *token_to_mbs_str(const Token *token) {
 Returns true if `str` is equal to the value of `token`.
 */
 bool token_cmp(const char32_t *str, const Token *token) {
-	const size_t len = token_len(token);
-
-	return c32slen(str) == len && c32sncmp(str, token->begin, len);
-}
-
-/*
-Return the string length of `token`.
-*/
-__attribute__((pure)) size_t token_len(const Token *token) {
-	return (size_t)(token->end - token->begin);
+	return (
+		c32slen(str) == token->len &&
+		c32sncmp(str, token->begin, token->len)
+	);
 }
 
 /*

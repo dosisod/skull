@@ -32,7 +32,7 @@ Classify the token `token`.
 static void classify_token(Token *const token) {
 	if (token->type) return;
 
-	const size_t len = token_len(token);
+	const size_t len = token->len;
 
 	if (len == 1) {
 		switch (*token->begin) {
@@ -86,7 +86,7 @@ static void classify_token(Token *const token) {
 	else if (is_valid_identifier_str(str)) {
 		token->type = TOKEN_IDENTIFIER;
 
-		if (token->end[-1] == ':') {
+		if (token->begin[token->len - 1] == ':') {
 			token->type = TOKEN_NEW_IDENTIFIER;
 			str[len - 1] = '\0';
 
@@ -94,7 +94,7 @@ static void classify_token(Token *const token) {
 				token->type = TOKEN_UNKNOWN;
 			}
 			else {
-				token->end--;
+				token->len--;
 			}
 		}
 	}

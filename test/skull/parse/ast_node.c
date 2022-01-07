@@ -203,7 +203,7 @@ static bool test_parse_ast_tree_if(void) {
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
-	ASSERT_EQUAL(node->token_end->end, code + 2);
+	ASSERT_EQUAL(node->token_end->len, 2);
 	ASSERT_FALSEY(node->last);
 	ASSERT_FALSEY(node->next);
 	ASSERT_TRUTHY(node->expr);
@@ -219,7 +219,7 @@ static bool test_parse_ast_tree_if_with_var(void) {
 
 	ASSERT_EQUAL(node->type, AST_NODE_IF);
 	ASSERT_EQUAL(node->token->begin, code);
-	ASSERT_EQUAL(node->token_end->end, code + 2);
+	ASSERT_EQUAL(node->token_end->len, 2);
 	ASSERT_FALSEY(node->last);
 	ASSERT_FALSEY(node->next);
 	ASSERT_TRUTHY(node->expr);
@@ -430,7 +430,14 @@ static bool ast_tree_fixture(const char32_t *code, NodeType node_type, unsigned 
 	ASSERT_EQUAL(node->token->begin, code + begin_offset);
 
 	if (node->token_end) {
-		ASSERT_EQUAL(node->token_end->end, code + end_offset);
+		ASSERT_EQUAL(
+			(
+				node->token_end->begin -
+				node->token->begin +
+				node->token_end->len
+			),
+			end_offset
+		);
 	}
 
 	ASSERT_FALSEY(node->last);
@@ -452,7 +459,7 @@ static bool ast_tree_expr_fixture(const char32_t *code, ExprType expr_type, unsi
 	ASSERT_EQUAL(node->token->begin, code + begin_offset);
 
 	if (node->token_end) {
-		ASSERT_EQUAL(node->token_end->end, code + end_offset);
+		ASSERT_EQUAL(node->token_end->len, end_offset);
 	}
 
 	ASSERT_FALSEY(node->last);
