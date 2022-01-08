@@ -222,6 +222,9 @@ static bool parse_long_option(const char *arg) {
 	else if (strcmp(arg, "llvm-no-verify") == 0) {
 		set_bool_flag(&BUILD_DATA.llvm_no_verify, "--llvm-no-verify");
 	}
+	else if (strcmp(arg, "color") == 0) {
+		set_bool_flag(&BUILD_DATA.color, "--color");
+	}
 	else {
 		fprintf(stderr, "skull: unknown option \"--%s\"\n", arg);
 		return true;

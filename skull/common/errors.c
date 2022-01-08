@@ -124,6 +124,8 @@ Return whether color output should be displayed.
 static bool do_show_color(void) {
 	static int flag;
 
+	if (BUILD_DATA.color) return 2;
+
 	if (!flag) {
 		const char *use_color = getenv("COLOR");
 
