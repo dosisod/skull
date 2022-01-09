@@ -87,7 +87,7 @@ static bool test_str_expr(void) {
 }
 
 static bool test_identifier_expr(void) {
-	Variable *var = make_variable(TYPE_INT, U"x", false);
+	Variable *var = make_variable(&TYPE_INT, U"x", false);
 
 	ASSERT_TRUTHY(expr_fixture(AST_NODE_EXPR_VAR(var), "x"));
 
@@ -169,7 +169,7 @@ static bool test_int_pow_expr(void) {
 	);
 	SET_EXPR_VALUE_INT(expr->lhs.expr, 1);
 	SET_EXPR_VALUE_INT(expr->rhs, 2);
-	expr->type = TYPE_INT;
+	expr->type = &TYPE_INT;
 
 	char *expr_str = gen_expr_c(expr);
 
@@ -188,7 +188,7 @@ static bool test_float_pow_expr(void) {
 	);
 	SET_EXPR_VALUE_FLOAT(expr->lhs.expr, 1.0);
 	SET_EXPR_VALUE_FLOAT(expr->rhs, 2.0);
-	expr->type = TYPE_FLOAT;
+	expr->type = &TYPE_FLOAT;
 
 	char *expr_str = gen_expr_c(expr);
 
@@ -208,7 +208,7 @@ static bool test_str_is(void) {
 	);
 	SET_EXPR_VALUE_STR(expr->lhs.expr, "x");
 	SET_EXPR_VALUE_STR(expr->rhs, "x");
-	expr->type = TYPE_BOOL;
+	expr->type = &TYPE_BOOL;
 
 	char *expr_str = gen_expr_c(expr);
 
@@ -228,7 +228,7 @@ static bool test_str_isnt(void) {
 	);
 	SET_EXPR_VALUE_STR(expr->lhs.expr, "x");
 	SET_EXPR_VALUE_STR(expr->rhs, "x");
-	expr->type = TYPE_BOOL;
+	expr->type = &TYPE_BOOL;
 
 	char *expr_str = gen_expr_c(expr);
 

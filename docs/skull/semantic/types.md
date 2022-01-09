@@ -1,10 +1,17 @@
 # skull/semantic/types
 
 ```c
-typedef const char * Type
+typedef struct Type {
+	const char *name;
+
+	Type *inner;
+}
 ```
 
-> Types are simply named strings.
+> `name` is the pretty-printable name for the type.
+> \
+> `inner` is the inner type of a generic, ie, `Pointer<Int>`. If not specified,
+> it is assumed to be a plain type.
 
 ```c
 bool eval_bool(const Token *const token)
@@ -37,7 +44,7 @@ char32_t *eval_str(const Token *const token)
 > Return string converted from `token`, or `NULL` if an error occurred.
 
 ```c
-Type __attribute__((pure)) find_type(const char *const name)
+Type __attribute__((pure)) *find_type(const char *const name)
 ```
 
 > Returns pointer to type with name `name`.

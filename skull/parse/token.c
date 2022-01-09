@@ -122,7 +122,13 @@ static bool tokenize_inner_loop(TokenizeCtx *ctx) {
 
 static bool is_delimeter(char32_t c) {
 	return (
-		c == '{' || c == '}' || c == '(' || c == ')' || c == ',' || c == '\n'
+		c == '{' ||
+		c == '}' ||
+		c == '(' ||
+		c == ')' ||
+		c == ',' ||
+		c == '\n' ||
+		c == '&'
 	);
 }
 
@@ -248,6 +254,7 @@ static void parse_delimiter(TokenizeCtx *ctx) {
 		case ')': ctx->token->type = TOKEN_PAREN_CLOSE; break;
 		case ',': ctx->token->type = TOKEN_COMMA; break;
 		case '\n': ctx->token->type = TOKEN_NEWLINE; break;
+		case '&': ctx->token->type = TOKEN_OPER_REF; break;
 		default: break; // make GCC happy
 	}
 

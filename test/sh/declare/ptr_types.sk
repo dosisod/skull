@@ -1,0 +1,11 @@
+mut bool := true
+mut int := 1234
+mut float := 3.14
+mut str := "hello world"
+mut rune := 'x'
+
+mut bool_ptr := &bool
+mut int_ptr := &int
+mut float_ptr := &float
+mut str_ptr := &str
+mut rune_ptr := &rune

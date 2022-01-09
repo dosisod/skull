@@ -16,7 +16,7 @@ void setup_semantic_state(void) {
 
 	*SEMANTIC_STATE.main_func = (FunctionDeclaration){
 		.name = create_main_func_name(BUILD_DATA.filename),
-		.return_type = TYPE_INT
+		.return_type = &TYPE_INT
 	};
 
 	SEMANTIC_STATE.current_func = SEMANTIC_STATE.main_func;

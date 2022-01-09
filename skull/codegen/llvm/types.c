@@ -10,34 +10,37 @@
 /*
 Generate the LLVM type for `type`.
 */
-LLVMTypeRef type_to_llvm_type(Type type) {
-	if (type == TYPE_BOOL) {
+LLVMTypeRef type_to_llvm_type(Type *type) {
+	if (type == &TYPE_BOOL) {
 		return LLVMInt1TypeInContext(SKULL_STATE_LLVM.ctx);
 	}
-	if (type == TYPE_INT) {
+	if (type == &TYPE_INT) {
 		return LLVMInt64TypeInContext(SKULL_STATE_LLVM.ctx);
 	}
-	if (type == TYPE_FLOAT) {
+	if (type == &TYPE_FLOAT) {
 		return LLVMDoubleTypeInContext(SKULL_STATE_LLVM.ctx);
 	}
-	if (type == TYPE_RUNE) {
+	if (type == &TYPE_RUNE) {
 		return LLVMInt32TypeInContext(SKULL_STATE_LLVM.ctx);
 	}
-	if (type == TYPE_STR) {
+	if (type == &TYPE_STR) {
 		return LLVMPointerType(
 			LLVMInt8TypeInContext(SKULL_STATE_LLVM.ctx),
 			0
 		);
 	}
-	if (type == TYPE_VOID) {
+	if (type == &TYPE_VOID) {
 		return LLVMVoidTypeInContext(SKULL_STATE_LLVM.ctx);
+	}
+	if (is_reference(type)) {
+		return LLVMPointerType(type_to_llvm_type(type->inner), 0);
 	}
 
 	return NULL;
 }
 
 LLVMTypeRef type_to_llvm_func_type(
-	Type type,
+	Type *type,
 	LLVMTypeRef *param_types,
 	unsigned num_params
 ) {

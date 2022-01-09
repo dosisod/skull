@@ -29,4 +29,17 @@ f2() { noop }
 
 x := 1 + f()
 
+# TODO: disallow "int" and friends from being use as var names C backend
+int_ := 1
+bool_ := true
+float_ := 3.14
+rune_ := 'x'
+str_ := "hello world"
+
+int_ptr := &int_
+bool_ptr := &bool_
+float_ptr := &float_
+rune_ptr := &rune_
+str_ptr := &str_
+
 return a

@@ -23,9 +23,9 @@ bool validate_stmt_return(const AstNode *node) {
 
 	if (node->expr && !validate_expr(node->expr)) return false;
 
-	Type return_type = SEMANTIC_STATE.current_func->return_type;
+	Type *return_type = SEMANTIC_STATE.current_func->return_type;
 
-	if (!node->expr && return_type != TYPE_VOID) {
+	if (!node->expr && return_type != &TYPE_VOID) {
 		FMT_ERROR(ERR_RETURN_MISSING_EXPR, {
 			.loc = &node->token->location
 		});
@@ -46,15 +46,15 @@ static bool is_valid_return_expr(const AstNode *node) {
 
 	const Token *expr_token = find_expr_node_token(node->expr);
 
-	if (is_main && expr->type != TYPE_INT) {
+	if (is_main && expr->type != &TYPE_INT) {
 		FMT_ERROR(ERR_NON_INT_MAIN, { .tok = expr_token });
 
 		return false;
 	}
 
-	Type return_type = SEMANTIC_STATE.current_func->return_type;
+	Type *return_type = SEMANTIC_STATE.current_func->return_type;
 
-	if (return_type != TYPE_VOID && expr->type != return_type) {
+	if (return_type != &TYPE_VOID && expr->type != return_type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{ .loc = &expr_token->location, .type = return_type },
 			{ .type = expr->type }
@@ -178,7 +178,7 @@ static bool validate_control_not_missing_if(const AstNode *node) {
 }
 
 static bool validate_bool_expr(const AstNodeExpr *expr) {
-	if (expr->type != TYPE_BOOL) {
+	if (expr->type != &TYPE_BOOL) {
 		FMT_ERROR(ERR_NON_BOOL_EXPR, { .loc = find_expr_node_location(expr) });
 
 		return false;

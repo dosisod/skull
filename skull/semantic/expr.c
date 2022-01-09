@@ -18,12 +18,14 @@ static bool is_div_by_zero(const AstNodeExpr *);
 static bool validate_const_expr(AstNodeExpr *);
 static bool validate_pow_expr(const AstNodeExpr *);
 static bool validate_bool_expr(const AstNodeExpr *);
+static bool validate_ref_expr(const AstNodeExpr *);
 static bool is_numeric(const AstNodeExpr *);
 static bool validate_shift_expr(const AstNodeExpr *);
 static FunctionDeclaration *find_func_by_token(const Token *);
 static bool validate_func_call_params(AstNodeFunctionCall *);
 static void set_expr_type(AstNodeExpr *);
 static void set_const_expr(AstNodeExpr *);
+static Type *get_pointer_type(const Type *);
 static bool validate_binary_expr(AstNodeExpr *);
 static bool validate_expr_restrictions(AstNodeExpr *);
 static bool is_binary_expr(ExprType);
@@ -105,6 +107,8 @@ static bool validate_expr_restrictions(AstNodeExpr *expr) {
 		case EXPR_OR:
 		case EXPR_XOR:
 			return validate_bool_expr(expr);
+		case EXPR_REF:
+			return validate_ref_expr(expr);
 		default: break;
 	}
 
@@ -122,8 +126,8 @@ static void set_expr_type(AstNodeExpr *expr) {
 		case EXPR_GTR_THAN_EQ:
 		case EXPR_AND:
 		case EXPR_OR:
-		case EXPR_XOR:
-			expr->type = TYPE_BOOL; break;
+		case EXPR_XOR: expr->type = &TYPE_BOOL; break;
+		case EXPR_REF: expr->type = get_pointer_type(expr->rhs->type); break;
 		default: expr->type = expr->rhs->type; break;
 	}
 }
@@ -137,6 +141,16 @@ static void set_const_expr(AstNodeExpr *expr) {
 	else expr->is_const_expr = expr->rhs->is_const_expr;
 }
 
+static Type *get_pointer_type(const Type *type) {
+	if (type == &TYPE_BOOL) return &TYPE_BOOL_REF;
+	if (type == &TYPE_INT) return &TYPE_INT_REF;
+	if (type == &TYPE_FLOAT) return &TYPE_FLOAT_REF;
+	if (type == &TYPE_RUNE) return &TYPE_RUNE_REF;
+	if (type == &TYPE_STR) return &TYPE_STR_REF;
+
+	return NULL;
+}
+
 static bool validate_const_expr(AstNodeExpr *expr) {
 	const Token *token = expr->lhs.tok;
 	bool err = false;
@@ -144,22 +158,22 @@ static bool validate_const_expr(AstNodeExpr *expr) {
 	switch (token->type) {
 		case TOKEN_INT_CONST: {
 			expr->value._int = eval_integer(token, &err);
-			expr->type = TYPE_INT;
+			expr->type = &TYPE_INT;
 			break;
 		}
 		case TOKEN_FLOAT_CONST: {
 			expr->value._float = eval_float(token, &err);
-			expr->type = TYPE_FLOAT;
+			expr->type = &TYPE_FLOAT;
 			break;
 		}
 		case TOKEN_BOOL_CONST: {
 			expr->value._bool = eval_bool(token);
-			expr->type = TYPE_BOOL;
+			expr->type = &TYPE_BOOL;
 			break;
 		}
 		case TOKEN_RUNE_CONST: {
 			expr->value.rune = eval_rune(token, &err);
-			expr->type = TYPE_RUNE;
+			expr->type = &TYPE_RUNE;
 			break;
 		}
 		case TOKEN_STR_CONST: {
@@ -172,7 +186,7 @@ static bool validate_const_expr(AstNodeExpr *expr) {
 			if (!mbs) return false;
 
 			expr->value.str = mbs;
-			expr->type = TYPE_STR;
+			expr->type = &TYPE_STR;
 			break;
 		}
 		default: return false;
@@ -183,7 +197,7 @@ static bool validate_const_expr(AstNodeExpr *expr) {
 }
 
 static bool validate_shift_expr(const AstNodeExpr *expr) {
-	if (expr->rhs->type != TYPE_INT) {
+	if (expr->rhs->type != &TYPE_INT) {
 		FMT_ERROR(ERR_NOT_INT, { .loc = find_expr_node_location(expr) });
 
 		return false;
@@ -193,8 +207,8 @@ static bool validate_shift_expr(const AstNodeExpr *expr) {
 }
 
 static bool is_numeric(const AstNodeExpr *expr) {
-	const bool ok = expr->rhs->type == TYPE_INT ||
-		expr->rhs->type == TYPE_FLOAT;
+	const bool ok = expr->rhs->type == &TYPE_INT ||
+		expr->rhs->type == &TYPE_FLOAT;
 
 	if (!ok) {
 		FMT_ERROR(ERR_NOT_NUMERIC, { .loc = find_expr_node_location(expr) });
@@ -225,9 +239,9 @@ static bool is_div_by_zero(const AstNodeExpr *expr) {
 }
 
 static bool validate_pow_expr(const AstNodeExpr *expr) {
-	Type type = expr->rhs->type;
+	Type *type = expr->rhs->type;
 
-	if (type != TYPE_INT && type != TYPE_FLOAT) {
+	if (type != &TYPE_INT && type != &TYPE_FLOAT) {
 		FMT_ERROR(ERR_POW_BAD_TYPE, { .type = expr->rhs->type });
 
 		return false;
@@ -237,17 +251,29 @@ static bool validate_pow_expr(const AstNodeExpr *expr) {
 }
 
 static bool validate_bool_expr(const AstNodeExpr *expr) {
-	if (expr->rhs->type != TYPE_BOOL) {
+	if (expr->rhs->type != &TYPE_BOOL) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
 			{
 				.loc = find_expr_node_location(expr),
-				.type = TYPE_BOOL
+				.type = &TYPE_BOOL
 			},
 			{ .type = expr->rhs->type }
 		);
 
 		return false;
 	}
+	return true;
+}
+
+static bool validate_ref_expr(const AstNodeExpr *expr) {
+	if (expr->rhs->oper != EXPR_IDENTIFIER) {
+		FMT_ERROR(ERR_REF_IDENT_ONLY, {
+			.loc = find_expr_node_location(expr)
+		});
+
+		return false;
+	}
+
 	return true;
 }
 
@@ -331,5 +357,5 @@ static bool validate_func_call_params(AstNodeFunctionCall *func_call) {
 }
 
 static bool is_binary_expr(ExprType oper) {
-	return !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT);
+	return !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT || oper == EXPR_REF);
 }

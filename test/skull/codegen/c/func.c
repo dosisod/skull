@@ -15,7 +15,7 @@
 static bool test_no_arg_func_decl(void) {
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
-		.return_type = TYPE_VOID,
+		.return_type = &TYPE_VOID,
 		.is_external = true
 	};
 
@@ -31,11 +31,11 @@ static bool test_no_arg_func_decl(void) {
 }
 
 static bool test_single_arg_func_decl(void) {
-	Variable *param = make_variable(TYPE_INT, U"x", true);
+	Variable *param = make_variable(&TYPE_INT, U"x", true);
 
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
-		.return_type = TYPE_VOID,
+		.return_type = &TYPE_VOID,
 		.is_external = true,
 		.num_params = 1,
 		.params = (AstNodeFunctionParam*[]){
@@ -56,12 +56,12 @@ static bool test_single_arg_func_decl(void) {
 }
 
 static bool test_many_arg_func_decl(void) {
-	Variable *param_x = make_variable(TYPE_INT, U"x", true);
-	Variable *param_y = make_variable(TYPE_INT, U"y", true);
+	Variable *param_x = make_variable(&TYPE_INT, U"x", true);
+	Variable *param_y = make_variable(&TYPE_INT, U"y", true);
 
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
-		.return_type = TYPE_VOID,
+		.return_type = &TYPE_VOID,
 		.is_external = true,
 		.num_params = 2,
 		.params = (AstNodeFunctionParam*[]){
@@ -86,7 +86,7 @@ static bool test_many_arg_func_decl(void) {
 static bool test_func_with_body(void) {
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
-		.return_type = TYPE_VOID
+		.return_type = &TYPE_VOID
 	};
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, false, false);
@@ -105,7 +105,7 @@ static bool test_func_static(void) {
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
 		.is_export = true,
-		.return_type = TYPE_VOID
+		.return_type = &TYPE_VOID
 	};
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, false, true);

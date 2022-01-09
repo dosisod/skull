@@ -1,8 +1,7 @@
 #pragma once
 
 #include "skull/parse/ast_node.h"
-
-typedef const char * Type;
+#include "skull/semantic/types.h"
 
 /*
 Stores a function declaration.
@@ -29,10 +28,10 @@ typedef struct FunctionDeclaration {
 	void *type;
 
 	unsigned short num_params;
-	Type *param_types;
+	Type **param_types;
 	char32_t **param_names;
 
-	Type return_type;
+	Type *return_type;
 
 	_Bool was_called : 1;
 	_Bool is_external : 1;

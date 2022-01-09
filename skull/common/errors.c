@@ -112,7 +112,8 @@ static const char *errors[] = {
 	[ERR_NO_MUT_TYPE_ALIAS] = "type alias cannot be mutable",
 	[ERR_NO_TYPE_EXPR] = "type aliases cannot be used in expressions",
 	[ERR_NO_DOUBLE_UNARY] = "cannot use unary operator twice",
-	[ERR_UNEXPECTED_UNARY_EXPR] = "unexpected unary operator"
+	[ERR_UNEXPECTED_UNARY_EXPR] = "unexpected unary operator",
+	[ERR_REF_IDENT_ONLY] = "cannot take reference of non-identifier"
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);
@@ -233,7 +234,7 @@ void message_stringify(Message *const msg) {
 	if (msg->var)
 		msg->real = strdup(msg->var->name);
 	else if (msg->type)
-		msg->real = strdup(msg->type);
+		msg->real = strdup(msg->type->name);
 	else if (msg->str32)
 		msg->real = c32stombs(msg->str32, NULL);
 	else if (msg->i)

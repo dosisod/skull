@@ -34,7 +34,7 @@ static bool test_make_scope(void) {
 
 static bool test_scope_find_name(void) {
 	SEMANTIC_STATE.scope = make_scope();
-	Variable *var = make_variable(TYPE_INT, U"x", true);
+	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
 	scope_add_var(symbol_wrapper(var));
 
@@ -48,7 +48,7 @@ static bool test_scope_find_name(void) {
 
 static bool test_add_vars_to_scope(void) {
 	SEMANTIC_STATE.scope = make_scope();
-	Variable *var = make_variable(TYPE_INT, U"x", true);
+	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
 	scope_add_var(symbol_wrapper(var));
 
@@ -61,8 +61,8 @@ static bool test_add_vars_to_scope(void) {
 
 static bool test_cannot_add_same_varname_to_scope(void) {
 	SEMANTIC_STATE.scope = make_scope();
-	Variable *var1 = make_variable(TYPE_INT, U"x", true);
-	Variable *var2 = make_variable(TYPE_INT, U"x", true);
+	Variable *var1 = make_variable(&TYPE_INT, U"x", true);
+	Variable *var2 = make_variable(&TYPE_INT, U"x", true);
 
 	ASSERT_TRUTHY(scope_add_var(symbol_wrapper(var1)));
 

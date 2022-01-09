@@ -32,10 +32,11 @@ static Operation gen_expr_add, gen_expr_sub, gen_expr_mult,
 static Expr gen_expr_const(const AstNodeExpr *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr gen_expr_identifier(const AstNodeExpr *);
+static Expr gen_expr_ref(const AstNodeExpr *);
 static Operation *expr_type_to_func(ExprType);
 
 static Expr create_and_call_builtin_oper(
-	Type,
+	Type *,
 	LLVMTypeRef,
 	const char *,
 	LLVMValueRef,
@@ -53,6 +54,8 @@ Expr gen_expr(const AstNodeExpr *const expr) {
 			return gen_expr_const(expr);
 		case EXPR_FUNC:
 			return gen_expr_func_call(expr->lhs.func_call);
+		case EXPR_REF:
+			return gen_expr_ref(expr);
 		default: break;
 	}
 
@@ -96,19 +99,19 @@ Make a simple expression (const literal) from `expr`.
 static Expr gen_expr_const(const AstNodeExpr *expr) {
 	LLVMValueRef value = NULL;
 
-	if (expr->type == TYPE_INT) {
+	if (expr->type == &TYPE_INT) {
 		value = LLVM_INT(expr->value._int);
 	}
-	else if (expr->type == TYPE_FLOAT) {
+	else if (expr->type == &TYPE_FLOAT) {
 		value = LLVM_FLOAT(expr->value._float);
 	}
-	else if (expr->type == TYPE_BOOL) {
+	else if (expr->type == &TYPE_BOOL) {
 		value = LLVM_BOOL(expr->value._bool);
 	}
-	else if (expr->type == TYPE_RUNE) {
+	else if (expr->type == &TYPE_RUNE) {
 		value = LLVM_RUNE(expr->value.rune);
 	}
-	else if (expr->type == TYPE_STR) {
+	else if (expr->type == &TYPE_STR) {
 		value = LLVMBuildBitCast(
 			SKULL_STATE_LLVM.builder,
 			LLVMBuildGlobalString(
@@ -116,7 +119,7 @@ static Expr gen_expr_const(const AstNodeExpr *expr) {
 				expr->value.str,
 				""
 			),
-			type_to_llvm_type(TYPE_STR),
+			type_to_llvm_type(&TYPE_STR),
 			""
 		);
 	}
@@ -139,13 +142,13 @@ static Expr gen_expr_math_oper(
 	LLVMBuildX int_func,
 	LLVMBuildX float_func
 ) {
-	if (lhs->type == TYPE_INT)
+	if (lhs->type == &TYPE_INT)
 		return (Expr){
 			.value = int_func(SKULL_STATE_LLVM.builder, lhs->value, rhs, ""),
 			.type = lhs->type
 		};
 
-	if (lhs->type == TYPE_FLOAT)
+	if (lhs->type == &TYPE_FLOAT)
 		return (Expr){
 			.value = float_func(SKULL_STATE_LLVM.builder, lhs->value, rhs, ""),
 			.type = lhs->type
@@ -193,7 +196,7 @@ static Expr gen_expr_mod(const Expr *lhs, LLVMValueRef rhs) {
 Return expression for left shift of `lhs` and `rhs`.
 */
 static Expr gen_expr_lshift(const Expr *lhs, LLVMValueRef rhs) {
-	if (lhs->type == TYPE_INT)
+	if (lhs->type == &TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildShl(
 				SKULL_STATE_LLVM.builder,
@@ -201,7 +204,7 @@ static Expr gen_expr_lshift(const Expr *lhs, LLVMValueRef rhs) {
 				rhs,
 				""
 			),
-			.type = TYPE_INT
+			.type = &TYPE_INT
 		};
 
 	assert(false);
@@ -211,7 +214,7 @@ static Expr gen_expr_lshift(const Expr *lhs, LLVMValueRef rhs) {
 Return expression for logical right shift of `lhs` and `rhs`.
 */
 static Expr gen_expr_rshift(const Expr *lhs, LLVMValueRef rhs) {
-	if (lhs->type == TYPE_INT)
+	if (lhs->type == &TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildLShr(
 				SKULL_STATE_LLVM.builder,
@@ -219,7 +222,7 @@ static Expr gen_expr_rshift(const Expr *lhs, LLVMValueRef rhs) {
 				rhs,
 				""
 			),
-			.type = TYPE_INT
+			.type = &TYPE_INT
 		};
 
 	assert(false);
@@ -231,10 +234,10 @@ Return expression for taking `lhs` to the power of `rhs`.
 static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs) {
 	const char *func_name = NULL;
 
-	if (lhs->type == TYPE_INT)
+	if (lhs->type == &TYPE_INT)
 		func_name = "_int_pow";
 
-	else if (lhs->type == TYPE_FLOAT)
+	else if (lhs->type == &TYPE_FLOAT)
 		func_name = "_float_pow";
 
 	return create_and_call_builtin_oper(
@@ -247,6 +250,16 @@ static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs) {
 }
 
 /*
+Return reference to an expression `expr`.
+*/
+static Expr gen_expr_ref(const AstNodeExpr *expr) {
+	return (Expr){
+		.value = expr->rhs->var->ref,
+		.type = expr->rhs->var->type->inner
+	};
+}
+
+/*
 Return expression for result of not operator for `rhs`.
 */
 static Expr gen_expr_not(const Expr *lhs, LLVMValueRef rhs) {
@@ -254,7 +267,7 @@ static Expr gen_expr_not(const Expr *lhs, LLVMValueRef rhs) {
 
 	return (Expr){
 		.value = LLVMBuildNot(SKULL_STATE_LLVM.builder, rhs, ""),
-		.type = TYPE_BOOL
+		.type = &TYPE_BOOL
 	};
 }
 
@@ -265,7 +278,7 @@ static Expr gen_expr_unary_neg(const Expr *lhs, LLVMValueRef rhs) {
 	return gen_expr_math_oper(
 		&(Expr){
 			.type = lhs->type,
-			.value = lhs->type == TYPE_INT ?
+			.value = lhs->type == &TYPE_INT ?
 				LLVM_INT(0) :
 				LLVM_FLOAT(0)
 		},
@@ -279,9 +292,9 @@ static Expr gen_expr_unary_neg(const Expr *lhs, LLVMValueRef rhs) {
 Return expression for result of is operator for `lhs` and `rhs`.
 */
 static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
-	Type type = lhs->type;
+	Type *type = lhs->type;
 
-	if (type == TYPE_INT || type == TYPE_RUNE || type == TYPE_BOOL)
+	if (type == &TYPE_INT || type == &TYPE_RUNE || type == &TYPE_BOOL)
 		return (Expr){
 			.value = LLVMBuildICmp(
 				SKULL_STATE_LLVM.builder,
@@ -290,10 +303,10 @@ static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
 				rhs,
 				""
 			),
-			.type = TYPE_BOOL
+			.type = &TYPE_BOOL
 		};
 
-	if (type == TYPE_FLOAT)
+	if (type == &TYPE_FLOAT)
 		return (Expr){
 			.value = LLVMBuildFCmp(
 				SKULL_STATE_LLVM.builder,
@@ -302,10 +315,10 @@ static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
 				rhs,
 				""
 			),
-			.type = TYPE_BOOL
+			.type = &TYPE_BOOL
 		};
 
-	if (type == TYPE_STR)
+	if (type == &TYPE_STR)
 		return gen_expr_is_str(lhs->value, rhs);
 
 	assert(false);
@@ -316,8 +329,8 @@ Return expression for string-is operator against `lhs` and `rhs`.
 */
 static Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs) {
 	return create_and_call_builtin_oper(
-		TYPE_BOOL,
-		type_to_llvm_type(TYPE_STR),
+		&TYPE_BOOL,
+		type_to_llvm_type(&TYPE_STR),
 		"_strcmp",
 		lhs,
 		rhs
@@ -330,7 +343,7 @@ Create a function called `name` (if it does not exist) which returns type
 with the `lhs` and `rhs` operands.
 */
 static Expr create_and_call_builtin_oper(
-	Type rtype,
+	Type *rtype,
 	LLVMTypeRef type,
 	const char *name,
 	LLVMValueRef lhs,
@@ -394,7 +407,7 @@ static Expr gen_expr_relational_oper(
 	LLVMIntPredicate int_pred,
 	LLVMRealPredicate float_pred
 ) {
-	if (lhs->type == TYPE_INT)
+	if (lhs->type == &TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildICmp(
 				SKULL_STATE_LLVM.builder,
@@ -403,10 +416,10 @@ static Expr gen_expr_relational_oper(
 				rhs,
 				""
 			),
-			.type = TYPE_BOOL
+			.type = &TYPE_BOOL
 		};
 
-	if (lhs->type == TYPE_FLOAT)
+	if (lhs->type == &TYPE_FLOAT)
 		return (Expr){
 			.value = LLVMBuildFCmp(
 				SKULL_STATE_LLVM.builder,
@@ -415,7 +428,7 @@ static Expr gen_expr_relational_oper(
 				rhs,
 				""
 			),
-			.type = TYPE_BOOL
+			.type = &TYPE_BOOL
 		};
 
 	assert(false);

@@ -171,35 +171,35 @@
 
 #define AST_NODE_CONST_INT(_value) \
 	&(AstNodeExpr) { \
-		.type = TYPE_INT, \
+		.type = &TYPE_INT, \
 		.value._int = (_value), \
 		.oper = EXPR_CONST \
 	}
 
 #define AST_NODE_CONST_FLOAT(_value) \
 	&(AstNodeExpr) { \
-		.type = TYPE_FLOAT , \
+		.type = &TYPE_FLOAT , \
 		.value._float = (_value), \
 		.oper = EXPR_CONST \
 	}
 
 #define AST_NODE_CONST_BOOL(_value) \
 	&(AstNodeExpr) { \
-		.type = TYPE_BOOL, \
+		.type = &TYPE_BOOL, \
 		.value._bool = (_value), \
 		.oper = EXPR_CONST \
 	}
 
 #define AST_NODE_CONST_RUNE(_value) \
 	&(AstNodeExpr) { \
-		.type = TYPE_RUNE, \
+		.type = &TYPE_RUNE, \
 		.value.rune = (_value), \
 		.oper = EXPR_CONST \
 	}
 
 #define AST_NODE_CONST_STR(_value) \
 	&(AstNodeExpr) { \
-		.type = TYPE_STR, \
+		.type = &TYPE_STR, \
 		.value.str = (_value), \
 		.oper = EXPR_CONST \
 	}
@@ -211,19 +211,19 @@
 	}
 
 #define SET_EXPR_VALUE_INT(_expr, _value) \
-	(_expr)->type = TYPE_INT; \
+	(_expr)->type = &TYPE_INT; \
 	(_expr)->value._int = (_value)
 
 #define SET_EXPR_VALUE_FLOAT(_expr, _value) \
-	(_expr)->type = TYPE_FLOAT; \
+	(_expr)->type = &TYPE_FLOAT; \
 	(_expr)->value._float = (_value)
 
 #define SET_EXPR_VALUE_BOOL(_expr, _value) \
-	(_expr)->type = TYPE_BOOL; \
+	(_expr)->type = &TYPE_BOOL; \
 	(_expr)->value._bool = (_value)
 
 #define SET_EXPR_VALUE_STR(_expr, _value) \
-	(_expr)->type = TYPE_STR; \
+	(_expr)->type = &TYPE_STR; \
 	(_expr)->value.str = (char[]){_value}
 
 typedef struct AstNode AstNode;

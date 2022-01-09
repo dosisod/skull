@@ -597,6 +597,15 @@ NULL,
 "./test/sh/error/oper/check_unary_oper.sk: Compilation error: line 1 column 11: unexpected unary operator\n"
 );
 
+pass |= e2e_wrapper(
+"x := &1",
+TEST_DIR"/error/oper/check_non_ident_ref.sk",
+
+NULL,
+
+"./test/sh/error/oper/check_non_ident_ref.sk: Compilation error: line 1 column 7: cannot take reference of non-identifier\n"
+);
+
 	return pass;
 }
 

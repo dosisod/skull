@@ -313,6 +313,17 @@ static bool test_check_for_closing_double_quote(void) {
 	PASS
 }
 
+static bool test_auto_classify_ref_token(void) {
+	Token *t = tokenize(U"&");
+
+	ASSERT_TRUTHY(t);
+	ASSERT_EQUAL(t->type, TOKEN_OPER_REF);
+
+	free_tokens(t);
+
+	PASS
+}
+
 void tokenizer_test_self(bool *pass) {
 	RUN_ALL(
 		test_tokenize_single_token,
@@ -335,7 +346,8 @@ void tokenizer_test_self(bool *pass) {
 		test_invalid_comment_start,
 		test_check_for_missing_block_comment,
 		test_check_for_closing_single_quote,
-		test_check_for_closing_double_quote
+		test_check_for_closing_double_quote,
+		test_auto_classify_ref_token
 	)
 
 	free_errors();

@@ -204,6 +204,7 @@ static ExprType token_type_to_expr_oper_type(TokenType type) {
 		case TOKEN_OPER_XOR: return EXPR_XOR;
 		case TOKEN_OPER_OR: return EXPR_OR;
 		case TOKEN_OPER_NOT: return EXPR_NOT;
+		case TOKEN_OPER_REF: return EXPR_REF;
 		default: return EXPR_UNKNOWN;
 	}
 }
@@ -610,7 +611,12 @@ Return whether `oper` is a unary expr or not. Since `EXPR_SUB` and
 can be considered unary, if it would make since in context.
 */
 static bool is_unary_oper(ExprType oper) {
-	return oper == EXPR_SUB || oper == EXPR_UNARY_NEG || oper == EXPR_NOT;
+	return (
+		oper == EXPR_SUB ||
+		oper == EXPR_UNARY_NEG ||
+		oper == EXPR_NOT ||
+		oper == EXPR_REF
+	);
 }
 
 /*
@@ -1028,6 +1034,7 @@ const Token *find_expr_node_token(const AstNodeExpr *expr) {
 			return expr->lhs.func_call->func_name_tok;
 		case EXPR_UNARY_NEG:
 		case EXPR_NOT:
+		case EXPR_REF:
 			return find_expr_node_token(expr->rhs);
 		default: return find_expr_node_token(expr->lhs.expr);
 	}

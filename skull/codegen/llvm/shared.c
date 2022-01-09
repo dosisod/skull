@@ -28,7 +28,7 @@ void setup_llvm_state(void) {
 	);
 	state->ctx = ctx;
 
-	LLVMTypeRef main_func_type = type_to_llvm_func_type(TYPE_INT, NULL, 0);
+	LLVMTypeRef main_func_type = type_to_llvm_func_type(&TYPE_INT, NULL, 0);
 
 	LLVMValueRef main_func = LLVMAddFunction(
 		main_module,

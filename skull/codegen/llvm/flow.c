@@ -29,7 +29,7 @@ Build an unreachable statement.
 Expr gen_stmt_unreachable(void) {
 	return (Expr){
 		.value = LLVMBuildUnreachable(SKULL_STATE_LLVM.builder),
-		.type = TYPE_VOID
+		.type = &TYPE_VOID
 	};
 }
 
@@ -47,7 +47,7 @@ void gen_stmt_noop(const Location *location) {
 		LLVM_INT(0),
 		LLVMBuildAlloca(
 			SKULL_STATE_LLVM.builder,
-			type_to_llvm_type(TYPE_INT),
+			type_to_llvm_type(&TYPE_INT),
 			"noop"
 		)
 	);
@@ -62,7 +62,7 @@ Expr gen_stmt_return(const AstNode *node) {
 	if (!node->expr) {
 		return (Expr){
 			.value = LLVMBuildRetVoid(SKULL_STATE_LLVM.builder),
-			.type = TYPE_VOID
+			.type = &TYPE_VOID
 		};
 	}
 
@@ -228,7 +228,7 @@ Expr gen_stmt_break(void) {
 			SKULL_STATE_LLVM.builder,
 			SKULL_STATE_LLVM.current_while_end
 		),
-		.type = TYPE_VOID
+		.type = &TYPE_VOID
 	};
 }
 
@@ -238,7 +238,7 @@ Expr gen_stmt_continue(void) {
 			SKULL_STATE_LLVM.builder,
 			SKULL_STATE_LLVM.current_while_cond
 		),
-		.type = TYPE_VOID
+		.type = &TYPE_VOID
 	};
 }
 

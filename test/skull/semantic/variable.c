@@ -9,9 +9,9 @@
 #include "test/testing.h"
 
 static bool test_create_variable(void) {
-	Variable *var = make_variable(TYPE_INT, U"x", true);
+	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
-	ASSERT_EQUAL(strcmp(var->type, TYPE_INT), 0);
+	ASSERT_EQUAL(strcmp(var->type->name, TYPE_INT.name), 0);
 	ASSERT_EQUAL(strcmp(var->name, "x"), 0);
 	ASSERT_TRUTHY(var->is_const);
 	ASSERT_FALSEY(var->ref);
@@ -28,7 +28,7 @@ static bool test_create_variable_with_invalid_type_fails(void) {
 }
 
 static bool test_make_variable_with_invalid_name_fails(void) {
-	Variable *var = make_variable(TYPE_INT, U"1nvalid", false);
+	Variable *var = make_variable(&TYPE_INT, U"1nvalid", false);
 
 	ASSERT_FALSEY(var);
 
@@ -38,7 +38,7 @@ static bool test_make_variable_with_invalid_name_fails(void) {
 }
 
 static bool test_free_variable(void) {
-	free_variable(make_variable(TYPE_INT, U"x", true));
+	free_variable(make_variable(&TYPE_INT, U"x", true));
 
 	PASS
 }

@@ -14,7 +14,7 @@
 
 #include "skull/semantic/func.h"
 
-static Type validate_return_type(char *);
+static Type *validate_return_type(char *);
 static bool validate_func_params(const AstNode *, FunctionDeclaration *);
 
 bool validate_stmt_func_decl(const AstNode *node) {
@@ -32,7 +32,9 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	Type return_type = validate_return_type(node->func_proto->return_type_name);
+	Type *return_type = validate_return_type(
+		node->func_proto->return_type_name
+	);
 	if (!return_type) return false;
 
 	FunctionDeclaration *func = Calloc(1, sizeof(FunctionDeclaration));
@@ -90,12 +92,12 @@ bool post_validate_stmt_func_decl(const AstNode *node) {
 		terminal_node->type == AST_NODE_RETURN &&
 		!!terminal_node->expr;
 
-	if (!returned_value && func->return_type != TYPE_VOID) {
+	if (!returned_value && func->return_type != &TYPE_VOID) {
 		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(func->name) });
 
 		return false;
 	}
-	if (returned_value && func->return_type == TYPE_VOID) {
+	if (returned_value && func->return_type == &TYPE_VOID) {
 		FMT_ERROR(ERR_NO_VOID_RETURN, { .real = strdup(func->name) });
 
 		return false;
@@ -172,8 +174,8 @@ static bool validate_func_params(
 	return true;
 }
 
-static Type validate_return_type(char *type_name) {
-	Type type = type_name ? find_type(type_name) : TYPE_VOID;
+static Type *validate_return_type(char *type_name) {
+	Type *type = type_name ? find_type(type_name) : &TYPE_VOID;
 
 	if (type_name && !type) {
 		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = type_name });

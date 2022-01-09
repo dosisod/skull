@@ -11,7 +11,7 @@
 #include "test/testing.h"
 
 static bool test_find_type(void) {
-	ASSERT_EQUAL(find_type("Int"), TYPE_INT);
+	ASSERT_EQUAL(find_type("Int"), &TYPE_INT);
 
 	PASS
 }

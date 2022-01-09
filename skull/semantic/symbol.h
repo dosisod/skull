@@ -1,9 +1,10 @@
 #pragma once
 
+#include "skull/semantic/types.h"
+
 typedef struct Location Location;
 typedef struct Variable Variable;
 typedef struct FunctionDeclaration FunctionDeclaration;
-typedef const char * Type;
 
 typedef enum {
 	SYMBOL_UNKNOWN,
@@ -14,7 +15,7 @@ typedef enum {
 
 typedef struct Symbol {
 	char *name;
-	Type expr_type;
+	Type *expr_type;
 	const Location *location;
 	SymbolType type;
 	union {

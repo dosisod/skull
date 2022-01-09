@@ -41,6 +41,7 @@ CExpr gen_expr_c(const AstNodeExpr *expr) {
 			return gen_expr_binary_c(expr);
 		case EXPR_UNARY_NEG:
 		case EXPR_NOT:
+		case EXPR_REF:
 			return gen_expr_unary_c(expr);
 		case EXPR_FUNC:
 			return gen_expr_func_call_c(expr->lhs.func_call);
@@ -50,7 +51,7 @@ CExpr gen_expr_c(const AstNodeExpr *expr) {
 }
 
 static CExpr gen_expr_const_c(const AstNodeExpr *expr) {
-	if (expr->type == TYPE_INT) {
+	if (expr->type == &TYPE_INT) {
 		const int64_t i = expr->value._int;
 
 		// only add L suffix if value is larger then a C "int"
@@ -60,20 +61,20 @@ static CExpr gen_expr_const_c(const AstNodeExpr *expr) {
 
 		return uvsnprintf("%li", i);
 	}
-	if (expr->type == TYPE_FLOAT) {
+	if (expr->type == &TYPE_FLOAT) {
 		if (!expr->value._int) return strdup("0.0");
 
 		// here we are using the hex representation of the float to guarantee
 		// that there is no loss in percision when stringifying.
 		return uvsnprintf("%a", expr->value._float);
 	}
-	if (expr->type == TYPE_BOOL) {
+	if (expr->type == &TYPE_BOOL) {
 		return strdup(expr->value._bool ? "1" : "0");
 	}
-	if (expr->type == TYPE_RUNE) {
+	if (expr->type == &TYPE_RUNE) {
 		return uvsnprintf("0x%lX", expr->value.rune);
 	}
-	if (expr->type == TYPE_STR) {
+	if (expr->type == &TYPE_STR) {
 		return uvsnprintf("\"%s\"", expr->value.str);
 	}
 
@@ -92,7 +93,7 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 		case EXPR_LSHIFT: fmt = "(%s << %s)"; break;
 		case EXPR_RSHIFT: fmt = "(%s >> %s)"; break;
 		case EXPR_IS: {
-			if (expr->lhs.expr->type == TYPE_STR) {
+			if (expr->lhs.expr->type == &TYPE_STR) {
 				fmt = "_strcmp(%s, %s)";
 				SKULL_STATE_C.called_strcmp = true;
 			}
@@ -100,7 +101,7 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 			break;
 		}
 		case EXPR_ISNT: {
-			if (expr->lhs.expr->type == TYPE_STR) {
+			if (expr->lhs.expr->type == &TYPE_STR) {
 				fmt = "!_strcmp(%s, %s)";
 				SKULL_STATE_C.called_strcmp = true;
 			}
@@ -115,11 +116,11 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 		case EXPR_OR: fmt = "(%s || %s)"; break;
 		case EXPR_XOR: fmt = "(%s ^ %s)"; break;
 		case EXPR_POW: {
-			if (expr->type == TYPE_INT) {
+			if (expr->type == &TYPE_INT) {
 				fmt = "_int_pow(%s, %s)";
 				SKULL_STATE_C.called_int_pow = true;
 			}
-			else if (expr->type == TYPE_FLOAT) {
+			else if (expr->type == &TYPE_FLOAT) {
 				fmt = "_float_pow(%s, %s)";
 				SKULL_STATE_C.called_float_pow = true;
 			}
@@ -144,6 +145,7 @@ static CExpr gen_expr_unary_c(const AstNodeExpr *expr) {
 	switch (expr->oper) {
 		case EXPR_UNARY_NEG: fmt = "-(%s)"; break;
 		case EXPR_NOT: fmt = "!%s"; break;
+		case EXPR_REF: fmt = "&%s"; break;
 		default: break;
 	}
 

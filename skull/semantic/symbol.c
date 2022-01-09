@@ -95,7 +95,7 @@ static Symbol find_symbol(char *name) {
 		};
 	}
 
-	Type type = find_type(name);
+	Type *type = find_type(name);
 	if (type) {
 		return (Symbol){
 			.name = name,

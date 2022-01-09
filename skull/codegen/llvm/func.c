@@ -164,7 +164,7 @@ static void gen_function_def(
 	if (SEMANTIC_STATE.scope)
 		SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
-	if (func->return_type == TYPE_VOID && returned.type != TYPE_VOID)
+	if (func->return_type == &TYPE_VOID && returned.type != &TYPE_VOID)
 		LLVMBuildRetVoid(SKULL_STATE_LLVM.builder);
 
 	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, current_block);

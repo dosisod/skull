@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 #include "skull/parse/token.h"
+#include "skull/semantic/types.h"
 
 typedef enum {
 	AST_NODE_UNKNOWN,
@@ -36,7 +37,6 @@ typedef struct AstNodeFunctionCall AstNodeFunctionCall;
 typedef struct AstNodeExpr AstNodeExpr;
 typedef struct FunctionDeclaration FunctionDeclaration;
 typedef struct Variable Variable;
-typedef const char * Type;
 
 /*
 An `AstNode` abstractly stores data about parsed code.
@@ -153,7 +153,8 @@ typedef enum {
 	EXPR_XOR,
 	EXPR_IDENTIFIER,
 	EXPR_CONST,
-	EXPR_FUNC
+	EXPR_FUNC,
+	EXPR_REF
 } ExprType;
 
 /*
@@ -175,7 +176,7 @@ typedef struct AstNodeExpr {
 		char32_t rune;
 		char *str;
 	} value;
-	Type type;
+	Type *type;
 
 	AstNodeExpr *rhs;
 

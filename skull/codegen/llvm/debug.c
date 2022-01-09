@@ -23,7 +23,7 @@
 #include "skull/codegen/llvm/debug.h"
 
 
-static LLVMMetadataRef type_to_llvm_di_type(const Type);
+static LLVMMetadataRef type_to_llvm_di_type(const Type *);
 static void alloc_debug_function_param(Variable *);
 static void add_llvm_global_var_def_debug_info(const Variable *);
 static void add_llvm_local_var_def_debug_info(const Variable *);
@@ -40,6 +40,11 @@ LLVMMetadataRef DI_TYPE_INT;
 LLVMMetadataRef DI_TYPE_FLOAT;
 LLVMMetadataRef DI_TYPE_RUNE;
 LLVMMetadataRef DI_TYPE_STR;
+LLVMMetadataRef DI_TYPE_BOOL_REF;
+LLVMMetadataRef DI_TYPE_INT_REF;
+LLVMMetadataRef DI_TYPE_FLOAT_REF;
+LLVMMetadataRef DI_TYPE_RUNE_REF;
+LLVMMetadataRef DI_TYPE_STR_REF;
 
 LLVMDIBuilderRef setup_debug_info(
 	const char *filename,
@@ -48,11 +53,17 @@ LLVMDIBuilderRef setup_debug_info(
 	LLVMDIBuilderRef di_builder = LLVMCreateDIBuilder(module);
 	DEBUG_INFO.builder = di_builder;
 
-	DI_TYPE_BOOL = type_to_llvm_di_type(TYPE_BOOL);
-	DI_TYPE_INT = type_to_llvm_di_type(TYPE_INT);
-	DI_TYPE_FLOAT = type_to_llvm_di_type(TYPE_FLOAT);
-	DI_TYPE_RUNE = type_to_llvm_di_type(TYPE_RUNE);
-	DI_TYPE_STR = type_to_llvm_di_type(TYPE_STR);
+	DI_TYPE_BOOL = type_to_llvm_di_type(&TYPE_BOOL);
+	DI_TYPE_INT = type_to_llvm_di_type(&TYPE_INT);
+	DI_TYPE_FLOAT = type_to_llvm_di_type(&TYPE_FLOAT);
+	DI_TYPE_RUNE = type_to_llvm_di_type(&TYPE_RUNE);
+	DI_TYPE_STR = type_to_llvm_di_type(&TYPE_STR);
+
+	DI_TYPE_BOOL_REF = type_to_llvm_di_type(&TYPE_BOOL_REF);
+	DI_TYPE_INT_REF = type_to_llvm_di_type(&TYPE_INT_REF);
+	DI_TYPE_FLOAT_REF  = type_to_llvm_di_type(&TYPE_FLOAT_REF);
+	DI_TYPE_RUNE_REF = type_to_llvm_di_type(&TYPE_RUNE_REF);
+	DI_TYPE_STR_REF = type_to_llvm_di_type(&TYPE_STR_REF);
 
 	char cwd[PATH_MAX];
 
@@ -132,8 +143,8 @@ LLVMDIBuilderRef setup_debug_info(
 	return di_builder;
 }
 
-LLVMMetadataRef type_to_llvm_di_type(const Type type) {
-	if (type == TYPE_STR) {
+LLVMMetadataRef type_to_llvm_di_type(const Type *type) {
+	if (type == &TYPE_STR) {
 		return LLVMDIBuilderCreatePointerType(
 			DEBUG_INFO.builder,
 			LLVMDIBuilderCreateBasicType(
@@ -146,32 +157,44 @@ LLVMMetadataRef type_to_llvm_di_type(const Type type) {
 			64, // size in bits
 			0, // align in bits
 			0, // address space
-			"Str", 3
+			type->name, strlen(type->name)
 		);
+	}
+	if (is_reference(type)) {
+		LLVMMetadataRef md = LLVMDIBuilderCreatePointerType(
+			DEBUG_INFO.builder,
+			type_to_llvm_di_type(type->inner),
+			64,
+			0,
+			0,
+			type->name, strlen(type->name)
+		);
+
+		return md;
 	}
 
 	unsigned bits = 0;
 	DW_ATE encoding = DW_ATE_signed;
 
-	if (type == TYPE_BOOL) {
+	if (type == &TYPE_BOOL) {
 		bits = 1;
 		encoding = DW_ATE_boolean;
 	}
-	else if (type == TYPE_INT) {
+	else if (type == &TYPE_INT) {
 		bits = 64;
 	}
-	else if (type == TYPE_FLOAT) {
+	else if (type == &TYPE_FLOAT) {
 		bits = sizeof(double) * CHAR_BIT;
 		encoding = DW_ATE_float;
 	}
-	else if (type == TYPE_RUNE) {
+	else if (type == &TYPE_RUNE) {
 		bits = 32;
 		encoding = DW_ATE_UTF;
 	}
 
 	return LLVMDIBuilderCreateBasicType(
 		DEBUG_INFO.builder,
-		type, strlen(type),
+		type->name, strlen(type->name),
 		bits,
 		encoding,
 		LLVMDIFlagZero
@@ -193,12 +216,18 @@ LLVMMetadataRef make_llvm_debug_location(const Location *location) {
 	);
 }
 
-LLVMMetadataRef __attribute__((pure)) type_to_di_type(Type type) {
-	if (type == TYPE_BOOL) return DI_TYPE_BOOL;
-	if (type == TYPE_INT) return DI_TYPE_INT;
-	if (type == TYPE_FLOAT) return DI_TYPE_FLOAT;
-	if (type == TYPE_RUNE) return DI_TYPE_RUNE;
-	if (type == TYPE_STR) return DI_TYPE_STR;
+LLVMMetadataRef __attribute__((pure)) type_to_di_type(Type *type) {
+	if (type == &TYPE_BOOL) return DI_TYPE_BOOL;
+	if (type == &TYPE_INT) return DI_TYPE_INT;
+	if (type == &TYPE_FLOAT) return DI_TYPE_FLOAT;
+	if (type == &TYPE_RUNE) return DI_TYPE_RUNE;
+	if (type == &TYPE_STR) return DI_TYPE_STR;
+
+	if (type == &TYPE_BOOL_REF) return DI_TYPE_BOOL_REF;
+	if (type == &TYPE_INT_REF) return DI_TYPE_INT_REF;
+	if (type == &TYPE_FLOAT_REF) return DI_TYPE_FLOAT_REF;
+	if (type == &TYPE_RUNE_REF) return DI_TYPE_RUNE_REF;
+	if (type == &TYPE_STR_REF) return DI_TYPE_STR_REF;
 
 	return NULL;
 }

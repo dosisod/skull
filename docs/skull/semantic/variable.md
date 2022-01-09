@@ -2,7 +2,7 @@
 
 ```c
 typedef struct Variable {
-	Type type;
+	Type *type;
 	char *name;
 	_Bool is_const : 1;
 	_Bool is_const_lit : 1;
@@ -47,7 +47,7 @@ typedef struct Variable {
 > `ref` stores arbitrary data, for use in the backend.
 
 ```c
-Variable *make_variable(Type type, const char32_t *const name, bool is_const)
+Variable *make_variable(Type *type, const char32_t *const name, bool is_const)
 ```
 
 > Make a variable called `name` with type `type`, and make it const if

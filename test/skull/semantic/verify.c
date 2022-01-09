@@ -1189,7 +1189,7 @@ static bool test_validate_is_int(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	PASS;
@@ -1208,7 +1208,7 @@ static bool test_validate_is_float(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	PASS;
@@ -1227,7 +1227,7 @@ static bool test_validate_is_rune(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	PASS;
@@ -1246,7 +1246,7 @@ static bool test_validate_is_bool(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	PASS;
@@ -1265,7 +1265,7 @@ static bool test_validate_is_str(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	free(node->expr->lhs.expr->value.str);
@@ -1286,7 +1286,7 @@ static bool test_validate_isnt_int(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	PASS;
@@ -1305,7 +1305,7 @@ static bool test_validate_isnt_float(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	PASS;
@@ -1324,7 +1324,7 @@ static bool test_validate_isnt_rune(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	PASS;
@@ -1343,7 +1343,7 @@ static bool test_validate_isnt_bool(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	PASS;
@@ -1362,7 +1362,7 @@ static bool test_validate_isnt_str(void) {
 	);
 
 	ASSERT_TRUTHY(validate_expr(node->expr));
-	ASSERT_EQUAL(node->expr->type, TYPE_BOOL);
+	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	free(node->expr->lhs.expr->value.str);

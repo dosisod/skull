@@ -3,7 +3,7 @@
 ```c
 typedef struct {
 	LLVMValueRef value;
-	Type type;
+	Type *type;
 }
 ```
 
@@ -89,6 +89,12 @@ static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs)
 > Return expression for taking `lhs` to the power of `rhs`.
 
 ```c
+static Expr gen_expr_ref(const AstNodeExpr *expr)
+```
+
+> Return reference to an expression `expr`.
+
+```c
 static Expr gen_expr_not(const Expr *lhs, LLVMValueRef rhs)
 ```
 
@@ -113,7 +119,7 @@ static Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for string-is operator against `lhs` and `rhs`.
 
 ```c
-static Expr create_and_call_builtin_oper(Type rtype, LLVMTypeRef type, const char *name, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr create_and_call_builtin_oper(Type *rtype, LLVMTypeRef type, const char *name, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Create a function called `name` (if it does not exist) which returns type

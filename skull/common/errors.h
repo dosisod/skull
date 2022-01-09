@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <uchar.h>
 
+#include "skull/semantic/types.h"
+
 typedef struct Token Token;
 typedef struct Location Location;
 typedef struct Vector Vector;
@@ -81,11 +83,11 @@ typedef enum {
 	ERR_NO_MUT_TYPE_ALIAS = 70,
 	ERR_NO_TYPE_EXPR = 71,
 	ERR_NO_DOUBLE_UNARY = 72,
-	ERR_UNEXPECTED_UNARY_EXPR = 73
+	ERR_UNEXPECTED_UNARY_EXPR = 73,
+	ERR_REF_IDENT_ONLY = 74
 } ErrorCode;
 
 typedef struct Variable Variable;
-typedef const char * Type;
 
 /*
 `Message` allows for passing different objects (strings, types, variables),
@@ -99,7 +101,7 @@ typedef struct {
 	const Token *tok;
 	const Location *loc;
 	const Variable *var;
-	Type type;
+	Type *type;
 	char *real; // copy of string that will be used in final error msg
 
 	size_t i;

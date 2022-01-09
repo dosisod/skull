@@ -20,7 +20,7 @@ static bool is_expr_compatible_with_var(const AstNodeExpr *, const Variable *);
 
 bool validate_stmt_var_def(const AstNode *node) {
 	char *name = token_to_mbs_str(node->token_end->next);
-	Type type = find_type(name);
+	Type *type = find_type(name);
 	free(name);
 
 	if (type) return validate_stmt_type_alias(node);
@@ -75,7 +75,7 @@ Return `NULL` if an error occurred.
 */
 static Variable *node_to_var(const AstNode *const node) {
 	const Token *token = node->var_def->name_tok;
-	Type type = node->var_def->expr->type;
+	Type *type = node->var_def->expr->type;
 
 	if (node->var_def->is_implicit) {
 		if (is_void_func_assign(node)) return NULL;
@@ -131,7 +131,7 @@ static Variable *node_to_var(const AstNode *const node) {
 static bool is_void_func_assign(const AstNode *node) {
 	const AstNodeExpr *expr = node->var_def->expr;
 
-	if (expr->oper == EXPR_FUNC && expr->type == TYPE_VOID) {
+	if (expr->oper == EXPR_FUNC && expr->type == &TYPE_VOID) {
 		FMT_ERROR(ERR_NO_VOID_ASSIGN, {
 			.loc = &expr->lhs.func_call->func_name_tok->location,
 			.real = token_to_mbs_str(node->token)

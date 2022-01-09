@@ -23,23 +23,12 @@ static bool message_stringify_wrapper(Message *error, const char *expected) {
 
 static bool test_fmt_error_stringify(void) {
 	Token *tok = tokenize(U"xxx");
-	Message err_tok = {
-		.tok = tok
-	};
-
-	Variable *var = make_variable(TYPE_INT, U"var_name", true);
-	Message err_var = {
-		.var = var
-	};
-
-	Message err_type = {
-		.type = TYPE_INT
-	};
-
+	Message err_tok = { .tok = tok };
+	Variable *var = make_variable(&TYPE_INT, U"var_name", true);
+	Message err_var = { .var = var };
+	Message err_type = { .type = &TYPE_INT };
 	const char32_t *str = U"some string";
-	Message err_str = {
-		.str32 = str
-	};
+	Message err_str = { .str32 = str };
 
 	ASSERT_TRUTHY(message_stringify_wrapper(&err_tok, "xxx"));
 	ASSERT_TRUTHY(message_stringify_wrapper(&err_var, "var_name"));
