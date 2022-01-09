@@ -15,7 +15,6 @@
 
 static char *fmt_message_internal(ErrorType, ErrorCode, Message []);
 static void message_stringify(Message *const);
-static bool do_show_color(void);
 static void write_error_msg(char *);
 static char *get_location_str(const Message *);
 static char *get_error_msg(const Message[], size_t, ErrorCode);
@@ -118,23 +117,6 @@ static const char *errors[] = {
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);
 
-/*
-Return whether color output should be displayed.
-*/
-static bool do_show_color(void) {
-	static int flag;
-
-	if (BUILD_DATA.color) return 2;
-
-	if (!flag) {
-		const char *use_color = getenv("COLOR");
-
-		flag = (use_color && *use_color == '1') ? 2 : 1;
-	}
-
-	return flag - 1;
-}
-
 void fmt_message(ErrorType type, ErrorCode id, Message msgs[]) {
 	char *msg = fmt_message_internal(type, id, msgs);
 
@@ -168,10 +150,10 @@ static char *fmt_message_internal(
 
 	char *prefix = uvsnprintf(
 		(type == ERROR_FATAL) ?
-			(do_show_color() ?
+			(BUILD_DATA.color ?
 				color_fatal_msg :
 				fatal_msg) :
-			(do_show_color() ?
+			(BUILD_DATA.color ?
 				color_warning_msg :
 				warning_msg),
 		BUILD_DATA.filename

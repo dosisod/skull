@@ -22,6 +22,7 @@
 
 static int usage(void);
 static int version(void);
+static void handle_env(void);
 static void set_bool_flag(bool *, const char *);
 static bool parse_long_option(const char *);
 static char *squash_argv(char *[]);
@@ -31,6 +32,8 @@ static noreturn void bail(int);
 
 int main(int argc, char *argv[]) {
 	if (argc == 1) return usage();
+
+	handle_env();
 
 	int err = handle_args(argc - 1, argv + 1);
 	if (err) return err;
@@ -54,6 +57,11 @@ int main(int argc, char *argv[]) {
 	free(BUILD_DATA.out_file);
 
 	return err;
+}
+
+static void handle_env(void) {
+	const char *color = getenv("COLOR");
+	BUILD_DATA.color = color && *color == '1';
 }
 
 static int handle_args(int argc, char *argv[]) {

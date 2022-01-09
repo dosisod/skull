@@ -20,12 +20,6 @@ typedef struct {
 > See `message_stringify` for uses of these fields.
 
 ```c
-static bool do_show_color(void)
-```
-
-> Return whether color output should be displayed.
-
-```c
 static char *fmt_message_internal(ErrorType type, ErrorCode id, Message msgs[])
 ```
 
