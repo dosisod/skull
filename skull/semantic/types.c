@@ -188,17 +188,32 @@ Type __attribute__((pure)) *find_type(const char *const name) {
 	return NULL;
 }
 
+Type *get_pointer_type_(const Type *type) {
+	if (!SEMANTIC_STATE.dynamic_pointers)
+		SEMANTIC_STATE.dynamic_pointers = make_ht();
+
+	Type *found = ht_get(SEMANTIC_STATE.dynamic_pointers, type->name);
+	if (found) return found;
+
+	const size_t len = strlen(type->name);
+	char *name = Malloc(len + 2);
+	name[0] = '&';
+	strncpy(name + 1, type->name, len + 1);
+
+	Type *new_type = Calloc(1, sizeof(Type));
+	*new_type = (Type){ .name = name, .inner = type };
+
+	ht_add(SEMANTIC_STATE.dynamic_pointers, type->name, new_type);
+
+	return new_type;
+}
+
 Type TYPE_BOOL = { .name = "Bool" };
 Type TYPE_INT = { .name = "Int" };
 Type TYPE_FLOAT = { .name = "Float" };
 Type TYPE_RUNE = { .name = "Rune" };
 Type TYPE_STR = { .name = "Str" };
 Type TYPE_VOID = { .name = "Void" };
-Type TYPE_BOOL_REF = { .name = "&Bool", .inner = &TYPE_BOOL };
-Type TYPE_INT_REF = { .name = "&Int", .inner = &TYPE_INT };
-Type TYPE_FLOAT_REF = { .name = "&Float", .inner = &TYPE_FLOAT };
-Type TYPE_RUNE_REF = { .name = "&Rune", .inner = &TYPE_RUNE };
-Type TYPE_STR_REF = { .name = "&Str", .inner = &TYPE_STR };
 
 Type **TYPES_BUILTIN = (Type *[]){
 	&TYPE_BOOL,
@@ -207,11 +222,6 @@ Type **TYPES_BUILTIN = (Type *[]){
 	&TYPE_RUNE,
 	&TYPE_STR,
 	&TYPE_VOID,
-	&TYPE_BOOL_REF,
-	&TYPE_INT_REF,
-	&TYPE_FLOAT_REF,
-	&TYPE_RUNE_REF,
-	&TYPE_STR_REF,
 	NULL
 };
 
@@ -278,11 +288,10 @@ bool validate_stmt_type_alias(const AstNode *node) {
 }
 
 bool is_reference(const Type *type) {
-	return (
-		type == &TYPE_BOOL_REF ||
-		type == &TYPE_INT_REF ||
-		type == &TYPE_FLOAT_REF ||
-		type == &TYPE_RUNE_REF ||
-		type == &TYPE_STR_REF
-	);
+	return !!type->inner;
+}
+
+void free_dynamic_type(HashItem *item) {
+	free(((Type *)item->data)->dyn_name);
+	free(item->data);
 }

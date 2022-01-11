@@ -40,11 +40,6 @@ LLVMMetadataRef DI_TYPE_INT;
 LLVMMetadataRef DI_TYPE_FLOAT;
 LLVMMetadataRef DI_TYPE_RUNE;
 LLVMMetadataRef DI_TYPE_STR;
-LLVMMetadataRef DI_TYPE_BOOL_REF;
-LLVMMetadataRef DI_TYPE_INT_REF;
-LLVMMetadataRef DI_TYPE_FLOAT_REF;
-LLVMMetadataRef DI_TYPE_RUNE_REF;
-LLVMMetadataRef DI_TYPE_STR_REF;
 
 LLVMDIBuilderRef setup_debug_info(
 	const char *filename,
@@ -58,12 +53,6 @@ LLVMDIBuilderRef setup_debug_info(
 	DI_TYPE_FLOAT = type_to_llvm_di_type(&TYPE_FLOAT);
 	DI_TYPE_RUNE = type_to_llvm_di_type(&TYPE_RUNE);
 	DI_TYPE_STR = type_to_llvm_di_type(&TYPE_STR);
-
-	DI_TYPE_BOOL_REF = type_to_llvm_di_type(&TYPE_BOOL_REF);
-	DI_TYPE_INT_REF = type_to_llvm_di_type(&TYPE_INT_REF);
-	DI_TYPE_FLOAT_REF  = type_to_llvm_di_type(&TYPE_FLOAT_REF);
-	DI_TYPE_RUNE_REF = type_to_llvm_di_type(&TYPE_RUNE_REF);
-	DI_TYPE_STR_REF = type_to_llvm_di_type(&TYPE_STR_REF);
 
 	char cwd[PATH_MAX];
 
@@ -223,11 +212,9 @@ LLVMMetadataRef __attribute__((pure)) type_to_di_type(Type *type) {
 	if (type == &TYPE_RUNE) return DI_TYPE_RUNE;
 	if (type == &TYPE_STR) return DI_TYPE_STR;
 
-	if (type == &TYPE_BOOL_REF) return DI_TYPE_BOOL_REF;
-	if (type == &TYPE_INT_REF) return DI_TYPE_INT_REF;
-	if (type == &TYPE_FLOAT_REF) return DI_TYPE_FLOAT_REF;
-	if (type == &TYPE_RUNE_REF) return DI_TYPE_RUNE_REF;
-	if (type == &TYPE_STR_REF) return DI_TYPE_STR_REF;
+	if (type->inner) {
+		return type_to_llvm_di_type(type);
+	}
 
 	return NULL;
 }

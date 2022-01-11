@@ -12,6 +12,7 @@ source_filename = "./test/sh/declare/ptr_types.sk"
 @float_ptr = private global double* @float
 @str_ptr = private global i8** @str
 @rune_ptr = private global i32* @rune
+@double_ptr = private global i64** @int_ptr
 
 define i64 @.ptr_types() {
 entry:

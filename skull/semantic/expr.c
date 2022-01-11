@@ -25,7 +25,6 @@ static FunctionDeclaration *find_func_by_token(const Token *);
 static bool validate_func_call_params(AstNodeFunctionCall *);
 static void set_expr_type(AstNodeExpr *);
 static void set_const_expr(AstNodeExpr *);
-static Type *get_pointer_type(const Type *);
 static bool validate_binary_expr(AstNodeExpr *);
 static bool validate_expr_restrictions(AstNodeExpr *);
 static bool is_binary_expr(ExprType);
@@ -127,7 +126,7 @@ static void set_expr_type(AstNodeExpr *expr) {
 		case EXPR_AND:
 		case EXPR_OR:
 		case EXPR_XOR: expr->type = &TYPE_BOOL; break;
-		case EXPR_REF: expr->type = get_pointer_type(expr->rhs->type); break;
+		case EXPR_REF: expr->type = get_pointer_type_(expr->rhs->type); break;
 		default: expr->type = expr->rhs->type; break;
 	}
 }
@@ -139,16 +138,6 @@ static void set_const_expr(AstNodeExpr *expr) {
 		);
 	}
 	else expr->is_const_expr = expr->rhs->is_const_expr;
-}
-
-static Type *get_pointer_type(const Type *type) {
-	if (type == &TYPE_BOOL) return &TYPE_BOOL_REF;
-	if (type == &TYPE_INT) return &TYPE_INT_REF;
-	if (type == &TYPE_FLOAT) return &TYPE_FLOAT_REF;
-	if (type == &TYPE_RUNE) return &TYPE_RUNE_REF;
-	if (type == &TYPE_STR) return &TYPE_STR_REF;
-
-	return NULL;
 }
 
 static bool validate_const_expr(AstNodeExpr *expr) {

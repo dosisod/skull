@@ -12,21 +12,22 @@ source_filename = "./test/skull/codegen/llvm/ptr_types.sk"
 @float_ptr = private global double* @float, !dbg !26
 @str_ptr = private global i8** @str, !dbg !29
 @rune_ptr = private global i32* @rune, !dbg !32
+@double_ptr = private global i64** @int_ptr, !dbg !35
 
-define i64 @.ptr_types() !dbg !37 {
+define i64 @.ptr_types() !dbg !40 {
 entry:
-  ret i64 0, !dbg !39
+  ret i64 0, !dbg !42
 }
 
 !llvm.dbg.cu = !{!2}
-!llvm.module.flags = !{!35, !36}
+!llvm.module.flags = !{!38, !39}
 
 !0 = !DIGlobalVariableExpression(var: !1, expr: !DIExpression())
 !1 = distinct !DIGlobalVariable(name: "bool", scope: !2, file: !3, line: 1, type: !22, isLocal: true, isDefinition: true, align: 8)
 !2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "skull", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !5, splitDebugInlining: false)
 !3 = !DIFile(filename: "./test/skull/codegen/llvm/ptr_types.sk", directory: ".")
 !4 = !{}
-!5 = !{!0, !6, !9, !12, !16, !19, !23, !26, !29, !32}
+!5 = !{!0, !6, !9, !12, !16, !19, !23, !26, !29, !32, !35}
 !6 = !DIGlobalVariableExpression(var: !7, expr: !DIExpression())
 !7 = distinct !DIGlobalVariable(name: "int", scope: !2, file: !3, line: 2, type: !8, isLocal: true, isDefinition: true, align: 8)
 !8 = !DIBasicType(name: "Int", size: 64, encoding: DW_ATE_signed)
@@ -56,8 +57,11 @@ entry:
 !32 = !DIGlobalVariableExpression(var: !33, expr: !DIExpression())
 !33 = distinct !DIGlobalVariable(name: "rune_ptr", scope: !2, file: !3, line: 11, type: !34, isLocal: true, isDefinition: true, align: 8)
 !34 = !DIDerivedType(tag: DW_TAG_pointer_type, name: "&Rune", baseType: !18, size: 64, dwarfAddressSpace: 0)
-!35 = !{i32 4, !"Dwarf Version", i32 4}
-!36 = !{i32 4, !"Debug Info Version", i32 3}
-!37 = distinct !DISubprogram(name: ".ptr_types", scope: !3, file: !3, line: 1, type: !38, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !2, retainedNodes: !4)
-!38 = !DISubroutineType(types: !4)
-!39 = !DILocation(line: 1, column: 1, scope: !37)
+!35 = !DIGlobalVariableExpression(var: !36, expr: !DIExpression())
+!36 = distinct !DIGlobalVariable(name: "double_ptr", scope: !2, file: !3, line: 12, type: !37, isLocal: true, isDefinition: true, align: 8)
+!37 = !DIDerivedType(tag: DW_TAG_pointer_type, name: "&&Int", baseType: !25, size: 64, dwarfAddressSpace: 0)
+!38 = !{i32 4, !"Dwarf Version", i32 4}
+!39 = !{i32 4, !"Debug Info Version", i32 3}
+!40 = distinct !DISubprogram(name: ".ptr_types", scope: !3, file: !3, line: 1, type: !41, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !2, retainedNodes: !4)
+!41 = !DISubroutineType(types: !4)
+!42 = !DILocation(line: 1, column: 1, scope: !40)

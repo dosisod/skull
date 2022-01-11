@@ -36,7 +36,7 @@ static Expr gen_expr_ref(const AstNodeExpr *);
 static Operation *expr_type_to_func(ExprType);
 
 static Expr create_and_call_builtin_oper(
-	Type *,
+	const Type *,
 	LLVMTypeRef,
 	const char *,
 	LLVMValueRef,
@@ -292,7 +292,7 @@ static Expr gen_expr_unary_neg(const Expr *lhs, LLVMValueRef rhs) {
 Return expression for result of is operator for `lhs` and `rhs`.
 */
 static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
-	Type *type = lhs->type;
+	const Type *type = lhs->type;
 
 	if (type == &TYPE_INT || type == &TYPE_RUNE || type == &TYPE_BOOL)
 		return (Expr){
@@ -343,7 +343,7 @@ Create a function called `name` (if it does not exist) which returns type
 with the `lhs` and `rhs` operands.
 */
 static Expr create_and_call_builtin_oper(
-	Type *rtype,
+	const Type *rtype,
 	LLVMTypeRef type,
 	const char *name,
 	LLVMValueRef lhs,

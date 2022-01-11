@@ -25,9 +25,12 @@ typedef struct Type Type;
 it is assumed to be a plain type.
 */
 typedef struct Type {
-	const char *name;
+	union {
+		const char *name;
+		char *dyn_name;
+	};
 
-	Type *inner;
+	const Type *inner;
 } Type;
 
 extern Type TYPE_BOOL;
@@ -36,13 +39,9 @@ extern Type TYPE_FLOAT;
 extern Type TYPE_RUNE;
 extern Type TYPE_STR;
 extern Type TYPE_VOID;
-extern Type TYPE_BOOL_REF;
-extern Type TYPE_INT_REF;
-extern Type TYPE_FLOAT_REF;
-extern Type TYPE_RUNE_REF;
-extern Type TYPE_STR_REF;
 
 extern Type **TYPES_BUILTIN;
 
 Type *find_type(const char *const);
 _Bool is_reference(const Type *);
+Type *get_pointer_type_(const Type *);

@@ -10,6 +10,7 @@
 SemanticState SEMANTIC_STATE;
 
 char *create_main_func_name(const char *);
+void free_dynamic_type(void *);
 
 void setup_semantic_state(void) {
 	SEMANTIC_STATE.main_func = Calloc(1, sizeof(FunctionDeclaration));
@@ -39,4 +40,7 @@ void free_semantic_state(void) {
 
 	state->scope = NULL;
 	state->while_loop_depth = 0;
+
+	free_ht(SEMANTIC_STATE.dynamic_pointers, free_dynamic_type);
+	SEMANTIC_STATE.dynamic_pointers = NULL;
 }

@@ -9,3 +9,4 @@ mut int_ptr := &int
 mut float_ptr := &float
 mut str_ptr := &str
 mut rune_ptr := &rune
+mut double_ptr := &int_ptr

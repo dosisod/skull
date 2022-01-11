@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/semantic/types.h"
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
+#include "skull/semantic/shared.h"
+#include "skull/semantic/types.h"
 
 #include "test/skull/semantic/types.h"
 #include "test/testing.h"
@@ -193,6 +194,17 @@ static bool test_eval_str(void) {
 	PASS;
 }
 
+static bool test_add_dynamic_pointer(void) {
+	Type *type = get_pointer_type_(&TYPE_INT);
+
+	ASSERT_TRUTHY(type);
+	ASSERT_EQUAL(strcmp(type->name, "&Int"), 0);
+
+	free_semantic_state();
+
+	PASS;
+}
+
 void types_test_self(bool *pass) {
 	RUN_ALL(
 		test_find_type,
@@ -204,6 +216,7 @@ void types_test_self(bool *pass) {
 		test_eval_rune_invalid_escape_fails,
 		test_eval_rune_chars_after_escape_invalid,
 		test_eval_str,
-		test_eval_str_invalid_escape_fails
+		test_eval_str_invalid_escape_fails,
+		test_add_dynamic_pointer
 	)
 }

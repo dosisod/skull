@@ -2,9 +2,12 @@
 
 ```c
 typedef struct Type {
-	const char *name;
+	union {
+		const char *name;
+		char *dyn_name;
+	};
 
-	Type *inner;
+	const Type *inner;
 }
 ```
 

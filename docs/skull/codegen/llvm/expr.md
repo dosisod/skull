@@ -3,7 +3,7 @@
 ```c
 typedef struct {
 	LLVMValueRef value;
-	Type *type;
+	const Type *type;
 }
 ```
 
@@ -119,7 +119,7 @@ static Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs)
 > Return expression for string-is operator against `lhs` and `rhs`.
 
 ```c
-static Expr create_and_call_builtin_oper(Type *rtype, LLVMTypeRef type, const char *name, LLVMValueRef lhs, LLVMValueRef rhs)
+static Expr create_and_call_builtin_oper(const Type *rtype, LLVMTypeRef type, const char *name, LLVMValueRef lhs, LLVMValueRef rhs)
 ```
 
 > Create a function called `name` (if it does not exist) which returns type

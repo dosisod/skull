@@ -7,7 +7,7 @@ typedef struct {
 	const Token *tok;
 	const Location *loc;
 	const Variable *var;
-	Type *type;
+	const Type *type;
 	char *real; // copy of string that will be used in final error msg
 
 	size_t i;
