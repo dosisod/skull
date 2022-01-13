@@ -75,20 +75,20 @@ Return expression for identifier `token` with type `type`.
 static Expr gen_expr_identifier(const AstNodeExpr *expr) {
 	Variable *var = expr->var;
 
-	if (var->is_const && !(var->is_global && !var->is_const_lit)) {
-		return (Expr){
-			.value = var->ref,
+	if (var->is_global || !var->is_const) {
+		return (Expr) {
+			.value = LLVMBuildLoad2(
+				SKULL_STATE_LLVM.builder,
+				type_to_llvm_type(var->type),
+				var->ref,
+				""
+			),
 			.type = var->type
 		};
 	}
 
-	return (Expr) {
-		.value = LLVMBuildLoad2(
-			SKULL_STATE_LLVM.builder,
-			type_to_llvm_type(var->type),
-			var->ref,
-			""
-		),
+	return (Expr){
+		.value = var->ref,
 		.type = var->type
 	};
 }

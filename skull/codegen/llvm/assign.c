@@ -17,7 +17,6 @@
 static void assign_value_to_var(LLVMValueRef, Variable *);
 static void setup_var_llvm(LLVMValueRef, Variable *);
 static bool is_top_level(void);
-static bool requires_global_decl(const Variable *);
 static bool requires_alloca_decl(const Variable *);
 
 /*
@@ -50,7 +49,7 @@ static void setup_var_llvm(LLVMValueRef value, Variable *var) {
 	var->is_global = is_top_level();
 	var->is_const_lit = is_const_literal;
 
-	if (requires_global_decl(var)) {
+	if (var->is_global) {
 		var->ref = LLVMAddGlobal(
 			SKULL_STATE_LLVM.module,
 			type_to_llvm_type(var->type),
@@ -103,20 +102,6 @@ static void assign_value_to_var(LLVMValueRef value, Variable *var) {
 
 static bool is_top_level(void) {
 	return SKULL_STATE_LLVM.current_func == SKULL_STATE_LLVM.main_func;
-}
-
-/*
-Determine if a global LLVM declaration is needed for this variable.
-
-Exported variables always need a declaration, and mutable variables only
-need one if they are marked "mut" (since they could be reassigned later),
-or if expression is not const (since it cannot be known at compile time).
-*/
-static bool requires_global_decl(const Variable *var) {
-	return (
-		var->is_exported ||
-		(var->is_global && (!var->is_const || !var->is_const_lit))
-	);
 }
 
 static bool requires_alloca_decl(const Variable *var) {
