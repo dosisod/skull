@@ -46,6 +46,7 @@ static bool test_push_ast_node(void) {
 	ASSERT_EQUAL(tmp->next->last, tmp);
 
 	free_ast_tree(tmp);
+	free_tokens(token);
 
 	PASS
 }
@@ -210,6 +211,7 @@ static bool test_parse_ast_tree_if(void) {
 	ASSERT_TRUTHY(node->child);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -226,6 +228,7 @@ static bool test_parse_ast_tree_if_with_var(void) {
 	ASSERT_TRUTHY(node->child);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -247,7 +250,11 @@ static bool test_parse_ast_tree_continue(void) {
 }
 
 static bool test_free_ast_tree(void) {
-	free_ast_tree(parse_ast_tree(tokenize(U"noop")));
+	Token *token = tokenize(U"noop");
+
+	free_ast_tree(parse_ast_tree(token));
+
+	free_tokens(token);
 
 	PASS
 }
@@ -261,6 +268,7 @@ static bool test_ooo_unary_association(void) {
 	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_CONST);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -274,6 +282,7 @@ static bool test_ooo_paren_expr(void) {
 	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_CONST);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -289,6 +298,7 @@ static bool test_ooo_group_higher_precedence_1(void) {
 	ASSERT_EQUAL(node->expr->rhs->oper, EXPR_CONST);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -304,6 +314,7 @@ static bool test_ooo_group_higher_precedence_2(void) {
 	ASSERT_EQUAL(node->expr->rhs->rhs->oper, EXPR_CONST);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -321,6 +332,7 @@ static bool test_ooo_group_higher_precedence_3(void) {
 	ASSERT_EQUAL(node->expr->rhs->rhs->oper, EXPR_CONST);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -338,6 +350,7 @@ static bool test_ooo_group_higher_precedence_4(void) {
 	ASSERT_EQUAL(node->expr->lhs.expr->rhs->rhs->oper, EXPR_CONST);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -355,6 +368,7 @@ static bool test_ooo_group_same_precedence(void) {
 	ASSERT_EQUAL(node->expr->lhs.expr->lhs.expr->rhs->oper, EXPR_CONST);
 
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -442,6 +456,7 @@ static bool ast_tree_fixture(const char32_t *code, NodeType node_type, unsigned 
 
 	ASSERT_FALSEY(node->last);
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }
@@ -464,6 +479,7 @@ static bool ast_tree_expr_fixture(const char32_t *code, ExprType expr_type, unsi
 
 	ASSERT_FALSEY(node->last);
 	free_ast_tree(node);
+	free_tokens(token);
 
 	PASS
 }

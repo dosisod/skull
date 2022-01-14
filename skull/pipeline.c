@@ -39,6 +39,7 @@ int run_pipeline(const char *filename, char *file_contents) {
 
 	AstNode *node = parse_ast_tree(token);
 	if (!node) {
+		free_tokens(token);
 		free(_file_contents);
 		free(file_contents);
 		return true;
@@ -60,6 +61,7 @@ int run_pipeline(const char *filename, char *file_contents) {
 	}
 
 	free_ast_tree(node);
+	free_tokens(token);
 	free(_file_contents);
 	free(file_contents);
 	free_semantic_state();

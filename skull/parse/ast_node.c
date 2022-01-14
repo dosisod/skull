@@ -24,7 +24,6 @@ static void free_ast_function_proto(AstNode *);
 static void free_ast_var_def(AstNode *);
 static void free_ast_var_assign(AstNode *);
 static void free_ast_node(AstNode *);
-static void free_ast_tree_(AstNode *);
 static bool is_single_token_expr(TokenType);
 static void free_expr_node(AstNodeExpr *);
 static AstNode *push_ast_node(ParserCtx *, Token *, NodeType);
@@ -52,7 +51,7 @@ typedef enum {
 	(tok)->next && (tok)->next->type == (type2))
 
 /*
-Makes an AST (abstract syntax tree) from a given string.
+Makes an AST (abstract syntax tree) from a list of tokens.
 */
 AstNode *parse_ast_tree(Token *token) {
 	Token *head = token;
@@ -61,12 +60,12 @@ AstNode *parse_ast_tree(Token *token) {
 
 	AstNode *tree = parse_ast_tree_(&ctx);
 
-	if (!tree) free_tokens(head);
-	else if (!tree->token) {
+	if (tree && !tree->token) {
 		// in case the first node does not have a token, assign the head of
 		// the token list to it
 		tree->token = head;
 	}
+
 	if (ctx.err) {
 		free_ast_tree(tree);
 		return NULL;
@@ -379,14 +378,14 @@ static AstNode *parse_ast_tree_(ParserCtx *ctx) {
 	}
 
 	if (ctx->err) {
-		free_ast_tree_(ctx->head);
+		free_ast_tree(ctx->head);
 		return NULL;
 	}
 
 	if (!ctx->token && ctx->indent_lvl != 0) {
 		FMT_ERROR(ERR_EOF_NO_BRACKET, {0});
 
-		free_ast_tree_(ctx->head);
+		free_ast_tree(ctx->head);
 		ctx->err = true;
 		return NULL;
 	}
@@ -523,7 +522,7 @@ static void parse_ast_sub_tree_(ParserCtx *ctx) {
 	if (!child->token) {
 		FMT_ERROR(ERR_EMPTY_BLOCK, { .loc = &(ctx->token)->location });
 
-		free_ast_tree_(child);
+		free_ast_tree(child);
 		ctx->err = true;
 		return;
 	}
@@ -766,7 +765,7 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 				.loc = &func_name_token->location
 			});
 
-			free_ast_tree_(child_copy);
+			free_ast_tree(child_copy);
 			ctx->err = true;
 			return NULL;
 		}
@@ -795,7 +794,7 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 				.loc = &ctx->token->location
 			});
 
-			free_ast_tree_(child_copy);
+			free_ast_tree(child_copy);
 			ctx->err = true;
 			return NULL;
 		}
@@ -839,18 +838,6 @@ static AstNode *push_ast_node(
 }
 
 /*
-Frees an AST tree.
-*/
-void free_ast_tree(AstNode *node) {
-	if (node) {
-		Token *token = node->token;
-
-		free_ast_tree_(node);
-		free_tokens(token);
-	};
-}
-
-/*
 Free an expression nodes and all its sub-expressions.
 */
 static void free_expr_node(AstNodeExpr *expr) {
@@ -868,7 +855,7 @@ static void free_expr_node(AstNodeExpr *expr) {
 		return;
 	}
 	if (expr->oper == EXPR_FUNC) {
-		free_ast_tree_(expr->lhs.func_call->params);
+		free_ast_tree(expr->lhs.func_call->params);
 		free(expr->lhs.func_call);
 		free(expr);
 		return;
@@ -880,15 +867,15 @@ static void free_expr_node(AstNodeExpr *expr) {
 }
 
 /*
-Internal AST freeing function.
+Frees an AST tree.
 */
-static void free_ast_tree_(AstNode *node) {
+void free_ast_tree(AstNode *node) {
 	AstNode *current = NULL;
 
 	while (node) {
 		free_ast_node(node);
 
-		if (node->child) free_ast_tree_(node->child);
+		if (node->child) free_ast_tree(node->child);
 
 		current = node;
 		node = node->next;

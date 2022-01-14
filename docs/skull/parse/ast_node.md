@@ -137,7 +137,7 @@ typedef struct AstNodeExpr {
 AstNode *parse_ast_tree(Token *token)
 ```
 
-> Makes an AST (abstract syntax tree) from a given string.
+> Makes an AST (abstract syntax tree) from a list of tokens.
 
 ```c
 static ExprType token_type_to_expr_oper_type(TokenType type)
@@ -211,22 +211,16 @@ static AstNode *push_ast_node(ParserCtx *ctx, Token *last, NodeType node_type)
 > Push a new AST node to `node` with type `node_type`. Return created node.
 
 ```c
-void free_ast_tree(AstNode *node)
-```
-
-> Frees an AST tree.
-
-```c
 static void free_expr_node(AstNodeExpr *expr)
 ```
 
 > Free an expression nodes and all its sub-expressions.
 
 ```c
-static void free_ast_tree_(AstNode *node)
+void free_ast_tree(AstNode *node)
 ```
 
-> Internal AST freeing function.
+> Frees an AST tree.
 
 ```c
 static __attribute__((pure)) bool is_single_token_expr(TokenType token_type)
