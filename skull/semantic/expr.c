@@ -126,7 +126,7 @@ static void set_expr_type(AstNodeExpr *expr) {
 		case EXPR_AND:
 		case EXPR_OR:
 		case EXPR_XOR: expr->type = &TYPE_BOOL; break;
-		case EXPR_REF: expr->type = get_pointer_type_(expr->rhs->type); break;
+		case EXPR_REF: expr->type = get_reference_type(expr->rhs->type); break;
 		default: expr->type = expr->rhs->type; break;
 	}
 }

@@ -38,6 +38,8 @@ static AstNodeExpr *parse_expr_rhs(ParserCtx *, AstNodeExpr *);
 static unsigned oper_to_precedence(ExprType);
 static AstNodeExpr *parse_root_expr(ParserCtx *);
 static bool is_unary_oper(ExprType);
+static bool is_explicit_type(ParserCtx *);
+static Token *is_potential_type(Token *);
 
 
 typedef enum {
@@ -106,14 +108,8 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 
 	Token *name_token = ctx->token;
 
-	if (ctx->token->type == TOKEN_NEW_IDENTIFIER &&
-		ctx->token->next &&
-		ctx->token->next->type == TOKEN_IDENTIFIER &&
-		ctx->token->next->next &&
-		ctx->token->next->next->type == TOKEN_OPER_EQUAL
-	) {
+	if (is_explicit_type(ctx)) {
 		is_implicit = false;
-		ctx->token = ctx->token->next->next;
 	}
 	else if (AST_TOKEN_CMP2(ctx->token,
 		TOKEN_IDENTIFIER,
@@ -154,6 +150,43 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 	}
 
 	return RESULT_OK;
+}
+
+static bool is_explicit_type(ParserCtx *ctx) {
+	Token *head = ctx->token;
+
+	if (ctx->token->type != TOKEN_NEW_IDENTIFIER || !ctx->token->next) {
+		return false;
+	}
+
+	next_token(ctx);
+
+	Token *type_token = is_potential_type(ctx->token);
+	if (type_token) {
+		ctx->token = type_token->next;
+		return true;
+	}
+
+	ctx->token = head;
+	return false;
+}
+
+/*
+Check whether the tokens starting at `token` is a potential type. Return
+last token of type if valid, otherwise `NULL`.
+*/
+static Token *is_potential_type(Token *token) {
+	if (!token) return NULL;
+
+	if (token->type == TOKEN_IDENTIFIER) {
+		return token;
+	}
+
+	if (token->type == TOKEN_OPER_REF) {
+		return is_potential_type(token->next);
+	}
+
+	return NULL;
 }
 
 static ParserResult parse_var_assign(ParserCtx *ctx) {

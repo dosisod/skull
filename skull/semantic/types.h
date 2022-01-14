@@ -21,8 +21,8 @@ typedef struct Type Type;
 /*
 `name` is the pretty-printable name for the type.
 
-`inner` is the inner type of a generic, ie, `Pointer<Int>`. If not specified,
-it is assumed to be a plain type.
+`inner` is the inner type of a complex type, ie, `&Int`. If `NULL`, it is
+assumed to be a plain type.
 */
 typedef struct Type {
 	union {
@@ -44,4 +44,4 @@ extern Type **TYPES_BUILTIN;
 
 Type *find_type(const char *const);
 _Bool is_reference(const Type *);
-Type *get_pointer_type_(const Type *);
+Type *get_reference_type(const Type *);

@@ -13,8 +13,8 @@ typedef struct Type {
 
 > `name` is the pretty-printable name for the type.
 > \
-> `inner` is the inner type of a generic, ie, `Pointer<Int>`. If not specified,
-> it is assumed to be a plain type.
+> `inner` is the inner type of a complex type, ie, `&Int`. If `NULL`, it is
+> assumed to be a plain type.
 
 ```c
 bool eval_bool(const Token *const token)

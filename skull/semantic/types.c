@@ -188,11 +188,11 @@ Type __attribute__((pure)) *find_type(const char *const name) {
 	return NULL;
 }
 
-Type *get_pointer_type_(const Type *type) {
-	if (!SEMANTIC_STATE.dynamic_pointers)
-		SEMANTIC_STATE.dynamic_pointers = make_ht();
+Type *get_reference_type(const Type *type) {
+	if (!SEMANTIC_STATE.dynamic_refs)
+		SEMANTIC_STATE.dynamic_refs = make_ht();
 
-	Type *found = ht_get(SEMANTIC_STATE.dynamic_pointers, type->name);
+	Type *found = ht_get(SEMANTIC_STATE.dynamic_refs, type->name);
 	if (found) return found;
 
 	const size_t len = strlen(type->name);
@@ -203,7 +203,7 @@ Type *get_pointer_type_(const Type *type) {
 	Type *new_type = Calloc(1, sizeof(Type));
 	*new_type = (Type){ .name = name, .inner = type };
 
-	ht_add(SEMANTIC_STATE.dynamic_pointers, type->name, new_type);
+	ht_add(SEMANTIC_STATE.dynamic_refs, type->name, new_type);
 
 	return new_type;
 }

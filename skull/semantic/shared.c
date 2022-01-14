@@ -41,6 +41,6 @@ void free_semantic_state(void) {
 	state->scope = NULL;
 	state->while_loop_depth = 0;
 
-	free_ht(SEMANTIC_STATE.dynamic_pointers, free_dynamic_type);
-	SEMANTIC_STATE.dynamic_pointers = NULL;
+	free_ht(SEMANTIC_STATE.dynamic_refs, free_dynamic_type);
+	SEMANTIC_STATE.dynamic_refs = NULL;
 }

@@ -140,6 +140,13 @@ AstNode *parse_ast_tree(Token *token)
 > Makes an AST (abstract syntax tree) from a list of tokens.
 
 ```c
+static Token *is_potential_type(Token *token)
+```
+
+> Check whether the tokens starting at `token` is a potential type. Return
+> last token of type if valid, otherwise `NULL`.
+
+```c
 static ExprType token_type_to_expr_oper_type(TokenType type)
 ```
 

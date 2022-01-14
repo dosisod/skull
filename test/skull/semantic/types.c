@@ -194,8 +194,8 @@ static bool test_eval_str(void) {
 	PASS;
 }
 
-static bool test_add_dynamic_pointer(void) {
-	Type *type = get_pointer_type_(&TYPE_INT);
+static bool test_add_dynamic_reference_type(void) {
+	Type *type = get_reference_type(&TYPE_INT);
 
 	ASSERT_TRUTHY(type);
 	ASSERT_EQUAL(strcmp(type->name, "&Int"), 0);
@@ -217,6 +217,6 @@ void types_test_self(bool *pass) {
 		test_eval_rune_chars_after_escape_invalid,
 		test_eval_str,
 		test_eval_str_invalid_escape_fails,
-		test_add_dynamic_pointer
+		test_add_dynamic_reference_type
 	)
 }

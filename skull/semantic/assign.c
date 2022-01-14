@@ -16,6 +16,7 @@
 static bool is_void_func_assign(const AstNode *);
 static Variable *node_to_var(const AstNode *const);
 static bool is_expr_compatible_with_var(const AstNodeExpr *, const Variable *);
+static Type *token_to_type(const Token *);
 
 
 bool validate_stmt_var_def(const AstNode *node) {
@@ -81,10 +82,7 @@ static Variable *node_to_var(const AstNode *const node) {
 		if (is_void_func_assign(node)) return NULL;
 	}
 	else {
-		char *const type_name = token_to_mbs_str(token->next);
-
-		type = find_type(type_name);
-		free(type_name);
+		type = token_to_type(token->next);
 
 		if (!type) {
 			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = token->next });
@@ -124,6 +122,22 @@ static Variable *node_to_var(const AstNode *const node) {
 	variable_disable_warnings(var);
 	free_variable(var);
 	free(symbol);
+
+	return NULL;
+}
+
+static Type *token_to_type(const Token *token) {
+	if (token->type == TOKEN_IDENTIFIER) {
+		char *type_name = token_to_mbs_str(token);
+		Type *type = find_type(type_name);
+
+		free(type_name);
+		return type;
+	}
+
+	if (token->type == TOKEN_OPER_REF) {
+		return get_reference_type(token_to_type(token->next));
+	}
 
 	return NULL;
 }

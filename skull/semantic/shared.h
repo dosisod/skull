@@ -14,7 +14,7 @@ typedef struct {
 	FunctionDeclaration *current_func;
 	FunctionDeclaration *last_func;
 	unsigned while_loop_depth;
-	HashTable *dynamic_pointers;
+	HashTable *dynamic_refs;
 } SemanticState;
 
 extern SemanticState SEMANTIC_STATE;
