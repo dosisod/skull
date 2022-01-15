@@ -606,6 +606,17 @@ NULL,
 "./test/sh/error/oper/check_non_ident_ref.sk: Compilation error: line 1 column 7: cannot take reference of non-identifier\n"
 );
 
+
+pass |= e2e_wrapper(
+"f() { noop }\n"\
+"x: Void = f()",
+TEST_DIR"/error/func/no_explicit_void_assign.sk",
+
+NULL,
+
+"./test/sh/error/func/no_explicit_void_assign.sk: Compilation error: line 2 column 11: function returning type void cannot be assigned to variable \"x\"\n"
+);
+
 	return pass;
 }
 

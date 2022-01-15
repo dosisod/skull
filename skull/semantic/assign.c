@@ -77,10 +77,9 @@ static Variable *node_to_var(const AstNode *const node) {
 	const Token *token = node->var_def->name_tok;
 	Type *type = node->var_def->expr->type;
 
-	if (node->var_def->is_implicit) {
-		if (is_void_func_assign(node)) return NULL;
-	}
-	else {
+	if (is_void_func_assign(node)) return NULL;
+
+	if (!node->var_def->is_implicit) {
 		type = token_to_type(token->next);
 
 		if (!type) {
