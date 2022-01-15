@@ -330,7 +330,7 @@ TEST_DIR"/error/func/proto_param_bad_type.sk",
 
 NULL,
 
-"./test/sh/error/func/proto_param_bad_type.sk: Compilation error: type \"does_not_exist\" could not be found\n"
+"./test/sh/error/func/proto_param_bad_type.sk: Compilation error: line 1 column 6: type \"does_not_exist\" could not be found\n"
 );
 
 

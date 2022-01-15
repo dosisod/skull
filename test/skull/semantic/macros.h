@@ -94,14 +94,14 @@
 			.name_tok = ((_is_export) || (_is_external)) ? \
 				(_token)->next : \
 				(_token), \
-			.return_type_name = NULL, \
+			.return_type_token = NULL, \
 			.is_external = (_is_external), \
 			.is_export = (_is_export), \
 		} \
 	}
 
 #define AST_NODE_FUNC_RTYPE(_node, _rtype) \
-	(_node)->func_proto->return_type_name = (char[]){_rtype}
+	(_node)->func_proto->return_type_token = (_rtype)
 
 #define AST_NODE_NOOP() \
 	&(AstNode){ \

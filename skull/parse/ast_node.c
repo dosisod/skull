@@ -40,6 +40,7 @@ static AstNodeExpr *parse_root_expr(ParserCtx *);
 static bool is_unary_oper(ExprType);
 static bool is_explicit_type(ParserCtx *);
 static Token *is_potential_type(Token *);
+static Vector *parse_function_proto_params(ParserCtx *);
 
 
 typedef enum {
@@ -245,7 +246,6 @@ static void free_param(AstNodeFunctionParam *param) {
 	if (!param) return;
 
 	if (param->var && !param->var->name) free(param->var);
-	free(param->type_name);
 	free(param->param_name);
 	free(param);
 }
@@ -269,43 +269,24 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 	const Token *func_name_token = ctx->token;
 	ctx->token = ctx->token->next->next;
 
-	Vector *params = make_vector();
-
-	bool is_proto = false;
-
-	while (AST_TOKEN_CMP2(ctx->token, TOKEN_NEW_IDENTIFIER, TOKEN_IDENTIFIER)) {
-		is_proto = true;
-
-		AstNodeFunctionParam *param;
-		param = Malloc(sizeof *param);
-		param->type_name = token_to_mbs_str(ctx->token->next);
-		param->param_name = token_to_string(ctx->token);
-
-		// allocate a placeholder variable to store the location
-		param->var = Calloc(1, sizeof(Variable));
-		param->var->location = ctx->token->location;
-
-		vector_push(params, param);
-
-		ctx->token = ctx->token->next->next;
-		if (ctx->token->type != TOKEN_COMMA) break;
-		next_token(ctx);
-	}
-
-	char *return_type_name = NULL;
+	Token *last_token = ctx->token;
+	Vector *params = parse_function_proto_params(ctx);
+	const bool is_proto = ctx->token != last_token;
 
 	const TokenType token_type = is_external ?
 		TOKEN_NEWLINE :
 		TOKEN_BRACKET_OPEN;
 
+	Token *tmp = NULL;
+	Token *return_type_token = NULL;
+
 	if (ctx->token->type == TOKEN_PAREN_CLOSE &&
 		ctx->token->next &&
-		ctx->token->next->type == TOKEN_IDENTIFIER &&
-		ctx->token->next->next &&
-		ctx->token->next->next->type == token_type
+		(tmp = is_potential_type(ctx->token->next)) &&
+		tmp->next->type == token_type
 	) {
-		return_type_name = token_to_mbs_str(ctx->token->next);
-		next_token(ctx);
+		return_type_token = ctx->token->next;
+		ctx->token = tmp;
 	}
 
 	else if (!AST_TOKEN_CMP2(ctx->token, TOKEN_PAREN_CLOSE, token_type)) {
@@ -331,7 +312,7 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 	);
 	*ctx->node->func_proto = (AstNodeFunctionProto){
 		.name_tok = func_name_token,
-		.return_type_name = return_type_name,
+		.return_type_token = return_type_token,
 		.is_external = is_external,
 		.is_export = is_export,
 		.num_params = num_params
@@ -355,6 +336,34 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 	next_token(ctx);
 
 	return RESULT_OK;
+}
+
+static Vector *parse_function_proto_params(ParserCtx *ctx) {
+	Vector *params = make_vector();
+	Token *last_token = ctx->token;
+
+	while (is_explicit_type(ctx)) {
+		Token *next = ctx->token;
+		ctx->token = last_token;
+
+		AstNodeFunctionParam *param;
+		param = Malloc(sizeof *param);
+		param->type_name = ctx->token->next;
+		param->param_name = token_to_string(ctx->token);
+
+		// allocate a placeholder variable to store the location
+		param->var = Calloc(1, sizeof(Variable));
+		param->var->location = ctx->token->location;
+
+		vector_push(params, param);
+
+		ctx->token = next;
+		last_token = next->next;
+		if (ctx->token->type != TOKEN_COMMA) break;
+		next_token(ctx);
+	}
+
+	return params;
 }
 
 static void parse_condition(ParserCtx *ctx, NodeType node_type) {
@@ -940,8 +949,6 @@ static void free_ast_node(AstNode *node) {
 }
 
 static void free_ast_function_proto(AstNode *node) {
-	free(node->func_proto->return_type_name);
-
 	unsigned num_params = node->func_proto->num_params;
 
 	AstNodeFunctionParam **params = node->func_proto->params;

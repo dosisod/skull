@@ -108,11 +108,12 @@ static bool test_binary_oper_is_const_expr_if_lhs_and_rhs_are_const_expr(void) {
 
 static bool test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr(void) {
 	Token *token = tokenize_fixture(U"external f() Int\nf() + 2");
-	Token *expr_token = token->next->next->next->next->next->next;;
+	Token *type_token = token->next->next->next->next;
+	Token *expr_token = type_token->next->next;;
 	Token *int_token = expr_token->next->next->next->next;
 
 	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
-	AST_NODE_FUNC_RTYPE(func, "Int");
+	AST_NODE_FUNC_RTYPE(func, type_token);
 
 	ASSERT_TRUTHY(validate_ast_tree(func));
 
@@ -133,11 +134,12 @@ static bool test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr(void) {
 
 static bool test_binary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 	Token *token = tokenize_fixture(U"external f() Int\n1 + f()");
-	Token *int_token = token->next->next->next->next->next->next;
+	Token *type_token = token->next->next->next->next;
+	Token *int_token = type_token->next->next;
 	Token *expr_token = int_token->next->next;
 
 	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
-	AST_NODE_FUNC_RTYPE(func, "Int");
+	AST_NODE_FUNC_RTYPE(func, type_token);
 
 	ASSERT_TRUTHY(validate_ast_tree(func));
 
@@ -177,10 +179,11 @@ static bool test_unary_oper_is_const_expr_if_rhs_is_const_expr(void) {
 
 static bool test_unary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 	Token *token = tokenize_fixture(U"external f() Bool\nnot f()");
-	Token *expr_token = token->next->next->next->next->next->next;
+	Token *type_token = token->next->next->next->next;
+	Token *expr_token = type_token->next->next;
 
 	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
-	AST_NODE_FUNC_RTYPE(func, "Bool");
+	AST_NODE_FUNC_RTYPE(func, type_token);
 
 	ASSERT_TRUTHY(validate_ast_tree(func));
 
@@ -223,12 +226,13 @@ static bool test_var_expr_is_const_expr_if_var_def_expr_is_const_expr(void) {
 
 static bool test_var_expr_isnt_const_expr_if_var_def_expr_isnt_const_expr(void) {
 	Token *token = tokenize_fixture(U"external f() Int\nx := f()\nx");
-	Token *var_def_token = token->next->next->next->next->next->next;
+	Token *type_token = token->next->next->next->next;
+	Token *var_def_token = type_token->next->next;
 	Token *var_def_expr_token = var_def_token->next->next;
 	Token *expr_token = var_def_expr_token->next->next->next->next;
 
 	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
-	AST_NODE_FUNC_RTYPE(func, "Bool");
+	AST_NODE_FUNC_RTYPE(func, type_token);
 
 	ASSERT_TRUTHY(validate_ast_tree(func));
 
@@ -981,7 +985,7 @@ static bool test_validate_non_void_function_missing_return(void) {
 	Token *token = tokenize_fixture(U"f() Int { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	AST_NODE_FUNC_RTYPE(node, "Int");
+	AST_NODE_FUNC_RTYPE(node, token->next->next->next);
 
 	return validate_tree_fixture(
 		node,
@@ -1106,11 +1110,12 @@ static bool test_validate_func_parameter_count(void) {
 
 static bool test_validate_func_return_invalid_type(void) {
 	Token *token = tokenize_fixture(U"f() Int { return false }");
-	Token *return_token = token->next->next->next->next->next;
+	Token *type_token = token->next->next->next;
+	Token *return_token = type_token->next->next;
 	Token *return_expr_token = return_token->next;
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	AST_NODE_FUNC_RTYPE(node, "Int");
+	AST_NODE_FUNC_RTYPE(node, type_token);
 
 	node->child = AST_NODE_RETURN(
 		return_token,
@@ -1127,11 +1132,11 @@ static bool test_validate_func_check_return_type(void) {
 	Token *token = tokenize_fixture(U"f() invalid { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	AST_NODE_FUNC_RTYPE(node, "invalid");
+	AST_NODE_FUNC_RTYPE(node, token->next->next->next);
 
 	return validate_tree_fixture(
 		node,
-		"(null): Compilation error: type \"invalid\" could not be found\n"
+		"(null): Compilation error: line 1 column 5: type \"invalid\" could not be found\n"
 	);
 }
 

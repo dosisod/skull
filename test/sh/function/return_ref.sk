@@ -1,0 +1,5 @@
+i := 1
+
+f() &Int {
+	return &i
+}

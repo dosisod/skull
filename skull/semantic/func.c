@@ -14,7 +14,7 @@
 
 #include "skull/semantic/func.h"
 
-static Type *validate_return_type(char *);
+static Type *validate_return_type(const Token *);
 static bool validate_func_params(const AstNode *, FunctionDeclaration *);
 
 bool validate_stmt_func_decl(const AstNode *node) {
@@ -33,7 +33,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 	}
 
 	Type *return_type = validate_return_type(
-		node->func_proto->return_type_name
+		node->func_proto->return_type_token
 	);
 	if (!return_type) return false;
 
@@ -120,10 +120,10 @@ static bool validate_func_params(
 	make_child_scope();
 
 	for RANGE(i, function->num_params) {
-		function->param_types[i] = find_type(params[i]->type_name);
+		function->param_types[i] = token_to_type(params[i]->type_name);
 
 		if (!function->param_types[i]) {
-			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = params[i]->type_name });
+			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = params[i]->type_name });
 
 			restore_parent_scope();
 			return false;
@@ -174,11 +174,11 @@ static bool validate_func_params(
 	return true;
 }
 
-static Type *validate_return_type(char *type_name) {
-	Type *type = type_name ? find_type(type_name) : &TYPE_VOID;
+static Type *validate_return_type(const Token *token) {
+	Type *type = token ? token_to_type(token) : &TYPE_VOID;
 
-	if (type_name && !type) {
-		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .str = type_name });
+	if (token && !type) {
+		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = token });
 
 		return NULL;
 	}

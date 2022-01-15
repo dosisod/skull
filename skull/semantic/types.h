@@ -45,3 +45,4 @@ extern Type **TYPES_BUILTIN;
 Type *find_type(const char *const);
 _Bool is_reference(const Type *);
 Type *get_reference_type(const Type *);
+Type *token_to_type(const Token *);

@@ -60,7 +60,7 @@ typedef struct AstNodeVarAssign {
 
 ```c
 typedef struct AstNodeFunctionParam {
-	char *type_name;
+	Token *type_name;
 	char32_t *param_name;
 	Variable *var;
 }
@@ -72,7 +72,7 @@ typedef struct AstNodeFunctionParam {
 typedef struct AstNodeFunctionProto {
 	const Token *name_tok;
 
-	char *return_type_name;
+	Token *return_type_token;
 
 	unsigned short num_params;
 

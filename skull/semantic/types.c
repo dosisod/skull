@@ -291,6 +291,22 @@ bool is_reference(const Type *type) {
 	return !!type->inner;
 }
 
+Type *token_to_type(const Token *token) {
+	if (token->type == TOKEN_IDENTIFIER) {
+		char *type_name = token_to_mbs_str(token);
+		Type *type = find_type(type_name);
+
+		free(type_name);
+		return type;
+	}
+
+	if (token->type == TOKEN_OPER_REF) {
+		return get_reference_type(token_to_type(token->next));
+	}
+
+	return NULL;
+}
+
 void free_dynamic_type(HashItem *item) {
 	free(((Type *)item->data)->dyn_name);
 	free(item->data);
