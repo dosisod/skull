@@ -189,6 +189,8 @@ Type __attribute__((pure)) *find_type(const char *const name) {
 }
 
 Type *get_reference_type(const Type *type) {
+	if (!type) return NULL;
+
 	if (!SEMANTIC_STATE.dynamic_refs)
 		SEMANTIC_STATE.dynamic_refs = make_ht();
 

@@ -113,7 +113,8 @@ static const char *errors[] = {
 	[ERR_NO_TYPE_EXPR] = "type aliases cannot be used in expressions",
 	[ERR_NO_DOUBLE_UNARY] = "cannot use unary operator twice",
 	[ERR_UNEXPECTED_UNARY_EXPR] = "unexpected unary operator",
-	[ERR_REF_IDENT_ONLY] = "cannot take reference of non-identifier"
+	[ERR_REF_IDENT_ONLY] = "cannot take reference of non-identifier",
+	[ERR_MISSING_ASSIGNMENT] = "variable is missing an assignment"
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);

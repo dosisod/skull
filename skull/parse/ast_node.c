@@ -111,6 +111,11 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 
 	if (is_explicit_type(ctx)) {
 		is_implicit = false;
+
+		if (!ctx->token) {
+			FMT_ERROR(ERR_MISSING_ASSIGNMENT, { .loc = &name_token->location });
+			return RESULT_ERROR;
+		}
 	}
 	else if (AST_TOKEN_CMP2(ctx->token,
 		TOKEN_IDENTIFIER,
@@ -155,6 +160,8 @@ static ParserResult parse_var_def(ParserCtx *ctx) {
 
 static bool is_explicit_type(ParserCtx *ctx) {
 	Token *head = ctx->token;
+
+	if (!head) return false;
 
 	if (ctx->token->type != TOKEN_NEW_IDENTIFIER || !ctx->token->next) {
 		return false;
@@ -271,6 +278,16 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 
 	Token *last_token = ctx->token;
 	Vector *params = parse_function_proto_params(ctx);
+
+	if (!ctx->token) {
+		FMT_ERROR(ERR_MISSING_CLOSING_PAREN, {
+			.loc = &func_name_token->next->location
+		});
+
+		free_vector(params, (void(*)(void *))free_param);
+		return RESULT_ERROR;
+	}
+
 	const bool is_proto = ctx->token != last_token;
 
 	const TokenType token_type = is_external ?
@@ -282,11 +299,23 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 
 	if (ctx->token->type == TOKEN_PAREN_CLOSE &&
 		ctx->token->next &&
-		(tmp = is_potential_type(ctx->token->next)) &&
-		tmp->next->type == token_type
+		(tmp = is_potential_type(ctx->token->next))
 	) {
-		return_type_token = ctx->token->next;
-		ctx->token = tmp;
+		if (tmp->next && tmp->next->type == token_type) {
+			return_type_token = ctx->token->next;
+			ctx->token = tmp;
+		}
+		else {
+			FMT_ERROR(
+				token_type == TOKEN_NEWLINE ?
+					ERR_EXPECTED_NEWLINE :
+					ERR_MISSING_OPEN_BRAK,
+				{ .loc = &tmp->location }
+			);
+
+			free_vector(params, (void(*)(void *))free_param);
+			return RESULT_ERROR;
+		}
 	}
 
 	else if (!AST_TOKEN_CMP2(ctx->token, TOKEN_PAREN_CLOSE, token_type)) {
@@ -343,7 +372,10 @@ static Vector *parse_function_proto_params(ParserCtx *ctx) {
 	Token *last_token = ctx->token;
 
 	while (is_explicit_type(ctx)) {
-		Token *next = ctx->token;
+		if (!ctx->token) return params;
+
+		Token *last = ctx->token;
+
 		ctx->token = last_token;
 
 		AstNodeFunctionParam *param;
@@ -357,8 +389,8 @@ static Vector *parse_function_proto_params(ParserCtx *ctx) {
 
 		vector_push(params, param);
 
-		ctx->token = next;
-		last_token = next->next;
+		ctx->token = last;
+		last_token = last->next;
 		if (ctx->token->type != TOKEN_COMMA) break;
 		next_token(ctx);
 	}
@@ -620,14 +652,24 @@ static AstNodeExpr *parse_expression(ParserCtx *ctx) {
 }
 
 static AstNodeExpr *parse_single_expr(ParserCtx *ctx) {
+	if (!ctx->token) return NULL;
+
 	ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
 
 	if (!is_unary_oper(oper)) {
 		return parse_root_expr(ctx);
 	}
 
+	Token *last = ctx->token;
 	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
 	next_token(ctx);
+
+	if (!ctx->token) {
+		FMT_ERROR(ERR_EXPECTED_EXPR, { .tok = last });
+
+		ctx->err = true;
+		return NULL;
+	}
 
 	const ExprType next_oper = token_type_to_expr_oper_type(ctx->token->type);
 	if (is_unary_oper(next_oper)) {
@@ -828,6 +870,14 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 		child = ctx->node;
 
 		ctx->node = old_node;
+
+		if (!ctx->token) {
+			FMT_ERROR(ERR_MISSING_CLOSING_PAREN, { .loc = &last->location });
+
+			free_ast_tree(child_copy);
+			ctx->err = true;
+			return NULL;
+		}
 
 		if (ctx->token->type == TOKEN_PAREN_CLOSE) break;
 

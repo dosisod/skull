@@ -426,12 +426,12 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"external x() x()\n",
+"external x() x()",
 TEST_DIR"/error/misc/no_newline_external.sk",
 
 NULL,
 
-"./test/sh/error/misc/no_newline_external.sk: Compilation error: line 1 column 1: unexpected token: \"external\"\n"
+"./test/sh/error/misc/no_newline_external.sk: Compilation error: line 1 column 14: expected a newline\n"
 );
 
 
@@ -615,6 +615,86 @@ TEST_DIR"/error/func/no_explicit_void_assign.sk",
 NULL,
 
 "./test/sh/error/func/no_explicit_void_assign.sk: Compilation error: line 2 column 11: function returning type void cannot be assigned to variable \"x\"\n"
+);
+
+
+pass |= e2e_wrapper(
+"x: &invalid_type = 0",
+TEST_DIR"/error/declare/invalid_explicit_ref.sk",
+
+NULL,
+
+"./test/sh/error/declare/invalid_explicit_ref.sk: Compilation error: line 1 column 4: type \"&\" could not be found\n"
+);
+
+
+pass |= e2e_wrapper(
+"x: y",
+TEST_DIR"/error/declare/no_assignment.sk",
+
+NULL,
+
+"./test/sh/error/declare/no_assignment.sk: Compilation error: line 1 column 1: variable is missing an assignment\n"
+);
+
+
+pass |= e2e_wrapper(
+"f(",
+TEST_DIR"/error/func/no_closing_paren.sk",
+
+NULL,
+
+"./test/sh/error/func/no_closing_paren.sk: Compilation error: line 1 column 2: missing closing parenthesis\n"
+);
+
+
+pass |= e2e_wrapper(
+"f(x: Int",
+TEST_DIR"/error/func/no_closing_paren_single_arg.sk",
+
+NULL,
+
+"./test/sh/error/func/no_closing_paren_single_arg.sk: Compilation error: line 1 column 2: missing closing parenthesis\n"
+);
+
+
+pass |= e2e_wrapper(
+"1 +",
+TEST_DIR"/error/oper/rhs_missing.sk",
+
+NULL,
+
+"./test/sh/error/oper/rhs_missing.sk: Compilation error: line 1 column 3: expected expression after \"+\"\n"
+);
+
+
+pass |= e2e_wrapper(
+"f(1",
+TEST_DIR"/error/func/single_expr_call.sk",
+
+NULL,
+
+"./test/sh/error/func/single_expr_call.sk: Compilation error: line 1 column 3: missing closing parenthesis\n"
+);
+
+
+pass |= e2e_wrapper(
+"f() Int",
+TEST_DIR"/error/func/missing_body.sk",
+
+NULL,
+
+"./test/sh/error/func/missing_body.sk: Compilation error: line 1 column 5: missing opening bracket\n"
+);
+
+
+pass |= e2e_wrapper(
+"-",
+TEST_DIR"/error/expr/unary_missing_rhs.sk",
+
+NULL,
+
+"./test/sh/error/expr/unary_missing_rhs.sk: Compilation error: line 1 column 1: expected expression after \"-\"\n"
 );
 
 	return pass;
