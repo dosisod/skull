@@ -42,4 +42,6 @@ float_ptr := &float_
 rune_ptr := &rune_
 str_ptr := &str_
 
+alias := Int
+
 return a

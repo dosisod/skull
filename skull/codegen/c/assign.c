@@ -21,6 +21,8 @@ CStmt gen_stmt_var_assign_c(const AstNode *node) {
 CStmt gen_stmt_var_def_c(const AstNode *node) {
 	const Variable *var = node->var_def->var;
 
+	if (!var) return NULL;
+
 	CType type = skull_type_to_c_type(var->type);
 
 	if (SKULL_STATE_C.indent_lvl == 1) {
