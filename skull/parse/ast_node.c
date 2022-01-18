@@ -853,6 +853,13 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 			ctx->err = true;
 			return NULL;
 		}
+		if (ctx->token->type == TOKEN_COMMA) {
+			FMT_ERROR(ERR_UNEXPECTED_COMMA, { .loc = &ctx->token->location });
+
+			free_ast_tree(child_copy);
+			ctx->err = true;
+			return NULL;
+		}
 
 		AstNode *old_node = ctx->node;
 

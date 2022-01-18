@@ -697,6 +697,19 @@ NULL,
 "./test/sh/error/expr/unary_missing_rhs.sk: Compilation error: line 1 column 1: expected expression after \"-\"\n"
 );
 
+
+pass |= e2e_wrapper(
+"f() { noop }\n" \
+"\n" \
+"f(,)",
+
+TEST_DIR"/error/expr/func_call_extra_comma.sk",
+
+NULL,
+
+"./test/sh/error/expr/func_call_extra_comma.sk: Compilation error: line 3 column 3: unexpected comma\n"
+);
+
 	return pass;
 }
 
