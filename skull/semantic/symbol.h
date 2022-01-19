@@ -15,7 +15,7 @@ typedef enum {
 
 typedef struct Symbol {
 	char *name;
-	Type *expr_type;
+	const Type *expr_type;
 	const Location *location;
 	SymbolType type;
 	union {

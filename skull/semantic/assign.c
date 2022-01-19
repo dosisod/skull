@@ -20,7 +20,7 @@ static bool is_expr_compatible_with_var(const AstNodeExpr *, const Variable *);
 
 bool validate_stmt_var_def(const AstNode *node) {
 	char *name = token_to_mbs_str(node->token_end->next);
-	Type *type = find_type(name);
+	const Type *type = find_type(name);
 	free(name);
 
 	if (type) return validate_stmt_type_alias(node);
@@ -75,7 +75,7 @@ Return `NULL` if an error occurred.
 */
 static Variable *node_to_var(const AstNode *const node) {
 	const Token *token = node->var_def->name_tok;
-	Type *type = node->var_def->expr->type;
+	const Type *type = node->var_def->expr->type;
 
 	if (is_void_func_assign(node)) return NULL;
 

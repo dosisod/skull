@@ -19,6 +19,7 @@ static const bool* bool_ptr = &bool_;
 static const double* float_ptr = &float_;
 static const char32_t* rune_ptr = &rune_;
 static const char** str_ptr = &str_;
+static const int64_t deref = *int_ptr;
 
 static int init(void) __asm__(".first");
 static int init(void) {

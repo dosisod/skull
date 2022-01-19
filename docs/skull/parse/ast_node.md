@@ -115,7 +115,7 @@ typedef struct AstNodeExpr {
 		char32_t rune;
 		char *str;
 	} value;
-	Type *type;
+	const Type *type;
 
 	AstNodeExpr *rhs;
 
@@ -188,7 +188,8 @@ static bool is_unary_oper(ExprType oper)
 
 > Return whether `oper` is a unary expr or not. Since `EXPR_SUB` and
 > `EXPR_UNARY_NEG` are share the same representation, they can both
-> can be considered unary, if it would make since in context.
+> can be considered unary, if it would make since in context (same for
+> `EXPR_DEREF` and `EXPR_MULT`).
 
 ```c
 static AstNodeExpr *parse_root_expr(ParserCtx *ctx)

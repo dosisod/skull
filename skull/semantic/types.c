@@ -172,7 +172,7 @@ char32_t *eval_str(const Token *const token) {
 /*
 Returns pointer to type with name `name`.
 */
-Type __attribute__((pure)) *find_type(const char *const name) {
+const Type __attribute__((pure)) *find_type(const char *const name) {
 	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
 
 	if (symbol && symbol->type == SYMBOL_ALIAS) return symbol->expr_type;
@@ -293,10 +293,10 @@ bool is_reference(const Type *type) {
 	return !!type->inner;
 }
 
-Type *token_to_type(const Token *token) {
+const Type *token_to_type(const Token *token) {
 	if (token->type == TOKEN_IDENTIFIER) {
 		char *type_name = token_to_mbs_str(token);
-		Type *type = find_type(type_name);
+		const Type *type = find_type(type_name);
 
 		free(type_name);
 		return type;

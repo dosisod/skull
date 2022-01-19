@@ -154,7 +154,8 @@ typedef enum {
 	EXPR_IDENTIFIER,
 	EXPR_CONST,
 	EXPR_FUNC,
-	EXPR_REF
+	EXPR_REF,
+	EXPR_DEREF
 } ExprType;
 
 /*
@@ -176,7 +177,7 @@ typedef struct AstNodeExpr {
 		char32_t rune;
 		char *str;
 	} value;
-	Type *type;
+	const Type *type;
 
 	AstNodeExpr *rhs;
 

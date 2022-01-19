@@ -87,6 +87,7 @@ typedef enum {
 	ERR_REF_IDENT_ONLY = 74,
 	ERR_MISSING_ASSIGNMENT = 75,
 	ERR_UNEXPECTED_COMMA = 76,
+	ERR_CANNOT_DEREF = 77,
 } ErrorCode;
 
 typedef struct Variable Variable;

@@ -42,6 +42,7 @@ CExpr gen_expr_c(const AstNodeExpr *expr) {
 		case EXPR_UNARY_NEG:
 		case EXPR_NOT:
 		case EXPR_REF:
+		case EXPR_DEREF:
 			return gen_expr_unary_c(expr);
 		case EXPR_FUNC:
 			return gen_expr_func_call_c(expr->lhs.func_call);
@@ -146,6 +147,7 @@ static CExpr gen_expr_unary_c(const AstNodeExpr *expr) {
 		case EXPR_UNARY_NEG: fmt = "-(%s)"; break;
 		case EXPR_NOT: fmt = "!%s"; break;
 		case EXPR_REF: fmt = "&%s"; break;
+		case EXPR_DEREF: fmt = "*%s"; break;
 		default: break;
 	}
 

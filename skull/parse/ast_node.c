@@ -662,6 +662,7 @@ static AstNodeExpr *parse_single_expr(ParserCtx *ctx) {
 
 	Token *last = ctx->token;
 	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
+	if (oper == EXPR_MULT) oper = EXPR_DEREF;
 	next_token(ctx);
 
 	if (!ctx->token) {
@@ -691,14 +692,17 @@ static AstNodeExpr *parse_single_expr(ParserCtx *ctx) {
 /*
 Return whether `oper` is a unary expr or not. Since `EXPR_SUB` and
 `EXPR_UNARY_NEG` are share the same representation, they can both
-can be considered unary, if it would make since in context.
+can be considered unary, if it would make since in context (same for
+`EXPR_DEREF` and `EXPR_MULT`).
 */
 static bool is_unary_oper(ExprType oper) {
 	return (
 		oper == EXPR_SUB ||
 		oper == EXPR_UNARY_NEG ||
 		oper == EXPR_NOT ||
-		oper == EXPR_REF
+		oper == EXPR_REF ||
+		oper == EXPR_MULT ||
+		oper == EXPR_DEREF
 	);
 }
 
@@ -725,7 +729,7 @@ static AstNodeExpr *parse_expr_rhs(ParserCtx *ctx, AstNodeExpr *expr) {
 
 	const ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
 	if (oper == EXPR_UNKNOWN) return expr;
-	if (is_unary_oper(oper) && oper != EXPR_SUB) {
+	if (is_unary_oper(oper) && (oper != EXPR_SUB && oper != EXPR_MULT)) {
 		FMT_ERROR(ERR_UNEXPECTED_UNARY_EXPR, { .loc = &ctx->token->location });
 		ctx->err = true;
 		return NULL;
@@ -764,6 +768,7 @@ static unsigned oper_to_precedence(ExprType oper) {
 			return 2;
 		case EXPR_NOT:
 		case EXPR_UNARY_NEG:
+		case EXPR_DEREF:
 			return 3;
 		case EXPR_MULT:
 		case EXPR_DIV:
@@ -1117,6 +1122,7 @@ const Token *find_expr_node_token(const AstNodeExpr *expr) {
 		case EXPR_FUNC:
 			return expr->lhs.func_call->func_name_tok;
 		case EXPR_UNARY_NEG:
+		case EXPR_DEREF:
 		case EXPR_NOT:
 		case EXPR_REF:
 			return find_expr_node_token(expr->rhs);

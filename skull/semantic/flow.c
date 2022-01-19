@@ -23,7 +23,7 @@ bool validate_stmt_return(const AstNode *node) {
 
 	if (node->expr && !validate_expr(node->expr)) return false;
 
-	Type *return_type = SEMANTIC_STATE.current_func->return_type;
+	const Type *return_type = SEMANTIC_STATE.current_func->return_type;
 
 	if (!node->expr && return_type != &TYPE_VOID) {
 		FMT_ERROR(ERR_RETURN_MISSING_EXPR, {
@@ -52,7 +52,7 @@ static bool is_valid_return_expr(const AstNode *node) {
 		return false;
 	}
 
-	Type *return_type = SEMANTIC_STATE.current_func->return_type;
+	const Type *return_type = SEMANTIC_STATE.current_func->return_type;
 
 	if (return_type != &TYPE_VOID && expr->type != return_type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,

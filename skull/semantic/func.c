@@ -14,7 +14,7 @@
 
 #include "skull/semantic/func.h"
 
-static Type *validate_return_type(const Token *);
+static const Type *validate_return_type(const Token *);
 static bool validate_func_params(const AstNode *, FunctionDeclaration *);
 
 bool validate_stmt_func_decl(const AstNode *node) {
@@ -32,7 +32,7 @@ bool validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	Type *return_type = validate_return_type(
+	const Type *return_type = validate_return_type(
 		node->func_proto->return_type_token
 	);
 	if (!return_type) return false;
@@ -174,8 +174,8 @@ static bool validate_func_params(
 	return true;
 }
 
-static Type *validate_return_type(const Token *token) {
-	Type *type = token ? token_to_type(token) : &TYPE_VOID;
+static const Type *validate_return_type(const Token *token) {
+	const Type *type = token ? token_to_type(token) : &TYPE_VOID;
 
 	if (token && !type) {
 		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = token });

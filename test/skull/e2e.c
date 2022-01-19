@@ -710,6 +710,29 @@ NULL,
 "./test/sh/error/expr/func_call_extra_comma.sk: Compilation error: line 3 column 3: unexpected comma\n"
 );
 
+
+pass |= e2e_wrapper(
+"x := * 1\n",
+
+TEST_DIR"/error/expr/deref_constant_fails.sk",
+
+NULL,
+
+"./test/sh/error/expr/deref_constant_fails.sk: Compilation error: line 1 column 8: cannot dereference expression\n"
+);
+
+
+pass |= e2e_wrapper(
+"a := 1\n" \
+"b := * a\n",
+
+TEST_DIR"/error/expr/deref_non_ref_fails.sk",
+
+NULL,
+
+"./test/sh/error/expr/deref_non_ref_fails.sk: Compilation error: line 2 column 8: cannot dereference expression\n"
+);
+
 	return pass;
 }
 

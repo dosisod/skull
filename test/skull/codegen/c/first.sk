@@ -44,4 +44,6 @@ str_ptr := &str_
 
 alias := Int
 
+deref := * int_ptr
+
 return a

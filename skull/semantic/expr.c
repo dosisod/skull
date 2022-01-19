@@ -8,6 +8,7 @@
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
+#include "skull/semantic/types.h"
 
 #include "skull/semantic/expr.h"
 
@@ -28,6 +29,7 @@ static void set_const_expr(AstNodeExpr *);
 static bool validate_binary_expr(AstNodeExpr *);
 static bool validate_expr_restrictions(AstNodeExpr *);
 static bool is_binary_expr(ExprType);
+static bool validate_deref_expr(const AstNodeExpr *);
 
 
 bool validate_expr(AstNodeExpr *expr) {
@@ -108,6 +110,8 @@ static bool validate_expr_restrictions(AstNodeExpr *expr) {
 			return validate_bool_expr(expr);
 		case EXPR_REF:
 			return validate_ref_expr(expr);
+		case EXPR_DEREF:
+			return validate_deref_expr(expr);
 		default: break;
 	}
 
@@ -127,6 +131,7 @@ static void set_expr_type(AstNodeExpr *expr) {
 		case EXPR_OR:
 		case EXPR_XOR: expr->type = &TYPE_BOOL; break;
 		case EXPR_REF: expr->type = get_reference_type(expr->rhs->type); break;
+		case EXPR_DEREF: expr->type = expr->rhs->type->inner; break;
 		default: expr->type = expr->rhs->type; break;
 	}
 }
@@ -228,7 +233,7 @@ static bool is_div_by_zero(const AstNodeExpr *expr) {
 }
 
 static bool validate_pow_expr(const AstNodeExpr *expr) {
-	Type *type = expr->rhs->type;
+	const Type *type = expr->rhs->type;
 
 	if (type != &TYPE_INT && type != &TYPE_FLOAT) {
 		FMT_ERROR(ERR_POW_BAD_TYPE, { .type = expr->rhs->type });
@@ -259,6 +264,16 @@ static bool validate_ref_expr(const AstNodeExpr *expr) {
 		FMT_ERROR(ERR_REF_IDENT_ONLY, {
 			.loc = find_expr_node_location(expr)
 		});
+
+		return false;
+	}
+
+	return true;
+}
+
+static bool validate_deref_expr(const AstNodeExpr *expr) {
+	if (expr->rhs->oper != EXPR_IDENTIFIER || !is_reference(expr->rhs->type)) {
+		FMT_ERROR(ERR_CANNOT_DEREF, { .loc = find_expr_node_location(expr) });
 
 		return false;
 	}
@@ -346,5 +361,10 @@ static bool validate_func_call_params(AstNodeFunctionCall *func_call) {
 }
 
 static bool is_binary_expr(ExprType oper) {
-	return !(oper == EXPR_UNARY_NEG || oper == EXPR_NOT || oper == EXPR_REF);
+	return !(
+		oper == EXPR_UNARY_NEG ||
+		oper == EXPR_NOT ||
+		oper == EXPR_REF ||
+		oper == EXPR_DEREF
+	);
 }

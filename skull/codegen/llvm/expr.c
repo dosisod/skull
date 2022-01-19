@@ -33,6 +33,7 @@ static Expr gen_expr_const(const AstNodeExpr *);
 static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
 static Expr gen_expr_identifier(const AstNodeExpr *);
 static Expr gen_expr_ref(const AstNodeExpr *);
+static Expr gen_expr_deref(const AstNodeExpr *);
 static Operation *expr_type_to_func(ExprType);
 
 static Expr create_and_call_builtin_oper(
@@ -56,6 +57,8 @@ Expr gen_expr(const AstNodeExpr *const expr) {
 			return gen_expr_func_call(expr->lhs.func_call);
 		case EXPR_REF:
 			return gen_expr_ref(expr);
+		case EXPR_DEREF:
+			return gen_expr_deref(expr);
 		default: break;
 	}
 
@@ -73,7 +76,7 @@ Expr gen_expr(const AstNodeExpr *const expr) {
 Return expression for identifier `token` with type `type`.
 */
 static Expr gen_expr_identifier(const AstNodeExpr *expr) {
-	Variable *var = expr->var;
+	const Variable *var = expr->var;
 
 	if (var->is_global || !var->is_const) {
 		return (Expr) {
@@ -90,6 +93,25 @@ static Expr gen_expr_identifier(const AstNodeExpr *expr) {
 	return (Expr){
 		.value = var->ref,
 		.type = var->type
+	};
+}
+
+static Expr gen_expr_deref(const AstNodeExpr *expr) {
+	const Variable *var = expr->rhs->var;
+
+	return (Expr) {
+		.value = LLVMBuildLoad2(
+			SKULL_STATE_LLVM.builder,
+			type_to_llvm_type(var->type->inner),
+			LLVMBuildLoad2(
+				SKULL_STATE_LLVM.builder,
+				type_to_llvm_type(var->type),
+				var->ref,
+				""
+			),
+			""
+		),
+		.type = var->type->inner
 	};
 }
 

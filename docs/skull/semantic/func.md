@@ -9,10 +9,10 @@ typedef struct FunctionDeclaration {
 	void *type;
 
 	unsigned short num_params;
-	Type **param_types;
+	const Type **param_types;
 	char32_t **param_names;
 
-	Type *return_type;
+	const Type *return_type;
 
 	_Bool was_called : 1;
 	_Bool is_external : 1;

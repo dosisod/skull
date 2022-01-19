@@ -205,7 +205,7 @@ LLVMMetadataRef make_llvm_debug_location(const Location *location) {
 	);
 }
 
-LLVMMetadataRef __attribute__((pure)) type_to_di_type(Type *type) {
+LLVMMetadataRef __attribute__((pure)) type_to_di_type(const Type *type) {
 	if (type == &TYPE_BOOL) return DI_TYPE_BOOL;
 	if (type == &TYPE_INT) return DI_TYPE_INT;
 	if (type == &TYPE_FLOAT) return DI_TYPE_FLOAT;

@@ -116,6 +116,7 @@ static const char *errors[] = {
 	[ERR_REF_IDENT_ONLY] = "cannot take reference of non-identifier",
 	[ERR_MISSING_ASSIGNMENT] = "variable is missing an assignment",
 	[ERR_UNEXPECTED_COMMA] = "unexpected comma",
+	[ERR_CANNOT_DEREF] = "cannot dereference expression",
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);
