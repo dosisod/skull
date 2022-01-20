@@ -390,7 +390,17 @@ TEST_DIR"/error/misc/invalid_paren_expr.sk",
 
 NULL,
 
-"./test/sh/error/misc/invalid_paren_expr.sk: Compilation error: line 1 column 7: invalid expression near \"_\"\n"
+"./test/sh/error/misc/invalid_paren_expr.sk: Compilation error: line 1 column 6: invalid expression near \"(\"\n"
+);
+
+
+pass |= e2e_wrapper(
+"x := (",
+TEST_DIR"/error/misc/invalid_paren_expr2.sk",
+
+NULL,
+
+"./test/sh/error/misc/invalid_paren_expr2.sk: Compilation error: line 1 column 6: invalid expression near \"(\"\n"
 );
 
 
@@ -446,12 +456,12 @@ NULL,
 
 
 pass |= e2e_wrapper(
-"x := (1\n",
+"x := (1",
 TEST_DIR"/error/misc/paren_expr_missing_paren.sk",
 
 NULL,
 
-"./test/sh/error/misc/paren_expr_missing_paren.sk: Compilation error: line 1 column 8: missing closing parenthesis\n"
+"./test/sh/error/misc/paren_expr_missing_paren.sk: Compilation error: line 1 column 6: missing closing parenthesis\n"
 );
 
 

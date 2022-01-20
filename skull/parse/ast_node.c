@@ -795,20 +795,23 @@ static unsigned oper_to_precedence(ExprType oper) {
 }
 
 static AstNodeExpr *parse_paren_expr(ParserCtx *ctx) {
+	const Token *old_token = ctx->token;
+
 	next_token(ctx);
 
 	AstNodeExpr *expr = parse_expression(ctx);
-	if (!expr) {
-		FMT_ERROR(ERR_INVALID_EXPR, { .tok = ctx->token });
 
+	if (expr && (!ctx->token || ctx->token->type != TOKEN_PAREN_CLOSE)) {
+		FMT_ERROR(ERR_MISSING_CLOSING_PAREN, { .loc = &old_token->location });
+
+		free_expr_node(expr);
 		ctx->err = true;
 		return NULL;
 	}
 
-	if (!ctx->token || ctx->token->type != TOKEN_PAREN_CLOSE) {
-		FMT_ERROR(ERR_MISSING_CLOSING_PAREN, { .loc = &ctx->token->location });
+	if (!expr) {
+		FMT_ERROR(ERR_INVALID_EXPR, { .tok = old_token });
 
-		free_expr_node(expr);
 		ctx->err = true;
 		return NULL;
 	}
