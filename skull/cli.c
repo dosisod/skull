@@ -172,7 +172,10 @@ printf("skull [-v|--version|-h|--help]\n\n" \
 "skull file [-S|-E|-c|--c-backend]\n" \
 "           [-gq]\n" \
 "           [--werror]\n" \
+"           [-O1|-O2|-O3]\n" \
 "           [-o output]\n" \
+"           [--llvm-no-verify]\n" \
+"           [--color]\n" \
 "           [-- args]\n"
 );
 

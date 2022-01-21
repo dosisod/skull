@@ -10,7 +10,8 @@
            [\fB\-\-werror\fR]
            [\fB\-O1\fR|\fB\-O2\fR|\fB\-O3\fR]
            [\fB\-o\fR \fIoutput\fR]
-           [\fB\-\-llvm\-no\-verify]
+           [\fB\-\-llvm\-no\-verify\fR]
+           [\fB\-\-color\fR]
            [\fB\-\-\fR \fIargs\fR]
 
 .SH DESCRIPTION
@@ -66,6 +67,10 @@ In the LLVM backend, don't verify LLVM module(s).
 This allows for forcing the output of invalid LLVM for debugging purposes.
 
 .TP
+.B \-\-color
+Add color to compiler output.
+
+.TP
 .B \-g
 Add debugging information.
 
@@ -84,6 +89,12 @@ Redirect output stream to \fIoutput\fR instead of default location.
 .TP
 .BI \-\- " args"
 Forward \fIargs\fR to \fBcc\fR during the final compilation of \fIfile\fR.
+
+.SH ENVIRONMENT
+
+.TP
+.B COLOR
+Acts like \fB--color\fR when set to 1.
 
 .SH AUTHOR
 dosisod <https://github.com/dosisod>
