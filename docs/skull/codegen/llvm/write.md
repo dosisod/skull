@@ -1,8 +1,9 @@
 # skull/codegen/llvm/write
 
 ```c
-bool write_file_llvm(const char *filename)
+bool write_llvm(const char *filename)
 ```
 
-> Write LLVM code to `filename`, return whether error occured.
+> Writer for LLVM backend. Can emit LLVM, native binary, or assembler based
+> on CLI parameters.
 

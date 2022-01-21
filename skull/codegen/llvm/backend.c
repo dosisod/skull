@@ -6,7 +6,7 @@
 
 Backend llvm_backend = {
 	.setup = setup_llvm_state,
-	.write = write_file_llvm,
+	.write = write_llvm,
 	.gen_module = gen_module,
 	.cleanup = free_llvm_state,
 	.extension = "ll"

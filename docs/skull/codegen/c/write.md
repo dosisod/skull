@@ -4,5 +4,5 @@
 bool write_file_c(const char *filename)
 ```
 
-> Write c code to `filename`, return whether error occured.
+> Write C code for given `filename` to new file, with ".sk" replaced with ".c".
 

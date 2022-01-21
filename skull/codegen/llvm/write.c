@@ -18,24 +18,26 @@
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/write.h"
+#include "skull/codegen/shared.h"
 #include "skull/common/io.h"
 #include "skull/common/str.h"
 
 static bool create_ll_file(const char *);
 static bool verify_llvm(void);
 static bool optimize_llvm(void);
-static int run_llc(void);
-static int run_cc(char *);
+static bool run_llc(void);
+static bool run_cc(char *);
 static int sh(char *[]);
 static int shell(char *);
 static char *get_llc_binary(void);
 static char *get_binary_name(void);
-static int check_directory(char *);
+static bool check_directory(char *);
 
 /*
-Write LLVM code to `filename`, return whether error occured.
+Writer for LLVM backend. Can emit LLVM, native binary, or assembler based
+on CLI parameters.
 */
-bool write_file_llvm(const char *filename) {
+bool write_llvm(const char *filename) {
 	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
 
 	if (!BUILD_DATA.llvm_no_verify && verify_llvm()) return true;
@@ -44,7 +46,9 @@ bool write_file_llvm(const char *filename) {
 		if (optimize_llvm()) return true;
 	}
 
-	bool err = create_ll_file(filename);
+	char *out_filename = get_new_filename(filename, "ll");
+	bool err = create_ll_file(out_filename);
+	free(out_filename);
 
 	if (err || BUILD_DATA.preprocess) return err;
 
@@ -153,17 +157,20 @@ static char *get_binary_name(void) {
 	return binary_name;
 }
 
-static int check_directory(char *binary_name) {
+/*
+Return true if an error occurs.
+*/
+static bool check_directory(char *binary_name) {
 	if (is_directory(binary_name)) {
 		printf("skull: \"%s\" is a directory not a file\n", binary_name);
 		free(binary_name);
-		return 1;
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
-static int run_llc(void) {
+static bool run_llc(void) {
 	if (!BUILD_DATA.out_file) {
 		BUILD_DATA.out_file = gen_filename(
 			BUILD_DATA.filename,
@@ -173,13 +180,13 @@ static int run_llc(void) {
 
 	if (!BUILD_DATA.asm_backend && strcmp(BUILD_DATA.out_file, "-") == 0) {
 		puts("skull: cannot print binary file to stdout");
-		return 1;
+		return true;
 	}
 
 	char *llc_cmd = get_llc_binary();
 	if (!llc_cmd) {
 		puts("skull: llc command not found");
-		return 1;
+		return true;
 	}
 
 	char *llvm_file = gen_filename(BUILD_DATA.filename, "ll");
@@ -195,7 +202,7 @@ static int run_llc(void) {
 		NULL
 	};
 
-	const int exit_code = sh(args);
+	const bool exit_code = sh(args);
 
 	errno = 0;
 	remove(llvm_file);
@@ -228,7 +235,7 @@ static char *get_llc_binary(void) {
 }
 #undef CHECK_CMD
 
-static int run_cc(char *binary_name) {
+static bool run_cc(char *binary_name) {
 	char *module_name = create_main_func_name(BUILD_DATA.filename);
 
 	char *shim = uvsnprintf(
@@ -241,7 +248,7 @@ static int run_cc(char *binary_name) {
 	free(module_name);
 	free(binary_name);
 
-	const int exit_code = shell(shim);
+	const bool exit_code = shell(shim);
 
 	remove(BUILD_DATA.out_file);
 	free(shim);
