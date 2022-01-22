@@ -27,7 +27,7 @@ void setup_locale(void) {
 		locale = "C.UTF-8";
 	}
 	if (!setlocale(LC_CTYPE, locale)) {
-		puts("Cannot setup locale for UTF-8 environment");
+		fprintf(stderr, "Cannot setup locale for UTF-8 environment\n");
 		exit(1);
 	}
 }

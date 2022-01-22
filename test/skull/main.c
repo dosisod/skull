@@ -62,7 +62,7 @@ int main(void) {
 		puts("All tests passed!");
 	}
 	else {
-		puts("\n1 or more errors occurred.");
+		fprintf(stderr, "\n1 or more errors occurred.\n");
 	}
 	return !passed;
 }

@@ -15,14 +15,14 @@ typedef _Bool (*Test)(void);
 #define PASS return 1;
 
 #define FAIL \
-	printf(__FILE__":%s:%i: ", __func__, __LINE__); \
-	puts(COLOR_BOLD COLOR_RED_FG "FAILED " COLOR_RESET); \
+	fprintf(stderr, __FILE__":%s:%i: ", __func__, __LINE__); \
+	fprintf(stderr, COLOR_BOLD COLOR_RED_FG "FAILED " COLOR_RESET "\n"); \
 	return 0;
 
 #define ASSERT_TRUTHY(x) \
 	if (!(x)) { \
-		printf(__FILE__":%s:%i: ", __func__, __LINE__); \
-		printf( \
+		fprintf(stderr, __FILE__":%s:%i: ", __func__, __LINE__); \
+		fprintf(stderr, \
 			COLOR_BOLD COLOR_RED_FG "FAILED " COLOR_RESET \
 			"Expected `" #x "` to be truthy\n" \
 		); \
@@ -31,8 +31,8 @@ typedef _Bool (*Test)(void);
 
 #define ASSERT_FALSEY(x) \
 	if ((x)) { \
-		printf(__FILE__":%s:%i: ", __func__, __LINE__); \
-		printf( \
+		fprintf(stderr, __FILE__":%s:%i: ", __func__, __LINE__); \
+		fprintf(stderr, \
 			COLOR_BOLD COLOR_RED_FG "FAILED " COLOR_RESET \
 			"Expected `" #x "` to be falsey\n" \
 		); \
@@ -41,8 +41,8 @@ typedef _Bool (*Test)(void);
 
 #define ASSERT_EQUAL(x, y) \
 	if ((x) != (y)) { \
-		printf(__FILE__":%s:%i: ", __func__, __LINE__); \
-		printf( \
+		fprintf(stderr, __FILE__":%s:%i: ", __func__, __LINE__); \
+		fprintf(stderr, \
 			COLOR_BOLD COLOR_RED_FG "FAILED " COLOR_RESET \
 			"Expected `" #x "` and `" #y "` to be equal\n" \
 		); \

@@ -3,7 +3,7 @@
 ```c
 #define DIE_IF_MALLOC_FAILS(ptr) \
 	if (!(ptr)) { \
-		puts("\nfailed to allocate sufficient memory, exiting"); \
+		fprintf(stderr, "\nfailed to allocate sufficient memory, exiting\n"); \
 		exit(1); \
 	}
 ```

@@ -130,7 +130,7 @@ static bool optimize_llvm(void) {
 static bool create_ll_file(const char *filename) {
 	if (strcmp(filename, "-") == 0) {
 		char *msg = LLVMPrintModuleToString(SKULL_STATE_LLVM.module);
-		printf("%s", msg);
+		fprintf(stderr, "%s", msg);
 
 		LLVMDisposeMessage(msg);
 		return false;
@@ -162,7 +162,11 @@ Return true if an error occurs.
 */
 static bool check_directory(char *binary_name) {
 	if (is_directory(binary_name)) {
-		printf("skull: \"%s\" is a directory not a file\n", binary_name);
+		fprintf(
+			stderr,
+			"skull: \"%s\" is a directory not a file\n",
+			binary_name
+		);
 		free(binary_name);
 		return true;
 	}
@@ -179,13 +183,13 @@ static bool run_llc(void) {
 	}
 
 	if (!BUILD_DATA.asm_backend && strcmp(BUILD_DATA.out_file, "-") == 0) {
-		puts("skull: cannot print binary file to stdout");
+		fprintf(stderr, "skull: cannot print binary file to stdout\n");
 		return true;
 	}
 
 	char *llc_cmd = get_llc_binary();
 	if (!llc_cmd) {
-		puts("skull: llc command not found");
+		fprintf(stderr, "skull: llc command not found\n");
 		return true;
 	}
 

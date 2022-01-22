@@ -771,7 +771,7 @@ static int e2e_wrapper(const char *code, const char *mock_file, const char *llvm
 
 	if (err) {
 		// TODO(dosisod) give better error on why it failed
-		printf("%s " COLOR_BOLD COLOR_RED_FG "FAIL" COLOR_RESET "\n", mock_file);
+		fprintf(stderr, "%s " COLOR_BOLD COLOR_RED_FG "FAIL" COLOR_RESET "\n", mock_file);
 	}
 	return err;
 }
