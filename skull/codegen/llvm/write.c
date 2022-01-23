@@ -22,11 +22,17 @@
 #include "skull/common/io.h"
 #include "skull/common/str.h"
 
-static bool create_ll_file(const char *);
-static bool verify_llvm(void);
-static bool optimize_llvm(void);
-static bool run_llc(void);
-static bool run_cc(char *);
+typedef enum {
+	PHASE_DONE,
+	PHASE_ERR,
+	PHASE_NEXT,
+} PhaseResult;
+
+static PhaseResult create_ll_file(const char *);
+static PhaseResult verify_llvm(void);
+static PhaseResult optimize_llvm(void);
+static PhaseResult run_llc(void);
+static PhaseResult run_cc(void);
 static int sh(char *[]);
 static int shell(char *);
 static char *get_llc_binary(void);
@@ -40,28 +46,24 @@ on CLI parameters.
 bool write_llvm(const char *filename) {
 	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
 
-	if (!BUILD_DATA.llvm_no_verify && verify_llvm()) return true;
+	PhaseResult result = verify_llvm();
+	if (result != PHASE_NEXT) return result;
 
-	if (BUILD_DATA.optimize1 || BUILD_DATA.optimize2 || BUILD_DATA.optimize3) {
-		if (optimize_llvm()) return true;
-	}
+	result = optimize_llvm();
+	if (result != PHASE_NEXT) return result;
 
-	char *out_filename = get_new_filename(filename, "ll");
-	bool err = create_ll_file(out_filename);
-	free(out_filename);
+	result = create_ll_file(filename);
+	if (result != PHASE_NEXT) return result;
 
-	if (err || BUILD_DATA.preprocess) return err;
+	result = run_llc();
+	if (result != PHASE_NEXT) return result;
 
-	err = run_llc();
-	if (err || BUILD_DATA.asm_backend || BUILD_DATA.compile_only) return err;
-
-	char *binary_name = get_binary_name();
-	err = check_directory(binary_name);
-
-	return err || run_cc(binary_name);
+	return run_cc();
 }
 
-static bool verify_llvm(void) {
+static PhaseResult verify_llvm(void) {
+	if (BUILD_DATA.llvm_no_verify) return PHASE_NEXT;
+
 	char *err_msg = NULL;
 
 	const bool err = LLVMVerifyModule(
@@ -76,10 +78,18 @@ static bool verify_llvm(void) {
 
 	LLVMDisposeMessage(err_msg);
 
-	return err;
+	return err ? PHASE_ERR : PHASE_NEXT;
 }
 
-static bool optimize_llvm(void) {
+static PhaseResult optimize_llvm(void) {
+	if (!(
+		BUILD_DATA.optimize1 ||
+		BUILD_DATA.optimize2 ||
+		BUILD_DATA.optimize3
+	)) {
+		return PHASE_NEXT;
+	}
+
 	LLVMInitializeAllTargetInfos();
 
 	char *triple = LLVMGetDefaultTargetTriple();
@@ -92,7 +102,7 @@ static bool optimize_llvm(void) {
 		fprintf(stderr, "skull: \"%s\"\n", err_msg);
 		LLVMDisposeMessage(err_msg);
 		LLVMDisposeMessage(triple);
-		return true;
+		return PHASE_ERR;
 	}
 
 	char *cpu = LLVMGetHostCPUName();
@@ -124,29 +134,37 @@ static bool optimize_llvm(void) {
 	LLVMDisposeTargetMachine(target_machine);
 	LLVMDisposePassBuilderOptions(options);
 
-	return false;
+	return PHASE_NEXT;
 }
 
-static bool create_ll_file(const char *filename) {
+static PhaseResult create_ll_file(const char *filename) {
 	if (strcmp(filename, "-") == 0) {
 		char *msg = LLVMPrintModuleToString(SKULL_STATE_LLVM.module);
 		fprintf(stderr, "%s", msg);
 
 		LLVMDisposeMessage(msg);
-		return false;
+	}
+	else {
+		char *out_filename = get_new_filename(filename, "ll");
+
+		char *msg = NULL;
+		LLVMBool did_fail = LLVMPrintModuleToFile(
+			SKULL_STATE_LLVM.module,
+			out_filename,
+			&msg
+		);
+
+		free(out_filename);
+
+		if (did_fail) {
+			fprintf(stderr, "skull: error occurred: %s\n", msg);
+
+			LLVMDisposeMessage(msg);
+			return PHASE_ERR;
+		}
 	}
 
-	char *msg = NULL;
-	LLVMBool did_fail = LLVMPrintModuleToFile(
-		SKULL_STATE_LLVM.module,
-		filename,
-		&msg
-	);
-
-	if (did_fail) fprintf(stderr, "skull: error occurred: %s\n", msg);
-
-	LLVMDisposeMessage(msg);
-	return did_fail;
+	return BUILD_DATA.preprocess ? PHASE_DONE : PHASE_NEXT;
 }
 
 static char *get_binary_name(void) {
@@ -174,7 +192,7 @@ static bool check_directory(char *binary_name) {
 	return false;
 }
 
-static bool run_llc(void) {
+static PhaseResult run_llc(void) {
 	if (!BUILD_DATA.out_file) {
 		BUILD_DATA.out_file = gen_filename(
 			BUILD_DATA.filename,
@@ -184,13 +202,13 @@ static bool run_llc(void) {
 
 	if (!BUILD_DATA.asm_backend && strcmp(BUILD_DATA.out_file, "-") == 0) {
 		fprintf(stderr, "skull: cannot print binary file to stdout\n");
-		return true;
+		return PHASE_ERR;
 	}
 
 	char *llc_cmd = get_llc_binary();
 	if (!llc_cmd) {
 		fprintf(stderr, "skull: llc command not found\n");
-		return true;
+		return PHASE_ERR;
 	}
 
 	char *llvm_file = gen_filename(BUILD_DATA.filename, "ll");
@@ -215,10 +233,14 @@ static bool run_llc(void) {
 
 	if (errno) {
 		perror("remove");
-		return 1;
+		return PHASE_ERR;
 	}
 
-	return exit_code;
+	if (exit_code) return PHASE_ERR;
+
+	return (BUILD_DATA.asm_backend || BUILD_DATA.compile_only) ?
+		PHASE_DONE :
+		PHASE_NEXT;
 }
 
 #define CHECK_CMD(_cmd) { \
@@ -239,7 +261,12 @@ static char *get_llc_binary(void) {
 }
 #undef CHECK_CMD
 
-static bool run_cc(char *binary_name) {
+static PhaseResult run_cc(void) {
+	char *binary_name = get_binary_name();
+	bool err = check_directory(binary_name);
+
+	if (err) return PHASE_ERR;
+
 	char *module_name = create_main_func_name(BUILD_DATA.filename);
 
 	char *shim = uvsnprintf(
@@ -258,7 +285,7 @@ static bool run_cc(char *binary_name) {
 	free(shim);
 	free(BUILD_DATA.extra_args);
 
-	return exit_code;
+	return exit_code ? PHASE_ERR : PHASE_DONE;
 }
 
 static int sh(char *argv[]) {
