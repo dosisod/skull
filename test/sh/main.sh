@@ -142,6 +142,13 @@ test_skull "trailing_arg_after_dash_o.sh" "-o ./test/sh/skull/something ./test/s
 test_skull "optimization.sh" "./test/sh/skull/o1.sk -O1 -E"
 test_skull "invalid_optimization_flag.sh" "-Ox"
 test_skull "color.sh" "./test/sh/skull/werror.sk --color"
+test_skull "only_one_optimization_lvl.sh" "-O1 -O2"
+test_skull "cannot_mingle_c_and_llvm_flags.sh" "--c-backend --llvm-no-verify"
+test_skull "cannot_suppress_werror.sh" "-q --werror"
+test_skull "cannot_mix_asm_and_c_backend.sh" "-S --c-backend"
+test_skull "cannot_mix_output_types.sh" "-S -E"
+test_skull "cannot_mix_output_types.sh" "-c -E"
+test_skull "cannot_mix_output_types.sh" "-c -S"
 
 printf "\n"
 $passed || (printf "1 or more tests failed\n" && exit 1)

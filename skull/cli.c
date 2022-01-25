@@ -29,6 +29,7 @@ static char *squash_argv(char *[]);
 static int handle_args(int, char *[]);
 static void cleanup(void);
 static noreturn void bail(int);
+static bool build_data_valid(void);
 
 int main(int argc, char *argv[]) {
 	if (argc == 1) return usage();
@@ -37,6 +38,8 @@ int main(int argc, char *argv[]) {
 
 	int err = handle_args(argc - 1, argv + 1);
 	if (err) return err;
+
+	if (!build_data_valid()) return 1;
 
 	if (!BUILD_DATA.filename) {
 		fprintf(stderr, "skull: expected filename\n");
@@ -269,6 +272,50 @@ static char *squash_argv(char *argv[]) {
 	out[wrote - 1] = '\0';
 
 	return out;
+}
+
+/*
+Return true if there are no conflicting cli arguments.
+*/
+static bool build_data_valid(void) {
+	if ((BUILD_DATA.optimize1 +
+		BUILD_DATA.optimize2 +
+		BUILD_DATA.optimize3
+	) > 1) {
+		fprintf(stderr, "skull: cannot specify multiple optimization levels\n");
+		return false;
+	}
+
+	if (BUILD_DATA.c_backend && BUILD_DATA.llvm_no_verify) {
+		fprintf(
+			stderr,
+			"skull: cannot specify llvm-specific flags when using C backend\n"
+		);
+		return false;
+	}
+
+	if (BUILD_DATA.quiet && BUILD_DATA.werror) {
+		fprintf(
+			stderr,
+			"skull: warnings aren't suppressed with --werror, -q is ignored\n"
+		);
+		return false;
+	}
+
+	if (BUILD_DATA.asm_backend && BUILD_DATA.c_backend) {
+		fprintf(stderr, "skull: cannot output assembly (-S) using C backend\n");
+		return false;
+	}
+
+	if ((BUILD_DATA.preprocess +
+		BUILD_DATA.asm_backend +
+		BUILD_DATA.compile_only
+	) > 1) {
+		fprintf(stderr, "skull: -S, -E, and -c cannot be used together\n");
+		return false;
+	}
+
+	return true;
 }
 
 static void bail(int exit_code) {
