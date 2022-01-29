@@ -38,6 +38,7 @@ static AstNodeExpr *parse_expr_rhs(ParserCtx *, AstNodeExpr *);
 static unsigned oper_to_precedence(ExprType);
 static AstNodeExpr *parse_root_expr(ParserCtx *);
 static bool is_unary_oper(ExprType);
+static ExprType get_potential_unary_oper(TokenType);
 static bool is_explicit_type(ParserCtx *);
 static Token *is_potential_type(Token *);
 static Vector *parse_function_proto_params(ParserCtx *);
@@ -222,13 +223,13 @@ static ParserResult parse_var_assign(ParserCtx *ctx) {
 }
 
 /*
-Convert a `TokenType` to an `ExprType`.
+Convert a `TokenType` to an `ExprType` in a binary-expr context
 */
-static ExprType token_type_to_expr_oper_type(TokenType type) {
+static ExprType token_type_to_binary_expr_type(TokenType type) {
 	switch (type) {
 		case TOKEN_OPER_PLUS: return EXPR_ADD;
-		case TOKEN_OPER_MINUS: return EXPR_SUB;
-		case TOKEN_OPER_MULT: return EXPR_MULT;
+		case TOKEN_OPER_DASH: return EXPR_SUB;
+		case TOKEN_OPER_STAR: return EXPR_MULT;
 		case TOKEN_OPER_DIV: return EXPR_DIV;
 		case TOKEN_OPER_MOD: return EXPR_MOD;
 		case TOKEN_OPER_LSHIFT: return EXPR_LSHIFT;
@@ -654,15 +655,12 @@ static AstNodeExpr *parse_expression(ParserCtx *ctx) {
 static AstNodeExpr *parse_single_expr(ParserCtx *ctx) {
 	if (!ctx->token) return NULL;
 
-	ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
-
-	if (!is_unary_oper(oper)) {
+	ExprType unary_oper = get_potential_unary_oper(ctx->token->type);
+	if (!unary_oper) {
 		return parse_root_expr(ctx);
 	}
 
 	Token *last = ctx->token;
-	if (oper == EXPR_SUB) oper = EXPR_UNARY_NEG;
-	if (oper == EXPR_MULT) oper = EXPR_DEREF;
 	next_token(ctx);
 
 	if (!ctx->token) {
@@ -672,8 +670,7 @@ static AstNodeExpr *parse_single_expr(ParserCtx *ctx) {
 		return NULL;
 	}
 
-	const ExprType next_oper = token_type_to_expr_oper_type(ctx->token->type);
-	if (is_unary_oper(next_oper)) {
+	if (get_potential_unary_oper(ctx->token->type)) {
 		FMT_ERROR(ERR_NO_DOUBLE_UNARY, { .loc = &ctx->token->location });
 
 		ctx->err = true;
@@ -682,28 +679,30 @@ static AstNodeExpr *parse_single_expr(ParserCtx *ctx) {
 
 	AstNodeExpr *expr = Malloc(sizeof(AstNodeExpr));
 	*expr = (AstNodeExpr){
-		.oper = oper,
+		.oper = unary_oper,
 		.rhs = parse_root_expr(ctx)
 	};
 
 	return expr;
 }
 
-/*
-Return whether `oper` is a unary expr or not. Since `EXPR_SUB` and
-`EXPR_UNARY_NEG` are share the same representation, they can both
-can be considered unary, if it would make since in context (same for
-`EXPR_DEREF` and `EXPR_MULT`).
-*/
 static bool is_unary_oper(ExprType oper) {
 	return (
-		oper == EXPR_SUB ||
 		oper == EXPR_UNARY_NEG ||
 		oper == EXPR_NOT ||
 		oper == EXPR_REF ||
-		oper == EXPR_MULT ||
 		oper == EXPR_DEREF
 	);
+}
+
+static ExprType get_potential_unary_oper(TokenType type) {
+	switch (type) {
+		case TOKEN_OPER_DASH: return EXPR_UNARY_NEG;
+		case TOKEN_OPER_STAR: return EXPR_DEREF;
+		case TOKEN_OPER_NOT: return EXPR_NOT;
+		case TOKEN_OPER_REF: return EXPR_REF;
+		default: return EXPR_UNKNOWN;
+	}
 }
 
 /*
@@ -727,9 +726,10 @@ static AstNodeExpr *parse_root_expr(ParserCtx *ctx) {
 static AstNodeExpr *parse_expr_rhs(ParserCtx *ctx, AstNodeExpr *expr) {
 	if (!ctx->token) return expr;
 
-	const ExprType oper = token_type_to_expr_oper_type(ctx->token->type);
+	const ExprType oper = token_type_to_binary_expr_type(ctx->token->type);
+
 	if (oper == EXPR_UNKNOWN) return expr;
-	if (is_unary_oper(oper) && (oper != EXPR_SUB && oper != EXPR_MULT)) {
+	if (is_unary_oper(oper)) {
 		FMT_ERROR(ERR_UNEXPECTED_UNARY_EXPR, { .loc = &ctx->token->location });
 		ctx->err = true;
 		return NULL;

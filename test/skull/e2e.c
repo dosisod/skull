@@ -743,6 +743,17 @@ NULL,
 "./test/sh/error/expr/deref_non_ref_fails.sk: Compilation error: line 2 column 8: cannot dereference expression\n"
 );
 
+
+pass |= e2e_wrapper(
+"x := true not true\n",
+
+TEST_DIR"/error/expr/unexpected_unary.sk",
+
+NULL,
+
+"./test/sh/error/expr/unexpected_unary.sk: Compilation error: line 1 column 11: unexpected unary operator\n"
+);
+
 	return pass;
 }
 

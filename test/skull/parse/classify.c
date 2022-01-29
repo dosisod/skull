@@ -167,11 +167,11 @@ static bool test_token_plus_oper(void) {
 }
 
 static bool test_token_minus_oper(void) {
-	return classify_token_fixture(U"-", TOKEN_OPER_MINUS);
+	return classify_token_fixture(U"-", TOKEN_OPER_DASH);
 }
 
 static bool test_token_mult_oper(void) {
-	return classify_token_fixture(U"*", TOKEN_OPER_MULT);
+	return classify_token_fixture(U"*", TOKEN_OPER_STAR);
 }
 
 static bool test_token_div_oper(void) {

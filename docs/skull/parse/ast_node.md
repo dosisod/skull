@@ -147,10 +147,10 @@ static Token *is_potential_type(Token *token)
 > last token of type if valid, otherwise `NULL`.
 
 ```c
-static ExprType token_type_to_expr_oper_type(TokenType type)
+static ExprType token_type_to_binary_expr_type(TokenType type)
 ```
 
-> Convert a `TokenType` to an `ExprType`.
+> Convert a `TokenType` to an `ExprType` in a binary-expr context
 
 ```c
 static AstNode *parse_ast_tree_(ParserCtx *ctx)
@@ -181,15 +181,6 @@ static AstNodeExpr *parse_expression(ParserCtx *ctx)
 > Try and generate AST node for expression.
 > \
 > Returns node if one was added, NULL otherwise.
-
-```c
-static bool is_unary_oper(ExprType oper)
-```
-
-> Return whether `oper` is a unary expr or not. Since `EXPR_SUB` and
-> `EXPR_UNARY_NEG` are share the same representation, they can both
-> can be considered unary, if it would make since in context (same for
-> `EXPR_DEREF` and `EXPR_MULT`).
 
 ```c
 static AstNodeExpr *parse_root_expr(ParserCtx *ctx)

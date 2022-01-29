@@ -38,8 +38,8 @@ static void classify_token(Token *const token) {
 		switch (*token->begin) {
 			case '=': token->type = TOKEN_OPER_EQUAL; return;
 			case '+': token->type = TOKEN_OPER_PLUS; return;
-			case '-': token->type = TOKEN_OPER_MINUS; return;
-			case '*': token->type = TOKEN_OPER_MULT; return;
+			case '-': token->type = TOKEN_OPER_DASH; return;
+			case '*': token->type = TOKEN_OPER_STAR; return;
 			case '/': token->type = TOKEN_OPER_DIV; return;
 			case '<': token->type = TOKEN_OPER_LESS_THAN; return;
 			case '>': token->type = TOKEN_OPER_GTR_THAN; return;

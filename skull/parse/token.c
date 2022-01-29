@@ -128,7 +128,8 @@ static bool is_delimeter(char32_t c) {
 		c == ')' ||
 		c == ',' ||
 		c == '\n' ||
-		c == '&'
+		c == '&' ||
+		c == '*'
 	);
 }
 
