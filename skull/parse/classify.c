@@ -64,6 +64,7 @@ static void classify_token(Token *const token) {
 	TOKEN_TRY_STR("noop", TOKEN_KW_NOOP)
 	TOKEN_TRY_STR("break", TOKEN_KW_BREAK)
 	TOKEN_TRY_STR("continue", TOKEN_KW_CONTINUE)
+	TOKEN_TRY_STR("import", TOKEN_KW_IMPORT)
 	TOKEN_TRY_STR("mod", TOKEN_OPER_MOD)
 	TOKEN_TRY_STR(":=", TOKEN_OPER_AUTO_EQUAL)
 	TOKEN_TRY_STR("not", TOKEN_OPER_NOT)
@@ -144,6 +145,7 @@ static bool is_reserved_str(const char32_t *const str) {
 		c32scmp(U"noop", str) ||
 		c32scmp(U"break", str) ||
 		c32scmp(U"continue", str) ||
+		c32scmp(U"import", str) ||
 		c32scmp(U"mod", str) ||
 		c32scmp(U"isnt", str) ||
 		c32scmp(U"and", str) ||

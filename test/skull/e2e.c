@@ -766,6 +766,28 @@ NULL,
 "./test/sh/error/declare/redundant_reassign.sk: Compilation error: line 2 column 5: redundant assignment of variable \"x\" to itself\n"
 );
 
+
+pass |= e2e_wrapper(
+"import",
+
+TEST_DIR"/error/flow/import_missing_token.sk",
+
+NULL,
+
+"./test/sh/error/flow/import_missing_token.sk: Compilation error: line 1 column 1: expected identifier after \"import\"\n"
+);
+
+
+pass |= e2e_wrapper(
+"import 1",
+
+TEST_DIR"/error/flow/import_missing_ident.sk",
+
+NULL,
+
+"./test/sh/error/flow/import_missing_ident.sk: Compilation error: line 1 column 8: expected identifier after \"import\"\n"
+);
+
 	return pass;
 }
 

@@ -47,6 +47,7 @@ static const char *errors[] = {
 	[ERR_NO_CLOSING_QUOTE] = "expected closing quote",
 	[ERR_NO_VOID_ASSIGN] = \
 		"function returning type void cannot be assigned to variable \"%s\"",
+	[ERR_IMPORT_IDENT] = "expected identifier after \"import\"",
 	[ERR_VAR_ALREADY_DEFINED] = "variable \"%s\" already defined",
 	[ERR_NON_INT_MAIN] = "returning non-int expression \"%s\" from main",
 	[ERR_NON_BOOL_EXPR] = "expected boolean expression",

@@ -499,6 +499,21 @@ static void parse_continue(ParserCtx *ctx) {
 	next_token(ctx);
 }
 
+static void parse_import(ParserCtx *ctx) {
+	const Token *next = ctx->token->next;
+
+	if (next && next->type == TOKEN_IDENTIFIER) {
+		ctx->token = next->next;
+	}
+	else {
+		FMT_ERROR(ERR_IMPORT_IDENT, {
+			.loc = next ? &next->location : &ctx->token->location
+		});
+
+		ctx->err = true;
+	}
+}
+
 /*
 Parse a single AST node.
 
@@ -529,6 +544,7 @@ static bool parse_ast_node(ParserCtx *ctx) {
 		case TOKEN_KW_NOOP: parse_noop(ctx); break;
 		case TOKEN_KW_BREAK: parse_break(ctx); break;
 		case TOKEN_KW_CONTINUE: parse_continue(ctx); break;
+		case TOKEN_KW_IMPORT: parse_import(ctx); break;
 		default: {
 			ParserResult result = parse_function_proto(ctx);
 
