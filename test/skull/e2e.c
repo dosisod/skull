@@ -754,6 +754,18 @@ NULL,
 "./test/sh/error/expr/unexpected_unary.sk: Compilation error: line 1 column 11: unexpected unary operator\n"
 );
 
+
+pass |= e2e_wrapper(
+"mut x := 1\n" \
+"x = x\n",
+
+TEST_DIR"/error/declare/redundant_reassign.sk",
+
+NULL,
+
+"./test/sh/error/declare/redundant_reassign.sk: Compilation error: line 2 column 5: redundant assignment of variable \"x\" to itself\n"
+);
+
 	return pass;
 }
 

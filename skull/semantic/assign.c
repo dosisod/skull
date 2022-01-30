@@ -16,6 +16,7 @@
 static bool is_void_func_assign(const AstNode *);
 static Variable *node_to_var(const AstNode *const);
 static bool is_expr_compatible_with_var(const AstNodeExpr *, const Variable *);
+static bool is_redundant_reassign(const AstNodeVarAssign *);
 
 
 bool validate_stmt_var_def(const AstNode *node) {
@@ -65,7 +66,10 @@ bool validate_stmt_var_assign(const AstNode *node) {
 
 	if (!validate_expr(node->var_assign->expr)) return false;
 
-	return is_expr_compatible_with_var(node->var_assign->expr, var);
+	return (
+		is_expr_compatible_with_var(node->var_assign->expr, var) &&
+		!is_redundant_reassign(node->var_assign)
+	);
 }
 
 /*
@@ -158,4 +162,16 @@ static bool is_expr_compatible_with_var(
 	}
 
 	return true;
+}
+
+static bool is_redundant_reassign(const AstNodeVarAssign *var_assign) {
+	const AstNodeExpr *expr = var_assign->expr;
+
+	if (expr->oper == EXPR_IDENTIFIER && expr->var == var_assign->var) {
+		FMT_ERROR(ERR_REDUNDANT_REASSIGN, { .tok = expr->lhs.tok });
+
+		return true;
+	}
+
+	return false;
 }
