@@ -1,7 +1,7 @@
 # Skull Documentation
 
 * [Getting Started](./getting_started.md)
-* Variables (TODO)
+* [Variables](./variables.md)
 * Basic expressions (TODO)
 * Functions (TODO)
 * Control Flow (TODO)
