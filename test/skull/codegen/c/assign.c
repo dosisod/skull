@@ -14,17 +14,12 @@
 
 static bool top_lvl_var_def_fixture(bool, bool, bool, const char *, const char *);
 
-static void reset_state(void) {
-	free(SKULL_STATE_C.globals);
-	SKULL_STATE_C.globals = NULL;
-}
-
 static bool test_assign(void) {
 	AstNode *node = AST_NODE_VAR_ASSIGN(NULL, AST_NODE_CONST_EXPR(NULL));
 	SET_EXPR_VALUE_INT(node->var_assign->expr, 1);
 	node->var_assign->var = make_variable(&TYPE_INT, U"x", false);
 
-	char *str = gen_stmt_var_assign_c(node);
+	char *str = gen_stmt_var_assign_c(node, setup_c_state());
 
 	ASSERT_TRUTHY(str);
 	ASSERT_EQUAL(strcmp(str, "x = 1;"), 0);
@@ -43,7 +38,7 @@ static bool test_mutable_var_def(void) {
 	node->var_def->var = make_variable(&TYPE_INT, U"x", false);
 	node->var_def->var->expr = node->var_def->expr;
 
-	char *str = gen_stmt_var_def_c(node);
+	char *str = gen_stmt_var_def_c(node, setup_c_state());
 
 	ASSERT_TRUTHY(str);
 	ASSERT_EQUAL(strcmp(str, TYPE_INT_C" x = 1;"), 0);
@@ -62,7 +57,7 @@ static bool test_const_var_def(void) {
 	node->var_def->var = make_variable(&TYPE_INT, U"x", true);
 	node->var_def->var->expr = node->var_def->expr;
 
-	char *str = gen_stmt_var_def_c(node);
+	char *str = gen_stmt_var_def_c(node, setup_c_state());
 
 	ASSERT_TRUTHY(str);
 	ASSERT_EQUAL(strcmp(str, "const "TYPE_INT_C" x = 1;"), 0);
@@ -113,19 +108,21 @@ static bool top_lvl_var_def_fixture(
 	node->var_def->expr->is_const_expr = is_const_expr;
 	node->var_def->var->expr = node->var_def->expr;
 
-	SKULL_STATE_C.indent_lvl = 1;
-	char *str = gen_stmt_var_def_c(node);
-	SKULL_STATE_C.indent_lvl = 0;
+	SkullStateC *state = setup_c_state();
+
+	state->indent_lvl = 1;
+	char *str = gen_stmt_var_def_c(node, state);
+	state->indent_lvl = 0;
 
 	if (expected_literal) {
 		ASSERT_TRUTHY(str);
 		ASSERT_EQUAL(strcmp(str, expected_literal), 0);
 	}
 
-	ASSERT_TRUTHY(SKULL_STATE_C.globals);
-	ASSERT_EQUAL(strcmp(SKULL_STATE_C.globals, expected_global), 0);
+	ASSERT_TRUTHY(state->globals);
+	ASSERT_EQUAL(strcmp(state->globals, expected_global), 0);
 
-	reset_state();
+	free_c_state();
 
 	free(str);
 	free_variable(node->var_def->var);

@@ -14,7 +14,7 @@
 #include "test/testing.h"
 
 static bool expr_fixture(const AstNodeExpr *expr, const char *expected) {
-	char *out = gen_expr_c(expr);
+	char *out = gen_expr_c(expr, NULL);
 
 	const bool pass = out && strcmp(out, expected) == 0;
 
@@ -148,7 +148,7 @@ static bool test_binary_expr(void) {
 		SET_EXPR_VALUE_INT(node->expr->lhs.expr, 1);
 		SET_EXPR_VALUE_INT(node->expr->rhs, 1);
 
-		char *expr_str = gen_expr_c(node->expr);
+		char *expr_str = gen_expr_c(node->expr, NULL);
 
 		pass &= expr_str && strcmp(*expected, expr_str) == 0;
 
@@ -171,10 +171,11 @@ static bool test_int_pow_expr(void) {
 	SET_EXPR_VALUE_INT(expr->rhs, 2);
 	expr->type = &TYPE_INT;
 
-	char *expr_str = gen_expr_c(expr);
+	SkullStateC *state = setup_c_state();
+	char *expr_str = gen_expr_c(expr, state);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "_int_pow(1, 2)") == 0);
-	ASSERT_TRUTHY(SKULL_STATE_C.called_int_pow);
+	ASSERT_TRUTHY(state->called_int_pow);
 
 	free(expr_str);
 	PASS;
@@ -190,11 +191,12 @@ static bool test_float_pow_expr(void) {
 	SET_EXPR_VALUE_FLOAT(expr->rhs, 2.0);
 	expr->type = &TYPE_FLOAT;
 
-	char *expr_str = gen_expr_c(expr);
+	SkullStateC *state = setup_c_state();
+	char *expr_str = gen_expr_c(expr, state);
 
 	const char *expected = "_float_pow(0x1p+0, 0x1p+1)";
 	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
-	ASSERT_TRUTHY(SKULL_STATE_C.called_float_pow);
+	ASSERT_TRUTHY(state->called_float_pow);
 
 	free(expr_str);
 	PASS;
@@ -210,11 +212,12 @@ static bool test_str_is(void) {
 	SET_EXPR_VALUE_STR(expr->rhs, "x");
 	expr->type = &TYPE_BOOL;
 
-	char *expr_str = gen_expr_c(expr);
+	SkullStateC *state = setup_c_state();
+	char *expr_str = gen_expr_c(expr, state);
 
 	const char *expected = "_strcmp(\"x\", \"x\")";
 	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
-	ASSERT_TRUTHY(SKULL_STATE_C.called_strcmp);
+	ASSERT_TRUTHY(state->called_strcmp);
 
 	free(expr_str);
 	PASS;
@@ -230,11 +233,12 @@ static bool test_str_isnt(void) {
 	SET_EXPR_VALUE_STR(expr->rhs, "x");
 	expr->type = &TYPE_BOOL;
 
-	char *expr_str = gen_expr_c(expr);
+	SkullStateC *state = setup_c_state();
+	char *expr_str = gen_expr_c(expr, state);
 
 	const char *expected = "!_strcmp(\"x\", \"x\")";
 	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
-	ASSERT_TRUTHY(SKULL_STATE_C.called_strcmp);
+	ASSERT_TRUTHY(state->called_strcmp);
 
 	free(expr_str);
 	PASS;
@@ -248,7 +252,7 @@ static bool test_unary_negation(void) {
 	);
 	SET_EXPR_VALUE_INT(expr->rhs, 1);
 
-	char *expr_str = gen_expr_c(expr);
+	char *expr_str = gen_expr_c(expr, NULL);
 
 	const char *expected = "-(1)";
 	ASSERT_TRUTHY(strcmp(expr_str, expected) == 0);
@@ -265,7 +269,7 @@ static bool test_unary_not(void) {
 	);
 	SET_EXPR_VALUE_INT(expr->rhs, 1);
 
-	char *expr_str = gen_expr_c(expr);
+	char *expr_str = gen_expr_c(expr, NULL);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "!1") == 0);
 
@@ -278,7 +282,7 @@ static bool test_func_call_no_args(void) {
 	char func_name[] = "f";
 	expr->lhs.func_call->func_decl->name = func_name;
 
-	char *expr_str = gen_expr_c(expr);
+	char *expr_str = gen_expr_c(expr, NULL);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "f()") == 0);
 
@@ -294,7 +298,7 @@ static bool test_func_call_single_arg(void) {
 	expr->lhs.func_call->func_decl->name = (char[]){"f"};
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
 
-	char *expr_str = gen_expr_c(expr);
+	char *expr_str = gen_expr_c(expr, NULL);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "f(1)") == 0);
 
@@ -312,7 +316,7 @@ static bool test_func_call_two_args(void) {
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->expr, 2);
 
-	char *expr_str = gen_expr_c(expr);
+	char *expr_str = gen_expr_c(expr, NULL);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2)") == 0);
 
@@ -332,7 +336,7 @@ static bool test_func_call_many_args(void) {
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->expr, 2);
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->next->expr, 3);
 
-	char *expr_str = gen_expr_c(expr);
+	char *expr_str = gen_expr_c(expr, NULL);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "f(1, 2, 3)") == 0);
 

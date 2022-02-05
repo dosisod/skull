@@ -12,7 +12,8 @@ static Expr gen_node(const AstNode **);
 /*
 Run code generator for module starting at `node`.
 */
-void gen_module(const AstNode *node) {
+void gen_module(const AstNode *node, SkullStateLLVM *state) {
+	(void)state;
 	const Expr expr = gen_tree(node);
 
 	if (!expr.value) {

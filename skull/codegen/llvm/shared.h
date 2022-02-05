@@ -17,4 +17,4 @@ typedef struct {
 extern SkullStateLLVM SKULL_STATE_LLVM;
 
 void free_llvm_state(void);
-void setup_llvm_state(void);
+SkullStateLLVM *setup_llvm_state(void);

@@ -1,3 +1,5 @@
 #pragma once
 
-_Bool write_llvm(const char *);
+#include "skull/codegen/llvm/shared.h"
+
+_Bool write_llvm(const char *, SkullStateLLVM *);

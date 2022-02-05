@@ -1,7 +1,7 @@
 # skull/codegen/llvm/write
 
 ```c
-bool write_llvm(const char *filename)
+bool write_llvm(const char *filename, SkullStateLLVM *state)
 ```
 
 > Writer for LLVM backend. Can emit LLVM, native binary, or assembler based

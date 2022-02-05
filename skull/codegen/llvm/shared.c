@@ -16,7 +16,7 @@
 
 SkullStateLLVM SKULL_STATE_LLVM;
 
-void setup_llvm_state(void) {
+SkullStateLLVM *setup_llvm_state(void) {
 	SkullStateLLVM *state = &SKULL_STATE_LLVM;
 
 	const char *filename = BUILD_DATA.filename;
@@ -61,6 +61,8 @@ void setup_llvm_state(void) {
 	if (BUILD_DATA.debug) {
 		setup_debug_info(filename, SKULL_STATE_LLVM.module);
 	}
+
+	return &SKULL_STATE_LLVM;
 }
 
 /*

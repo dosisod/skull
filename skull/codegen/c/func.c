@@ -12,30 +12,28 @@
 
 static char *gen_param_c(AstNodeFunctionParam *);
 
-CStmt gen_stmt_func_call_c(const AstNode *node) {
-	CExpr expr = gen_expr_c(node->expr);
+CStmt gen_stmt_func_call_c(const AstNode *node, SkullStateC *state) {
+	CExpr expr = gen_expr_c(node->expr, state);
 	CStmt out = uvsnprintf("%s;", expr);
 
 	free(expr);
 	return out;
 }
 
-void gen_function_def_c(const AstNode *node) {
-	char *func = gen_function_prototype_c(node);
+void gen_function_def_c(const AstNode *node, SkullStateC *state) {
+	char *func = gen_function_prototype_c(node, state);
 
-	char *old_globals = SKULL_STATE_C.globals;
+	char *old_globals = state->globals;
 	if (old_globals) {
-		SKULL_STATE_C.globals = uvsnprintf(
-			"%s\n%s", SKULL_STATE_C.globals, func
-		);
+		state->globals = uvsnprintf("%s\n%s", state->globals, func);
 
 		free(old_globals);
 		free(func);
 	}
-	else SKULL_STATE_C.globals = func;
+	else state->globals = func;
 }
 
-char *gen_function_prototype_c(const AstNode *node) {
+char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 	FunctionDeclaration *func = node->func_proto->func;
 	AstNodeFunctionParam **params = func->params;
 	char *param_list = NULL;
@@ -62,10 +60,10 @@ char *gen_function_prototype_c(const AstNode *node) {
 	param_list = param_list ? param_list : (char[]){"void"};
 
 	if (!func->is_external) {
-		unsigned indent_lvl = SKULL_STATE_C.indent_lvl;
-		SKULL_STATE_C.indent_lvl = 0;
-		char *tree = gen_tree_c(node->child);
-		SKULL_STATE_C.indent_lvl = indent_lvl;
+		unsigned indent_lvl = state->indent_lvl;
+		state->indent_lvl = 0;
+		char *tree = gen_tree_c(node->child, state);
+		state->indent_lvl = indent_lvl;
 
 		out = uvsnprintf(
 			func->is_export ?

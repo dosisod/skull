@@ -1,7 +1,7 @@
 # skull/codegen/llvm/core
 
 ```c
-void gen_module(const AstNode *node)
+void gen_module(const AstNode *node, SkullStateLLVM *state)
 ```
 
 > Run code generator for module starting at `node`.

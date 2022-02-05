@@ -35,11 +35,11 @@ static void add_llvm_local_var_def_debug_info(const Variable *);
 #define PRODUCER "clang (skull "SKULL_VERSION")"
 
 DebugInfo DEBUG_INFO;
-LLVMMetadataRef DI_TYPE_BOOL;
-LLVMMetadataRef DI_TYPE_INT;
-LLVMMetadataRef DI_TYPE_FLOAT;
-LLVMMetadataRef DI_TYPE_RUNE;
-LLVMMetadataRef DI_TYPE_STR;
+static LLVMMetadataRef DI_TYPE_BOOL;
+static LLVMMetadataRef DI_TYPE_INT;
+static LLVMMetadataRef DI_TYPE_FLOAT;
+static LLVMMetadataRef DI_TYPE_RUNE;
+static LLVMMetadataRef DI_TYPE_STR;
 
 LLVMDIBuilderRef setup_debug_info(
 	const char *filename,

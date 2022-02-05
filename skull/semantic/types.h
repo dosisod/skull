@@ -40,8 +40,6 @@ extern Type TYPE_RUNE;
 extern Type TYPE_STR;
 extern Type TYPE_VOID;
 
-extern Type **TYPES_BUILTIN;
-
 const Type *find_type(const char *const);
 _Bool is_reference(const Type *);
 Type *get_reference_type(const Type *);

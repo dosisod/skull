@@ -9,6 +9,6 @@ typedef struct {
 	unsigned indent_lvl;
 } SkullStateC;
 
-extern SkullStateC SKULL_STATE_C;
-
-char *get_indentation(void);
+SkullStateC *setup_c_state(void);
+char *get_indentation(const SkullStateC *);
+void free_c_state(void);

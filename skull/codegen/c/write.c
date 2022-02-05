@@ -17,15 +17,15 @@ static const char *_float_pow; // NOLINT
 static const char *_int_pow; // NOLINT
 static const char *headers;
 
-static void print_builtins(FILE *);
 static void print_headers(FILE *);
-static void print_globals(FILE *);
-static void print_main_shim(FILE *, const char *);
+static void print_builtins(FILE *, const SkullStateC *);
+static void print_globals(FILE *, const SkullStateC *);
+static void print_main_shim(FILE *, const char *, const SkullStateC *);
 
 /*
 Write C code for given `filename` to new file, with ".sk" replaced with ".c".
 */
-bool write_file_c(const char *filename) {
+bool write_file_c(const char *filename, SkullStateC *state) {
 	char *out_filename = get_new_filename(filename, "c");
 
 	FILE *f = strcmp(out_filename, "-") == 0 ?
@@ -35,11 +35,11 @@ bool write_file_c(const char *filename) {
 	free(out_filename);
 
 	print_headers(f);
-	print_builtins(f);
-	print_globals(f);
+	print_builtins(f, state);
+	print_globals(f, state);
 
 	char *module_name = create_main_func_name(BUILD_DATA.filename);
-	print_main_shim(f, module_name);
+	print_main_shim(f, module_name, state);
 	free(module_name);
 
 	return false;
@@ -49,24 +49,28 @@ static void print_headers(FILE *f) {
 	fprintf(f, "%s\n", headers);
 }
 
-static void print_globals(FILE *f) {
-	if (SKULL_STATE_C.globals) fprintf(f, "%s\n\n", SKULL_STATE_C.globals);
+static void print_globals(FILE *f, const SkullStateC *state) {
+	if (state->globals) fprintf(f, "%s\n\n", state->globals);
 }
 
-static void print_builtins(FILE *f) {
-	if (SKULL_STATE_C.called_strcmp) fprintf(f, "%s\n", _strcmp);
-	if (SKULL_STATE_C.called_int_pow) fprintf(f, "%s\n", _int_pow);
-	if (SKULL_STATE_C.called_float_pow) fprintf(f, "%s\n", _float_pow);
+static void print_builtins(FILE *f, const SkullStateC *state) {
+	if (state->called_strcmp) fprintf(f, "%s\n", _strcmp);
+	if (state->called_int_pow) fprintf(f, "%s\n", _int_pow);
+	if (state->called_float_pow) fprintf(f, "%s\n", _float_pow);
 }
 
-static void print_main_shim(FILE *f, const char *module_name) {
+static void print_main_shim(
+	FILE *f,
+	const char *module_name,
+	const SkullStateC *state
+) {
 	fprintf(
 		f,
 		"static int init(void) __asm__(\"%s\");\n" \
 		"static int init(void) {\n%s\n\treturn 0;\n}\n" \
 		"int main(void) { return init(); }\n",
 		module_name,
-		SKULL_STATE_C.tree ? SKULL_STATE_C.tree : ""
+		state->tree ? state->tree : ""
 	);
 }
 

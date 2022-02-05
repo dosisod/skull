@@ -16,6 +16,7 @@
 #include "skull/semantic/types.h"
 
 static void strip_underscore_num(char *, char);
+static Type **TYPES_BUILTIN;
 
 
 /*
@@ -217,7 +218,7 @@ Type TYPE_RUNE = { .name = "Rune" };
 Type TYPE_STR = { .name = "Str" };
 Type TYPE_VOID = { .name = "Void" };
 
-Type **TYPES_BUILTIN = (Type *[]){
+static Type **TYPES_BUILTIN = (Type *[]){
 	&TYPE_BOOL,
 	&TYPE_INT,
 	&TYPE_FLOAT,

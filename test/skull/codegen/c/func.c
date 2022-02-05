@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "skull/codegen/c/func.h"
+#include "skull/codegen/c/shared.h"
 #include "skull/codegen/c/types.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/types.h"
@@ -22,7 +23,7 @@ static bool test_no_arg_func_decl(void) {
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
 	node->func_proto->func = func;
 
-	char *str = gen_function_prototype_c(node);
+	char *str = gen_function_prototype_c(node, setup_c_state());
 
 	ASSERT_TRUTHY(strcmp(str, "void f(void);") == 0);
 
@@ -46,7 +47,7 @@ static bool test_single_arg_func_decl(void) {
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
 	node->func_proto->func = func;
 
-	char *str = gen_function_prototype_c(node);
+	char *str = gen_function_prototype_c(node, setup_c_state());
 
 	ASSERT_TRUTHY(strcmp(str, "void f("TYPE_INT_C" x);") == 0);
 
@@ -73,7 +74,7 @@ static bool test_many_arg_func_decl(void) {
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
 	node->func_proto->func = func;
 
-	char *str = gen_function_prototype_c(node);
+	char *str = gen_function_prototype_c(node, setup_c_state());
 
 	ASSERT_TRUTHY(strcmp(str, "void f("TYPE_INT_C" x, "TYPE_INT_C" y);") == 0);
 
@@ -93,7 +94,7 @@ static bool test_func_with_body(void) {
 	node->child = AST_NODE_NOOP();
 	node->func_proto->func = func;
 
-	char *str = gen_function_prototype_c(node);
+	char *str = gen_function_prototype_c(node, setup_c_state());
 
 	ASSERT_TRUTHY(strcmp(str, "static void f(void) {\n\t(void)0;\n}") == 0);
 
@@ -112,7 +113,7 @@ static bool test_func_static(void) {
 	node->child = AST_NODE_NOOP();
 	node->func_proto->func = func;
 
-	char *str = gen_function_prototype_c(node);
+	char *str = gen_function_prototype_c(node, setup_c_state());
 
 	ASSERT_TRUTHY(strcmp(str, "void f(void) {\n\t(void)0;\n}") == 0);
 

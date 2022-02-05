@@ -12,10 +12,11 @@
 #include "skull/codegen/c/expr.h"
 
 static CExpr gen_expr_const_c(const AstNodeExpr *);
-static CExpr gen_expr_binary_c(const AstNodeExpr *);
-static CExpr gen_expr_unary_c(const AstNodeExpr *);
+static CExpr gen_expr_binary_c(const AstNodeExpr *, SkullStateC *);
+static CExpr gen_expr_unary_c(const AstNodeExpr *, SkullStateC *);
+static CExpr gen_expr_func_call_c(const AstNodeFunctionCall *, SkullStateC *);
 
-CExpr gen_expr_c(const AstNodeExpr *expr) {
+CExpr gen_expr_c(const AstNodeExpr *expr, SkullStateC *state) {
 	switch (expr->oper) {
 		case EXPR_CONST:
 			return gen_expr_const_c(expr);
@@ -38,14 +39,14 @@ CExpr gen_expr_c(const AstNodeExpr *expr) {
 		case EXPR_OR:
 		case EXPR_XOR:
 		case EXPR_POW:
-			return gen_expr_binary_c(expr);
+			return gen_expr_binary_c(expr, state);
 		case EXPR_UNARY_NEG:
 		case EXPR_NOT:
 		case EXPR_REF:
 		case EXPR_DEREF:
-			return gen_expr_unary_c(expr);
+			return gen_expr_unary_c(expr, state);
 		case EXPR_FUNC:
-			return gen_expr_func_call_c(expr->lhs.func_call);
+			return gen_expr_func_call_c(expr->lhs.func_call, state);
 		default:
 			return NULL;
 	}
@@ -82,7 +83,7 @@ static CExpr gen_expr_const_c(const AstNodeExpr *expr) {
 	return NULL;
 }
 
-static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
+static CExpr gen_expr_binary_c(const AstNodeExpr *expr, SkullStateC *state) {
 	const char *fmt = NULL;
 
 	switch (expr->oper) {
@@ -96,7 +97,7 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 		case EXPR_IS: {
 			if (expr->lhs.expr->type == &TYPE_STR) {
 				fmt = "_strcmp(%s, %s)";
-				SKULL_STATE_C.called_strcmp = true;
+				state->called_strcmp = true;
 			}
 			else fmt = "(%s == %s)";
 			break;
@@ -104,7 +105,7 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 		case EXPR_ISNT: {
 			if (expr->lhs.expr->type == &TYPE_STR) {
 				fmt = "!_strcmp(%s, %s)";
-				SKULL_STATE_C.called_strcmp = true;
+				state->called_strcmp = true;
 			}
 			else fmt = "(%s != %s)";
 			break;
@@ -119,19 +120,19 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 		case EXPR_POW: {
 			if (expr->type == &TYPE_INT) {
 				fmt = "_int_pow(%s, %s)";
-				SKULL_STATE_C.called_int_pow = true;
+				state->called_int_pow = true;
 			}
 			else if (expr->type == &TYPE_FLOAT) {
 				fmt = "_float_pow(%s, %s)";
-				SKULL_STATE_C.called_float_pow = true;
+				state->called_float_pow = true;
 			}
 			break;
 		}
 		default: return NULL;
 	}
 
-	CExpr expr_lhs = gen_expr_c(expr->lhs.expr);
-	CExpr expr_rhs = gen_expr_c(expr->rhs);
+	CExpr expr_lhs = gen_expr_c(expr->lhs.expr, state);
+	CExpr expr_rhs = gen_expr_c(expr->rhs, state);
 
 	CExpr out = uvsnprintf(fmt, expr_lhs, expr_rhs);
 
@@ -140,7 +141,7 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr) {
 	return out;
 }
 
-static CExpr gen_expr_unary_c(const AstNodeExpr *expr) {
+static CExpr gen_expr_unary_c(const AstNodeExpr *expr, SkullStateC *state) {
 	const char *fmt = NULL;
 
 	switch (expr->oper) {
@@ -153,14 +154,17 @@ static CExpr gen_expr_unary_c(const AstNodeExpr *expr) {
 
 	if (!fmt) return NULL;
 
-	CExpr expr_str = gen_expr_c(expr->rhs);
+	CExpr expr_str = gen_expr_c(expr->rhs, state);
 	CExpr out = uvsnprintf(fmt, expr_str);
 
 	free(expr_str);
 	return out;
 }
 
-CExpr gen_expr_func_call_c(const AstNodeFunctionCall *func_call) {
+static CExpr gen_expr_func_call_c(
+	const AstNodeFunctionCall *func_call,
+	SkullStateC *state
+) {
 	FunctionDeclaration *function = func_call->func_decl;
 	char *name = function->name;
 	unsigned short num_params = function->num_params;
@@ -172,7 +176,7 @@ CExpr gen_expr_func_call_c(const AstNodeFunctionCall *func_call) {
 	unsigned short at = 0;
 
 	while (at < num_params) {
-		CExpr expr = gen_expr_c(param->expr);
+		CExpr expr = gen_expr_c(param->expr, state);
 
 		if (at == 0) {
 			param_list = expr;

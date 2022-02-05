@@ -43,7 +43,9 @@ static bool check_directory(char *);
 Writer for LLVM backend. Can emit LLVM, native binary, or assembler based
 on CLI parameters.
 */
-bool write_llvm(const char *filename) {
+bool write_llvm(const char *filename, SkullStateLLVM *state) {
+	(void)state;
+
 	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
 
 	PhaseResult result = verify_llvm();

@@ -9,11 +9,12 @@ bool run_backend(
 	const AstNode *node,
 	const char *filename
 ) {
-	if (backend->setup) backend->setup();
+	void *state = NULL;
+	if (backend->setup) state = backend->setup();
 
-	if (backend->gen_module) backend->gen_module(node);
+	if (backend->gen_module) backend->gen_module(node, state);
 
-	const bool success = backend->write(filename);
+	const bool success = backend->write(filename, state);
 
 	if (backend->cleanup) backend->cleanup();
 
