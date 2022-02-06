@@ -1463,6 +1463,29 @@ static bool test_validate_type_alias_in_expr_not_allowed(void) {
 	PASS
 }
 
+static bool test_validate_break_in_func_def(void) {
+	Token *token = tokenize_fixture(U"while true { f() { break } }");
+
+	Token *func_token = token->next->next->next;
+	Token *break_token = func_token->next->next->next->next;
+
+	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(func_token, false, false);
+	func->child = AST_NODE_BREAK(break_token);
+
+	AstNode *while_node = AST_NODE_WHILE(
+		token,
+		AST_NODE_CONST_EXPR(token->next),
+		func
+	);
+
+	return validate_tree_fixture(
+		while_node,
+		"(null): Warning: line 1 column 7: condition is always true\n" \
+		"(null): Compilation error: line 1 column 20: break must be inside while loop\n"
+	);
+}
+
+
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
 		test_validate_int_expr,
@@ -1545,7 +1568,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_isnt_str,
 		test_validate_matching_types,
 		test_validate_type_alias_mut_not_allowed,
-		test_validate_type_alias_in_expr_not_allowed
+		test_validate_type_alias_in_expr_not_allowed,
+		test_validate_break_in_func_def
 	)
 }
 

@@ -3,6 +3,7 @@
 
 #include "skull/build_data.h"
 #include "skull/common/errors.h"
+#include "skull/semantic/entry.h"
 #include "skull/semantic/expr.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
@@ -93,21 +94,30 @@ static bool no_dead_code_below(const AstNode *node) {
 }
 
 bool validate_control_else(const AstNode *node) {
-	return validate_control_not_missing_if(node) &&
-		!is_missing_block(node, "else");
+	return (
+		validate_control_not_missing_if(node) &&
+		!is_missing_block(node, "else") &&
+		setup_and_validate_ast_sub_tree(node->child)
+	);
 }
 
 bool validate_control_if(const AstNode *node) {
-	return !is_missing_block(node, "if") &&
+	return (
+		!is_missing_block(node, "if") &&
 		validate_expr(node->expr) &&
-		validate_bool_expr(node->expr);
+		validate_bool_expr(node->expr) &&
+		setup_and_validate_ast_sub_tree(node->child)
+	);
 }
 
 bool validate_control_elif(const AstNode *node) {
-	return !is_missing_block(node, "elif") &&
+	return (
+		!is_missing_block(node, "elif") &&
 		validate_control_not_missing_if(node) &&
 		validate_expr(node->expr) &&
-		validate_bool_expr(node->expr);
+		validate_bool_expr(node->expr) &&
+		setup_and_validate_ast_sub_tree(node->child)
+	);
 }
 
 bool validate_control_while(const AstNode *node) {
@@ -120,7 +130,10 @@ bool validate_control_while(const AstNode *node) {
 		return false;
 	}
 
-	return true;
+	const bool is_valid = setup_and_validate_ast_sub_tree(node->child);
+	SEMANTIC_STATE.while_loop_depth--;
+
+	return is_valid;
 }
 
 bool validate_control_break(const AstNode *node) {

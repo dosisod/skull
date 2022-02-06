@@ -6,6 +6,7 @@
 #include "skull/common/hashtable.h"
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
+#include "skull/semantic/entry.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
@@ -16,8 +17,24 @@
 
 static const Type *validate_return_type(const Token *);
 static bool validate_func_params(const AstNode *, FunctionDeclaration *);
+static bool validate_stmt_func_decl_(const AstNode *);
 
 bool validate_stmt_func_decl(const AstNode *node) {
+	const unsigned while_loop_depth = SEMANTIC_STATE.while_loop_depth;
+	SEMANTIC_STATE.while_loop_depth = 0;
+
+	const bool is_valid = (
+		validate_stmt_func_decl_(node) &&
+		setup_and_validate_ast_sub_tree(node->child) &&
+		post_validate_stmt_func_decl(node)
+	);
+
+	SEMANTIC_STATE.while_loop_depth = while_loop_depth;
+
+	return is_valid;
+}
+
+static bool validate_stmt_func_decl_(const AstNode *node) {
 	const bool is_external = node->func_proto->is_external;
 	const bool is_export = node->func_proto->is_export;
 	const Token *const func_name_token = node->func_proto->name_tok;

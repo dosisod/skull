@@ -15,37 +15,25 @@
 #include "skull/semantic/entry.h"
 
 
-static bool validate_ast_tree_(const AstNode *);
 static bool validate_ast_node(const AstNode *);
-static bool post_validate_ast_node(const AstNode *);
+static bool validate_ast_sub_tree(const AstNode *);
 
 /*
-Validate an entire AST tree starting at `node`.
+Validate an entire AST tree starting at `node` (the root).
 */
 bool validate_ast_tree(const AstNode *node) {
-	const bool pass = validate_ast_tree_(node);
+	const bool pass = validate_ast_sub_tree(node);
 	reset_scope_head();
 
 	return pass && check_unused_symbols(node);
 }
 
 /*
-Validate an entire AST tree starting at `node`.
+Validate an AST tree starting at `node`.
 */
-static bool validate_ast_tree_(const AstNode *node) {
+static bool validate_ast_sub_tree(const AstNode *node) {
 	while (node) {
 		if (!validate_ast_node(node)) return false;
-
-		if (node->child) {
-			make_child_scope();
-			const bool is_valid = validate_ast_tree_(node->child);
-			restore_parent_scope();
-
-			if (!is_valid) return false;
-			make_adjacent_scope();
-		}
-
-		if (!post_validate_ast_node(node)) return false;
 
 		node = node->next;
 	}
@@ -54,13 +42,13 @@ static bool validate_ast_tree_(const AstNode *node) {
 	return true;
 }
 
-static bool post_validate_ast_node(const AstNode *node) {
-	if (node->type == AST_NODE_FUNCTION_PROTO) {
-		return post_validate_stmt_func_decl(node);
-	}
-	if (node->type == AST_NODE_WHILE) {
-		SEMANTIC_STATE.while_loop_depth--;
-	}
+bool setup_and_validate_ast_sub_tree(const AstNode *node) {
+	make_child_scope();
+	const bool is_valid = validate_ast_sub_tree(node);
+	restore_parent_scope();
+
+	if (!is_valid) return false;
+	make_adjacent_scope();
 
 	return true;
 }
