@@ -1,3 +1,5 @@
+#pragma once
+
 #define SHIM "echo \'#include <stdint.h>\n" \
 "#include <uchar.h>\n" \
 "_Bool _strcmp(const char *a, const char *b) {\n" \
