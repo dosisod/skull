@@ -7,6 +7,7 @@
 #include "skull/semantic/expr.h"
 #include "skull/semantic/flow.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/import.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
@@ -72,6 +73,7 @@ static bool validate_ast_node(const AstNode *node) {
 		case AST_NODE_WHILE: return validate_control_while(node);
 		case AST_NODE_BREAK: return validate_control_break(node);
 		case AST_NODE_CONTINUE: return validate_control_continue(node);
+		case AST_NODE_IMPORT: return validate_stmt_import(node);
 		default: return true;
 	}
 }

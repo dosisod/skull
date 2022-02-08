@@ -503,6 +503,8 @@ static void parse_import(ParserCtx *ctx) {
 	const Token *next = ctx->token->next;
 
 	if (next && next->type == TOKEN_IDENTIFIER) {
+		push_ast_node(ctx, ctx->token, AST_NODE_IMPORT);
+
 		ctx->token = next->next;
 	}
 	else {

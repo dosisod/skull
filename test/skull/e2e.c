@@ -788,6 +788,17 @@ NULL,
 "./test/sh/error/flow/import_missing_ident.sk: Compilation error: line 1 column 8: expected identifier after \"import\"\n"
 );
 
+
+pass |= e2e_wrapper(
+"import not_a_module",
+
+TEST_DIR"/error/flow/import_module_not_found.sk",
+
+NULL,
+
+"./test/sh/error/flow/import_module_not_found.sk: Compilation error: could not load module \"not_a_module\": No such file or directory\n"
+);
+
 	return pass;
 }
 

@@ -114,7 +114,7 @@ _OBJS_TEST := $(patsubst %.c,%.o,$(shell find test/skull -name "*.c" | grep -v "
 	$(shell find skull -name "*.c" | grep -v "main\|errors\|ast_node\|hashtable\|classify\|codegen\|cli") test/testing.c)
 _OBJS_LLVM := $(patsubst %.c,%.o,$(shell find skull/codegen -name "*.c"))
 
-E2E := $(patsubst %.sk,%.c,$(shell find test/sh -name "*.sk" | grep -v skull))
+E2E := $(patsubst %.sk,%.c,$(shell find test/sh -name "*.sk" | grep -v "skull\|dummy"))
 
 ODIR := build/objs
 OBJS := $(addprefix $(ODIR)/,$(_OBJS))

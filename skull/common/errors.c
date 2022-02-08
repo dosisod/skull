@@ -118,6 +118,7 @@ static const char *errors[] = {
 	[ERR_MISSING_ASSIGNMENT] = "variable is missing an assignment",
 	[ERR_UNEXPECTED_COMMA] = "unexpected comma",
 	[ERR_CANNOT_DEREF] = "cannot dereference expression",
+	[ERR_LOAD_MODULE] = "could not load module \"%s\": %s",
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);
