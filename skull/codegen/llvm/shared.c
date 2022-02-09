@@ -14,7 +14,7 @@
 
 #include "skull/codegen/llvm/shared.h"
 
-SkullStateLLVM SKULL_STATE_LLVM;
+static SkullStateLLVM SKULL_STATE_LLVM;
 
 SkullStateLLVM *setup_llvm_state(void) {
 	SkullStateLLVM *state = &SKULL_STATE_LLVM;
@@ -28,7 +28,9 @@ SkullStateLLVM *setup_llvm_state(void) {
 	);
 	state->ctx = ctx;
 
-	LLVMTypeRef main_func_type = type_to_llvm_func_type(&TYPE_INT, NULL, 0);
+	LLVMTypeRef main_func_type = type_to_llvm_func_type(
+		&TYPE_INT, NULL, 0, state
+	);
 
 	LLVMValueRef main_func = LLVMAddFunction(
 		main_module,
@@ -58,11 +60,9 @@ SkullStateLLVM *setup_llvm_state(void) {
 
 	state->current_func = state->main_func;
 
-	if (BUILD_DATA.debug) {
-		setup_debug_info(filename, SKULL_STATE_LLVM.module);
-	}
+	if (BUILD_DATA.debug) setup_debug_info(filename, state);
 
-	return &SKULL_STATE_LLVM;
+	return state;
 }
 
 /*

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "skull/codegen/llvm/fwd_decl.h"
+#include "skull/codegen/llvm/shared.h"
 #include "skull/semantic/types.h"
 
 typedef struct Location Location;
@@ -39,13 +40,19 @@ extern DebugInfo DEBUG_INFO;
 
 LLVMDIBuilderRef setup_debug_info(
 	const char *,
-	LLVMModuleRef
+	const SkullStateLLVM *
 );
 
-void add_llvm_debug_info(LLVMValueRef, const Location *);
-LLVMMetadataRef make_llvm_debug_location(const Location *);
+void add_llvm_debug_info(
+	LLVMValueRef,
+	const Location *,
+	const SkullStateLLVM *
+);
 
 LLVMMetadataRef type_to_di_type(const Type *);
-void add_llvm_var_def_debug_info(const Variable *);
+void add_llvm_var_def_debug_info(const Variable *, const SkullStateLLVM *);
 LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *);
-LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *);
+LLVMMetadataRef add_llvm_func_debug_info(
+	FunctionDeclaration *,
+	const SkullStateLLVM *
+);

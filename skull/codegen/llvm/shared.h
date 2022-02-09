@@ -14,7 +14,5 @@ typedef struct {
 	LLVMBasicBlockRef current_while_end;
 } SkullStateLLVM;
 
-extern SkullStateLLVM SKULL_STATE_LLVM;
-
 void free_llvm_state(void);
 SkullStateLLVM *setup_llvm_state(void);

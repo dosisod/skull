@@ -3,6 +3,7 @@
 
 #include "skull/build_data.h"
 #include "skull/codegen/llvm/aliases.h"
+#include "skull/codegen/llvm/core.h"
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
@@ -13,64 +14,71 @@
 
 #include "skull/codegen/llvm/flow.h"
 
-Expr gen_tree(const AstNode *);
 static void gen_control_if_(
 	const AstNode **,
 	LLVMBasicBlockRef,
-	LLVMBasicBlockRef
+	LLVMBasicBlockRef,
+	SkullStateLLVM *
 );
 
-static void gen_control_code_block(const AstNode *, LLVMBasicBlockRef);
+static void gen_control_code_block(
+	const AstNode *,
+	LLVMBasicBlockRef,
+	SkullStateLLVM *
+);
 
 
 /*
 Build an unreachable statement.
 */
-Expr gen_stmt_unreachable(void) {
+Expr gen_stmt_unreachable(const SkullStateLLVM *state) {
 	return (Expr){
-		.value = LLVMBuildUnreachable(SKULL_STATE_LLVM.builder),
+		.value = LLVMBuildUnreachable(state->builder),
 		.type = &TYPE_VOID
 	};
 }
 
-void gen_stmt_implicit_main_return(const Location *location) {
-	LLVMValueRef ret = LLVMBuildRet(SKULL_STATE_LLVM.builder, LLVM_INT(0));
+void gen_stmt_implicit_main_return(
+	const Location *location,
+	const SkullStateLLVM *state
+) {
+	LLVMValueRef ret = LLVMBuildRet(state->builder, LLVM_INT(0));
 
-	add_llvm_debug_info(ret, location);
+	add_llvm_debug_info(ret, location, state);
 }
 
-void gen_stmt_noop(const Location *location) {
+void gen_stmt_noop(const Location *location, const SkullStateLLVM *state) {
 	if (!BUILD_DATA.debug) return;
 
 	LLVMValueRef noop = LLVMBuildStore(
-		SKULL_STATE_LLVM.builder,
+		state->builder,
 		LLVM_INT(0),
 		LLVMBuildAlloca(
-			SKULL_STATE_LLVM.builder,
-			type_to_llvm_type(&TYPE_INT),
+			state->builder,
+			type_to_llvm_type(&TYPE_INT, state),
 			"noop"
 		)
 	);
 
-	add_llvm_debug_info(noop, location);
+	add_llvm_debug_info(noop, location, state);
 }
 
 /*
 Builds an return statement from `node`.
 */
-Expr gen_stmt_return(const AstNode *node) {
+Expr gen_stmt_return(const AstNode *node, const SkullStateLLVM *state) {
 	if (!node->expr) {
 		return (Expr){
-			.value = LLVMBuildRetVoid(SKULL_STATE_LLVM.builder),
+			.value = LLVMBuildRetVoid(state->builder),
 			.type = &TYPE_VOID
 		};
 	}
 
-	const Expr expr = gen_expr(node->expr);
+	const Expr expr = gen_expr(node->expr, state);
 
-	LLVMValueRef ret = LLVMBuildRet(SKULL_STATE_LLVM.builder, expr.value);
+	LLVMValueRef ret = LLVMBuildRet(state->builder, expr.value);
 
-	add_llvm_debug_info(ret, &node->token->location);
+	add_llvm_debug_info(ret, &node->token->location, state);
 
 	return expr;
 }
@@ -78,61 +86,62 @@ Expr gen_stmt_return(const AstNode *node) {
 /*
 Builds LLVM for a while loop from `node`.
 */
-void gen_control_while(const AstNode *node) {
+void gen_control_while(const AstNode *node, SkullStateLLVM *state) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
-		SKULL_STATE_LLVM.ctx,
-		SKULL_STATE_LLVM.current_func->ref,
+		state->ctx,
+		state->current_func->ref,
 		"while_cond"
 	);
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlockInContext(
-		SKULL_STATE_LLVM.ctx,
-		SKULL_STATE_LLVM.current_func->ref,
+		state->ctx,
+		state->current_func->ref,
 		"while_loop"
 	);
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlockInContext(
-		SKULL_STATE_LLVM.ctx,
-		SKULL_STATE_LLVM.current_func->ref,
+		state->ctx,
+		state->current_func->ref,
 		"while_end"
 	);
 
-	SKULL_STATE_LLVM.current_while_cond = while_cond;
-	SKULL_STATE_LLVM.current_while_end = while_end;
+	state->current_while_cond = while_cond;
+	state->current_while_end = while_end;
 
-	LLVMBuildBr(SKULL_STATE_LLVM.builder, while_cond);
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_cond);
+	LLVMBuildBr(state->builder, while_cond);
+	LLVMPositionBuilderAtEnd(state->builder, while_cond);
 
-	LLVMValueRef cond = gen_expr(node->expr).value;
-	add_llvm_debug_info(cond, find_expr_node_location(node->expr));
+	LLVMValueRef cond = gen_expr(node->expr, state).value;
+	add_llvm_debug_info(cond, find_expr_node_location(node->expr), state);
 
 	LLVMBuildCondBr(
-		SKULL_STATE_LLVM.builder,
+		state->builder,
 		cond,
 		while_loop,
 		while_end
 	);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_loop);
-	gen_control_code_block(node, while_cond);
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, while_end);
+	LLVMPositionBuilderAtEnd(state->builder, while_loop);
+	gen_control_code_block(node, while_cond, state);
+	LLVMPositionBuilderAtEnd(state->builder, while_end);
 
 	// shouldn't be needed since semantic layer checks that all break/continue
 	// statements are in a while loop, but it doesn't hurt to leave it in.
-	SKULL_STATE_LLVM.current_while_cond = NULL;
-	SKULL_STATE_LLVM.current_while_end = NULL;
+	state->current_while_cond = NULL;
+	state->current_while_end = NULL;
 }
 
 /*
 Builds an if block from `node`.
 */
-void gen_control_if(const AstNode **node) {
+void gen_control_if(const AstNode **node, SkullStateLLVM *state) {
 	gen_control_if_(
 		node,
-		LLVMGetInsertBlock(SKULL_STATE_LLVM.builder),
+		LLVMGetInsertBlock(state->builder),
 		LLVMAppendBasicBlockInContext(
-			SKULL_STATE_LLVM.ctx,
-			SKULL_STATE_LLVM.current_func->ref,
+			state->ctx,
+			state->current_func->ref,
 			"end"
-		)
+		),
+		state
 	);
 }
 
@@ -142,7 +151,8 @@ Internal function for building an `if` node.
 static void gen_control_if_(
 	const AstNode **node,
 	LLVMBasicBlockRef entry,
-	LLVMBasicBlockRef end
+	LLVMBasicBlockRef end,
+	SkullStateLLVM *state
 ) {
 	const AstNode *next_non_comment = (*node)->next;
 
@@ -156,36 +166,37 @@ static void gen_control_if_(
 	}
 
 	LLVMBasicBlockRef if_cond_true = LLVMAppendBasicBlockInContext(
-		SKULL_STATE_LLVM.ctx,
-		SKULL_STATE_LLVM.current_func->ref,
+		state->ctx,
+		state->current_func->ref,
 		"if_true"
 	);
 	LLVMBasicBlockRef if_cond_false = NULL;
 	LLVMMoveBasicBlockBefore(if_cond_true, end);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_cond_true);
-	gen_control_code_block(*node, end);
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, entry);
+	LLVMPositionBuilderAtEnd(state->builder, if_cond_true);
+	gen_control_code_block(*node, end, state);
+	LLVMPositionBuilderAtEnd(state->builder, entry);
 
 	if (next_non_comment && (
 		next_non_comment->type == AST_NODE_ELIF ||
 		next_non_comment->type == AST_NODE_ELSE)
 	) {
 		if_cond_false = LLVMAppendBasicBlockInContext(
-			SKULL_STATE_LLVM.ctx,
-			SKULL_STATE_LLVM.current_func->ref,
+			state->ctx,
+			state->current_func->ref,
 			"if_false"
 		);
 		LLVMMoveBasicBlockAfter(end, if_cond_false);
 
-		LLVMValueRef cond = gen_expr((*node)->expr).value;
+		LLVMValueRef cond = gen_expr((*node)->expr, state).value;
 		add_llvm_debug_info(
 			cond,
-			find_expr_node_location((*node)->expr)
+			find_expr_node_location((*node)->expr),
+			state
 		);
 
 		LLVMBuildCondBr(
-			SKULL_STATE_LLVM.builder,
+			state->builder,
 			cond,
 			if_cond_true,
 			if_cond_false
@@ -196,48 +207,43 @@ static void gen_control_if_(
 
 	// if there is an elif block following the current if block
 	if (next_non_comment && next_non_comment->type == AST_NODE_ELIF) {
-		gen_control_if_(node, if_cond_false, end);
+		gen_control_if_(node, if_cond_false, end, state);
 	}
 	// if there is an else block following the current if block
 	else if (next_non_comment && next_non_comment->type == AST_NODE_ELSE) {
-		LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, if_cond_false);
-		gen_control_code_block(*node, end);
+		LLVMPositionBuilderAtEnd(state->builder, if_cond_false);
+		gen_control_code_block(*node, end, state);
 	}
 	// just a single if statement
 	else {
-		LLVMValueRef cond = gen_expr((*node)->expr).value;
+		LLVMValueRef cond = gen_expr((*node)->expr, state).value;
 		add_llvm_debug_info(
 			cond,
-			find_expr_node_location((*node)->expr)
+			find_expr_node_location((*node)->expr),
+			state
 		);
 
 		LLVMBuildCondBr(
-			SKULL_STATE_LLVM.builder,
+			state->builder,
 			cond,
 			if_cond_true,
 			end
 		);
 	}
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, end);
+	LLVMPositionBuilderAtEnd(state->builder, end);
 }
 
-Expr gen_stmt_break(void) {
+Expr gen_stmt_break(const SkullStateLLVM *state) {
 	return (Expr){
-		.value = LLVMBuildBr(
-			SKULL_STATE_LLVM.builder,
-			SKULL_STATE_LLVM.current_while_end
-		),
+		.value = LLVMBuildBr(state->builder, state->current_while_end),
 		.type = &TYPE_VOID
 	};
 }
 
-Expr gen_stmt_continue(void) {
+Expr gen_stmt_continue(const SkullStateLLVM *state) {
 	return (Expr){
-		.value = LLVMBuildBr(
-			SKULL_STATE_LLVM.builder,
-			SKULL_STATE_LLVM.current_while_cond
-		),
+		.value = LLVMBuildBr(state->builder, state->current_while_cond),
 		.type = &TYPE_VOID
 	};
 }
@@ -247,7 +253,8 @@ Parse `node` while in a new scope. Branch to `block` if no return occurred.
 */
 static void gen_control_code_block(
 	const AstNode *node,
-	LLVMBasicBlockRef block
+	LLVMBasicBlockRef block,
+	SkullStateLLVM *state
 ) {
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
 
@@ -255,7 +262,7 @@ static void gen_control_code_block(
 		&node->token->location
 	);
 
-	const Expr returned = gen_tree(node->child);
+	const Expr returned = gen_tree(node->child, state);
 
 	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 
@@ -263,5 +270,5 @@ static void gen_control_code_block(
 
 	if (SEMANTIC_STATE.scope) SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
-	if (!returned.value) LLVMBuildBr(SKULL_STATE_LLVM.builder, block);
+	if (!returned.value) LLVMBuildBr(state->builder, block);
 }

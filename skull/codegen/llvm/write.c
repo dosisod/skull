@@ -28,9 +28,9 @@ typedef enum {
 	PHASE_NEXT,
 } PhaseResult;
 
-static PhaseResult create_ll_file(const char *);
-static PhaseResult verify_llvm(void);
-static PhaseResult optimize_llvm(void);
+static PhaseResult create_ll_file(const char *, const SkullStateLLVM *);
+static PhaseResult verify_llvm(const SkullStateLLVM *);
+static PhaseResult optimize_llvm(const SkullStateLLVM *);
 static PhaseResult run_llc(void);
 static PhaseResult run_cc(void);
 static int sh(char *[]);
@@ -44,17 +44,15 @@ Writer for LLVM backend. Can emit LLVM, native binary, or assembler based
 on CLI parameters.
 */
 bool write_llvm(const char *filename, SkullStateLLVM *state) {
-	(void)state;
-
 	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
 
-	PhaseResult result = verify_llvm();
+	PhaseResult result = verify_llvm(state);
 	if (result != PHASE_NEXT) return result;
 
-	result = optimize_llvm();
+	result = optimize_llvm(state);
 	if (result != PHASE_NEXT) return result;
 
-	result = create_ll_file(filename);
+	result = create_ll_file(filename, state);
 	if (result != PHASE_NEXT) return result;
 
 	result = run_llc();
@@ -63,13 +61,13 @@ bool write_llvm(const char *filename, SkullStateLLVM *state) {
 	return run_cc();
 }
 
-static PhaseResult verify_llvm(void) {
+static PhaseResult verify_llvm(const SkullStateLLVM *state) {
 	if (BUILD_DATA.llvm_no_verify) return PHASE_NEXT;
 
 	char *err_msg = NULL;
 
 	const bool err = LLVMVerifyModule(
-		SKULL_STATE_LLVM.module,
+		state->module,
 		LLVMReturnStatusAction,
 		&err_msg
 	);
@@ -83,7 +81,7 @@ static PhaseResult verify_llvm(void) {
 	return err ? PHASE_ERR : PHASE_NEXT;
 }
 
-static PhaseResult optimize_llvm(void) {
+static PhaseResult optimize_llvm(const SkullStateLLVM *state) {
 	if (!(
 		BUILD_DATA.optimize1 ||
 		BUILD_DATA.optimize2 ||
@@ -128,7 +126,7 @@ static PhaseResult optimize_llvm(void) {
 			"default<O2>" :
 			"default<O3>";
 
-	LLVMRunPasses(SKULL_STATE_LLVM.module, passes, target_machine, options);
+	LLVMRunPasses(state->module, passes, target_machine, options);
 
 	LLVMDisposeMessage(triple);
 	LLVMDisposeMessage(cpu);
@@ -139,9 +137,12 @@ static PhaseResult optimize_llvm(void) {
 	return PHASE_NEXT;
 }
 
-static PhaseResult create_ll_file(const char *filename) {
+static PhaseResult create_ll_file(
+	const char *filename,
+	const SkullStateLLVM *state
+) {
 	if (strcmp(filename, "-") == 0) {
-		char *msg = LLVMPrintModuleToString(SKULL_STATE_LLVM.module);
+		char *msg = LLVMPrintModuleToString(state->module);
 		fprintf(stderr, "%s", msg);
 
 		LLVMDisposeMessage(msg);
@@ -151,7 +152,7 @@ static PhaseResult create_ll_file(const char *filename) {
 
 		char *msg = NULL;
 		LLVMBool did_fail = LLVMPrintModuleToFile(
-			SKULL_STATE_LLVM.module,
+			state->module,
 			out_filename,
 			&msg
 		);

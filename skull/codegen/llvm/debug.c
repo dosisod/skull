@@ -24,9 +24,16 @@
 
 
 static LLVMMetadataRef type_to_llvm_di_type(const Type *);
-static void alloc_debug_function_param(Variable *);
+static void alloc_debug_function_param(Variable *, const SkullStateLLVM *);
 static void add_llvm_global_var_def_debug_info(const Variable *);
-static void add_llvm_local_var_def_debug_info(const Variable *);
+static void add_llvm_local_var_def_debug_info(
+	const Variable *,
+	const SkullStateLLVM *
+);
+static LLVMMetadataRef make_llvm_debug_location(
+	const Location *,
+	const SkullStateLLVM *
+);
 
 #ifndef SKULL_VERSION
 #define SKULL_VERSION "<unknown>"
@@ -43,9 +50,9 @@ static LLVMMetadataRef DI_TYPE_STR;
 
 LLVMDIBuilderRef setup_debug_info(
 	const char *filename,
-	LLVMModuleRef module
+	const SkullStateLLVM *state
 ) {
-	LLVMDIBuilderRef di_builder = LLVMCreateDIBuilder(module);
+	LLVMDIBuilderRef di_builder = LLVMCreateDIBuilder(state->module);
 	DEBUG_INFO.builder = di_builder;
 
 	DI_TYPE_BOOL = type_to_llvm_di_type(&TYPE_BOOL);
@@ -113,17 +120,17 @@ LLVMDIBuilderRef setup_debug_info(
 	);
 	free(main_func_name);
 
-	LLVMSetSubprogram(SKULL_STATE_LLVM.main_func->ref, DEBUG_INFO.scope);
+	LLVMSetSubprogram(state->main_func->ref, DEBUG_INFO.scope);
 
 	LLVMAddModuleFlag(
-		module,
+		state->module,
 		LLVMModuleFlagBehaviorOverride,
 		"Dwarf Version", 13,
 		LLVMValueAsMetadata(LLVM_INT32(4))
 	);
 
 	LLVMAddModuleFlag(
-		module,
+		state->module,
 		LLVMModuleFlagBehaviorOverride,
 		"Debug Info Version", 18,
 		LLVMValueAsMetadata(LLVM_INT32(3))
@@ -190,14 +197,25 @@ LLVMMetadataRef type_to_llvm_di_type(const Type *type) {
 	);
 }
 
-void add_llvm_debug_info(LLVMValueRef value, const Location *location) {
-	if (BUILD_DATA.debug && !LLVMIsConstant(value))
-		LLVMInstructionSetDebugLoc(value, make_llvm_debug_location(location));
+void add_llvm_debug_info(
+	LLVMValueRef value,
+	const Location *location,
+	const SkullStateLLVM *state
+) {
+	if (BUILD_DATA.debug && !LLVMIsConstant(value)) {
+		LLVMInstructionSetDebugLoc(
+			value,
+			make_llvm_debug_location(location, state)
+		);
+	}
 }
 
-LLVMMetadataRef make_llvm_debug_location(const Location *location) {
+static LLVMMetadataRef make_llvm_debug_location(
+	const Location *location,
+	const SkullStateLLVM *state
+) {
 	return LLVMDIBuilderCreateDebugLocation(
-		SKULL_STATE_LLVM.ctx,
+		state->ctx,
 		location->line,
 		location->column,
 		DEBUG_INFO.scope,
@@ -219,11 +237,14 @@ LLVMMetadataRef __attribute__((pure)) type_to_di_type(const Type *type) {
 	return NULL;
 }
 
-void add_llvm_var_def_debug_info(const Variable *var) {
+void add_llvm_var_def_debug_info(
+	const Variable *var,
+	const SkullStateLLVM *state
+) {
 	if (!BUILD_DATA.debug) return;
 
 	if (var->is_global) add_llvm_global_var_def_debug_info(var);
-	else add_llvm_local_var_def_debug_info(var);
+	else add_llvm_local_var_def_debug_info(var, state);
 }
 
 static void add_llvm_global_var_def_debug_info(const Variable *var) {
@@ -244,7 +265,10 @@ static void add_llvm_global_var_def_debug_info(const Variable *var) {
 	LLVMGlobalSetMetadata(var->ref, 0, metadata);
 }
 
-static void add_llvm_local_var_def_debug_info(const Variable *var) {
+static void add_llvm_local_var_def_debug_info(
+	const Variable *var,
+	const SkullStateLLVM *state
+) {
 	LLVMMetadataRef di_var = LLVMDIBuilderCreateAutoVariable(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.scope,
@@ -262,8 +286,8 @@ static void add_llvm_local_var_def_debug_info(const Variable *var) {
 		var->ref,
 		di_var,
 		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
-		make_llvm_debug_location(&var->location),
-		LLVMGetLastBasicBlock(SKULL_STATE_LLVM.current_func->ref)
+		make_llvm_debug_location(&var->location, state),
+		LLVMGetLastBasicBlock(state->current_func->ref)
 	);
 }
 
@@ -283,7 +307,10 @@ LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *location) {
 	return old_di_scope;
 }
 
-LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
+LLVMMetadataRef add_llvm_func_debug_info(
+	FunctionDeclaration *func,
+	const SkullStateLLVM *state
+) {
 	if (!BUILD_DATA.debug) return NULL;
 
 	LLVMMetadataRef *di_param_types = Malloc(
@@ -343,14 +370,14 @@ LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 			);
 			free(param_name);
 
-			alloc_debug_function_param(func->params[i]->var);
+			alloc_debug_function_param(func->params[i]->var, state);
 
 			LLVMDIBuilderInsertDeclareAtEnd(
 				DEBUG_INFO.builder,
 				func->params[i]->var->ref,
 				di_var,
 				LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
-				make_llvm_debug_location(&func->location),
+				make_llvm_debug_location(&func->location, state),
 				LLVMGetLastBasicBlock(func->ref)
 			);
 		}
@@ -359,21 +386,20 @@ LLVMMetadataRef add_llvm_func_debug_info(FunctionDeclaration *func) {
 	return old_di_scope;
 }
 
-static void alloc_debug_function_param(Variable *var) {
+static void alloc_debug_function_param(
+	Variable *var,
+	const SkullStateLLVM *state
+) {
 	LLVMValueRef old_ref = var->ref;
 	Variable *func_var = var;
 
 	func_var->ref = LLVMBuildAlloca(
-		SKULL_STATE_LLVM.builder,
-		type_to_llvm_type(func_var->type),
+		state->builder,
+		type_to_llvm_type(func_var->type, state),
 		func_var->name
 	);
 
-	LLVMBuildStore(
-		SKULL_STATE_LLVM.builder,
-		old_ref,
-		func_var->ref
-	);
+	LLVMBuildStore(state->builder, old_ref, func_var->ref);
 
 	var->ref = func_var->ref;
 	var->is_const = false;

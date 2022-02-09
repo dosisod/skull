@@ -13,7 +13,7 @@
 
 #include "skull/codegen/llvm/expr.h"
 
-typedef Expr (Operation)(const Expr *, LLVMValueRef);
+typedef Expr (Operation)(const Expr *, LLVMValueRef, const SkullStateLLVM *);
 
 typedef LLVMValueRef (LLVMBuildX)(
 	LLVMBuilderRef,
@@ -29,11 +29,11 @@ static Operation gen_expr_add, gen_expr_sub, gen_expr_mult,
 	gen_expr_and, gen_expr_or, gen_expr_xor, gen_expr_div, gen_expr_mod,
 	gen_expr_pow;
 
-static Expr gen_expr_const(const AstNodeExpr *);
-static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef);
-static Expr gen_expr_identifier(const AstNodeExpr *);
+static Expr gen_expr_const(const AstNodeExpr *, const SkullStateLLVM *);
+static Expr gen_expr_is_str(LLVMValueRef, LLVMValueRef, const SkullStateLLVM *);
+static Expr gen_expr_identifier(const AstNodeExpr *, const SkullStateLLVM *);
 static Expr gen_expr_ref(const AstNodeExpr *);
-static Expr gen_expr_deref(const AstNodeExpr *);
+static Expr gen_expr_deref(const AstNodeExpr *, const SkullStateLLVM *);
 static Operation *expr_type_to_func(ExprType);
 
 static Expr create_and_call_builtin_oper(
@@ -41,48 +41,56 @@ static Expr create_and_call_builtin_oper(
 	LLVMTypeRef,
 	const char *,
 	LLVMValueRef,
-	LLVMValueRef
+	LLVMValueRef,
+	const SkullStateLLVM *
 );
 
 /*
 Return expression for `expr`.
 */
-Expr gen_expr(const AstNodeExpr *const expr) {
+Expr gen_expr(const AstNodeExpr *const expr, const SkullStateLLVM *state) {
 	switch (expr->oper) {
 		case EXPR_IDENTIFIER:
-			return gen_expr_identifier(expr);
+			return gen_expr_identifier(expr, state);
 		case EXPR_CONST:
-			return gen_expr_const(expr);
+			return gen_expr_const(expr, state);
 		case EXPR_FUNC:
-			return gen_expr_func_call(expr->lhs.func_call);
+			return gen_expr_func_call(expr->lhs.func_call, state);
 		case EXPR_REF:
 			return gen_expr_ref(expr);
 		case EXPR_DEREF:
-			return gen_expr_deref(expr);
+			return gen_expr_deref(expr, state);
 		default: break;
 	}
 
-	const Expr lhs = expr->lhs.expr ? gen_expr(expr->lhs.expr) : (Expr){0};
-	const Expr rhs = gen_expr(expr->rhs);
+	const Expr lhs = expr->lhs.expr ?
+		gen_expr(expr->lhs.expr, state) :
+		(Expr){0};
+
+	const Expr rhs = gen_expr(expr->rhs, state);
 	Operation *func = expr_type_to_func(expr->oper);
 
 	return func(
 		&(Expr){ .type = rhs.type, .value = lhs.value },
-		rhs.value
+		rhs.value,
+		state
 	);
 }
 
 /*
 Return expression for identifier `token` with type `type`.
 */
-static Expr gen_expr_identifier(const AstNodeExpr *expr) {
+static Expr gen_expr_identifier(
+	const AstNodeExpr *expr,
+	const SkullStateLLVM *state
+) {
 	const Variable *var = expr->var;
 
 	if (var->is_global || !var->is_const) {
 		return (Expr) {
 			.value = LLVMBuildLoad2(
-				SKULL_STATE_LLVM.builder,
-				type_to_llvm_type(var->type),
+				state->builder,
+				type_to_llvm_type(var->type, state),
 				var->ref,
 				""
 			),
@@ -96,16 +104,19 @@ static Expr gen_expr_identifier(const AstNodeExpr *expr) {
 	};
 }
 
-static Expr gen_expr_deref(const AstNodeExpr *expr) {
+static Expr gen_expr_deref(
+	const AstNodeExpr *expr,
+	const SkullStateLLVM *state
+) {
 	const Variable *var = expr->rhs->var;
 
 	return (Expr) {
 		.value = LLVMBuildLoad2(
-			SKULL_STATE_LLVM.builder,
-			type_to_llvm_type(var->type->inner),
+			state->builder,
+			type_to_llvm_type(var->type->inner, state),
 			LLVMBuildLoad2(
-				SKULL_STATE_LLVM.builder,
-				type_to_llvm_type(var->type),
+				state->builder,
+				type_to_llvm_type(var->type, state),
 				var->ref,
 				""
 			),
@@ -118,7 +129,10 @@ static Expr gen_expr_deref(const AstNodeExpr *expr) {
 /*
 Make a simple expression (const literal) from `expr`.
 */
-static Expr gen_expr_const(const AstNodeExpr *expr) {
+static Expr gen_expr_const(
+	const AstNodeExpr *expr,
+	const SkullStateLLVM *state
+) {
 	LLVMValueRef value = NULL;
 
 	if (expr->type == &TYPE_INT) {
@@ -135,13 +149,13 @@ static Expr gen_expr_const(const AstNodeExpr *expr) {
 	}
 	else if (expr->type == &TYPE_STR) {
 		value = LLVMBuildBitCast(
-			SKULL_STATE_LLVM.builder,
+			state->builder,
 			LLVMBuildGlobalString(
-				SKULL_STATE_LLVM.builder,
+				state->builder,
 				expr->value.str,
 				""
 			),
-			type_to_llvm_type(&TYPE_STR),
+			type_to_llvm_type(&TYPE_STR, state),
 			""
 		);
 	}
@@ -162,17 +176,18 @@ static Expr gen_expr_math_oper(
 	const Expr *lhs,
 	LLVMValueRef rhs,
 	LLVMBuildX int_func,
-	LLVMBuildX float_func
+	LLVMBuildX float_func,
+	const SkullStateLLVM *state
 ) {
 	if (lhs->type == &TYPE_INT)
 		return (Expr){
-			.value = int_func(SKULL_STATE_LLVM.builder, lhs->value, rhs, ""),
+			.value = int_func(state->builder, lhs->value, rhs, ""),
 			.type = lhs->type
 		};
 
 	if (lhs->type == &TYPE_FLOAT)
 		return (Expr){
-			.value = float_func(SKULL_STATE_LLVM.builder, lhs->value, rhs, ""),
+			.value = float_func(state->builder, lhs->value, rhs, ""),
 			.type = lhs->type
 		};
 
@@ -182,46 +197,72 @@ static Expr gen_expr_math_oper(
 /*
 Return expression for addition of `lhs` and `rhs`.
 */
-static Expr gen_expr_add(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWAdd, LLVMBuildFAdd);
+static Expr gen_expr_add(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWAdd, LLVMBuildFAdd, state);
 }
 
 /*
 Return expression for subtraction of `lhs` and `rhs`.
 */
-static Expr gen_expr_sub(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWSub, LLVMBuildFSub);
+static Expr gen_expr_sub(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWSub, LLVMBuildFSub, state);
 }
 
 /*
 Return expression for multiplication of `lhs` and `rhs`.
 */
-static Expr gen_expr_mult(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWMul, LLVMBuildFMul);
+static Expr gen_expr_mult(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_math_oper(lhs, rhs, LLVMBuildNSWMul, LLVMBuildFMul, state);
 }
 
 /*
 Return expression for division of `lhs` and `rhs`.
 */
-static Expr gen_expr_div(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_math_oper(lhs, rhs, LLVMBuildExactSDiv, LLVMBuildFDiv);
+static Expr gen_expr_div(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_math_oper(
+		lhs, rhs, LLVMBuildExactSDiv, LLVMBuildFDiv, state
+	);
 }
 
 /*
 Return expression for modulus of `lhs` and `rhs`.
 */
-static Expr gen_expr_mod(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_math_oper(lhs, rhs, LLVMBuildSRem, LLVMBuildFRem);
+static Expr gen_expr_mod(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_math_oper(lhs, rhs, LLVMBuildSRem, LLVMBuildFRem, state);
 }
 
 /*
 Return expression for left shift of `lhs` and `rhs`.
 */
-static Expr gen_expr_lshift(const Expr *lhs, LLVMValueRef rhs) {
+static Expr gen_expr_lshift(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
 	if (lhs->type == &TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildShl(
-				SKULL_STATE_LLVM.builder,
+				state->builder,
 				lhs->value,
 				rhs,
 				""
@@ -235,11 +276,15 @@ static Expr gen_expr_lshift(const Expr *lhs, LLVMValueRef rhs) {
 /*
 Return expression for logical right shift of `lhs` and `rhs`.
 */
-static Expr gen_expr_rshift(const Expr *lhs, LLVMValueRef rhs) {
+static Expr gen_expr_rshift(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
 	if (lhs->type == &TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildLShr(
-				SKULL_STATE_LLVM.builder,
+				state->builder,
 				lhs->value,
 				rhs,
 				""
@@ -253,7 +298,11 @@ static Expr gen_expr_rshift(const Expr *lhs, LLVMValueRef rhs) {
 /*
 Return expression for taking `lhs` to the power of `rhs`.
 */
-static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs) {
+static Expr gen_expr_pow(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
 	const char *func_name = NULL;
 
 	if (lhs->type == &TYPE_INT)
@@ -264,10 +313,11 @@ static Expr gen_expr_pow(const Expr *lhs, LLVMValueRef rhs) {
 
 	return create_and_call_builtin_oper(
 		lhs->type,
-		type_to_llvm_type(lhs->type),
+		type_to_llvm_type(lhs->type, state),
 		func_name,
 		lhs->value,
-		rhs
+		rhs,
+		state
 	);
 }
 
@@ -284,11 +334,15 @@ static Expr gen_expr_ref(const AstNodeExpr *expr) {
 /*
 Return expression for result of not operator for `rhs`.
 */
-static Expr gen_expr_not(const Expr *lhs, LLVMValueRef rhs) {
+static Expr gen_expr_not(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
 	(void)lhs;
 
 	return (Expr){
-		.value = LLVMBuildNot(SKULL_STATE_LLVM.builder, rhs, ""),
+		.value = LLVMBuildNot(state->builder, rhs, ""),
 		.type = &TYPE_BOOL
 	};
 }
@@ -296,7 +350,11 @@ static Expr gen_expr_not(const Expr *lhs, LLVMValueRef rhs) {
 /*
 Return expression for result of unary negation operator for `rhs`.
 */
-static Expr gen_expr_unary_neg(const Expr *lhs, LLVMValueRef rhs) {
+static Expr gen_expr_unary_neg(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
 	return gen_expr_math_oper(
 		&(Expr){
 			.type = lhs->type,
@@ -306,20 +364,25 @@ static Expr gen_expr_unary_neg(const Expr *lhs, LLVMValueRef rhs) {
 		},
 		rhs,
 		LLVMBuildNSWSub,
-		LLVMBuildFSub
+		LLVMBuildFSub,
+		state
 	);
 }
 
 /*
 Return expression for result of is operator for `lhs` and `rhs`.
 */
-static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
+static Expr gen_expr_is(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
 	const Type *type = lhs->type;
 
 	if (type == &TYPE_INT || type == &TYPE_RUNE || type == &TYPE_BOOL)
 		return (Expr){
 			.value = LLVMBuildICmp(
-				SKULL_STATE_LLVM.builder,
+				state->builder,
 				LLVMIntEQ,
 				lhs->value,
 				rhs,
@@ -331,7 +394,7 @@ static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
 	if (type == &TYPE_FLOAT)
 		return (Expr){
 			.value = LLVMBuildFCmp(
-				SKULL_STATE_LLVM.builder,
+				state->builder,
 				LLVMRealOEQ,
 				lhs->value,
 				rhs,
@@ -341,7 +404,7 @@ static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
 		};
 
 	if (type == &TYPE_STR)
-		return gen_expr_is_str(lhs->value, rhs);
+		return gen_expr_is_str(lhs->value, rhs, state);
 
 	assert(false);
 }
@@ -349,13 +412,18 @@ static Expr gen_expr_is(const Expr *lhs, LLVMValueRef rhs) {
 /*
 Return expression for string-is operator against `lhs` and `rhs`.
 */
-static Expr gen_expr_is_str(LLVMValueRef lhs, LLVMValueRef rhs) {
+static Expr gen_expr_is_str(
+	LLVMValueRef lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
 	return create_and_call_builtin_oper(
 		&TYPE_BOOL,
-		type_to_llvm_type(&TYPE_STR),
+		type_to_llvm_type(&TYPE_STR, state),
 		"_strcmp",
 		lhs,
-		rhs
+		rhs,
+		state
 	);
 }
 
@@ -369,26 +437,28 @@ static Expr create_and_call_builtin_oper(
 	LLVMTypeRef type,
 	const char *name,
 	LLVMValueRef lhs,
-	LLVMValueRef rhs
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
 ) {
-	LLVMValueRef func = LLVMGetNamedFunction(SKULL_STATE_LLVM.module, name);
+	LLVMValueRef func = LLVMGetNamedFunction(state->module, name);
 
 	LLVMTypeRef func_type = type_to_llvm_func_type(
 		rtype,
 		(LLVMTypeRef[]){ type, type },
-		2
+		2,
+		state
 	);
 
 	if (!func)
 		func = LLVMAddFunction(
-			SKULL_STATE_LLVM.module,
+			state->module,
 			name,
 			func_type
 		);
 
 	return (Expr){
 		.value = LLVMBuildCall2(
-			SKULL_STATE_LLVM.builder,
+			state->builder,
 			func_type,
 			func,
 			(LLVMValueRef[]){ lhs, rhs },
@@ -404,12 +474,13 @@ Return expression for result of is not operator for `lhs` and `rhs`.
 */
 static Expr gen_expr_is_not(
 	const Expr *lhs,
-	LLVMValueRef rhs
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
 ) {
-	Expr expr = gen_expr_is(lhs, rhs);
+	Expr expr = gen_expr_is(lhs, rhs, state);
 
 	expr.value = LLVMBuildNot(
-		SKULL_STATE_LLVM.builder,
+		state->builder,
 		expr.value,
 		""
 	);
@@ -427,12 +498,13 @@ static Expr gen_expr_relational_oper(
 	const Expr *lhs,
 	LLVMValueRef rhs,
 	LLVMIntPredicate int_pred,
-	LLVMRealPredicate float_pred
+	LLVMRealPredicate float_pred,
+	const SkullStateLLVM *state
 ) {
 	if (lhs->type == &TYPE_INT)
 		return (Expr){
 			.value = LLVMBuildICmp(
-				SKULL_STATE_LLVM.builder,
+				state->builder,
 				int_pred,
 				lhs->value,
 				rhs,
@@ -444,7 +516,7 @@ static Expr gen_expr_relational_oper(
 	if (lhs->type == &TYPE_FLOAT)
 		return (Expr){
 			.value = LLVMBuildFCmp(
-				SKULL_STATE_LLVM.builder,
+				state->builder,
 				float_pred,
 				lhs->value,
 				rhs,
@@ -459,31 +531,47 @@ static Expr gen_expr_relational_oper(
 /*
 Return expression for result of less than operator for `lhs` and `rhs`.
 */
-static Expr gen_expr_less_than(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_relational_oper(lhs, rhs, LLVMIntSLT, LLVMRealOLT);
+static Expr gen_expr_less_than(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_relational_oper(lhs, rhs, LLVMIntSLT, LLVMRealOLT, state);
 }
 
 /*
 Return expression for result of greater than operator for `lhs` and `rhs`.
 */
-static Expr gen_expr_gtr_than(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_relational_oper(lhs, rhs, LLVMIntSGT, LLVMRealOGT);
+static Expr gen_expr_gtr_than(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_relational_oper(lhs, rhs, LLVMIntSGT, LLVMRealOGT, state);
 }
 
 /*
 Return expression for result of less than or equal to operator for `lhs` and
 `rhs`.
 */
-static Expr gen_expr_less_than_eq(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_relational_oper(lhs, rhs, LLVMIntSLE, LLVMRealOLE);
+static Expr gen_expr_less_than_eq(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_relational_oper(lhs, rhs, LLVMIntSLE, LLVMRealOLE, state);
 }
 
 /*
 Return expression for result of greater than or equal to operator for `lhs`
 and `rhs`.
 */
-static Expr gen_expr_gtr_than_eq(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_relational_oper(lhs, rhs, LLVMIntSGE, LLVMRealOGE);
+static Expr gen_expr_gtr_than_eq(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_relational_oper(lhs, rhs, LLVMIntSGE, LLVMRealOGE, state);
 }
 
 /*
@@ -492,15 +580,11 @@ Return result of logical operation `func` on `lhs` and `rhs`.
 static Expr gen_expr_logical_oper(
 	const Expr *lhs,
 	LLVMValueRef rhs,
-	LLVMBuildX func
+	LLVMBuildX func,
+	const SkullStateLLVM *state
 ) {
 	return (Expr){
-		.value = func(
-			SKULL_STATE_LLVM.builder,
-			lhs->value,
-			rhs,
-			""
-		),
+		.value = func(state->builder, lhs->value, rhs, ""),
 		.type = lhs->type
 	};
 }
@@ -508,22 +592,34 @@ static Expr gen_expr_logical_oper(
 /*
 Return result of logical "and" operation of `lhs` and `rhs`.
 */
-static Expr gen_expr_and(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_logical_oper(lhs, rhs, LLVMBuildAnd);
+static Expr gen_expr_and(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_logical_oper(lhs, rhs, LLVMBuildAnd, state);
 }
 
 /*
 Return result of logical "or" operation of `lhs` and `rhs`.
 */
-static Expr gen_expr_or(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_logical_oper(lhs, rhs, LLVMBuildOr);
+static Expr gen_expr_or(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_logical_oper(lhs, rhs, LLVMBuildOr, state);
 }
 
 /*
 Return result of logical "xor" operation of `lhs` and `rhs`.
 */
-static Expr gen_expr_xor(const Expr *lhs, LLVMValueRef rhs) {
-	return gen_expr_logical_oper(lhs, rhs, LLVMBuildXor);
+static Expr gen_expr_xor(
+	const Expr *lhs,
+	LLVMValueRef rhs,
+	const SkullStateLLVM *state
+) {
+	return gen_expr_logical_oper(lhs, rhs, LLVMBuildXor, state);
 }
 
 static Operation *expr_type_to_func(ExprType oper) {

@@ -7,6 +7,7 @@
 
 #include "skull/build_data.h"
 #include "skull/codegen/llvm/aliases.h"
+#include "skull/codegen/llvm/core.h"
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
@@ -21,31 +22,39 @@
 
 #include "skull/codegen/llvm/func.h"
 
-Expr gen_tree(const AstNode *);
-
-static void gen_function_def(const AstNode *const, FunctionDeclaration *);
-static void add_func(FunctionDeclaration *);
-static LLVMTypeRef *parse_func_param(const FunctionDeclaration *);
+static void gen_function_def(
+	const AstNode *const,
+	FunctionDeclaration *,
+	SkullStateLLVM *
+);
+static void add_func(FunctionDeclaration *, const SkullStateLLVM *);
+static LLVMTypeRef *parse_func_param(
+	const FunctionDeclaration *,
+	const SkullStateLLVM *state
+);
 
 /*
 Parse declaration (and potential definition) of function in `node`.
 */
-void gen_stmt_func_decl(const AstNode *const node) {
+void gen_stmt_func_decl(
+	const AstNode *const node,
+	SkullStateLLVM *state
+) {
 	FunctionDeclaration *func = node->func_proto->func;
 
-	add_func(node->func_proto->func);
+	add_func(node->func_proto->func, state);
 
-	if (!func->is_external) gen_function_def(node, func);
+	if (!func->is_external) gen_function_def(node, func, state);
 }
 
 /*
 Add new LLVM function from `func`.
 */
-static void add_func(FunctionDeclaration *func) {
-	LLVMTypeRef *params = parse_func_param(func);
+static void add_func(FunctionDeclaration *func, const SkullStateLLVM *state) {
+	LLVMTypeRef *params = parse_func_param(func, state);
 
 	func->type = LLVMFunctionType(
-		type_to_llvm_type(func->return_type),
+		type_to_llvm_type(func->return_type, state),
 		params,
 		func->num_params,
 		false
@@ -53,7 +62,7 @@ static void add_func(FunctionDeclaration *func) {
 	free(params);
 
 	func->ref = LLVMAddFunction(
-		SKULL_STATE_LLVM.module,
+		state->module,
 		func->name,
 		func->type
 	);
@@ -69,13 +78,16 @@ static void add_func(FunctionDeclaration *func) {
 /*
 Setup function params of `func`.
 */
-static LLVMTypeRef *parse_func_param(const FunctionDeclaration *func) {
+static LLVMTypeRef *parse_func_param(
+	const FunctionDeclaration *func,
+	const SkullStateLLVM *state
+) {
 	const unsigned num_params = func->num_params;
 
 	LLVMTypeRef *params = Calloc(num_params, sizeof(LLVMTypeRef));
 
 	for RANGE(i, num_params) { // NOLINT
-		params[i] = type_to_llvm_type(func->param_types[i]);
+		params[i] = type_to_llvm_type(func->param_types[i], state);
 	}
 
 	return params;
@@ -84,7 +96,10 @@ static LLVMTypeRef *parse_func_param(const FunctionDeclaration *func) {
 /*
 Builds a function call from `func_call`.
 */
-Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call) {
+Expr gen_expr_func_call(
+	const AstNodeFunctionCall *const func_call,
+	const SkullStateLLVM *state
+) {
 	FunctionDeclaration *function = func_call->func_decl;
 
 	unsigned short num_params = function->num_params;
@@ -96,13 +111,13 @@ Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call) {
 	const AstNode *param = func_call->params;
 
 	for RANGE(i, num_params) { // NOLINT
-		params[i] = gen_expr(param->expr).value;
+		params[i] = gen_expr(param->expr, state).value;
 		param = param->next;
 	}
 
 	const Expr ret = (Expr){
 		.value = LLVMBuildCall2(
-			SKULL_STATE_LLVM.builder,
+			state->builder,
 			function->type,
 			function->ref,
 			params,
@@ -111,7 +126,7 @@ Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call) {
 		),
 		.type = function->return_type
 	};
-	add_llvm_debug_info(ret.value, &func_call->func_name_tok->location);
+	add_llvm_debug_info(ret.value, &func_call->func_name_tok->location, state);
 
 	free(params);
 
@@ -123,7 +138,8 @@ Create a native LLVM function.
 */
 static void gen_function_def(
 	const AstNode *const node,
-	FunctionDeclaration *func
+	FunctionDeclaration *func,
+	SkullStateLLVM *state
 ) {
 	if (func->param_types) {
 		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
@@ -137,27 +153,27 @@ static void gen_function_def(
 	}
 
 	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
-		SKULL_STATE_LLVM.current_func->ref
+		state->current_func->ref
 	);
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
-		SKULL_STATE_LLVM.ctx,
+		state->ctx,
 		func->ref,
 		"entry"
 	);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, entry);
+	LLVMPositionBuilderAtEnd(state->builder, entry);
 
-	FunctionDeclaration *old_func = SKULL_STATE_LLVM.current_func;
-	SKULL_STATE_LLVM.current_func = func;
+	FunctionDeclaration *old_func =state->current_func;
+	state->current_func = func;
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
 
-	LLVMMetadataRef old_di_scope = add_llvm_func_debug_info(func);
+	LLVMMetadataRef old_di_scope = add_llvm_func_debug_info(func, state);
 
-	const Expr returned = gen_tree(node->child);
+	const Expr returned = gen_tree(node->child, state);
 
 	restore_parent_scope();
-	SKULL_STATE_LLVM.current_func = old_func;
+	state->current_func = old_func;
 
 	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 
@@ -165,7 +181,7 @@ static void gen_function_def(
 		SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
 
 	if (func->return_type == &TYPE_VOID && returned.type != &TYPE_VOID)
-		LLVMBuildRetVoid(SKULL_STATE_LLVM.builder);
+		LLVMBuildRetVoid(state->builder);
 
-	LLVMPositionBuilderAtEnd(SKULL_STATE_LLVM.builder, current_block);
+	LLVMPositionBuilderAtEnd(state->builder, current_block);
 }

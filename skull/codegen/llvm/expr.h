@@ -1,6 +1,7 @@
 #pragma once
 
 #include "skull/codegen/llvm/fwd_decl.h"
+#include "skull/codegen/llvm/shared.h"
 #include "skull/semantic/types.h"
 
 typedef struct AstNode AstNode;
@@ -18,4 +19,4 @@ typedef struct {
 	const Type *type;
 } Expr;
 
-Expr gen_expr(const AstNodeExpr *const);
+Expr gen_expr(const AstNodeExpr *const, const SkullStateLLVM *);
