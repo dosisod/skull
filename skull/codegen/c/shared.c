@@ -18,9 +18,11 @@ char *get_indentation(const SkullStateC *state) {
 	static char tabs[MAX_TABS] = {0};
 	memset(tabs, '\t', MAX_TABS);
 
-	if (state->indent_lvl < MAX_TABS) {
-		tabs[state->indent_lvl] = '\0';
-	}
+	const unsigned max = state->indent_lvl >= MAX_TABS ?
+		MAX_TABS - 1 :
+		state->indent_lvl;
+
+	tabs[max] = '\0';
 
 	return tabs;
 }
