@@ -19,6 +19,7 @@
 #include "skull/semantic/func.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
+#include "skull/version.h"
 
 #include "skull/codegen/llvm/debug.h"
 
@@ -34,10 +35,6 @@ static LLVMMetadataRef make_llvm_debug_location(
 	const Location *,
 	const SkullStateLLVM *
 );
-
-#ifndef SKULL_VERSION
-#define SKULL_VERSION "<unknown>"
-#endif
 
 #define PRODUCER "clang (skull "SKULL_VERSION")"
 

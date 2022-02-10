@@ -9,16 +9,11 @@
 #include "skull/common/malloc.h"
 #include "skull/common/str.h"
 #include "skull/real_main.h"
-
-
-#ifndef SKULL_VERSION
-#define SKULL_VERSION "<unknown>"
-#endif
+#include "skull/version.h"
 
 #ifndef RELEASE
 #define RELEASE 0
 #endif
-
 
 static int usage(void);
 static int version(void);
