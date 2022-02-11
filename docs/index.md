@@ -3,6 +3,6 @@
 * [Getting Started](./getting_started.md)
 * [Variables](./variables.md)
 * [Expressions](./expressions.md)
-* Functions (TODO)
+* [Functions](./functions.md)
 * Control Flow (TODO)
 * [Developer API documentation](/docs/skull/)
