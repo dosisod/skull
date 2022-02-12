@@ -15,6 +15,7 @@ typedef enum {
 
 typedef struct Symbol {
 	char *name;
+	char *linkage_name;
 	const Type *expr_type;
 	const Location *location;
 	SymbolType type;

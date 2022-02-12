@@ -70,7 +70,7 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 				"%s %s(%s) {\n%s\n}" :
 				"static %s %s(%s) {\n%s\n}",
 			skull_type_to_c_type(func->return_type),
-			func->name,
+			func->linkage_name,
 			param_list,
 			tree
 		);
@@ -81,7 +81,7 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 		out = uvsnprintf(
 			"%s %s(%s);",
 			skull_type_to_c_type(func->return_type),
-			func->name,
+			func->linkage_name,
 			param_list
 		);
 	}
@@ -94,6 +94,6 @@ static char *gen_param_c(AstNodeFunctionParam *param) {
 	return uvsnprintf(
 		"%s %s",
 		skull_type_to_c_type(param->var->type),
-		param->var->name
+		param->var->linkage_name
 	);
 }

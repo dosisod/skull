@@ -1,3 +1,5 @@
 export f() {
 	# do nothing
 }
+
+f()

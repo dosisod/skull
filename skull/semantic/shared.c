@@ -19,6 +19,7 @@ void setup_semantic_state(void) {
 		.name = create_main_func_name(BUILD_DATA.filename),
 		.return_type = &TYPE_INT
 	};
+	SEMANTIC_STATE.main_func->linkage_name = SEMANTIC_STATE.main_func->name;
 
 	SEMANTIC_STATE.current_func = SEMANTIC_STATE.main_func;
 	SEMANTIC_STATE.last_func = NULL;

@@ -22,6 +22,7 @@ Stores a function declaration.
 */
 typedef struct FunctionDeclaration {
 	char *name;
+	char *linkage_name;
 	Location location;
 
 	void *ref;

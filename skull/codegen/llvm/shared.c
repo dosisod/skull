@@ -34,7 +34,7 @@ SkullStateLLVM *setup_llvm_state(void) {
 
 	LLVMValueRef main_func = LLVMAddFunction(
 		main_module,
-		SEMANTIC_STATE.main_func->name,
+		SEMANTIC_STATE.main_func->linkage_name,
 		main_func_type
 	);
 

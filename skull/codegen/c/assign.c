@@ -19,7 +19,7 @@ static CStmt gen_stmt_stack_var(const AstNode *, CType type, SkullStateC *);
 
 CStmt gen_stmt_var_assign_c(const AstNode *node, SkullStateC *state) {
 	return gen_stmt_var_assign_c_(
-		node->var_assign->var->name,
+		node->var_assign->var->linkage_name,
 		node->var_assign->expr,
 		state
 	);
@@ -77,7 +77,7 @@ static CStmt gen_stmt_global_var(
 			fmt,
 			old_globals ? old_globals : "",
 			type,
-			var->name,
+			var->linkage_name,
 			value
 		);
 
@@ -94,13 +94,13 @@ static CStmt gen_stmt_global_var(
 			"%s\nstatic %s %s;",
 		old_globals ? old_globals : "",
 		type,
-		var->name
+		var->linkage_name
 	);
 
 	free(old_globals);
 
 	return gen_stmt_var_assign_c_(
-		var->name, node->var_def->expr, state
+		var->linkage_name, node->var_def->expr, state
 	);
 }
 
@@ -114,7 +114,7 @@ static CStmt gen_stmt_stack_var(
 	const char *fmt = var->is_const ? "const %s %s = %s;" : "%s %s = %s;";
 
 	CExpr expr_str = gen_expr_c(node->var_def->expr, state);
-	CStmt stmt = uvsnprintf(fmt, type, var->name, expr_str);
+	CStmt stmt = uvsnprintf(fmt, type, var->linkage_name, expr_str);
 
 	free(expr_str);
 	return stmt;

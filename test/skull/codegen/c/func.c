@@ -16,6 +16,7 @@
 static bool test_no_arg_func_decl(void) {
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
+		.linkage_name = (char[]){"f"},
 		.return_type = &TYPE_VOID,
 		.is_external = true
 	};
@@ -36,6 +37,7 @@ static bool test_single_arg_func_decl(void) {
 
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
+		.linkage_name = (char[]){"f"},
 		.return_type = &TYPE_VOID,
 		.is_external = true,
 		.num_params = 1,
@@ -62,6 +64,7 @@ static bool test_many_arg_func_decl(void) {
 
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
+		.linkage_name = (char[]){"f"},
 		.return_type = &TYPE_VOID,
 		.is_external = true,
 		.num_params = 2,
@@ -87,6 +90,7 @@ static bool test_many_arg_func_decl(void) {
 static bool test_func_with_body(void) {
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
+		.linkage_name = (char[]){"f"},
 		.return_type = &TYPE_VOID
 	};
 
@@ -105,6 +109,7 @@ static bool test_func_with_body(void) {
 static bool test_func_static(void) {
 	FunctionDeclaration *func = &(FunctionDeclaration){
 		.name = (char[]){"f"},
+		.linkage_name = (char[]){"f"},
 		.is_export = true,
 		.return_type = &TYPE_VOID
 	};

@@ -4,6 +4,7 @@
 typedef struct Variable {
 	const Type *type;
 	char *name;
+	char *linkage_name;
 	_Bool is_const : 1;
 	_Bool is_const_lit : 1;
 	_Bool is_global : 1;

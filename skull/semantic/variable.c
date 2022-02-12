@@ -30,6 +30,7 @@ Variable *make_variable(
 		.type = type,
 		.is_const = is_const
 	};
+	var->linkage_name = var->name;
 
 	return var;
 }
@@ -41,6 +42,8 @@ void free_variable(Variable *var) {
 	if (!var) return;
 
 	free(var->name);
+	if (var->name && var->name != var->linkage_name) free(var->linkage_name);
+
 	free(var);
 }
 

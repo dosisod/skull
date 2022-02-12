@@ -7,6 +7,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/semantic/entry.h"
+#include "skull/semantic/mangle.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
@@ -68,6 +69,8 @@ static bool validate_stmt_func_decl_(const AstNode *node) {
 	SEMANTIC_STATE.current_func = func;
 
 	node->func_proto->func = func;
+
+	func->linkage_name = is_export ? mangle_name(func->name) : func->name;
 
 	Symbol *symbol = Calloc(1, sizeof(Symbol));
 	*symbol = (Symbol){
@@ -151,6 +154,7 @@ static bool validate_func_params(
 			node->func_proto->params[i]->param_name,
 			true
 		);
+		param_var->linkage_name = param_var->name;
 
 		Location param_location = function->params[i]->var->location;
 		free(function->params[i]->var);
@@ -217,6 +221,8 @@ void free_function_declaration(FunctionDeclaration *func) {
 	if (!func) return;
 
 	free(func->name);
+	if (func->name != func->linkage_name) free(func->linkage_name);
+
 	free(func->param_types);
 	free(func);
 }

@@ -4,6 +4,7 @@
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
 #include "skull/semantic/expr.h"
+#include "skull/semantic/mangle.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
 #include "skull/semantic/symbol.h"
@@ -107,6 +108,8 @@ static Variable *node_to_var(const AstNode *const node) {
 
 	Symbol *symbol;
 	symbol = Calloc(1, sizeof *symbol);
+
+	var->linkage_name = var->is_exported ? mangle_name(var->name) : var->name;
 
 	*symbol = (Symbol){
 		.name = var->name,

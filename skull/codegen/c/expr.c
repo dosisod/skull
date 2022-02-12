@@ -21,7 +21,7 @@ CExpr gen_expr_c(const AstNodeExpr *expr, SkullStateC *state) {
 		case EXPR_CONST:
 			return gen_expr_const_c(expr);
 		case EXPR_IDENTIFIER:
-			return strdup(expr->var->name);
+			return strdup(expr->var->linkage_name);
 		case EXPR_ADD:
 		case EXPR_SUB:
 		case EXPR_MULT:
@@ -166,7 +166,7 @@ static CExpr gen_expr_func_call_c(
 	SkullStateC *state
 ) {
 	FunctionDeclaration *function = func_call->func_decl;
-	char *name = function->name;
+	char *name = function->linkage_name;
 	unsigned short num_params = function->num_params;
 
 	if (num_params == 0) return uvsnprintf("%s()", name);

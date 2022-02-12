@@ -63,7 +63,7 @@ static void add_func(FunctionDeclaration *func, const SkullStateLLVM *state) {
 
 	func->ref = LLVMAddFunction(
 		state->module,
-		func->name,
+		func->linkage_name,
 		func->type
 	);
 

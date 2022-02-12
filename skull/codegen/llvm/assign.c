@@ -64,7 +64,7 @@ static void setup_var_llvm(
 		var->ref = LLVMAddGlobal(
 			state->module,
 			type_to_llvm_type(var->type, state),
-			var->name
+			var->linkage_name
 		);
 
 		LLVMSetLinkage(
@@ -85,7 +85,7 @@ static void setup_var_llvm(
 		var->ref = LLVMBuildAlloca(
 			state->builder,
 			type_to_llvm_type(var->type, state),
-			var->name
+			var->linkage_name
 		);
 	}
 

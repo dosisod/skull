@@ -3,10 +3,11 @@ source_filename = "./test/sh/function/exported.sk"
 
 define i64 @.exported() {
 entry:
+  call void @exported.f()
   ret i64 0
 }
 
-define void @f() {
+define void @exported.f() {
 entry:
   ret void
 }
