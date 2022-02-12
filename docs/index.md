@@ -4,5 +4,5 @@
 * [Variables](./variables.md)
 * [Expressions](./expressions.md)
 * [Functions](./functions.md)
-* Control Flow (TODO)
+* [Control Flow](./control_flow.md)
 * [Developer API documentation](/docs/skull/)
