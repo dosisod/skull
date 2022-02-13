@@ -1485,6 +1485,22 @@ static bool test_validate_break_in_func_def(void) {
 	);
 }
 
+static bool test_validate_func_call_on_var_fails(void) {
+	Token *token = tokenize_fixture(U"x := 1\nx()");
+	Token *expr_token = token->next->next;
+	Token *func_token = expr_token->next->next;
+
+	AstNode *var_def = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(expr_token), true);
+	AstNode *func = AST_NODE_EXPR(func_token, AST_NODE_FUNC_EXPR(func_token));
+
+	var_def->next = func;
+
+	return validate_tree_fixture(
+		var_def,
+		"(null): Compilation error: line 2 column 1: function \"x\" missing declaration\n"
+	);
+}
+
 
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
@@ -1569,7 +1585,8 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_matching_types,
 		test_validate_type_alias_mut_not_allowed,
 		test_validate_type_alias_in_expr_not_allowed,
-		test_validate_break_in_func_def
+		test_validate_break_in_func_def,
+		test_validate_func_call_on_var_fails
 	)
 }
 

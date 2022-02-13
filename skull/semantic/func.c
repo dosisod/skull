@@ -212,7 +212,7 @@ Return function declaration called `name`, or `NULL` if not found.
 */
 FunctionDeclaration *find_func_by_name(const char *name) {
 	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
-	if (symbol) return symbol->func;
+	if (symbol && symbol->type == SYMBOL_FUNC) return symbol->func;
 
 	return NULL;
 }
