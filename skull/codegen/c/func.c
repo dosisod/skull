@@ -6,6 +6,7 @@
 #include "skull/codegen/c/shared.h"
 #include "skull/codegen/c/types.h"
 #include "skull/common/str.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/codegen/c/func.h"
@@ -93,7 +94,7 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 static char *gen_param_c(AstNodeFunctionParam *param) {
 	return uvsnprintf(
 		"%s %s",
-		skull_type_to_c_type(param->var->type),
-		param->var->linkage_name
+		skull_type_to_c_type(param->symbol->var->type),
+		param->symbol->var->linkage_name
 	);
 }

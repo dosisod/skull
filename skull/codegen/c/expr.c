@@ -6,6 +6,7 @@
 #include "skull/codegen/c/shared.h"
 #include "skull/common/str.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
 
@@ -21,7 +22,7 @@ CExpr gen_expr_c(const AstNodeExpr *expr, SkullStateC *state) {
 		case EXPR_CONST:
 			return gen_expr_const_c(expr);
 		case EXPR_IDENTIFIER:
-			return strdup(expr->var->linkage_name);
+			return strdup(expr->symbol->var->linkage_name);
 		case EXPR_ADD:
 		case EXPR_SUB:
 		case EXPR_MULT:
@@ -165,7 +166,7 @@ static CExpr gen_expr_func_call_c(
 	const AstNodeFunctionCall *func_call,
 	SkullStateC *state
 ) {
-	FunctionDeclaration *function = func_call->func_decl;
+	FunctionDeclaration *function = func_call->symbol->func;
 	char *name = function->linkage_name;
 	unsigned short num_params = function->num_params;
 

@@ -3,6 +3,7 @@
 #include "skull/build_data.h"
 #include "skull/common/errors.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/semantic/unused.h"
@@ -15,12 +16,12 @@ bool check_unused_symbols(const AstNode *node) {
 
 	while (head) {
 		if (head->type == AST_NODE_VAR_DEF) {
-			const Variable *var = head->var_def->var;
-
-			if (!var) {
+			if (!head->var_def->symbol) {
 				head = head->next;
 				continue;
 			}
+
+			const Variable *var = head->var_def->symbol->var;
 
 			if (!var->is_const && !var->was_reassigned) {
 				FMT_WARN(err, WARN_VAR_NOT_CONST, {

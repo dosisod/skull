@@ -57,7 +57,7 @@ Allow for finding of uninitialized variables by setting `allow_uninitialized`.
 
 Return `NULL` if variable was not found.
 */
-Variable *scope_find_var(const Token *const token) {
+Symbol *scope_find_var(const Token *const token) {
 	char *const var_name = token_to_mbs_str(token);
 	Symbol *const symbol = scope_find_name(SEMANTIC_STATE.scope, var_name);
 
@@ -73,7 +73,7 @@ Variable *scope_find_var(const Token *const token) {
 	}
 	free(var_name);
 
-	return symbol->var;
+	return symbol;
 }
 
 /*

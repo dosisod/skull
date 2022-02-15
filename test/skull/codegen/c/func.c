@@ -6,6 +6,7 @@
 #include "skull/codegen/c/shared.h"
 #include "skull/codegen/c/types.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
 #include "test/skull/semantic/macros.h"
@@ -42,7 +43,10 @@ static bool test_single_arg_func_decl(void) {
 		.is_external = true,
 		.num_params = 1,
 		.params = (AstNodeFunctionParam*[]){
-			&(AstNodeFunctionParam){ .var = param }
+			&(AstNodeFunctionParam){
+				.symbol = &(Symbol){ .var = param },
+				.location = NULL
+			}
 		}
 	};
 
@@ -69,8 +73,14 @@ static bool test_many_arg_func_decl(void) {
 		.is_external = true,
 		.num_params = 2,
 		.params = (AstNodeFunctionParam*[]){
-			&(AstNodeFunctionParam){ .var = param_x },
-			&(AstNodeFunctionParam){ .var = param_y }
+			&(AstNodeFunctionParam){
+				.symbol = &(Symbol){ .var = param_x },
+				.location = NULL
+			},
+			&(AstNodeFunctionParam){
+				.symbol = &(Symbol){ .var = param_y },
+				.location = NULL
+			}
 		}
 	};
 

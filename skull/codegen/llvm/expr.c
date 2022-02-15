@@ -10,6 +10,7 @@
 #include "skull/common/str.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/scope.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/codegen/llvm/expr.h"
 
@@ -84,7 +85,7 @@ static Expr gen_expr_identifier(
 	const AstNodeExpr *expr,
 	const SkullStateLLVM *state
 ) {
-	const Variable *var = expr->var;
+	const Variable *var = expr->symbol->var;
 
 	if (var->is_global || !var->is_const) {
 		return (Expr) {
@@ -108,7 +109,7 @@ static Expr gen_expr_deref(
 	const AstNodeExpr *expr,
 	const SkullStateLLVM *state
 ) {
-	const Variable *var = expr->rhs->var;
+	const Variable *var = expr->rhs->symbol->var;
 
 	return (Expr) {
 		.value = LLVMBuildLoad2(
@@ -326,8 +327,8 @@ Return reference to an expression `expr`.
 */
 static Expr gen_expr_ref(const AstNodeExpr *expr) {
 	return (Expr){
-		.value = expr->rhs->var->ref,
-		.type = expr->rhs->var->type->inner
+		.value = expr->rhs->symbol->var->ref,
+		.type = expr->rhs->symbol->var->type->inner
 	};
 }
 

@@ -18,6 +18,7 @@
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 
 #include "skull/codegen/llvm/func.h"
@@ -100,7 +101,7 @@ Expr gen_expr_func_call(
 	const AstNodeFunctionCall *const func_call,
 	const SkullStateLLVM *state
 ) {
-	FunctionDeclaration *function = func_call->func_decl;
+	FunctionDeclaration *function = func_call->symbol->func;
 
 	unsigned short num_params = function->num_params;
 
@@ -145,7 +146,7 @@ static void gen_function_def(
 		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
 
 		for RANGE(i, func->num_params) {
-			Variable *param_var = func->params[i]->var;
+			Variable *param_var = func->params[i]->symbol->var;
 
 			param_var->ref = next_param;
 			next_param = LLVMGetNextParam(next_param);

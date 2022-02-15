@@ -40,7 +40,7 @@
 		.lhs = { \
 			.func_call = &(AstNodeFunctionCall){ \
 				.func_name_tok = (_token), \
-				.func_decl = &(FunctionDeclaration) {0} \
+				.symbol = &(Symbol){ .func = &(FunctionDeclaration) {0} } \
 			} \
 		}, \
 		.oper = EXPR_FUNC \
@@ -68,7 +68,7 @@
 		.token = (_token), \
 		.var_assign = &(AstNodeVarAssign){ \
 			.expr = (_expr), \
-			.var = NULL \
+			.symbol = &(Symbol){ .var = NULL } \
 		} \
 	}
 
@@ -80,7 +80,7 @@
 		.var_def = &(AstNodeVarDef){ \
 			.name_tok = (_token), \
 			.expr = (_expr), \
-			.var = NULL, \
+			.symbol = &(Symbol){ .var = NULL }, \
 			.is_implicit = (_is_implicit), \
 			.is_const = true \
 		} \
@@ -206,7 +206,7 @@
 
 #define AST_NODE_EXPR_VAR(_var) \
 	&(AstNodeExpr) { \
-		.var = (_var), \
+		.symbol = &(Symbol){ .var = (_var) }, \
 		.oper = EXPR_IDENTIFIER \
 	}
 

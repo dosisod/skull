@@ -11,6 +11,7 @@
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/codegen/llvm/assign.h"
 
@@ -27,10 +28,10 @@ static bool requires_alloca_decl(const Variable *);
 Builds a variable definition from `var_def`.
 */
 void gen_stmt_var_def(const AstNodeVarDef *var_def, SkullStateLLVM *state) {
-	Variable *var = var_def->var;
-
 	// this is actually a type alias, nothing to generate
-	if (!var) return;
+	if (!var_def->symbol) return;
+
+	Variable *var = var_def->symbol->var;
 
 	LLVMValueRef value = gen_expr(var_def->expr, state).value;
 
@@ -47,7 +48,7 @@ void gen_stmt_var_assign(
 ) {
 	LLVMValueRef value = gen_expr(var_assign->expr, state).value;
 
-	assign_value_to_var(value, var_assign->var, state);
+	assign_value_to_var(value, var_assign->symbol->var, state);
 }
 
 static void setup_var_llvm(

@@ -37,7 +37,7 @@ typedef struct AstNodeFunctionProto AstNodeFunctionProto;
 typedef struct AstNodeFunctionCall AstNodeFunctionCall;
 typedef struct AstNodeExpr AstNodeExpr;
 typedef struct FunctionDeclaration FunctionDeclaration;
-typedef struct Variable Variable;
+typedef struct Symbol Symbol;
 
 /*
 An `AstNode` abstractly stores data about parsed code.
@@ -80,7 +80,7 @@ Used to store special data about `AST_NODE_VAR_DEF` nodes.
 typedef struct AstNodeVarDef {
 	const Token *name_tok;
 	AstNodeExpr *expr;
-	Variable *var;
+	Symbol *symbol;
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
 	_Bool is_exported: 1;
@@ -91,7 +91,7 @@ Used to store special data about `AST_NODE_VAR_ASSIGN` nodes.
 */
 typedef struct AstNodeVarAssign {
 	AstNodeExpr *expr;
-	Variable *var;
+	Symbol *symbol;
 } AstNodeVarAssign;
 
 /*
@@ -100,7 +100,8 @@ Store information about a function's parameters (name, type, etc)
 typedef struct AstNodeFunctionParam {
 	Token *type_name;
 	char32_t *param_name;
-	Variable *var;
+	Symbol *symbol;
+	Location *location; // TODO(dosisod): remove when location is in symbol
 } AstNodeFunctionParam;
 
 /*
@@ -128,7 +129,7 @@ typedef struct AstNodeFunctionCall {
 	const Token *func_name_tok;
 	AstNode *params;
 	unsigned short num_values;
-	FunctionDeclaration *func_decl;
+	Symbol *symbol;
 } AstNodeFunctionCall;
 
 typedef enum {
@@ -169,7 +170,7 @@ typedef struct AstNodeExpr {
 		AstNodeFunctionCall *func_call;
 	} lhs;
 
-	Variable *var;
+	Symbol *symbol;
 
 	union {
 		int64_t _int;

@@ -17,6 +17,7 @@
 #include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/semantic/func.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 #include "skull/semantic/variable.h"
 #include "skull/version.h"
@@ -367,11 +368,11 @@ LLVMMetadataRef add_llvm_func_debug_info(
 			);
 			free(param_name);
 
-			alloc_debug_function_param(func->params[i]->var, state);
+			alloc_debug_function_param(func->params[i]->symbol->var, state);
 
 			LLVMDIBuilderInsertDeclareAtEnd(
 				DEBUG_INFO.builder,
-				func->params[i]->var->ref,
+				func->params[i]->symbol->var->ref,
 				di_var,
 				LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
 				make_llvm_debug_location(&func->location, state),

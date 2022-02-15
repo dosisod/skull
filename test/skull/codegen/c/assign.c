@@ -6,6 +6,7 @@
 #include "skull/codegen/c/shared.h"
 #include "skull/codegen/c/types.h"
 #include "skull/parse/ast_node.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/variable.h"
 
 #include "test/skull/codegen/c/assign.h"
@@ -17,7 +18,7 @@ static bool top_lvl_var_def_fixture(bool, bool, bool, const char *, const char *
 static bool test_assign(void) {
 	AstNode *node = AST_NODE_VAR_ASSIGN(NULL, AST_NODE_CONST_EXPR(NULL));
 	SET_EXPR_VALUE_INT(node->var_assign->expr, 1);
-	node->var_assign->var = make_variable(&TYPE_INT, U"x", false);
+	node->var_assign->symbol->var = make_variable(&TYPE_INT, U"x", false);
 
 	char *str = gen_stmt_var_assign_c(node, setup_c_state());
 
@@ -25,7 +26,7 @@ static bool test_assign(void) {
 	ASSERT_EQUAL(strcmp(str, "x = 1;"), 0);
 
 	free(str);
-	free_variable(node->var_assign->var);
+	free_variable(node->var_assign->symbol->var);
 	PASS;
 }
 
@@ -35,8 +36,8 @@ static bool test_mutable_var_def(void) {
 	AstNode *node = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(NULL), true);
 
 	SET_EXPR_VALUE_INT(node->var_def->expr, 1);
-	node->var_def->var = make_variable(&TYPE_INT, U"x", false);
-	node->var_def->var->expr = node->var_def->expr;
+	node->var_def->symbol->var = make_variable(&TYPE_INT, U"x", false);
+	node->var_def->symbol->var->expr = node->var_def->expr;
 
 	char *str = gen_stmt_var_def_c(node, setup_c_state());
 
@@ -44,7 +45,7 @@ static bool test_mutable_var_def(void) {
 	ASSERT_EQUAL(strcmp(str, TYPE_INT_C" x = 1;"), 0);
 
 	free(str);
-	free_variable(node->var_def->var);
+	free_variable(node->var_def->symbol->var);
 	PASS;
 }
 
@@ -54,8 +55,8 @@ static bool test_const_var_def(void) {
 	AstNode *node = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(NULL), true);
 
 	SET_EXPR_VALUE_INT(node->var_def->expr, 1);
-	node->var_def->var = make_variable(&TYPE_INT, U"x", true);
-	node->var_def->var->expr = node->var_def->expr;
+	node->var_def->symbol->var = make_variable(&TYPE_INT, U"x", true);
+	node->var_def->symbol->var->expr = node->var_def->expr;
 
 	char *str = gen_stmt_var_def_c(node, setup_c_state());
 
@@ -63,7 +64,7 @@ static bool test_const_var_def(void) {
 	ASSERT_EQUAL(strcmp(str, "const "TYPE_INT_C" x = 1;"), 0);
 
 	free(str);
-	free_variable(node->var_def->var);
+	free_variable(node->var_def->symbol->var);
 	PASS;
 }
 
@@ -103,10 +104,10 @@ static bool top_lvl_var_def_fixture(
 	AstNode *node = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(NULL), true);
 
 	SET_EXPR_VALUE_INT(node->var_def->expr, 1);
-	node->var_def->var = make_variable(&TYPE_INT, U"x", is_const);
-	node->var_def->var->is_exported = is_export;
+	node->var_def->symbol->var = make_variable(&TYPE_INT, U"x", is_const);
+	node->var_def->symbol->var->is_exported = is_export;
 	node->var_def->expr->is_const_expr = is_const_expr;
-	node->var_def->var->expr = node->var_def->expr;
+	node->var_def->symbol->var->expr = node->var_def->expr;
 
 	SkullStateC *state = setup_c_state();
 
@@ -125,7 +126,7 @@ static bool top_lvl_var_def_fixture(
 	free_c_state();
 
 	free(str);
-	free_variable(node->var_def->var);
+	free_variable(node->var_def->symbol->var);
 	PASS;
 }
 

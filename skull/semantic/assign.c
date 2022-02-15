@@ -15,7 +15,7 @@
 
 
 static bool is_void_func_assign(const AstNode *);
-static Variable *node_to_var(const AstNode *const);
+static Symbol *node_to_var(const AstNode *const);
 static bool is_expr_compatible_with_var(const AstNodeExpr *, const Variable *);
 static bool is_redundant_reassign(const AstNodeVarAssign *);
 
@@ -30,13 +30,15 @@ bool validate_stmt_var_def(const AstNode *node) {
 	AstNodeExpr *expr = node->var_def->expr;
 	if (!validate_expr(expr)) return false;
 
-	Variable *var = node_to_var(node);
-	if (!var) return false;
+	Symbol *symbol = node_to_var(node);
+	if (!symbol || !symbol->var) return false;
+
+	Variable *var = symbol->var;
 
 	var->is_defined = true;
 	var->expr = expr;
 
-	node->var_def->var = var;
+	node->var_def->symbol = symbol;
 
 	if (!is_expr_compatible_with_var(expr, var)) return false;
 
@@ -50,12 +52,12 @@ bool validate_stmt_var_def(const AstNode *node) {
 }
 
 bool validate_stmt_var_assign(const AstNode *node) {
-	Variable *var = scope_find_var(node->token);
-	if (!var) return false;
+	Symbol *symbol = scope_find_var(node->token);
+	if (!symbol || !symbol->var) return false;
 
-	node->var_assign->var = var;
+	node->var_assign->symbol = symbol;
 
-	if (var->is_const) {
+	if (symbol->var->is_const) {
 		FMT_ERROR(ERR_REASSIGN_CONST, {
 			.tok = node->token
 		});
@@ -63,22 +65,22 @@ bool validate_stmt_var_assign(const AstNode *node) {
 		return false;
 	}
 
-	var->was_reassigned = true;
+	symbol->var->was_reassigned = true;
 
 	if (!validate_expr(node->var_assign->expr)) return false;
 
 	return (
-		is_expr_compatible_with_var(node->var_assign->expr, var) &&
+		is_expr_compatible_with_var(node->var_assign->expr, symbol->var) &&
 		!is_redundant_reassign(node->var_assign)
 	);
 }
 
 /*
-Make and add a variable from `node` to Skull state.
+Make and add a symbol (as a variable) from `node` to the Skull state.
 
 Return `NULL` if an error occurred.
 */
-static Variable *node_to_var(const AstNode *const node) {
+static Symbol *node_to_var(const AstNode *const node) {
 	const Token *token = node->var_def->name_tok;
 	const Type *type = node->var_def->expr->type;
 
@@ -120,7 +122,7 @@ static Variable *node_to_var(const AstNode *const node) {
 	};
 
 	if (scope_add_symbol(symbol)) {
-		return var;
+		return symbol;
 	}
 
 	var->name = NULL;
@@ -141,7 +143,7 @@ static bool is_void_func_assign(const AstNode *node) {
 		});
 
 		// suppress errors
-		expr->lhs.func_call->func_decl->was_called = true;
+		expr->lhs.func_call->symbol->func->was_called = true;
 
 		return true;
 	}
@@ -170,7 +172,7 @@ static bool is_expr_compatible_with_var(
 static bool is_redundant_reassign(const AstNodeVarAssign *var_assign) {
 	const AstNodeExpr *expr = var_assign->expr;
 
-	if (expr->oper == EXPR_IDENTIFIER && expr->var == var_assign->var) {
+	if (expr->oper == EXPR_IDENTIFIER && expr->symbol == var_assign->symbol) {
 		FMT_ERROR(ERR_REDUNDANT_REASSIGN, { .tok = expr->lhs.tok });
 
 		return true;

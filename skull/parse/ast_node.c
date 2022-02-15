@@ -5,6 +5,7 @@
 #include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/parse/ast_node.h"
@@ -253,7 +254,9 @@ static ExprType token_type_to_binary_expr_type(TokenType type) {
 static void free_param(AstNodeFunctionParam *param) {
 	if (!param) return;
 
-	if (param->var && !param->var->name) free(param->var);
+	if (param->symbol && param->symbol->var && !param->symbol->var->name) {
+		free(param->symbol->var);
+	}
 	free(param->param_name);
 	free(param);
 }
@@ -383,10 +386,8 @@ static Vector *parse_function_proto_params(ParserCtx *ctx) {
 		param = Malloc(sizeof *param);
 		param->type_name = ctx->token->next;
 		param->param_name = token_to_string(ctx->token);
-
-		// allocate a placeholder variable to store the location
-		param->var = Calloc(1, sizeof(Variable));
-		param->var->location = ctx->token->location;
+		param->location = &ctx->token->location;
+		param->symbol = NULL;
 
 		vector_push(params, param);
 
@@ -981,6 +982,7 @@ static void free_expr_node(AstNodeExpr *expr) {
 	}
 	if (expr->oper == EXPR_FUNC) {
 		free_ast_tree(expr->lhs.func_call->params);
+		free(expr->lhs.func_call->symbol);
 		free(expr->lhs.func_call);
 		free(expr);
 		return;

@@ -5,6 +5,7 @@
 #include "skull/codegen/c/shared.h"
 #include "skull/codegen/c/types.h"
 #include "skull/common/str.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/variable.h"
 
 #include "skull/codegen/c/assign.h"
@@ -19,16 +20,16 @@ static CStmt gen_stmt_stack_var(const AstNode *, CType type, SkullStateC *);
 
 CStmt gen_stmt_var_assign_c(const AstNode *node, SkullStateC *state) {
 	return gen_stmt_var_assign_c_(
-		node->var_assign->var->linkage_name,
+		node->var_assign->symbol->var->linkage_name,
 		node->var_assign->expr,
 		state
 	);
 }
 
 CStmt gen_stmt_var_def_c(const AstNode *node, SkullStateC *state) {
-	const Variable *var = node->var_def->var;
+	if (!node->var_def->symbol) return NULL;
 
-	if (!var) return NULL;
+	const Variable *var = node->var_def->symbol->var;
 
 	CType type = skull_type_to_c_type(var->type);
 
@@ -56,7 +57,7 @@ static CStmt gen_stmt_global_var(
 	CType type,
 	SkullStateC *state
 ) {
-	const Variable *var = node->var_def->var;
+	const Variable *var = node->var_def->symbol->var;
 
 	if (var->expr->is_const_expr) {
 		CExpr value = gen_expr_c(var->expr, state);
@@ -109,7 +110,7 @@ static CStmt gen_stmt_stack_var(
 	CType type,
 	SkullStateC *state
 ) {
-	const Variable *var = node->var_def->var;
+	const Variable *var = node->var_def->symbol->var;
 
 	const char *fmt = var->is_const ? "const %s %s = %s;" : "%s %s = %s;";
 

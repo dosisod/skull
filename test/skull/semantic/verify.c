@@ -9,6 +9,7 @@
 #include "skull/semantic/entry.h"
 #include "skull/semantic/expr.h"
 #include "skull/semantic/shared.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 
 #include "test/testing.h"
@@ -129,6 +130,7 @@ static bool test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr(void) {
 	ASSERT_FALSEY(expr->is_const_expr);
 
 	free_tokens(token);
+	free(expr->lhs.expr->lhs.func_call->symbol);
 	return pass;
 }
 
@@ -155,6 +157,7 @@ static bool test_binary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 	ASSERT_FALSEY(expr->is_const_expr);
 
 	free_tokens(token);
+	free(expr->rhs->lhs.func_call->symbol);
 	return pass;
 }
 
@@ -200,6 +203,7 @@ static bool test_unary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 
 	free_tokens(token);
 	free(expr->value.str);
+	free(expr->rhs->lhs.func_call->symbol);
 	return pass;
 }
 
@@ -236,11 +240,9 @@ static bool test_var_expr_isnt_const_expr_if_var_def_expr_isnt_const_expr(void) 
 
 	ASSERT_TRUTHY(validate_ast_tree(func));
 
-	AstNode *var_def = AST_NODE_VAR_DEF(
-		var_def_token,
-		AST_NODE_FUNC_EXPR(var_def_expr_token),
-		true
-	);
+	AstNodeExpr *func_expr = AST_NODE_FUNC_EXPR(var_def_expr_token);
+
+	AstNode *var_def = AST_NODE_VAR_DEF(var_def_token, func_expr, true);
 	ASSERT_TRUTHY(validate_ast_tree(var_def));
 
 	AstNodeExpr *expr = AST_NODE_IDENT_EXPR(expr_token);
@@ -251,6 +253,7 @@ static bool test_var_expr_isnt_const_expr_if_var_def_expr_isnt_const_expr(void) 
 	free_tokens(token);
 
 	ASSERT_TRUTHY(pass);
+	free(func_expr->lhs.func_call->symbol);
 	PASS;
 }
 
@@ -1043,16 +1046,19 @@ static bool test_validate_no_void_assign(void) {
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
 	node->token = token;
 
-	node->next = AST_NODE_VAR_DEF(
-		x_token,
-		AST_NODE_FUNC_EXPR(func_call_token),
-		true
-	);
+	AstNodeExpr *func_expr = AST_NODE_FUNC_EXPR(func_call_token);
+	node->next = AST_NODE_VAR_DEF(x_token, func_expr, true);
 
-	return validate_tree_fixture(
+	const bool pass = validate_tree_fixture(
 		node,
 		"(null): Compilation error: line 2 column 6: function returning type void cannot be assigned to variable \"x\"\n"
 	);
+
+	free(func_expr->lhs.func_call->symbol);
+
+	ASSERT_TRUTHY(pass);
+
+	PASS;
 }
 
 static bool test_validate_return_non_void_from_void_func(void) {
@@ -1092,20 +1098,24 @@ static bool test_validate_func_parameter_count(void) {
 	Token *func_call_expr_token = func_call_token->next->next;
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, false);
-	node->next = AST_NODE_EXPR(
-		func_call_token,
-		AST_NODE_FUNC_EXPR(func_call_token)
-	);
+	AstNodeExpr *func_expr = AST_NODE_FUNC_EXPR(func_call_token);
+	node->next = AST_NODE_EXPR(func_call_token, func_expr);
 
 	AST_NODE_FUNC_ADD_PARAM(
 		node->next->expr,
 		AST_NODE_EXPR(func_call_token, AST_NODE_CONST_EXPR(func_call_expr_token))
 	);
 
-	return validate_tree_fixture(
+	const bool pass = validate_tree_fixture(
 		node,
 		"(null): Compilation error: line 2 column 1: invalid number of parameters\n"
 	);
+
+	free(func_expr->lhs.func_call->symbol);
+
+	ASSERT_TRUTHY(pass);
+
+	PASS;
 }
 
 static bool test_validate_func_return_invalid_type(void) {

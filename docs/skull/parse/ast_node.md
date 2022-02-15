@@ -40,7 +40,7 @@ typedef struct AstNode {
 typedef struct AstNodeVarDef {
 	const Token *name_tok;
 	AstNodeExpr *expr;
-	Variable *var;
+	Symbol *symbol;
 	_Bool is_implicit : 1;
 	_Bool is_const : 1;
 	_Bool is_exported: 1;
@@ -52,7 +52,7 @@ typedef struct AstNodeVarDef {
 ```c
 typedef struct AstNodeVarAssign {
 	AstNodeExpr *expr;
-	Variable *var;
+	Symbol *symbol;
 }
 ```
 
@@ -62,7 +62,8 @@ typedef struct AstNodeVarAssign {
 typedef struct AstNodeFunctionParam {
 	Token *type_name;
 	char32_t *param_name;
-	Variable *var;
+	Symbol *symbol;
+	Location *location; // TODO(dosisod): remove when location is in symbol
 }
 ```
 
@@ -92,7 +93,7 @@ typedef struct AstNodeFunctionCall {
 	const Token *func_name_tok;
 	AstNode *params;
 	unsigned short num_values;
-	FunctionDeclaration *func_decl;
+	Symbol *symbol;
 }
 ```
 
@@ -106,7 +107,7 @@ typedef struct AstNodeExpr {
 		AstNodeFunctionCall *func_call;
 	} lhs;
 
-	Variable *var;
+	Symbol *symbol;
 
 	union {
 		int64_t _int;

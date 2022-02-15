@@ -154,12 +154,9 @@ static bool validate_func_params(
 			node->func_proto->params[i]->param_name,
 			true
 		);
-		param_var->linkage_name = param_var->name;
 
-		Location param_location = function->params[i]->var->location;
-		free(function->params[i]->var);
-		function->params[i]->var = NULL;
-		param_var->location = param_location;
+		param_var->linkage_name = param_var->name;
+		param_var->location = *function->params[i]->location;
 		param_var->is_defined = true;
 
 		if (function->is_external) variable_disable_warnings(param_var);
@@ -188,7 +185,7 @@ static bool validate_func_params(
 			return false;
 		}
 
-		function->params[i]->var = param_var;
+		function->params[i]->symbol = symbol;
 	}
 	restore_parent_scope();
 

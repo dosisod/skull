@@ -3,11 +3,13 @@
 #include "skull/codegen/llvm/fwd_decl.h"
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
+#include "skull/common/malloc.h"
 #include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 
 #include "skull/semantic/expr.h"
@@ -53,12 +55,14 @@ bool validate_expr(AstNodeExpr *expr) {
 }
 
 static bool validate_ident_expr(AstNodeExpr *expr) {
-	Variable *var = scope_find_var(expr->lhs.tok);
-	if (!var) return false;
+	Symbol *symbol = scope_find_var(expr->lhs.tok);
+	if (!symbol || !symbol->var) return false;
+
+	Variable *var = symbol->var;
 
 	var->was_read = true;
 
-	expr->var = var;
+	expr->symbol = symbol;
 	expr->type = var->type;
 	if (var->expr) expr->is_const_expr = var->expr->is_const_expr;
 
@@ -296,7 +300,8 @@ static bool validate_stmt_func_call(AstNodeExpr *expr) {
 	FunctionDeclaration *function = find_func_by_token(func_name_token);
 	if (!function) return false;
 
-	func_call->func_decl = function;
+	func_call->symbol = Calloc(1, sizeof(Symbol));
+	func_call->symbol->func = function;
 	function->was_called = true;
 	expr->type = function->return_type;
 
@@ -336,7 +341,7 @@ static FunctionDeclaration *find_func_by_token(const Token *token) {
 }
 
 static bool validate_func_call_params(AstNodeFunctionCall *func_call) {
-	const FunctionDeclaration *function = func_call->func_decl;
+	const FunctionDeclaration *function = func_call->symbol->func;
 	const AstNode *param = func_call->params;
 
 	for RANGE(i, function->num_params) {

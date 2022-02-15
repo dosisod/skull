@@ -38,7 +38,7 @@ Scope *make_scope(void)
 > Returns a new variable scope.
 
 ```c
-Variable *scope_find_var(const Token *const token)
+Symbol *scope_find_var(const Token *const token)
 ```
 
 > Try and find a variable stored in `token`.
