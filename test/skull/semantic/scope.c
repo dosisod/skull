@@ -16,7 +16,7 @@ static Symbol *symbol_wrapper(Variable *var) {
 	*symbol = (Symbol){
 		.name = var->name,
 		.expr_type = var->type,
-		.location = &var->location,
+		.location = var->location,
 		.type = SYMBOL_VAR,
 		.var = var
 	};

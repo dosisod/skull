@@ -94,6 +94,7 @@
 			.name_tok = ((_is_export) || (_is_external)) ? \
 				(_token)->next : \
 				(_token), \
+			.symbol = &(Symbol){0}, \
 			.return_type_token = NULL, \
 			.is_external = (_is_external), \
 			.is_export = (_is_export), \

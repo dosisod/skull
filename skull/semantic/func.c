@@ -68,15 +68,13 @@ static bool validate_stmt_func_decl_(const AstNode *node) {
 	SEMANTIC_STATE.last_func = SEMANTIC_STATE.current_func;
 	SEMANTIC_STATE.current_func = func;
 
-	node->func_proto->func = func;
-
 	func->linkage_name = is_export ? mangle_name(func->name) : func->name;
 
 	Symbol *symbol = Calloc(1, sizeof(Symbol));
 	*symbol = (Symbol){
 		.name = func->name,
 		.expr_type = func->return_type,
-		.location = &func->location,
+		.location = func->location,
 		.type = SYMBOL_FUNC,
 		.func = func
 	};
@@ -86,6 +84,8 @@ static bool validate_stmt_func_decl_(const AstNode *node) {
 		free(symbol);
 		return false;
 	}
+
+	node->func_proto->symbol = symbol;
 
 	return validate_func_params(node, func);
 }
@@ -166,7 +166,7 @@ static bool validate_func_params(
 		*symbol = (Symbol){
 			.name = param_var->name,
 			.expr_type = param_var->type,
-			.location = &param_var->location,
+			.location = param_var->location,
 			.type = SYMBOL_VAR,
 			.var = param_var
 		};

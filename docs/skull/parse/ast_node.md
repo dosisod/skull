@@ -77,7 +77,7 @@ typedef struct AstNodeFunctionProto {
 
 	unsigned short num_params;
 
-	FunctionDeclaration *func;
+	Symbol *symbol;
 
 	_Bool is_external : 1;
 	_Bool is_export : 1;

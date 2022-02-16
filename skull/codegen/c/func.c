@@ -35,7 +35,7 @@ void gen_function_def_c(const AstNode *node, SkullStateC *state) {
 }
 
 char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
-	FunctionDeclaration *func = node->func_proto->func;
+	FunctionDeclaration *func = node->func_proto->symbol->func;
 	AstNodeFunctionParam **params = func->params;
 	char *param_list = NULL;
 	unsigned short i = 0;

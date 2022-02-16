@@ -15,7 +15,7 @@ static Symbol find_symbol(char *);
 static bool symbol_already_exists(Symbol *new_symbol) {
 	Symbol symbol = find_symbol(new_symbol->name);
 
-	const Location *location = new_symbol->location;
+	const Location *location = &new_symbol->location;
 	char *name = new_symbol->name;
 
 	if (symbol.type == SYMBOL_VAR) {

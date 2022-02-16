@@ -41,9 +41,9 @@ void gen_stmt_func_decl(
 	const AstNode *const node,
 	SkullStateLLVM *state
 ) {
-	FunctionDeclaration *func = node->func_proto->func;
+	FunctionDeclaration *func = node->func_proto->symbol->func;
 
-	add_func(node->func_proto->func, state);
+	add_func(node->func_proto->symbol->func, state);
 
 	if (!func->is_external) gen_function_def(node, func, state);
 }

@@ -17,7 +17,7 @@ typedef struct Symbol {
 	char *name;
 	char *linkage_name;
 	const Type *expr_type;
-	const Location *location;
+	Location location;
 	SymbolType type;
 	union {
 		FunctionDeclaration *func;

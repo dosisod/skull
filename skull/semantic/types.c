@@ -275,7 +275,7 @@ bool validate_stmt_type_alias(const AstNode *node) {
 	symbol = Calloc(1, sizeof *symbol);
 	*symbol = (Symbol){
 		.name = alias,
-		.location = &token->location,
+		.location = token->location,
 		.expr_type = find_type(type_name),
 		.type = SYMBOL_ALIAS,
 	};

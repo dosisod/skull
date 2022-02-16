@@ -36,7 +36,6 @@ typedef struct AstNodeVarAssign AstNodeVarAssign;
 typedef struct AstNodeFunctionProto AstNodeFunctionProto;
 typedef struct AstNodeFunctionCall AstNodeFunctionCall;
 typedef struct AstNodeExpr AstNodeExpr;
-typedef struct FunctionDeclaration FunctionDeclaration;
 typedef struct Symbol Symbol;
 
 /*
@@ -114,7 +113,7 @@ typedef struct AstNodeFunctionProto {
 
 	unsigned short num_params;
 
-	FunctionDeclaration *func;
+	Symbol *symbol;
 
 	_Bool is_external : 1;
 	_Bool is_export : 1;

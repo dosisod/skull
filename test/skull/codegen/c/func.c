@@ -23,7 +23,7 @@ static bool test_no_arg_func_decl(void) {
 	};
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
-	node->func_proto->func = func;
+	node->func_proto->symbol->func = func;
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
@@ -51,7 +51,7 @@ static bool test_single_arg_func_decl(void) {
 	};
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
-	node->func_proto->func = func;
+	node->func_proto->symbol->func = func;
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
@@ -85,7 +85,7 @@ static bool test_many_arg_func_decl(void) {
 	};
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
-	node->func_proto->func = func;
+	node->func_proto->symbol->func = func;
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
@@ -106,7 +106,7 @@ static bool test_func_with_body(void) {
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, false, false);
 	node->child = AST_NODE_NOOP();
-	node->func_proto->func = func;
+	node->func_proto->symbol->func = func;
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
@@ -126,7 +126,7 @@ static bool test_func_static(void) {
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, false, true);
 	node->child = AST_NODE_NOOP();
-	node->func_proto->func = func;
+	node->func_proto->symbol->func = func;
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 

@@ -36,7 +36,7 @@ bool check_unused_symbols(const AstNode *node) {
 		}
 
 		else if (head->type == AST_NODE_FUNCTION_PROTO) {
-			const FunctionDeclaration *func = head->func_proto->func;
+			const FunctionDeclaration *func = head->func_proto->symbol->func;
 
 			if (!func->was_called) {
 				FMT_WARN(err, WARN_FUNC_UNUSED, {
