@@ -4,15 +4,16 @@
 
 typedef struct Scope Scope;
 typedef struct FunctionDeclaration FunctionDeclaration;
+typedef struct Symbol Symbol;
 
 /*
 Stores semantic analyzer global state.
 */
 typedef struct {
 	Scope *scope;
-	FunctionDeclaration *main_func;
-	FunctionDeclaration *current_func;
-	FunctionDeclaration *last_func;
+	Symbol *main_func;
+	Symbol *current_func;
+	Symbol *last_func;
 	unsigned while_loop_depth;
 	HashTable *dynamic_refs;
 } SemanticState;

@@ -25,10 +25,10 @@
 
 static void gen_function_def(
 	const AstNode *const,
-	FunctionDeclaration *,
+	Symbol *,
 	SkullStateLLVM *
 );
-static void add_func(FunctionDeclaration *, const SkullStateLLVM *);
+static void add_func(Symbol *, const SkullStateLLVM *);
 static LLVMTypeRef *parse_func_param(
 	const FunctionDeclaration *,
 	const SkullStateLLVM *state
@@ -43,15 +43,18 @@ void gen_stmt_func_decl(
 ) {
 	FunctionDeclaration *func = node->func_proto->symbol->func;
 
-	add_func(node->func_proto->symbol->func, state);
+	add_func(node->func_proto->symbol, state);
 
-	if (!func->is_external) gen_function_def(node, func, state);
+	if (!func->is_external)
+		gen_function_def(node, node->func_proto->symbol, state);
 }
 
 /*
-Add new LLVM function from `func`.
+Add new LLVM function from `symbol`.
 */
-static void add_func(FunctionDeclaration *func, const SkullStateLLVM *state) {
+static void add_func(Symbol *symbol, const SkullStateLLVM *state) {
+	FunctionDeclaration *func = symbol->func;
+
 	LLVMTypeRef *params = parse_func_param(func, state);
 
 	func->type = LLVMFunctionType(
@@ -64,7 +67,7 @@ static void add_func(FunctionDeclaration *func, const SkullStateLLVM *state) {
 
 	func->ref = LLVMAddFunction(
 		state->module,
-		func->linkage_name,
+		symbol->linkage_name,
 		func->type
 	);
 
@@ -139,9 +142,11 @@ Create a native LLVM function.
 */
 static void gen_function_def(
 	const AstNode *const node,
-	FunctionDeclaration *func,
+	Symbol *symbol,
 	SkullStateLLVM *state
 ) {
+	FunctionDeclaration *func = symbol->func;
+
 	if (func->param_types) {
 		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
 
@@ -154,7 +159,7 @@ static void gen_function_def(
 	}
 
 	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
-		state->current_func->ref
+		state->current_func->func->ref
 	);
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
@@ -165,16 +170,16 @@ static void gen_function_def(
 
 	LLVMPositionBuilderAtEnd(state->builder, entry);
 
-	FunctionDeclaration *old_func =state->current_func;
-	state->current_func = func;
+	Symbol *old_symbol = state->current_func;
+	state->current_func = symbol;
 	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
 
-	LLVMMetadataRef old_di_scope = add_llvm_func_debug_info(func, state);
+	LLVMMetadataRef old_di_scope = add_llvm_func_debug_info(symbol, state);
 
 	const Expr returned = gen_tree(node->child, state);
 
 	restore_parent_scope();
-	state->current_func = old_func;
+	state->current_func = old_symbol;
 
 	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 

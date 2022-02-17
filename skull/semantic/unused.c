@@ -21,26 +21,27 @@ bool check_unused_symbols(const AstNode *node) {
 				continue;
 			}
 
-			const Variable *var = head->var_def->symbol->var;
+			const Symbol *symbol = head->var_def->symbol;
+			const Variable *var = symbol->var;
 
 			if (!var->is_const && !var->was_reassigned) {
 				FMT_WARN(err, WARN_VAR_NOT_CONST, {
-					.var = var, .loc = &var->location
+					.var = var, .loc = &symbol->location
 				});
 			}
 			if (!var->was_read && !var->is_exported) {
 				FMT_WARN(err, WARN_VAR_UNUSED, {
-					.var = var, .loc = &var->location
+					.var = var, .loc = &symbol->location
 				});
 			}
 		}
 
 		else if (head->type == AST_NODE_FUNCTION_PROTO) {
-			const FunctionDeclaration *func = head->func_proto->symbol->func;
+			const Symbol *symbol = head->func_proto->symbol;
 
-			if (!func->was_called) {
+			if (!symbol->func->was_called) {
 				FMT_WARN(err, WARN_FUNC_UNUSED, {
-					.str = func->name, .loc = &func->location
+					.str = symbol->name, .loc = &symbol->location
 				});
 			}
 		}

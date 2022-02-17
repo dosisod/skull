@@ -11,6 +11,7 @@
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/codegen/llvm/flow.h"
 
@@ -89,17 +90,17 @@ Builds LLVM for a while loop from `node`.
 void gen_control_while(const AstNode *node, SkullStateLLVM *state) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		state->ctx,
-		state->current_func->ref,
+		state->current_func->func->ref,
 		"while_cond"
 	);
 	LLVMBasicBlockRef while_loop = LLVMAppendBasicBlockInContext(
 		state->ctx,
-		state->current_func->ref,
+		state->current_func->func->ref,
 		"while_loop"
 	);
 	LLVMBasicBlockRef while_end = LLVMAppendBasicBlockInContext(
 		state->ctx,
-		state->current_func->ref,
+		state->current_func->func->ref,
 		"while_end"
 	);
 
@@ -138,7 +139,7 @@ void gen_control_if(const AstNode **node, SkullStateLLVM *state) {
 		LLVMGetInsertBlock(state->builder),
 		LLVMAppendBasicBlockInContext(
 			state->ctx,
-			state->current_func->ref,
+			state->current_func->func->ref,
 			"end"
 		),
 		state
@@ -167,7 +168,7 @@ static void gen_control_if_(
 
 	LLVMBasicBlockRef if_cond_true = LLVMAppendBasicBlockInContext(
 		state->ctx,
-		state->current_func->ref,
+		state->current_func->func->ref,
 		"if_true"
 	);
 	LLVMBasicBlockRef if_cond_false = NULL;
@@ -183,7 +184,7 @@ static void gen_control_if_(
 	) {
 		if_cond_false = LLVMAppendBasicBlockInContext(
 			state->ctx,
-			state->current_func->ref,
+			state->current_func->func->ref,
 			"if_false"
 		);
 		LLVMMoveBasicBlockAfter(end, if_cond_false);

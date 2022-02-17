@@ -1,14 +1,11 @@
 #pragma once
 
 #include "skull/parse/ast_node.h"
+#include "skull/semantic/symbol.h"
 #include "skull/semantic/types.h"
 
 /*
 Stores a function declaration.
-
-`name` is the name of the declared function.
-
-`location` is the location of the function name.
 
 `ref` is for storing arbitrary information, for use in the backend
 
@@ -21,10 +18,6 @@ Stores a function declaration.
 `return_type` is the Skull type that the function returns.
 */
 typedef struct FunctionDeclaration {
-	char *name;
-	char *linkage_name;
-	Location location;
-
 	void *ref;
 	void *type;
 
@@ -44,6 +37,6 @@ typedef struct FunctionDeclaration {
 _Bool validate_stmt_func_decl(const AstNode *);
 _Bool post_validate_stmt_func_decl(const AstNode *);
 
-void free_function_declaration(FunctionDeclaration *);
+void free_function_declaration(Symbol *);
 
-FunctionDeclaration *find_func_by_name(const char *);
+Symbol *find_func_by_name(const char *);

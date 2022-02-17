@@ -106,7 +106,6 @@ static Symbol *node_to_var(const AstNode *const node) {
 	free(name);
 	var->implicitly_typed = node->var_def->is_implicit;
 	var->is_exported = node->var_def->is_exported;
-	var->location = token->location;
 
 	Symbol *symbol;
 	symbol = Calloc(1, sizeof *symbol);
@@ -116,7 +115,7 @@ static Symbol *node_to_var(const AstNode *const node) {
 	*symbol = (Symbol){
 		.name = var->name,
 		.expr_type = var->type,
-		.location = var->location,
+		.location = token->location,
 		.type = SYMBOL_VAR,
 		.var = var
 	};

@@ -24,7 +24,7 @@ static bool validate_bool_expr(const AstNodeExpr *);
 static bool validate_ref_expr(const AstNodeExpr *);
 static bool is_numeric(const AstNodeExpr *);
 static bool validate_shift_expr(const AstNodeExpr *);
-static FunctionDeclaration *find_func_by_token(const Token *);
+static Symbol *find_func_by_token(const Token *);
 static bool validate_func_call_params(AstNodeFunctionCall *);
 static void set_expr_type(AstNodeExpr *);
 static void set_const_expr(AstNodeExpr *);
@@ -297,11 +297,12 @@ static bool validate_stmt_func_call(AstNodeExpr *expr) {
 	AstNodeFunctionCall *func_call = expr->lhs.func_call;
 	const Token *func_name_token = func_call->func_name_tok;
 
-	FunctionDeclaration *function = find_func_by_token(func_name_token);
-	if (!function) return false;
+	Symbol *symbol = find_func_by_token(func_name_token);
+	if (!symbol || !symbol->func) return false;
 
-	func_call->symbol = Calloc(1, sizeof(Symbol));
-	func_call->symbol->func = function;
+	FunctionDeclaration *function = symbol->func;
+
+	func_call->symbol = symbol;
 	function->was_called = true;
 	expr->type = function->return_type;
 
@@ -328,13 +329,13 @@ static bool validate_stmt_func_call(AstNodeExpr *expr) {
 	return true;
 }
 
-static FunctionDeclaration *find_func_by_token(const Token *token) {
-	char *const func_name = token_to_mbs_str(token);
+static Symbol *find_func_by_token(const Token *token) {
+	char *func_name = token_to_mbs_str(token);
 
-	FunctionDeclaration *function = find_func_by_name(func_name);
+	Symbol *symbol = find_func_by_name(func_name);
 	free(func_name);
 
-	if (function) return function;
+	if (symbol) return symbol;
 
 	FMT_ERROR(ERR_MISSING_DECLARATION, { .tok = token });
 	return NULL;

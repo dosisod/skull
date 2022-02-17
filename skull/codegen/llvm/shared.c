@@ -11,6 +11,7 @@
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/codegen/llvm/shared.h"
 
@@ -55,8 +56,8 @@ SkullStateLLVM *setup_llvm_state(void) {
 	};
 
 	state->main_func = SEMANTIC_STATE.main_func;
-	state->main_func->ref = main_func;
-	state->main_func->type = main_func_type;
+	state->main_func->func->ref = main_func;
+	state->main_func->func->type = main_func_type;
 
 	state->current_func = state->main_func;
 

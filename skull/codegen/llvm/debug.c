@@ -27,9 +27,9 @@
 
 static LLVMMetadataRef type_to_llvm_di_type(const Type *);
 static void alloc_debug_function_param(Variable *, const SkullStateLLVM *);
-static void add_llvm_global_var_def_debug_info(const Variable *);
+static void add_llvm_global_var_def_debug_info(const Symbol *);
 static void add_llvm_local_var_def_debug_info(
-	const Variable *,
+	const Symbol *,
 	const SkullStateLLVM *
 );
 static LLVMMetadataRef make_llvm_debug_location(
@@ -118,7 +118,7 @@ LLVMDIBuilderRef setup_debug_info(
 	);
 	free(main_func_name);
 
-	LLVMSetSubprogram(state->main_func->ref, DEBUG_INFO.scope);
+	LLVMSetSubprogram(state->main_func->func->ref, DEBUG_INFO.scope);
 
 	LLVMAddModuleFlag(
 		state->module,
@@ -236,44 +236,44 @@ LLVMMetadataRef __attribute__((pure)) type_to_di_type(const Type *type) {
 }
 
 void add_llvm_var_def_debug_info(
-	const Variable *var,
+	const Symbol *symbol,
 	const SkullStateLLVM *state
 ) {
 	if (!BUILD_DATA.debug) return;
 
-	if (var->is_global) add_llvm_global_var_def_debug_info(var);
-	else add_llvm_local_var_def_debug_info(var, state);
+	if (symbol->var->is_global) add_llvm_global_var_def_debug_info(symbol);
+	else add_llvm_local_var_def_debug_info(symbol, state);
 }
 
-static void add_llvm_global_var_def_debug_info(const Variable *var) {
+static void add_llvm_global_var_def_debug_info(const Symbol *symbol) {
 	LLVMMetadataRef metadata = LLVMDIBuilderCreateGlobalVariableExpression(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.compile_unit,
-		var->linkage_name, strlen(var->linkage_name),
+		symbol->var->linkage_name, strlen(symbol->var->linkage_name),
 		"", 0, // linkage
 		DEBUG_INFO.file,
-		var->location.line,
-		type_to_di_type(var->type),
-		!var->is_exported, // local to unit
+		symbol->location.line,
+		type_to_di_type(symbol->var->type),
+		!symbol->var->is_exported, // local to unit
 		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
 		NULL, // decl
 		8 // alignment
 	);
 
-	LLVMGlobalSetMetadata(var->ref, 0, metadata);
+	LLVMGlobalSetMetadata(symbol->var->ref, 0, metadata);
 }
 
 static void add_llvm_local_var_def_debug_info(
-	const Variable *var,
+	const Symbol *symbol,
 	const SkullStateLLVM *state
 ) {
 	LLVMMetadataRef di_var = LLVMDIBuilderCreateAutoVariable(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.scope,
-		var->linkage_name, strlen(var->linkage_name),
+		symbol->var->linkage_name, strlen(symbol->var->linkage_name),
 		DEBUG_INFO.file,
-		var->location.line,
-		type_to_di_type(var->type),
+		symbol->location.line,
+		type_to_di_type(symbol->var->type),
 		true, // survive optimizations
 		LLVMDIFlagZero,
 		8 // alignment
@@ -281,11 +281,11 @@ static void add_llvm_local_var_def_debug_info(
 
 	LLVMDIBuilderInsertDeclareAtEnd(
 		DEBUG_INFO.builder,
-		var->ref,
+		symbol->var->ref,
 		di_var,
 		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
-		make_llvm_debug_location(&var->location, state),
-		LLVMGetLastBasicBlock(state->current_func->ref)
+		make_llvm_debug_location(&symbol->location, state),
+		LLVMGetLastBasicBlock(state->current_func->func->ref)
 	);
 }
 
@@ -306,10 +306,12 @@ LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *location) {
 }
 
 LLVMMetadataRef add_llvm_func_debug_info(
-	FunctionDeclaration *func,
+	Symbol *symbol,
 	const SkullStateLLVM *state
 ) {
 	if (!BUILD_DATA.debug) return NULL;
+
+	FunctionDeclaration *func = symbol->func;
 
 	LLVMMetadataRef *di_param_types = Malloc(
 		(func->num_params + 1) * sizeof(LLVMMetadataRef)
@@ -333,14 +335,14 @@ LLVMMetadataRef add_llvm_func_debug_info(
 	LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.file,
-		func->linkage_name, strlen(func->linkage_name),
+		symbol->linkage_name, strlen(symbol->linkage_name),
 		"", 0,
 		DEBUG_INFO.file,
-		func->location.line,
+		symbol->location.line,
 		di_type,
 		false,
 		!func->is_external,
-		func->location.line,
+		symbol->location.line,
 		LLVMDIFlagZero,
 		false
 	);
@@ -352,7 +354,7 @@ LLVMMetadataRef add_llvm_func_debug_info(
 		for RANGE(i, func->num_params) {
 			char *param_name = c32stombs(
 				func->params[i]->param_name,
-				&func->location
+				&symbol->location
 			);
 
 			LLVMMetadataRef di_var = LLVMDIBuilderCreateParameterVariable(
@@ -361,7 +363,7 @@ LLVMMetadataRef add_llvm_func_debug_info(
 				param_name, strlen(param_name),
 				i + 1,
 				DEBUG_INFO.file,
-				func->location.line,
+				symbol->location.line,
 				type_to_di_type(func->param_types[i]),
 				true,
 				LLVMDIFlagZero
@@ -375,7 +377,7 @@ LLVMMetadataRef add_llvm_func_debug_info(
 				func->params[i]->symbol->var->ref,
 				di_var,
 				LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
-				make_llvm_debug_location(&func->location, state),
+				make_llvm_debug_location(&symbol->location, state),
 				LLVMGetLastBasicBlock(func->ref)
 			);
 		}

@@ -3,9 +3,9 @@
 ```c
 typedef struct {
 	Scope *scope;
-	FunctionDeclaration *main_func;
-	FunctionDeclaration *current_func;
-	FunctionDeclaration *last_func;
+	Symbol *main_func;
+	Symbol *current_func;
+	Symbol *last_func;
 	unsigned while_loop_depth;
 	HashTable *dynamic_refs;
 }

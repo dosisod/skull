@@ -13,8 +13,8 @@ void gen_stmt_var_assign(const AstNodeVarAssign *var_assign, SkullStateLLVM *sta
 > Assign a to a variable from `var_assign`.
 
 ```c
-static void assign_value_to_var(LLVMValueRef value, Variable *var, const SkullStateLLVM *state)
+static void assign_value_to_var(LLVMValueRef value, Symbol *symbol, const SkullStateLLVM *state)
 ```
 
-> Assign `value` to `var`.
+> Assign `value` to `symbol`.
 

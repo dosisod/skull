@@ -3,13 +3,14 @@
 #include "skull/codegen/llvm/fwd_decl.h"
 
 typedef struct FunctionDeclaration FunctionDeclaration;
+typedef struct Symbol Symbol;
 
 typedef struct {
 	LLVMBuilderRef builder;
 	LLVMContextRef ctx;
 	LLVMModuleRef module;
-	FunctionDeclaration *current_func;
-	FunctionDeclaration *main_func;
+	Symbol *current_func;
+	Symbol *main_func;
 	LLVMBasicBlockRef current_while_cond;
 	LLVMBasicBlockRef current_while_end;
 } SkullStateLLVM;

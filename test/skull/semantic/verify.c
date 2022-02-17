@@ -130,7 +130,6 @@ static bool test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr(void) {
 	ASSERT_FALSEY(expr->is_const_expr);
 
 	free_tokens(token);
-	free(expr->lhs.expr->lhs.func_call->symbol);
 	return pass;
 }
 
@@ -157,7 +156,6 @@ static bool test_binary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 	ASSERT_FALSEY(expr->is_const_expr);
 
 	free_tokens(token);
-	free(expr->rhs->lhs.func_call->symbol);
 	return pass;
 }
 
@@ -203,7 +201,6 @@ static bool test_unary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 
 	free_tokens(token);
 	free(expr->value.str);
-	free(expr->rhs->lhs.func_call->symbol);
 	return pass;
 }
 
@@ -253,7 +250,6 @@ static bool test_var_expr_isnt_const_expr_if_var_def_expr_isnt_const_expr(void) 
 	free_tokens(token);
 
 	ASSERT_TRUTHY(pass);
-	free(func_expr->lhs.func_call->symbol);
 	PASS;
 }
 
@@ -1054,8 +1050,6 @@ static bool test_validate_no_void_assign(void) {
 		"(null): Compilation error: line 2 column 6: function returning type void cannot be assigned to variable \"x\"\n"
 	);
 
-	free(func_expr->lhs.func_call->symbol);
-
 	ASSERT_TRUTHY(pass);
 
 	PASS;
@@ -1110,8 +1104,6 @@ static bool test_validate_func_parameter_count(void) {
 		node,
 		"(null): Compilation error: line 2 column 1: invalid number of parameters\n"
 	);
-
-	free(func_expr->lhs.func_call->symbol);
 
 	ASSERT_TRUTHY(pass);
 

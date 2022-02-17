@@ -982,7 +982,6 @@ static void free_expr_node(AstNodeExpr *expr) {
 	}
 	if (expr->oper == EXPR_FUNC) {
 		free_ast_tree(expr->lhs.func_call->params);
-		free(expr->lhs.func_call->symbol);
 		free(expr->lhs.func_call);
 		free(expr);
 		return;

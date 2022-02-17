@@ -85,13 +85,13 @@ static Symbol find_symbol(char *name) {
 		};
 	}
 
-	FunctionDeclaration *func = find_func_by_name(name);
-	if (func) {
+	symbol = find_func_by_name(name);
+	if (symbol) {
 		return (Symbol){
 			.name = name,
-			.expr_type = func->return_type,
+			.expr_type = symbol->func->return_type,
 			.type = SYMBOL_FUNC,
-			.func = func
+			.func = symbol->func
 		};
 	}
 

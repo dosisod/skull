@@ -57,27 +57,27 @@ static bool validate_stmt_func_decl_(const AstNode *node) {
 
 	FunctionDeclaration *func = Calloc(1, sizeof(FunctionDeclaration));
 	*func = (FunctionDeclaration){
-		.name = token_to_mbs_str(func_name_token),
-		.location = func_name_token->location,
 		.is_external = is_external,
 		.is_export = is_export,
 		.return_type = return_type,
 		.num_params = node->func_proto->num_params,
 		.params = node->func_proto->params
 	};
-	SEMANTIC_STATE.last_func = SEMANTIC_STATE.current_func;
-	SEMANTIC_STATE.current_func = func;
-
-	func->linkage_name = is_export ? mangle_name(func->name) : func->name;
 
 	Symbol *symbol = Calloc(1, sizeof(Symbol));
 	*symbol = (Symbol){
-		.name = func->name,
+		.name = token_to_mbs_str(func_name_token),
 		.expr_type = func->return_type,
-		.location = func->location,
+		.location = func_name_token->location,
 		.type = SYMBOL_FUNC,
 		.func = func
 	};
+	symbol->linkage_name = is_export ?
+		mangle_name(symbol->name) :
+		symbol->name;
+
+	SEMANTIC_STATE.last_func = SEMANTIC_STATE.current_func;
+	SEMANTIC_STATE.current_func = symbol;
 
 	if (!scope_add_symbol(symbol)) {
 		free(func);
@@ -91,7 +91,8 @@ static bool validate_stmt_func_decl_(const AstNode *node) {
 }
 
 bool post_validate_stmt_func_decl(const AstNode *node) {
-	const FunctionDeclaration *func = SEMANTIC_STATE.current_func;
+	const Symbol *symbol = SEMANTIC_STATE.current_func;
+	const FunctionDeclaration *func = symbol->func;
 
 	if (func->is_external) {
 		make_adjacent_scope();
@@ -113,12 +114,12 @@ bool post_validate_stmt_func_decl(const AstNode *node) {
 		!!terminal_node->expr;
 
 	if (!returned_value && func->return_type != &TYPE_VOID) {
-		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(func->name) });
+		FMT_ERROR(ERR_EXPECTED_RETURN, { .real = strdup(symbol->name) });
 
 		return false;
 	}
 	if (returned_value && func->return_type == &TYPE_VOID) {
-		FMT_ERROR(ERR_NO_VOID_RETURN, { .real = strdup(func->name) });
+		FMT_ERROR(ERR_NO_VOID_RETURN, { .real = strdup(symbol->name) });
 
 		return false;
 	}
@@ -156,7 +157,6 @@ static bool validate_func_params(
 		);
 
 		param_var->linkage_name = param_var->name;
-		param_var->location = *function->params[i]->location;
 		param_var->is_defined = true;
 
 		if (function->is_external) variable_disable_warnings(param_var);
@@ -166,7 +166,7 @@ static bool validate_func_params(
 		*symbol = (Symbol){
 			.name = param_var->name,
 			.expr_type = param_var->type,
-			.location = param_var->location,
+			.location = *function->params[i]->location,
 			.type = SYMBOL_VAR,
 			.var = param_var
 		};
@@ -174,7 +174,7 @@ static bool validate_func_params(
 		if (!scope_add_var(symbol)) {
 			FMT_ERROR(ERR_SHADOW_VAR, {
 				.var = param_var,
-				.loc = &param_var->location
+				.loc = &symbol->location
 			});
 
 			variable_disable_warnings(param_var);
@@ -205,21 +205,24 @@ static const Type *validate_return_type(const Token *token) {
 }
 
 /*
-Return function declaration called `name`, or `NULL` if not found.
+Return function declaration (as Symbol) called `name`, or `NULL` if not found.
 */
-FunctionDeclaration *find_func_by_name(const char *name) {
+Symbol *find_func_by_name(const char *name) {
 	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
-	if (symbol && symbol->type == SYMBOL_FUNC) return symbol->func;
+	if (symbol && symbol->type == SYMBOL_FUNC) return symbol;
 
 	return NULL;
 }
 
-void free_function_declaration(FunctionDeclaration *func) {
-	if (!func) return;
+void free_function_declaration(Symbol *symbol) {
+	if (!symbol || !symbol->func) return;
 
-	free(func->name);
-	if (func->name != func->linkage_name) free(func->linkage_name);
+	FunctionDeclaration *func = symbol->func;
+
+	free(symbol->name);
+	if (symbol->name != symbol->linkage_name) free(symbol->linkage_name);
 
 	free(func->param_types);
 	free(func);
+	free(symbol);
 }

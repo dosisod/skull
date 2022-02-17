@@ -30,8 +30,6 @@ module.
 `is_defined` is set once a variable is done being assigned (used to detect
 self-referencing the variable currently being assignment to).
 
-`location` stores the location where the variable was first defined.
-
 `ref` stores arbitrary data, for use in the backend.
 */
 typedef struct Variable {
@@ -46,8 +44,6 @@ typedef struct Variable {
 	_Bool implicitly_typed : 1;
 	_Bool is_exported : 1;
 	_Bool is_defined : 1;
-
-	Location location;
 
 	void *ref;
 	AstNodeExpr *expr;

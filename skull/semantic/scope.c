@@ -152,15 +152,15 @@ static void free_ht_symbol(HashItem *item) {
 
 	if (symbol->type == SYMBOL_VAR) {
 		free_variable(symbol->var);
+		free(symbol);
 	}
 	else if (symbol->type == SYMBOL_FUNC) {
-		free_function_declaration(symbol->func);
+		free_function_declaration(symbol);
 	}
 	else if (symbol->type == SYMBOL_ALIAS) {
 		free(symbol->name);
+		free(symbol);
 	}
-
-	free(symbol);
 }
 
 /*

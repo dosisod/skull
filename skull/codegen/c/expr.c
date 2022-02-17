@@ -167,7 +167,7 @@ static CExpr gen_expr_func_call_c(
 	SkullStateC *state
 ) {
 	FunctionDeclaration *function = func_call->symbol->func;
-	char *name = function->linkage_name;
+	char *name = func_call->symbol->linkage_name;
 	unsigned short num_params = function->num_params;
 
 	if (num_params == 0) return uvsnprintf("%s()", name);

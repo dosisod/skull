@@ -2,10 +2,6 @@
 
 ```c
 typedef struct FunctionDeclaration {
-	char *name;
-	char *linkage_name;
-	Location location;
-
 	void *ref;
 	void *type;
 
@@ -25,10 +21,6 @@ typedef struct FunctionDeclaration {
 
 > Stores a function declaration.
 > \
-> `name` is the name of the declared function.
-> \
-> `location` is the location of the function name.
-> \
 > `ref` is for storing arbitrary information, for use in the backend
 > \
 > `type` same as `ref`.
@@ -40,8 +32,8 @@ typedef struct FunctionDeclaration {
 > `return_type` is the Skull type that the function returns.
 
 ```c
-FunctionDeclaration *find_func_by_name(const char *name)
+Symbol *find_func_by_name(const char *name)
 ```
 
-> Return function declaration called `name`, or `NULL` if not found.
+> Return function declaration (as Symbol) called `name`, or `NULL` if not found.
 

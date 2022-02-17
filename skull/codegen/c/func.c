@@ -35,7 +35,8 @@ void gen_function_def_c(const AstNode *node, SkullStateC *state) {
 }
 
 char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
-	FunctionDeclaration *func = node->func_proto->symbol->func;
+	Symbol *symbol = node->func_proto->symbol;
+	FunctionDeclaration *func = symbol->func;
 	AstNodeFunctionParam **params = func->params;
 	char *param_list = NULL;
 	unsigned short i = 0;
@@ -71,7 +72,7 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 				"%s %s(%s) {\n%s\n}" :
 				"static %s %s(%s) {\n%s\n}",
 			skull_type_to_c_type(func->return_type),
-			func->linkage_name,
+			symbol->linkage_name,
 			param_list,
 			tree
 		);
@@ -82,7 +83,7 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 		out = uvsnprintf(
 			"%s %s(%s);",
 			skull_type_to_c_type(func->return_type),
-			func->linkage_name,
+			symbol->linkage_name,
 			param_list
 		);
 	}

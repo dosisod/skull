@@ -4,6 +4,7 @@
 #include "skull/common/malloc.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/semantic/shared.h"
 
@@ -13,14 +14,19 @@ char *create_main_func_name(const char *);
 void free_dynamic_type(void *);
 
 void setup_semantic_state(void) {
-	SEMANTIC_STATE.main_func = Calloc(1, sizeof(FunctionDeclaration));
-
-	*SEMANTIC_STATE.main_func = (FunctionDeclaration){
-		.name = create_main_func_name(BUILD_DATA.filename),
+	FunctionDeclaration *func = Calloc(1, sizeof(FunctionDeclaration));
+	*func = (FunctionDeclaration){
 		.return_type = &TYPE_INT
 	};
-	SEMANTIC_STATE.main_func->linkage_name = SEMANTIC_STATE.main_func->name;
 
+	char *func_name = create_main_func_name(BUILD_DATA.filename);
+
+	Symbol *symbol = Calloc(1, sizeof(FunctionDeclaration));
+	symbol->func = func;
+	symbol->name = func_name;
+	symbol->linkage_name = func_name;
+
+	SEMANTIC_STATE.main_func = symbol;
 	SEMANTIC_STATE.current_func = SEMANTIC_STATE.main_func;
 	SEMANTIC_STATE.last_func = NULL;
 }
@@ -35,7 +41,7 @@ void free_semantic_state(void) {
 	free_scope(state->scope);
 
 	if (state->main_func) {
-		state->main_func->was_called = true;
+		state->main_func->func->was_called = true;
 		free_function_declaration(state->main_func);
 	}
 

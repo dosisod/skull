@@ -50,9 +50,9 @@ void add_llvm_debug_info(
 );
 
 LLVMMetadataRef type_to_di_type(const Type *);
-void add_llvm_var_def_debug_info(const Variable *, const SkullStateLLVM *);
+void add_llvm_var_def_debug_info(const Symbol *, const SkullStateLLVM *);
 LLVMMetadataRef add_llvm_control_flow_debug_info(const Location *);
 LLVMMetadataRef add_llvm_func_debug_info(
-	FunctionDeclaration *,
+	Symbol *,
 	const SkullStateLLVM *
 );
