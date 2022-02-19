@@ -150,5 +150,11 @@ test_skull "cannot_mix_output_types.sh" "-S -E"
 test_skull "cannot_mix_output_types.sh" "-c -E"
 test_skull "cannot_mix_output_types.sh" "-c -S"
 
+export COLOR=1
+test_skull "cannot_mix_color_flag_and_env.sh" "--color"
+export COLOR=0
+test_skull "cannot_mix_color_flag_and_env.sh" "--color"
+unset COLOR
+
 printf "\n"
 $passed || (printf "1 or more tests failed\n" && exit 1)

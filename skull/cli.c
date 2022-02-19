@@ -232,6 +232,14 @@ static bool parse_long_option(const char *arg) {
 		set_bool_flag(&BUILD_DATA.llvm_no_verify, "--llvm-no-verify");
 	}
 	else if (strcmp(arg, "color") == 0) {
+		if (getenv("COLOR")) {
+			fprintf(
+				stderr,
+				"skull: --color overrides COLOR environment variable\n"
+			);
+			bail(1);
+		}
+
 		set_bool_flag(&BUILD_DATA.color, "--color");
 	}
 	else {
