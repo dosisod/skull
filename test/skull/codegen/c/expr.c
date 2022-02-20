@@ -282,7 +282,6 @@ static bool test_func_call_no_args(void) {
 	AstNodeExpr *expr = AST_NODE_FUNC_EXPR(NULL);
 	char func_name[] = "f";
 	expr->lhs.func_call->symbol->name = func_name;
-	expr->lhs.func_call->symbol->linkage_name = func_name;
 
 	char *expr_str = gen_expr_c(expr, NULL);
 
@@ -298,7 +297,6 @@ static bool test_func_call_single_arg(void) {
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
 
 	expr->lhs.func_call->symbol->name = (char[]){"f"};
-	expr->lhs.func_call->symbol->linkage_name = (char[]){"f"};
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
 
 	char *expr_str = gen_expr_c(expr, NULL);
@@ -316,7 +314,6 @@ static bool test_func_call_two_args(void) {
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
 
 	expr->lhs.func_call->symbol->name = (char[]){"f"};
-	expr->lhs.func_call->symbol->linkage_name = (char[]){"f"};
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->expr, 2);
 
@@ -336,7 +333,6 @@ static bool test_func_call_many_args(void) {
 	AST_NODE_FUNC_ADD_PARAM(expr, AST_NODE_EXPR(NULL, AST_NODE_CONST_EXPR(NULL)));
 
 	expr->lhs.func_call->symbol->name = (char[]){"f"};
-	expr->lhs.func_call->symbol->linkage_name = (char[]){"f"};
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->expr, 1);
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->expr, 2);
 	SET_EXPR_VALUE_INT(expr->lhs.func_call->params->next->next->expr, 3);

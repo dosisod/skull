@@ -46,4 +46,11 @@ alias := Int
 
 deref := * int_ptr
 
+export exported_func() Int { return 1 }
+
+export exported := 1234
+export exported2 := exported_func()
+
+testing := exported
+
 return a

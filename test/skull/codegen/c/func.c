@@ -22,7 +22,7 @@ static bool test_no_arg_func_decl(void) {
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
 	node->func_proto->symbol->func = func;
-	node->func_proto->symbol->linkage_name = (char[]){"f"};
+	node->func_proto->symbol->name = (char[]){"f"};
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
@@ -49,7 +49,7 @@ static bool test_single_arg_func_decl(void) {
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
 	node->func_proto->symbol->func = func;
-	node->func_proto->symbol->linkage_name = (char[]){"f"};
+	node->func_proto->symbol->name = (char[]){"f"};
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
@@ -82,7 +82,7 @@ static bool test_many_arg_func_decl(void) {
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, true, false);
 	node->func_proto->symbol->func = func;
-	node->func_proto->symbol->linkage_name = (char[]){"f"};
+	node->func_proto->symbol->name = (char[]){"f"};
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
@@ -102,7 +102,7 @@ static bool test_func_with_body(void) {
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, false, false);
 	node->child = AST_NODE_NOOP();
 	node->func_proto->symbol->func = func;
-	node->func_proto->symbol->linkage_name = (char[]){"f"};
+	node->func_proto->symbol->name = (char[]){"f"};
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
@@ -121,11 +121,14 @@ static bool test_func_static(void) {
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(&(Token){0}, false, true);
 	node->child = AST_NODE_NOOP();
 	node->func_proto->symbol->func = func;
-	node->func_proto->symbol->linkage_name = (char[]){"f"};
+	node->func_proto->symbol->name = (char[]){"f"};
+	node->func_proto->symbol->linkage_name = (char[]){"exported_name"};
 
 	char *str = gen_function_prototype_c(node, setup_c_state());
 
-	ASSERT_TRUTHY(strcmp(str, "void f(void) {\n\t(void)0;\n}") == 0);
+	const char *expected = "void f(void) __asm__(\"exported_name\");\nvoid f(void) {\n\t(void)0;\n}";
+
+	ASSERT_TRUTHY(strcmp(str, expected) == 0);
 
 	free(str);
 	PASS;

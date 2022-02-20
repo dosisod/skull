@@ -85,11 +85,11 @@ static bool test_top_lvl_const_and_constexpr_var_def(void) {
 }
 
 static bool test_top_lvl_const_and_export_var_def(void) {
-	return top_lvl_var_def_fixture(true, true, false, "\n"TYPE_INT_C" x;", "x = 1;");
+	return top_lvl_var_def_fixture(true, true, false, "\n"TYPE_INT_C" x __asm__(\"x\");", "x = 1;");
 }
 
 static bool test_top_lvl_const_and_export_and_constexpr_var_def(void) {
-	return top_lvl_var_def_fixture(true, true, true, "\nconst "TYPE_INT_C" x = 1;", NULL);
+	return top_lvl_var_def_fixture(true, true, true, "\nconst "TYPE_INT_C" x __asm__(\"x\") = 1;", NULL);
 }
 
 static bool top_lvl_var_def_fixture(
