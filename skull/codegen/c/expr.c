@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -48,9 +49,10 @@ CExpr gen_expr_c(const AstNodeExpr *expr, SkullStateC *state) {
 			return gen_expr_unary_c(expr, state);
 		case EXPR_FUNC:
 			return gen_expr_func_call_c(expr->lhs.func_call, state);
-		default:
-			return NULL;
+		default: break;
 	}
+
+	assert(false);
 }
 
 static CExpr gen_expr_const_c(const AstNodeExpr *expr) {
@@ -81,7 +83,7 @@ static CExpr gen_expr_const_c(const AstNodeExpr *expr) {
 		return uvsnprintf("\"%s\"", expr->value.str);
 	}
 
-	return NULL;
+	assert(false);
 }
 
 static CExpr gen_expr_binary_c(const AstNodeExpr *expr, SkullStateC *state) {
@@ -129,7 +131,7 @@ static CExpr gen_expr_binary_c(const AstNodeExpr *expr, SkullStateC *state) {
 			}
 			break;
 		}
-		default: return NULL;
+		default: assert(false);
 	}
 
 	CExpr expr_lhs = gen_expr_c(expr->lhs.expr, state);
@@ -150,10 +152,8 @@ static CExpr gen_expr_unary_c(const AstNodeExpr *expr, SkullStateC *state) {
 		case EXPR_NOT: fmt = "!%s"; break;
 		case EXPR_REF: fmt = "&%s"; break;
 		case EXPR_DEREF: fmt = "*%s"; break;
-		default: break;
+		default: assert(false);
 	}
-
-	if (!fmt) return NULL;
 
 	CExpr expr_str = gen_expr_c(expr->rhs, state);
 	CExpr out = uvsnprintf(fmt, expr_str);

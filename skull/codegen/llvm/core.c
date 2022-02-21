@@ -1,3 +1,5 @@
+#include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -52,7 +54,10 @@ static Expr gen_node(const AstNode **node, SkullStateLLVM *state) {
 			gen_stmt_noop(&(*node)->token->location, state); break;
 		case AST_NODE_BREAK: return gen_stmt_break(state);
 		case AST_NODE_CONTINUE: return gen_stmt_continue(state);
-		default: break;
+		case AST_NODE_IMPORT:
+		case AST_NODE_COMMENT:
+			break;
+		default: assert(false);
 	}
 
 	return (Expr){0};

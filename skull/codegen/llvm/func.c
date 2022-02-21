@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
@@ -41,12 +42,12 @@ void gen_stmt_func_decl(
 	const AstNode *const node,
 	SkullStateLLVM *state
 ) {
-	FunctionDeclaration *func = node->func_proto->symbol->func;
+	Symbol *symbol = node->func_proto->symbol;
+	assert(symbol->type == SYMBOL_FUNC);
 
-	add_func(node->func_proto->symbol, state);
+	add_func(symbol, state);
 
-	if (!func->is_external)
-		gen_function_def(node, node->func_proto->symbol, state);
+	if (!symbol->func->is_external) gen_function_def(node, symbol, state);
 }
 
 /*

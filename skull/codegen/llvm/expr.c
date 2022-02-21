@@ -260,18 +260,17 @@ static Expr gen_expr_lshift(
 	LLVMValueRef rhs,
 	const SkullStateLLVM *state
 ) {
-	if (lhs->type == &TYPE_INT)
-		return (Expr){
-			.value = LLVMBuildShl(
-				state->builder,
-				lhs->value,
-				rhs,
-				""
-			),
-			.type = &TYPE_INT
-		};
+	assert(lhs->type == &TYPE_INT);
 
-	assert(false);
+	return (Expr){
+		.value = LLVMBuildShl(
+			state->builder,
+			lhs->value,
+			rhs,
+			""
+		),
+		.type = &TYPE_INT
+	};
 }
 
 /*
@@ -282,18 +281,17 @@ static Expr gen_expr_rshift(
 	LLVMValueRef rhs,
 	const SkullStateLLVM *state
 ) {
-	if (lhs->type == &TYPE_INT)
-		return (Expr){
-			.value = LLVMBuildLShr(
-				state->builder,
-				lhs->value,
-				rhs,
-				""
-			),
-			.type = &TYPE_INT
-		};
+	assert(lhs->type == &TYPE_INT);
 
-	assert(false);
+	return (Expr){
+		.value = LLVMBuildLShr(
+			state->builder,
+			lhs->value,
+			rhs,
+			""
+		),
+		.type = &TYPE_INT
+	};
 }
 
 /*
@@ -644,6 +642,6 @@ static Operation *expr_type_to_func(ExprType oper) {
 		case EXPR_MOD: return gen_expr_mod;
 		case EXPR_DIV: return gen_expr_div;
 		case EXPR_POW: return gen_expr_pow;
-		default: return NULL;
+		default: assert(false);
 	}
 }
