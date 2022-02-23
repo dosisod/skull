@@ -37,13 +37,19 @@ CStmt gen_stmt_var_def_c(const AstNode *node, SkullStateC *state) {
 
 	const Variable *var = node->var_def->symbol->var;
 
-	CType type = skull_type_to_c_type(var->type);
+	char *type = skull_type_to_c_type(var->type);
 
 	if (state->indent_lvl == 1) {
-		return gen_stmt_global_var(node, type, state);
+		CStmt stmt = gen_stmt_global_var(node, type, state);
+
+		free(type);
+		return stmt;
 	}
 
-	return gen_stmt_stack_var(node, type, state);
+	CStmt stmt = gen_stmt_stack_var(node, type, state);
+
+	free(type);
+	return stmt;
 }
 
 static CStmt gen_stmt_var_assign_c_(

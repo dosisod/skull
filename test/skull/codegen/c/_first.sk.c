@@ -19,6 +19,7 @@ static const bool* bool_ptr = &bool_;
 static const double* float_ptr = &float_;
 static const char32_t* rune_ptr = &rune_;
 static const char** str_ptr = &str_;
+static const int64_t** double_ptr = &int_ptr;
 static const int64_t deref = *int_ptr;
 int64_t exported_func(void) __asm__("first.exported_func");
 int64_t exported_func(void) {

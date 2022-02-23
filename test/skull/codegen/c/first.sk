@@ -42,6 +42,8 @@ float_ptr := &float_
 rune_ptr := &rune_
 str_ptr := &str_
 
+double_ptr := &int_ptr
+
 alias := Int
 
 deref := * int_ptr

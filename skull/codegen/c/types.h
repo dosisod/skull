@@ -11,4 +11,4 @@ typedef const char * CType;
 #define TYPE_BOOL_C "bool"
 #define TYPE_VOID_C "void"
 
-CType skull_type_to_c_type(const Type *);
+char *skull_type_to_c_type(const Type *);

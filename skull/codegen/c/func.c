@@ -61,11 +61,13 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 	char *out = NULL;
 	param_list = param_list ? param_list : (char[]){"void"};
 
+	char *return_type = skull_type_to_c_type(func->return_type);
+
 	char *fwd_decl = NULL;
 	if (func->is_export) {
 		fwd_decl = uvsnprintf(
 			"%s %s(%s) __asm__(\"%s\");\n",
-			skull_type_to_c_type(func->return_type),
+			return_type,
 			symbol->name,
 			param_list,
 			symbol->linkage_name
@@ -77,7 +79,7 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 		else {
 			out = uvsnprintf(
 				"%s %s(%s);",
-				skull_type_to_c_type(func->return_type),
+				return_type,
 				symbol->name,
 				param_list
 			);
@@ -94,7 +96,7 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 				"%s%s %s(%s) {\n%s\n}" :
 				"%sstatic %s %s(%s) {\n%s\n}",
 			func->is_export ? fwd_decl : "",
-			skull_type_to_c_type(func->return_type),
+			return_type,
 			symbol->name,
 			param_list,
 			tree
@@ -103,15 +105,17 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 		free(tree);
 	}
 
+	free(return_type);
 	if (fwd_decl != out) free(fwd_decl);
 	if (func->num_params) free(param_list); // NOLINT
 	return out;
 }
 
 static char *gen_param_c(AstNodeFunctionParam *param) {
-	return uvsnprintf(
-		"%s %s",
-		skull_type_to_c_type(param->symbol->var->type),
-		param->symbol->var->name
-	);
+	char *return_type = skull_type_to_c_type(param->symbol->var->type);
+
+	char *tmp = uvsnprintf("%s %s", return_type, param->symbol->var->name);
+
+	free(return_type);
+	return tmp;
 }
