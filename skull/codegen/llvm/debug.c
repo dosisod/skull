@@ -249,7 +249,7 @@ static void add_llvm_global_var_def_debug_info(const Symbol *symbol) {
 	LLVMMetadataRef metadata = LLVMDIBuilderCreateGlobalVariableExpression(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.compile_unit,
-		symbol->var->linkage_name, strlen(symbol->var->linkage_name),
+		symbol->var->name, strlen(symbol->var->name),
 		"", 0, // linkage
 		DEBUG_INFO.file,
 		symbol->location.line,
@@ -270,7 +270,7 @@ static void add_llvm_local_var_def_debug_info(
 	LLVMMetadataRef di_var = LLVMDIBuilderCreateAutoVariable(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.scope,
-		symbol->var->linkage_name, strlen(symbol->var->linkage_name),
+		symbol->var->name, strlen(symbol->var->name),
 		DEBUG_INFO.file,
 		symbol->location.line,
 		type_to_di_type(symbol->var->type),
@@ -335,7 +335,7 @@ LLVMMetadataRef add_llvm_func_debug_info(
 	LLVMMetadataRef new_di_scope = LLVMDIBuilderCreateFunction(
 		DEBUG_INFO.builder,
 		DEBUG_INFO.file,
-		symbol->linkage_name, strlen(symbol->linkage_name),
+		symbol->name, strlen(symbol->name),
 		"", 0,
 		DEBUG_INFO.file,
 		symbol->location.line,
@@ -396,7 +396,7 @@ static void alloc_debug_function_param(
 	func_var->ref = LLVMBuildAlloca(
 		state->builder,
 		type_to_llvm_type(func_var->type, state),
-		func_var->linkage_name
+		func_var->name
 	);
 
 	LLVMBuildStore(state->builder, old_ref, func_var->ref);
