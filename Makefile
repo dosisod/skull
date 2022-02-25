@@ -4,9 +4,9 @@
 
 include config.mk
 
-all: skull test docs e2e embed
+all: skull test docs e2e embed libskull
 
-.PHONY: skull test docs e2e embed
+.PHONY: skull test docs e2e embed libskull
 .POSIX:
 
 options:
@@ -23,6 +23,12 @@ skull: $(DIRS) build/skull/skull
 test: $(DIRS) build/test/test
 embed: $(DIRS) build/test/embed
 e2e: $(DIRS) test/sh/e2e_inner.h build/test/e2e
+
+libskull: $(DIRS) $(ODIR)/libskull.so
+
+$(ODIR)/libskull.so: $(OBJS) $(OBJS_LLVM) $(ODIR)/skull/real_main.o $(ODIR)/skull/cli.o
+	@$(ECHO) "\033[92mLink\033[0m libskull\n"
+	@$(CC) $^ -shared -o $@ $(LLVM_LDFLAGS) -fPIC
 
 $(ODIR)/%.o: %.c %.h
 	@$(ECHO) "\033[92mCompile\033[0m $<\n"
@@ -80,17 +86,18 @@ lint:
 	@$(ECHO) "\033[92mRunning clang-tidy\033[0m\n"
 	@./test/clang_tidy.sh
 
-install: clean | skull
+install: skull
 	@mkdir -p $(MANPATH)
 	@install -m 644 docs/skull/skull.1 $(MANPATH)
 	@$(ECHO) "\033[92mInstall\033[0m Skull\n"
 	@install build/skull/skull $(BIN)
-	@make clean
 
-install-dev:
+install-dev: libskull
 	@$(ECHO) "\033[92mInstall\033[0m Skull headers\n"
 	@mkdir -p $(HEADER)/skull
-	@cp skull/Skull.h $(HEADER)/skull/Skull.h
+	@install skull/Skull.h $(HEADER)/skull/Skull.h
+	@$(ECHO) "\033[92mInstall\033[0m Skull shared libraries\n"
+	@install $(ODIR)/libskull.so $(LIB)/libskull.so
 
 uninstall:
 	@$(ECHO) "\033[92mUninstall\033[0m Skull\n"

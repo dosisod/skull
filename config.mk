@@ -1,4 +1,5 @@
 BIN := /usr/local/bin
+LIB := /usr/lib/
 HEADER := /usr/include
 MANPATH := $(shell manpath | cut -d : -f1)/man1/
 
@@ -53,7 +54,8 @@ CFLAGS += -std=c18 \
 	-Wcast-qual \
 	-Wstack-protector \
 	-I. \
-	-DSKULL_VERSION="\"$(SKULL_VERSION)\""
+	-DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
+	-fPIC
 
 LLVM_CONFIG := $(shell command -v llvm-config-13 || command -v llvm-config)
 LLVM_CFLAGS := $(shell $(LLVM_CONFIG) --cflags)
