@@ -799,6 +799,17 @@ NULL,
 "./test/sh/error/flow/import_module_not_found.sk: Compilation error: could not load module \"not_a_module\": No such file or directory\n"
 );
 
+
+pass |= e2e_wrapper(
+"f() { noop }\nexport x := f()",
+
+TEST_DIR"/error/func/use_correct_token_for_void_assign.sk",
+
+NULL,
+
+"./test/sh/error/func/use_correct_token_for_void_assign.sk: Compilation error: line 2 column 13: function returning type void cannot be assigned to variable \"x\"\n"
+);
+
 	return pass;
 }
 

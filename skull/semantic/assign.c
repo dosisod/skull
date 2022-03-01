@@ -138,7 +138,7 @@ static bool is_void_func_assign(const AstNode *node) {
 	if (expr->oper == EXPR_FUNC && expr->type == &TYPE_VOID) {
 		FMT_ERROR(ERR_NO_VOID_ASSIGN, {
 			.loc = &expr->lhs.func_call->func_name_tok->location,
-			.real = token_to_mbs_str(node->token)
+			.real = token_to_mbs_str(node->var_def->name_tok)
 		});
 
 		// suppress errors
