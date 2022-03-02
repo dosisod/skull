@@ -1,0 +1,4 @@
+int_ptr := &Int
+
+i := 1
+ptr: int_ptr = &i

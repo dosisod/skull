@@ -263,12 +263,14 @@ bool validate_stmt_type_alias(const AstNode *node) {
 		return false;
 	}
 
-	if (node->var_def->expr->oper != EXPR_IDENTIFIER) {
+	const ExprType oper = node->var_def->expr->oper;
+
+	if (oper != EXPR_IDENTIFIER && oper != EXPR_REF) {
 		FMT_ERROR(ERR_NO_TYPE_EXPR, { .loc = &token->next->next->location });
 		return false;
 	}
 
-	char *type_name = token_to_mbs_str(token->next->next);
+	const Type *type = token_to_type(token->next->next);
 	char *alias = token_to_mbs_str(token);
 
 	Symbol *symbol;
@@ -276,16 +278,14 @@ bool validate_stmt_type_alias(const AstNode *node) {
 	*symbol = (Symbol){
 		.name = alias,
 		.location = token->location,
-		.expr_type = find_type(type_name),
+		.expr_type = type,
 		.type = SYMBOL_ALIAS,
 	};
 
 	if (scope_add_symbol(symbol)) {
-		free(type_name);
 		return true;
 	}
 
-	free(type_name);
 	free(symbol);
 	return false;
 }

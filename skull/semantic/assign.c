@@ -21,9 +21,7 @@ static bool is_redundant_reassign(const AstNodeVarAssign *);
 
 
 bool validate_stmt_var_def(const AstNode *node) {
-	char *name = token_to_mbs_str(node->token_end->next);
-	const Type *type = find_type(name);
-	free(name);
+	const Type *type = token_to_type(node->token_end->next);
 
 	if (type) return validate_stmt_type_alias(node);
 
