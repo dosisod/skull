@@ -810,6 +810,17 @@ NULL,
 "./test/sh/error/func/use_correct_token_for_void_assign.sk: Compilation error: line 2 column 13: function returning type void cannot be assigned to variable \"x\"\n"
 );
 
+
+pass |= e2e_wrapper(
+"external f()",
+
+TEST_DIR"/error/func/no_newline_external_eof.sk",
+
+NULL,
+
+"./test/sh/error/func/no_newline_external_eof.sk: Compilation error: line 1 column 12: expected a newline\n"
+);
+
 	return pass;
 }
 

@@ -333,6 +333,12 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 			return RESULT_ERROR;
 		}
 
+		if (token_type == TOKEN_NEWLINE && !ctx->token->next) {
+			FMT_ERROR(ERR_EXPECTED_NEWLINE, { .loc = &ctx->token->location });
+
+			return RESULT_ERROR;
+		}
+
 		ctx->token = first;
 		return RESULT_IGNORE;
 	}
