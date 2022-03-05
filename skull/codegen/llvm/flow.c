@@ -69,10 +69,11 @@ Builds an return statement from `node`.
 */
 Expr gen_stmt_return(const AstNode *node, const SkullStateLLVM *state) {
 	if (!node->expr) {
-		return (Expr){
-			.value = LLVMBuildRetVoid(state->builder),
-			.type = &TYPE_VOID
-		};
+		LLVMValueRef ret = LLVMBuildRetVoid(state->builder);
+
+		add_llvm_debug_info(ret, &node->token->location, state);
+
+		return (Expr){ .type = &TYPE_VOID, .value = ret };
 	}
 
 	const Expr expr = gen_expr(node->expr, state);

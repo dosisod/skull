@@ -31,6 +31,8 @@ f4() {
 	if bool {
 		noop
 	}
+
+	return
 }
 
 mut global := 1

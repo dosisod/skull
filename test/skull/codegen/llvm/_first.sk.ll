@@ -79,7 +79,7 @@ if_true2:                                         ; preds = %end
   br label %end1
 
 end1:                                             ; preds = %end, %if_true2
-  ret void
+  ret void, !dbg !59
 }
 
 attributes #0 = { nofree nosync nounwind readnone speculatable willreturn }
@@ -88,7 +88,7 @@ attributes #0 = { nofree nosync nounwind readnone speculatable willreturn }
 !llvm.module.flags = !{!7, !8}
 
 !0 = !DIGlobalVariableExpression(var: !1, expr: !DIExpression())
-!1 = distinct !DIGlobalVariable(name: "global", scope: !2, file: !3, line: 36, type: !6, isLocal: true, isDefinition: true, align: 8)
+!1 = distinct !DIGlobalVariable(name: "global", scope: !2, file: !3, line: 38, type: !6, isLocal: true, isDefinition: true, align: 8)
 !2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "skull", isOptimized: false, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !5, splitDebugInlining: false)
 !3 = !DIFile(filename: "./test/skull/codegen/llvm/first.sk", directory: ".")
 !4 = !{}
@@ -146,3 +146,4 @@ attributes #0 = { nofree nosync nounwind readnone speculatable willreturn }
 !56 = !DILocation(line: 31, column: 5, scope: !32)
 !57 = !DILocation(line: 32, column: 3, scope: !58)
 !58 = distinct !DILexicalBlock(scope: !32, file: !3, line: 31, column: 2)
+!59 = !DILocation(line: 35, column: 2, scope: !32)
