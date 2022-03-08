@@ -821,6 +821,17 @@ NULL,
 "./test/sh/error/func/no_newline_external_eof.sk: Compilation error: line 1 column 12: expected a newline\n"
 );
 
+
+pass |= e2e_wrapper(
+"f(1\n",
+
+TEST_DIR"/error/func/no_closing_paren_with_newline.sk",
+
+NULL,
+
+"./test/sh/error/func/no_closing_paren_with_newline.sk: Compilation error: line 1 column 4: missing closing parenthesis\n"
+);
+
 	return pass;
 }
 

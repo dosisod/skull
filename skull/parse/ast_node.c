@@ -911,8 +911,10 @@ static AstNodeExpr *parse_func_call(ParserCtx *ctx) {
 
 		ctx->node = old_node;
 
-		if (!ctx->token) {
-			FMT_ERROR(ERR_MISSING_CLOSING_PAREN, { .loc = &last->location });
+		if (!ctx->token || ctx->token->type == TOKEN_NEWLINE) {
+			FMT_ERROR(ERR_MISSING_CLOSING_PAREN, {
+				.loc = ctx->token ? &ctx->token->location : &last->location
+			});
 
 			free_ast_tree(child_copy);
 			ctx->err = true;
