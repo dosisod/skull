@@ -1,0 +1,4 @@
+external f()
+
+if true { noop }
+if true { noop }

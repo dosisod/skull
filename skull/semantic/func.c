@@ -94,10 +94,7 @@ bool post_validate_stmt_func_decl(const AstNode *node) {
 	const Symbol *symbol = SEMANTIC_STATE.current_func;
 	const FunctionDeclaration *func = symbol->func;
 
-	if (func->is_external) {
-		make_adjacent_scope();
-		return true;
-	}
+	if (func->is_external) return true;
 
 	const AstNode *terminal_node = node->child;
 
@@ -133,12 +130,13 @@ static bool validate_func_params(
 	const AstNode *node,
 	FunctionDeclaration *function
 ) {
-	AstNodeFunctionParam **params = node->func_proto->params;
-	if (!params) return true;
+	if (!function->num_params) return true;
 
 	function->param_types = Calloc(function->num_params, sizeof(Type));
 
 	make_child_scope();
+
+	AstNodeFunctionParam **params = node->func_proto->params;
 
 	for RANGE(i, function->num_params) {
 		function->param_types[i] = token_to_type(params[i]->type_name);
