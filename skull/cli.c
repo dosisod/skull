@@ -19,6 +19,7 @@ static int usage(void);
 static int version(void);
 static void handle_env(void);
 static void set_bool_flag(bool *, const char *);
+static void check_duplicate_flag(bool, const char *);
 static bool parse_long_option(const char *);
 static char *squash_argv(char *[]);
 static int handle_args(int, char *[]);
@@ -122,6 +123,8 @@ static int handle_args(int argc, char *argv[]) {
 			break;
 		}
 		case 'o': {
+			check_duplicate_flag(BUILD_DATA.out_file, "-o");
+
 			if (argc == 1) {
 				fprintf(stderr, "skull: expected filename after -o\n");
 				bail(1);
@@ -157,11 +160,16 @@ static int handle_args(int argc, char *argv[]) {
 	return handle_args(--argc, ++argv);
 }
 
-static void set_bool_flag(bool *flag, const char *str) {
-	if (*flag) {
+static void check_duplicate_flag(bool flag, const char *str) {
+	if (flag) {
 		fprintf(stderr, "skull: %s cannot be used more then once\n", str);
 		bail(1);
 	}
+}
+
+static void set_bool_flag(bool *flag, const char *str) {
+	check_duplicate_flag(*flag, str);
+
 	*flag = true;
 }
 
