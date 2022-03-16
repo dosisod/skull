@@ -1,18 +1,4 @@
-FROM ubuntu:jammy
-
-RUN apt update && \
-	apt upgrade -y && \
-	DEBIAN_FRONTEND=noninteractive apt install \
-		build-essential \
-		gcc-11 \
-		clang-13 \
-		clang-tidy-13 \
-		llvm-13-dev \
-		shellcheck \
-		git \
-		file -y
-
-RUN sed -i "s/LLVMCreatePassBuilderOptions()/LLVMCreatePassBuilderOptions(void)/" $(llvm-config-13 --includedir)/llvm-c/Transforms/PassBuilder.h
+FROM skull:ubuntu-base
 
 WORKDIR /app
 COPY --chown=1000 . .

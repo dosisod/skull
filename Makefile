@@ -12,6 +12,8 @@ all: skull test docs e2e embed libskull
 options:
 	@$(ECHO) "\033[92mCC:\033[0m $(CC)\n"
 	@$(ECHO) "\033[92mCFLAGS:\033[0m $(CFLAGS)\n"
+	@$(ECHO) "\033[92mLLVM_CFLAGS:\033[0m $(LLVM_CFLAGS)\n"
+	@$(ECHO) "\033[92mLLVM_LDFLAGS:\033[0m $(LLVM_LDFLAGS)\n"
 	@$(ECHO) "\033[92mOBJS:\033[0m $(OBJS)\n"
 	@$(ECHO) "\033[92mOBJS_LLVM:\033[0m $(OBJS_LLVM)\n"
 	@$(ECHO) "\033[92mOBJS_TEST:\033[0m $(OBJS_TEST)\n"

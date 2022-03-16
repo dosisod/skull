@@ -1,0 +1,19 @@
+FROM alpine:20210804
+
+RUN apk update && \
+	apk upgrade && \
+	apk add \
+		build-base \
+		clang \
+		git \
+		file \
+		llvm13-dev && \
+	rm /var/cache/apk/*
+
+RUN sed -i "s/LLVMCreatePassBuilderOptions()/LLVMCreatePassBuilderOptions(void)/" $(llvm-config-13 --includedir || llvm-config --includedir)/llvm-c/Transforms/PassBuilder.h
+
+WORKDIR /skull
+COPY . .
+
+RUN make DEBUG=1 options skull test e2e libskull install install-dev && \
+	make clean

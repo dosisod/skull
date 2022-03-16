@@ -9,4 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: docker build .
+      - name: Build Skull docker image
+        run: cd dockerfiles && make ubuntu-base
+
+      - name: Run Skull tests
+        run: docker build -f .github/workflows/Dockerfile .

@@ -55,7 +55,8 @@ CFLAGS += -std=c18 \
 	-Wstack-protector \
 	-I. \
 	-DSKULL_VERSION="\"$(SKULL_VERSION)\"" \
-	-fPIC
+	-fPIC \
+	-D_GNU_SOURCE
 
 LLVM_CONFIG := $(shell command -v llvm-config-13 || command -v llvm-config)
 LLVM_CFLAGS := $(shell $(LLVM_CONFIG) --cflags)

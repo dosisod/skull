@@ -1,0 +1,7 @@
+FROM skull:ubuntu-base
+
+WORKDIR /skull
+COPY . .
+
+RUN make DEBUG=1 options skull test e2e libskull install install-dev && \
+	make clean
