@@ -13,7 +13,6 @@
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/common/malloc.h"
-#include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/parse/ast_node.h"
 #include "skull/semantic/func.h"
@@ -91,7 +90,7 @@ static LLVMTypeRef *parse_func_param(
 
 	LLVMTypeRef *params = Calloc(num_params, sizeof(LLVMTypeRef));
 
-	for RANGE(i, num_params) { // NOLINT
+	for (unsigned i = 0; i < num_params; i++) {
 		params[i] = type_to_llvm_type(func->param_types[i], state);
 	}
 
@@ -115,7 +114,7 @@ Expr gen_expr_func_call(
 
 	const AstNode *param = func_call->params;
 
-	for RANGE(i, num_params) { // NOLINT
+	for (unsigned i = 0; i < num_params; i++) {
 		params[i] = gen_expr(param->expr, state).value;
 		param = param->next;
 	}
@@ -151,7 +150,7 @@ static void gen_function_def(
 	if (func->param_types) {
 		LLVMValueRef next_param = LLVMGetFirstParam(func->ref);
 
-		for RANGE(i, func->num_params) {
+		for (unsigned i = 0; i < func->num_params; i++) {
 			Variable *param_var = func->params[i]->symbol->var;
 
 			param_var->ref = next_param;

@@ -5,7 +5,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
 #include "skull/common/malloc.h"
-#include "skull/common/range.h"
 #include "skull/semantic/entry.h"
 #include "skull/semantic/mangle.h"
 #include "skull/semantic/scope.h"
@@ -138,7 +137,7 @@ static bool validate_func_params(
 
 	AstNodeFunctionParam **params = node->func_proto->params;
 
-	for RANGE(i, function->num_params) {
+	for (unsigned i = 0; i < function->num_params; i++) {
 		function->param_types[i] = token_to_type(params[i]->type_name);
 
 		if (!function->param_types[i]) {

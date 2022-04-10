@@ -3,7 +3,6 @@
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
-#include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/semantic/symbol.h"
 #include "skull/semantic/variable.h"
@@ -1045,7 +1044,7 @@ static void free_ast_function_proto(AstNode *node) {
 
 	AstNodeFunctionParam **params = node->func_proto->params;
 
-	for RANGE(i, num_params) { // NOLINT
+	for (unsigned i = 0; i < num_params; i++) {
 		free_param(params[i]);
 	}
 
@@ -1097,7 +1096,7 @@ Indent more depending on the value of `indent_lvl`.
 */
 static void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 	while (node) {
-		for RANGE(_, indent_lvl) { // NOLINT
+		for (unsigned i = 0; i < indent_lvl; i++) {
 			putchar(' ');
 		}
 
@@ -1114,7 +1113,7 @@ static void print_ast_tree_(const AstNode *node, unsigned indent_lvl) {
 		while (token != token_end) {
 			char *str = token_to_mbs_str(token);
 
-			for RANGE(_, indent_lvl) { // NOLINT
+			for (unsigned i = 0; i < indent_lvl; i++) {
 				putchar(' ');
 			}
 

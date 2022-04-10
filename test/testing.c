@@ -5,7 +5,6 @@
 
 #include "../skull/common/color.h"
 #include "../skull/common/errors.h"
-#include "../skull/common/range.h"
 #include "../skull/common/vector.h"
 #include "skull/common/malloc.h"
 

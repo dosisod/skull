@@ -1,7 +1,6 @@
 #include <stdbool.h>
 
 #include "skull/common/malloc.h"
-#include "skull/common/range.h"
 
 #include "skull/common/vector.h"
 
@@ -79,7 +78,7 @@ void free_vector2(
 	void (*free_func)(void (*)(void *), void *),
 	void (*free_func2)(void *)
 ) {
-	for RANGE(i, v->length) {
+	for (unsigned i = 0; i < v->length; i++) {
 		if (free_func && v->elements)
 			free_func(free_func2, v->elements[i]);
 

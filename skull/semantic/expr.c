@@ -4,7 +4,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/hashtable.h"
 #include "skull/common/malloc.h"
-#include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
@@ -345,7 +344,7 @@ static bool validate_func_call_params(AstNodeFunctionCall *func_call) {
 	const FunctionDeclaration *function = func_call->symbol->func;
 	const AstNode *param = func_call->params;
 
-	for RANGE(i, function->num_params) {
+	for (unsigned i = 0; i < function->num_params; i++) {
 		if (!validate_expr(param->expr)) return false;
 
 		if (param->expr->type != function->param_types[i]) {

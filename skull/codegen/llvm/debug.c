@@ -14,7 +14,6 @@
 #include "skull/codegen/llvm/shared.h"
 #include "skull/codegen/llvm/types.h"
 #include "skull/common/malloc.h"
-#include "skull/common/range.h"
 #include "skull/common/str.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/symbol.h"
@@ -351,7 +350,7 @@ LLVMMetadataRef add_llvm_func_debug_info(
 	LLVMSetSubprogram(func->ref, DEBUG_INFO.scope);
 
 	if (func->num_params) {
-		for RANGE(i, func->num_params) {
+		for (unsigned i = 0; i < func->num_params; i++) {
 			char *param_name = c32stombs(
 				func->params[i]->param_name,
 				&symbol->location

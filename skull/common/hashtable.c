@@ -2,7 +2,6 @@
 #include <string.h>
 
 #include "skull/common/malloc.h"
-#include "skull/common/range.h"
 
 #include "skull/common/hashtable.h"
 
@@ -25,7 +24,7 @@ static __attribute__((pure)) unsigned ht_hash_key(const char *const key) {
 
 	unsigned long long hash = 0;
 
-	for RANGE(i, len) { // NOLINT
+	for (unsigned i = 0; i < len; i++) {
 		hash += (unsigned long long)key[i] * i;
 	}
 
@@ -68,7 +67,7 @@ void *ht_get(const HashTable *const ht, const char *const key) {
 	const Vector *items = ht->slots[ht_hash_key(key)];
 	if (!items) return NULL;
 
-	for RANGE(i, items->length) {
+	for (unsigned i = 0; i < items->length; i++) {
 		const HashItem *item = vector_at_HashItem(items, i);
 
 		if (strcmp(item->key, key) == 0) return item->data;
@@ -92,7 +91,7 @@ Free a hashtable `ht`, and free each item with `free_func`.
 void free_ht(HashTable *ht, void (*free_func)(void *)) {
 	if (!ht) return;
 
-	for RANGE(i, MAX_SLOTS) { // NOLINT
+	for (unsigned i = 0; i < MAX_SLOTS; i++) {
 		Vector *items = ht->slots[i];
 
 		if (items) free_vector2(items, free_ht_item, free_func);
