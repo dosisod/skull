@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include <llvm-c/Core.h>
+#include <llvm-c/TargetMachine.h>
 
 #include "skull/build_data.h"
 #include "skull/codegen/abi.h"
@@ -75,6 +76,8 @@ void free_llvm_state(void) {
 	LLVMDisposeBuilder(state->builder);
 	LLVMDisposeModule(state->module);
 	LLVMContextDispose(state->ctx);
+
+	if (state->target_machine) LLVMDisposeTargetMachine(state->target_machine);
 
 	*state = (SkullStateLLVM){0};
 }

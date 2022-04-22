@@ -23,3 +23,6 @@ typedef struct LLVMOpaqueMetadata *LLVMMetadataRef;
 
 struct LLVMOpaqueDIBuilder;
 typedef struct LLVMOpaqueDIBuilder *LLVMDIBuilderRef;
+
+struct LLVMOpaqueTargetMachine;
+typedef struct LLVMOpaqueTargetMachine *LLVMTargetMachineRef;

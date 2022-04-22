@@ -5,4 +5,4 @@ case "$@" in
 	*) exit 1 ;;
 esac
 
-rm test/sh/skull/.dummy.sk.ll
+[ ! -f test/sh/skull/.dummy.sk.ll ]

@@ -13,6 +13,7 @@ typedef struct {
 	Symbol *main_func;
 	LLVMBasicBlockRef current_while_cond;
 	LLVMBasicBlockRef current_while_end;
+	LLVMTargetMachineRef target_machine;
 } SkullStateLLVM;
 
 void free_llvm_state(void);
