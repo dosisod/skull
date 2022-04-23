@@ -20,6 +20,4 @@
 "	for (int64_t i = 1; i < exp; i++) result *= base;\n" \
 "	return result;\n" \
 "}\n" \
-"int init(void) __asm__(\"%s\");\n" \
-"int main(void) { return init(); }\n" \
-"\' | cc \"%s\" -o \"%s\" %s -I/usr/include/skull -x c - -lm"
+"\' | cc -nostartfiles \"%s\" -o \"%s\" %s -I/usr/include/skull -x c - -lm"

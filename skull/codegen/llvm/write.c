@@ -17,10 +17,13 @@
 #include "skull/codegen/abi.h"
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
+#include "skull/codegen/llvm/types.h"
 #include "skull/codegen/llvm/write.h"
 #include "skull/codegen/shared.h"
 #include "skull/common/io.h"
 #include "skull/common/str.h"
+#include "skull/semantic/func.h"
+#include "skull/semantic/symbol.h"
 
 typedef enum {
 	PHASE_DONE,
@@ -34,6 +37,8 @@ static PhaseResult verify_llvm(const SkullStateLLVM *);
 static PhaseResult optimize_llvm(SkullStateLLVM *);
 static PhaseResult emit_stage_1(const char *, SkullStateLLVM *);
 static PhaseResult emit_native_binary(void);
+static void add_start_shim(SkullStateLLVM *);
+static bool will_build_binary(void);
 static int sh(char *[]);
 static int shell(char *);
 static char *get_binary_name(void);
@@ -45,6 +50,10 @@ on CLI parameters.
 */
 bool write_llvm(const char *filename, SkullStateLLVM *state) {
 	if (BUILD_DATA.debug) LLVMDIBuilderFinalize(DEBUG_INFO.builder);
+
+	// we need to add more LLVM boilerplate if we end up needing to actually
+	// create a binary, though we still want it to be verified+optimized
+	if (will_build_binary()) add_start_shim(state);
 
 	PhaseResult result = verify_llvm(state);
 	if (result != PHASE_NEXT) return result;
@@ -174,16 +183,12 @@ static PhaseResult emit_native_binary(void) {
 
 	if (err) return PHASE_ERR;
 
-	char *module_name = create_main_func_name(BUILD_DATA.filename);
-
 	char *shim = uvsnprintf(
 		SHIM,
-		module_name,
 		BUILD_DATA.out_file,
 		binary_name,
 		BUILD_DATA.extra_args ? BUILD_DATA.extra_args : (char[]){0}
 	);
-	free(module_name);
 	free(binary_name);
 
 	const bool exit_code = shell(shim);
@@ -318,4 +323,72 @@ static PhaseResult emit_stage_1(const char *filename, SkullStateLLVM *state) {
 	return (BUILD_DATA.compile_only || BUILD_DATA.asm_backend) ?
 		PHASE_DONE :
 		PHASE_NEXT;
+}
+
+static bool will_build_binary(void) {
+	return !(
+		BUILD_DATA.preprocess ||
+		BUILD_DATA.compile_only ||
+		BUILD_DATA.asm_backend
+	);
+}
+
+/*
+Add custom _start function (allows for using "main" as a function name).
+*/
+static void add_start_shim(SkullStateLLVM *state) {
+	LLVMTypeRef start_type = type_to_llvm_func_type(
+		&TYPE_VOID, NULL, 0, state
+	);
+
+	LLVMValueRef start_func = LLVMAddFunction(
+		state->module,
+		"_start",
+		start_type
+	);
+
+	LLVMSetLinkage(start_func, LLVMExternalLinkage);
+
+	LLVMTypeRef exit_func_type = type_to_llvm_func_type(
+		&TYPE_VOID,
+		(LLVMTypeRef[]){ LLVMInt64TypeInContext(state->ctx) },
+		1,
+		state
+	);
+
+	LLVMValueRef exit_func = LLVMAddFunction(
+		state->module,
+		"exit",
+		exit_func_type
+	);
+
+	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
+		state->ctx,
+		start_func,
+		"entry"
+	);
+
+	LLVMPositionBuilderAtEnd(state->builder, entry);
+
+	LLVMValueRef return_value = LLVMBuildCall2(
+		state->builder,
+		state->main_func->func->type,
+		state->main_func->func->ref,
+		NULL,
+		0,
+		""
+	);
+
+	LLVMBuildCall2(
+		state->builder,
+		exit_func_type,
+		exit_func,
+		(LLVMValueRef[]){ return_value },
+		1,
+		""
+	);
+
+	// we could add a noreturn attribute to the exit call, but this is easier
+	// for now
+	LLVMBuildRetVoid(state->builder);
 }

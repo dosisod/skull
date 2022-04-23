@@ -39,3 +39,9 @@ static PhaseResult emit_stage_1(const char *filename, SkullStateLLVM *state)
 > * Object file
 > * Assembly file (to stdout or file)
 
+```c
+static void add_start_shim(SkullStateLLVM *state)
+```
+
+> Add custom _start function (allows for using "main" as a function name).
+
