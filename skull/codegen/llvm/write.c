@@ -348,6 +348,7 @@ static void add_start_shim(SkullStateLLVM *state) {
 	);
 
 	LLVMSetLinkage(start_func, LLVMExternalLinkage);
+	LLVMAddTargetDependentFunctionAttr(start_func, "stackrealign", "");
 
 	LLVMTypeRef exit_func_type = type_to_llvm_func_type(
 		&TYPE_VOID,

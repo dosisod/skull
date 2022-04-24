@@ -26,7 +26,7 @@ RUN skull test/main.sk
 RUN ./test/main
 
 USER 0
-RUN make CC=gcc-11 clean install-dev
+RUN make CC=gcc-11 clean install install-dev
 USER 1000
 RUN cc test/libskull.c -o skull-shim && ./skull-shim
 
