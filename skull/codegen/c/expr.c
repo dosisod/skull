@@ -77,7 +77,7 @@ static CExpr gen_expr_const_c(const AstNodeExpr *expr) {
 		return strdup(expr->value._bool ? "1" : "0");
 	}
 	if (expr->type == &TYPE_RUNE) {
-		return uvsnprintf("0x%lX", expr->value.rune);
+		return uvsnprintf("0x%X", expr->value.rune);
 	}
 	if (expr->type == &TYPE_STR) {
 		return uvsnprintf("\"%s\"", expr->value.str);
