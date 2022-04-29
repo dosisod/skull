@@ -20,6 +20,15 @@ main() Int {
 return main()
 ```
 
+## Run via Docker
+
+> Note: these images are for development, and are not optimized for production (for now).
+> They are very large (~600MB for `-alpine`, ~1.2GB for `-ubuntu`)!
+
+```
+$ docker run --rm -it ghcr.io/dosisod/skull:ubuntu bash
+```
+
 ## Setup
 
 Before you build, you will need to install some common development packages,
