@@ -16,6 +16,6 @@ do
 	docker tag skull:$base "$registry:$base"
 done
 
-docker tag skull:latest "$registry:$version-ubuntu"
+docker tag skull:ubuntu "$registry:latest"
 
 docker push -a $registry
