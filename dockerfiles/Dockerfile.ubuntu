@@ -1,7 +1,15 @@
-FROM skull:ubuntu-base
+FROM ubuntu:22.04
 
-WORKDIR /skull
-COPY . .
+RUN apt update && \
+	apt upgrade -y && \
+	DEBIAN_FRONTEND=noninteractive apt install \
+		gcc-11 \
+		llvm-13-runtime -y && \
+	rm -rf /var/lib/apt/lists/*
 
-RUN make DEBUG=1 options skull test e2e libskull install install-dev && \
-	make clean
+COPY --from=skull:ubuntu-dev /usr/local/bin/skull /usr/local/bin/skull
+COPY --from=skull:ubuntu-dev /usr/lib/libskull.so /usr/lib/libskull.so
+
+RUN update-alternatives --install /usr/bin/cc cc $(which gcc-11) 100
+
+ENTRYPOINT ["skull"]

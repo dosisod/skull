@@ -4,16 +4,12 @@ RUN apk update && \
 	apk upgrade && \
 	apk add \
 		build-base \
-		clang \
-		git \
-		file \
-		llvm13-dev && \
+		llvm13-libs && \
 	rm /var/cache/apk/*
 
-RUN sed -i "s/LLVMCreatePassBuilderOptions()/LLVMCreatePassBuilderOptions(void)/" $(llvm-config-13 --includedir || llvm-config --includedir)/llvm-c/Transforms/PassBuilder.h
+COPY --from=skull:alpine-dev /usr/local/bin/skull /usr/local/bin/skull
+COPY --from=skull:alpine-dev /usr/lib/libskull.so /usr/lib/libskull.so
 
-WORKDIR /skull
-COPY . .
+RUN ln -sf $(which clang) /usr/bin/cc
 
-RUN make DEBUG=1 options skull test e2e libskull install install-dev && \
-	make clean
+ENTRYPOINT ["skull"]

@@ -1,15 +1,8 @@
 FROM archlinux:base-devel
 
-RUN pacman -Syu --noconfirm \
-	clang \
-	llvm \
-	llvm-libs \
-	git
+RUN pacman -Syu --noconfirm llvm-libs
 
-RUN sed -i "s/LLVMCreatePassBuilderOptions()/LLVMCreatePassBuilderOptions(void)/" $(llvm-config-13 --includedir || llvm-config --includedir)/llvm-c/Transforms/PassBuilder.h
+COPY --from=skull:archlinux-dev /usr/local/bin/skull /usr/local/bin/skull
+COPY --from=skull:archlinux-dev /usr/lib/libskull.so /usr/lib/libskull.so
 
-WORKDIR /skull
-COPY . .
-
-RUN make DEBUG=1 options skull test e2e libskull install install-dev && \
-	make clean
+RUN ln -sf $(which gcc) /usr/bin/cc

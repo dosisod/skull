@@ -10,7 +10,7 @@ registry="ghcr.io/dosisod/skull"
 	exit 1
 }
 
-for base in {alpine,archlinux,ubuntu}
+for base in {alpine,alpine-dev,archlinux,archlinux-dev,ubuntu,ubuntu-dev}
 do
 	docker tag skull:$base "$registry:$version-$base"
 	docker tag skull:$base "$registry:$base"
