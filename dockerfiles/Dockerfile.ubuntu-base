@@ -10,6 +10,7 @@ RUN apt update && \
 		llvm-13-dev \
 		shellcheck \
 		git \
-		file -y
+		file \
+		xxd -y
 
 RUN sed -i "s/LLVMCreatePassBuilderOptions()/LLVMCreatePassBuilderOptions(void)/" $(llvm-config-13 --includedir)/llvm-c/Transforms/PassBuilder.h

@@ -1,6 +1,9 @@
 *
 !skull
+skull/shim.h
 !test
+test/sh/e2e_inner.h
+test/sh/**/*.c
 !Makefile
 !config.mk
 !.git

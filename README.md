@@ -42,7 +42,7 @@ Note: the `llvm-13-dev` package is only available in impish (21.10) or jammy
 build from [source](https://github.com/llvm/llvm-project#getting-the-source-code-and-building-llvm).
 
 ```
-$ sudo apt install llvm-13-dev build-essential git
+$ sudo apt install llvm-13-dev build-essential git xxd
 ```
 
 You can also drop in `clang` instead of `gcc` (`gcc` is included in
@@ -55,7 +55,7 @@ $ sudo apt install clang
 #### Arch Linux
 
 ```
-$ sudo pacman -S base-devel clang llvm llvm-libs git man-db
+$ sudo pacman -S base-devel clang llvm llvm-libs git man-db vim
 ```
 
 ## Building and Running
