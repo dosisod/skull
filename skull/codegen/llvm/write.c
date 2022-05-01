@@ -9,11 +9,12 @@
 #include <llvm-c/Analysis.h>
 #include <llvm-c/Core.h>
 #include <llvm-c/DebugInfo.h>
+#include <llvm-c/IRReader.h>
+#include <llvm-c/Linker.h>
 #include <llvm-c/Target.h>
 #include <llvm-c/Transforms/PassBuilder.h>
 
 #include "skull/build_data.h"
-#include "skull/cc_shim.h"
 #include "skull/codegen/abi.h"
 #include "skull/codegen/llvm/debug.h"
 #include "skull/codegen/llvm/shared.h"
@@ -24,6 +25,7 @@
 #include "skull/common/str.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/symbol.h"
+#include "skull/shim.h"
 
 typedef enum {
 	PHASE_DONE,
@@ -37,7 +39,8 @@ static PhaseResult verify_llvm(const SkullStateLLVM *);
 static PhaseResult optimize_llvm(SkullStateLLVM *);
 static PhaseResult emit_stage_1(const char *, SkullStateLLVM *);
 static PhaseResult emit_native_binary(void);
-static void add_start_shim(SkullStateLLVM *);
+static bool add_start_shim(SkullStateLLVM *);
+static bool llvm_insert_builtins(SkullStateLLVM *);
 static bool will_build_binary(void);
 static int sh(char *[]);
 static int shell(char *);
@@ -53,7 +56,7 @@ bool write_llvm(const char *filename, SkullStateLLVM *state) {
 
 	// we need to add more LLVM boilerplate if we end up needing to actually
 	// create a binary, though we still want it to be verified+optimized
-	if (will_build_binary()) add_start_shim(state);
+	if (will_build_binary() && !add_start_shim(state)) return PHASE_ERR;
 
 	PhaseResult result = verify_llvm(state);
 	if (result != PHASE_NEXT) return result;
@@ -184,7 +187,7 @@ static PhaseResult emit_native_binary(void) {
 	if (err) return PHASE_ERR;
 
 	char *shim = uvsnprintf(
-		SHIM,
+		"cc -nostartfiles \"%s\" -o \"%s\" %s -I/usr/include/skull -lm",
 		BUILD_DATA.out_file,
 		binary_name,
 		BUILD_DATA.extra_args ? BUILD_DATA.extra_args : (char[]){0}
@@ -335,8 +338,10 @@ static bool will_build_binary(void) {
 
 /*
 Add custom _start function (allows for using "main" as a function name).
+
+Return `false` if an error occurred.
 */
-static void add_start_shim(SkullStateLLVM *state) {
+static bool add_start_shim(SkullStateLLVM *state) {
 	LLVMTypeRef start_type = type_to_llvm_func_type(
 		&TYPE_VOID, NULL, 0, state
 	);
@@ -392,4 +397,46 @@ static void add_start_shim(SkullStateLLVM *state) {
 	// we could add a noreturn attribute to the exit call, but this is easier
 	// for now
 	LLVMBuildRetVoid(state->builder);
+
+	return llvm_insert_builtins(state);
+}
+
+/*
+Add built-in functions (via LLVM IR), inserting them into the existing module
+in `state`.
+
+Return `false` if an error occurred.
+*/
+static bool llvm_insert_builtins(SkullStateLLVM *state) {
+	LLVMMemoryBufferRef mem_buf = LLVMCreateMemoryBufferWithMemoryRangeCopy(
+		LL_SHIM,
+		LL_SHIM_len,
+		"<jit>"
+	);
+
+	LLVMModuleRef shim_module = NULL;
+	char *err_msg = NULL;
+
+	bool failed = LLVMParseIRInContext(
+		state->ctx,
+		mem_buf,
+		&shim_module,
+		&err_msg
+	);
+
+	if (failed || err_msg) {
+		fprintf(stderr, "%s\n", err_msg);
+		LLVMDisposeErrorMessage(err_msg);
+		return false;
+	}
+
+	failed = LLVMLinkModules2(state->module, shim_module);
+	if (failed) {
+		// there is a diagnostic handler you can setup to get the actual error,
+		// but I couldn't figure out how to set it up correctly.
+		fprintf(stderr, "skull: internal error\n");
+		return false;
+	}
+
+	return true;
 }

@@ -21,7 +21,7 @@ options:
 $(DIRS):
 	@mkdir -p $(DIRS)
 
-skull: $(DIRS) build/skull/skull
+skull: $(DIRS) skull/shim.h build/skull/skull
 test: $(DIRS) build/test/test
 embed: $(DIRS) build/test/embed
 e2e: $(DIRS) test/sh/e2e_inner.h build/test/e2e
@@ -57,6 +57,10 @@ test/sh/%.c: test/sh/%.sk test/sh/%.sk.ll build/test/embed
 test/sh/e2e_inner.h: $(E2E)
 	@$(ECHO) "\033[92mGenerate\033[0m e2e_inner\n"
 	@cat $(E2E) > test/sh/e2e_inner.h
+
+skull/shim.h:
+	@$(ECHO) "\033[92mGenerate\033[0m $@\n"
+	@xxd -i skull/shim.ll | sed -e 's/skull_shim_ll/LL_SHIM/' -e 's/unsigned char/char/' > skull/shim.h
 
 $(ODIR)/test/skull/e2e.o: test/sh/e2e_inner.h
 

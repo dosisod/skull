@@ -3,3 +3,4 @@ build/
 test/sh/read_protected.sk
 test/sh/e2e_inner.h
 test/sh/**/*.c
+skull/shim.h

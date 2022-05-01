@@ -40,8 +40,19 @@ static PhaseResult emit_stage_1(const char *filename, SkullStateLLVM *state)
 > * Assembly file (to stdout or file)
 
 ```c
-static void add_start_shim(SkullStateLLVM *state)
+static bool add_start_shim(SkullStateLLVM *state)
 ```
 
 > Add custom _start function (allows for using "main" as a function name).
+> \
+> Return `false` if an error occurred.
+
+```c
+static bool llvm_insert_builtins(SkullStateLLVM *state)
+```
+
+> Add built-in functions (via LLVM IR), inserting them into the existing module
+> in `state`.
+> \
+> Return `false` if an error occurred.
 
