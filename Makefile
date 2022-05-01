@@ -21,10 +21,11 @@ options:
 $(DIRS):
 	@mkdir -p $(DIRS)
 
-skull: $(DIRS) skull/shim.h build/skull/skull
+skull: $(DIRS) build/skull/skull
 test: $(DIRS) build/test/test
 embed: $(DIRS) build/test/embed
 e2e: $(DIRS) test/sh/e2e_inner.h build/test/e2e
+skull/codegen/llvm/write.c: skull/shim.h
 
 libskull: $(DIRS) $(ODIR)/libskull.so
 
@@ -74,7 +75,7 @@ docs:
 
 clean:
 	@$(ECHO) "\033[92mCleaning\033[0m\n"
-	@rm -rf build/* test/sh/e2e_inner.h test/sh/**/*.c
+	@rm -rf build/* test/sh/e2e_inner.h test/sh/**/*.c skull/shim.h
 
 scaffold:
 	@[ -n "$(NAME)" ] || { $(ECHO) "NAME is not set, exiting\n"; exit 1; }
