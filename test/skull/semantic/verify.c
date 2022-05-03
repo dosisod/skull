@@ -945,16 +945,17 @@ static bool test_validate_trivial_type(void) {
 	PASS
 }
 
-static bool test_validate_no_export_main(void) {
+static bool test_validate_allow_export_main(void) {
 	Token *token = tokenize_fixture(U"export main() { noop }");
 
 	AstNode *node = AST_NODE_NO_ARGS_FUNC_DECL(token, false, true);
 	node->token = token;
 
-	return validate_tree_fixture(
-		node,
-		"(null): Compilation error: line 1 column 8: cannot export function \"main\"\n"
-	);
+	ASSERT_TRUTHY(node);
+
+	free_tokens(token);
+
+	PASS
 }
 
 static bool test_validate_redeclare_type_alias_as_var(void) {
@@ -1559,7 +1560,7 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_stmt_between_if_and_elif,
 		test_validate_no_redeclare_alias,
 		test_validate_trivial_type,
-		test_validate_no_export_main,
+		test_validate_allow_export_main,
 		test_validate_redeclare_type_alias_as_var,
 		test_validate_non_void_function_missing_return,
 		test_validate_redeclare_var_as_func,

@@ -44,11 +44,6 @@ static bool validate_stmt_func_decl_(const AstNode *node) {
 		return false;
 	}
 
-	if (is_export && token_cmp(U"main", func_name_token)) {
-		FMT_ERROR(ERR_MAIN_RESERVED, { .loc = &func_name_token->location });
-		return false;
-	}
-
 	const Type *return_type = validate_return_type(
 		node->func_proto->return_type_token
 	);

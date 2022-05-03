@@ -51,7 +51,6 @@ static const char *errors[] = {
 	[ERR_VAR_ALREADY_DEFINED] = "variable \"%s\" already defined",
 	[ERR_NON_INT_MAIN] = "returning non-int expression \"%s\" from main",
 	[ERR_NON_BOOL_EXPR] = "expected boolean expression",
-	[ERR_MAIN_RESERVED] = "cannot export function \"main\"",
 	[ERR_NO_REDEFINE_FUNC] = "cannot redeclare function \"%s\"",
 	[ERR_NO_REDEFINE_VAR_AS_FUNC] = \
 		"cannot redeclare variable \"%s\" as function",

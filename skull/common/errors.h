@@ -10,7 +10,7 @@ typedef struct Token Token;
 typedef struct Location Location;
 typedef struct Vector Vector;
 
-// unused error codes: 38, 39
+// unused error codes: 20, 38, 39
 
 typedef enum {
 	ERR_UNEXPECTED_TOKEN = 0,
@@ -33,7 +33,6 @@ typedef enum {
 	ERR_VAR_ALREADY_DEFINED = 17,
 	ERR_NON_INT_MAIN = 18,
 	ERR_NON_BOOL_EXPR = 19,
-	ERR_MAIN_RESERVED = 20,
 	ERR_NO_REDEFINE_FUNC = 21,
 	ERR_NO_REDEFINE_VAR_AS_FUNC = 22,
 	ERR_NO_REDEFINE_FUNC_AS_VAR = 23,
