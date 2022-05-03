@@ -10,15 +10,16 @@
 
 #include "skull/semantic/symbol.h"
 
-static Symbol find_symbol(char *);
+static SymbolType find_symbol_type(char *);
 
 static bool symbol_already_exists(Symbol *new_symbol) {
-	Symbol symbol = find_symbol(new_symbol->name);
+	SymbolType type = find_symbol_type(new_symbol->name);
+	if (type == SYMBOL_UNKNOWN) return false;
 
 	const Location *location = &new_symbol->location;
 	char *name = new_symbol->name;
 
-	if (symbol.type == SYMBOL_VAR) {
+	if (type == SYMBOL_VAR) {
 		if (new_symbol->type == SYMBOL_VAR) {
 			FMT_ERROR(ERR_VAR_ALREADY_DEFINED, {
 				.loc = location,
@@ -35,7 +36,7 @@ static bool symbol_already_exists(Symbol *new_symbol) {
 			{ .loc = location, .real = name }
 		);
 	}
-	else if (symbol.type == SYMBOL_ALIAS) {
+	else if (type == SYMBOL_ALIAS) {
 		if (new_symbol->type == SYMBOL_ALIAS) {
 			FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, {
 				.loc = location,
@@ -52,7 +53,7 @@ static bool symbol_already_exists(Symbol *new_symbol) {
 			{ .loc = location, .real = name }
 		);
 	}
-	else if (symbol.type == SYMBOL_FUNC) {
+	else if (type == SYMBOL_FUNC) {
 		if (new_symbol->type == SYMBOL_FUNC) {
 			FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
 				.loc = location,
@@ -74,37 +75,17 @@ static bool symbol_already_exists(Symbol *new_symbol) {
 	return true;
 }
 
-static Symbol find_symbol(char *name) {
+static SymbolType find_symbol_type(char *name) {
 	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
-	if (symbol && symbol->type == SYMBOL_VAR) {
-		return (Symbol){
-			.name = name,
-			.expr_type = symbol->var->type,
-			.type = SYMBOL_VAR,
-			.var = symbol->var
-		};
-	}
+	if (symbol && symbol->type == SYMBOL_VAR) return SYMBOL_VAR;
 
 	symbol = find_func_by_name(name);
-	if (symbol) {
-		return (Symbol){
-			.name = name,
-			.expr_type = symbol->func->return_type,
-			.type = SYMBOL_FUNC,
-			.func = symbol->func
-		};
-	}
+	if (symbol) return SYMBOL_FUNC;
 
 	const Type *type = find_type(name);
-	if (type) {
-		return (Symbol){
-			.name = name,
-			.expr_type = type,
-			.type = SYMBOL_ALIAS
-		};
-	}
+	if (type) return SYMBOL_ALIAS;
 
-	return (Symbol){0};
+	return SYMBOL_UNKNOWN;
 }
 
 bool scope_add_symbol(Symbol *symbol) {
