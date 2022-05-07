@@ -16,7 +16,7 @@ bool run_backend(
 
 	const bool success = backend->write(filename, state);
 
-	if (backend->cleanup) backend->cleanup();
+	if (backend->cleanup) backend->cleanup(state);
 
 	return success;
 }

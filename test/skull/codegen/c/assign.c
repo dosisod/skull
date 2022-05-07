@@ -20,13 +20,15 @@ static bool test_assign(void) {
 	SET_EXPR_VALUE_INT(node->var_assign->expr, 1);
 	node->var_assign->symbol->var = make_variable(&TYPE_INT, U"x", false);
 
-	char *str = gen_stmt_var_assign_c(node, setup_c_state());
+	SkullStateC *state = setup_c_state();
+	char *str = gen_stmt_var_assign_c(node, state);
 
 	ASSERT_TRUTHY(str);
 	ASSERT_EQUAL(strcmp(str, "x = 1;"), 0);
 
 	free(str);
 	free_variable(node->var_assign->symbol->var);
+	free_c_state(state);
 	PASS;
 }
 
@@ -39,13 +41,15 @@ static bool test_mutable_var_def(void) {
 	node->var_def->symbol->var = make_variable(&TYPE_INT, U"x", false);
 	node->var_def->symbol->var->expr = node->var_def->expr;
 
-	char *str = gen_stmt_var_def_c(node, setup_c_state());
+	SkullStateC *state = setup_c_state();
+	char *str = gen_stmt_var_def_c(node, state);
 
 	ASSERT_TRUTHY(str);
 	ASSERT_EQUAL(strcmp(str, TYPE_INT_C" x = 1;"), 0);
 
 	free(str);
 	free_variable(node->var_def->symbol->var);
+	free_c_state(state);
 	PASS;
 }
 
@@ -58,13 +62,15 @@ static bool test_const_var_def(void) {
 	node->var_def->symbol->var = make_variable(&TYPE_INT, U"x", true);
 	node->var_def->symbol->var->expr = node->var_def->expr;
 
-	char *str = gen_stmt_var_def_c(node, setup_c_state());
+	SkullStateC *state = setup_c_state();
+	char *str = gen_stmt_var_def_c(node, state);
 
 	ASSERT_TRUTHY(str);
 	ASSERT_EQUAL(strcmp(str, "const "TYPE_INT_C" x = 1;"), 0);
 
 	free(str);
 	free_variable(node->var_def->symbol->var);
+	free_c_state(state);
 	PASS;
 }
 
@@ -123,7 +129,7 @@ static bool top_lvl_var_def_fixture(
 	ASSERT_TRUTHY(state->globals);
 	ASSERT_EQUAL(strcmp(state->globals, expected_global), 0);
 
-	free_c_state();
+	free_c_state(state);
 
 	free(str);
 	free_variable(node->var_def->symbol->var);

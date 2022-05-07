@@ -16,10 +16,8 @@
 
 #include "skull/codegen/llvm/shared.h"
 
-static SkullStateLLVM SKULL_STATE_LLVM;
-
 SkullStateLLVM *setup_llvm_state(void) {
-	SkullStateLLVM *state = &SKULL_STATE_LLVM;
+	SkullStateLLVM *state = Calloc(1, sizeof(SkullStateLLVM));
 
 	const char *filename = BUILD_DATA.filename;
 
@@ -70,8 +68,8 @@ SkullStateLLVM *setup_llvm_state(void) {
 /*
 Free everything about a Skull LLVM compiler instance.
 */
-void free_llvm_state(void) {
-	SkullStateLLVM *state = &SKULL_STATE_LLVM;
+void free_llvm_state(SkullStateLLVM *state) {
+	if (!state) return;
 
 	LLVMDisposeBuilder(state->builder);
 	LLVMDisposeModule(state->module);
@@ -79,5 +77,5 @@ void free_llvm_state(void) {
 
 	if (state->target_machine) LLVMDisposeTargetMachine(state->target_machine);
 
-	*state = (SkullStateLLVM){0};
+	free(state);
 }

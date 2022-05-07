@@ -16,5 +16,5 @@ typedef struct {
 	LLVMTargetMachineRef target_machine;
 } SkullStateLLVM;
 
-void free_llvm_state(void);
 SkullStateLLVM *setup_llvm_state(void);
+void free_llvm_state(SkullStateLLVM *);

@@ -11,4 +11,4 @@ typedef struct {
 
 SkullStateC *setup_c_state(void);
 char *get_indentation(const SkullStateC *);
-void free_c_state(void);
+void free_c_state(SkullStateC *);

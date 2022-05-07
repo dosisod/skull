@@ -9,5 +9,5 @@ Backend c_backend = {
 	.write = (_Bool (*)(const char *, void *))write_file_c,
 	.gen_module = (void (*)(const AstNode *, void *))gen_module_c,
 	.extension = "c",
-	.cleanup = free_c_state
+	.cleanup = (void (*)(void *))free_c_state
 };

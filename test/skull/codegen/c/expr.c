@@ -179,6 +179,7 @@ static bool test_int_pow_expr(void) {
 	ASSERT_TRUTHY(state->called_int_pow);
 
 	free(expr_str);
+	free_c_state(state);
 	PASS;
 }
 
@@ -200,6 +201,7 @@ static bool test_float_pow_expr(void) {
 	ASSERT_TRUTHY(state->called_float_pow);
 
 	free(expr_str);
+	free_c_state(state);
 	PASS;
 }
 
@@ -221,6 +223,7 @@ static bool test_str_is(void) {
 	ASSERT_TRUTHY(state->called_strcmp);
 
 	free(expr_str);
+	free_c_state(state);
 	PASS;
 }
 
@@ -242,6 +245,7 @@ static bool test_str_isnt(void) {
 	ASSERT_TRUTHY(state->called_strcmp);
 
 	free(expr_str);
+	free_c_state(state);
 	PASS;
 }
 

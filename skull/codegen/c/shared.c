@@ -1,14 +1,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "skull/codegen/c/shared.h"
+#include "skull/common/malloc.h"
 
-static SkullStateC SKULL_STATE_C;
+#include "skull/codegen/c/shared.h"
 
 #define MAX_TABS 64
 
 SkullStateC *setup_c_state(void) {
-	return &SKULL_STATE_C;
+	return Calloc(1, sizeof(SkullStateC));
 }
 
 char *get_indentation(const SkullStateC *state) {
@@ -27,7 +27,13 @@ char *get_indentation(const SkullStateC *state) {
 	return tabs;
 }
 
-void free_c_state(void) {
-	free(SKULL_STATE_C.globals);
-	SKULL_STATE_C.globals = NULL;
+void free_c_state(SkullStateC *state) {
+	if (!state) return;
+
+	free(state->globals);
+	free(state->tree);
+	state->globals = NULL;
+	state->tree= NULL;
+
+	free(state);
 }
