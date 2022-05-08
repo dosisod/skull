@@ -119,9 +119,9 @@ void classify_tokens(Token *head) {
 Returns true if `name` is a type string.
 */
 static bool is_type_str(const char32_t *const name) {
-	char *const type_name = c32stombs(name, NULL);
+	char *type_name = c32stombs(name, NULL);
 
-	const bool is_type = find_type(type_name);
+	const bool is_type = find_builtin_type(type_name);
 	free(type_name);
 
 	return is_type;

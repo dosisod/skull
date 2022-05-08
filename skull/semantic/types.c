@@ -178,6 +178,10 @@ const Type __attribute__((pure)) *find_type(const char *const name) {
 
 	if (symbol && symbol->type == SYMBOL_ALIAS) return symbol->expr_type;
 
+	return find_builtin_type(name);
+}
+
+const Type __attribute__((pure)) *find_builtin_type(const char *const name) {
 	Type **type = TYPES_BUILTIN;
 
 	while (*type) {
