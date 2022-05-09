@@ -18,7 +18,7 @@ typedef struct Scope {
 > `child` stores a nested scope with more variables in it.
 
 ```c
-bool scope_add_var(Symbol *symbol)
+bool scope_add_var(SemanticState *state, Symbol *symbol)
 ```
 
 > Add `symbol` (as variable) to current scope.
@@ -38,7 +38,7 @@ Scope *make_scope(void)
 > Returns a new variable scope.
 
 ```c
-Symbol *scope_find_var(const Token *const token)
+Symbol *scope_find_var(SemanticState *state, const Token *const token)
 ```
 
 > Try and find a variable stored in `token`.
@@ -48,13 +48,13 @@ Symbol *scope_find_var(const Token *const token)
 > Return `NULL` if variable was not found.
 
 ```c
-void make_child_scope(void)
+void make_child_scope(SemanticState *state)
 ```
 
 > Add a child scope to the current and replace current scope with new one.
 
 ```c
-void make_adjacent_scope(void)
+void make_adjacent_scope(SemanticState *state)
 ```
 
 > Make a scope adjacent to the current scope.
@@ -63,19 +63,19 @@ void make_adjacent_scope(void)
 > after a child scope.
 
 ```c
-Scope *find_scope_head(void)
+static Scope *find_scope_head(SemanticState *state)
 ```
 
 > Find the head of the current scope (without going to the parent node).
 
 ```c
-void reset_scope_head(void)
+void reset_scope_head(SemanticState *state)
 ```
 
 > Move the current scope to the scope head.
 
 ```c
-void restore_parent_scope(void)
+void restore_parent_scope(SemanticState *state)
 ```
 
 > Free current scope, set current scope to parent scope.

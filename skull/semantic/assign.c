@@ -15,20 +15,20 @@
 
 
 static bool is_void_func_assign(const AstNode *);
-static Symbol *node_to_var(const AstNode *const);
+static Symbol *node_to_var(SemanticState *, const AstNode *const);
 static bool is_expr_compatible_with_var(const AstNodeExpr *, const Variable *);
 static bool is_redundant_reassign(const AstNodeVarAssign *);
 
 
-bool validate_stmt_var_def(const AstNode *node) {
-	const Type *type = token_to_type(node->token_end->next);
+bool validate_stmt_var_def(SemanticState *state, const AstNode *node) {
+	const Type *type = token_to_type(state, node->token_end->next);
 
-	if (type) return validate_stmt_type_alias(node);
+	if (type) return validate_stmt_type_alias(state, node);
 
 	AstNodeExpr *expr = node->var_def->expr;
-	if (!validate_expr(expr)) return false;
+	if (!validate_expr(state, expr)) return false;
 
-	Symbol *symbol = node_to_var(node);
+	Symbol *symbol = node_to_var(state, node);
 	if (!symbol || !symbol->var) return false;
 
 	Variable *var = symbol->var;
@@ -49,8 +49,8 @@ bool validate_stmt_var_def(const AstNode *node) {
 	return true;
 }
 
-bool validate_stmt_var_assign(const AstNode *node) {
-	Symbol *symbol = scope_find_var(node->token);
+bool validate_stmt_var_assign(SemanticState *state, const AstNode *node) {
+	Symbol *symbol = scope_find_var(state, node->token);
 	if (!symbol || !symbol->var) return false;
 
 	node->var_assign->symbol = symbol;
@@ -65,7 +65,7 @@ bool validate_stmt_var_assign(const AstNode *node) {
 
 	symbol->var->was_reassigned = true;
 
-	if (!validate_expr(node->var_assign->expr)) return false;
+	if (!validate_expr(state, node->var_assign->expr)) return false;
 
 	return (
 		is_expr_compatible_with_var(node->var_assign->expr, symbol->var) &&
@@ -78,14 +78,14 @@ Make and add a symbol (as a variable) from `node` to the Skull state.
 
 Return `NULL` if an error occurred.
 */
-static Symbol *node_to_var(const AstNode *const node) {
+static Symbol *node_to_var(SemanticState *state, const AstNode *const node) {
 	const Token *token = node->var_def->name_tok;
 	const Type *type = node->var_def->expr->type;
 
 	if (is_void_func_assign(node)) return NULL;
 
 	if (!node->var_def->is_implicit) {
-		type = token_to_type(token->next);
+		type = token_to_type(state, token->next);
 
 		if (!type) {
 			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = token->next });
@@ -118,7 +118,7 @@ static Symbol *node_to_var(const AstNode *const node) {
 		.var = var
 	};
 
-	if (scope_add_symbol(symbol)) {
+	if (scope_add_symbol(state, symbol)) {
 		return symbol;
 	}
 

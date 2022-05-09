@@ -26,72 +26,89 @@ static bool validate_tree_fixture(AstNode *, const char *);
 static Token *tokenize_fixture(const char32_t *);
 
 static bool test_validate_int_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"1");
 	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 
 	ASSERT_TRUTHY(expr->is_const_expr);
 	ASSERT_EQUAL(expr->value._int, 1);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_validate_float_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"1.0");
 	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 
 	ASSERT_TRUTHY(expr->is_const_expr);
 	ASSERT_EQUAL((int)expr->value._float, 1);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_validate_bool_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"true");
 	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 
 	ASSERT_TRUTHY(expr->is_const_expr);
 	ASSERT_TRUTHY(expr->value._bool);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_validate_rune_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"'x'");
 	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 
 	ASSERT_TRUTHY(expr->is_const_expr);
 	ASSERT_EQUAL(expr->value.rune, 'x');
 
 	free_tokens(token);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_validate_str_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"\"x\"");
 	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 
 	ASSERT_TRUTHY(expr->is_const_expr);
 	ASSERT_TRUTHY(strcmp(expr->value.str, "x")== 0);
 
 	free_tokens(token);
 	free(expr->value.str);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_binary_oper_is_const_expr_if_lhs_and_rhs_are_const_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"1 + 2");
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		AST_NODE_CONST_EXPR(token),
@@ -99,15 +116,18 @@ static bool test_binary_oper_is_const_expr_if_lhs_and_rhs_are_const_expr(void) {
 		AST_NODE_CONST_EXPR(token->next->next)
 	);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 
 	ASSERT_TRUTHY(expr->is_const_expr);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"external f() Int\nf() + 2");
 	Token *type_token = token->next->next->next->next;
 	Token *expr_token = type_token->next->next;;
@@ -116,7 +136,7 @@ static bool test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr(void) {
 	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
 	AST_NODE_FUNC_RTYPE(func, type_token);
 
-	ASSERT_TRUTHY(validate_ast_tree(func));
+	ASSERT_TRUTHY(validate_ast_tree(state, func));
 
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		AST_NODE_FUNC_EXPR(expr_token),
@@ -124,16 +144,19 @@ static bool test_binary_oper_isnt_const_expr_if_lhs_isnt_const_expr(void) {
 		AST_NODE_CONST_EXPR(int_token)
 	);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 	ASSERT_TRUTHY(pass);
 
 	ASSERT_FALSEY(expr->is_const_expr);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_binary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"external f() Int\n1 + f()");
 	Token *type_token = token->next->next->next->next;
 	Token *int_token = type_token->next->next;
@@ -142,7 +165,7 @@ static bool test_binary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
 	AST_NODE_FUNC_RTYPE(func, type_token);
 
-	ASSERT_TRUTHY(validate_ast_tree(func));
+	ASSERT_TRUTHY(validate_ast_tree(state, func));
 
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		AST_NODE_CONST_EXPR(int_token),
@@ -150,16 +173,19 @@ static bool test_binary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 		AST_NODE_FUNC_EXPR(expr_token)
 	);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 	ASSERT_TRUTHY(pass);
 
 	ASSERT_FALSEY(expr->is_const_expr);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_unary_oper_is_const_expr_if_rhs_is_const_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"not true");
 
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
@@ -168,17 +194,20 @@ static bool test_unary_oper_is_const_expr_if_rhs_is_const_expr(void) {
 		AST_NODE_CONST_EXPR(token->next)
 	);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 
 	ASSERT_TRUTHY(expr->is_const_expr);
 
 	free_tokens(token);
+	free_semantic_state(state);
 
 	ASSERT_TRUTHY(pass);
 	PASS;
 }
 
 static bool test_unary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"external f() Bool\nnot f()");
 	Token *type_token = token->next->next->next->next;
 	Token *expr_token = type_token->next->next;
@@ -186,7 +215,7 @@ static bool test_unary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
 	AST_NODE_FUNC_RTYPE(func, type_token);
 
-	ASSERT_TRUTHY(validate_ast_tree(func));
+	ASSERT_TRUTHY(validate_ast_tree(state, func));
 
 	AstNodeExpr *expr = AST_NODE_BINARY_EXPR(
 		NULL,
@@ -194,17 +223,20 @@ static bool test_unary_oper_isnt_const_expr_if_rhs_isnt_const_expr(void) {
 		AST_NODE_FUNC_EXPR(expr_token->next)
 	);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 	ASSERT_TRUTHY(pass);
 
 	ASSERT_FALSEY(expr->is_const_expr);
 
 	free_tokens(token);
 	free(expr->value.str);
+	free_semantic_state(state);
 	return pass;
 }
 
 static bool test_var_expr_is_const_expr_if_var_def_expr_is_const_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"x := 1\nx");
 
 	AstNode *node = AST_NODE_VAR_DEF(
@@ -212,20 +244,23 @@ static bool test_var_expr_is_const_expr_if_var_def_expr_is_const_expr(void) {
 		AST_NODE_CONST_EXPR(token->next->next),
 		true
 	);
-	ASSERT_TRUTHY(validate_ast_tree(node));
+	ASSERT_TRUTHY(validate_ast_tree(state, node));
 
 	AstNodeExpr *expr = AST_NODE_IDENT_EXPR(token->next->next->next->next);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 	ASSERT_TRUTHY(expr->is_const_expr);
 
 	free_tokens(token);
+	free_semantic_state(state);
 
 	ASSERT_TRUTHY(pass);
 	PASS;
 }
 
 static bool test_var_expr_isnt_const_expr_if_var_def_expr_isnt_const_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"external f() Int\nx := f()\nx");
 	Token *type_token = token->next->next->next->next;
 	Token *var_def_token = type_token->next->next;
@@ -235,82 +270,97 @@ static bool test_var_expr_isnt_const_expr_if_var_def_expr_isnt_const_expr(void) 
 	AstNode *func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
 	AST_NODE_FUNC_RTYPE(func, type_token);
 
-	ASSERT_TRUTHY(validate_ast_tree(func));
+	ASSERT_TRUTHY(validate_ast_tree(state, func));
 
 	AstNodeExpr *func_expr = AST_NODE_FUNC_EXPR(var_def_expr_token);
 
 	AstNode *var_def = AST_NODE_VAR_DEF(var_def_token, func_expr, true);
-	ASSERT_TRUTHY(validate_ast_tree(var_def));
+	ASSERT_TRUTHY(validate_ast_tree(state, var_def));
 
 	AstNodeExpr *expr = AST_NODE_IDENT_EXPR(expr_token);
 
-	const bool pass = validate_expr(expr);
+	const bool pass = validate_expr(state, expr);
 	ASSERT_FALSEY(expr->is_const_expr);
 
 	free_tokens(token);
+	free_semantic_state(state);
 
 	ASSERT_TRUTHY(pass);
 	PASS;
 }
 
 static bool test_validate_int_overflow(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"99999999999999999999999999999999");
 	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(expr));
+	ASSERT_FALSEY(validate_expr(state, expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"99999999999999999999999999999999\"\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool test_validate_int_underflow(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"-99999999999999999999999999999999");
 	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(expr));
+	ASSERT_FALSEY(validate_expr(state, expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"-99999999999999999999999999999999\"\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool test_validate_float_overflow(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0");
 	AstNodeExpr *expr = AST_NODE_CONST_EXPR(token);
 
-	ASSERT_FALSEY(validate_expr(expr));
+	ASSERT_FALSEY(validate_expr(state, expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: overflow occurred while parsing \"999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999.0\"\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool test_validate_missing_function_decl(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"x()");
 
 	AstNode *node = AST_NODE_EXPR(token, AST_NODE_FUNC_EXPR(token));
 
-	ASSERT_FALSEY(validate_expr(node->expr));
+	ASSERT_FALSEY(validate_expr(state, node->expr));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: function \"x\" missing declaration\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool test_validate_trailing_expr(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"1");
 	AstNode *node = AST_NODE_EXPR(token, AST_NODE_CONST_EXPR(token));
 
-	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(validate_ast_tree(state, node));
 	free(node->expr->value.str);
 
 	ASSERT_FALSEY(compare_errors(
@@ -318,6 +368,7 @@ static bool test_validate_trailing_expr(void) {
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
@@ -474,6 +525,8 @@ static bool test_validate_reassign_non_existent_var(void) {
 }
 
 static bool test_validate_check_expr_type_when_declaring(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"x := 0\ny: Bool = x");
 
 	Token *var_x_expr = token->next->next;
@@ -492,13 +545,14 @@ static bool test_validate_check_expr_type_when_declaring(void) {
 		false
 	);
 
-	ASSERT_TRUTHY(validate_ast_tree(node_x));
-	ASSERT_FALSEY(validate_ast_tree(node_y));
+	ASSERT_TRUTHY(validate_ast_tree(state, node_x));
+	ASSERT_FALSEY(validate_ast_tree(state, node_y));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 2 column 11: expected type \"Bool\", got \"Int\"\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
@@ -517,6 +571,8 @@ static bool test_validate_check_explicit_type_exists(void) {
 }
 
 static bool test_validate_disallow_reassigning_const(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"x := 0\nx = 1");
 
 	AstNode *def = AST_NODE_VAR_DEF(
@@ -533,33 +589,39 @@ static bool test_validate_disallow_reassigning_const(void) {
 		AST_NODE_CONST_EXPR(assign_expr)
 	);
 
-	ASSERT_TRUTHY(validate_ast_tree(def));
-	ASSERT_FALSEY(validate_ast_tree(assign));
+	ASSERT_TRUTHY(validate_ast_tree(state, def));
+	ASSERT_FALSEY(validate_ast_tree(state, assign));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 2 column 1: cannot reassign const variable \"x\"\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool test_validate_redeclare_function(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"external x()");
 
 	AstNode *external_func = AST_NODE_NO_ARGS_FUNC_DECL(token, true, false);
-	ASSERT_TRUTHY(validate_ast_tree(external_func));
+	ASSERT_TRUTHY(validate_ast_tree(state, external_func));
 
 	// just call validate again to simulate a redeclaration
-	ASSERT_FALSEY(validate_ast_tree(external_func));
+	ASSERT_FALSEY(validate_ast_tree(state, external_func));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 10: cannot redeclare function \"x\"\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool test_validate_redeclare_variable(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"x := 0");
 
 	AstNode *variable = AST_NODE_VAR_DEF(
@@ -567,18 +629,21 @@ static bool test_validate_redeclare_variable(void) {
 		AST_NODE_CONST_EXPR(token->next->next),
 		true
 	);
-	ASSERT_TRUTHY(validate_ast_tree(variable));
+	ASSERT_TRUTHY(validate_ast_tree(state, variable));
 
-	ASSERT_FALSEY(validate_ast_tree(variable));
+	ASSERT_FALSEY(validate_ast_tree(state, variable));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 1 column 1: variable \"x\" already defined\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool test_validate_redeclare_variable_as_alias(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"x := 1\nx := Int");
 
 	AstNode *variable = AST_NODE_VAR_DEF(
@@ -586,7 +651,7 @@ static bool test_validate_redeclare_variable_as_alias(void) {
 		AST_NODE_CONST_EXPR(token->next->next),
 		true
 	);
-	ASSERT_TRUTHY(validate_ast_tree(variable));
+	ASSERT_TRUTHY(validate_ast_tree(state, variable));
 
 	Token *alias_token = token->next->next->next->next;
 
@@ -596,12 +661,13 @@ static bool test_validate_redeclare_variable_as_alias(void) {
 		true
 	);
 
-	ASSERT_FALSEY(validate_ast_tree(alias));
+	ASSERT_FALSEY(validate_ast_tree(state, alias));
 	ASSERT_FALSEY(compare_errors(
 		"(null): Compilation error: line 2 column 1: cannot redeclare variable \"x\" as type alias\n"
 	));
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS
 }
 
@@ -927,6 +993,8 @@ static bool test_validate_no_redeclare_alias(void) {
 }
 
 static bool test_validate_trivial_type(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"x: Int = 1");
 	Token *expr_token = token->next->next->next;
 
@@ -935,13 +1003,14 @@ static bool test_validate_trivial_type(void) {
 		AST_NODE_CONST_EXPR(expr_token),
 		false
 	);
-	ASSERT_TRUTHY(validate_ast_tree(node));
+	ASSERT_TRUTHY(validate_ast_tree(state, node));
 
 	ASSERT_FALSEY(compare_errors(
 		"(null): Warning: explicit type \"Int\" can be trivialy deduced\n"
 	));
 
 	free_tokens(node->token);
+	free_semantic_state(state);
 	PASS
 }
 
@@ -1046,14 +1115,10 @@ static bool test_validate_no_void_assign(void) {
 	AstNodeExpr *func_expr = AST_NODE_FUNC_EXPR(func_call_token);
 	node->next = AST_NODE_VAR_DEF(x_token, func_expr, true);
 
-	const bool pass = validate_tree_fixture(
+	return validate_tree_fixture(
 		node,
 		"(null): Compilation error: line 2 column 6: function returning type void cannot be assigned to variable \"x\"\n"
 	);
-
-	ASSERT_TRUTHY(pass);
-
-	PASS;
 }
 
 static bool test_validate_return_non_void_from_void_func(void) {
@@ -1101,14 +1166,10 @@ static bool test_validate_func_parameter_count(void) {
 		AST_NODE_EXPR(func_call_token, AST_NODE_CONST_EXPR(func_call_expr_token))
 	);
 
-	const bool pass = validate_tree_fixture(
+	return validate_tree_fixture(
 		node,
 		"(null): Compilation error: line 2 column 1: invalid number of parameters\n"
 	);
-
-	ASSERT_TRUTHY(pass);
-
-	PASS;
 }
 
 static bool test_validate_func_return_invalid_type(void) {
@@ -1185,6 +1246,7 @@ static bool test_continue_outside_while(void) {
 }
 
 static bool test_validate_is_int(void) {
+	SemanticState *state = setup_semantic_state();
 	Token *token = tokenize_fixture(U"1 is 1");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1196,14 +1258,17 @@ static bool test_validate_is_int(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_is_float(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"1.0 is 1.0");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1215,14 +1280,17 @@ static bool test_validate_is_float(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_is_rune(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"'x' is 'x'");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1234,14 +1302,17 @@ static bool test_validate_is_rune(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_is_bool(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"true is true");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1253,14 +1324,17 @@ static bool test_validate_is_bool(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_is_str(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"\"x\" is \"x\"");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1272,16 +1346,19 @@ static bool test_validate_is_str(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	free(node->expr->lhs.expr->value.str);
 	free(node->expr->rhs->value.str);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_isnt_int(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"1 isnt 1");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1293,14 +1370,17 @@ static bool test_validate_isnt_int(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_isnt_float(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"1.0 isnt 1.0");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1312,14 +1392,17 @@ static bool test_validate_isnt_float(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_isnt_rune(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"'x' isnt 'x'");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1331,14 +1414,17 @@ static bool test_validate_isnt_rune(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_isnt_bool(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"true isnt true");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1350,14 +1436,17 @@ static bool test_validate_isnt_bool(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
+	free_semantic_state(state);
 	PASS;
 }
 
 static bool test_validate_isnt_str(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"\"x\" isnt \"x\"");
 
 	AstNode *node = AST_NODE_EXPR(
@@ -1369,12 +1458,13 @@ static bool test_validate_isnt_str(void) {
 		)
 	);
 
-	ASSERT_TRUTHY(validate_expr(node->expr));
+	ASSERT_TRUTHY(validate_expr(state, node->expr));
 	ASSERT_EQUAL(node->expr->type, &TYPE_BOOL);
 
 	free_tokens(token);
 	free(node->expr->lhs.expr->value.str);
 	free(node->expr->rhs->value.str);
+	free_semantic_state(state);
 	PASS;
 }
 
@@ -1413,6 +1503,8 @@ static bool test_validate_matching_types(void) {
 }
 
 static bool test_validate_type_alias_mut_not_allowed(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"mut x := Int");
 	Token *int_token = token->next->next->next;
 
@@ -1426,14 +1518,17 @@ static bool test_validate_type_alias_mut_not_allowed(void) {
 
 	const char *errors = "(null): Compilation error: line 1 column 5: type alias cannot be mutable\n";
 
-	ASSERT_FALSEY(validate_ast_tree(node));
+	ASSERT_FALSEY(validate_ast_tree(state, node));
 	ASSERT_FALSEY(compare_errors(errors));
 
 	free_tokens(node->token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool test_validate_type_alias_in_expr_not_allowed(void) {
+	SemanticState *state = setup_semantic_state();
+
 	Token *token = tokenize_fixture(U"x := Int\ny := x + 1");
 	Token *int_token = token->next->next;
 	Token *y_token = int_token->next->next;
@@ -1445,7 +1540,7 @@ static bool test_validate_type_alias_in_expr_not_allowed(void) {
 		AST_NODE_IDENT_EXPR(int_token),
 		true
 	);
-	ASSERT_TRUTHY(validate_ast_tree(x_def));
+	ASSERT_TRUTHY(validate_ast_tree(state, x_def));
 
 	AstNode *y_def = AST_NODE_VAR_DEF(
 		y_token,
@@ -1459,10 +1554,11 @@ static bool test_validate_type_alias_in_expr_not_allowed(void) {
 
 	const char *errors = "(null): Compilation error: line 2 column 6: type aliases cannot be used in expressions\n";
 
-	ASSERT_FALSEY(validate_ast_tree(y_def));
+	ASSERT_FALSEY(validate_ast_tree(state, y_def));
 	ASSERT_FALSEY(compare_errors(errors));
 
 	free_tokens(x_def->token);
+	free_semantic_state(state);
 	PASS
 }
 
@@ -1594,24 +1690,28 @@ void semantic_verify_test_self(bool *pass) {
 }
 
 static bool validate_binary_expr_fixture(AstNode *node, const char *errors) {
-	ASSERT_FALSEY(validate_expr(node->expr));
+	SemanticState *state = setup_semantic_state();
+
+	ASSERT_FALSEY(validate_expr(state, node->expr));
 	ASSERT_FALSEY(compare_errors(errors));
 
 	free_tokens(node->token);
+	free_semantic_state(state);
 	PASS
 }
 
 static bool validate_tree_fixture(AstNode *node, const char *errors) {
-	ASSERT_FALSEY(validate_ast_tree(node));
+	SemanticState *state = setup_semantic_state();
+
+	ASSERT_FALSEY(validate_ast_tree(state, node));
 	ASSERT_FALSEY(compare_errors(errors));
 
 	free_tokens(node->token);
+	free_semantic_state(state);
 	PASS
 }
 
 static Token *tokenize_fixture(const char32_t *code) {
-	free_semantic_state();
-	setup_semantic_state();
 	Token *token = tokenize(code);
 	classify_tokens(token);
 	free_errors();

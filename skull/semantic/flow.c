@@ -17,14 +17,14 @@ static bool validate_control_not_missing_if(const AstNode *);
 static bool is_missing_block(const AstNode *, const char *);
 static bool validate_bool_expr(const AstNodeExpr *);
 static bool no_dead_code_below(const AstNode *);
-static bool is_valid_return_expr(const AstNode *);
+static bool is_valid_return_expr(SemanticState *, const AstNode *);
 
-bool validate_stmt_return(const AstNode *node) {
+bool validate_stmt_return(SemanticState *state, const AstNode *node) {
 	if (!assert_sane_child(node->next)) return false;
 
-	if (node->expr && !validate_expr(node->expr)) return false;
+	if (node->expr && !validate_expr(state, node->expr)) return false;
 
-	const Type *return_type = SEMANTIC_STATE.current_func->func->return_type;
+	const Type *return_type = state->current_func->func->return_type;
 
 	if (!node->expr && return_type != &TYPE_VOID) {
 		FMT_ERROR(ERR_RETURN_MISSING_EXPR, {
@@ -34,14 +34,13 @@ bool validate_stmt_return(const AstNode *node) {
 		return false;
 	}
 
-	if (node->expr && !is_valid_return_expr(node)) return false;
+	if (node->expr && !is_valid_return_expr(state, node)) return false;
 
 	return no_dead_code_below(node->next);
 }
 
-static bool is_valid_return_expr(const AstNode *node) {
-	const bool is_main = \
-		SEMANTIC_STATE.current_func == SEMANTIC_STATE.main_func;
+static bool is_valid_return_expr(SemanticState *state, const AstNode *node) {
+	const bool is_main = state->current_func == state->main_func;
 
 	const AstNodeExpr *expr = node->expr;
 
@@ -53,7 +52,7 @@ static bool is_valid_return_expr(const AstNode *node) {
 		return false;
 	}
 
-	const Type *return_type = SEMANTIC_STATE.current_func->func->return_type;
+	const Type *return_type = state->current_func->func->return_type;
 
 	if (return_type != &TYPE_VOID && expr->type != return_type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
@@ -93,51 +92,51 @@ static bool no_dead_code_below(const AstNode *node) {
 	return true;
 }
 
-bool validate_control_else(const AstNode *node) {
+bool validate_control_else(SemanticState *state, const AstNode *node) {
 	return (
 		validate_control_not_missing_if(node) &&
 		!is_missing_block(node, "else") &&
-		setup_and_validate_ast_sub_tree(node->child)
+		setup_and_validate_ast_sub_tree(state, node->child)
 	);
 }
 
-bool validate_control_if(const AstNode *node) {
+bool validate_control_if(SemanticState *state, const AstNode *node) {
 	return (
 		!is_missing_block(node, "if") &&
-		validate_expr(node->expr) &&
+		validate_expr(state, node->expr) &&
 		validate_bool_expr(node->expr) &&
-		setup_and_validate_ast_sub_tree(node->child)
+		setup_and_validate_ast_sub_tree(state, node->child)
 	);
 }
 
-bool validate_control_elif(const AstNode *node) {
+bool validate_control_elif(SemanticState *state, const AstNode *node) {
 	return (
 		!is_missing_block(node, "elif") &&
 		validate_control_not_missing_if(node) &&
-		validate_expr(node->expr) &&
+		validate_expr(state, node->expr) &&
 		validate_bool_expr(node->expr) &&
-		setup_and_validate_ast_sub_tree(node->child)
+		setup_and_validate_ast_sub_tree(state, node->child)
 	);
 }
 
-bool validate_control_while(const AstNode *node) {
-	SEMANTIC_STATE.while_loop_depth++;
+bool validate_control_while(SemanticState *state, const AstNode *node) {
+	state->while_loop_depth++;
 
 	if (is_missing_block(node, "while") ||
-		!validate_expr(node->expr) ||
+		!validate_expr(state, node->expr) ||
 		!validate_bool_expr(node->expr)
 	) {
 		return false;
 	}
 
-	const bool is_valid = setup_and_validate_ast_sub_tree(node->child);
-	SEMANTIC_STATE.while_loop_depth--;
+	const bool is_valid = setup_and_validate_ast_sub_tree(state, node->child);
+	state->while_loop_depth--;
 
 	return is_valid;
 }
 
-bool validate_control_break(const AstNode *node) {
-	if (SEMANTIC_STATE.while_loop_depth > 0) {
+bool validate_control_break(SemanticState *state, const AstNode *node) {
+	if (state->while_loop_depth > 0) {
 		return no_dead_code_below(node->next);
 	}
 
@@ -145,8 +144,8 @@ bool validate_control_break(const AstNode *node) {
 	return false;
 }
 
-bool validate_control_continue(const AstNode *node) {
-	if (SEMANTIC_STATE.while_loop_depth > 0) {
+bool validate_control_continue(SemanticState *state, const AstNode *node) {
+	if (state->while_loop_depth > 0) {
 		return no_dead_code_below(node->next);
 	}
 

@@ -12,5 +12,5 @@ Expr gen_stmt_break(const SkullStateLLVM *);
 Expr gen_stmt_continue(const SkullStateLLVM *);
 void gen_stmt_implicit_main_return(const Location *, const SkullStateLLVM *);
 void gen_stmt_noop(const Location *, const SkullStateLLVM *);
-void gen_control_while(const AstNode *, SkullStateLLVM *);
-void gen_control_if(const AstNode **, SkullStateLLVM *);
+void gen_control_while(SemanticState *, const AstNode *, SkullStateLLVM *);
+void gen_control_if(SemanticState *, const AstNode **, SkullStateLLVM *);

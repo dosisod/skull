@@ -1,6 +1,7 @@
 #pragma once
 
 #include "skull/codegen/llvm/fwd_decl.h"
+#include "skull/semantic/shared.h"
 
 typedef struct FunctionDeclaration FunctionDeclaration;
 typedef struct Symbol Symbol;
@@ -16,5 +17,5 @@ typedef struct {
 	LLVMTargetMachineRef target_machine;
 } SkullStateLLVM;
 
-SkullStateLLVM *setup_llvm_state(void);
+SkullStateLLVM *setup_llvm_state(SemanticState *);
 void free_llvm_state(SkullStateLLVM *);

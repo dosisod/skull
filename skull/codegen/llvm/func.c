@@ -24,6 +24,7 @@
 #include "skull/codegen/llvm/func.h"
 
 static void gen_function_def(
+	SemanticState *,
 	const AstNode *const,
 	Symbol *,
 	SkullStateLLVM *
@@ -38,6 +39,7 @@ static LLVMTypeRef *parse_func_param(
 Parse declaration (and potential definition) of function in `node`.
 */
 void gen_stmt_func_decl(
+	SemanticState *semantic_state,
 	const AstNode *const node,
 	SkullStateLLVM *state
 ) {
@@ -46,7 +48,9 @@ void gen_stmt_func_decl(
 
 	add_func(symbol, state);
 
-	if (!symbol->func->is_external) gen_function_def(node, symbol, state);
+	if (!symbol->func->is_external) {
+		gen_function_def(semantic_state, node, symbol, state);
+	}
 }
 
 /*
@@ -141,6 +145,7 @@ Expr gen_expr_func_call(
 Create a native LLVM function.
 */
 static void gen_function_def(
+	SemanticState *semantic_state,
 	const AstNode *const node,
 	Symbol *symbol,
 	SkullStateLLVM *state
@@ -172,19 +177,19 @@ static void gen_function_def(
 
 	Symbol *old_symbol = state->current_func;
 	state->current_func = symbol;
-	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->child;
+	semantic_state->scope = semantic_state->scope->child;
 
 	LLVMMetadataRef old_di_scope = add_llvm_func_debug_info(symbol, state);
 
-	const Expr returned = gen_tree(node->child, state);
+	const Expr returned = gen_tree(semantic_state, node->child, state);
 
-	restore_parent_scope();
+	restore_parent_scope(semantic_state);
 	state->current_func = old_symbol;
 
 	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 
-	if (SEMANTIC_STATE.scope)
-		SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->next;
+	if (semantic_state->scope)
+		semantic_state->scope = semantic_state->scope->next;
 
 	if (func->return_type == &TYPE_VOID && returned.type != &TYPE_VOID)
 		LLVMBuildRetVoid(state->builder);

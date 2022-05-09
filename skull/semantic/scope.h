@@ -1,6 +1,7 @@
 #pragma once
 
 #include "skull/common/hashtable.h"
+#include "skull/semantic/shared.h"
 #include "skull/semantic/variable.h"
 
 typedef struct Scope Scope;
@@ -26,15 +27,14 @@ typedef struct Scope {
 Scope *make_scope(void);
 
 Symbol *scope_find_name(const Scope *const, const char *);
-_Bool scope_add_var(Symbol *);
+_Bool scope_add_var(SemanticState *, Symbol *);
 
 void free_scope(Scope *);
 
-void make_child_scope(void);
-void restore_parent_scope(void);
-void make_adjacent_scope(void);
-Scope *find_scope_head(void);
-void reset_scope_head(void);
-_Bool is_top_lvl_scope(void);
+void make_child_scope(SemanticState *);
+void restore_parent_scope(SemanticState *);
+void make_adjacent_scope(SemanticState *);
+void reset_scope_head(SemanticState *);
+_Bool is_top_lvl_scope(SemanticState *);
 
-Symbol *scope_find_var(const Token *const);
+Symbol *scope_find_var(SemanticState *, const Token *const);

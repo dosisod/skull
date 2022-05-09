@@ -20,7 +20,7 @@ static bool test_assign(void) {
 	SET_EXPR_VALUE_INT(node->var_assign->expr, 1);
 	node->var_assign->symbol->var = make_variable(&TYPE_INT, U"x", false);
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *str = gen_stmt_var_assign_c(node, state);
 
 	ASSERT_TRUTHY(str);
@@ -41,7 +41,7 @@ static bool test_mutable_var_def(void) {
 	node->var_def->symbol->var = make_variable(&TYPE_INT, U"x", false);
 	node->var_def->symbol->var->expr = node->var_def->expr;
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *str = gen_stmt_var_def_c(node, state);
 
 	ASSERT_TRUTHY(str);
@@ -62,7 +62,7 @@ static bool test_const_var_def(void) {
 	node->var_def->symbol->var = make_variable(&TYPE_INT, U"x", true);
 	node->var_def->symbol->var->expr = node->var_def->expr;
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *str = gen_stmt_var_def_c(node, state);
 
 	ASSERT_TRUTHY(str);
@@ -115,7 +115,7 @@ static bool top_lvl_var_def_fixture(
 	node->var_def->expr->is_const_expr = is_const_expr;
 	node->var_def->symbol->var->expr = node->var_def->expr;
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 
 	state->indent_lvl = 1;
 	char *str = gen_stmt_var_def_c(node, state);

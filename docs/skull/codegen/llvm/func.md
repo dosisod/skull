@@ -1,7 +1,7 @@
 # skull/codegen/llvm/func
 
 ```c
-void gen_stmt_func_decl(const AstNode *const node, SkullStateLLVM *state)
+void gen_stmt_func_decl(SemanticState *semantic_state, const AstNode *const node, SkullStateLLVM *state)
 ```
 
 > Parse declaration (and potential definition) of function in `node`.
@@ -25,7 +25,7 @@ Expr gen_expr_func_call(const AstNodeFunctionCall *const func_call, const SkullS
 > Builds a function call from `func_call`.
 
 ```c
-static void gen_function_def(const AstNode *const node, Symbol *symbol, SkullStateLLVM *state)
+static void gen_function_def(SemanticState *semantic_state, const AstNode *const node, Symbol *symbol, SkullStateLLVM *state)
 ```
 
 > Create a native LLVM function.

@@ -14,8 +14,8 @@
 #include "skull/semantic/expr.h"
 
 
-static bool validate_stmt_func_call(AstNodeExpr *);
-static bool validate_ident_expr(AstNodeExpr *);
+static bool validate_stmt_func_call(SemanticState *, AstNodeExpr *);
+static bool validate_ident_expr(SemanticState *, AstNodeExpr *);
 static bool is_div_by_zero(const AstNodeExpr *);
 static bool validate_const_expr(AstNodeExpr *);
 static bool validate_pow_expr(const AstNodeExpr *);
@@ -23,38 +23,38 @@ static bool validate_bool_expr(const AstNodeExpr *);
 static bool validate_ref_expr(const AstNodeExpr *);
 static bool is_numeric(const AstNodeExpr *);
 static bool validate_shift_expr(const AstNodeExpr *);
-static Symbol *find_func_by_token(const Token *);
-static bool validate_func_call_params(AstNodeFunctionCall *);
-static void set_expr_type(AstNodeExpr *);
+static Symbol *find_func_by_token(SemanticState *, const Token *);
+static bool validate_func_call_params(SemanticState *, AstNodeFunctionCall *);
+static void set_expr_type(SemanticState *, AstNodeExpr *);
 static void set_const_expr(AstNodeExpr *);
-static bool validate_binary_expr(AstNodeExpr *);
+static bool validate_binary_expr(SemanticState *, AstNodeExpr *);
 static bool validate_expr_restrictions(AstNodeExpr *);
 static bool is_binary_expr(ExprType);
 static bool validate_deref_expr(const AstNodeExpr *);
 
 
-bool validate_expr(AstNodeExpr *expr) {
+bool validate_expr(SemanticState *state, AstNodeExpr *expr) {
 	const ExprType oper = expr->oper;
 
 	switch (oper) {
-		case EXPR_FUNC: return validate_stmt_func_call(expr);
-		case EXPR_IDENTIFIER: return validate_ident_expr(expr);
+		case EXPR_FUNC: return validate_stmt_func_call(state, expr);
+		case EXPR_IDENTIFIER: return validate_ident_expr(state, expr);
 		case EXPR_CONST: return validate_const_expr(expr);
 		default: break;
 	}
 
-	if (!validate_expr(expr->rhs)) return false;
-	if (!validate_binary_expr(expr)) return false;
+	if (!validate_expr(state, expr->rhs)) return false;
+	if (!validate_binary_expr(state, expr)) return false;
 	if (!validate_expr_restrictions(expr)) return false;
 
-	set_expr_type(expr);
+	set_expr_type(state, expr);
 	set_const_expr(expr);
 
 	return true;
 }
 
-static bool validate_ident_expr(AstNodeExpr *expr) {
-	Symbol *symbol = scope_find_var(expr->lhs.tok);
+static bool validate_ident_expr(SemanticState *state, AstNodeExpr *expr) {
+	Symbol *symbol = scope_find_var(state, expr->lhs.tok);
 	if (!symbol || !symbol->var) return false;
 
 	Variable *var = symbol->var;
@@ -68,10 +68,10 @@ static bool validate_ident_expr(AstNodeExpr *expr) {
 	return true;
 }
 
-static bool validate_binary_expr(AstNodeExpr *expr) {
+static bool validate_binary_expr(SemanticState *state, AstNodeExpr *expr) {
 	if (!is_binary_expr(expr->oper)) return true;
 
-	if (!validate_expr(expr->lhs.expr)) return false;
+	if (!validate_expr(state, expr->lhs.expr)) return false;
 
 	if (expr->lhs.expr->type != expr->rhs->type) {
 		FMT_ERROR(ERR_EXPECTED_SAME_TYPE,
@@ -121,7 +121,7 @@ static bool validate_expr_restrictions(AstNodeExpr *expr) {
 	return true;
 }
 
-static void set_expr_type(AstNodeExpr *expr) {
+static void set_expr_type(SemanticState *state, AstNodeExpr *expr) {
 	switch (expr->oper) {
 		case EXPR_NOT:
 		case EXPR_IS:
@@ -133,7 +133,10 @@ static void set_expr_type(AstNodeExpr *expr) {
 		case EXPR_AND:
 		case EXPR_OR:
 		case EXPR_XOR: expr->type = &TYPE_BOOL; break;
-		case EXPR_REF: expr->type = get_reference_type(expr->rhs->type); break;
+		case EXPR_REF: {
+			expr->type = get_reference_type(state, expr->rhs->type);
+			break;
+		}
 		case EXPR_DEREF: expr->type = expr->rhs->type->inner; break;
 		default: expr->type = expr->rhs->type; break;
 	}
@@ -284,19 +287,19 @@ static bool validate_deref_expr(const AstNodeExpr *expr) {
 	return true;
 }
 
-bool validate_expr_func(const AstNode *node) {
+bool validate_expr_func(SemanticState *state, const AstNode *node) {
 	if (node->expr->oper == EXPR_FUNC)
-		return validate_stmt_func_call(node->expr);
+		return validate_stmt_func_call(state, node->expr);
 
 	FMT_ERROR(ERR_NO_DANGLING_EXPR, { .loc = &node->token->location });
 	return false;
 }
 
-static bool validate_stmt_func_call(AstNodeExpr *expr) {
+static bool validate_stmt_func_call(SemanticState *state, AstNodeExpr *expr) {
 	AstNodeFunctionCall *func_call = expr->lhs.func_call;
 	const Token *func_name_token = func_call->func_name_tok;
 
-	Symbol *symbol = find_func_by_token(func_name_token);
+	Symbol *symbol = find_func_by_token(state, func_name_token);
 	if (!symbol || !symbol->func) return false;
 
 	FunctionDeclaration *function = symbol->func;
@@ -323,15 +326,15 @@ static bool validate_stmt_func_call(AstNodeExpr *expr) {
 		return false;
 	}
 
-	if (num_params) return validate_func_call_params(func_call);
+	if (num_params) return validate_func_call_params(state, func_call);
 
 	return true;
 }
 
-static Symbol *find_func_by_token(const Token *token) {
+static Symbol *find_func_by_token(SemanticState *state, const Token *token) {
 	char *func_name = token_to_mbs_str(token);
 
-	Symbol *symbol = find_func_by_name(func_name);
+	Symbol *symbol = find_func_by_name(state, func_name);
 	free(func_name);
 
 	if (symbol) return symbol;
@@ -340,12 +343,15 @@ static Symbol *find_func_by_token(const Token *token) {
 	return NULL;
 }
 
-static bool validate_func_call_params(AstNodeFunctionCall *func_call) {
+static bool validate_func_call_params(
+	SemanticState *state,
+	AstNodeFunctionCall *func_call
+) {
 	const FunctionDeclaration *function = func_call->symbol->func;
 	const AstNode *param = func_call->params;
 
 	for (unsigned i = 0; i < function->num_params; i++) {
-		if (!validate_expr(param->expr)) return false;
+		if (!validate_expr(state, param->expr)) return false;
 
 		if (param->expr->type != function->param_types[i]) {
 			FMT_ERROR(ERR_FUNC_TYPE_MISMATCH,

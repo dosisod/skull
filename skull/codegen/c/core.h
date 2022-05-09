@@ -6,5 +6,5 @@
 typedef struct AstNode AstNode;
 typedef char * CTree;
 
-void gen_module_c(const AstNode *, SkullStateC *);
+void gen_module_c(SemanticState *, const AstNode *, SkullStateC *);
 CTree gen_tree_c(const AstNode *, SkullStateC *);

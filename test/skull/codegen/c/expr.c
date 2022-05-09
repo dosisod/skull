@@ -172,7 +172,7 @@ static bool test_int_pow_expr(void) {
 	SET_EXPR_VALUE_INT(expr->rhs, 2);
 	expr->type = &TYPE_INT;
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *expr_str = gen_expr_c(expr, state);
 
 	ASSERT_TRUTHY(strcmp(expr_str, "_int_pow(1, 2)") == 0);
@@ -193,7 +193,7 @@ static bool test_float_pow_expr(void) {
 	SET_EXPR_VALUE_FLOAT(expr->rhs, 2.0);
 	expr->type = &TYPE_FLOAT;
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *expr_str = gen_expr_c(expr, state);
 
 	const char *expected = "_float_pow(0x1p+0, 0x1p+1)";
@@ -215,7 +215,7 @@ static bool test_str_is(void) {
 	SET_EXPR_VALUE_STR(expr->rhs, "x");
 	expr->type = &TYPE_BOOL;
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *expr_str = gen_expr_c(expr, state);
 
 	const char *expected = "_strcmp(\"x\", \"x\")";
@@ -237,7 +237,7 @@ static bool test_str_isnt(void) {
 	SET_EXPR_VALUE_STR(expr->rhs, "x");
 	expr->type = &TYPE_BOOL;
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *expr_str = gen_expr_c(expr, state);
 
 	const char *expected = "!_strcmp(\"x\", \"x\")";

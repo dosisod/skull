@@ -12,7 +12,11 @@
 #include "test/testing.h"
 
 static bool test_find_type(void) {
-	ASSERT_EQUAL(find_type("Int"), &TYPE_INT);
+	SemanticState *state = setup_semantic_state();
+
+	ASSERT_EQUAL(find_type(state, "Int"), &TYPE_INT);
+
+	free_semantic_state(state);
 
 	PASS
 }
@@ -195,12 +199,14 @@ static bool test_eval_str(void) {
 }
 
 static bool test_add_dynamic_reference_type(void) {
-	Type *type = get_reference_type(&TYPE_INT);
+	SemanticState *state = setup_semantic_state();
+
+	Type *type = get_reference_type(state, &TYPE_INT);
 
 	ASSERT_TRUTHY(type);
 	ASSERT_EQUAL(strcmp(type->name, "&Int"), 0);
 
-	free_semantic_state();
+	free_semantic_state(state);
 
 	PASS;
 }

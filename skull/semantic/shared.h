@@ -18,7 +18,5 @@ typedef struct {
 	HashTable *dynamic_refs;
 } SemanticState;
 
-extern SemanticState SEMANTIC_STATE;
-
-void setup_semantic_state(void);
-void free_semantic_state(void);
+SemanticState *setup_semantic_state(void);
+void free_semantic_state(SemanticState *);

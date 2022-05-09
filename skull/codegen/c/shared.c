@@ -7,7 +7,9 @@
 
 #define MAX_TABS 64
 
-SkullStateC *setup_c_state(void) {
+SkullStateC *setup_c_state(SemanticState *state) {
+	(void)state;
+
 	return Calloc(1, sizeof(SkullStateC));
 }
 

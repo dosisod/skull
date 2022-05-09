@@ -34,9 +34,8 @@ typedef struct FunctionDeclaration {
 	AstNodeFunctionParam **params;
 } FunctionDeclaration;
 
-_Bool validate_stmt_func_decl(const AstNode *);
-_Bool post_validate_stmt_func_decl(const AstNode *);
+_Bool validate_stmt_func_decl(SemanticState *, const AstNode *);
 
 void free_function_declaration(Symbol *);
 
-Symbol *find_func_by_name(const char *);
+Symbol *find_func_by_name(SemanticState *, const char *);

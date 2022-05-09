@@ -16,7 +16,7 @@
 
 #include "skull/codegen/llvm/shared.h"
 
-SkullStateLLVM *setup_llvm_state(void) {
+SkullStateLLVM *setup_llvm_state(SemanticState *semantic_state) {
 	SkullStateLLVM *state = Calloc(1, sizeof(SkullStateLLVM));
 
 	const char *filename = BUILD_DATA.filename;
@@ -34,7 +34,7 @@ SkullStateLLVM *setup_llvm_state(void) {
 
 	LLVMValueRef main_func = LLVMAddFunction(
 		main_module,
-		SEMANTIC_STATE.main_func->linkage_name,
+		semantic_state->main_func->linkage_name,
 		main_func_type
 	);
 
@@ -54,7 +54,7 @@ SkullStateLLVM *setup_llvm_state(void) {
 		.module = main_module
 	};
 
-	state->main_func = SEMANTIC_STATE.main_func;
+	state->main_func = semantic_state->main_func;
 	state->main_func->func->ref = main_func;
 	state->main_func->func->type = main_func_type;
 

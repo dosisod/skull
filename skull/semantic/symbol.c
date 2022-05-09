@@ -10,10 +10,10 @@
 
 #include "skull/semantic/symbol.h"
 
-static SymbolType find_symbol_type(char *);
+static SymbolType find_symbol_type(SemanticState *, char *);
 
-static bool symbol_already_exists(Symbol *new_symbol) {
-	SymbolType type = find_symbol_type(new_symbol->name);
+static bool symbol_already_exists(SemanticState *state, Symbol *new_symbol) {
+	SymbolType type = find_symbol_type(state, new_symbol->name);
 	if (type == SYMBOL_UNKNOWN) return false;
 
 	const Location *location = &new_symbol->location;
@@ -75,28 +75,27 @@ static bool symbol_already_exists(Symbol *new_symbol) {
 	return true;
 }
 
-static SymbolType find_symbol_type(char *name) {
-	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
+static SymbolType find_symbol_type(SemanticState *state, char *name) {
+	Symbol *symbol = scope_find_name(state->scope, name);
 	if (symbol && symbol->type == SYMBOL_VAR) return SYMBOL_VAR;
 
-	symbol = find_func_by_name(name);
+	symbol = find_func_by_name(state, name);
 	if (symbol) return SYMBOL_FUNC;
 
-	const Type *type = find_type(name);
+	const Type *type = find_type(state, name);
 	if (type) return SYMBOL_ALIAS;
 
 	return SYMBOL_UNKNOWN;
 }
 
-bool scope_add_symbol(Symbol *symbol) {
-	if (symbol_already_exists(symbol)) {
+bool scope_add_symbol(SemanticState *state, Symbol *symbol) {
+	if (!state || symbol_already_exists(state, symbol)) {
 		return false;
 	}
 
-	if (!SEMANTIC_STATE.scope) SEMANTIC_STATE.scope = make_scope();
-	if (!SEMANTIC_STATE.scope->symbols)
-		SEMANTIC_STATE.scope->symbols = make_ht();
+	if (!state->scope) state->scope = make_scope();
+	if (!state->scope->symbols)
+		state->scope->symbols = make_ht();
 
-	return ht_add(SEMANTIC_STATE.scope->symbols, symbol->name, symbol);
+	return ht_add(state->scope->symbols, symbol->name, symbol);
 }
-

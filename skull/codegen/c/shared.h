@@ -1,5 +1,7 @@
 #pragma once
 
+#include "skull/semantic/shared.h"
+
 typedef struct {
 	char *tree;
 	char *globals;
@@ -9,6 +11,6 @@ typedef struct {
 	unsigned indent_lvl;
 } SkullStateC;
 
-SkullStateC *setup_c_state(void);
+SkullStateC *setup_c_state(SemanticState *);
 char *get_indentation(const SkullStateC *);
 void free_c_state(SkullStateC *);

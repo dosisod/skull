@@ -1,5 +1,6 @@
 #pragma once
 
+#include "skull/semantic/shared.h"
 #include "skull/semantic/types.h"
 
 typedef struct Location Location;
@@ -25,4 +26,4 @@ typedef struct Symbol {
 	};
 } Symbol;
 
-_Bool scope_add_symbol(Symbol *);
+_Bool scope_add_symbol(SemanticState *, Symbol *);

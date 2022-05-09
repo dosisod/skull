@@ -32,47 +32,53 @@ static bool test_make_scope(void) {
 }
 
 static bool test_scope_find_name(void) {
-	SEMANTIC_STATE.scope = make_scope();
+	SemanticState *state = setup_semantic_state();
+
+	state->scope = make_scope();
 	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
-	scope_add_var(symbol_wrapper(var));
+	scope_add_var(state, symbol_wrapper(var));
 
-	ASSERT_EQUAL(scope_find_name(SEMANTIC_STATE.scope, "x")->var, var);
-	ASSERT_FALSEY(scope_find_name(SEMANTIC_STATE.scope, "y"));
+	ASSERT_EQUAL(scope_find_name(state->scope, "x")->var, var);
+	ASSERT_FALSEY(scope_find_name(state->scope, "y"));
 
-	free_semantic_state();
+	free_semantic_state(state);
 
 	PASS
 }
 
 static bool test_add_vars_to_scope(void) {
-	SEMANTIC_STATE.scope = make_scope();
+	SemanticState *state = setup_semantic_state();
+
+	state->scope = make_scope();
 	Variable *var = make_variable(&TYPE_INT, U"x", true);
 
-	scope_add_var(symbol_wrapper(var));
+	scope_add_var(state, symbol_wrapper(var));
 
-	ASSERT_EQUAL(((Symbol *)ht_get(SEMANTIC_STATE.scope->symbols, "x"))->var, var);
+	ASSERT_EQUAL(((Symbol *)ht_get(state->scope->symbols, "x"))->var, var);
 
-	free_semantic_state();
+	free_semantic_state(state);
 
 	PASS
 }
 
 static bool test_cannot_add_same_varname_to_scope(void) {
-	SEMANTIC_STATE.scope = make_scope();
+	SemanticState *state = setup_semantic_state();
+
+	state->scope = make_scope();
 	Variable *var1 = make_variable(&TYPE_INT, U"x", true);
 	Variable *var2 = make_variable(&TYPE_INT, U"x", true);
 
-	ASSERT_TRUTHY(scope_add_var(symbol_wrapper(var1)));
+	ASSERT_TRUTHY(scope_add_var(state, symbol_wrapper(var1)));
 
 	Symbol *temp = symbol_wrapper(var2);
-	ASSERT_FALSEY(scope_add_var(temp));
+	ASSERT_FALSEY(scope_add_var(state, temp));
 	free(temp);
 
-	ASSERT_EQUAL(((Symbol *)ht_get(SEMANTIC_STATE.scope->symbols, "x"))->var, var1);
+	ASSERT_EQUAL(((Symbol *)ht_get(state->scope->symbols, "x"))->var, var1);
 
 	free_variable(var2);
-	free_semantic_state();
+	free_semantic_state(state);
 
 	PASS
 }

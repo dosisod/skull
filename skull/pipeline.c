@@ -45,26 +45,26 @@ int run_pipeline(const char *filename, char *file_contents) {
 		return true;
 	}
 
-	setup_semantic_state();
+	SemanticState *state = setup_semantic_state();
 
-	bool err = !validate_ast_tree(node);
+	bool err = !validate_ast_tree(state, node);
 
 	// For now, the LLVM backend will always be selected as the default.
 	BUILD_DATA.llvm_backend = true;
 
 	if (err) {}
 	else if (BUILD_DATA.c_backend) {
-		err = run_backend(&c_backend, node, filename);
+		err = run_backend(state, &c_backend, node, filename);
 	}
 	else if (BUILD_DATA.llvm_backend) {
-		err = run_backend(&llvm_backend, node, filename);
+		err = run_backend(state, &llvm_backend, node, filename);
 	}
 
 	free_ast_tree(node);
 	free_tokens(token);
 	free(_file_contents);
 	free(file_contents);
-	free_semantic_state();
+	free_semantic_state(state);
 
 	return err;
 }

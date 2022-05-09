@@ -10,7 +10,7 @@
 static bool test_parse_single_node(void) {
 	AstNode *node = AST_NODE_NOOP();
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *tree = gen_tree_c(node, state);
 
 	ASSERT_TRUTHY(strcmp(tree, "\t(void)0;") == 0);
@@ -24,7 +24,7 @@ static bool test_parse_multiple_nodes(void) {
 	AstNode *node = AST_NODE_NOOP();
 	node->next = AST_NODE_NOOP();
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *tree = gen_tree_c(node, state);
 
 	ASSERT_TRUTHY(strcmp(tree, "\t(void)0;\n\t(void)0;") == 0);

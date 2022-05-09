@@ -10,18 +10,22 @@
 
 
 static void free_ht_symbol(HashItem *);
+static Scope *find_scope_head(SemanticState *);
 
 /*
 Add `symbol` (as variable) to current scope.
 
 Returns `true` if `var` was added, else `false`
 */
-bool scope_add_var(Symbol *symbol) {
-	if (SEMANTIC_STATE.scope &&
-		scope_find_name(SEMANTIC_STATE.scope, symbol->name)
-	) return false;
+bool scope_add_var(SemanticState *state, Symbol *symbol) {
+	if (
+		!state ||
+		(state->scope && scope_find_name(state->scope, symbol->name))
+	) {
+		return false;
+	}
 
-	return scope_add_symbol(symbol);
+	return scope_add_symbol(state, symbol);
 }
 
 /*
@@ -57,9 +61,9 @@ Allow for finding of uninitialized variables by setting `allow_uninitialized`.
 
 Return `NULL` if variable was not found.
 */
-Symbol *scope_find_var(const Token *const token) {
+Symbol *scope_find_var(SemanticState *state, const Token *const token) {
 	char *const var_name = token_to_mbs_str(token);
-	Symbol *const symbol = scope_find_name(SEMANTIC_STATE.scope, var_name);
+	Symbol *const symbol = scope_find_name(state->scope, var_name);
 
 	if (!symbol ||
 		!symbol->var ||
@@ -79,15 +83,17 @@ Symbol *scope_find_var(const Token *const token) {
 /*
 Add a child scope to the current and replace current scope with new one.
 */
-void make_child_scope(void) {
-	Scope *scope = SEMANTIC_STATE.scope;
+void make_child_scope(SemanticState *state) {
+	if (!state) return;
+
+	Scope *scope = state->scope;
 	if (!scope) scope = make_scope();
 
 	Scope *child = scope->child ? scope->child : make_scope();
 
 	scope->child = child;
 	child->parent = scope;
-	SEMANTIC_STATE.scope = child;
+	state->scope = child;
 }
 
 /*
@@ -96,22 +102,24 @@ Make a scope adjacent to the current scope.
 An adjacent scope is one that is on the same level as the current scope and
 after a child scope.
 */
-void make_adjacent_scope(void) {
-	Scope *next = make_scope();
-	next->last = SEMANTIC_STATE.scope;
-	SEMANTIC_STATE.scope->next = next;
+void make_adjacent_scope(SemanticState *state) {
+	if (!state) return;
 
-	SEMANTIC_STATE.scope = next;
+	Scope *next = make_scope();
+	next->last = state->scope;
+	state->scope->next = next;
+
+	state->scope = next;
 }
 
 /*
 Find the head of the current scope (without going to the parent node).
 */
-Scope *find_scope_head(void) {
-	if (!SEMANTIC_STATE.scope) return NULL;
+static Scope *find_scope_head(SemanticState *state) {
+	if (!state || !state->scope) return NULL;
 
-	Scope *last = SEMANTIC_STATE.scope->last;
-	if (!last) return SEMANTIC_STATE.scope;
+	Scope *last = state->scope->last;
+	if (!last) return state->scope;
 
 	while (last && last->last) {
 		last = last->last;
@@ -120,8 +128,8 @@ Scope *find_scope_head(void) {
 	return last;
 }
 
-bool is_top_lvl_scope(void) {
-	Scope *head = find_scope_head();
+bool is_top_lvl_scope(SemanticState *state) {
+	Scope *head = find_scope_head(state);
 
 	return !head || !head->parent;
 }
@@ -129,20 +137,20 @@ bool is_top_lvl_scope(void) {
 /*
 Move the current scope to the scope head.
 */
-void reset_scope_head(void) {
-	if (!SEMANTIC_STATE.scope) return;
+void reset_scope_head(SemanticState *state) {
+	if (!state || !state->scope) return;
 
-	SEMANTIC_STATE.scope = find_scope_head();
+	state->scope = find_scope_head(state);
 }
 
 /*
 Free current scope, set current scope to parent scope.
 */
-void restore_parent_scope(void) {
-	if (!SEMANTIC_STATE.scope) return;
+void restore_parent_scope(SemanticState *state) {
+	if (!state || !state->scope) return;
 
-	reset_scope_head();
-	SEMANTIC_STATE.scope = SEMANTIC_STATE.scope->parent;
+	reset_scope_head(state);
+	state->scope = state->scope->parent;
 }
 
 static void free_ht_symbol(HashItem *item) {

@@ -173,8 +173,11 @@ char32_t *eval_str(const Token *const token) {
 /*
 Returns pointer to type with name `name`.
 */
-const Type __attribute__((pure)) *find_type(const char *const name) {
-	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
+const Type __attribute__((pure)) *find_type(
+	SemanticState *state,
+	const char *const name
+) {
+	Symbol *symbol = scope_find_name(state->scope, name);
 
 	if (symbol && symbol->type == SYMBOL_ALIAS) return symbol->expr_type;
 
@@ -193,13 +196,12 @@ const Type __attribute__((pure)) *find_builtin_type(const char *const name) {
 	return NULL;
 }
 
-Type *get_reference_type(const Type *type) {
+Type *get_reference_type(SemanticState *state, const Type *type) {
 	if (!type) return NULL;
 
-	if (!SEMANTIC_STATE.dynamic_refs)
-		SEMANTIC_STATE.dynamic_refs = make_ht();
+	if (!state->dynamic_refs) state->dynamic_refs = make_ht();
 
-	Type *found = ht_get(SEMANTIC_STATE.dynamic_refs, type->name);
+	Type *found = ht_get(state->dynamic_refs, type->name);
 	if (found) return found;
 
 	const size_t len = strlen(type->name);
@@ -210,7 +212,7 @@ Type *get_reference_type(const Type *type) {
 	Type *new_type = Calloc(1, sizeof(Type));
 	*new_type = (Type){ .name = name, .inner = type };
 
-	ht_add(SEMANTIC_STATE.dynamic_refs, type->name, new_type);
+	ht_add(state->dynamic_refs, type->name, new_type);
 
 	return new_type;
 }
@@ -259,7 +261,7 @@ static void strip_underscore_num(char *str, char c) {
 	*str = '\0';
 }
 
-bool validate_stmt_type_alias(const AstNode *node) {
+bool validate_stmt_type_alias(SemanticState *state, const AstNode *node) {
 	const Token *token = node->token;
 
 	if (!node->var_def->is_const) {
@@ -274,7 +276,7 @@ bool validate_stmt_type_alias(const AstNode *node) {
 		return false;
 	}
 
-	const Type *type = token_to_type(token->next->next);
+	const Type *type = token_to_type(state, token->next->next);
 	char *alias = token_to_mbs_str(token);
 
 	Symbol *symbol;
@@ -286,7 +288,7 @@ bool validate_stmt_type_alias(const AstNode *node) {
 		.type = SYMBOL_ALIAS,
 	};
 
-	if (scope_add_symbol(symbol)) {
+	if (scope_add_symbol(state, symbol)) {
 		return true;
 	}
 
@@ -298,17 +300,17 @@ bool is_reference(const Type *type) {
 	return !!type->inner;
 }
 
-const Type *token_to_type(const Token *token) {
+const Type *token_to_type(SemanticState *state, const Token *token) {
 	if (token->type == TOKEN_IDENTIFIER) {
 		char *type_name = token_to_mbs_str(token);
-		const Type *type = find_type(type_name);
+		const Type *type = find_type(state, type_name);
 
 		free(type_name);
 		return type;
 	}
 
 	if (token->type == TOKEN_OPER_REF) {
-		return get_reference_type(token_to_type(token->next));
+		return get_reference_type(state, token_to_type(state, token->next));
 	}
 
 	return NULL;

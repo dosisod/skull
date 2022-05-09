@@ -15,36 +15,45 @@
 
 #include "skull/semantic/func.h"
 
-static const Type *validate_return_type(const Token *);
-static bool validate_func_params(const AstNode *, FunctionDeclaration *);
-static bool validate_stmt_func_decl_(const AstNode *);
+static const Type *validate_return_type(SemanticState *, const Token *);
+static bool validate_func_params(
+	SemanticState *,
+	const AstNode *,
+	FunctionDeclaration *
+);
+static bool validate_stmt_func_decl_(SemanticState *, const AstNode *);
+static bool post_validate_stmt_func_decl(SemanticState *, const AstNode *);
 
-bool validate_stmt_func_decl(const AstNode *node) {
-	const unsigned while_loop_depth = SEMANTIC_STATE.while_loop_depth;
-	SEMANTIC_STATE.while_loop_depth = 0;
+bool validate_stmt_func_decl(SemanticState *state, const AstNode *node) {
+	const unsigned while_loop_depth = state->while_loop_depth;
+	state->while_loop_depth = 0;
 
 	const bool is_valid = (
-		validate_stmt_func_decl_(node) &&
-		setup_and_validate_ast_sub_tree(node->child) &&
-		post_validate_stmt_func_decl(node)
+		validate_stmt_func_decl_(state, node) &&
+		setup_and_validate_ast_sub_tree(state, node->child) &&
+		post_validate_stmt_func_decl(state, node)
 	);
 
-	SEMANTIC_STATE.while_loop_depth = while_loop_depth;
+	state->while_loop_depth = while_loop_depth;
 
 	return is_valid;
 }
 
-static bool validate_stmt_func_decl_(const AstNode *node) {
+static bool validate_stmt_func_decl_(
+	SemanticState *state,
+	const AstNode *node
+) {
 	const bool is_external = node->func_proto->is_external;
 	const bool is_export = node->func_proto->is_export;
 	const Token *const func_name_token = node->func_proto->name_tok;
 
-	if ((is_export || is_external) && !is_top_lvl_scope()) {
+	if ((is_export || is_external) && !is_top_lvl_scope(state)) {
 		FMT_ERROR(ERR_NO_NESTED, { .tok = func_name_token });
 		return false;
 	}
 
 	const Type *return_type = validate_return_type(
+		state,
 		node->func_proto->return_type_token
 	);
 	if (!return_type) return false;
@@ -70,10 +79,10 @@ static bool validate_stmt_func_decl_(const AstNode *node) {
 		mangle_name(symbol->name) :
 		symbol->name;
 
-	SEMANTIC_STATE.last_func = SEMANTIC_STATE.current_func;
-	SEMANTIC_STATE.current_func = symbol;
+	state->last_func = state->current_func;
+	state->current_func = symbol;
 
-	if (!scope_add_symbol(symbol)) {
+	if (!scope_add_symbol(state, symbol)) {
 		free(func);
 		free(symbol);
 		return false;
@@ -81,11 +90,14 @@ static bool validate_stmt_func_decl_(const AstNode *node) {
 
 	node->func_proto->symbol = symbol;
 
-	return validate_func_params(node, func);
+	return validate_func_params(state, node, func);
 }
 
-bool post_validate_stmt_func_decl(const AstNode *node) {
-	const Symbol *symbol = SEMANTIC_STATE.current_func;
+static bool post_validate_stmt_func_decl(
+	SemanticState *state,
+	const AstNode *node
+) {
+	const Symbol *symbol = state->current_func;
 	const FunctionDeclaration *func = symbol->func;
 
 	if (func->is_external) return true;
@@ -115,12 +127,13 @@ bool post_validate_stmt_func_decl(const AstNode *node) {
 		return false;
 	}
 
-	SEMANTIC_STATE.current_func = SEMANTIC_STATE.last_func;
+	state->current_func = state->last_func;
 
 	return true;
 }
 
 static bool validate_func_params(
+	SemanticState *state,
 	const AstNode *node,
 	FunctionDeclaration *function
 ) {
@@ -128,17 +141,17 @@ static bool validate_func_params(
 
 	function->param_types = Calloc(function->num_params, sizeof(Type));
 
-	make_child_scope();
+	make_child_scope(state);
 
 	AstNodeFunctionParam **params = node->func_proto->params;
 
 	for (unsigned i = 0; i < function->num_params; i++) {
-		function->param_types[i] = token_to_type(params[i]->type_name);
+		function->param_types[i] = token_to_type(state, params[i]->type_name);
 
 		if (!function->param_types[i]) {
 			FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = params[i]->type_name });
 
-			restore_parent_scope();
+			restore_parent_scope(state);
 			return false;
 		}
 
@@ -163,7 +176,7 @@ static bool validate_func_params(
 			.var = param_var
 		};
 
-		if (!scope_add_var(symbol)) {
+		if (!scope_add_var(state, symbol)) {
 			FMT_ERROR(ERR_SHADOW_VAR, {
 				.var = param_var,
 				.loc = &symbol->location
@@ -173,19 +186,22 @@ static bool validate_func_params(
 			free_variable(param_var);
 			free(symbol);
 
-			restore_parent_scope();
+			restore_parent_scope(state);
 			return false;
 		}
 
 		function->params[i]->symbol = symbol;
 	}
-	restore_parent_scope();
+	restore_parent_scope(state);
 
 	return true;
 }
 
-static const Type *validate_return_type(const Token *token) {
-	const Type *type = token ? token_to_type(token) : &TYPE_VOID;
+static const Type *validate_return_type(
+	SemanticState *state,
+	const Token *token
+) {
+	const Type *type = token ? token_to_type(state, token) : &TYPE_VOID;
 
 	if (token && !type) {
 		FMT_ERROR(ERR_TYPE_NOT_FOUND, { .tok = token });
@@ -199,8 +215,8 @@ static const Type *validate_return_type(const Token *token) {
 /*
 Return function declaration (as Symbol) called `name`, or `NULL` if not found.
 */
-Symbol *find_func_by_name(const char *name) {
-	Symbol *symbol = scope_find_name(SEMANTIC_STATE.scope, name);
+Symbol *find_func_by_name(SemanticState *state, const char *name) {
+	Symbol *symbol = scope_find_name(state->scope, name);
 	if (symbol && symbol->type == SYMBOL_FUNC) return symbol;
 
 	return NULL;

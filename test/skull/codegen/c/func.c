@@ -24,7 +24,7 @@ static bool test_no_arg_func_decl(void) {
 	node->func_proto->symbol->func = func;
 	node->func_proto->symbol->name = (char[]){"f"};
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *str = gen_function_prototype_c(node, state);
 
 	ASSERT_TRUTHY(strcmp(str, "void f(void);") == 0);
@@ -53,7 +53,7 @@ static bool test_single_arg_func_decl(void) {
 	node->func_proto->symbol->func = func;
 	node->func_proto->symbol->name = (char[]){"f"};
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *str = gen_function_prototype_c(node, state);
 
 	ASSERT_TRUTHY(strcmp(str, "void f("TYPE_INT_C" x);") == 0);
@@ -88,7 +88,7 @@ static bool test_many_arg_func_decl(void) {
 	node->func_proto->symbol->func = func;
 	node->func_proto->symbol->name = (char[]){"f"};
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *str = gen_function_prototype_c(node, state);
 
 	ASSERT_TRUTHY(strcmp(str, "void f("TYPE_INT_C" x, "TYPE_INT_C" y);") == 0);
@@ -110,7 +110,7 @@ static bool test_func_with_body(void) {
 	node->func_proto->symbol->func = func;
 	node->func_proto->symbol->name = (char[]){"f"};
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *str = gen_function_prototype_c(node, state);
 
 	ASSERT_TRUTHY(strcmp(str, "static void f(void) {\n\t(void)0;\n}") == 0);
@@ -132,7 +132,7 @@ static bool test_func_static(void) {
 	node->func_proto->symbol->name = (char[]){"f"};
 	node->func_proto->symbol->linkage_name = (char[]){"exported_name"};
 
-	SkullStateC *state = setup_c_state();
+	SkullStateC *state = setup_c_state(NULL);
 	char *str = gen_function_prototype_c(node, state);
 
 	const char *expected = "void f(void) __asm__(\"exported_name\");\nvoid f(void) {\n\t(void)0;\n}";
