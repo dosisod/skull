@@ -16,7 +16,6 @@
 #include "skull/codegen/llvm/flow.h"
 
 static void gen_control_if_(
-	SemanticState *,
 	const AstNode **,
 	LLVMBasicBlockRef,
 	LLVMBasicBlockRef,
@@ -24,7 +23,6 @@ static void gen_control_if_(
 );
 
 static void gen_control_code_block(
-	SemanticState *,
 	const AstNode *,
 	LLVMBasicBlockRef,
 	SkullStateLLVM *
@@ -90,11 +88,7 @@ Expr gen_stmt_return(const AstNode *node, const SkullStateLLVM *state) {
 /*
 Builds LLVM for a while loop from `node`.
 */
-void gen_control_while(
-	SemanticState *semantic_state,
-	const AstNode *node,
-	SkullStateLLVM *state
-) {
+void gen_control_while(const AstNode *node, SkullStateLLVM *state) {
 	LLVMBasicBlockRef while_cond = LLVMAppendBasicBlockInContext(
 		state->ctx,
 		state->current_func->func->ref,
@@ -128,7 +122,7 @@ void gen_control_while(
 	);
 
 	LLVMPositionBuilderAtEnd(state->builder, while_loop);
-	gen_control_code_block(semantic_state, node, while_cond, state);
+	gen_control_code_block(node, while_cond, state);
 	LLVMPositionBuilderAtEnd(state->builder, while_end);
 
 	// shouldn't be needed since semantic layer checks that all break/continue
@@ -140,13 +134,8 @@ void gen_control_while(
 /*
 Builds an if block from `node`.
 */
-void gen_control_if(
-	SemanticState *semantic_state,
-	const AstNode **node,
-	SkullStateLLVM *state
-) {
+void gen_control_if(const AstNode **node, SkullStateLLVM *state) {
 	gen_control_if_(
-		semantic_state,
 		node,
 		LLVMGetInsertBlock(state->builder),
 		LLVMAppendBasicBlockInContext(
@@ -162,7 +151,6 @@ void gen_control_if(
 Internal function for building an `if` node.
 */
 static void gen_control_if_(
-	SemanticState *semantic_state,
 	const AstNode **node,
 	LLVMBasicBlockRef entry,
 	LLVMBasicBlockRef end,
@@ -188,7 +176,7 @@ static void gen_control_if_(
 	LLVMMoveBasicBlockBefore(if_cond_true, end);
 
 	LLVMPositionBuilderAtEnd(state->builder, if_cond_true);
-	gen_control_code_block(semantic_state, *node, end, state);
+	gen_control_code_block(*node, end, state);
 	LLVMPositionBuilderAtEnd(state->builder, entry);
 
 	if (next_non_comment && (
@@ -221,12 +209,12 @@ static void gen_control_if_(
 
 	// if there is an elif block following the current if block
 	if (next_non_comment && next_non_comment->type == AST_NODE_ELIF) {
-		gen_control_if_(semantic_state, node, if_cond_false, end, state);
+		gen_control_if_(node, if_cond_false, end, state);
 	}
 	// if there is an else block following the current if block
 	else if (next_non_comment && next_non_comment->type == AST_NODE_ELSE) {
 		LLVMPositionBuilderAtEnd(state->builder, if_cond_false);
-		gen_control_code_block(semantic_state, *node, end, state);
+		gen_control_code_block(*node, end, state);
 	}
 	// just a single if statement
 	else {
@@ -266,25 +254,24 @@ Expr gen_stmt_continue(const SkullStateLLVM *state) {
 Parse `node` while in a new scope. Branch to `block` if no return occurred.
 */
 static void gen_control_code_block(
-	SemanticState *semantic_state,
 	const AstNode *node,
 	LLVMBasicBlockRef block,
 	SkullStateLLVM *state
 ) {
-	semantic_state->scope = semantic_state->scope->child;
+	state->semantic->scope = state->semantic->scope->child;
 
 	LLVMMetadataRef old_di_scope = add_llvm_control_flow_debug_info(
 		&node->token->location
 	);
 
-	const Expr returned = gen_tree(semantic_state, node->child, state);
+	const Expr returned = gen_tree(node->child, state);
 
 	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
 
-	restore_parent_scope(semantic_state);
+	restore_parent_scope(state->semantic);
 
-	if (semantic_state->scope) {
-		semantic_state->scope = semantic_state->scope->next;
+	if (state->semantic->scope) {
+		state->semantic->scope = state->semantic->scope->next;
 	}
 
 	if (!returned.value) LLVMBuildBr(state->builder, block);

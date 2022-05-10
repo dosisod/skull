@@ -57,8 +57,8 @@ SkullStateLLVM *setup_llvm_state(SemanticState *semantic_state) {
 	state->main_func = semantic_state->main_func;
 	state->main_func->func->ref = main_func;
 	state->main_func->func->type = main_func_type;
-
 	state->current_func = state->main_func;
+	state->semantic = semantic_state;
 
 	if (BUILD_DATA.debug) setup_debug_info(filename, state);
 

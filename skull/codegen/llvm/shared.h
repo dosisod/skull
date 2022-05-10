@@ -15,6 +15,7 @@ typedef struct {
 	LLVMBasicBlockRef current_while_cond;
 	LLVMBasicBlockRef current_while_end;
 	LLVMTargetMachineRef target_machine;
+	SemanticState *semantic;
 } SkullStateLLVM;
 
 SkullStateLLVM *setup_llvm_state(SemanticState *);

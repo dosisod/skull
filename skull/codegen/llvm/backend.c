@@ -7,8 +7,7 @@
 Backend llvm_backend = {
 	.setup = (void *(*)(SemanticState *))setup_llvm_state,
 	.write = (_Bool (*)(const char *, void *))write_llvm,
-	.gen_module = \
-		(void (*)(SemanticState *, const AstNode *, void *))gen_module,
+	.gen_module = (void (*)(const AstNode *, void *))gen_module,
 	.cleanup = (void (*)(void *))free_llvm_state,
 	.extension = "ll"
 };

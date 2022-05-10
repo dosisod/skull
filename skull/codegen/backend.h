@@ -5,7 +5,7 @@
 typedef struct Backend {
 	void *(*setup)(SemanticState *);
 	_Bool (*write)(const char *, void *);
-	void (*gen_module)(SemanticState *, const AstNode *, void *);
+	void (*gen_module)(const AstNode *, void *);
 	void (*cleanup)(void *);
 	const char *extension;
 } Backend;

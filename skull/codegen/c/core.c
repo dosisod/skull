@@ -12,13 +12,7 @@
 static CStmt gen_node_c(const AstNode *, SkullStateC *);
 static char *apply_indentation(char *, SkullStateC *);
 
-void gen_module_c(
-	SemanticState *semantic_state,
-	const AstNode *node,
-	SkullStateC *state
-) {
-	(void)semantic_state;
-
+void gen_module_c(const AstNode *node, SkullStateC *state) {
 	state->tree = gen_tree_c(node, state);
 }
 
