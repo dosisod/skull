@@ -6,6 +6,7 @@
 #include "skull/codegen/llvm/backend.h"
 #include "skull/codegen/llvm/core.h"
 #include "skull/codegen/llvm/shared.h"
+#include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/parse/classify.h"
 #include "skull/pipeline.h"
@@ -38,10 +39,16 @@ int run_pipeline(const char *filename, char *file_contents) {
 	classify_tokens(token);
 
 	AstNode *node = parse_ast_tree(token);
-	if (!node) {
+	if (!node || (node->type == AST_NODE_UNKNOWN && !node->child)) {
 		free_tokens(token);
 		free(_file_contents);
 		free(file_contents);
+
+		if (node) {
+			FMT_ERROR(WARN_FILE_EMPTY, {0});
+			free_ast_tree(node);
+		}
+
 		return true;
 	}
 

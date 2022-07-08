@@ -832,9 +832,19 @@ NULL,
 "./test/sh/error/func/no_closing_paren_with_newline.sk: Compilation error: line 1 column 4: missing closing parenthesis\n"
 );
 
+
+pass |= e2e_wrapper(
+"\n\n",
+
+TEST_DIR"/error/misc/newlines_only_doesnt_cause_segfault.sk",
+
+NULL,
+
+"./test/sh/error/misc/newlines_only_doesnt_cause_segfault.sk: Compilation error: file is empty\n"
+);
+
 	return pass;
 }
-
 
 static int e2e_wrapper(const char *code, const char *mock_file, const char *llvm_expected, const char *err_expected) {
 	BUILD_DATA.quiet = !err_expected;
