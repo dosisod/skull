@@ -284,7 +284,7 @@ static void add_llvm_local_var_def_debug_info(
 		di_var,
 		LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
 		make_llvm_debug_location(&symbol->location, state),
-		LLVMGetLastBasicBlock(state->current_func->func->ref)
+		LLVMGetInsertBlock(state->builder)
 	);
 }
 
@@ -377,7 +377,7 @@ LLVMMetadataRef add_llvm_func_debug_info(
 				di_var,
 				LLVMDIBuilderCreateExpression(DEBUG_INFO.builder, NULL, 0),
 				make_llvm_debug_location(&symbol->location, state),
-				LLVMGetLastBasicBlock(func->ref)
+				LLVMGetEntryBasicBlock(func->ref)
 			);
 		}
 	}

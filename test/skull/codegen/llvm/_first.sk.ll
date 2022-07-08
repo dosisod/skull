@@ -51,10 +51,10 @@ entry:
 if_true:                                          ; preds = %entry
   %if_test = alloca i64, align 8
   store i64 1, i64* %if_test, align 4, !dbg !50
+  call void @llvm.dbg.declare(metadata i64* %if_test, metadata !37, metadata !DIExpression()), !dbg !50
   br label %end
 
 end:                                              ; preds = %entry, %if_true
-  call void @llvm.dbg.declare(metadata i64* %if_test, metadata !37, metadata !DIExpression()), !dbg !50
   %int = alloca i64, align 8
   store i64 1234, i64* %int, align 4, !dbg !51
   call void @llvm.dbg.declare(metadata i64* %int, metadata !39, metadata !DIExpression()), !dbg !51

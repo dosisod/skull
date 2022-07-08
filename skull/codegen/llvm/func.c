@@ -153,9 +153,7 @@ static void gen_function_def(
 		}
 	}
 
-	LLVMBasicBlockRef current_block = LLVMGetLastBasicBlock(
-		state->current_func->func->ref
-	);
+	LLVMBasicBlockRef old_block = LLVMGetInsertBlock(state->builder);
 
 	LLVMBasicBlockRef entry = LLVMAppendBasicBlockInContext(
 		state->ctx,
@@ -184,5 +182,5 @@ static void gen_function_def(
 	if (func->return_type == &TYPE_VOID && returned.type != &TYPE_VOID)
 		LLVMBuildRetVoid(state->builder);
 
-	LLVMPositionBuilderAtEnd(state->builder, current_block);
+	LLVMPositionBuilderAtEnd(state->builder, old_block);
 }
