@@ -47,18 +47,16 @@ static int compile_file(char *filename) {
 		DIE("\".sk\" is not a valid name, exiting");
 	}
 
-	FILE *const f = open_file(filename, true);
+	FILE *f = open_file(filename, true);
 	if (!f) return 1;
 
-	char *const file_contents = file_to_string(f);
+	char *file_contents = file_to_string(f);
 	if (!file_contents) {
 		bool err = false;
 		FMT_WARN(err, WARN_FILE_EMPTY, {0});
 
-		if (err) {
-			fclose(f);
-			return err;
-		}
+		fclose(f);
+		return err;
 	}
 	fclose(f);
 

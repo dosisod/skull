@@ -152,6 +152,7 @@ test_skull "cannot_mix_asm_and_c_backend.sh" "-S --c-backend"
 test_skull "cannot_mix_output_types.sh" "-S -E"
 test_skull "cannot_mix_output_types.sh" "-c -E"
 test_skull "cannot_mix_output_types.sh" "-c -S"
+test_skull "zero_byte_file.sh" "test/sh/skull/zero_byte_file.sk"
 
 export COLOR=1
 test_skull "cannot_mix_color_flag_and_env.sh" "--color"
