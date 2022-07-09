@@ -16,13 +16,13 @@
 #include "skull/semantic/entry.h"
 
 
-static bool validate_ast_node(SemanticState *, const AstNode *);
-static bool validate_ast_sub_tree(SemanticState *, const AstNode *);
+static bool validate_ast_node(SemanticState *, AstNode *);
+static bool validate_ast_sub_tree(SemanticState *, AstNode *);
 
 /*
 Validate an entire AST tree starting at `node` (the root).
 */
-bool validate_ast_tree(SemanticState *state, const AstNode *node) {
+bool validate_ast_tree(SemanticState *state, AstNode *node) {
 	const bool pass = validate_ast_sub_tree(state, node);
 	reset_scope_head(state);
 
@@ -32,7 +32,7 @@ bool validate_ast_tree(SemanticState *state, const AstNode *node) {
 /*
 Validate an AST tree starting at `node`.
 */
-static bool validate_ast_sub_tree(SemanticState *state, const AstNode *node) {
+static bool validate_ast_sub_tree(SemanticState *state, AstNode *node) {
 	while (node) {
 		if (!validate_ast_node(state, node)) return false;
 
@@ -45,7 +45,7 @@ static bool validate_ast_sub_tree(SemanticState *state, const AstNode *node) {
 
 bool setup_and_validate_ast_sub_tree(
 	SemanticState *state,
-	const AstNode *node
+	AstNode *node
 ) {
 	make_child_scope(state);
 	const bool is_valid = validate_ast_sub_tree(state, node);
@@ -60,7 +60,7 @@ bool setup_and_validate_ast_sub_tree(
 /*
 Validate a single AST `node`.
 */
-static bool validate_ast_node(SemanticState *state, const AstNode *node) {
+static bool validate_ast_node(SemanticState *state, AstNode *node) {
 	if (!assert_sane_child(node)) return false;
 
 	switch (node->type) {
@@ -77,6 +77,7 @@ static bool validate_ast_node(SemanticState *state, const AstNode *node) {
 		case AST_NODE_WHILE: return validate_control_while(state, node);
 		case AST_NODE_BREAK: return validate_control_break(state, node);
 		case AST_NODE_CONTINUE: return validate_control_continue(state, node);
+		case AST_NODE_NAMESPACE: return validate_control_namespace(state, node);
 		case AST_NODE_IMPORT: return validate_stmt_import(node);
 		default: return true;
 	}

@@ -15,3 +15,4 @@ CBlock gen_control_if_c(const AstNode *, SkullStateC *);
 CBlock gen_control_elif_c(const AstNode *, SkullStateC *);
 CBlock gen_control_else_c(const AstNode *, SkullStateC *);
 CBlock gen_control_while_c(const AstNode *, SkullStateC *);
+CBlock gen_control_namespace_c(const AstNode *, SkullStateC *);

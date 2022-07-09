@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdbool.h>
 
 #include "skull/common/errors.h"
@@ -11,6 +12,7 @@
 #include "skull/semantic/symbol.h"
 
 static SymbolType find_symbol_type(SemanticState *, char *);
+static const char *symbol_type_to_str(SymbolType);
 
 static bool symbol_already_exists(SemanticState *state, Symbol *new_symbol) {
 	SymbolType type = find_symbol_type(state, new_symbol->name);
@@ -19,65 +21,32 @@ static bool symbol_already_exists(SemanticState *state, Symbol *new_symbol) {
 	const Location *location = &new_symbol->location;
 	char *name = new_symbol->name;
 
-	if (type == SYMBOL_VAR) {
-		if (new_symbol->type == SYMBOL_VAR) {
-			FMT_ERROR(ERR_VAR_ALREADY_DEFINED, {
-				.loc = location,
-				.real = name
-			});
-
-			return true;
-		}
-
+	if (type != new_symbol->type) {
 		FMT_ERROR(
-			new_symbol->type == SYMBOL_FUNC ?
-				ERR_NO_REDEFINE_VAR_AS_FUNC :
-				ERR_NO_REDEFINE_VAR_AS_ALIAS,
-			{ .loc = location, .real = name }
+			ERR_NO_REDEFINE_X_AS_Y,
+			{ .loc = location, .str = symbol_type_to_str(type) },
+			{ .real = name },
+			{ .str = symbol_type_to_str(new_symbol->type) }
 		);
+	}
+	else if (type == SYMBOL_VAR) {
+		FMT_ERROR(ERR_VAR_ALREADY_DEFINED, { .loc = location, .real = name });
 	}
 	else if (type == SYMBOL_ALIAS) {
-		if (new_symbol->type == SYMBOL_ALIAS) {
-			FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, {
-				.loc = location,
-				.real = name
-			});
-
-			return true;
-		}
-
-		FMT_ERROR(
-			new_symbol->type == SYMBOL_VAR ?
-				ERR_NO_REDEFINE_ALIAS_AS_VAR :
-				ERR_NO_REDEFINE_ALIAS_AS_FUNC,
-			{ .loc = location, .real = name }
-		);
+		FMT_ERROR(ERR_ALIAS_ALREADY_DEFINED, { .loc = location, .real = name });
 	}
 	else if (type == SYMBOL_FUNC) {
-		if (new_symbol->type == SYMBOL_FUNC) {
-			FMT_ERROR(ERR_NO_REDEFINE_FUNC, {
-				.loc = location,
-				.real = name
-			});
-
-			return true;
-		}
-
-		FMT_ERROR(
-			new_symbol->type == SYMBOL_ALIAS ?
-				ERR_NO_REDEFINE_FUNC_AS_ALIAS :
-				ERR_NO_REDEFINE_FUNC_AS_VAR,
-			{ .loc = location, .real = name }
-		);
+		FMT_ERROR(ERR_NO_REDEFINE_FUNC, { .loc = location, .real = name });
 	}
-	else return false;
 
 	return true;
 }
 
 static SymbolType find_symbol_type(SemanticState *state, char *name) {
 	Symbol *symbol = scope_find_name(state->scope, name);
-	if (symbol && symbol->type == SYMBOL_VAR) return SYMBOL_VAR;
+	if (symbol && (
+		symbol->type == SYMBOL_VAR || symbol->type == SYMBOL_NAMESPACE
+	)) return symbol->type;
 
 	symbol = find_func_by_name(state, name);
 	if (symbol) return SYMBOL_FUNC;
@@ -98,4 +67,15 @@ bool scope_add_symbol(SemanticState *state, Symbol *symbol) {
 		state->scope->symbols = make_ht();
 
 	return ht_add(state->scope->symbols, symbol->name, symbol);
+}
+
+static const char *symbol_type_to_str(SymbolType symbol) {
+	switch (symbol) {
+		case SYMBOL_UNKNOWN: return NULL;
+		case SYMBOL_ALIAS: return "type alias";
+		case SYMBOL_FUNC: return "function";
+		case SYMBOL_VAR: return "variable";
+		case SYMBOL_NAMESPACE: return "namespace";
+		default: assert(false);
+	}
 }

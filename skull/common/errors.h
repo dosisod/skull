@@ -10,7 +10,7 @@ typedef struct Token Token;
 typedef struct Location Location;
 typedef struct Vector Vector;
 
-// unused error codes: 20, 38, 39
+// unused error codes: 20, 22, 23, 38, 39, 62, 63, 64, 65
 
 typedef enum {
 	ERR_UNEXPECTED_TOKEN = 0,
@@ -34,8 +34,6 @@ typedef enum {
 	ERR_NON_INT_MAIN = 18,
 	ERR_NON_BOOL_EXPR = 19,
 	ERR_NO_REDEFINE_FUNC = 21,
-	ERR_NO_REDEFINE_VAR_AS_FUNC = 22,
-	ERR_NO_REDEFINE_FUNC_AS_VAR = 23,
 	ERR_ZERO_PARAM_FUNC = 24,
 	ERR_SHADOW_VAR = 25,
 	ERR_EXPECTED_RETURN = 26,
@@ -72,10 +70,6 @@ typedef enum {
 	WARN_FILE_EMPTY = 59,
 	ERR_NESTED_BLOCK_COMMENT = 60,
 	WARN_TRIVIAL_TYPE = 61,
-	ERR_NO_REDEFINE_ALIAS_AS_VAR = 62,
-	ERR_NO_REDEFINE_ALIAS_AS_FUNC = 63,
-	ERR_NO_REDEFINE_VAR_AS_ALIAS = 64,
-	ERR_NO_REDEFINE_FUNC_AS_ALIAS = 65,
 	ERR_NOT_NUMERIC = 66,
 	WARN_NO_BOM = 67,
 	ERR_BREAK_NOT_IN_WHILE = 68,
@@ -89,6 +83,7 @@ typedef enum {
 	ERR_UNEXPECTED_COMMA = 76,
 	ERR_CANNOT_DEREF = 77,
 	ERR_LOAD_MODULE = 78,
+	ERR_NO_REDEFINE_X_AS_Y = 79,
 } ErrorCode;
 
 typedef struct Variable Variable;

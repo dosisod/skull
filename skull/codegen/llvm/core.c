@@ -53,6 +53,7 @@ static Expr gen_node(const AstNode **node, SkullStateLLVM *state) {
 			gen_stmt_noop(&(*node)->token->location, state); break;
 		case AST_NODE_BREAK: return gen_stmt_break(state);
 		case AST_NODE_CONTINUE: return gen_stmt_continue(state);
+		case AST_NODE_NAMESPACE: gen_control_namespace(*node, state); break;
 		case AST_NODE_IMPORT:
 		case AST_NODE_COMMENT:
 			break;

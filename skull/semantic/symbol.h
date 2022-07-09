@@ -11,7 +11,8 @@ typedef enum {
 	SYMBOL_UNKNOWN,
 	SYMBOL_VAR,
 	SYMBOL_FUNC,
-	SYMBOL_ALIAS
+	SYMBOL_ALIAS,
+	SYMBOL_NAMESPACE,
 } SymbolType;
 
 typedef struct Symbol {

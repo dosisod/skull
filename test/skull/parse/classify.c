@@ -41,6 +41,7 @@ static bool test_is_reserved_str(void) {
 	ASSERT_TRUTHY(is_reserved_str(U"break"));
 	ASSERT_TRUTHY(is_reserved_str(U"continue"));
 	ASSERT_TRUTHY(is_reserved_str(U"import"));
+	ASSERT_TRUTHY(is_reserved_str(U"namespace"));
 	ASSERT_TRUTHY(is_reserved_str(U"mod"));
 	ASSERT_TRUTHY(is_reserved_str(U"isnt"));
 	ASSERT_TRUTHY(is_reserved_str(U"and"));
@@ -157,6 +158,10 @@ static bool test_token_if_kw(void) {
 
 static bool test_token_import_kw(void) {
 	return classify_token_fixture(U"import", TOKEN_KW_IMPORT);
+}
+
+static bool test_token_namespace_kw(void) {
+	return classify_token_fixture(U"namespace", TOKEN_KW_NAMESPACE);
 }
 
 static bool test_token_equal_oper(void) {
@@ -288,6 +293,7 @@ void classifier_test_self(bool *pass) {
 		test_token_return_kw,
 		test_token_if_kw,
 		test_token_import_kw,
+		test_token_namespace_kw,
 		test_token_equal_oper,
 		test_token_plus_oper,
 		test_token_minus_oper,

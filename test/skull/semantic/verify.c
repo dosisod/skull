@@ -1600,6 +1600,62 @@ static bool test_validate_func_call_on_var_fails(void) {
 	);
 }
 
+static bool test_validate_namespace_code_is_validated(void) {
+	Token *token = tokenize_fixture(U"namespace x {\ny: Int = false\n}");
+	Token *var_def_token = token->next->next->next->next;
+	Token *expr_token = var_def_token->next->next->next;
+
+	AstNode *node = AST_NODE_NAMESPACE(token);
+	node->child = AST_NODE_VAR_DEF(
+		var_def_token,
+		AST_NODE_CONST_EXPR(expr_token),
+		false
+	);
+
+	return validate_tree_fixture(
+		node,
+		"(null): Compilation error: line 2 column 10: expected type \"Int\", got \"Bool\"\n"
+	);
+}
+
+static bool test_validate_cannot_redeclare_x_as_namespace(void) {
+	Token *token = tokenize_fixture(U"x := 1\nnamespace x { noop }");
+	Token *expr_token = token->next->next;
+	Token *namespace_token = expr_token->next->next;
+
+	AstNode *var_def_node = AST_NODE_VAR_DEF(token, AST_NODE_CONST_EXPR(expr_token), true);
+
+	AstNode *namespace_node = AST_NODE_NAMESPACE(namespace_token);
+	var_def_node->next = namespace_node;
+
+	namespace_node->child = AST_NODE_NOOP();
+
+	return validate_tree_fixture(
+		var_def_node,
+		"(null): Compilation error: line 2 column 11: cannot redeclare variable \"x\" as namespace\n"
+	);
+}
+
+static bool test_validate_cannot_redeclare_var_as_namespace(void) {
+	Token *token = tokenize_fixture(U"namespace x { noop }\nx := 1");
+	Token *var_def_token = token->next->next->next->next->next->next;
+	Token *expr_token = var_def_token->next->next;
+
+	AstNode *namespace_node = AST_NODE_NAMESPACE(token);
+	namespace_node->child = AST_NODE_NOOP();
+
+	AstNode *var_def_node = AST_NODE_VAR_DEF(
+		var_def_token,
+		AST_NODE_CONST_EXPR(expr_token),
+		true
+	);
+	namespace_node->next = var_def_node;
+
+	return validate_tree_fixture(
+		namespace_node,
+		"(null): Compilation error: line 2 column 1: cannot redeclare namespace \"x\" as variable\n"
+	);
+}
 
 void semantic_verify_test_self(bool *pass) {
 	RUN_ALL(
@@ -1685,7 +1741,10 @@ void semantic_verify_test_self(bool *pass) {
 		test_validate_type_alias_mut_not_allowed,
 		test_validate_type_alias_in_expr_not_allowed,
 		test_validate_break_in_func_def,
-		test_validate_func_call_on_var_fails
+		test_validate_func_call_on_var_fails,
+		test_validate_namespace_code_is_validated,
+		test_validate_cannot_redeclare_x_as_namespace,
+		test_validate_cannot_redeclare_var_as_namespace
 	)
 }
 

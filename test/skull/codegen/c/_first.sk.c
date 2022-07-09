@@ -49,6 +49,9 @@ static int init(void) {
 	f();
 	x = (1 + f());
 	exported2 = exported_func();
+	"ns"; {
+		(void)0;
+	}
 	return a;
 	return 0;
 }

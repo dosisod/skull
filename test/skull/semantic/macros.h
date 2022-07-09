@@ -211,6 +211,13 @@
 		.oper = EXPR_IDENTIFIER \
 	}
 
+#define AST_NODE_NAMESPACE(_token) \
+	&(AstNode) { \
+		.type = AST_NODE_NAMESPACE, \
+		.token = (_token), \
+		.token_end = (_token)->next, \
+	}
+
 #define SET_EXPR_VALUE_INT(_expr, _value) \
 	(_expr)->type = &TYPE_INT; \
 	(_expr)->value._int = (_value)

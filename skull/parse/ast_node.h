@@ -23,6 +23,7 @@ typedef enum {
 	AST_NODE_ELSE,
 	AST_NODE_WHILE,
 	AST_NODE_IMPORT,
+	AST_NODE_NAMESPACE,
 
 	AST_NODE_COMMENT,
 	AST_NODE_NOOP,
@@ -70,6 +71,7 @@ typedef struct AstNode {
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
 		_Bool is_void_return;
+		Symbol *symbol;
 	};
 } AstNode;
 

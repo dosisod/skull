@@ -14,3 +14,4 @@ void gen_stmt_implicit_main_return(const Location *, const SkullStateLLVM *);
 void gen_stmt_noop(const Location *, const SkullStateLLVM *);
 void gen_control_while(const AstNode *, SkullStateLLVM *);
 void gen_control_if(const AstNode **, SkullStateLLVM *);
+void gen_control_namespace(const AstNode *, SkullStateLLVM *);

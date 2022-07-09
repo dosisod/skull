@@ -148,6 +148,13 @@ void gen_control_if(const AstNode **node, SkullStateLLVM *state) {
 }
 
 /*
+Builds a namespace from `node`.
+*/
+void gen_control_namespace(const AstNode *node, SkullStateLLVM *state) {
+	gen_control_code_block(node, NULL, state);
+}
+
+/*
 Internal function for building an `if` node.
 */
 static void gen_control_if_(
@@ -251,7 +258,8 @@ Expr gen_stmt_continue(const SkullStateLLVM *state) {
 }
 
 /*
-Parse `node` while in a new scope. Branch to `block` if no return occurred.
+Parse `node` while in a new scope. Branch to `block` if no return occurred (and
+is not `NULL`).
 */
 static void gen_control_code_block(
 	const AstNode *node,
@@ -274,5 +282,5 @@ static void gen_control_code_block(
 		state->semantic->scope = state->semantic->scope->next;
 	}
 
-	if (!returned.value) LLVMBuildBr(state->builder, block);
+	if (!returned.value && block) LLVMBuildBr(state->builder, block);
 }

@@ -10,6 +10,7 @@
 
 
 static void free_ht_symbol(HashItem *);
+static void free_symbol(Symbol *);
 static Scope *find_scope_head(SemanticState *);
 
 /*
@@ -154,8 +155,10 @@ void restore_parent_scope(SemanticState *state) {
 }
 
 static void free_ht_symbol(HashItem *item) {
-	Symbol *symbol = item->data;
+	free_symbol(item->data);
+}
 
+static void free_symbol(Symbol *symbol) {
 	if (!symbol) return;
 
 	if (symbol->type == SYMBOL_VAR) {
@@ -165,7 +168,7 @@ static void free_ht_symbol(HashItem *item) {
 	else if (symbol->type == SYMBOL_FUNC) {
 		free_function_declaration(symbol);
 	}
-	else if (symbol->type == SYMBOL_ALIAS) {
+	else if (symbol->type == SYMBOL_ALIAS || symbol->type == SYMBOL_NAMESPACE) {
 		free(symbol->name);
 		free(symbol);
 	}

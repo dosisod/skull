@@ -443,6 +443,17 @@ static void parse_while(ParserCtx *ctx) {
 	parse_condition(ctx, AST_NODE_WHILE);
 }
 
+static void parse_namespace(ParserCtx *ctx) {
+	if (!ctx->token || !ctx->token->next) {
+		ctx->err = true;
+		return;
+	}
+
+	Token *namespace_tok = ctx->token;
+	ctx->token = ctx->token->next->next;
+	push_ast_node(ctx, namespace_tok, AST_NODE_NAMESPACE);
+}
+
 /*
 Internal AST tree generator.
 
@@ -547,6 +558,7 @@ static bool parse_ast_node(ParserCtx *ctx) {
 		case TOKEN_KW_ELIF: parse_elif(ctx); break;
 		case TOKEN_KW_ELSE: parse_else(ctx); break;
 		case TOKEN_KW_WHILE: parse_while(ctx); break;
+		case TOKEN_KW_NAMESPACE: parse_namespace(ctx); break;
 		case TOKEN_KW_UNREACHABLE: parse_unreachable(ctx); break;
 		case TOKEN_COMMENT: parse_comment(ctx); break;
 		case TOKEN_KW_NOOP: parse_noop(ctx); break;

@@ -55,4 +55,6 @@ export exported2 := exported_func()
 
 testing := exported
 
+namespace ns { noop }
+
 return a

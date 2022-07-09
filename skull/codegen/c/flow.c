@@ -5,6 +5,7 @@
 #include "skull/codegen/c/core.h"
 #include "skull/codegen/c/expr.h"
 #include "skull/codegen/c/shared.h"
+#include "skull/semantic/symbol.h"
 
 #include "skull/codegen/c/flow.h"
 
@@ -61,6 +62,19 @@ CBlock gen_control_else_c(const AstNode *node, SkullStateC *state) {
 
 CBlock gen_control_while_c(const AstNode *node, SkullStateC *state) {
 	return gen_control_block_c(node, "while (%s) {\n%s\n%s}", state);
+}
+
+CBlock gen_control_namespace_c(const AstNode *node, SkullStateC *state) {
+	CTree tree = gen_tree_c(node->child, state);
+	CBlock block = uvsnprintf(
+		"\"%s\"; {\n%s\n%s}",
+		node->symbol->name,
+		tree,
+		get_indentation(state)
+	);
+
+	free(tree);
+	return block;
 }
 
 static CBlock gen_control_block_c(

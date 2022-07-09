@@ -20,6 +20,7 @@ typedef struct AstNode {
 		AstNodeFunctionProto *func_proto;
 		AstNodeExpr *expr;
 		_Bool is_void_return;
+		Symbol *symbol;
 	};
 }
 ```

@@ -12,4 +12,5 @@ _Bool validate_control_else(SemanticState *, const AstNode *);
 _Bool validate_control_while(SemanticState *, const AstNode *);
 _Bool validate_control_break(SemanticState *, const AstNode *);
 _Bool validate_control_continue(SemanticState *, const AstNode *);
+_Bool validate_control_namespace(SemanticState *, AstNode *);
 _Bool assert_sane_child(const AstNode *);

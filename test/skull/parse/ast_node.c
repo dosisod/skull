@@ -233,6 +233,23 @@ static bool test_parse_ast_tree_if_with_var(void) {
 	PASS
 }
 
+static bool test_parse_ast_tree_namespace(void) {
+	AST_NODE_FIXTURE(U"namespace x { noop }");
+
+	ASSERT_EQUAL(node->type, AST_NODE_NAMESPACE);
+	ASSERT_EQUAL(node->token->begin, code);
+	ASSERT_EQUAL(node->token_end->len, 1);
+	ASSERT_FALSEY(node->last);
+	ASSERT_FALSEY(node->next);
+	ASSERT_TRUTHY(node->child);
+	ASSERT_EQUAL(node->child->type, AST_NODE_NOOP);
+
+	free_ast_tree(node);
+	free_tokens(token);
+
+	PASS
+}
+
 static bool test_parse_ast_tree_comment(void) {
 	return ast_tree_fixture(U"# this is a comment", AST_NODE_COMMENT, 0, 19);
 }
@@ -414,6 +431,7 @@ void ast_node_test_self(bool *pass) {
 		test_parse_ast_tree_return,
 		test_parse_ast_tree_if,
 		test_parse_ast_tree_if_with_var,
+		test_parse_ast_tree_namespace,
 		test_parse_ast_tree_comment,
 		test_parse_ast_tree_noop,
 		test_parse_ast_tree_break,

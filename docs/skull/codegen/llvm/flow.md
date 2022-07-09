@@ -25,6 +25,12 @@ void gen_control_if(const AstNode **node, SkullStateLLVM *state)
 > Builds an if block from `node`.
 
 ```c
+void gen_control_namespace(const AstNode *node, SkullStateLLVM *state)
+```
+
+> Builds a namespace from `node`.
+
+```c
 static void gen_control_if_(const AstNode **node, LLVMBasicBlockRef entry, LLVMBasicBlockRef end, SkullStateLLVM *state)
 ```
 
@@ -34,5 +40,6 @@ static void gen_control_if_(const AstNode **node, LLVMBasicBlockRef entry, LLVMB
 static void gen_control_code_block(const AstNode *node, LLVMBasicBlockRef block, SkullStateLLVM *state)
 ```
 
-> Parse `node` while in a new scope. Branch to `block` if no return occurred.
+> Parse `node` while in a new scope. Branch to `block` if no return occurred (and
+> is not `NULL`).
 

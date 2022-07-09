@@ -52,10 +52,6 @@ static const char *errors[] = {
 	[ERR_NON_INT_MAIN] = "returning non-int expression \"%s\" from main",
 	[ERR_NON_BOOL_EXPR] = "expected boolean expression",
 	[ERR_NO_REDEFINE_FUNC] = "cannot redeclare function \"%s\"",
-	[ERR_NO_REDEFINE_VAR_AS_FUNC] = \
-		"cannot redeclare variable \"%s\" as function",
-	[ERR_NO_REDEFINE_FUNC_AS_VAR] = \
-		"cannot redeclare function \"%s\" as variable",
 	[ERR_ZERO_PARAM_FUNC] = \
 		"passing parameter to function that takes zero parameters",
 	[ERR_SHADOW_VAR] = "variable \"%s\" shadows existing variable",
@@ -97,14 +93,6 @@ static const char *errors[] = {
 	[ERR_NESTED_BLOCK_COMMENT] = \
 		"cannot put opening block comment in existing block comment",
 	[WARN_TRIVIAL_TYPE] = "explicit type \"%s\" can be trivialy deduced",
-	[ERR_NO_REDEFINE_ALIAS_AS_VAR] = \
-		"cannot redeclare type alias \"%s\" as variable",
-	[ERR_NO_REDEFINE_ALIAS_AS_FUNC] = \
-		"cannot redeclare type alias \"%s\" as function",
-	[ERR_NO_REDEFINE_VAR_AS_ALIAS] = \
-		"cannot redeclare variable \"%s\" as type alias",
-	[ERR_NO_REDEFINE_FUNC_AS_ALIAS] = \
-		"cannot redeclare function \"%s\" as type alias",
 	[ERR_NOT_NUMERIC] = "expected a numeric value",
 	[WARN_NO_BOM] = "BOM found",
 	[ERR_BREAK_NOT_IN_WHILE] = "break must be inside while loop",
@@ -118,6 +106,7 @@ static const char *errors[] = {
 	[ERR_UNEXPECTED_COMMA] = "unexpected comma",
 	[ERR_CANNOT_DEREF] = "cannot dereference expression",
 	[ERR_LOAD_MODULE] = "could not load module \"%s\": %s",
+	[ERR_NO_REDEFINE_X_AS_Y] = "cannot redeclare %s \"%s\" as %s",
 };
 
 static const unsigned MAX_ERRORS = sizeof(errors) / sizeof(char *);
@@ -219,6 +208,15 @@ static char *get_error_msg(
 			errors[id],
 			msgs[0].real ? msgs[0].real : msgs[0].str,
 			msgs[1].real ? msgs[1].real : msgs[1].str
+		);
+	}
+
+	if (num_of_percents == 3) {
+		return uvsnprintf(
+			errors[id],
+			msgs[0].real ? msgs[0].real : msgs[0].str,
+			msgs[1].real ? msgs[1].real : msgs[1].str,
+			msgs[2].real ? msgs[2].real : msgs[2].str
 		);
 	}
 

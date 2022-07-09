@@ -3,6 +3,7 @@
 
 #include "skull/build_data.h"
 #include "skull/common/errors.h"
+#include "skull/common/malloc.h"
 #include "skull/semantic/entry.h"
 #include "skull/semantic/expr.h"
 #include "skull/semantic/func.h"
@@ -153,6 +154,24 @@ bool validate_control_continue(SemanticState *state, const AstNode *node) {
 	return false;
 }
 
+bool validate_control_namespace(SemanticState *state, AstNode *node) {
+	Symbol *symbol = Calloc(1, sizeof(Symbol));
+	*symbol = (Symbol){
+		.name = token_to_mbs_str(node->token->next),
+		.location = node->token->next->location,
+		.type = SYMBOL_NAMESPACE,
+	};
+
+	if (!scope_add_symbol(state, symbol)) {
+		free(symbol);
+		return false;
+	}
+
+	node->symbol = symbol;
+
+	return setup_and_validate_ast_sub_tree(state, node->child);
+}
+
 static bool is_missing_block(const AstNode *node, const char *name) {
 	if (node->child) return false;
 
@@ -225,6 +244,7 @@ bool assert_sane_child(const AstNode *node) {
 		node_type == AST_NODE_ELSE ||
 		node_type == AST_NODE_WHILE ||
 		node_type == AST_NODE_FUNCTION_PROTO ||
+		node_type == AST_NODE_NAMESPACE ||
 		(node_type == AST_NODE_EXPR && node->expr->oper == EXPR_FUNC)
 	)) {
 		FMT_ERROR(ERR_UNEXPECTED_CODE_BLOCK, {
