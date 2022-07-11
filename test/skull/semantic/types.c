@@ -14,7 +14,7 @@
 static bool test_find_type(void) {
 	SemanticState *state = setup_semantic_state();
 
-	ASSERT_EQUAL(find_type(state, "Int"), &TYPE_INT);
+	ASSERT_EQUAL(find_type(state, (char[]){"Int"}), &TYPE_INT);
 
 	free_semantic_state(state);
 

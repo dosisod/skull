@@ -187,7 +187,7 @@ last token of type if valid, otherwise `NULL`.
 static Token *is_potential_type(Token *token) {
 	if (!token) return NULL;
 
-	if (token->type == TOKEN_IDENTIFIER) {
+	if (is_identifier_like(token)) {
 		return token;
 	}
 
@@ -199,7 +199,10 @@ static Token *is_potential_type(Token *token) {
 }
 
 static ParserResult parse_var_assign(ParserCtx *ctx) {
-	if (!AST_TOKEN_CMP2(ctx->token, TOKEN_IDENTIFIER, TOKEN_OPER_EQUAL)) {
+	if (!(is_identifier_like(ctx->token) &&
+		ctx->token->next &&
+		ctx->token->next->type == TOKEN_OPER_EQUAL
+	)) {
 		return RESULT_IGNORE;
 	}
 
@@ -749,7 +752,10 @@ static AstNodeExpr *parse_root_expr(ParserCtx *ctx) {
 	if (ctx->token->type == TOKEN_PAREN_OPEN) {
 		return parse_paren_expr(ctx);
 	}
-	if (AST_TOKEN_CMP2(ctx->token, TOKEN_IDENTIFIER, TOKEN_PAREN_OPEN)) {
+	if (is_identifier_like(ctx->token) &&
+		ctx->token->next &&
+		ctx->token->next->type == TOKEN_PAREN_OPEN
+	) {
 		return parse_func_call(ctx);
 	}
 	if (is_single_token_expr(ctx->token->type)) {
@@ -863,9 +869,7 @@ static AstNodeExpr *parse_single_token_expr(ParserCtx *ctx) {
 	AstNodeExpr *expr = Malloc(sizeof(AstNodeExpr));
 	*expr = (AstNodeExpr){
 		.lhs = { .tok = ctx->token },
-		.oper = ctx->token->type == TOKEN_IDENTIFIER ?
-			EXPR_IDENTIFIER :
-			EXPR_CONST
+		.oper = is_identifier_like(ctx->token) ? EXPR_IDENTIFIER : EXPR_CONST
 	};
 
 	next_token(ctx);
@@ -1083,6 +1087,7 @@ Return whether `token_type` represents a constant literal, or an identifier.
 static __attribute__((pure)) bool is_single_token_expr(TokenType token_type) {
 	switch (token_type) {
 		case TOKEN_IDENTIFIER:
+		case TOKEN_DOT_IDENTIFIER:
 		case TOKEN_INT_CONST:
 		case TOKEN_FLOAT_CONST:
 		case TOKEN_BOOL_CONST:

@@ -26,7 +26,7 @@ typedef struct Scope {
 
 Scope *make_scope(void);
 
-Symbol *scope_find_name(const Scope *const, const char *);
+Symbol *scope_find_name(const Scope *const, char *);
 _Bool scope_add_var(SemanticState *, Symbol *);
 
 void free_scope(Scope *);
@@ -35,6 +35,7 @@ void make_child_scope(SemanticState *);
 void restore_parent_scope(SemanticState *);
 void make_adjacent_scope(SemanticState *);
 void reset_scope_head(SemanticState *);
+Scope *get_last_adjacent_scope(Scope *);
 _Bool is_top_lvl_scope(SemanticState *);
 
 Symbol *scope_find_var(SemanticState *, const Token *const);

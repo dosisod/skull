@@ -88,15 +88,26 @@ static void classify_token(Token *const token) {
 	else if (is_valid_identifier_str(str)) {
 		token->type = TOKEN_IDENTIFIER;
 
-		if (token->begin[token->len - 1] == ':') {
-			token->type = TOKEN_NEW_IDENTIFIER;
-			str[len - 1] = '\0';
+		bool contains_dot = false;
+		if (c32schr(str, '.')) {
+			token->type = TOKEN_DOT_IDENTIFIER;
+			contains_dot = true;
+		}
 
-			if (is_reserved_str(str) || is_type_str(str)) {
+		if (token->begin[token->len - 1] == ':') {
+			if (contains_dot) {
 				token->type = TOKEN_UNKNOWN;
 			}
 			else {
-				token->len--;
+				token->type = TOKEN_NEW_IDENTIFIER;
+				str[len - 1] = '\0';
+
+				if (is_reserved_str(str) || is_type_str(str)) {
+					token->type = TOKEN_UNKNOWN;
+				}
+				else {
+					token->len--;
+				}
 			}
 		}
 	}
@@ -287,11 +298,19 @@ bool is_valid_identifier_str(const char32_t *str) {
 	str++;
 
 	while (*str) {
-		if (*str == ':') {
+		const char32_t c = *str;
+
+		if (c == ':') {
 			str++;
 			break;
 		}
-		if (*str != '_' && !c32isalnum(*str)) return false;
+
+		if (c == '.') {
+			if (!str[1]) return false;
+		}
+		else if (c != '_' && !c32isalnum(c)) {
+			return false;
+		}
 
 		str++;
 	}

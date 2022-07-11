@@ -175,7 +175,7 @@ Returns pointer to type with name `name`.
 */
 const Type __attribute__((pure)) *find_type(
 	SemanticState *state,
-	const char *const name
+	char *const name
 ) {
 	Symbol *symbol = scope_find_name(state->scope, name);
 
@@ -301,7 +301,7 @@ bool is_reference(const Type *type) {
 }
 
 const Type *token_to_type(SemanticState *state, const Token *token) {
-	if (token->type == TOKEN_IDENTIFIER) {
+	if (is_identifier_like(token)) {
 		char *type_name = token_to_mbs_str(token);
 		const Type *type = find_type(state, type_name);
 
@@ -319,4 +319,11 @@ const Type *token_to_type(SemanticState *state, const Token *token) {
 void free_dynamic_type(HashItem *item) {
 	free(((Type *)item->data)->dyn_name);
 	free(item->data);
+}
+
+bool is_identifier_like(const Token *token) {
+	return (
+		token->type == TOKEN_DOT_IDENTIFIER ||
+		token->type == TOKEN_IDENTIFIER
+	);
 }

@@ -1,4 +1,6 @@
+#include <assert.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
@@ -31,13 +33,33 @@ bool scope_add_var(SemanticState *state, Symbol *symbol) {
 
 /*
 Returns pointer to variable with matching `name` if found, else `NULL`
+
+This function might modify the contents of `name` durring execution, but will
+always keep the data the same after the function has finished.
 */
-Symbol *scope_find_name(const Scope *const scope, const char *name) {
-	if (!scope ||
-		!(scope->symbols || scope->parent || scope->last)
-	) return NULL;
+Symbol *scope_find_name(const Scope *const scope, char *name) {
+	if (!scope || !(scope->symbols || scope->parent || scope->last)) {
+		return NULL;
+	}
 
 	if (scope->symbols) {
+		char *dot_position = strchr(name, '.');
+
+		if (dot_position) {
+			*dot_position = '\0';
+
+			Symbol *namespace = scope_find_name(scope, name);
+			Symbol *symbol = NULL;
+
+			if (namespace && namespace->type == SYMBOL_NAMESPACE) {
+				symbol = scope_find_name(namespace->scope, dot_position + 1);
+			}
+
+			*dot_position = '.';
+
+			return symbol;
+		}
+
 		Symbol *symbol = ht_get(scope->symbols, name);
 		if (symbol) return symbol;
 	}
@@ -189,4 +211,12 @@ void free_scope(Scope *scope) {
 	if (scope->next) free_scope(scope->next);
 
 	free(scope);
+}
+
+Scope *get_last_adjacent_scope(Scope *scope) {
+	while (scope && scope->next) {
+		scope = scope->next;
+	}
+
+	return scope;
 }

@@ -3,6 +3,7 @@
 #include "skull/build_data.h"
 #include "skull/common/errors.h"
 #include "skull/common/malloc.h"
+#include "skull/common/str.h"
 #include "skull/semantic/expr.h"
 #include "skull/semantic/mangle.h"
 #include "skull/semantic/scope.h"

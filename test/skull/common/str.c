@@ -217,6 +217,16 @@ static bool test_mbstoc32s_illegal_utf8(void) {
 	PASS
 }
 
+static bool test_c32schr(void) {
+	const char32_t *str = U"abc";
+
+	ASSERT_FALSEY(c32schr(str, 'x'));
+	ASSERT_EQUAL(c32schr(str, 'a'), str);
+	ASSERT_EQUAL(c32schr(str, 'c'), str + 2);
+
+	PASS
+}
+
 void str_test_self(bool *pass) {
 	RUN_ALL(
 		test_strrstr,
@@ -233,6 +243,7 @@ void str_test_self(bool *pass) {
 		test_c32isxdigit,
 		test_uvsnsprintf,
 		test_c32sunescape,
-		test_mbstoc32s_illegal_utf8
+		test_mbstoc32s_illegal_utf8,
+		test_c32schr
 	)
 }

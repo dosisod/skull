@@ -5,6 +5,7 @@
 typedef struct Location Location;
 
 const char *strrstr(const char *, const char *);
+const char32_t *c32schr(const char32_t *const, char32_t);
 
 void c32sncpy(char32_t *, const char32_t *, size_t);
 size_t c32slen(const char32_t *);

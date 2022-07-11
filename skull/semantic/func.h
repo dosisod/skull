@@ -38,4 +38,4 @@ _Bool validate_stmt_func_decl(SemanticState *, const AstNode *);
 
 void free_function_declaration(Symbol *);
 
-Symbol *find_func_by_name(SemanticState *, const char *);
+Symbol *find_func_by_name(SemanticState *, char *);

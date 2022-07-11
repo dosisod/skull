@@ -169,7 +169,11 @@ bool validate_control_namespace(SemanticState *state, AstNode *node) {
 
 	node->symbol = symbol;
 
-	return setup_and_validate_ast_sub_tree(state, node->child);
+	const bool ok = setup_and_validate_ast_sub_tree(state, node->child);
+
+	if (ok) symbol->scope = get_last_adjacent_scope(state->scope->last->child);
+
+	return ok;
 }
 
 static bool is_missing_block(const AstNode *node, const char *name) {

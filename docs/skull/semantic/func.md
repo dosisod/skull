@@ -32,7 +32,7 @@ typedef struct FunctionDeclaration {
 > `return_type` is the Skull type that the function returns.
 
 ```c
-Symbol *find_func_by_name(SemanticState *state, const char *name)
+Symbol *find_func_by_name(SemanticState *state, char *name)
 ```
 
 > Return function declaration (as Symbol) called `name`, or `NULL` if not found.

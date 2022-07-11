@@ -233,16 +233,21 @@ static bool test_is_valid_identifier(void) {
 	ASSERT_TRUTHY(is_valid_identifier_str(U"z"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"A"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"Z"));
-	ASSERT_FALSEY(is_valid_identifier_str(U"0"));
-	ASSERT_FALSEY(is_valid_identifier_str(U"_"));
-	ASSERT_FALSEY(is_valid_identifier_str(U"~"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"a:"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"abc:"));
-	ASSERT_FALSEY(is_valid_identifier_str(U"1var"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"var1"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"x1"));
 	ASSERT_TRUTHY(is_valid_identifier_str(U"x_"));
+	ASSERT_TRUTHY(is_valid_identifier_str(U"a.b.c"));
+
+	ASSERT_FALSEY(is_valid_identifier_str(U"1var"));
 	ASSERT_FALSEY(is_valid_identifier_str(U"_x"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"0"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"_"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"~"));
+	ASSERT_FALSEY(is_valid_identifier_str(U".x"));
+	ASSERT_FALSEY(is_valid_identifier_str(U"x."));
+	ASSERT_FALSEY(is_valid_identifier_str(U"x!@$"));
 
 	PASS
 }
@@ -252,15 +257,23 @@ static bool test_is_valid_identifier_token(void) {
 }
 
 static bool test_new_identifier_clip_trailing_colon(void) {
-	return classify_token_with_len_fixture(U"x: Int = 0", TOKEN_NEW_IDENTIFIER, 0, 1);
+	return classify_token_with_len_fixture(U"x:", TOKEN_NEW_IDENTIFIER, 0, 1);
 }
 
 static bool test_identifier_cannot_be_type(void) {
-	return classify_token_with_len_fixture(U"Int: Int = 0", TOKEN_UNKNOWN, 0, 4);
+	return classify_token_with_len_fixture(U"Int:", TOKEN_UNKNOWN, 0, 4);
 }
 
 static bool test_identifier_cannot_be_reserved(void) {
-	return classify_token_with_len_fixture(U"mut: Int = 0", TOKEN_UNKNOWN, 0, 4);
+	return classify_token_with_len_fixture(U"mut:", TOKEN_UNKNOWN, 0, 4);
+}
+
+static bool test_identifier_can_have_dots_in_it(void) {
+	return classify_token_with_len_fixture(U"a.b.c", TOKEN_DOT_IDENTIFIER, 0, 5);
+}
+
+static bool test_new_identifier_cannot_have_dots_in_it(void) {
+	return classify_token_with_len_fixture(U"a.b.c:", TOKEN_UNKNOWN, 0, 6);
 }
 
 static bool test_classify_tokens(void) {
@@ -315,6 +328,8 @@ void classifier_test_self(bool *pass) {
 		test_new_identifier_clip_trailing_colon,
 		test_identifier_cannot_be_type,
 		test_identifier_cannot_be_reserved,
+		test_identifier_can_have_dots_in_it,
+		test_new_identifier_cannot_have_dots_in_it,
 		test_classify_tokens
 	)
 

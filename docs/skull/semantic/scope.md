@@ -26,10 +26,13 @@ bool scope_add_var(SemanticState *state, Symbol *symbol)
 > Returns `true` if `var` was added, else `false`
 
 ```c
-Symbol *scope_find_name(const Scope *const scope, const char *name)
+Symbol *scope_find_name(const Scope *const scope, char *name)
 ```
 
 > Returns pointer to variable with matching `name` if found, else `NULL`
+> \
+> This function might modify the contents of `name` durring execution, but will
+> always keep the data the same after the function has finished.
 
 ```c
 Scope *make_scope(void)

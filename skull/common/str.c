@@ -222,6 +222,20 @@ const char __attribute__((pure)) *strrstr(
 }
 
 /*
+Return pointer to first occurrence of `c` in `str`, or `NULL` if none was
+found.
+*/
+const char32_t *c32schr(const char32_t *str, char32_t c) {
+	while (*str) {
+		if (*str == c) return str;
+
+		str++;
+	}
+
+	return NULL;
+}
+
+/*
 Convert `c` as an ASCII hex value to an integer.
 */
 static __attribute__((const)) char32_t c32unhex(char32_t c) {

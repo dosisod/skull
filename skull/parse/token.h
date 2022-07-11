@@ -5,11 +5,11 @@
 typedef struct Token Token;
 
 typedef enum {
-	// default token type
 	TOKEN_UNKNOWN,
 
 	TOKEN_IDENTIFIER,
-	TOKEN_NEW_IDENTIFIER, // must suffix new var names with ":"
+	TOKEN_NEW_IDENTIFIER,
+	TOKEN_DOT_IDENTIFIER,
 
 	TOKEN_KW_MUT,
 	TOKEN_KW_RETURN,

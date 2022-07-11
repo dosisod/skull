@@ -41,8 +41,9 @@ extern Type TYPE_RUNE;
 extern Type TYPE_STR;
 extern Type TYPE_VOID;
 
-const Type *find_type(SemanticState *, const char *const);
+const Type *find_type(SemanticState *, char *const);
 const Type *find_builtin_type(const char *const);
 _Bool is_reference(const Type *);
 Type *get_reference_type(SemanticState *, const Type *);
 const Type *token_to_type(SemanticState *, const Token *);
+_Bool is_identifier_like(const Token *);

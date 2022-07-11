@@ -83,6 +83,13 @@ const char __attribute__((pure)) *strrstr(const char *const str, const char *con
 > `NULL` is returned if no such string is found.
 
 ```c
+const char32_t *c32schr(const char32_t *str, char32_t c)
+```
+
+> Return pointer to first occurrence of `c` in `str`, or `NULL` if none was
+> found.
+
+```c
 static __attribute__((const)) char32_t c32unhex(char32_t c)
 ```
 

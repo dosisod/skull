@@ -47,7 +47,7 @@ char32_t *eval_str(const Token *const token)
 > Return string converted from `token`, or `NULL` if an error occurred.
 
 ```c
-const Type __attribute__((pure)) *find_type(SemanticState *state, const char *const name)
+const Type __attribute__((pure)) *find_type(SemanticState *state, char *const name)
 ```
 
 > Returns pointer to type with name `name`.

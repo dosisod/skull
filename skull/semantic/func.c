@@ -215,7 +215,7 @@ static const Type *validate_return_type(
 /*
 Return function declaration (as Symbol) called `name`, or `NULL` if not found.
 */
-Symbol *find_func_by_name(SemanticState *state, const char *name) {
+Symbol *find_func_by_name(SemanticState *state, char *name) {
 	Symbol *symbol = scope_find_name(state->scope, name);
 	if (symbol && symbol->type == SYMBOL_FUNC) return symbol;
 

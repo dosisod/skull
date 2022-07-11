@@ -1,0 +1,15 @@
+namespace x {
+  namespace y {
+    mut z := 1
+
+    f() { noop }
+  }
+
+  int := Int
+}
+
+x.y.z = 2
+
+x.y.f()
+
+mut num: x.int = 123

@@ -843,6 +843,17 @@ NULL,
 "./test/sh/error/misc/newlines_only_doesnt_cause_segfault.sk: Compilation error: file is empty\n"
 );
 
+
+pass |= e2e_wrapper(
+	"x := y.z",
+
+	TEST_DIR"/error/flow/namespace_access_no_segfault_if_not_found.sk",
+
+	NULL,
+
+	"./test/sh/error/flow/namespace_access_no_segfault_if_not_found.sk: Compilation error: line 1 column 6: variable \"y.z\" not found\n"
+);
+
 	return pass;
 }
 

@@ -24,6 +24,7 @@ typedef struct Symbol {
 	union {
 		FunctionDeclaration *func;
 		Variable *var;
+		Scope *scope;
 	};
 } Symbol;
 
