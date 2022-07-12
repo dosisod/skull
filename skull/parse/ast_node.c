@@ -50,9 +50,11 @@ typedef enum {
 	RESULT_ERROR
 } ParserResult;
 
+#define NOT_NULL(x) (x) && (x)
+
 #define AST_TOKEN_CMP2(tok, type1, type2) \
-	((tok) && (tok)->type == (type1) && \
-	(tok)->next && (tok)->next->type == (type2))
+	(NOT_NULL((tok)->type) == (type1) && \
+	NOT_NULL((tok)->next)->type == (type2))
 
 /*
 Makes an AST (abstract syntax tree) from a list of tokens.
@@ -200,8 +202,7 @@ static Token *is_potential_type(Token *token) {
 
 static ParserResult parse_var_assign(ParserCtx *ctx) {
 	if (!(is_identifier_like(ctx->token) &&
-		ctx->token->next &&
-		ctx->token->next->type == TOKEN_OPER_EQUAL
+		NOT_NULL(ctx->token->next)->type == TOKEN_OPER_EQUAL
 	)) {
 		return RESULT_IGNORE;
 	}
@@ -307,7 +308,7 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 		ctx->token->next &&
 		(tmp = is_potential_type(ctx->token->next))
 	) {
-		if (tmp->next && tmp->next->type == token_type) {
+		if (NOT_NULL(tmp->next)->type == token_type) {
 			return_type_token = ctx->token->next;
 			ctx->token = tmp;
 		}
@@ -522,7 +523,7 @@ static void parse_continue(ParserCtx *ctx) {
 static void parse_import(ParserCtx *ctx) {
 	const Token *next = ctx->token->next;
 
-	if (next && next->type == TOKEN_IDENTIFIER) {
+	if (NOT_NULL(next)->type == TOKEN_IDENTIFIER) {
 		push_ast_node(ctx, ctx->token, AST_NODE_IMPORT);
 
 		ctx->token = next->next;
@@ -753,8 +754,7 @@ static AstNodeExpr *parse_root_expr(ParserCtx *ctx) {
 		return parse_paren_expr(ctx);
 	}
 	if (is_identifier_like(ctx->token) &&
-		ctx->token->next &&
-		ctx->token->next->type == TOKEN_PAREN_OPEN
+		NOT_NULL(ctx->token->next)->type == TOKEN_PAREN_OPEN
 	) {
 		return parse_func_call(ctx);
 	}
