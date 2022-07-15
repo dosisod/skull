@@ -42,6 +42,9 @@ void gen_stmt_func_decl(const AstNode *const node, SkullStateLLVM *state) {
 	if (!symbol->func->is_external) {
 		gen_function_def(node, symbol, state);
 	}
+
+	if (state->semantic->scope)
+		state->semantic->scope = state->semantic->scope->next;
 }
 
 /*
@@ -175,9 +178,6 @@ static void gen_function_def(
 	state->current_func = old_symbol;
 
 	if (BUILD_DATA.debug) DEBUG_INFO.scope = old_di_scope;
-
-	if (state->semantic->scope)
-		state->semantic->scope = state->semantic->scope->next;
 
 	if (func->return_type == &TYPE_VOID && returned.type != &TYPE_VOID)
 		LLVMBuildRetVoid(state->builder);
