@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include <llvm-c/Core.h>
 #include <llvm-c/DebugInfo.h>
 
 #include "skull/build_data.h"

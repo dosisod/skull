@@ -32,17 +32,17 @@ $ docker run --rm -it ghcr.io/dosisod/skull:ubuntu bash
 ## Setup
 
 Before you build, you will need to install some common development packages,
-and LLVM 13.
+and LLVM 14.
 
 #### Ubuntu
 
-Note: the `llvm-13-dev` package is only available in impish (21.10) or jammy
-(22.04). If you want to use this in 20.04 or earlier, you will need to add the
+Note: the `llvm-14-dev` package is only available on Ubuntu Jammy (22.04).
+If you want to use this in 21.04 or earlier, you will need to add the
 [LLVM APT repositories](https://apt.llvm.org/) to your system (untested), or
 build from [source](https://github.com/llvm/llvm-project#getting-the-source-code-and-building-llvm).
 
 ```
-$ sudo apt install llvm-13-dev build-essential git xxd
+$ sudo apt install llvm-14-dev build-essential git xxd
 ```
 
 You can also drop in `clang` instead of `gcc` (`gcc` is included in
@@ -81,7 +81,7 @@ Install [https://docs.docker.com/engine/install/ubuntu/](docker).
 In addition run:
 
 ```
-$ sudo apt install clang-tidy-13
+$ sudo apt install clang-tidy-14
 ```
 
 #### Arch Linux

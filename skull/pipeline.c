@@ -9,7 +9,6 @@
 #include "skull/common/errors.h"
 #include "skull/common/str.h"
 #include "skull/parse/classify.h"
-#include "skull/pipeline.h"
 #include "skull/semantic/entry.h"
 #include "skull/semantic/shared.h"
 

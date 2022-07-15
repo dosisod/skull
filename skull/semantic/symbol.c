@@ -2,7 +2,6 @@
 #include <stdbool.h>
 
 #include "skull/common/errors.h"
-#include "skull/common/errors.h"
 #include "skull/semantic/func.h"
 #include "skull/semantic/scope.h"
 #include "skull/semantic/shared.h"

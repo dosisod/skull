@@ -240,28 +240,28 @@ Convert `c` as an ASCII hex value to an integer.
 */
 static __attribute__((const)) char32_t c32unhex(char32_t c) {
 	switch (c) {
-		case '0': return 0;
-		case '1': return 1;
-		case '2': return 2;
-		case '3': return 3;
-		case '4': return 4;
-		case '5': return 5;
-		case '6': return 6;
-		case '7': return 7;
-		case '8': return 8;
-		case '9': return 9;
+		case '0': return 0x0;
+		case '1': return 0x1;
+		case '2': return 0x2;
+		case '3': return 0x3;
+		case '4': return 0x4;
+		case '5': return 0x5;
+		case '6': return 0x6;
+		case '7': return 0x7;
+		case '8': return 0x8;
+		case '9': return 0x9;
 		case 'A':
-		case 'a': return 10;
+		case 'a': return 0xA;
 		case 'B':
-		case 'b': return 11;
+		case 'b': return 0xB;
 		case 'C':
-		case 'c': return 12;
+		case 'c': return 0xC;
 		case 'D':
-		case 'd': return 13;
+		case 'd': return 0xD;
 		case 'E':
-		case 'e': return 14;
+		case 'e': return 0xE;
 		case 'F':
-		case 'f': return 15;
+		case 'f': return 0xF;
 		default: return 0;
 	}
 }

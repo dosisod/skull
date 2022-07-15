@@ -1,7 +1,7 @@
 #!/bin/sh
 
-CLANG_TIDY=$(command -v clang-tidy-13 || command -v clang-tidy || command -v clang-tidy-12)
-LLVM_CONFIG=$(command -v llvm-config-13 || command -v llvm-config || command -v llvm-config-12)
+CLANG_TIDY=$(command -v clang-tidy-14 || command -v clang-tidy || command -v clang-tidy-13)
+LLVM_CONFIG=$(command -v llvm-config-14 || command -v llvm-config || command -v llvm-config-13)
 
 [ ! "$($CLANG_TIDY \
 	$(find -L skull test -type f -name "*.[ch]" ! -name "*.sk.c" ! -path "*/sh/*" ! -path "test/skull/e2e.c") \
@@ -18,7 +18,7 @@ LLVM_CONFIG=$(command -v llvm-config-13 || command -v llvm-config || command -v 
 -altera-id-dependent-backward-branch,altera-unroll-loops,-misc-no-recursion,\
 -altera-unroll-loops,-readability-function-cognitive-complexity,\
 -bugprone-suspicious-include,-bugprone-easily-swappable-parameters,\
--clang-diagnostic-strict-prototypes\
+-clang-diagnostic-strict-prototypes,-cert-err33-c,-readability-identifier-length\
 	-quiet -- \
 	-std=c17 -I. $($LLVM_CONFIG --cflags) 2>&1 | tee /dev/stderr | grep "skull"
 )" ]

@@ -7,8 +7,6 @@ RUN pacman -Syu --noconfirm \
 	git \
 	vim
 
-RUN sed -i "s/LLVMCreatePassBuilderOptions()/LLVMCreatePassBuilderOptions(void)/" $(llvm-config-13 --includedir || llvm-config --includedir)/llvm-c/Transforms/PassBuilder.h
-
 WORKDIR /skull
 COPY . .
 
