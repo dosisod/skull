@@ -22,12 +22,26 @@ return main()
 
 ## Run via Docker
 
-> Note: these images are for development, and are not optimized for production (for now).
-> They are very large (~600MB for `-alpine`, ~1.2GB for `-ubuntu`)!
+Versions and sizes (as of v0.9.0):
+
+| Version | Size |
+|---------|------|
+| `alpine` | 312MB |
+| `archlinux` | 1.62GB |
+| `ubuntu` | 407MB |
+| `alpine-dev` | 579MB |
+| `archlinux-dev` | 2.35GB |
+| `ubuntu-dev` | 1.32GB |
+
+Running:
 
 ```
-$ docker run --rm -it ghcr.io/dosisod/skull:ubuntu bash
+$ docker run --rm -it ghcr.io/dosisod/skull:<VERSION> bash
 ```
+
+The reason these dockerfiles are so big is because they include development
+packages such as GCC, which is needed for the final compilation of Skull programs.
+This might change in the future though.
 
 ## Setup
 
