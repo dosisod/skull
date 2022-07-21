@@ -8,18 +8,30 @@
 
 #include "skull/common/io.h"
 
+#define CHECK_ERRNO(msg) \
+	if (errno) { \
+		perror((msg)); \
+		return NULL; \
+	}
+
 /*
 Return string read from file descriptor `fd`.
 */
-char *file_to_string(FILE *const fd) {
+char *file_to_string(FILE *fd) {
+	errno = 0;
 	fseek(fd, 0, SEEK_END);
+	CHECK_ERRNO("fseek");
 
 	const long len = ftell(fd);
-	if (len == -1) return NULL;
+	CHECK_ERRNO("ftell");
 
+	if (!len) return NULL;
+
+	errno = 0;
 	fseek(fd, 0, SEEK_SET);
+	CHECK_ERRNO("fseek");
 
-	char *const str = Malloc((size_t)len + 1);
+	char *str = Malloc((size_t)len + 1);
 	const size_t read = fread(str, 1, (size_t)len, fd);
 
 	if (!read) {
@@ -34,30 +46,31 @@ char *file_to_string(FILE *const fd) {
 /*
 Open `filename`, handle errors if any.
 
-Set `is_RO` to true if file should be opened as read-only.
+Set `is_ro` to true if file should be opened as read-only.
 */
-FILE *open_file(const char *filename, bool is_RO) {
+FILE *open_file(const char *filename, bool is_ro) {
 	errno = 0;
-	FILE *const f = fopen(filename, is_RO ? "re" : "we");
-	if (!f) {
-		if (errno == EACCES)
-			fprintf(
-				stderr,
-				"skull: cannot open \"%s\", permission denied\n",
-				filename
-			);
+	FILE *f = fopen(filename, is_ro ? "re" : "we");
 
-		else if (errno == ENOENT)
-			fprintf(
-				stderr,
-				"skull: \"%s\" was not found, exiting\n",
-				filename
-			);
+	if (f) return f;
 
-		return NULL;
-	}
+	if (errno == EACCES)
+		fprintf(
+			stderr,
+			"skull: cannot open \"%s\", permission denied\n",
+			filename
+		);
 
-	return f;
+	else if (errno == ENOENT)
+		fprintf(
+			stderr,
+			"skull: \"%s\" was not found, exiting\n",
+			filename
+		);
+
+	else perror("fopen");
+
+	return NULL;
 }
 
 /*
@@ -66,9 +79,9 @@ Create Skull filename based on `filename` with extention `ext`.
 char *gen_filename(const char *filename, const char *ext) {
 	const size_t len = strlen(filename);
 	const size_t ext_len = strlen(ext);
-	char *const new_filename = Malloc(len + 3 + ext_len);
+	char *new_filename = Malloc(len + 3 + ext_len);
 
-	const char *const slash_pos = strrchr(filename, '/');
+	const char *slash_pos = strrchr(filename, '/');
 	if (!slash_pos) {
 		new_filename[0] = '.';
 		strncpy(new_filename + 1, filename, len + 1);

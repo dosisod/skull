@@ -196,7 +196,10 @@ static PhaseResult emit_native_binary(void) {
 
 	const bool exit_code = shell(shim);
 
+	errno = 0;
 	remove(BUILD_DATA.out_file);
+	if (errno) perror("remove");
+
 	free(shim);
 	free(BUILD_DATA.extra_args);
 
