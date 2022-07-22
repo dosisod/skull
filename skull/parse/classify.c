@@ -16,8 +16,34 @@ static bool is_constant_bool_str(const char32_t *const);
 static bool is_constant_rune_str(const char32_t *const);
 static bool is_constant_str_str(const char32_t *const);
 
+#define KW_MUT U"mut"
+#define KW_RETURN U"return"
+#define KW_UNREACHABLE U"unreachable"
+#define KW_IF U"if"
+#define KW_ELIF U"elif"
+#define KW_ELSE U"else"
+#define KW_WHILE U"while"
+#define KW_EXTERNAL U"external"
+#define KW_EXPORT U"export"
+#define KW_NOOP U"noop"
+#define KW_BREAK U"break"
+#define KW_CONTINUE U"continue"
+#define KW_IMPORT U"import"
+#define KW_NAMESPACE U"namespace"
+#define KW_MOD U"mod"
+#define KW_NOT U"not"
+#define KW_IS U"is"
+#define KW_ISNT U"isnt"
+#define KW_AND U"and"
+#define KW_OR U"or"
+#define KW_XOR U"xor"
+#define KW_INFINITY U"Infinity"
+#define KW_NAN U"NaN"
+#define KW_TRUE U"true"
+#define KW_FALSE U"false"
+
 #define TOKEN_TRY_STR(str, token_type) \
-	else if (token_cmp(U##str, token)) { \
+	else if (token_cmp((str), token)) { \
 		token->type = (token_type); \
 	}
 
@@ -52,32 +78,32 @@ static void classify_token(Token *const token) {
 
 	if (false) {}
 
-	TOKEN_TRY_STR("mut", TOKEN_KW_MUT)
-	TOKEN_TRY_STR("return", TOKEN_KW_RETURN)
-	TOKEN_TRY_STR("unreachable", TOKEN_KW_UNREACHABLE)
-	TOKEN_TRY_STR("if", TOKEN_KW_IF)
-	TOKEN_TRY_STR("elif", TOKEN_KW_ELIF)
-	TOKEN_TRY_STR("else", TOKEN_KW_ELSE)
-	TOKEN_TRY_STR("while", TOKEN_KW_WHILE)
-	TOKEN_TRY_STR("external", TOKEN_KW_EXTERNAL)
-	TOKEN_TRY_STR("export", TOKEN_KW_EXPORT)
-	TOKEN_TRY_STR("noop", TOKEN_KW_NOOP)
-	TOKEN_TRY_STR("break", TOKEN_KW_BREAK)
-	TOKEN_TRY_STR("continue", TOKEN_KW_CONTINUE)
-	TOKEN_TRY_STR("import", TOKEN_KW_IMPORT)
-	TOKEN_TRY_STR("namespace", TOKEN_KW_NAMESPACE)
-	TOKEN_TRY_STR("mod", TOKEN_OPER_MOD)
-	TOKEN_TRY_STR(":=", TOKEN_OPER_AUTO_EQUAL)
-	TOKEN_TRY_STR("not", TOKEN_OPER_NOT)
-	TOKEN_TRY_STR("is", TOKEN_OPER_IS)
-	TOKEN_TRY_STR("isnt", TOKEN_OPER_ISNT)
-	TOKEN_TRY_STR("and", TOKEN_OPER_AND)
-	TOKEN_TRY_STR("or", TOKEN_OPER_OR)
-	TOKEN_TRY_STR("xor", TOKEN_OPER_XOR)
-	TOKEN_TRY_STR("<=", TOKEN_OPER_LESS_THAN_EQ)
-	TOKEN_TRY_STR(">=", TOKEN_OPER_GTR_THAN_EQ)
-	TOKEN_TRY_STR("<<", TOKEN_OPER_LSHIFT)
-	TOKEN_TRY_STR(">>", TOKEN_OPER_RSHIFT)
+	TOKEN_TRY_STR(KW_MUT, TOKEN_KW_MUT)
+	TOKEN_TRY_STR(KW_RETURN, TOKEN_KW_RETURN)
+	TOKEN_TRY_STR(KW_UNREACHABLE, TOKEN_KW_UNREACHABLE)
+	TOKEN_TRY_STR(KW_IF, TOKEN_KW_IF)
+	TOKEN_TRY_STR(KW_ELIF, TOKEN_KW_ELIF)
+	TOKEN_TRY_STR(KW_ELSE, TOKEN_KW_ELSE)
+	TOKEN_TRY_STR(KW_WHILE, TOKEN_KW_WHILE)
+	TOKEN_TRY_STR(KW_EXTERNAL, TOKEN_KW_EXTERNAL)
+	TOKEN_TRY_STR(KW_EXPORT, TOKEN_KW_EXPORT)
+	TOKEN_TRY_STR(KW_NOOP, TOKEN_KW_NOOP)
+	TOKEN_TRY_STR(KW_BREAK, TOKEN_KW_BREAK)
+	TOKEN_TRY_STR(KW_CONTINUE, TOKEN_KW_CONTINUE)
+	TOKEN_TRY_STR(KW_IMPORT, TOKEN_KW_IMPORT)
+	TOKEN_TRY_STR(KW_NAMESPACE, TOKEN_KW_NAMESPACE)
+	TOKEN_TRY_STR(KW_MOD, TOKEN_OPER_MOD)
+	TOKEN_TRY_STR(U":=", TOKEN_OPER_AUTO_EQUAL)
+	TOKEN_TRY_STR(KW_NOT, TOKEN_OPER_NOT)
+	TOKEN_TRY_STR(KW_IS, TOKEN_OPER_IS)
+	TOKEN_TRY_STR(KW_ISNT, TOKEN_OPER_ISNT)
+	TOKEN_TRY_STR(KW_AND, TOKEN_OPER_AND)
+	TOKEN_TRY_STR(KW_OR, TOKEN_OPER_OR)
+	TOKEN_TRY_STR(KW_XOR, TOKEN_OPER_XOR)
+	TOKEN_TRY_STR(U"<=", TOKEN_OPER_LESS_THAN_EQ)
+	TOKEN_TRY_STR(U">=", TOKEN_OPER_GTR_THAN_EQ)
+	TOKEN_TRY_STR(U"<<", TOKEN_OPER_LSHIFT)
+	TOKEN_TRY_STR(U">>", TOKEN_OPER_RSHIFT)
 
 	TOKEN_SET_IF(is_constant_integer_str(str), TOKEN_INT_CONST)
 	TOKEN_SET_IF(is_constant_float_str(str), TOKEN_FLOAT_CONST)
@@ -143,27 +169,22 @@ static bool is_type_str(const char32_t *const name) {
 Returns true if a `str` is a reserved.
 */
 static bool is_reserved_str(const char32_t *const str) {
-	return c32scmp(U"return", str) ||
-		c32scmp(U"mut", str) ||
-		c32scmp(U"not", str) ||
-		c32scmp(U"is", str) ||
-		c32scmp(U"unreachable", str) ||
-		c32scmp(U"if", str) ||
-		c32scmp(U"elif", str) ||
-		c32scmp(U"else", str) ||
-		c32scmp(U"while", str) ||
-		c32scmp(U"external", str) ||
-		c32scmp(U"export", str) ||
-		c32scmp(U"noop", str) ||
-		c32scmp(U"break", str) ||
-		c32scmp(U"continue", str) ||
-		c32scmp(U"import", str) ||
-		c32scmp(U"namespace", str) ||
-		c32scmp(U"mod", str) ||
-		c32scmp(U"isnt", str) ||
-		c32scmp(U"and", str) ||
-		c32scmp(U"or", str) ||
-		c32scmp(U"xor", str);
+	const char32_t *reserved[] = {
+		KW_MUT, KW_RETURN, KW_UNREACHABLE, KW_IF, KW_ELIF, KW_ELSE, KW_WHILE,
+		KW_EXTERNAL, KW_EXPORT, KW_NOOP, KW_BREAK, KW_CONTINUE, KW_IMPORT,
+		KW_NAMESPACE, KW_MOD, KW_NOT, KW_IS, KW_ISNT, KW_AND, KW_OR, KW_XOR,
+		KW_INFINITY, KW_NAN, KW_TRUE, KW_FALSE, NULL
+	};
+
+	const char32_t **at = reserved;
+
+	while (*at) {
+		if (c32scmp(*at, str)) return true;
+
+		at++;
+	}
+
+	return false;
 }
 
 #define EXHAUST_STR_INT(cond) \
@@ -223,9 +244,9 @@ Returns true if `str` is a valid float (with decimal).
 Examples: `123.0`, `-123.0`, `0.0`, `Infinity`
 */
 static bool is_constant_float_str(const char32_t *str) {
-	if (c32scmp(U"NaN", str)) return true;
+	if (c32scmp(KW_NAN, str)) return true;
 	if (*str == '-') str++;
-	if (c32scmp(U"Infinity", str)) return true;
+	if (c32scmp(KW_INFINITY, str)) return true;
 	if (*str == '.' || *str == '_') return false;
 
 	bool was_last_underscore = false;
@@ -254,7 +275,7 @@ static bool is_constant_float_str(const char32_t *str) {
 Returns true if `str` is a valid bool (`true` or `false`).
 */
 static bool is_constant_bool_str(const char32_t *const str) {
-	return c32scmp(U"false", str) || c32scmp(U"true", str);
+	return c32scmp(KW_TRUE, str) || c32scmp(KW_FALSE, str);
 }
 
 /*

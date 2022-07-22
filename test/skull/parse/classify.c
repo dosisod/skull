@@ -47,6 +47,10 @@ static bool test_is_reserved_str(void) {
 	ASSERT_TRUTHY(is_reserved_str(U"and"));
 	ASSERT_TRUTHY(is_reserved_str(U"or"));
 	ASSERT_TRUTHY(is_reserved_str(U"xor"));
+	ASSERT_TRUTHY(is_reserved_str(U"Infinity"));
+	ASSERT_TRUTHY(is_reserved_str(U"NaN"));
+	ASSERT_TRUTHY(is_reserved_str(U"true"));
+	ASSERT_TRUTHY(is_reserved_str(U"false"));
 
 	PASS
 }
