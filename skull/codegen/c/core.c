@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "skull/codegen/c/assign.h"
+#include "skull/codegen/c/debug.h"
 #include "skull/codegen/c/expr.h"
 #include "skull/codegen/c/flow.h"
 #include "skull/codegen/c/func.h"
@@ -69,7 +70,7 @@ static CStmt gen_node_c(const AstNode *node, SkullStateC *state) {
 
 	if (!str) return NULL;
 
-	return apply_indentation(str, state);
+	return apply_debug_info(apply_indentation(str, state), node);
 }
 
 static char *apply_indentation(char *str, SkullStateC *state) {

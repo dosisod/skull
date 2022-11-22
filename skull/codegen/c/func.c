@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "skull/codegen/c/core.h"
+#include "skull/codegen/c/debug.h"
 #include "skull/codegen/c/expr.h"
 #include "skull/codegen/c/shared.h"
 #include "skull/codegen/c/types.h"
@@ -101,6 +102,8 @@ char *gen_function_prototype_c(const AstNode *node, SkullStateC *state) {
 			param_list,
 			tree
 		);
+
+		out = apply_debug_info(out, node);
 
 		free(tree);
 	}

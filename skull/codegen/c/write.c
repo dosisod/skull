@@ -64,14 +64,30 @@ static void print_main_shim(
 	const char *module_name,
 	const SkullStateC *state
 ) {
-	fprintf(
-		f,
-		"static int init(void) __asm__(\"%s\");\n" \
-		"static int init(void) {\n%s\n\treturn 0;\n}\n" \
-		"int main(void) { return init(); }\n",
-		module_name,
-		state->tree ? state->tree : ""
-	);
+	if (BUILD_DATA.debug) {
+		fprintf(
+			f,
+			"#line 1 \"%s\"\n" \
+			"static int init(void) __asm__(\"%s\");\n" \
+			"static int init(void) {\n%s\n\treturn 0;\n}\n" \
+			"#line 1 \"%s\"\n" \
+			"int main(void) { return init(); }\n",
+			BUILD_DATA.filename,
+			module_name,
+			state->tree ? state->tree : "",
+			BUILD_DATA.filename
+		);
+	}
+	else {
+		fprintf(
+			f,
+			"static int init(void) __asm__(\"%s\");\n" \
+			"static int init(void) {\n%s\n\treturn 0;\n}\n" \
+			"int main(void) { return init(); }\n",
+			module_name,
+			state->tree ? state->tree : ""
+		);
+	}
 }
 
 

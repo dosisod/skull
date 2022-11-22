@@ -25,7 +25,7 @@ test_c_backend() {
 	printf "%s" "$dir/$file "
 
 	rm -f "./$dir/.$file.ll"
-	./build/skull/skull --c-backend "./$dir/$file" 2> /dev/null
+	./build/skull/skull --c-backend "$2" "./$dir/$file" 2> /dev/null
 	[ "$?" = "0" ] || { fail; return; }
 
 	compare "./$dir/_$file.c" "./$dir/.$file.c"
@@ -77,9 +77,11 @@ find test/sh/ -name ".*.out" -print0 | xargs -0 -I{} rm {}
 find test/sh/ -name ".*.ll" -print0 | xargs -0 -I{} rm {}
 find test/sh/ -name ".*.out" -print0 | xargs -0 -I{} rm {}
 
-for file in $(find test/skull/codegen/c/ -name "_*.c") ; do
+for file in $(find test/skull/codegen/c/ -name "_*.c" -not -name "*debug*") ; do
 	test_c_backend "$file"
 done
+
+test_c_backend "test/skull/codegen/c/_debug_line_info.sk.c" "-g"
 
 for file in $(find test/skull/codegen/llvm/ -name "_*.ll") ; do
 	test_llvm_debug "$file"
