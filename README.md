@@ -133,9 +133,13 @@ $ ./build/test/test
 $ ./test/sh/main.sh
 ```
 
-## Install Vim syntax highlighting
+## Syntax Highlighting
 
-See [dosisod/vim-skull](https://github.com/dosisod/vim-skull).
+It is recommended to use the newer [tree-sitter syntax highlighter](https://github.com/dosisod/tree-sitter-skull)
+instead of the older [Vim syntax highlighter](https://github.com/dosisod/vim-skull).
+
+Once you do have it installed though you will automatically get syntax highlighting for
+all `.sk` files!
 
 ## Todo
 
