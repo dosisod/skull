@@ -5,7 +5,7 @@ source_filename = "./test/sh/flow/if/with_var_true.sk"
 
 define i64 @.with_var_true() {
 entry:
-  %0 = load i1, i1* @x, align 1
+  %0 = load i1, ptr @x, align 1
   br i1 %0, label %if_true, label %end
 
 if_true:                                          ; preds = %entry

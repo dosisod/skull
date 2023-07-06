@@ -6,7 +6,7 @@ source_filename = "./test/sh/oper/int_pow.sk"
 define i64 @.int_pow() {
 entry:
   %0 = call i64 @_int_pow(i64 10, i64 3)
-  store i64 %0, i64* @x, align 4
+  store i64 %0, ptr @x, align 4
   ret i64 0
 }
 

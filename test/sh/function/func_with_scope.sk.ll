@@ -11,6 +11,6 @@ entry:
 define private void @f() {
 entry:
   %x = alloca i64, align 8
-  store i64 1, i64* %x, align 4
+  store i64 1, ptr %x, align 4
   ret void
 }

@@ -6,8 +6,8 @@ source_filename = "./test/sh/oper/rhs_with_var.sk"
 
 define i64 @.rhs_with_var() {
 entry:
-  %0 = load i64, i64* @x, align 4
+  %0 = load i64, ptr @x, align 4
   %1 = add nsw i64 2, %0
-  store i64 %1, i64* @z, align 4
+  store i64 %1, ptr @z, align 4
   ret i64 0
 }

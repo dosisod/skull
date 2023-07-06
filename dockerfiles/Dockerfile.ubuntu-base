@@ -5,9 +5,9 @@ RUN apt update && \
 	DEBIAN_FRONTEND=noninteractive apt install \
 		build-essential \
 		gcc-11 \
-		clang-14 \
-		clang-tidy-14 \
-		llvm-14-dev \
+		clang-15 \
+		clang-tidy-15 \
+		llvm-15-dev \
 		shellcheck \
 		git \
 		file \

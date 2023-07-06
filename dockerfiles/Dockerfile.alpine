@@ -1,10 +1,10 @@
-FROM alpine:20220715
+FROM alpine:3.18
 
 RUN apk update && \
 	apk upgrade && \
 	apk add \
 		build-base \
-		llvm14-libs && \
+		llvm15-libs && \
 	rm /var/cache/apk/*
 
 COPY --from=skull:alpine-dev /usr/local/bin/skull /usr/local/bin/skull

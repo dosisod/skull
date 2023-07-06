@@ -6,7 +6,7 @@ source_filename = "./test/sh/oper/float_pow.sk"
 define i64 @.float_pow() {
 entry:
   %0 = call double @_float_pow(double 2.000000e+00, double 3.000000e+00)
-  store double %0, double* @x, align 8
+  store double %0, ptr @x, align 8
   ret i64 0
 }
 

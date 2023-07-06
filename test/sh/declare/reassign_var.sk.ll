@@ -5,6 +5,6 @@ source_filename = "./test/sh/declare/reassign_var.sk"
 
 define i64 @.reassign_var() {
 entry:
-  store i64 1, i64* @x, align 4
+  store i64 1, ptr @x, align 4
   ret i64 0
 }

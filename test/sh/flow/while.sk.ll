@@ -17,7 +17,7 @@ while_end:                                        ; preds = %while_cond
   br label %while_cond1
 
 while_cond1:                                      ; preds = %while_loop2, %while_end
-  %0 = load i64, i64* @i, align 4
+  %0 = load i64, ptr @i, align 4
   %1 = icmp slt i64 %0, 10
   br i1 %1, label %while_loop2, label %while_end3
 

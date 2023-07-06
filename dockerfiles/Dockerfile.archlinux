@@ -1,6 +1,8 @@
 FROM archlinux:base-devel
 
-RUN pacman -Syu --noconfirm llvm-libs
+RUN pacman-key --init && \
+	pacman -Sy --noconfirm archlinux-keyring && \
+	pacman -Syu --noconfirm llvm-libs
 
 COPY --from=skull:archlinux-dev /usr/local/bin/skull /usr/local/bin/skull
 COPY --from=skull:archlinux-dev /usr/lib/libskull.so /usr/lib/libskull.so

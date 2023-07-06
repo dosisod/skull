@@ -8,8 +8,8 @@ source_filename = "./test/sh/oper/unary_expr.sk"
 
 define i64 @.unary_expr() {
 entry:
-  %0 = load i64, i64* @y, align 4
+  %0 = load i64, ptr @y, align 4
   %1 = sub nsw i64 0, %0
-  store i64 %1, i64* @z, align 4
+  store i64 %1, ptr @z, align 4
   ret i64 0
 }

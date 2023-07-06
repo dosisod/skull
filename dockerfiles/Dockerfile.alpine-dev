@@ -1,4 +1,4 @@
-FROM alpine:20220715
+FROM alpine:3.18
 
 RUN apk update && \
 	apk upgrade && \
@@ -7,7 +7,7 @@ RUN apk update && \
 		clang \
 		git \
 		file \
-		llvm14-dev && \
+		llvm15-dev && \
 	rm /var/cache/apk/*
 
 WORKDIR /skull

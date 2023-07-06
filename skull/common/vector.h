@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#define VECTOR_START_MAX 8
+enum { VECTOR_START_MAX = 8 };
 
 #define MAKE_VECTOR(type) \
 	void vector_push_##type(Vector *v, type *ptr) { /* NOLINT */ \

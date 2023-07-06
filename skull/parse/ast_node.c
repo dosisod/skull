@@ -306,7 +306,7 @@ static ParserResult parse_function_proto(ParserCtx *ctx) {
 
 	if (ctx->token->type == TOKEN_PAREN_CLOSE &&
 		ctx->token->next &&
-		(tmp = is_potential_type(ctx->token->next))
+		(tmp = is_potential_type(ctx->token->next)) // NOLINT
 	) {
 		if (NOT_NULL(tmp->next)->type == token_type) {
 			return_type_token = ctx->token->next;

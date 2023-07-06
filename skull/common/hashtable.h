@@ -2,7 +2,7 @@
 
 #include "skull/common/vector.h"
 
-#define MAX_SLOTS 64
+enum { MAX_SLOTS = 64 };
 
 typedef struct HashItem {
 	const char *key;

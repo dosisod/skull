@@ -5,14 +5,14 @@ source_filename = "./test/skull/codegen/llvm/ptr_types.sk"
 @int = private global i64 1234, !dbg !5
 @float = private global double 3.140000e+00, !dbg !8
 @0 = private unnamed_addr constant [12 x i8] c"hello world\00", align 1
-@str = private global i8* getelementptr inbounds ([12 x i8], [12 x i8]* @0, i32 0, i32 0), !dbg !11
+@str = private global ptr @0, !dbg !11
 @rune = private global i32 120, !dbg !15
-@bool_ptr = private global i1* @bool, !dbg !18
-@int_ptr = private global i64* @int, !dbg !22
-@float_ptr = private global double* @float, !dbg !25
-@str_ptr = private global i8** @str, !dbg !28
-@rune_ptr = private global i32* @rune, !dbg !31
-@double_ptr = private global i64** @int_ptr, !dbg !34
+@bool_ptr = private global ptr @bool, !dbg !18
+@int_ptr = private global ptr @int, !dbg !22
+@float_ptr = private global ptr @float, !dbg !25
+@str_ptr = private global ptr @str, !dbg !28
+@rune_ptr = private global ptr @rune, !dbg !31
+@double_ptr = private global ptr @int_ptr, !dbg !34
 
 define i64 @.ptr_types() !dbg !39 {
 entry:

@@ -9,8 +9,8 @@ entry:
 define private double @func() {
 entry:
   %ret = alloca double, align 8
-  store double 3.140000e+00, double* %ret, align 8
-  %0 = load double, double* %ret, align 8
+  store double 3.140000e+00, ptr %ret, align 8
+  %0 = load double, ptr %ret, align 8
   ret double %0
 }
 

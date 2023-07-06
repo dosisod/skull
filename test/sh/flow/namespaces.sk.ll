@@ -6,7 +6,7 @@ source_filename = "./test/sh/flow/namespaces.sk"
 
 define i64 @.namespaces() {
 entry:
-  store i64 2, i64* @z, align 4
+  store i64 2, ptr @z, align 4
   call void @f()
   ret i64 0
 }

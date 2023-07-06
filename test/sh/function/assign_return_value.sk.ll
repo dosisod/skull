@@ -6,8 +6,8 @@ source_filename = "./test/sh/function/assign_return_value.sk"
 define i64 @.assign_return_value() {
 entry:
   %0 = call i64 @func()
-  store i64 %0, i64* @x, align 4
-  %1 = load i64, i64* @x, align 4
+  store i64 %0, ptr @x, align 4
+  %1 = load i64, ptr @x, align 4
   ret i64 %1
 }
 

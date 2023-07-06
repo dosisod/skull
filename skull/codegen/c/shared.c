@@ -5,7 +5,7 @@
 
 #include "skull/codegen/c/shared.h"
 
-#define MAX_TABS 64
+enum { MAX_TABS = 64 };
 
 SkullStateC *setup_c_state(SemanticState *state) {
 	(void)state;

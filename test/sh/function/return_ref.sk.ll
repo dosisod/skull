@@ -8,7 +8,7 @@ entry:
   ret i64 0
 }
 
-define private i64* @f() {
+define private ptr @f() {
 entry:
-  ret i64* @i
+  ret ptr @i
 }

@@ -10,7 +10,7 @@ RUN ./build/test/test
 RUN ./test/sh/main.sh
 RUN make clean
 
-RUN make TRACE=1 CC=clang-14 options clean all
+RUN make TRACE=1 CC=clang-15 options clean all
 RUN ./build/test/test
 RUN ./test/sh/main.sh
 RUN make clean
@@ -28,6 +28,6 @@ RUN cc test/libskull.c -o skull-shim && ./skull-shim
 
 RUN cd test/docs/c-integration && make
 
-RUN clang-tidy-14 --version
+RUN clang-tidy-15 --version
 RUN make lint
 RUN shellcheck test/sh/main.sh Makefile

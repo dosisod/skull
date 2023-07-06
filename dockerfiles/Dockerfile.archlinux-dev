@@ -1,11 +1,13 @@
 FROM archlinux:base-devel
 
-RUN pacman -Syu --noconfirm \
-	clang \
-	llvm \
-	llvm-libs \
-	git \
-	vim
+RUN pacman-key --init && \
+	pacman -Sy --noconfirm archlinux-keyring && \
+	pacman -Syu --noconfirm \
+		clang \
+		llvm \
+		llvm-libs \
+		git \
+		vim
 
 WORKDIR /skull
 COPY . .

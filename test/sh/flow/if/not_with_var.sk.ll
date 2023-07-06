@@ -5,7 +5,7 @@ source_filename = "./test/sh/flow/if/not_with_var.sk"
 
 define i64 @.not_with_var() {
 entry:
-  %0 = load i1, i1* @x, align 1
+  %0 = load i1, ptr @x, align 1
   %1 = xor i1 %0, true
   br i1 %1, label %if_true, label %end
 

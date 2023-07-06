@@ -18,7 +18,7 @@ if_true2:                                         ; preds = %if_true
   br label %end1
 
 end1:                                             ; preds = %if_true, %if_true2
-  %0 = load i64, i64* @x, align 4
-  store i64 %0, i64* @z, align 4
+  %0 = load i64, ptr @x, align 4
+  store i64 %0, ptr @z, align 4
   br label %end
 }
