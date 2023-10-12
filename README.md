@@ -45,26 +45,22 @@ This might change in the future though.
 
 ## Setup
 
-Before you build, you will need to install some common development packages,
-and LLVM 15.
+Before you build you will need to install LLVM as well as some development packages.
+Currently Skull is compatible with LLVM 15 and 16.
+
+> Note: If you plan on developing Skull, you will need to install LLVM 16.
+> For Ubuntu, this requires you have Ubuntu Lunar (23.04) or newer installed.
 
 #### Ubuntu
-
-Note: the `llvm-15-dev` package is only available on Ubuntu Jammy (22.04).
-If you want to use this in 21.04 or earlier, you will need to add the
-[LLVM APT repositories](https://apt.llvm.org/) to your system (untested), or
-build from [source](https://github.com/llvm/llvm-project#getting-the-source-code-and-building-llvm).
 
 ```
 $ sudo apt install llvm-15-dev build-essential git xxd
 ```
 
-You can also drop in `clang` instead of `gcc` (`gcc` is included in
-`build-essential` package by default):
-
-```
-$ sudo apt install clang
-```
+> Note: the `llvm-15-dev` package is only available on Ubuntu Jammy (22.04) or newer.
+> If you want to use Skull in earlier versions of Ubuntu you will need to add the
+> [LLVM APT repositories](https://apt.llvm.org/) to your system (untested), or
+> build from [source](https://github.com/llvm/llvm-project#getting-the-source-code-and-building-llvm).
 
 #### Arch Linux
 
@@ -95,7 +91,7 @@ Install [https://docs.docker.com/engine/install/ubuntu/](docker).
 In addition run:
 
 ```
-$ sudo apt install clang-tidy-15
+$ sudo apt install llvm-16-dev clang-tidy-16
 ```
 
 #### Arch Linux

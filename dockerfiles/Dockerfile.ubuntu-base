@@ -1,13 +1,13 @@
-FROM ubuntu:jammy
+FROM ubuntu:23.04
 
 RUN apt update && \
 	apt upgrade -y && \
 	DEBIAN_FRONTEND=noninteractive apt install \
 		build-essential \
 		gcc-11 \
-		clang-15 \
-		clang-tidy-15 \
-		llvm-15-dev \
+		clang-16 \
+		clang-tidy-16 \
+		llvm-16-dev \
 		shellcheck \
 		git \
 		file \

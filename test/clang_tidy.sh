@@ -1,7 +1,7 @@
 #!/bin/sh
 
-CLANG_TIDY=$(command -v clang-tidy-15 || command -v clang-tidy || command -v clang-tidy-14)
-LLVM_CONFIG=$(command -v llvm-config-15 || command -v llvm-config || command -v llvm-config-14)
+CLANG_TIDY=$(command -v clang-tidy-16 || command -v clang-tidy || command -v clang-tidy-15)
+LLVM_CONFIG=$(command -v llvm-config-16 || command -v llvm-config || command -v llvm-config-15)
 
 [ ! "$($CLANG_TIDY \
 	$(find -L skull test -type f -name "*.[ch]" ! -name "*.sk.c" ! -path "*/sh/*" ! -path "test/skull/e2e.c") \

@@ -4,7 +4,7 @@ RUN apk update && \
 	apk upgrade && \
 	apk add \
 		build-base \
-		llvm15-libs && \
+		llvm16-libs && \
 	rm /var/cache/apk/*
 
 COPY --from=skull:alpine-dev /usr/local/bin/skull /usr/local/bin/skull

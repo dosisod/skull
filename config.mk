@@ -58,7 +58,7 @@ CFLAGS += -std=c18 \
 	-fPIC \
 	-D_GNU_SOURCE
 
-LLVM_CONFIG := $(shell command -v llvm-config-15 || command -v llvm15-config || command -v llvm-config)
+LLVM_CONFIG := $(shell command -v llvm-config-16 || command -v llvm16-config || command -v llvm-config)
 LLVM_CFLAGS := $(shell $(LLVM_CONFIG) --cflags)
 
 RELEASE ?= 0

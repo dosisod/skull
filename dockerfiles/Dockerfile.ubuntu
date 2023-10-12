@@ -1,10 +1,10 @@
-FROM ubuntu:22.04
+FROM ubuntu:23.04
 
 RUN apt update && \
 	apt upgrade -y && \
 	DEBIAN_FRONTEND=noninteractive apt install \
 		gcc-11 \
-		llvm-15-runtime -y && \
+		llvm-16-runtime -y && \
 	rm -rf /var/lib/apt/lists/*
 
 COPY --from=skull:ubuntu-dev /usr/local/bin/skull /usr/local/bin/skull

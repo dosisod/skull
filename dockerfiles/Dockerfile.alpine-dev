@@ -7,7 +7,7 @@ RUN apk update && \
 		clang \
 		git \
 		file \
-		llvm15-dev && \
+		llvm16-dev && \
 	rm /var/cache/apk/*
 
 WORKDIR /skull

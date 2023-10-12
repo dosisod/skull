@@ -25,7 +25,7 @@ entry:
   ret void
 }
 
-; Function Attrs: nocallback nofree nosync nounwind readnone speculatable willreturn
+; Function Attrs: nocallback nofree nosync nounwind speculatable willreturn memory(none)
 declare void @llvm.dbg.declare(metadata, metadata, metadata) #0
 
 define private void @f3(i64 %0, i64 %1) !dbg !24 {
@@ -82,7 +82,7 @@ end1:                                             ; preds = %end, %if_true2
   ret void, !dbg !59
 }
 
-attributes #0 = { nocallback nofree nosync nounwind readnone speculatable willreturn }
+attributes #0 = { nocallback nofree nosync nounwind speculatable willreturn memory(none) }
 
 !llvm.dbg.cu = !{!2}
 !llvm.module.flags = !{!6, !7}
