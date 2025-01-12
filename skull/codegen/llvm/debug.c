@@ -279,7 +279,7 @@ static void add_llvm_local_var_def_debug_info(
 		8 // alignment
 	);
 
-	LLVMDIBuilderInsertDeclareAtEnd(
+	LLVMDIBuilderInsertDeclareRecordAtEnd(
 		DEBUG_INFO.builder,
 		symbol->var->ref,
 		di_var,
@@ -372,7 +372,7 @@ LLVMMetadataRef add_llvm_func_debug_info(
 
 			alloc_debug_function_param(func->params[i]->symbol->var, state);
 
-			LLVMDIBuilderInsertDeclareAtEnd(
+			LLVMDIBuilderInsertDeclareRecordAtEnd(
 				DEBUG_INFO.builder,
 				func->params[i]->symbol->var->ref,
 				di_var,

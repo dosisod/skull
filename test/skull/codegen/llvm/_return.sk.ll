@@ -13,7 +13,7 @@ entry:
 !1 = !DIFile(filename: "./test/skull/codegen/llvm/return.sk", directory: ".")
 !2 = !{i32 4, !"Dwarf Version", i32 4}
 !3 = !{i32 4, !"Debug Info Version", i32 3}
-!4 = distinct !DISubprogram(name: ".return", scope: !1, file: !1, line: 1, type: !5, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !0, retainedNodes: !6)
+!4 = distinct !DISubprogram(name: ".return", scope: !1, file: !1, line: 1, type: !5, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !0)
 !5 = !DISubroutineType(types: !6)
 !6 = !{}
 !7 = !DILocation(line: 1, column: 1, scope: !4)

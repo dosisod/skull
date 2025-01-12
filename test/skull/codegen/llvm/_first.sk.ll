@@ -19,23 +19,20 @@ define private void @f2(i64 %0) !dbg !17 {
 entry:
   %x = alloca i64, align 8
   store i64 %0, ptr %x, align 4
-  call void @llvm.dbg.declare(metadata ptr %x, metadata !21, metadata !DIExpression()), !dbg !22
+    #dbg_declare(ptr %x, !21, !DIExpression(), !22)
   %noop = alloca i64, align 8
   store i64 0, ptr %noop, align 4, !dbg !23
   ret void
 }
 
-; Function Attrs: nocallback nofree nosync nounwind speculatable willreturn memory(none)
-declare void @llvm.dbg.declare(metadata, metadata, metadata) #0
-
 define private void @f3(i64 %0, i64 %1) !dbg !24 {
 entry:
   %y = alloca i64, align 8
   store i64 %0, ptr %y, align 4
-  call void @llvm.dbg.declare(metadata ptr %y, metadata !28, metadata !DIExpression()), !dbg !30
+    #dbg_declare(ptr %y, !28, !DIExpression(), !30)
   %z = alloca i64, align 8
   store i64 %1, ptr %z, align 4
-  call void @llvm.dbg.declare(metadata ptr %z, metadata !29, metadata !DIExpression()), !dbg !30
+    #dbg_declare(ptr %z, !29, !DIExpression(), !30)
   %noop = alloca i64, align 8
   store i64 0, ptr %noop, align 4, !dbg !31
   ret void
@@ -45,31 +42,31 @@ define private void @f4() !dbg !32 {
 entry:
   %local_var = alloca i64, align 8
   store i64 1, ptr %local_var, align 4, !dbg !49
-  call void @llvm.dbg.declare(metadata ptr %local_var, metadata !36, metadata !DIExpression()), !dbg !49
+    #dbg_declare(ptr %local_var, !36, !DIExpression(), !49)
   br i1 true, label %if_true, label %end
 
 if_true:                                          ; preds = %entry
   %if_test = alloca i64, align 8
   store i64 1, ptr %if_test, align 4, !dbg !50
-  call void @llvm.dbg.declare(metadata ptr %if_test, metadata !37, metadata !DIExpression()), !dbg !50
+    #dbg_declare(ptr %if_test, !37, !DIExpression(), !50)
   br label %end
 
 end:                                              ; preds = %entry, %if_true
   %int = alloca i64, align 8
   store i64 1234, ptr %int, align 4, !dbg !51
-  call void @llvm.dbg.declare(metadata ptr %int, metadata !39, metadata !DIExpression()), !dbg !51
+    #dbg_declare(ptr %int, !39, !DIExpression(), !51)
   %float = alloca double, align 8
   store double 3.141500e+00, ptr %float, align 8, !dbg !52
-  call void @llvm.dbg.declare(metadata ptr %float, metadata !40, metadata !DIExpression()), !dbg !52
+    #dbg_declare(ptr %float, !40, !DIExpression(), !52)
   %rune = alloca i32, align 4
   store i32 120, ptr %rune, align 4, !dbg !53
-  call void @llvm.dbg.declare(metadata ptr %rune, metadata !42, metadata !DIExpression()), !dbg !53
+    #dbg_declare(ptr %rune, !42, !DIExpression(), !53)
   %bool = alloca i1, align 1
   store i1 false, ptr %bool, align 1, !dbg !54
-  call void @llvm.dbg.declare(metadata ptr %bool, metadata !44, metadata !DIExpression()), !dbg !54
+    #dbg_declare(ptr %bool, !44, !DIExpression(), !54)
   %str = alloca ptr, align 8
   store ptr @0, ptr %str, align 8, !dbg !55
-  call void @llvm.dbg.declare(metadata ptr %str, metadata !46, metadata !DIExpression()), !dbg !55
+    #dbg_declare(ptr %str, !46, !DIExpression(), !55)
   %0 = load i1, ptr %bool, align 1, !dbg !56
   br i1 %0, label %if_true2, label %end1
 
@@ -82,8 +79,6 @@ end1:                                             ; preds = %end, %if_true2
   ret void, !dbg !59
 }
 
-attributes #0 = { nocallback nofree nosync nounwind speculatable willreturn memory(none) }
-
 !llvm.dbg.cu = !{!2}
 !llvm.module.flags = !{!6, !7}
 
@@ -95,12 +90,12 @@ attributes #0 = { nocallback nofree nosync nounwind speculatable willreturn memo
 !5 = !DIBasicType(name: "Int", size: 64, encoding: DW_ATE_signed)
 !6 = !{i32 4, !"Dwarf Version", i32 4}
 !7 = !{i32 4, !"Debug Info Version", i32 3}
-!8 = distinct !DISubprogram(name: ".first", scope: !3, file: !3, line: 1, type: !9, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !2, retainedNodes: !10)
+!8 = distinct !DISubprogram(name: ".first", scope: !3, file: !3, line: 1, type: !9, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !2)
 !9 = !DISubroutineType(types: !10)
 !10 = !{}
 !11 = !DILocation(line: 5, column: 1, scope: !8)
 !12 = !DILocation(line: 1, column: 1, scope: !8)
-!13 = distinct !DISubprogram(name: "f", scope: !3, file: !3, line: 1, type: !14, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !2, retainedNodes: !10)
+!13 = distinct !DISubprogram(name: "f", scope: !3, file: !3, line: 1, type: !14, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !2)
 !14 = !DISubroutineType(types: !15)
 !15 = !{!5}
 !16 = !DILocation(line: 2, column: 2, scope: !13)

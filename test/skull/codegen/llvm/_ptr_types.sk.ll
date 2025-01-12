@@ -61,7 +61,7 @@ entry:
 !36 = !DIDerivedType(tag: DW_TAG_pointer_type, name: "&&Int", baseType: !24, size: 64, dwarfAddressSpace: 0)
 !37 = !{i32 4, !"Dwarf Version", i32 4}
 !38 = !{i32 4, !"Debug Info Version", i32 3}
-!39 = distinct !DISubprogram(name: ".ptr_types", scope: !3, file: !3, line: 1, type: !40, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !2, retainedNodes: !41)
+!39 = distinct !DISubprogram(name: ".ptr_types", scope: !3, file: !3, line: 1, type: !40, scopeLine: 1, spFlags: DISPFlagDefinition, unit: !2)
 !40 = !DISubroutineType(types: !41)
 !41 = !{}
 !42 = !DILocation(line: 1, column: 1, scope: !39)
